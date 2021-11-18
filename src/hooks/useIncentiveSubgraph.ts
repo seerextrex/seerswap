@@ -48,29 +48,23 @@ export function useIncentiveSubgraph() {
 
             const pool = await fetchPool(events[i].pool)
 
-            const rewardContract = new Contract(
-                events[i].rewardToken,
-                ERC20_ABI,
-                provider
-            )
+            const rewardToken = await fetchToken(events[i].rewardToken);
+            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken);
 
-            const bonusRewardContract = new Contract(
-                events[i].bonusRewardToken,
-                ERC20_ABI,
-                provider
-            )
-
-            _events.push({
+            const _event: any = {
                 ...events[i],
                 token0: pool.token0.symbol,
                 token1: pool.token1.symbol,
                 rewardAddress: events[i].rewardToken,
-                rewardToken: await rewardContract.symbol(),
-                reward: formatUnits(BigNumber.from(events[i].reward), await rewardContract.decimals()),
                 bonusRewardAddress: events[i].bonusRewardToken,
-                bonusRewardToken: await bonusRewardContract.symbol(),
-                bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), await bonusRewardContract.decimals())
-            })
+                rewardToken: rewardToken.symbol,
+                reward: formatUnits(BigNumber.from(events[i].reward), rewardToken.decimals),
+                bonusRewardToken: bonusRewardToken.symbol,
+                bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
+            }
+
+            _events.push({..._event})
+
         }
 
         return _events
@@ -155,8 +149,6 @@ export function useIncentiveSubgraph() {
                     provider
                 )
 
-                // const { symbol, name, decimals } = await fetchToken(reward.rewardAddress)
-
                 const symbol = await rewardContract.symbol()
                 const name = await rewardContract.name()
                 const decimals = await rewardContract.decimals()
@@ -202,9 +194,7 @@ export function useIncentiveSubgraph() {
                 return
             }
 
-            const _futureEvents = await getEvents(futureEvents)
-
-            setFutureEvents(_futureEvents)
+            setFutureEvents(await getEvents(futureEvents))
 
         } catch (err) {
             setFutureEventsLoading(null)

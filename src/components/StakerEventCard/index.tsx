@@ -425,14 +425,20 @@ export function StakerEventCard({
         </div>
       </CardHeader>
       <RewardWrapper style={{ marginBottom: '6px' }}>
-        <TokenIcon name={rewardToken}>{rewardToken.slice(0, 2)}</TokenIcon>
+        {
+          rewardToken &&
+          <TokenIcon name={rewardToken}>{rewardToken.slice(0, 2)}</TokenIcon>
+        }
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle>Reward</Subtitle>
           <RewardSymbol>{rewardToken}</RewardSymbol>
         </div>
-        <RewardAmount title={reward}>
+        {
+          reward &&
+          <RewardAmount title={reward}>
           {('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}
         </RewardAmount>
+        }
       </RewardWrapper>
       <div style={{ position: 'relative' }}>
         <div
@@ -449,24 +455,35 @@ export function StakerEventCard({
         </div>
       </div>
       <RewardWrapper style={{ backgroundColor: '#90175b', borderColor: '#af4cad' }}>
-        <TokenIcon name={bonusRewardToken}>{bonusRewardToken.slice(0, 2)}</TokenIcon>
+        {
+          bonusRewardToken &&
+        <TokenIcon name={bonusRewardToken}>{bonusRewardToken ? bonusRewardToken.slice(0, 2) : null}</TokenIcon>
+        }
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle style={{ color: '#ef71b8' }}>Bonus</Subtitle>
           <RewardSymbol>{bonusRewardToken}</RewardSymbol>
         </div>
-        <RewardAmount title={bonusReward}>
+        {
+          bonusReward &&
+          <RewardAmount title={bonusReward}>
           {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
         </RewardAmount>
+        }
       </RewardWrapper>
       <StakeInfo active>
         <div>
           <>
             <Subtitle>Start</Subtitle>
             <div>
-              <span>{new Date(startTime * 1000).toLocaleString().split(',')[0]}</span>
+              <span>{
+                startTime &&
+                new Date(startTime * 1000).toLocaleString().split(',')[0]
+              }</span>
             </div>
             <div>
-              <span>{`${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+              <span>{startTime &&
+              `${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`
+              }</span>
             </div>
           </>
         </div>
@@ -474,10 +491,16 @@ export function StakerEventCard({
         <div>
           <Subtitle>End</Subtitle>
           <div>
-            <span>{new Date(endTime * 1000).toLocaleString().split(',')[0]}</span>
+            <span>{
+              endTime &&
+              new Date(endTime * 1000).toLocaleString().split(',')[0]
+            }</span>
           </div>
           <div>
-            <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+            {
+              endTime &&
+              <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+            }
           </div>
         </div>
       </StakeInfo>

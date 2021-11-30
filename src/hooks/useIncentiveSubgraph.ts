@@ -65,7 +65,7 @@ export function useIncentiveSubgraph() {
                 bonusRewardToken: bonusRewardToken.symbol,
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }
-
+            
             _events.push({ ..._event })
         }
 
@@ -150,8 +150,6 @@ export function useIncentiveSubgraph() {
                     ERC20_ABI,
                     provider
                 )
-
-                // const { symbol, name, decimals } = await fetchToken(reward.rewardAddress)
 
                 const symbol = await rewardContract.symbol()
                 const name = await rewardContract.name()

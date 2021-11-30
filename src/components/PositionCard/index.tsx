@@ -27,6 +27,8 @@ import { RowBetween, RowFixed, AutoRow } from '../Row'
 import { Dots } from '../swap/styleds'
 import { BIG_INT_ZERO } from '../../constants/misc'
 
+import Badge, { BadgeVariant } from '../Badge'
+
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
 `
@@ -94,6 +96,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border }: Pos
                 <Text fontWeight={500} fontSize={20}>
                   {currency0.symbol}/{currency1.symbol}
                 </Text>
+                <Badge style={{ backgroundColor: '#0f2e40', color: '#48b9cd' }}>QuickSwap</Badge>
               </RowFixed>
               <RowFixed>
                 <Text fontWeight={500} fontSize={20}>
@@ -208,6 +211,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                 `${currency0.symbol}/${currency1.symbol}`
               )}
             </Text>
+            <Badge variant={BadgeVariant.WARNING}>QuickSwap</Badge>
           </AutoRow>
           <RowFixed gap="8px" style={{ marginRight: '4px' }}>
             <ButtonEmpty padding="6px 8px" $borderRadius="12px" width="100%" onClick={() => setShowMore(!showMore)}>

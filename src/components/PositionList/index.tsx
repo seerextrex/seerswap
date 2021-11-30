@@ -1,5 +1,5 @@
 import PositionListItem from 'components/PositionListItem'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Trans } from '@lingui/macro'
 import styled from 'styled-components/macro'
 import { MEDIA_WIDTHS } from 'theme'
@@ -39,6 +39,22 @@ type PositionListProps = React.PropsWithChildren<{
 }>
 
 export default function PositionList({ positions }: PositionListProps) {
+  const _positions = useMemo(() => {
+    if (!positions) {
+      return []
+    }
+
+    return positions.filter((position) => !position.onFarming)
+  }, [positions])
+
+  const _positionsOnFarming = useMemo(() => {
+    if (!positions) {
+      return []
+    }
+
+    return positions.filter((position) => position.onFarming)
+  }, [positions])
+
   return (
     <>
       <DesktopHeader>
@@ -53,7 +69,10 @@ export default function PositionList({ positions }: PositionListProps) {
       <MobileHeader>
         <Trans>Your positions</Trans>
       </MobileHeader>
-      {positions.map((p) => {
+      {_positionsOnFarming.map((p) => {
+        return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />
+      })}
+      {_positions.map((p) => {
         return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />
       })}
     </>

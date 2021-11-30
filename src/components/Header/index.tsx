@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import useScrollPosition from '@react-hook/window-scroll'
 import { darken } from 'polished'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
@@ -17,6 +17,8 @@ import Web3Status from '../Web3Status'
 import NetworkCard from './NetworkCard'
 import UniBalanceContent from './UniBalanceContent'
 import { deviceSizes } from '../../pages/styled'
+import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
+import usePrevious from '../../hooks/usePrevious'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
@@ -176,6 +178,7 @@ const BalanceText = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
+  cursor: default;
 `
 
 const Title = styled.a`
@@ -257,6 +260,18 @@ export default function Header() {
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
+  const prevEthBalance = usePrevious(userEthBalance)
+
+  const _userEthBalance = useMemo(() => {
+    if (!userEthBalance) {
+      return prevEthBalance
+    }
+
+    return userEthBalance
+  }, [userEthBalance])
+
+  const networkFailed = useIsNetworkFailed()
+
   const [darkMode] = useDarkModeManager()
 
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
@@ -297,6 +312,9 @@ export default function Header() {
         <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
           Farming
         </StyledNavLink>
+        <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
+          Migrate
+        </StyledNavLink>
         <StyledNavLink id={`info-nav-link`} to={'/info'}>
           Info
         </StyledNavLink>
@@ -305,31 +323,24 @@ export default function Header() {
       <HeaderControls>
         <NetworkCard />
         <HeaderElement>
-          {/* {availableClaim && !showClaimPopup && (
-            <UNIWrapper onClick={toggleClaimModal}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                <TYPE.white padding="0 2px">
-                  {claimTxn && !claimTxn?.receipt ? (
-                    <Dots>
-                      <Trans>Claiming UNI</Trans>
-                    </Dots>
-                  ) : (
-                    <Trans>Claim UNI</Trans>
-                  )}
-                </TYPE.white>
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )} */}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {chainId === 137 && account && userEthBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+              <BalanceText
+                style={{ flexShrink: 0 }}
+                pt="0.75rem"
+                pb="0.75rem"
+                pl="0.75rem"
+                pr="0.5rem"
+                fontWeight={500}
+              >
                 {userEthBalance?.toSignificant(3)} {chainValue}{' '}
+            {(chainId === 137 && account && userEthBalance) || networkFailed ? (
+              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pt="0.75rem" pb="0.75rem" pr="0.5rem" fontWeight={500}>
+                {_userEthBalance?.toSignificant(3)} {chainValue}
               </BalanceText>
             ) : null}
             <Web3Status />
           </AccountElement>
-          {/* <Menu /> */}
         </HeaderElement>
       </HeaderControls>
     </HeaderFrame>

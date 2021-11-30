@@ -16,6 +16,7 @@ export const Label = styled(TYPE.label)<{ end?: number }>`
 
 export const ClickableText = styled(Label)`
   text-align: end;
+
   &:hover {
     cursor: pointer;
     opacity: 0.6;

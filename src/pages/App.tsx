@@ -33,6 +33,7 @@ import { ExternalLink } from 'react-feather'
 import Modal from '../components/Modal'
 import { useEffect, useState } from 'react'
 import CautionModal from '../components/CautionModal'
+import PoolFinder from './PoolFinder'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -133,6 +134,7 @@ export default function App() {
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/swap" component={Swap} />
 
+              <Route exact strict path="/pool/v2/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={PoolPage} />
               <Route exact strict path="/pool/:tokenId" component={PositionPage} />
 
@@ -143,14 +145,12 @@ export default function App() {
                 component={RedirectDuplicateTokenIds}
               />
 
-              <Route
-                exact
-                strict
-                path="/increase/:currencyIdA?/:currencyIdB?/:feeAmount?/:tokenId?"
-                component={AddLiquidity}
-              />
+              <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
 
               <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
+
+              <Route exact strict path="/migrate" component={MigrateV2} />
+              <Route exact strict path="/migrate/:address" component={MigrateV2Pair} />
 
               <Route component={RedirectPathToSwapOnly} />
             </Switch>

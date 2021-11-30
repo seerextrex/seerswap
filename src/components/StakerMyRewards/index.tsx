@@ -204,7 +204,7 @@ export function StakerMyRewards({
   const chunkedRewards = useMemo(() => {
     if (!data) return
 
-    if (data.length === 0) return []
+    if (!Array.isArray(data) || data.length === 0) return []
 
     const _rewards = [[data[0]]]
 

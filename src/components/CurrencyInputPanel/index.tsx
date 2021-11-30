@@ -86,6 +86,12 @@ const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boole
         background-color: transparent;
       }
     `}
+
+  ${({ swap }) =>
+    swap &&
+    css`
+      width: 170px;
+    `}
 `
 
 const InputRow = styled.div<{ selected: boolean }>`
@@ -182,6 +188,7 @@ interface CurrencyInputPanelProps {
   centered?: boolean
   disabled: boolean
   shallow: boolean
+  swap: boolean
 }
 
 export default function CurrencyInputPanel({
@@ -208,6 +215,7 @@ export default function CurrencyInputPanel({
   centered = false,
   disabled,
   shallow = false,
+  swap = false,
   ...rest
 }: CurrencyInputPanelProps) {
   const { chainId } = useActiveWeb3React()
@@ -254,6 +262,7 @@ export default function CurrencyInputPanel({
               className="open-currency-select-button"
               // style={{ backgroundColor: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
               shallow={shallow}
+              swap={swap}
               disabled={shallow}
               onClick={() => {
                 if (onCurrencySelect) {
@@ -333,7 +342,7 @@ export default function CurrencyInputPanel({
                 value={value}
                 disabled={disabled}
                 onUserInput={(val) => {
-                  if (val === '.') val = '0.';
+                  if (val === '.') val = '0.'
                   onUserInput(val)
                 }}
               />

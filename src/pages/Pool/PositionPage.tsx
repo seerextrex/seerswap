@@ -578,7 +578,7 @@ export function PositionPage({
                   {currency0 && currency1 && tokenId ? (
                     <ButtonGray
                       as={Link}
-                      to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/500/${tokenId}`}
+                      to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"

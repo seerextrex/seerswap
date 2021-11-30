@@ -280,14 +280,14 @@ export default function AccountDetails({
                       <Trans>Disconnect</Trans>
                     </WalletAction>
                   )}
-                  <WalletAction
+                  {/* <WalletAction
                     style={{ fontSize: '.825rem', fontWeight: 400 }}
                     onClick={() => {
                       openOptions()
                     }}
                   >
                     <Trans>Change</Trans>
-                  </WalletAction>
+                  </WalletAction> */}
                 </div>
               </AccountGroupingRow>
               <AccountGroupingRow id="web3-account-identifier-row">

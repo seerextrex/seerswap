@@ -42,10 +42,10 @@ const ResponsiveGrid = styled.div`
   grid-gap: 1em;
   align-items: center;
 
-  grid-template-columns: 20px 3.5fr repeat(2, 1fr);
+  grid-template-columns: 20px 3.5fr repeat(3, 1fr);
 
   @media screen and (max-width: 900px) {
-    grid-template-columns: 20px 1.5fr repeat(2, 1fr);
+    grid-template-columns: 20px 1.5fr repeat(3, 1fr);
     & :nth-child(3) {
       display: none;
     }
@@ -81,7 +81,7 @@ export const POOL_HIDE = [
 
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
   const { chainId } = useActiveWeb3React()
-  
+
   return (
     <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
       <Label fontWeight={400}>{index + 1}</Label>
@@ -97,14 +97,14 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
         </RowFixed>
       </Label>
       <Label end={1} fontWeight={400}>
-        {formatDollarAmount(poolData.totalValueLockedUSD)}
-      </Label>
-      <Label end={1} fontWeight={400}>
         {formatDollarAmount(poolData.volumeUSD)}
       </Label>
-      {/* <Label end={1} fontWeight={400}>
-          {formatDollarAmount(poolData.volumeUSDWeek)}
-        </Label> */}
+      <Label end={1} fontWeight={400}>
+        {formatDollarAmount(poolData.volumeUSDWeek)}
+      </Label>
+      <Label end={1} fontWeight={400}>
+        {formatDollarAmount(poolData.totalValueLockedUSD)}
+      </Label>
     </ResponsiveGrid>
   )
 }
@@ -182,15 +182,15 @@ export default function InfoPoolsTable({
             <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.feeTier)}>
               Pool {arrow(SORT_FIELD.feeTier)}
             </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
-              TVL {arrow(SORT_FIELD.tvlUSD)}
-            </ClickableText>
             <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
               Volume 24H {arrow(SORT_FIELD.volumeUSD)}
             </ClickableText>
-            {/* <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
+            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
               Volume 7D {arrow(SORT_FIELD.volumeUSDWeek)}
-            </ClickableText> */}
+            </ClickableText>
+            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
+              TVL {arrow(SORT_FIELD.tvlUSD)}
+            </ClickableText>
           </ResponsiveGrid>
           {sortedPools.map((poolData, i) => {
             if (poolData) {

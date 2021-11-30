@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Check, CheckCircle, Frown, X } from 'react-feather'
+import { ArrowRight, Check, CheckCircle, Frown, X } from 'react-feather'
 import { Link } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components/macro'
 import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
@@ -158,13 +158,33 @@ const EmptyMock = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: 350px;
   align-items: center;
   justify-content: center;
 `
 
+const LiquidityLockWarning = styled.div`
+  margin-bottom: 1rem;
+  padding: 8px 12px;
+  background: #373717;
+  color: #ffff65;
+  border-radius: 8px;
+  line-height: 25px;
+`
+
+const ProvideLiquidityLink = styled(Link)`
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  background: linear-gradient(90deg, rgba(72, 41, 187, 1) 0%, rgba(188, 49, 255, 1) 100%);
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+`
+
 export function StakeModal({
-  event: { pool, startTime, endTime, id, rewardAddress, bonusRewardAddress, refundee },
+  event: { pool, startTime, endTime, id, rewardAddress, bonusRewardAddress, refundee, token0, token1 },
   closeHandler,
 }: {
   event: {
@@ -175,6 +195,8 @@ export function StakeModal({
     rewardAddress: string
     bonusRewardAddress: string
     refundee: string
+    token0: string
+    token1: string
   }
   closeHandler: () => void
 }) {
@@ -362,6 +384,8 @@ export function StakeModal({
     })
   }, [selectedNFT, submitState])
 
+  const linkToProviding = `/add/${rewardAddress}/${bonusRewardAddress}`
+
   return (
     <>
       {submitState === 3 ? (
@@ -374,7 +398,7 @@ export function StakeModal({
           </ModalHeader>
           <ModalBody style={{ alignItems: 'center', justifyContent: 'center' }}>
             <CheckCircle size={55} stroke={'#3ee43e'} />
-            <p>{`NFT ${selectedNFT.tokenId} deposited succesfully!`}</p>
+            <p>{`NFT #${selectedNFT.tokenId} deposited succesfully!`}</p>
           </ModalBody>
         </ModalWrapper>
       ) : (
@@ -385,11 +409,21 @@ export function StakeModal({
               <X size={18} stroke={'white'} />
             </CloseModalButton>
           </ModalHeader>
+          <LiquidityLockWarning>
+            {
+              'Your position will be locked in the farming contract. If you deposit your NFT, you won’t be able to interact with the deposited position until the end of this farming event.'
+            }
+          </LiquidityLockWarning>
           <ModalBody>
             {chunkedPositions && chunkedPositions.length === 0 ? (
               <EmptyMock>
                 <Frown size={30} stroke={'white'} />
                 <p>No NFT-s for this pool</p>
+                <p>To take part in this farming event, you need to</p>
+                <ProvideLiquidityLink to={linkToProviding}>
+                  <span>{`Provide liquidity for ${token0} / ${token1}`}</span>
+                  <ArrowRight style={{ marginLeft: '5px' }} size={16} />
+                </ProvideLiquidityLink>
               </EmptyMock>
             ) : chunkedPositions && chunkedPositions.length !== 0 ? (
               chunkedPositions.map((row, i) => (
@@ -416,7 +450,11 @@ export function StakeModal({
                       <NFTPositionIcon name={el.tokenId}></NFTPositionIcon>
                       <NFTPositionDescription>
                         <NFTPositionIndex>{`#${el.tokenId}`}</NFTPositionIndex>
-                        <NFTPositionLink href={`https://algebra.exchange/#/pool/${el.tokenId}`} rel="noopener noreferrer" target="_blank">
+                        <NFTPositionLink
+                          href={`https://app.algebra.finance/#/pool/${el.tokenId}`}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
                           View position
                         </NFTPositionLink>
                       </NFTPositionDescription>
@@ -457,9 +495,9 @@ export function StakeModal({
                   {submitState === 0
                     ? `Approving NFT #${selectedNFT.tokenId}`
                     : submitState === 1
-                    ? `Transferring NFT ${selectedNFT.tokenId}`
+                    ? `Transferring NFT #${selectedNFT.tokenId}`
                     : submitState === 2
-                    ? `Depositing NFT ${selectedNFT.tokenId}`
+                    ? `Depositing NFT #${selectedNFT.tokenId}`
                     : null}
                 </span>
               </StakeButtonLoader>

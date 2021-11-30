@@ -113,8 +113,8 @@ export default function FarmingPositionInfo({ el }: { el: any }) {
             <PositionInfoRowValue>{formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}</PositionInfoRowValue>
           </PositionInfoRow>
           <PositionInfoRow>
-            <PositionInfoRowTitle>Out of range</PositionInfoRowTitle>
-            <PositionInfoRowValue>{outOfRange ? 'Yes' : 'No'}</PositionInfoRowValue>
+            <PositionInfoRowTitle>In range</PositionInfoRowTitle>
+            <PositionInfoRowValue>{outOfRange ? 'No' : 'Yes'}</PositionInfoRowValue>
           </PositionInfoRow>
         </PositionInfoModal>
       </Modal>

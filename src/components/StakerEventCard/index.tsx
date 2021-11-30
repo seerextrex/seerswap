@@ -88,6 +88,7 @@ const TokenIcon = styled.div`
   border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
   color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
   border-radius: 50%;
+  user-select: none;
 
   &:last-of-type {
     margin-left: -9px;

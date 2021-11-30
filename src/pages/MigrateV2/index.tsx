@@ -35,7 +35,7 @@ function EmptyState({ message }: { message: ReactNode }) {
 const computeSushiPairAddress = ({ tokenA, tokenB }: { tokenA: Token; tokenB: Token }): string => {
   const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
   return getCreate2Address(
-    '0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac',
+    '0xc35dadb65012ec5796536bd9864ed8773abc74c4',
     keccak256(['bytes'], [pack(['address', 'address'], [token0.address, token1.address])]),
     '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303'
   )
@@ -64,9 +64,7 @@ export default function MigrateV2() {
     () =>
       trackedTokenPairs.map((tokens) => {
         // sushi liquidity token or null
-        const sushiLiquidityToken = chainId === 137 ? toSushiLiquidityToken(tokens) : null
-
-        // console.log('tokens', tokens)
+        const sushiLiquidityToken = chainId === 137 || chainId === 42 ? toSushiLiquidityToken(tokens) : null
 
         return {
           v2liquidityToken: v2FactoryAddress ? toV2LiquidityToken(tokens) : undefined,
@@ -83,8 +81,6 @@ export default function MigrateV2() {
     const sushi = tokenPairsWithLiquidityTokens
       .map(({ sushiLiquidityToken }) => sushiLiquidityToken)
       .filter((token): token is Token => !!token)
-
-    // console.log([...v2, ...sushi])
 
     return [...v2, ...sushi]
   }, [tokenPairsWithLiquidityTokens])
@@ -107,6 +103,13 @@ export default function MigrateV2() {
   // filter for v2 liquidity tokens that the user has a balance in
   const tokenPairsWithSushiBalance = useMemo(() => {
     if (fetchingPairBalances) return []
+
+    console.log(
+      'sushi',
+      tokenPairsWithLiquidityTokens.filter(
+        ({ sushiLiquidityToken }) => !!sushiLiquidityToken && pairBalances[sushiLiquidityToken.address]?.greaterThan(0)
+      )
+    )
 
     return tokenPairsWithLiquidityTokens.filter(
       ({ sushiLiquidityToken }) => !!sushiLiquidityToken && pairBalances[sushiLiquidityToken.address]?.greaterThan(0)
@@ -141,33 +144,39 @@ export default function MigrateV2() {
                 <Dots>Loading</Dots>
               </TYPE.body>
             </LightCard>
-          ) : v2Pairs.filter(([, pair]) => !!pair).length > 0 ? (
+          ) : v2Pairs.filter(([, pair]) => !!pair).length > 0 || tokenPairsWithSushiBalance.length > 0 ? (
             <>
-              {v2Pairs
-                .filter(([, pair]) => !!pair)
-                .map(([, pair]) => (
-                  <MigrateV2PositionCard key={(pair as Pair).liquidityToken.address} pair={pair as Pair} />
-                ))}
-
-              {tokenPairsWithSushiBalance.map(({ sushiLiquidityToken, tokens }) => {
-                return (
-                  <MigrateSushiPositionCard
-                    key={(sushiLiquidityToken as Token).address}
-                    tokenA={tokens[0]}
-                    tokenB={tokens[1]}
-                    liquidityToken={sushiLiquidityToken as Token}
-                  />
-                )
-              })}
+              {v2Pairs.filter(([, pair]) => !!pair).length > 0 && (
+                <>
+                  {v2Pairs
+                    .filter(([, pair]) => !!pair)
+                    .map(([, pair]) => (
+                      <MigrateV2PositionCard key={(pair as Pair).liquidityToken.address} pair={pair as Pair} />
+                    ))}
+                </>
+              )}
+              {tokenPairsWithSushiBalance.length > 0 && (
+                <>
+                  {tokenPairsWithSushiBalance.map(({ sushiLiquidityToken, tokens }) => {
+                    return (
+                      <MigrateSushiPositionCard
+                        key={(sushiLiquidityToken as Token).address}
+                        tokenA={tokens[0]}
+                        tokenB={tokens[1]}
+                        liquidityToken={sushiLiquidityToken as Token}
+                      />
+                    )
+                  })}
+                </>
+              )}
             </>
           ) : (
             <EmptyState message={'No liquidity found.'} />
           )}
-
           <AutoColumn justify={'center'} gap="md">
             <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
               Don’t see one of your tokens?{' '}
-              <StyledInternalLink id="import-pool-link" to={'/find?origin=/migrate'}>
+              <StyledInternalLink id="import-pool-link" to={'/pool/v2/find'}>
                 Import it.
               </StyledInternalLink>
             </Text>

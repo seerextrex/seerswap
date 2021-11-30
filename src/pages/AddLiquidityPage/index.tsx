@@ -899,12 +899,12 @@ export default function AddLiquidityPage({
                     >
                       <TokenItem highPrice={usdcAIsGreaterThen10000}>
                         {usdcAIsGreaterThen10000 && (
-                          <HigherPrice>During Alpha limit is $10.000 in one token</HigherPrice>
+                          <HigherPrice>During Alpha limit is $10,000 in one token</HigherPrice>
                         )}
                         {!atMaxAmounts[Field.CURRENCY_A] && !depositADisabled && (
                           <MaxButton
                             disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
-                            onClick={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')}
+                            onClick={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toFixed() ?? '')}
                           >
                             Max
                           </MaxButton>
@@ -914,7 +914,7 @@ export default function AddLiquidityPage({
                           onUserInput={onFieldAInput}
                           hideInput={true}
                           onMax={() => {
-                            onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
+                            onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toFixed() ?? '')
                           }}
                           onCurrencySelect={handleCurrencyASelect}
                           showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
@@ -958,7 +958,7 @@ export default function AddLiquidityPage({
                       </TokenItem>
                       <TokenItem highPrice={usdcBIsGreaterThen10000}>
                         {usdcBIsGreaterThen10000 && (
-                          <HigherPrice>During Alpha limit is $10.000 in one token</HigherPrice>
+                          <HigherPrice>During Alpha limit is $10,000 in one token</HigherPrice>
                         )}
                         {!atMaxAmounts[Field.CURRENCY_B] && !depositBDisabled && (
                           <MaxButton

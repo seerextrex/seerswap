@@ -26,6 +26,7 @@ query fetchToken {
 export const FETCH_INCENTIVE = incentiveId => gql`
 query fetchIncentive {
     incentives(where: { id: "${incentiveId}" }) {
+        id
         rewardToken
         bonusRewardToken
         startTime
@@ -250,7 +251,6 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
       }
       `
 
-    console.log('query', queryString)
     return gql(queryString)
 }
 

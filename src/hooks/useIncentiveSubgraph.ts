@@ -38,6 +38,9 @@ export function useIncentiveSubgraph() {
     const [currentEvents, setCurrentEvents] = useState(null)
     const [currentEventsLoading, setCurrentEventsLoading] = useState(false)
 
+    const [positionsOnFarmer, setPositionsOnFarmer] = useState(null)
+    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState(false)
+
     const provider = window.ethereum ? new providers.Web3Provider(window.ethereum) : undefined
 
     async function getEvents(events: any[]) {
@@ -62,9 +65,8 @@ export function useIncentiveSubgraph() {
                 bonusRewardToken: bonusRewardToken.symbol,
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }
-
-            _events.push({..._event})
-
+            
+            _events.push({ ..._event })
         }
 
         return _events
@@ -287,7 +289,7 @@ export function useIncentiveSubgraph() {
 
                 if (position.incentive) {
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, refundee } = await fetchIncentive(position.incentive)
+                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, refundee, id } = await fetchIncentive(position.incentive)
 
                     const rewardContract = new Contract(
                         rewardToken,
@@ -440,12 +442,45 @@ export function useIncentiveSubgraph() {
 
     }
 
+    async function fetchPositionsOnFarmer(account) {
+
+
+        try {
+
+            setPositionsOnFarmerLoading(true)
+
+            const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query({
+                query: TRANSFERED_POSITIONS(account, chainId),
+                fetchPolicy: 'network-only'
+            }))
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (positionsTransferred.length === 0) {
+                setPositionsOnFarmer([])
+                setPositionsOnFarmerLoading(false)
+                return
+            }
+
+
+            const transferredPositionsIds = positionsTransferred.map(position => position.tokenId);
+
+            setPositionsOnFarmer(transferredPositionsIds);
+
+        } catch (err) {
+            setPositionsOnFarmerLoading(null)
+            console.error('error while fetching positons on farmer', err)
+        }
+
+    }
+
     return {
         fetchRewards: { rewardsResult, rewardsLoading, fetchRewardsFn: fetchRewards },
         fetchFutureEvents: { futureEvents, futureEventsLoading, fetchFutureEventsFn: fetchFutureEvents },
         fetchCurrentEvents: { currentEvents, currentEventsLoading, fetchCurrentEventsFn: fetchCurrentEvents },
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn: fetchPositionsForPool },
-        fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions }
+        fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions },
+        fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn: fetchPositionsOnFarmer }
     }
 
 }

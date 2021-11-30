@@ -5,7 +5,7 @@ import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { usePool } from 'hooks/usePools'
 import { useToken } from 'hooks/Tokens'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { HideSmall, MEDIA_WIDTHS, SmallOnly } from 'theme'
 import { PositionDetails } from 'types/position'
 import { Price, Token, Percent } from '@uniswap/sdk-core'
@@ -19,6 +19,8 @@ import { USDC_POLYGON, USDT_POLYGON, WMATIC_EXTENDED } from '../../constants/tok
 import { Trans } from '@lingui/macro'
 import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { Bound } from 'state/mint/v3/actions'
+
+import { ArrowRight } from 'react-feather'
 
 const LinkRow = styled(Link)`
   align-items: center;
@@ -53,6 +55,13 @@ const LinkRow = styled(Link)`
     flex-direction: column;
     row-gap: 12px;
   `};
+
+  ${({ onFarming }) =>
+    onFarming &&
+    css`
+      border: 1px solid #702498;
+      background-color: rgba(25, 24, 30, 0.7);
+    `}
 `
 
 const BadgeText = styled.div`
@@ -61,6 +70,17 @@ const BadgeText = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 12px;
   `};
+`
+
+const OnFarmingBadge = styled(Link)`
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  background-color: #702498;
+  color: white;
+  font-size: 14px;
+  border-radius: 6px;
+  text-decoration: none;
 `
 
 const DataLineItem = styled.div`
@@ -193,6 +213,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     liquidity,
     tickLower,
     tickUpper,
+    onFarming,
   } = positionDetails
 
   const token0 = useToken(token0Address)
@@ -224,10 +245,12 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
 
   const positionSummaryLink = '/pool/' + positionDetails.tokenId
 
+  const farmingLink = `/farming/farms#${positionDetails.tokenId}`
+
   const removed = liquidity?.eq(0)
 
   return (
-    <LinkRow to={positionSummaryLink}>
+    <LinkRow to={positionSummaryLink} onFarming={onFarming}>
       <RowBetween>
         <PrimaryPositionIdData>
           <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={18} margin />
@@ -235,9 +258,15 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
             &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
           </DataText>
           &nbsp;
-          <Badge>
-            <BadgeText>{/* <Trans>{new Percent(feeAmount, 1_000_000).toSignificant()}%</Trans> */}</BadgeText>
-          </Badge>
+          {/* <Badge>
+            <BadgeText><Trans>{new Percent(feeAmount, 1_000_000).toSignificant()}%</Trans></BadgeText>
+          </Badge> */}
+          {onFarming && (
+            <OnFarmingBadge to={farmingLink}>
+              <span>Farming</span>
+              <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
+            </OnFarmingBadge>
+          )}
         </PrimaryPositionIdData>
         <RangeBadge removed={removed} inRange={!outOfRange} />
       </RowBetween>

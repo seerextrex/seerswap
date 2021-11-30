@@ -235,7 +235,7 @@ const ButtonConfirmedStyle = styled(Base)`
   /* border: 1px solid ${({ theme }) => theme.green1}; */
 
   &:disabled {
-    /* opacity: 50%; */
+    opacity: 50%;
     background-color: ${({ theme }) => theme.bg2};
     color: ${({ theme }) => theme.text2};
     cursor: auto;

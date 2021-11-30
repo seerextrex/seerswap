@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { useCallback, useMemo, useState } from 'react'
 import { useEffect } from 'react'
-import { CheckCircle, Frown } from 'react-feather'
+import { CheckCircle, Frown, Send } from 'react-feather'
 import styled, { keyframes, css } from 'styled-components/macro'
 import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useStakerHandlers } from '../../hooks/useStakerHandlers'
@@ -12,6 +12,8 @@ import FarmingPositionInfo from '../FarmingPositionInfo'
 import Loader from '../Loader'
 import Modal from '../Modal'
 import { PageTitle } from '../PageTitle'
+
+import { useLocation, useParams } from 'react-router'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -46,8 +48,6 @@ const skeletonGradient = css`
 const Stakes = styled.div`
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
-  // height: 450px;
   overflow-y: auto;
   overflow-x: hidden;
 `
@@ -62,6 +62,7 @@ const TokenIcon = styled.div`
   border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
   color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
   border-radius: 50%;
+  user-select: none;
 
   ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
 
@@ -75,7 +76,6 @@ const Stake = styled.div`
   margin-bottom: 16px;
   font-family: Montserrat;
   width: 100%;
-  // background: #202635;
 
   & > * {
     &:not(:last-of-type) {
@@ -83,7 +83,14 @@ const Stake = styled.div`
       min-width: calc(100% / 6);
     }
   }
+
+  ${({ navigatedTo }) =>
+    navigatedTo &&
+    css`
+      background-color: #1a1029;
+    `}
 `
+
 const StakeId = styled.div`
   display: flex;
   align-items: center;
@@ -237,6 +244,19 @@ const SendNFTButton = styled.button`
   }
 `
 
+const MoreButton = styled.button`
+  border: none;
+  background-color: transparent;
+`
+const SendNFTWarning = styled.div`
+  margin-bottom: 1rem;
+  padding: 8px 12px;
+  background: #373717;
+  color: #ffff65;
+  border-radius: 8px;
+}
+`
+
 export function StakerMyStakes({
   data,
   refreshing,
@@ -252,6 +272,8 @@ export function StakerMyStakes({
 
   const { getRewardsHandler, getRewardsHash, withdrawHandler, withdrawnHash, sendNFTL2Handler, sendNFTL2Hash } =
     useStakerHandlers() || {}
+
+  const { hash } = useLocation()
 
   const [sendModal, setSendModal] = useState(false)
   const [recipient, setRecipient] = useState('')
@@ -375,12 +397,11 @@ export function StakerMyStakes({
 
   function getTable(positions, staked: boolean) {
     return positions.map((el, i) => (
-      <Stake key={i}>
+      <Stake key={i} navigatedTo={hash === `#${el.tokenId}`}>
         <StakeId>
           <FarmingPositionInfo el={el} />
         </StakeId>
         <StakePool>
-          {/* {JSON.parse(el.pool)} */}
           {staked && (
             <>
               <TokenIcon name={el.pool.token0.symbol}>{el.pool.token0.symbol.slice(0, 2)}</TokenIcon>
@@ -420,7 +441,10 @@ export function StakerMyStakes({
         <StakeActions>
           {staked ? (
             el.endTime * 1000 > Date.now() ? (
-              <StakeButton onClick={() => setSendModal(el.L2tokenId)}>Send NFT</StakeButton>
+              // <StakeButton onClick={() => setSendModal(el.L2tokenId)}>Send NFT</StakeButton>
+              <MoreButton onClick={() => setSendModal(el.L2tokenId)}>
+                <Send color={'white'} size={18} />
+              </MoreButton>
             ) : (
               staked && (
                 <>
@@ -439,9 +463,9 @@ export function StakerMyStakes({
                       <span>{`Collect reward`}</span>
                     )}
                   </StakeButton>
-                  <StakeButton style={{ marginLeft: '8px' }} onClick={() => setSendModal(el.L2tokenId)}>
-                    Send NFT
-                  </StakeButton>
+                  <MoreButton style={{ marginLeft: '8px' }} onClick={() => setSendModal(el.L2tokenId)}>
+                    <Send color={'white'} size={18} />
+                  </MoreButton>
                 </>
               )
             )
@@ -487,7 +511,12 @@ export function StakerMyStakes({
             </>
           ) : (
             <>
-              <ModalTitle>Send NFT to</ModalTitle>
+              <ModalTitle>Send NFT to another account</ModalTitle>
+              <SendNFTWarning>
+                {
+                  'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'
+                }
+              </SendNFTWarning>
               <div style={{ marginBottom: '1rem' }}>
                 <RecipientInput
                   placeholder="Enter a recipient"
@@ -575,7 +604,7 @@ export function StakerMyStakes({
               <PageTitle title={'Inactive NFT-s'}></PageTitle>
               <StakeListHeader>
                 <div style={{ minWidth: '96px' }}>ID</div>
-                <div>Pool</div>
+                <div></div>
                 <div></div>
                 <div></div>
                 <div></div>

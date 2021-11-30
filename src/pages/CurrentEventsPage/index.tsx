@@ -9,7 +9,6 @@ import { useChunkedRows } from '../../utils/chunkForRows'
 import { deviceSizes } from '../styled'
 
 const PageWrapper = styled.div`
-  max-width: 900px;
   width: 100%;
 `
 const EventsCards = styled.div`

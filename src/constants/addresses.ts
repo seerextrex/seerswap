@@ -29,7 +29,7 @@ export const MULTICALL_ADDRESS: AddressMap = {
 }
 
 export const V3_MIGRATOR_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xDD0d3FD8258183097B5C4cbE8838b319E17f697A',
+  [SupportedChainId.POLYGON]: '0x602bf7e6b6788Fdc97aab1dF8B9Ed8A0E0edE1Bd',
 }
 
 export const STAKER_ADDRESS: AddressMap = {
@@ -37,7 +37,7 @@ export const STAKER_ADDRESS: AddressMap = {
 }
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x5757371414417b8c6caad45baef941abc7d3ab32'
+  [SupportedChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32'
 }
 export const V2_ROUTER_ADDRESS: AddressMap = {
   [SupportedChainId.POLYGON]: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506'

@@ -11,7 +11,7 @@ import { InfoTokens } from '../../components/InfoTokens'
 import { PageTitle } from '../../components/PageTitle'
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 900px;
+  max-width: 995px;
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`

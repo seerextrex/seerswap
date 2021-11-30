@@ -128,7 +128,7 @@ function V2PairMigration({
   const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
 
   const pairFactory = useSingleCallResult(pair, 'factory')
-  const isNotUniswap = pairFactory.result?.[0] && pairFactory.result[0] !== v2FactoryAddress
+  const isNotUniswap = pairFactory.result?.[0] && pairFactory.result[0].toLowerCase() !== v2FactoryAddress.toLowerCase()
 
   const deadline = useTransactionDeadline() // custom from users settings
   const blockTimestamp = useCurrentBlockTimestamp()
@@ -303,6 +303,22 @@ function V2PairMigration({
       )
     }
 
+    console.log({
+      pair: pair.address,
+      liquidityToMigrate: `0x${pairBalance.quotient.toString(16)}`,
+      percentageToMigrate,
+      token0: token0.address,
+      token1: token1.address,
+      tickLower,
+      tickUpper,
+      amount0Min: `0x${v3Amount0Min.toString(16)}`,
+      amount1Min: `0x${v3Amount1Min.toString(16)}`,
+      recipient: account,
+      deadline: deadlineToUse,
+      refundAsNative: false, // hard-code this for now,
+      sqrt: `0x${sqrtPrice.toString(16)}`,
+    })
+
     // TODO could save gas by not doing this in multicall
     data.push(
       migrator.interface.encodeFunctionData('migrate', [
@@ -328,7 +344,7 @@ function V2PairMigration({
     migrator.estimateGas
       .multicall(data)
       .then((gasEstimate) => {
-        return migrator.multicall(data, { gasLimit: 2000000 }).then((response: TransactionResponse) => {
+        return migrator.multicall(data, { gasLimit: 10000000 }).then((response: TransactionResponse) => {
           addTransaction(response, {
             type: TransactionType.MIGRATE_LIQUIDITY_V3,
             baseCurrencyId: currencyId(currency0),
@@ -378,7 +394,15 @@ function V2PairMigration({
                 {currency0.symbol}/{currency1.symbol} LP Tokens
               </TYPE.mediumHeader>
             </RowFixed>
-            <Badge variant={BadgeVariant.WARNING}>{isNotUniswap ? 'QuickSwap' : 'SushiSwap'}</Badge>
+            <Badge
+              variant={BadgeVariant.WARNING}
+              style={{
+                backgroundColor: isNotUniswap ? '#48062b' : '#0f2e40',
+                color: isNotUniswap ? '#f241a5' : '#48b9cd',
+              }}
+            >
+              {isNotUniswap ? 'SushiSwap' : 'QuickSwap'}
+            </Badge>
           </RowBetween>
           <LiquidityInfo token0Amount={token0Value} token1Amount={token1Value} />
         </AutoColumn>
@@ -397,16 +421,15 @@ function V2PairMigration({
                 {currency0.symbol}/{currency1.symbol} LP NFT
               </TYPE.mediumHeader>
             </RowFixed>
-            <Badge variant={BadgeVariant.PRIMARY}>ALGEBRA</Badge>
+            <Badge variant={BadgeVariant.PRIMARY}>Algebra</Badge>
           </RowBetween>
 
-          <FeeSelector feeAmount={feeAmount} handleFeePoolSelect={setFeeAmount} />
           {noLiquidity && (
             <BlueCard style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <AlertCircle color={theme.text1} style={{ marginBottom: '12px', opacity: 0.8 }} />
               <TYPE.body fontSize={14} style={{ marginBottom: 8, fontWeight: 500, opacity: 0.8 }} textAlign="center">
                 You are the first liquidity provider for this Algebra pool. Your liquidity will migrate at the current{' '}
-                {isNotUniswap ? 'SushiSwap' : 'V2'} price.
+                {isNotUniswap ? 'SushiSwap' : 'QuickSwap'} price.
               </TYPE.body>
 
               <TYPE.body fontWeight={500} textAlign="center" fontSize={14} style={{ marginTop: '8px', opacity: 0.8 }}>
@@ -417,7 +440,8 @@ function V2PairMigration({
                 <AutoColumn gap="8px" style={{ marginTop: '12px' }}>
                   <RowBetween>
                     <TYPE.body fontWeight={500} fontSize={14}>
-                      {isNotUniswap ? 'SushiSwap' : 'V2'} {invertPrice ? currency1.symbol : currency0.symbol} Price:{' '}
+                      {isNotUniswap ? 'SushiSwap' : 'QuickSwap'} {invertPrice ? currency1.symbol : currency0.symbol}{' '}
+                      Price:{' '}
                       {invertPrice
                         ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${currency0.symbol}`
                         : `${v2SpotPrice?.toSignificant(6)} ${currency1.symbol}`}
@@ -433,7 +457,8 @@ function V2PairMigration({
               <AutoColumn gap="8px">
                 <RowBetween>
                   <TYPE.body fontSize={14}>
-                    {isNotUniswap ? 'SushiSwap' : 'V2'} {invertPrice ? currency1.symbol : currency0.symbol} Price:
+                    {isNotUniswap ? 'SushiSwap' : 'QuickSwap'} {invertPrice ? currency1.symbol : currency0.symbol}{' '}
+                    Price:
                   </TYPE.body>
                   <TYPE.black fontSize={14}>
                     {invertPrice

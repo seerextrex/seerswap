@@ -38,6 +38,9 @@ export function useIncentiveSubgraph() {
     const [currentEvents, setCurrentEvents] = useState(null)
     const [currentEventsLoading, setCurrentEventsLoading] = useState(false)
 
+    const [positionsOnFarmer, setPositionsOnFarmer] = useState(null)
+    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState(false)
+
     const provider = window.ethereum ? new providers.Web3Provider(window.ethereum) : undefined
 
     async function getEvents(events: any[]) {
@@ -48,29 +51,22 @@ export function useIncentiveSubgraph() {
 
             const pool = await fetchPool(events[i].pool)
 
-            const rewardContract = new Contract(
-                events[i].rewardToken,
-                ERC20_ABI,
-                provider
-            )
+            const rewardToken = await fetchToken(events[i].rewardToken);
+            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken);
 
-            const bonusRewardContract = new Contract(
-                events[i].bonusRewardToken,
-                ERC20_ABI,
-                provider
-            )
-
-            _events.push({
+            const _event: any = {
                 ...events[i],
                 token0: pool.token0.symbol,
                 token1: pool.token1.symbol,
                 rewardAddress: events[i].rewardToken,
-                rewardToken: await rewardContract.symbol(),
-                reward: formatUnits(BigNumber.from(events[i].reward), await rewardContract.decimals()),
                 bonusRewardAddress: events[i].bonusRewardToken,
-                bonusRewardToken: await bonusRewardContract.symbol(),
-                bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), await bonusRewardContract.decimals())
-            })
+                rewardToken: rewardToken.symbol,
+                reward: formatUnits(BigNumber.from(events[i].reward), rewardToken.decimals),
+                bonusRewardToken: bonusRewardToken.symbol,
+                bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
+            }
+            
+            _events.push({ ..._event })
         }
 
         return _events
@@ -155,8 +151,6 @@ export function useIncentiveSubgraph() {
                     provider
                 )
 
-                // const { symbol, name, decimals } = await fetchToken(reward.rewardAddress)
-
                 const symbol = await rewardContract.symbol()
                 const name = await rewardContract.name()
                 const decimals = await rewardContract.decimals()
@@ -202,9 +196,7 @@ export function useIncentiveSubgraph() {
                 return
             }
 
-            const _futureEvents = await getEvents(futureEvents)
-
-            setFutureEvents(_futureEvents)
+            setFutureEvents(await getEvents(futureEvents))
 
         } catch (err) {
             setFutureEventsLoading(null)
@@ -450,12 +442,45 @@ export function useIncentiveSubgraph() {
 
     }
 
+    async function fetchPositionsOnFarmer(account) {
+
+
+        try {
+
+            setPositionsOnFarmerLoading(true)
+
+            const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query({
+                query: TRANSFERED_POSITIONS(account, chainId),
+                fetchPolicy: 'network-only'
+            }))
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (positionsTransferred.length === 0) {
+                setPositionsOnFarmer([])
+                setPositionsOnFarmerLoading(false)
+                return
+            }
+
+
+            const transferredPositionsIds = positionsTransferred.map(position => position.tokenId);
+
+            setPositionsOnFarmer(transferredPositionsIds);
+
+        } catch (err) {
+            setPositionsOnFarmerLoading(null)
+            console.error('error while fetching positons on farmer', err)
+        }
+
+    }
+
     return {
         fetchRewards: { rewardsResult, rewardsLoading, fetchRewardsFn: fetchRewards },
         fetchFutureEvents: { futureEvents, futureEventsLoading, fetchFutureEventsFn: fetchFutureEvents },
         fetchCurrentEvents: { currentEvents, currentEventsLoading, fetchCurrentEventsFn: fetchCurrentEvents },
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn: fetchPositionsForPool },
-        fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions }
+        fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions },
+        fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn: fetchPositionsOnFarmer }
     }
 
 }

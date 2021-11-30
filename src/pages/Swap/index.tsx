@@ -389,6 +389,13 @@ export default function Swap({ history }: RouteComponentProps) {
                 otherCurrency={currencies[Field.OUTPUT]}
                 showCommonBases={true}
                 id="swap-currency-input"
+                locked={false}
+                hideCurrency={false}
+                hideInput={false}
+                showBalance={true}
+                disabled={false}
+                shallow={false}
+                swap
               />
               <ArrowWrapper clickable>
                 {/* <ArrowDown
@@ -424,7 +431,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 value={formattedAmounts[Field.OUTPUT]}
                 onUserInput={handleTypeOutput}
                 label={independentField === Field.INPUT && !showWrap ? <Trans>To (at least)</Trans> : <Trans>To</Trans>}
-                showMaxButton={false}
+                showMaxButton={true}
                 hideBalance={false}
                 fiatValue={fiatValueOutput ?? undefined}
                 priceImpact={priceImpact}
@@ -433,6 +440,13 @@ export default function Swap({ history }: RouteComponentProps) {
                 otherCurrency={currencies[Field.INPUT]}
                 showCommonBases={true}
                 id="swap-currency-output"
+                locked={false}
+                hideCurrency={false}
+                hideInput={false}
+                showBalance={true}
+                disabled={false}
+                shallow={false}
+                swap
               />
             </div>
 
@@ -519,7 +533,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         approvalSubmitted ||
                         signatureState === UseERC20PermitState.SIGNED
                       }
-                      style={{ background: '#0f1940', color: 'white' }}
+                      style={{ background: '#5d32ed', color: 'white' }}
                       width="100%"
                       altDisabledStyle={approvalState === ApprovalState.PENDING} // show solid button while waiting
                       confirmed={
@@ -528,9 +542,15 @@ export default function Swap({ history }: RouteComponentProps) {
                     >
                       <AutoRow
                         justify="space-between"
-                        style={{ flexWrap: 'nowrap', background: '#0f1940', color: 'white' }}
+                        style={{
+                          flexWrap: 'nowrap',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          background: '#5d32ed',
+                          color: 'white',
+                        }}
                       >
-                        <span style={{ display: 'flex', alignItems: 'center', background: '#0f1940', color: 'white' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', background: '#5d32ed', color: 'white' }}>
                           <CurrencyLogo
                             currency={currencies[Field.INPUT]}
                             size={'20px'}
@@ -544,10 +564,10 @@ export default function Swap({ history }: RouteComponentProps) {
                           )}
                         </span>
                         {approvalState === ApprovalState.PENDING ? (
-                          <Loader stroke="white" />
+                          <Loader stroke="white" style={{ marginLeft: '5px' }} />
                         ) : (approvalSubmitted && approvalState === ApprovalState.APPROVED) ||
                           signatureState === UseERC20PermitState.SIGNED ? (
-                          <CheckCircle size="20" color={theme.green1} />
+                          <CheckCircle size="20" style={{ marginLeft: '5px' }} color={theme.green1} />
                         ) : (
                           <MouseoverTooltip
                             text={
@@ -576,7 +596,29 @@ export default function Swap({ history }: RouteComponentProps) {
                           })
                         }
                       }}
-                      style={{ backgroundColor: '#400f29', color: '#f51189', border: '1px solid #540c33' }}
+                      style={{
+                        backgroundColor:
+                          !isValid ||
+                          (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
+                          priceImpactTooHigh ||
+                          priceImpactSeverity
+                            ? '#200714'
+                            : '#5d32ed',
+                        color:
+                          !isValid ||
+                          (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
+                          priceImpactTooHigh ||
+                          priceImpactSeverity
+                            ? '#8a255a'
+                            : 'white',
+                        border:
+                          !isValid ||
+                          (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
+                          priceImpactTooHigh ||
+                          priceImpactSeverity
+                            ? '1px solid #2d1421'
+                            : '1px solid #5d32ed',
+                      }}
                       width="100%"
                       id="swap-button"
                       disabled={

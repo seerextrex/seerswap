@@ -1,9 +1,13 @@
 import { useSingleCallResult, useSingleContractMultipleData, Result } from 'state/multicall/hooks'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { PositionDetails } from 'types/position'
 import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Console } from 'console'
+
+import { TRANSFERED_POSITIONS } from '../utils/graphql-queries'
+import { useActiveWeb3React } from './web3'
+import { farmingClient } from '../apollo/client'
+import { useIncentiveSubgraph } from './useIncentiveSubgraph'
 
 interface UseV3PositionsResults {
   loading: boolean
@@ -69,8 +73,17 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
     account ?? undefined,
   ])
 
+  const { fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn } } = useIncentiveSubgraph()
+
   // we don't expect any account balance to ever exceed the bounds of max safe int
   const accountBalance: number | undefined = balanceResult?.[0]?.toNumber()
+
+  useEffect(() => {
+    if (account) {
+      fetchPositionsOnFarmerFn(account)
+    }
+  }, [])
+
 
   const tokenIdsArgs = useMemo(() => {
     if (accountBalance && account) {
@@ -98,8 +111,30 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
   const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(tokenIds)
 
+  const transferredTokenIds = useMemo(() => {
+
+    if (positionsOnFarmer) {
+      return positionsOnFarmer
+    }
+
+    return []
+
+  }, [positionsOnFarmer])
+
+  const { positions: _positionsOnFarmer, loading: _positionsOnFarmerLoading } = useV3PositionsFromTokenIds(transferredTokenIds)
+
+  const combinedPositions = useMemo(() => {
+
+    if (positions && _positionsOnFarmer) {
+      return [...positions, ..._positionsOnFarmer.map(position => ({ ...position, onFarming: true }))]
+    }
+
+    return undefined
+
+  }, [positions, _positionsOnFarmer])
+
   return {
-    loading: someTokenIdsLoading || balanceLoading || positionsLoading,
-    positions,
+    loading: someTokenIdsLoading || balanceLoading || positionsLoading || _positionsOnFarmerLoading,
+    positions: combinedPositions
   }
 }

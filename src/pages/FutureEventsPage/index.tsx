@@ -10,7 +10,6 @@ import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
 
 const PageWrapper = styled.div`
-  max-width: 900px;
   width: 100%;
 `
 const EventsCards = styled.div`

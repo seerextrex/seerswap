@@ -28,6 +28,8 @@ import { Dots } from '../swap/styleds'
 import { BIG_INT_ZERO } from '../../constants/misc'
 import { FixedHeightRow } from '.'
 
+import Badge, { BadgeVariant } from '../Badge'
+
 const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   border: none;
   background: ${({ theme, bgColor }) =>
@@ -95,6 +97,9 @@ export default function V2PositionCard({ pair, border, stakedBalance }: Position
                 `${currency0.symbol}/${currency1.symbol}`
               )}
             </Text>
+            <Badge variant={BadgeVariant.WARNING} style={{ backgroundColor: '#0f2e40', color: '#48b9cd' }}>
+              QuickSwap
+            </Badge>
           </AutoRow>
           <RowFixed gap="8px">
             <ButtonEmpty

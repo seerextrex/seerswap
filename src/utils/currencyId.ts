@@ -2,7 +2,7 @@ import { Currency } from '@uniswap/sdk-core'
 import { useActiveWeb3React } from '../hooks/web3'
 
 export function currencyId(currency: Currency, chainId: number): string {
-  let chainSymbol
+  let chainSymbol = 'MATIC';
 
   if (chainId === 137) {
     chainSymbol = 'MATIC'

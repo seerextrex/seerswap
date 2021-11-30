@@ -111,7 +111,7 @@ export default function StakingPage() {
               </MenuWrapper>
               <Switch>
                 <Route exact path={`${path}`}>
-                  <Redirect to={`${path}/${account ? 'rewards' : 'future-events'}`} />
+                  <Redirect to={`${path}/${account ? 'farms' : 'future-events'}`} />
                 </Route>
                 <Route exact path={`${path}/rewards`}>
                   <Helmet>

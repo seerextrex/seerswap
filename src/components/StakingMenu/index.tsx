@@ -68,14 +68,14 @@ const stakingMenuList = [
     link: 'rewards',
   },
   {
-    title: 'Future events',
-    icon: <Calendar size={18}></Calendar>,
-    link: 'future-events',
-  },
-  {
     title: 'Current events',
     icon: <Zap size={18}></Zap>,
     link: 'current-events',
+  },
+  {
+    title: 'Future events',
+    icon: <Calendar size={18}></Calendar>,
+    link: 'future-events',
   },
   {
     title: 'Create event',

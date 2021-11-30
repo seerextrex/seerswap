@@ -57,7 +57,9 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
               )}
             </Text>
 
-            <Badge variant={BadgeVariant.WARNING}>Quickswap</Badge>
+            <Badge variant={BadgeVariant.WARNING} style={{ backgroundColor: '#48062b', color: '#f241a5' }}>
+              SushiSwap
+            </Badge>
           </AutoRow>
           <RowFixed gap="8px">
             <ButtonEmpty

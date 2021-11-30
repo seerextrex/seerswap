@@ -64,7 +64,6 @@ export class Pair {
             'Uniswap V2'
         )
 
-        console.log('FROM PAIR', this.liquidityToken, sushi)
         this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>]
     }
 

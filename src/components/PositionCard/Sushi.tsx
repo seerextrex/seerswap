@@ -46,7 +46,7 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
       <AutoColumn gap="12px">
         <FixedHeightRow>
           <AutoRow gap="8px">
-            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={20} />
+            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
             <Text fontWeight={500} fontSize={20}>
               {!currency0 || !currency1 ? (
                 <Dots>
@@ -57,11 +57,24 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
               )}
             </Text>
 
-            <Badge variant={BadgeVariant.WARNING} style={{ backgroundColor: '#48062b', color: '#f241a5' }}>
+            <Badge
+              variant={BadgeVariant.WARNING}
+              ref={(element) => {
+                if (element) {
+                  element.style.setProperty('margin-left', 'auto', 'important')
+                  element.style.setProperty('margin-right', '6rem', 'important')
+                }
+              }}
+              style={{
+                backgroundColor: '#48062b',
+                color: '#f241a5',
+                minWidth: '100px',
+              }}
+            >
               SushiSwap
             </Badge>
           </AutoRow>
-          <RowFixed gap="8px">
+          <RowFixed gap="8px" style={{ minWidth: '110px' }}>
             <ButtonEmpty
               padding="0px 35px 0px 0px"
               $borderRadius="12px"

@@ -69,6 +69,15 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   `};
 `
 
+const MigrateButtonPrimary = styled(ResponsiveButtonPrimary)`
+  background-color: transparent;
+  border: 1px solid #36f;
+  margin-right: 1rem;
+  &:hover {
+    background-color: #040f31;
+  }
+`
+
 const MainContentWrapper = styled.main`
   // background-color: ${({ theme }) => theme.bg0};
   background-color: rgba(0, 0, 0, 0.6);
@@ -138,6 +147,9 @@ export default function Pool() {
                 <Trans>Pools Overview</Trans>
               </TYPE.body>
               <ButtonRow>
+                <MigrateButtonPrimary id="join-pool-button" as={Link} style={{ color: '#36f' }} to={`/migrate`}>
+                  <Trans>Migrate Pool</Trans>
+                </MigrateButtonPrimary>
                 <ResponsiveButtonPrimary
                   id="join-pool-button"
                   style={{ background: '#0f2e40', color: '#4cc1d5' }}

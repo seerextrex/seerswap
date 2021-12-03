@@ -212,12 +212,18 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
       .attr('stop-color', (d) => d.color)
 
     // Chart data visualize
+
+    svg.append('path').datum(chartData).attr("fill", "none")
+    .attr("stroke", "#00cab2")
+    .attr("stroke-width", 2).attr("d", d3.line().curve(d3.curveBumpX)
+    .x(function(d) { return xScale(d.time) })
+    .y(function(d) { return y(d.fee) })
+    )
+
     svg
       .append('path')
       .datum(chartData)
       .attr('fill', 'url(#gradient)')
-      .attr('stroke', '#00cab2')
-      .attr('stroke-width', 1.5)
       .attr(
         'd',
         d3
@@ -227,6 +233,7 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
           .y0((d) => y(d3.min(chartData, (d) => +d.fee - 0.01)))
           .y1((d) => y(d.fee))
       )
+
 
     xAxisGroup
       .selectAll('.tick')

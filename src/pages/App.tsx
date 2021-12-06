@@ -36,6 +36,7 @@ import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
 import { useInfoSubgraph } from '../hooks/subgraph/useInfoSubgraph'
 import FeeChartRangeInput from '../components/FeeChartRangeInput'
+import PoolInfoPage from './PoolInfoPage'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -89,7 +90,6 @@ export default function App() {
       return 60
     },
   })
-
 
   return (
     <ErrorBoundary>
@@ -153,7 +153,6 @@ export default function App() {
 
               <Route exact strict path="/migrate" component={MigrateV2} />
               <Route exact strict path="/migrate/:address" component={MigrateV2Pair} />
-
 
               <Route component={RedirectPathToSwapOnly} />
             </Switch>

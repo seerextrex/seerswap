@@ -64,19 +64,38 @@ export default function FeeChartRangeInput({
   refreshing,
   fetchHandler,
   id,
+  span
 }: {
   data: any
   refreshing: boolean
   fetchHandler: (id: string, start: number, end: number) => any
   id: string
+  span: number
 }) {
   const [isScale, setIsScale] = useState(false)
 
   const windowWidth = useWindowSize()
 
+  function getDateAgo(date, days) {
+    const dateCopy = new Date(date);
+
+    dateCopy.setDate(date.getDate() - days);
+    return dateCopy.getTime() ;
+  }
+
   useEffect(() => {
-    fetchHandler(id, 1636984800, 1637917200)
-  }, [])
+    const currentData = new Date()
+    let start = getDateAgo(currentData, 1)
+    if (span === 1) {
+      start = getDateAgo(currentData, 7)
+    }
+    if (span === 2) {
+      start = currentData.setMonth(currentData.getMonth() - 1)
+    }
+    // console.log(span, , Date.now())
+
+    fetchHandler(id, Math.floor(start / 1000), new Date().getTime())
+  }, [span])
 
   return (
     <Wrapper>

@@ -61,7 +61,7 @@ query fetchPool {
 export const FETCH_FEE_FROM_POOL = (pool: string, timestampStart: number, timestampFinish: number) => {
     return gql`
   query feeHourData {
-    feeHourDatas (where: {pool: "${pool}"}) {
+    feeHourDatas (where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
       id
       pool
       fee

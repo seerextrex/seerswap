@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 import styled from 'styled-components/macro'
 import FeeChartRangeInput from '../../components/FeeChartRangeInput'
@@ -21,16 +21,27 @@ const BodyWrapper = styled.div`
   display: flex;
   height: 600px;
 `
-
 const ChartWrapper = styled.div`
   flex: 2;
   margin-right: 1rem;
 `
-
 const InfoWrapper = styled.div`
   flex: 1;
   background-color: blue;
 `
+
+enum ChartType {
+  VOLUME,
+  TVL,
+  LIQUIDITY,
+  FEES,
+}
+
+enum ChartSpan {
+  DAY,
+  WEEK,
+  MONTH,
+}
 
 export default function PoolInfoPage({
   match: {
@@ -40,13 +51,54 @@ export default function PoolInfoPage({
 }: RouteComponentProps<{ id?: string }>) {
   const { chainId } = useActiveWeb3React()
 
-  const {
-    fetchPool: { fetchPoolFn, poolLoading, poolResult },
-  } = useInfoPoolChart()
+  const { fetchPool: { fetchPoolFn, poolLoading, poolResult }, } = useInfoPoolChart()
 
   const {
     fetchFees: { feesResult, feesLoading, fetchFeePoolFn },
   } = useInfoSubgraph()
+
+
+  const [span, setSpan] = useState(ChartSpan.DAY)
+  const [type, setType] = useState(ChartType.FEES)
+
+  const chartTypes = [
+    {
+      type: ChartType.VOLUME,
+      title: 'Volume',
+    },
+    {
+      type: ChartType.TVL,
+      title: 'TVL',
+    },
+    {
+      type: ChartType.LIQUIDITY,
+      title: 'Liquidity',
+    },
+    {
+      type: ChartType.FEES,
+      title: 'Fees',
+    },
+  ]
+
+  const chartSpans = [
+    {
+      type: ChartSpan.DAY,
+      title: 'Day',
+    },
+    {
+      type: ChartSpan.WEEK,
+      title: 'Week',
+    },
+    {
+      type: ChartSpan.MONTH,
+      title: 'Month',
+    },
+  ]
+
+  useEffect(() => {
+    // console.log(span, type)
+  }, [span, type])
+
 
   useEffect(() => {
     if (!id) return
@@ -57,18 +109,25 @@ export default function PoolInfoPage({
     <Wrapper>
       {poolResult && (
         <>
-          <PoolInfoHeader token0={poolResult.token0.id} token1={poolResult.token1.id} fee={''}></PoolInfoHeader>
+          <PoolInfoHeader token0={poolResult.token0.id} token1={poolResult.token1.id} fee={''}/>
           <BodyWrapper>
             <ChartWrapper>
-              <PoolInfoChartToolbar></PoolInfoChartToolbar>
+              <PoolInfoChartToolbar
+              chartSpans={chartSpans}
+              chartTypes={chartTypes}
+              setType={setType}
+              span={span}
+              type={type}
+              setSpan={setSpan}/>
               <FeeChartRangeInput
                 data={feesResult}
                 fetchHandler={fetchFeePoolFn}
                 refreshing={feesLoading}
                 id={id}
-              ></FeeChartRangeInput>
+                span={span}
+              />
             </ChartWrapper>
-            <InfoWrapper></InfoWrapper>
+            <InfoWrapper/>
           </BodyWrapper>
         </>
       )}

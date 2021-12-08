@@ -8,10 +8,8 @@ import { useEffect } from 'react'
 import Loader from '../Loader'
 import { PageTitle } from '../PageTitle'
 
-const Wrapper = styled(DarkGreyCard)`
+const Wrapper = styled.div`
   width: 100%;
-  background-color: #202635;
-  2rem;
 `
 const MockLoading = styled.div`
   display: flex;
@@ -61,23 +59,28 @@ export function daysCount(month: number, year: number) {
   }
 }
 
-export default function FeeChartRangeInput() {
-  const { id } = useParams<{ id: string }>()
-
-  const {
-    fetchFees: { feesResult, feesLoading, fetchFeePoolFn },
-  } = useInfoSubgraph()
-
+export default function FeeChartRangeInput({
+  data,
+  refreshing,
+  fetchHandler,
+  id,
+}: {
+  data: any
+  refreshing: boolean
+  fetchHandler: (id: string, start: number, end: number) => any
+  id: string
+}) {
   const [isScale, setIsScale] = useState(false)
+
   const windowWidth = useWindowSize()
 
   useEffect(() => {
-    fetchFeePoolFn(id, 1636984800, 1637917200)
+    fetchHandler(id, 1636984800, 1637917200)
   }, [])
 
   return (
     <Wrapper>
-      {feesLoading && feesResult === null ? (
+      {refreshing ? (
         <MockLoading>
           <Loader stroke={'white'} size={'25px'} />
         </MockLoading>
@@ -85,11 +88,11 @@ export default function FeeChartRangeInput() {
         <React.Fragment>
           {/* <button onClick={() => {setIsScale(!isScale)}}>{isScale ? '-' : '+'}</button> */}
           <Chart
-            feeData={feesResult === null ? undefined : feesResult}
+            feeData={data || undefined}
             dimensions={{
-              width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 900,
+              width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 950,
               height: 300,
-              margin: { top: 30, right: windowWidth[0] < 961 ? 10 : 30, bottom: 30, left: 60 },
+              margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 },
             }}
             scale={0}
             isScale={isScale}

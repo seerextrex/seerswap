@@ -37,6 +37,7 @@ import PoolFinder from './PoolFinder'
 import { useInfoSubgraph } from '../hooks/subgraph/useInfoSubgraph'
 import FeeChartRangeInput from '../components/FeeChartRangeInput'
 import PoolInfoPage from './PoolInfoPage'
+import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -96,6 +97,7 @@ export default function App() {
       <GlobalStyle />
       <Route component={DarkModeQueryParamReader} />
       <Route component={ApeModeQueryParamReader} />
+      <Route component={GoogleAnalyticsReporter} />
       <Web3ReactManager>
         <AppWrapper>
           <CautionModal />

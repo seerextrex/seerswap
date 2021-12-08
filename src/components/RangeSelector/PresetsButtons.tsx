@@ -6,6 +6,8 @@ import styled from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
 import { FeeAmount } from 'lib/src'
 
+import ReactGA from 'react-ga'
+
 const Button = styled(ButtonOutlined).attrs(() => ({
   padding: '4px',
   borderRadius: '8px',
@@ -68,7 +70,15 @@ export default function PresetsButtons({ feeAmount, setRange, setFullRange }: Pr
       <PresetButton values={RANGES[feeAmount][0]} setRange={setRange} />
       <PresetButton values={RANGES[feeAmount][1]} setRange={setRange} />
       <PresetButton values={RANGES[feeAmount][2]} setRange={setRange} />
-      <Button onClick={() => setFullRange()}>
+      <Button
+        onClick={() => {
+          setFullRange()
+          ReactGA.event({
+            category: 'Liquidity',
+            action: 'Full Range Clicked',
+          })
+        }}
+      >
         <TYPE.body fontSize={12}>
           <Trans>Full Range</Trans>
         </TYPE.body>

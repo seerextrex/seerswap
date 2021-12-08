@@ -6,6 +6,7 @@ import { AutoColumn } from '../Column'
 import styled from 'styled-components/macro'
 import { getUserAgent } from '../../utils/getUserAgent'
 import { AutoRow } from '../Row'
+import ReactGA from 'react-ga'
 
 const FallbackWrapper = styled.div`
   display: flex;
@@ -56,6 +57,11 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.log(error)
+    ReactGA.exception({
+      ...error,
+      ...errorInfo,
+      fatal: true,
+    })
   }
 
   render() {

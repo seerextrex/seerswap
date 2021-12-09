@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 import styled from 'styled-components/macro'
 import FeeChartRangeInput from '../../components/FeeChartRangeInput'
@@ -11,6 +11,8 @@ import { usePoolDynamicFee } from '../../hooks/usePoolDynamicFee'
 import { usePool } from '../../hooks/usePools'
 import { useActiveWeb3React } from '../../hooks/web3'
 
+import dayjs from 'dayjs'
+
 const Wrapper = styled.div`
   min-width: 995px;
   max-width: 995px;
@@ -20,16 +22,11 @@ const Wrapper = styled.div`
 const BodyWrapper = styled.div`
   display: flex;
   height: 600px;
+  width: 100%;
 `
 const ChartWrapper = styled.div`
-  flex: 2;
-  margin-right: 1rem;
+  width: 100%;
 `
-const InfoWrapper = styled.div`
-  flex: 1;
-  background-color: blue;
-`
-
 enum ChartType {
   VOLUME,
   TVL,
@@ -51,15 +48,29 @@ export default function PoolInfoPage({
 }: RouteComponentProps<{ id?: string }>) {
   const { chainId } = useActiveWeb3React()
 
-  const { fetchPool: { fetchPoolFn, poolLoading, poolResult }, } = useInfoPoolChart()
+  const {
+    fetchPool: { fetchPoolFn, poolLoading, poolResult },
+  } = useInfoPoolChart()
 
   const {
     fetchFees: { feesResult, feesLoading, fetchFeePoolFn },
   } = useInfoSubgraph()
 
-
   const [span, setSpan] = useState(ChartSpan.DAY)
   const [type, setType] = useState(ChartType.FEES)
+
+  const startTimestamp = useMemo(() => {
+    const day = dayjs()
+
+    switch (span) {
+      case ChartSpan.DAY:
+        return day.subtract(1, 'day').unix()
+      case ChartSpan.WEEK:
+        return day.subtract(7, 'day').unix()
+      case ChartSpan.MONTH:
+        return day.subtract(1, 'month').unix()
+    }
+  }, [span])
 
   const chartTypes = [
     {
@@ -96,9 +107,8 @@ export default function PoolInfoPage({
   ]
 
   useEffect(() => {
-    // console.log(span, type)
+    fetchFeePoolFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
   }, [span, type])
-
 
   useEffect(() => {
     if (!id) return
@@ -109,25 +119,26 @@ export default function PoolInfoPage({
     <Wrapper>
       {poolResult && (
         <>
-          <PoolInfoHeader token0={poolResult.token0.id} token1={poolResult.token1.id} fee={''}/>
+          <PoolInfoHeader token0={poolResult.token0.id} token1={poolResult.token1.id} fee={''} />
           <BodyWrapper>
             <ChartWrapper>
               <PoolInfoChartToolbar
-              chartSpans={chartSpans}
-              chartTypes={chartTypes}
-              setType={setType}
-              span={span}
-              type={type}
-              setSpan={setSpan}/>
+                chartSpans={chartSpans}
+                chartTypes={chartTypes}
+                setType={setType}
+                span={span}
+                type={type}
+                setSpan={setSpan}
+              />
               <FeeChartRangeInput
                 data={feesResult}
                 fetchHandler={fetchFeePoolFn}
                 refreshing={feesLoading}
                 id={id}
                 span={span}
+                startDate={startTimestamp}
               />
             </ChartWrapper>
-            <InfoWrapper/>
           </BodyWrapper>
         </>
       )}

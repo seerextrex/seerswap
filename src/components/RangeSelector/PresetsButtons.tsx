@@ -68,7 +68,11 @@ export default function PresetsButtons({ feeAmount, setRange, setFullRange }: Pr
       <PresetButton values={RANGES[feeAmount][0]} setRange={setRange} />
       <PresetButton values={RANGES[feeAmount][1]} setRange={setRange} />
       <PresetButton values={RANGES[feeAmount][2]} setRange={setRange} />
-      <Button onClick={() => setFullRange()}>
+      <Button
+        onClick={() => {
+          setFullRange()
+        }}
+      >
         <TYPE.body fontSize={12}>
           <Trans>Full Range</Trans>
         </TYPE.body>

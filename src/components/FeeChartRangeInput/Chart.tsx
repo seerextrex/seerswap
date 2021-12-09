@@ -2,6 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { ChartScale, daysCount } from './index'
 
+function sameDay(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
+}
+
 interface ChartInterface {
   feeData:
     | {
@@ -33,7 +37,6 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
 
-
   const days = useMemo(() => {
     if (feeData.length === 0) return 0
     return daysCount(
@@ -45,9 +48,8 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
   const chartData = useMemo(() => {
     if (feeData.length === 0) return []
     // console.log(scale)
-
     return feeData.map((item) => ({
-      time: new Date(item.timestamp * 1000).getDate(),
+      time: new Date(item.timestamp * 1000),
       fee: item.fee / item.changesCount / 10000,
       start: item.startFee,
       end: item.endFee,
@@ -58,80 +60,103 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
 
   const tickWidth = useMemo(() => {
     //Todo auto length
-    return dimensions.width / 30
+    return dimensions.width / 7
   }, [dimensions, feeData])
 
   // const xDomain = isScale ? [d3.min(chartData, (d) => +d.time - 1), d3.max(chartData, (d) => +d.time + 1)] : [1, days]
   // console.log(days)
 
   const xScale = useMemo(() => {
-    if (scale === 2) {
-      return d3.scaleTime().domain([new Date(startDate), Date.now()]).range([0, width])
-    } else if (scale === 1) {
-      return d3.scaleTime().domain([new Date(startDate), Date.now()]).range([0, width])
-    } else {
-      return d3.scaleTime().domain([new Date(startDate), Date.now()]).range([0, width])
-    }
+    console.log([new Date(d3.min(chartData, (d) => +d.time)), new Date(d3.max(chartData, (d) => +d.time))])
+    return (
+      d3
+        .scaleTime()
+        // .domain([new Date(startDate * 1000).getTime(), Date.now()])
+        .domain([d3.min(chartData, (d) => new Date(d.time)), d3.max(chartData, (d) => new Date(d.time))])
+        .range([0, width])
+    )
   }, [scale, chartData])
 
   const _chartData = useMemo(() => {
-    if (feeData.length === 0 || chartData[0].time == 0) return
+    if (chartData.length === 0) return
 
     let sameDays = []
     const res = []
 
-    for (let i = 0; i < chartData.length; i++) {
-      if (chartData[i - 1]) {
-        if (chartData[i].time === chartData[i - 1].time) {
-          sameDays.push(chartData[i])
-        } else {
-          if (sameDays.length !== 0) {
-            res.push(
-              sameDays.reduce(
-                (prev, cur) => {
-                  return { time: cur.time, fee: prev.fee + cur.fee }
-                },
-                {
-                  fee: 0,
-                  time: null,
-                }
-              )
+    for (let i = 1; i < chartData.length; i++) {
+      if (sameDay(new Date(chartData[i].time), new Date(chartData[i - 1].time))) {
+        sameDays.push(chartData[i])
+      } else {
+        if (sameDays.length !== 0) {
+          res.push(
+            sameDays.reduce(
+              (prev, cur) => {
+                return { time: cur.time, fee: prev.fee + cur.fee }
+              },
+              {
+                fee: 0,
+                time: null,
+              }
             )
-            res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
-          }
-
-          sameDays = []
+          )
+          res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
         }
+
+        sameDays = []
       }
+    }
+
+    if (res.length !== 0) {
+      res.push(
+        sameDays.reduce(
+          (prev, cur) => {
+            return { time: cur.time, fee: prev.fee + cur.fee }
+          },
+          {
+            fee: 0,
+            time: null,
+          }
+        )
+      )
+      res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
     }
 
     const newA = []
 
-    for (let i = 1; i < chartData[0].time; i++) {
-      newA.push({ time: i, start: 0, low: 0, high: 0, end: 0, fee: d3.min(chartData, (d) => +d.fee) })
-    }
+    // for (let i = 1; i < chartData[0].time; i++) {
+    //   newA.push({ time: i, start: 0, low: 0, high: 0, end: 0, fee: d3.min(chartData, (d) => +d.fee) })
+    // }
+
+    console.log([...newA, ...res])
+
     return [...newA, ...res]
   }, [chartData, feeData])
 
-
-
-  useEffect(() => {
-    const kek: any[] = []
-    for (let i = 0; i < feeData.length; i++) {
-      if (feeData[i - 1] !== undefined) {
-        if (new Date(feeData[i - 1].timestamp * 1000).getHours() + 1 !== new Date(feeData[i].timestamp * 1000).getHours()) {
-          for (let j = new Date(feeData[i - 1].timestamp * 1000).getHours(); j < new Date(feeData[i].timestamp * 1000).getHours(); j++) {
-            kek.push(j)
-          }
-        } else {
-          kek.push(new Date(feeData[i].timestamp * 1000).getHours())
-        }
-      }
-    }
-    console.log(kek, feeData.map(item => new Date(item.timestamp * 1000).getHours()))
-  },[feeData])
-
-
+  // useEffect(() => {
+  //   const kek: any[] = []
+  //   for (let i = 0; i < feeData.length; i++) {
+  //     if (feeData[i - 1] !== undefined) {
+  //       if (
+  //         new Date(feeData[i - 1].timestamp * 1000).getHours() + 1 !==
+  //         new Date(feeData[i].timestamp * 1000).getHours()
+  //       ) {
+  //         for (
+  //           let j = new Date(feeData[i - 1].timestamp * 1000).getHours();
+  //           j < new Date(feeData[i].timestamp * 1000).getHours();
+  //           j++
+  //         ) {
+  //           kek.push(j)
+  //         }
+  //       } else {
+  //         kek.push(new Date(feeData[i].timestamp * 1000).getHours())
+  //       }
+  //     }
+  //   }
+  //   console.log(
+  //     kek,
+  //     feeData.map((item) => new Date(item.timestamp * 1000).getHours())
+  //   )
+  // }, [feeData])
 
   const Line = d3
     .create('svg:line')
@@ -186,6 +211,8 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
   useEffect(() => {
     if (feeData.length === 0) return
 
+    console.log('_data', _chartData)
+
     const svgEl = d3.select(svgRef.current)
     svgEl.selectAll('*').remove()
 
@@ -205,14 +232,11 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
     })
 
     // xAxis
-    const xTicks =  scale === 0 ? 24 : scale === 1 ? 7 : days
+    // const xTicks = scale === 0 ? 24 : scale === 1 ? 7 : days
+    const xTicks = 8
     const xAxisGroup = svg.append('g').attr('transform', `translate(0, ${height})`).call(
-      d3
-        .axisBottom(xScale)
-        .ticks(xTicks)
-        .tickSize(-height)
-        .tickSizeOuter(0)
-        // .tickFormat('%H')
+      d3.axisBottom(xScale).ticks(xTicks).tickSize(-height).tickSizeOuter(0)
+      // .tickFormat('%H')
     )
     xAxisGroup.select('.domain').remove()
     xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')

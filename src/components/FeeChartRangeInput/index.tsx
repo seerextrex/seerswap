@@ -26,6 +26,7 @@ interface FeeChartRangeInputProps {
   fetchHandler: (id: string, start: number, end: number) => any
   id: string
   span: number
+  startDate: number
 }
 
 export enum ChartScale {
@@ -69,60 +70,60 @@ export function daysCount(month: number, year: number) {
   }
 }
 
-export default function FeeChartRangeInput({ data, refreshing, fetchHandler, id, span }: FeeChartRangeInputProps) {
-
+export default function FeeChartRangeInput({
+  data,
+  refreshing,
+  fetchHandler,
+  id,
+  span,
+  startDate,
+}: FeeChartRangeInputProps) {
   const windowWidth = useWindowSize()
 
-  function getDateAgo(date, days) {
-    const dateCopy = new Date(date)
+  // const [startDate, setStartDate] = useState(getDateAgo(currentData, 1))
 
-    dateCopy.setDate(date.getDate() - days)
-    return dateCopy.getTime()
-  }
-  const currentData = new Date()
-
-  const [startDate, setStartDate] = useState(getDateAgo(currentData, 1))
+  // useEffect(() => {
+  //   if (span === 0) {
+  //     setStartDate(getDateAgo(currentData, 1))
+  //   }
+  //   if (span === 1) {
+  //     setStartDate(getDateAgo(currentData, 8))
+  //   }
+  //   if (span === 2) {
+  //     setStartDate(currentData.setMonth(currentData.getMonth() - 1))
+  //   }
+  //   fetchHandler(id, Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
+  //   // console.log(Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
+  // }, [span])
 
   useEffect(() => {
-    if (span === 0) {
-      setStartDate(getDateAgo(currentData, 1))
-    }
-    if (span === 1) {
-      setStartDate(getDateAgo(currentData, 8))
-    }
-    if (span === 2) {
-      setStartDate(currentData.setMonth(currentData.getMonth() - 1))
-    }
-    fetchHandler(id, Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
-    // console.log(Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
-  }, [span])
+    console.log('DD', data)
+  }, [data])
 
- useEffect(() => {
-   // console.log(data, span)
- }, [data, span])
+  useEffect(() => {
+    // console.log(data, span)
+  }, [data, span])
 
   return (
     <Wrapper>
-      {refreshing ?
-        (
-          <MockLoading>
-            <Loader stroke={'white'} size={'25px'} />
-          </MockLoading>
-        ) :
-        (
-          <React.Fragment>
-            <Chart
-              feeData={data || undefined}
-              dimensions={{
-                width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 950,
-                height: 300,
-                margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 }
-              }}
-              scale={span}
-              startDate={startDate}
-            />
-          </React.Fragment>
-        )}
+      {refreshing ? (
+        <MockLoading>
+          <Loader stroke={'white'} size={'25px'} />
+        </MockLoading>
+      ) : (
+        <React.Fragment>
+          <Chart
+            feeData={data || undefined}
+            dimensions={{
+              width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 950,
+              height: 300,
+              margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 },
+            }}
+            scale={span}
+            startDate={startDate}
+          />
+        </React.Fragment>
+      )}
     </Wrapper>
   )
 }

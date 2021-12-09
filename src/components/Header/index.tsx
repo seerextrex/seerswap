@@ -10,6 +10,7 @@ import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components/macro'
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
+import Logo_logo from  '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import Modal from '../Modal'
 import Row from '../Row'
@@ -52,6 +53,9 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
     padding:  1rem;
     grid-template-columns: 36px 1fr;
   `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    padding: 0.5rem 1rem;
+  }`}
 `
 
 const HeaderControls = styled.div`
@@ -108,10 +112,8 @@ const HeaderLinks = styled(Row)`
     // border: 1px solid ${({ theme }) => theme.bg2};
     // box-shadow: 0px 6px 10px rgb(0 0 0 / 2%);
   `};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0;
-    background-color: black;
-  `}
+
+
 
   @media (max-width: 1366px) {
     grid-auto-flow: unset;
@@ -131,6 +133,12 @@ const HeaderLinks = styled(Row)`
     z-index: 99;
     position: fixed;
     top: unset;
+  }
+  
+  @media (max-width: 400px) {
+    display: flex;
+    max-width: 100%;
+    margin-left: 10px;
   }
 `
 
@@ -210,6 +218,11 @@ const AlgIcon = styled.div`
       width: 130px;
     }
   }`}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    & > img {
+      width: 30px;
+    }
+  }`}
 `
 
 const activeClassName = 'ACTIVE'
@@ -233,6 +246,9 @@ const StyledNavLink = styled(NavLink).attrs({
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border-radius: 16px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 14px 15px;
   `}
 
   &.${activeClassName} {
@@ -271,40 +287,43 @@ export default function Header() {
     chainValue = 'MATIC'
   }
 
+  console.log( window.innerWidth)
   return (
     <HeaderFrame showBackground={scrollY > 45}>
       <Title href=".">
         <AlgIcon>
-          <img width={'160px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+          <img width={'160px'} src={window.innerWidth < 501 ? Logo_logo : darkMode ? LogoDark : Logo} alt="logo" />
         </AlgIcon>
       </Title>
-      <HeaderLinks>
-        <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-          Swap
-        </StyledNavLink>
-        <StyledNavLink
-          id={`pool-nav-link`}
-          to={'/pool'}
-          isActive={(match, { pathname }) =>
-            Boolean(match) ||
-            pathname.startsWith('/add') ||
-            pathname.startsWith('/remove') ||
-            pathname.startsWith('/increase') ||
-            pathname.startsWith('/find')
-          }
-        >
-          Pool
-        </StyledNavLink>
-        <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
-          Farming
-        </StyledNavLink>
-        <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
-          Migrate
-        </StyledNavLink>
-        <StyledNavLink id={`info-nav-link`} to={'/info'}>
-          Info
-        </StyledNavLink>
-      </HeaderLinks>
+      <div>
+        <HeaderLinks>
+          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+            Swap
+          </StyledNavLink>
+          <StyledNavLink
+            id={`pool-nav-link`}
+            to={'/pool'}
+            isActive={(match, { pathname }) =>
+              Boolean(match) ||
+              pathname.startsWith('/add') ||
+              pathname.startsWith('/remove') ||
+              pathname.startsWith('/increase') ||
+              pathname.startsWith('/find')
+            }
+          >
+            Pool
+          </StyledNavLink>
+          <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
+            Farming
+          </StyledNavLink>
+          <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
+            Migrate
+          </StyledNavLink>
+          <StyledNavLink id={`info-nav-link`} to={'/info'}>
+            Info
+          </StyledNavLink>
+        </HeaderLinks>
+      </div>
 
       <HeaderControls>
         <NetworkCard />

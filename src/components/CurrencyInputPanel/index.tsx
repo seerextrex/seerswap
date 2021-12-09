@@ -92,12 +92,20 @@ const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boole
     css`
       width: 170px;
     `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    width: 100%;
+    margin: 10px 0 0 0;
+  }`}
 `
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ hideCurrency }) => (hideCurrency ? '1rem 1rem 0.75rem 0' : '1rem 1rem 0.75rem 1rem')};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    flex-direction: column;
+    height: 120px;
+  }`}
 `
 
 const LabelRow = styled.div`
@@ -125,7 +133,13 @@ const Aligner = styled.span`
   width: 100%;
   position: relative;
 `
-
+const NumericalInputStyled = styled(NumericalInput)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    width: 100%;
+    text-align: left!important;
+    font-size: 18px!important;
+  }`}
+`
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   margin: 0 0.25rem 0 0.35rem;
   height: 35%;
@@ -336,7 +350,7 @@ export default function CurrencyInputPanel({
           )}
           {!hideInput && (
             <>
-              <NumericalInput
+              <NumericalInputStyled
                 style={{ backgroundColor: 'transparent', textAlign: hideCurrency ? 'left' : 'right', fontSize: '20px' }}
                 className="token-amount-input"
                 value={value}

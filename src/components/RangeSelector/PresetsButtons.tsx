@@ -73,10 +73,6 @@ export default function PresetsButtons({ feeAmount, setRange, setFullRange }: Pr
       <Button
         onClick={() => {
           setFullRange()
-          ReactGA.event({
-            category: 'Liquidity',
-            action: 'Full Range Clicked',
-          })
         }}
       >
         <TYPE.body fontSize={12}>

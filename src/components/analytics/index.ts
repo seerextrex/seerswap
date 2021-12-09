@@ -1,9 +1,8 @@
 import ReactGA from 'react-ga'
 import { isMobile } from 'utils/userAgent'
 
-const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
+const GOOGLE_ANALYTICS_ID: string | undefined = "UA-213558502-3"
 if (typeof GOOGLE_ANALYTICS_ID === 'string') {
-    console.log('HERE')
     ReactGA.initialize(GOOGLE_ANALYTICS_ID, {
         gaOptions: {
             storage: 'none',
@@ -19,6 +18,5 @@ if (typeof GOOGLE_ANALYTICS_ID === 'string') {
                 : 'mobileRegular',
     })
 } else {
-    console.log('HERE 2')
     ReactGA.initialize('test', { testMode: true, debug: true })
 }

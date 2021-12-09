@@ -42,8 +42,8 @@ const ToolbarOptionsItem = styled.li`
 export default function PoolInfoChartToolbar({chartTypes, chartSpans, type, span, setType, setSpan} : {
   chartTypes: any
   chartSpans: any
-  type: any
-  span: any
+  type: number
+  span: number
   setType: any
   setSpan: any
 }) {

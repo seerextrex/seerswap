@@ -285,7 +285,6 @@ export function useInfoSubgraph() {
 
     }
 
-
     async function fetchPoolsByTime(blockNumber: number, tokenAddresses) {
 
         try {
@@ -308,6 +307,7 @@ export function useInfoSubgraph() {
 
     async function fetchFeePool(pool: string, timestampStart: number, timestampFinish: number) {
         try {
+            // console.log(timestampStart, timestampFinish)
             setFeesLoading(true)
             const {data: { feeHourDatas }, error: error} = await testClient.query({
                 query: FETCH_FEE_FROM_POOL(pool, timestampStart, timestampFinish),

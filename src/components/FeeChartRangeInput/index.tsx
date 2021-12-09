@@ -19,6 +19,15 @@ const MockLoading = styled.div`
   padding: 0 16px;
   max-width: 1000px;
 `
+
+interface FeeChartRangeInputProps {
+  data: any
+  refreshing: boolean
+  fetchHandler: (id: string, start: number, end: number) => any
+  id: string
+  span: number
+}
+
 export enum ChartScale {
   MONTH,
   DAY,
@@ -30,6 +39,7 @@ function useWindowSize() {
     function updateSize() {
       setSize([window.innerWidth, window.innerHeight])
     }
+
     window.addEventListener('resize', updateSize)
     updateSize()
     return () => window.removeEventListener('resize', updateSize)
@@ -59,65 +69,60 @@ export function daysCount(month: number, year: number) {
   }
 }
 
-export default function FeeChartRangeInput({
-  data,
-  refreshing,
-  fetchHandler,
-  id,
-  span
-}: {
-  data: any
-  refreshing: boolean
-  fetchHandler: (id: string, start: number, end: number) => any
-  id: string
-  span: number
-}) {
-  const [isScale, setIsScale] = useState(false)
+export default function FeeChartRangeInput({ data, refreshing, fetchHandler, id, span }: FeeChartRangeInputProps) {
 
   const windowWidth = useWindowSize()
 
   function getDateAgo(date, days) {
-    const dateCopy = new Date(date);
+    const dateCopy = new Date(date)
 
-    dateCopy.setDate(date.getDate() - days);
-    return dateCopy.getTime() ;
+    dateCopy.setDate(date.getDate() - days)
+    return dateCopy.getTime()
   }
+  const currentData = new Date()
+
+  const [startDate, setStartDate] = useState(getDateAgo(currentData, 1))
 
   useEffect(() => {
-    const currentData = new Date()
-    let start = getDateAgo(currentData, 1)
+    if (span === 0) {
+      setStartDate(getDateAgo(currentData, 1))
+    }
     if (span === 1) {
-      start = getDateAgo(currentData, 7)
+      setStartDate(getDateAgo(currentData, 8))
     }
     if (span === 2) {
-      start = currentData.setMonth(currentData.getMonth() - 1)
+      setStartDate(currentData.setMonth(currentData.getMonth() - 1))
     }
-    // console.log(span, , Date.now())
-
-    fetchHandler(id, Math.floor(start / 1000), new Date().getTime())
+    fetchHandler(id, Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
+    // console.log(Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
   }, [span])
+
+ useEffect(() => {
+   // console.log(data, span)
+ }, [data, span])
 
   return (
     <Wrapper>
-      {refreshing ? (
-        <MockLoading>
-          <Loader stroke={'white'} size={'25px'} />
-        </MockLoading>
-      ) : (
-        <React.Fragment>
-          {/* <button onClick={() => {setIsScale(!isScale)}}>{isScale ? '-' : '+'}</button> */}
-          <Chart
-            feeData={data || undefined}
-            dimensions={{
-              width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 950,
-              height: 300,
-              margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 },
-            }}
-            scale={0}
-            isScale={isScale}
-          />
-        </React.Fragment>
-      )}
+      {refreshing ?
+        (
+          <MockLoading>
+            <Loader stroke={'white'} size={'25px'} />
+          </MockLoading>
+        ) :
+        (
+          <React.Fragment>
+            <Chart
+              feeData={data || undefined}
+              dimensions={{
+                width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 950,
+                height: 300,
+                margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 }
+              }}
+              scale={span}
+              startDate={startDate}
+            />
+          </React.Fragment>
+        )}
     </Wrapper>
   )
 }

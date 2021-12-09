@@ -24,15 +24,15 @@ interface ChartInterface {
   }
 
   scale: ChartScale
-
-  isScale: boolean
+  startDate: number
 }
 
-export default function Chart({ feeData = [], scale, dimensions, isScale }: ChartInterface) {
+export default function Chart({ feeData = [], scale, dimensions, startDate }: ChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
+
 
   const days = useMemo(() => {
     if (feeData.length === 0) return 0
@@ -44,6 +44,8 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
 
   const chartData = useMemo(() => {
     if (feeData.length === 0) return []
+    // console.log(scale)
+
     return feeData.map((item) => ({
       time: new Date(item.timestamp * 1000).getDate(),
       fee: item.fee / item.changesCount / 10000,
@@ -54,12 +56,82 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
     }))
   }, [feeData])
 
-  const xDomain = isScale ? [d3.min(chartData, (d) => +d.time - 1), d3.max(chartData, (d) => +d.time + 1)] : [1, days]
-
   const tickWidth = useMemo(() => {
     //Todo auto length
     return dimensions.width / 30
   }, [dimensions, feeData])
+
+  // const xDomain = isScale ? [d3.min(chartData, (d) => +d.time - 1), d3.max(chartData, (d) => +d.time + 1)] : [1, days]
+  // console.log(days)
+
+  const xScale = useMemo(() => {
+    if (scale === 2) {
+      return d3.scaleTime().domain([new Date(startDate), Date.now()]).range([0, width])
+    } else if (scale === 1) {
+      return d3.scaleTime().domain([new Date(startDate), Date.now()]).range([0, width])
+    } else {
+      return d3.scaleTime().domain([new Date(startDate), Date.now()]).range([0, width])
+    }
+  }, [scale, chartData])
+
+  const _chartData = useMemo(() => {
+    if (feeData.length === 0 || chartData[0].time == 0) return
+
+    let sameDays = []
+    const res = []
+
+    for (let i = 0; i < chartData.length; i++) {
+      if (chartData[i - 1]) {
+        if (chartData[i].time === chartData[i - 1].time) {
+          sameDays.push(chartData[i])
+        } else {
+          if (sameDays.length !== 0) {
+            res.push(
+              sameDays.reduce(
+                (prev, cur) => {
+                  return { time: cur.time, fee: prev.fee + cur.fee }
+                },
+                {
+                  fee: 0,
+                  time: null,
+                }
+              )
+            )
+            res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
+          }
+
+          sameDays = []
+        }
+      }
+    }
+
+    const newA = []
+
+    for (let i = 1; i < chartData[0].time; i++) {
+      newA.push({ time: i, start: 0, low: 0, high: 0, end: 0, fee: d3.min(chartData, (d) => +d.fee) })
+    }
+    return [...newA, ...res]
+  }, [chartData, feeData])
+
+
+
+  useEffect(() => {
+    const kek: any[] = []
+    for (let i = 0; i < feeData.length; i++) {
+      if (feeData[i - 1] !== undefined) {
+        if (new Date(feeData[i - 1].timestamp * 1000).getHours() + 1 !== new Date(feeData[i].timestamp * 1000).getHours()) {
+          for (let j = new Date(feeData[i - 1].timestamp * 1000).getHours(); j < new Date(feeData[i].timestamp * 1000).getHours(); j++) {
+            kek.push(j)
+          }
+        } else {
+          kek.push(new Date(feeData[i].timestamp * 1000).getHours())
+        }
+      }
+    }
+    console.log(kek, feeData.map(item => new Date(item.timestamp * 1000).getHours()))
+  },[feeData])
+
+
 
   const Line = d3
     .create('svg:line')
@@ -111,54 +183,6 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
     .style('opacity', 1)
     .style('display', 'none')
 
-  const xScale = useMemo(() => {
-    if (scale === ChartScale.MONTH) {
-      return d3.scaleLinear().domain(xDomain).range([0, width])
-    } else {
-      return d3.scaleLinear().domain([0, 24]).range([0, width])
-    }
-  }, [scale, days, chartData])
-
-  const _chartData = useMemo(() => {
-    if (feeData.length === 0 || chartData[0].time == 0) return
-
-    let sameDays = []
-    const res = []
-
-    for (let i = 0; i < chartData.length; i++) {
-      if (chartData[i - 1]) {
-        if (chartData[i].time === chartData[i - 1].time) {
-          sameDays.push(chartData[i])
-        } else {
-          if (sameDays.length !== 0) {
-            res.push(
-              sameDays.reduce(
-                (prev, cur) => {
-                  return { time: cur.time, fee: prev.fee + cur.fee }
-                },
-                {
-                  fee: 0,
-                  time: null,
-                }
-              )
-            )
-            res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
-          }
-
-          sameDays = []
-        }
-      }
-    }
-
-    const newA = []
-
-    for (let i = 1; i < chartData[0].time; i++) {
-      newA.push({ time: i, start: 0, low: 0, high: 0, end: 0, fee: d3.min(chartData, (d) => +d.fee) })
-    }
-
-    return [...newA, ...res]
-  }, [])
-
   useEffect(() => {
     if (feeData.length === 0) return
 
@@ -167,6 +191,7 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
 
     const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 
+    //mouse events
     svgEl.on('mouseenter', () => {
       Line.style('display', 'block')
       InfoRectGroup.style('display', 'block')
@@ -179,19 +204,17 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
       Focus.style('display', 'none')
     })
 
-    // mouse events
-    const xTicks = isScale ? d3.max(_chartData, (d) => +d.time + 1) - d3.min(_chartData, (d) => +d.time - 1) : days
+    // xAxis
+    const xTicks =  scale === 0 ? 24 : scale === 1 ? 7 : days
     const xAxisGroup = svg.append('g').attr('transform', `translate(0, ${height})`).call(
       d3
         .axisBottom(xScale)
         .ticks(xTicks)
         .tickSize(-height)
-        // .tickPadding(10)
         .tickSizeOuter(0)
+        // .tickFormat('%H')
     )
-
     xAxisGroup.select('.domain').remove()
-    //
     xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
 
     // yAxis
@@ -209,7 +232,6 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
     )
 
     yAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0.1)').attr('id', 'xline')
-
     yAxisGroup.select('.domain').remove()
     yAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
 
@@ -238,7 +260,6 @@ export default function Chart({ feeData = [], scale, dimensions, isScale }: Char
       .attr('stop-color', (d) => d.color)
 
     // Chart data visualize
-
     svg
       .append('path')
       .datum(_chartData)

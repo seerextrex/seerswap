@@ -59,6 +59,8 @@ import { usePoolDynamicFee } from '../../hooks/usePoolDynamicFee'
 import { usePool } from '../../hooks/usePools'
 import { Helmet } from 'react-helmet'
 
+import ReactGA from 'react-ga'
+
 const StyledInfo = styled(Info)`
   opacity: 0.4;
   color: ${({ theme }) => theme.text1};
@@ -225,6 +227,11 @@ export default function Swap({ history }: RouteComponentProps) {
       }
     } else {
       await approveCallback()
+      ReactGA.event({
+        category: 'Swap',
+        action: 'Approve',
+        label: [trade?.inputAmount.currency.symbol, toggledVersion].join('/'),
+      })
     }
   }, [approveCallback, gatherPermitSignature, signatureState])
 
@@ -262,6 +269,21 @@ export default function Swap({ history }: RouteComponentProps) {
     swapCallback()
       .then((hash) => {
         setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
+        ReactGA.event({
+          category: 'Swap',
+          action:
+            recipient === null
+              ? 'Swap w/o Send'
+              : (recipientAddress ?? recipient) === account
+              ? 'Swap w/o Send + recipient'
+              : 'Swap w/ Send',
+          label: [
+            trade?.inputAmount?.currency?.symbol,
+            trade?.outputAmount?.currency?.symbol,
+            getTradeVersion(trade),
+            'MH',
+          ].join('/'),
+        })
       })
       .catch((error) => {
         setSwapState({
@@ -330,6 +352,10 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleMaxInput = useCallback(() => {
     maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.toExact())
+    ReactGA.event({
+      category: 'Swap',
+      action: 'Max',
+    })
   }, [maxInputAmount, onUserInput])
 
   const handleOutputSelect = useCallback(
@@ -474,6 +500,12 @@ export default function Swap({ history }: RouteComponentProps) {
                       setShowInverted={setShowInverted}
                     />
                     <MouseoverTooltipContent
+                      onOpen={() => {
+                        ReactGA.event({
+                          category: 'Swap',
+                          action: 'Transaction Details Tooltip Open',
+                        })
+                      }}
                       content={<AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />}
                     >
                       <StyledInfo />

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components/macro'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { TYPE } from 'theme'
 import { DarkGreyCard, GreyBadge } from 'components/Card'
 import Loader, { LoadingRows } from 'components/Loader'
@@ -83,29 +83,31 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   const { chainId } = useActiveWeb3React()
 
   return (
-    <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
-      <Label fontWeight={400}>{index + 1}</Label>
-      <Label fontWeight={400}>
-        <RowFixed>
-          <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} />
-          <TYPE.label ml="8px">
-            {poolData.token0.symbol}/{poolData.token1.symbol}
-          </TYPE.label>
-          <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#35405b' }}>
-            {feeTierPercent(poolData.fee)}
-          </GreyBadge>
-        </RowFixed>
-      </Label>
-      <Label end={1} fontWeight={400}>
-        {formatDollarAmount(poolData.volumeUSD)}
-      </Label>
-      <Label end={1} fontWeight={400}>
-        {formatDollarAmount(poolData.volumeUSDWeek)}
-      </Label>
-      <Label end={1} fontWeight={400}>
-        {formatDollarAmount(poolData.totalValueLockedUSD)}
-      </Label>
-    </ResponsiveGrid>
+    <NavLink to={`/info/pools/${poolData.address}`} style={{textDecoration: 'none'}}>
+      <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
+        <Label fontWeight={400}>{index + 1}</Label>
+        <Label fontWeight={400}>
+          <RowFixed>
+            <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} />
+            <TYPE.label ml="8px">
+              {poolData.token0.symbol}/{poolData.token1.symbol}
+            </TYPE.label>
+            <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#35405b' }}>
+              {feeTierPercent(poolData.fee)}
+            </GreyBadge>
+          </RowFixed>
+        </Label>
+        <Label end={1} fontWeight={400}>
+          {formatDollarAmount(poolData.volumeUSD)}
+        </Label>
+        <Label end={1} fontWeight={400}>
+          {formatDollarAmount(poolData.volumeUSDWeek)}
+        </Label>
+        <Label end={1} fontWeight={400}>
+          {formatDollarAmount(poolData.totalValueLockedUSD)}
+        </Label>
+      </ResponsiveGrid>
+    </NavLink>
   )
 }
 

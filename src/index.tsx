@@ -1,5 +1,6 @@
 import 'inter-ui'
 import '@reach/dialog/styles.css'
+import './components/analytics'
 
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client'
 
@@ -31,8 +32,6 @@ const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 if (!!window.ethereum) {
   window.ethereum.autoRefreshOnNetworkChange = false
 }
-
-const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
 
 const client = new ApolloClient({
   uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb',

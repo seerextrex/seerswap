@@ -33,6 +33,8 @@ import { tryParseTick } from './utils'
 import { usePool } from 'hooks/usePools'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
+import ReactGA from 'react-ga'
+
 export function useV3MintState(): AppState['mintV3'] {
   return useAppSelector((state) => state.mintV3)
 }

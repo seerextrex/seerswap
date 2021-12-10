@@ -55,7 +55,7 @@ export const Input = React.memo(function InnerInput({
   prependSymbol?: string | undefined
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const enforcer = (nextUserInput: string) => {
-    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput.trim()))) {
       onUserInput(nextUserInput)
     }
   }

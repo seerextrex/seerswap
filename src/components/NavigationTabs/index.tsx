@@ -90,8 +90,9 @@ export function FindPoolTabs({ origin }: { origin: string }) {
           <StyledArrowLeft />
         </HistoryLink>
         <ActiveText>
-          <Trans>Import V2 Pool</Trans>
+          <Trans>Migrate from SushiSwap or QuickSwap</Trans>
         </ActiveText>
+        <div></div>
       </RowBetween>
     </Tabs>
   )

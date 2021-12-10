@@ -31,11 +31,18 @@ import MigrateV2 from './MigrateV2'
 import { InfoPage } from './InfoPage'
 import { ExternalLink } from 'react-feather'
 import Modal from '../components/Modal'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
 import { useInfoSubgraph } from '../hooks/subgraph/useInfoSubgraph'
 import FeeChartRangeInput from '../components/FeeChartRangeInput'
+import PoolInfoPage from './PoolInfoPage'
+import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
+
+import * as Sentry from '@sentry/react'
+import { Integrations } from '@sentry/tracing'
+
+import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -82,20 +89,35 @@ const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 `
+
+Sentry.init({
+  dsn: 'https://fbf2161b766648b58456a3501f72e21a@o1085550.ingest.sentry.io/6096418',
+  integrations: [
+    new Integrations.BrowserTracing(),
+    new OfflineIntegration({
+      maxStoredEvents: 30,
+    }),
+    new CaptureConsoleIntegration({
+      levels: ['error'],
+    }),
+  ],
+  tracesSampleRate: 1.0,
+  attachStacktrace: true,
+})
+
 export default function App() {
-  //TODO
   Object.defineProperty(Pool.prototype, 'tickSpacing', {
     get() {
       return 60
     },
   })
 
-
   return (
-    <ErrorBoundary>
+    <Sentry.ErrorBoundary>
       <GlobalStyle />
       <Route component={DarkModeQueryParamReader} />
       <Route component={ApeModeQueryParamReader} />
+      <Route component={GoogleAnalyticsReporter} />
       <Web3ReactManager>
         <AppWrapper>
           <CautionModal />
@@ -154,13 +176,12 @@ export default function App() {
               <Route exact strict path="/migrate" component={MigrateV2} />
               <Route exact strict path="/migrate/:address" component={MigrateV2Pair} />
 
-
               <Route component={RedirectPathToSwapOnly} />
             </Switch>
             <Marginer />
           </BodyWrapper>
         </AppWrapper>
       </Web3ReactManager>
-    </ErrorBoundary>
+    </Sentry.ErrorBoundary>
   )
 }

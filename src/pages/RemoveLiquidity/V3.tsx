@@ -35,6 +35,8 @@ import Toggle from 'components/Toggle'
 import { t, Trans } from '@lingui/macro'
 import { SupportedChainId } from 'constants/chains'
 
+import ReactGA from 'react-ga'
+
 const DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
 // redirect invalid tokenIds
@@ -136,13 +138,18 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         const newTxn = {
           ...txn,
           gasLimit: calculateGasMargin(chainId, estimate),
-          gasPrice: 70000000000
+          gasPrice: 70000000000,
         }
 
         return library
           .getSigner()
           .sendTransaction(newTxn)
           .then((response: TransactionResponse) => {
+            ReactGA.event({
+              category: 'Liquidity',
+              action: 'RemoveV3',
+              label: [liquidityValue0.currency.symbol, liquidityValue1.currency.symbol].join('/'),
+            })
             setTxnHash(response.hash)
             setAttemptingTxn(false)
             addTransaction(response, {

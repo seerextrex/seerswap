@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components/macro'
 import { anonymizeLink } from '../utils/anonymizeLink'
 
+import ReactGA from 'react-ga'
+
 export const ButtonText = styled.button`
   outline: none;
   border: none;
@@ -173,8 +175,14 @@ function handleClickExternalLink(event: React.MouseEvent<HTMLAnchorElement>) {
 
   // don't prevent default, don't redirect if it's a new tab
   if (target === '_blank' || event.ctrlKey || event.metaKey) {
+    ReactGA.outboundLink({ label: anonymizedHref }, () => {
+      window.location.href = anonymizedHref
+    })
   } else {
     event.preventDefault()
+    ReactGA.outboundLink({ label: anonymizedHref }, () => {
+      window.location.href = anonymizedHref
+    })
   }
 }
 

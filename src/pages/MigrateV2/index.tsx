@@ -104,32 +104,31 @@ export default function MigrateV2() {
   const tokenPairsWithSushiBalance = useMemo(() => {
     if (fetchingPairBalances) return []
 
-    console.log(
-      'sushi',
-      tokenPairsWithLiquidityTokens.filter(
+    return tokenPairsWithLiquidityTokens
+      .filter(
         ({ sushiLiquidityToken }) => !!sushiLiquidityToken && pairBalances[sushiLiquidityToken.address]?.greaterThan(0)
       )
-    )
-
-    return tokenPairsWithLiquidityTokens.filter(
-      ({ sushiLiquidityToken }) => !!sushiLiquidityToken && pairBalances[sushiLiquidityToken.address]?.greaterThan(0)
-    )
+      .map((tokenPairsWithLiquidityTokens) => tokenPairsWithLiquidityTokens.tokens)
   }, [fetchingPairBalances, tokenPairsWithLiquidityTokens, pairBalances])
 
   const v2Pairs = useV2Pairs(tokenPairsWithV2Balance)
-  const v2IsLoading = fetchingPairBalances || v2Pairs.some(([pairState]) => pairState === PairState.LOADING)
+  const v2SushiPairs = useV2Pairs(tokenPairsWithSushiBalance, true)
+
+  const v2IsLoading =
+    fetchingPairBalances ||
+    v2Pairs.some(([pairState]) => pairState === PairState.LOADING) ||
+    v2SushiPairs.some(([pairState]) => pairState === PairState.LOADING)
 
   return (
     <>
       <BodyWrapper style={{ padding: 24 }}>
         <AutoColumn gap="16px">
-          <AutoRow style={{ alignItems: 'center', justifyContent: 'space-between' }} gap="8px">
+          <AutoRow style={{ alignItems: 'center', justifyContent: 'center' }} gap="8px">
             <TYPE.mediumHeader>Migrate Liquidity</TYPE.mediumHeader>
           </AutoRow>
 
-          <TYPE.body style={{ marginBottom: 8, fontWeight: 400 }}>
-            For each pool shown below, click migrate to remove your liquidity from previous DEX and deposit it into
-            Algebra.
+          <TYPE.body style={{ marginBottom: 8, fontWeight: 400, textAlign: 'center' }}>
+            Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra.
           </TYPE.body>
 
           {!account ? (
@@ -155,7 +154,20 @@ export default function MigrateV2() {
                     ))}
                 </>
               )}
-              {tokenPairsWithSushiBalance.length > 0 && (
+              {v2SushiPairs.filter(([, pair]) => !!pair).length > 0 && (
+                <>
+                  {v2SushiPairs
+                    .filter(([, pair]) => !!pair)
+                    .map(([, pair]) => (
+                      <MigrateV2PositionCard
+                        key={(pair as Pair).liquidityToken.address}
+                        sushi={true}
+                        pair={pair as Pair}
+                      />
+                    ))}
+                </>
+              )}
+              {/* {tokenPairsWithSushiBalance.length > 0 && (
                 <>
                   {tokenPairsWithSushiBalance.map(({ sushiLiquidityToken, tokens }) => {
                     return (
@@ -168,16 +180,16 @@ export default function MigrateV2() {
                     )
                   })}
                 </>
-              )}
+              )} */}
             </>
           ) : (
             <EmptyState message={'No liquidity found.'} />
           )}
           <AutoColumn justify={'center'} gap="md">
             <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-              Don’t see one of your tokens?{' '}
+              Don’t see one of your pools?{' '}
               <StyledInternalLink id="import-pool-link" to={'/pool/v2/find'}>
-                Import it.
+                Find it.
               </StyledInternalLink>
             </Text>
           </AutoColumn>

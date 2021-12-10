@@ -23,6 +23,8 @@ import PendingView from './PendingView'
 import { LightCard } from '../Card'
 import { Frown } from 'react-feather'
 
+import ReactGA from 'react-ga'
+
 const CloseIcon = styled.div`
   position: absolute;
   right: 1rem;
@@ -168,6 +170,12 @@ export default function WalletModal({
       return true
     })
     // log selected wallet
+
+    ReactGA.event({
+      category: 'Wallet',
+      action: 'Change Wallet',
+      label: name,
+    })
 
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)

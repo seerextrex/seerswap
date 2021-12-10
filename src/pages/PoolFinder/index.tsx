@@ -48,12 +48,17 @@ export default function PoolFinder() {
   const [currency1, setCurrency1] = useState<Currency | null>(null)
 
   const [pairState, pair] = useV2Pair(currency0 ?? undefined, currency1 ?? undefined)
+  const [sushiPairState, sushiPair] = useV2Pair(currency0 ?? undefined, currency1 ?? undefined, true)
+
   const addPair = usePairAdder()
   useEffect(() => {
     if (pair) {
       addPair(pair)
     }
-  }, [pair, addPair])
+    if (sushiPair) {
+      addPair(sushiPair)
+    }
+  }, [pair, sushiPair, addPair])
 
   const validPairNoLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
@@ -64,8 +69,23 @@ export default function PoolFinder() {
         JSBI.equal(pair.reserve1.quotient, JSBI.BigInt(0))
     )
 
+  const validSushiPairNoLiquidity: boolean =
+    sushiPairState === PairState.NOT_EXISTS ||
+    Boolean(
+      sushiPairState === PairState.EXISTS &&
+        sushiPair &&
+        JSBI.equal(sushiPair.reserve0.quotient, JSBI.BigInt(0)) &&
+        JSBI.equal(sushiPair.reserve1.quotient, JSBI.BigInt(0))
+    )
+
   const position: CurrencyAmount<Token> | undefined = useTokenBalance(account ?? undefined, pair?.liquidityToken)
   const hasPosition = Boolean(position && JSBI.greaterThan(position.quotient, JSBI.BigInt(0)))
+
+  const sushiPosition: CurrencyAmount<Token> | undefined = useTokenBalance(
+    account ?? undefined,
+    sushiPair?.liquidityToken
+  )
+  const hasSushiPosition = Boolean(sushiPosition && JSBI.greaterThan(sushiPosition.quotient, JSBI.BigInt(0)))
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -88,7 +108,7 @@ export default function PoolFinder() {
         {!account ? (
           <Trans>Connect to a wallet to find pools</Trans>
         ) : (
-          <Trans>Select a token to find your v2 liquidity.</Trans>
+          <Trans>Select a token to find your liquidity on SushiSwap or QuickSwap.</Trans>
         )}
       </Text>
     </LightCard>
@@ -103,7 +123,7 @@ export default function PoolFinder() {
             <AutoColumn gap="10px">
               <TYPE.link fontWeight={400} color={'primaryText1'}>
                 <Trans>
-                  <b>Tip:</b> Use this tool to find v2 pools that don&apos;t automatically appear in the interface.
+                  <b>Tip:</b> Use this tool to find SushiSwap or QuickSwap pools.
                 </Trans>
               </TYPE.link>
             </AutoColumn>
@@ -152,51 +172,32 @@ export default function PoolFinder() {
             )}
           </ButtonDropdownLight>
 
-          {hasPosition && (
-            <ColumnCenter
-              style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '12px' }}
-            >
-              <Text textAlign="center" fontWeight={500}>
-                <Trans>Pool Found!</Trans>
-              </Text>
-              {/* <StyledInternalLink to={`/pool/v2`}>
-                <Text textAlign="center">
-                  <Trans>Manage this pool.</Trans>
+          {hasPosition ||
+            (hasSushiPosition && (
+              <ColumnCenter
+                style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '12px' }}
+              >
+                <Text textAlign="center" fontWeight={500}>
+                  <Trans>Pool Found!</Trans>
                 </Text>
-              </StyledInternalLink> */}
-            </ColumnCenter>
-          )}
-
+              </ColumnCenter>
+            ))}
           {currency0 && currency1 ? (
-            pairState === PairState.EXISTS ? (
-              hasPosition && pair ? (
-                <MinimalPositionCard pair={pair} border="1px solid #CED0D9" />
-              ) : (
-                <LightCard padding="45px 10px">
-                  <AutoColumn gap="sm" justify="center">
-                    <Text textAlign="center">
-                      <Trans>You don’t have liquidity in this pool yet.</Trans>
-                    </Text>
-                    <StyledInternalLink to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
-                      <Text textAlign="center">
-                        <Trans>Add liquidity.</Trans>
-                      </Text>
-                    </StyledInternalLink>
-                  </AutoColumn>
-                </LightCard>
-              )
-            ) : validPairNoLiquidity ? (
-              <LightCard padding="45px 10px">
-                <AutoColumn gap="sm" justify="center">
-                  <Text textAlign="center">
-                    <Trans>No pool found.</Trans>
-                  </Text>
-                  <StyledInternalLink to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
-                    <Trans>Create pool.</Trans>
-                  </StyledInternalLink>
-                </AutoColumn>
-              </LightCard>
-            ) : pairState === PairState.INVALID ? (
+            pairState === PairState.EXISTS || sushiPairState === PairState.EXISTS ? (
+              <>
+                {sushiPairState === PairState.EXISTS ? (
+                  hasSushiPosition &&
+                  sushiPair && <MinimalPositionCard sushi={true} pair={sushiPair} border="1px solid #CED0D9" />
+                ) : (
+                  <></>
+                )}
+                {pairState === PairState.EXISTS ? (
+                  hasPosition && pair && <MinimalPositionCard pair={pair} border="1px solid #CED0D9" />
+                ) : (
+                  <></>
+                )}
+              </>
+            ) : pairState === PairState.INVALID && sushiPairState === PairState.INVALID ? (
               <LightCard padding="45px 10px">
                 <AutoColumn gap="sm" justify="center">
                   <Text textAlign="center" fontWeight={500}>
@@ -204,7 +205,7 @@ export default function PoolFinder() {
                   </Text>
                 </AutoColumn>
               </LightCard>
-            ) : pairState === PairState.LOADING ? (
+            ) : pairState === PairState.LOADING || sushiPairState === PairState.LOADING ? (
               <LightCard padding="45px 10px">
                 <AutoColumn gap="sm" justify="center">
                   <Text textAlign="center">
@@ -217,6 +218,13 @@ export default function PoolFinder() {
           ) : (
             prerequisiteMessage
           )}
+          {/* {currency0 &&
+            currency1 &&
+            pairState !== PairState.LOADING &&
+            sushiPairState !== PairState.LOADING &&
+            (pairState !== PairState.EXISTS || sushiPairState !== PairState.NOT) && (
+              <div style={{ padding: '1rem', textAlign: 'center' }}>No pools</div>
+            )} */}
         </AutoColumn>
 
         <CurrencySearchModal

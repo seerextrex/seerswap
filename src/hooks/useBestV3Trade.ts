@@ -133,6 +133,8 @@ export function useBestV3TradeExactOut(
     gasRequired: chainId ? QUOTE_GAS_OVERRIDES[chainId] ?? DEFAULT_GAS_QUOTE : undefined,
   })
 
+
+
   return useMemo(() => {
     if (!amountOut || !currencyIn || quotesResults.some(({ valid }) => !valid)) {
       return {
@@ -151,6 +153,7 @@ export function useBestV3TradeExactOut(
     const { bestRoute, amountIn } = quotesResults.reduce(
       (currentBest: { bestRoute: Route<Currency, Currency> | null; amountIn: BigNumber | null }, { result }, i) => {
         if (!result) return currentBest
+
 
         if (currentBest.amountIn === null) {
           return {

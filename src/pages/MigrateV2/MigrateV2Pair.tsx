@@ -51,6 +51,9 @@ import { currencyId } from '../../utils/currencyId'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { BodyWrapper } from '../AppBody'
 import { BigNumber } from '@ethersproject/bignumber'
+import { Link } from 'react-router-dom'
+
+import ReactGA from 'react-ga'
 
 const ZERO = JSBI.BigInt(0)
 
@@ -78,7 +81,7 @@ function LiquidityInfo({
     <AutoColumn gap="8px">
       <RowBetween>
         <RowFixed>
-          <CurrencyLogo size="20px" style={{ marginRight: '8px' }} currency={currency0} />
+          <CurrencyLogo size="24px" style={{ marginRight: '8px' }} currency={currency0} />
           <Text fontSize={16} fontWeight={500}>
             {currency0.symbol}
           </Text>
@@ -89,7 +92,7 @@ function LiquidityInfo({
       </RowBetween>
       <RowBetween>
         <RowFixed>
-          <CurrencyLogo size="20px" style={{ marginRight: '8px' }} currency={currency1} />
+          <CurrencyLogo size="24px" style={{ marginRight: '8px' }} currency={currency1} />
           <Text fontSize={16} fontWeight={500}>
             {currency1.symbol}
           </Text>
@@ -167,13 +170,23 @@ function V2PairMigration({
   )
   const v3SpotPrice = poolState === PoolState.EXISTS ? pool?.token0Price : undefined
 
-  let priceDifferenceFraction: Fraction | undefined =
-    v2SpotPrice && v3SpotPrice ? v3SpotPrice.divide(v2SpotPrice).subtract(1).multiply(100) : undefined
-  if (priceDifferenceFraction?.lessThan(ZERO)) {
+  let priceDifferenceFraction: Fraction | string | undefined =
+    v2SpotPrice && v3SpotPrice
+      ? v2SpotPrice.divide(v3SpotPrice).greaterThan(10000)
+        ? '> 1000'
+        : v3SpotPrice.divide(v2SpotPrice).subtract(1).multiply(100)
+      : undefined
+
+  if (typeof priceDifferenceFraction !== 'string' && priceDifferenceFraction?.lessThan(ZERO)) {
     priceDifferenceFraction = priceDifferenceFraction.multiply(-1)
   }
 
-  const largePriceDifference = priceDifferenceFraction && !priceDifferenceFraction?.lessThan(JSBI.BigInt(2))
+  const largePriceDifference = useMemo(() => {
+    if (typeof priceDifferenceFraction === 'string') {
+      return true
+    }
+    return priceDifferenceFraction && !priceDifferenceFraction?.lessThan(JSBI.BigInt(2))
+  }, [priceDifferenceFraction])
 
   // the following is a small hack to get access to price range data/input handlers
   const [baseToken, setBaseToken] = useState(token0)
@@ -329,6 +342,12 @@ function V2PairMigration({
       .multicall(data)
       .then((gasEstimate) => {
         return migrator.multicall(data, { gasLimit: 10000000 }).then((response: TransactionResponse) => {
+          ReactGA.event({
+            category: 'Migrate',
+            action: `${isNotUniswap ? 'SushiSwap' : 'QuickSwap'}->Algebra`,
+            label: `${currency0.symbol}/${currency1.symbol}`,
+          })
+
           addTransaction(response, {
             type: TransactionType.MIGRATE_LIQUIDITY_V3,
             baseCurrencyId: currencyId(currency0),
@@ -373,7 +392,7 @@ function V2PairMigration({
         <AutoColumn gap="lg">
           <RowBetween>
             <RowFixed style={{ marginLeft: '8px' }}>
-              <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={20} />
+              <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={24} />
               <TYPE.mediumHeader style={{ marginLeft: '8px' }}>
                 {currency0.symbol}/{currency1.symbol} LP Tokens
               </TYPE.mediumHeader>
@@ -400,7 +419,7 @@ function V2PairMigration({
         <AutoColumn gap="lg">
           <RowBetween>
             <RowFixed style={{ marginLeft: '8px' }}>
-              <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={20} />
+              <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={24} />
               <TYPE.mediumHeader style={{ marginLeft: '8px' }}>
                 {currency0.symbol}/{currency1.symbol} LP NFT
               </TYPE.mediumHeader>
@@ -458,7 +477,9 @@ function V2PairMigration({
                   <TYPE.black fontSize={14}>
                     {invertPrice
                       ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${currency0.symbol}`
-                      : `${v3SpotPrice?.toSignificant(6)} ${currency1.symbol}`}
+                      : `${
+                          Number(v3SpotPrice?.toSignificant(6)) < 0.0001 ? '< 0.0001' : v3SpotPrice?.toSignificant(6)
+                        } ${currency1.symbol}`}
                   </TYPE.black>
                 </RowBetween>
 
@@ -467,7 +488,11 @@ function V2PairMigration({
                     Price Difference:
                   </TYPE.body>
                   <TYPE.black fontSize={14} color="inherit">
-                    {priceDifferenceFraction?.toSignificant(4)}%
+                    {`${
+                      typeof priceDifferenceFraction !== 'string'
+                        ? priceDifferenceFraction?.toSignificant(4)
+                        : priceDifferenceFraction
+                    }%`}
                   </TYPE.black>
                 </RowBetween>
               </AutoColumn>
@@ -582,20 +607,20 @@ function V2PairMigration({
             ) : null}
             <AutoColumn gap="12px" style={{ flex: '1' }}>
               <ButtonConfirmed
-                confirmed={isSuccessfullyMigrated}
                 disabled={
                   !v3Amount0Min ||
                   !v3Amount1Min ||
                   invalidRange ||
                   (approval !== ApprovalState.APPROVED && signatureData === null) ||
                   confirmingMigration ||
-                  isMigrationPending ||
-                  isSuccessfullyMigrated
+                  isMigrationPending
                 }
-                onClick={migrate}
+                as={isSuccessfullyMigrated ? Link : null}
+                to={`/pool`}
+                onClick={isSuccessfullyMigrated ? null : migrate}
               >
                 {isSuccessfullyMigrated ? (
-                  'Success!'
+                  'Success! View pools'
                 ) : isMigrationPending ? (
                   <Dots>Migrating</Dots>
                 ) : (
@@ -675,7 +700,7 @@ export default function MigrateV2Pair({
   return (
     <BodyWrapper style={{ padding: 24 }}>
       <AutoColumn gap="16px">
-        <AutoRow style={{ alignItems: 'center', justifyContent: 'space-between' }} gap="8px">
+        <AutoRow style={{ alignItems: 'center', justifyContent: 'center' }} gap="8px">
           <TYPE.mediumHeader>Migrate Liquidity</TYPE.mediumHeader>
           <SettingsTab placeholderSlippage={DEFAULT_MIGRATE_SLIPPAGE_TOLERANCE} />
         </AutoRow>

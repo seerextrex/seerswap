@@ -24,6 +24,8 @@ import ImportRow from './ImportRow'
 import { Edit } from 'react-feather'
 import useDebounce from 'hooks/useDebounce'
 
+import ReactGA from 'react-ga'
+
 const ContentWrapper = styled(Column)`
   width: 100%;
   flex: 1 1;
@@ -88,9 +90,13 @@ export function CurrencySearch({
   const searchTokenIsAdded = useIsUserAddedToken(searchToken)
 
   useEffect(() => {
-    // if (isAddressSearch) {
-    // }
-    console.log()
+    if (isAddressSearch) {
+      ReactGA.event({
+        category: 'Currency Select',
+        action: 'Search by address',
+        label: isAddressSearch,
+      })
+    }
   }, [isAddressSearch])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)

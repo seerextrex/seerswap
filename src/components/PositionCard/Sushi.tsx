@@ -24,7 +24,7 @@ import Badge, { BadgeVariant } from 'components/Badge'
 const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   border: none;
   background: ${({ theme, bgColor }) =>
-          `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
+    `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
   position: relative;
   overflow: hidden;
   @media screen and (min-width: 501px) {
@@ -74,11 +74,11 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
         <ArrowLeft />
       </ArrowBack>
       <CardNoise />
-      <AutoColumn gap='12px'>
+      <AutoColumn gap="12px">
         <FixedHeightRow>
           <AutoRow gap="8px">
             <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
-            <Text fontWeight={500} fontSize={20}>
+            <TextStyled fontWeight={500} fontSize={20}>
               {!currency0 || !currency1 ? (
                 <Dots>
                   <Trans>Loading</Trans>
@@ -104,11 +104,11 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
               SushiSwap
             </Badge>
           </AutoRow>
-          <RowFixed gap="8px" style={{ minWidth: '110px' }}>
+          <RowFixedStyled gap="8px" style={{ minWidth: '110px' }}>
             <ButtonEmpty
-              padding='0px 35px 0px 0px'
-              $borderRadius='12px'
-              width='fit-content'
+              padding="0px 35px 0px 0px"
+              $borderRadius="12px"
+              width="fit-content"
               as={Link}
               to={`/migrate/${liquidityToken.address}`}
             >

@@ -21,7 +21,7 @@ export const blockClient = new ApolloClient({
 })
 
 export const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb',
+    uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -36,7 +36,7 @@ export const client = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb-farming',
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -48,19 +48,4 @@ export const farmingClient = new ApolloClient({
             errorPolicy: 'all',
         },
     },
-})
-
-export const testClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/fuzzyswap',
-    cache: new InMemoryCache(),
-    queryDeduplication: true,
-    defaultOptions: {
-        watchQuery: {
-            fetchPolicy: 'no-cache',
-        },
-        query: {
-            fetchPolicy: 'no-cache',
-            errorPolicy: 'all',
-        },
-    }
 })

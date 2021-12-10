@@ -26,7 +26,7 @@ export function useInfoSubgraph() {
 
     const { chainId, account } = useActiveWeb3React()
 
-    const { dataClient, testClient } = useClients()
+    const { dataClient } = useClients()
 
     const [t24, t48, tWeek] = useDeltaTimestamps()
 
@@ -101,9 +101,9 @@ export function useInfoSubgraph() {
                 const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
                 const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
 
-                const priceUSD = current ? parseFloat(current.derivedETH) * ethPrices.current : 0
-                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedETH) * ethPrices.oneDay : 0
-                const priceUSDWeek = week ? parseFloat(week.derivedETH) * ethPrices.week : 0
+                const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
+                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
+                const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
 
                 const priceUSDChange =
                     priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
@@ -213,9 +213,9 @@ export function useInfoSubgraph() {
                 const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
                 const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
                 const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
-                const priceUSD = current ? parseFloat(current.derivedETH) * ethPrices.current : 0
-                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedETH) * ethPrices.oneDay : 0
-                const priceUSDWeek = week ? parseFloat(week.derivedETH) * ethPrices.week : 0
+                const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
+                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
+                const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
                 const priceUSDChange =
                     priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
                 const priceUSDChangeWeek =

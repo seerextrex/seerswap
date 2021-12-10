@@ -110,6 +110,86 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "incentiveId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "rewardAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "bonusRewardToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "reward",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "bonusReward",
+        "type": "uint256"
+      }
+    ],
+    "name": "FarmEnded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "L2tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "incentiveId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint128",
+        "name": "liquidity",
+        "type": "uint128"
+      }
+    ],
+    "name": "FarmStarted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "contract IERC20Minimal",
         "name": "rewardToken",
         "type": "address"
@@ -172,6 +252,25 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "incentiveMaker",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_incentiveMaker",
+        "type": "address"
+      }
+    ],
+    "name": "IncentiveMakerChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "to",
         "type": "address"
       },
@@ -223,86 +322,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "incentiveId",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "rewardAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "bonusRewardToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "reward",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "bonusReward",
-        "type": "uint256"
-      }
-    ],
-    "name": "farmEnded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "L2tokenId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "incentiveId",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "liquidity",
-        "type": "uint128"
-      }
-    ],
-    "name": "farmStarted",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "DOMAIN_SEPARATOR",
     "outputs": [
@@ -313,56 +332,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "contract IERC20Minimal",
-            "name": "rewardToken",
-            "type": "address"
-          },
-          {
-            "internalType": "contract IERC20Minimal",
-            "name": "bonusRewardToken",
-            "type": "address"
-          },
-          {
-            "internalType": "contract IAlgebraPool",
-            "name": "pool",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "startTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "endTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "refundee",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IAlgebraFarming.IncentiveKey",
-        "name": "key",
-        "type": "tuple"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "enterFarming",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -543,7 +512,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "_tokenId",
+        "name": "L2TokenId",
         "type": "uint256"
       },
       {
@@ -610,6 +579,56 @@
         "type": "uint256"
       }
     ],
+    "name": "enterFarming",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "contract IERC20Minimal",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IERC20Minimal",
+            "name": "bonusRewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IAlgebraPool",
+            "name": "pool",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "refundee",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IAlgebraFarming.IncentiveKey",
+        "name": "key",
+        "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
     "name": "exitFarming",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -619,12 +638,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "bytes32",
-        "name": "incentiveId",
+        "name": "",
         "type": "bytes32"
       }
     ],
@@ -632,7 +651,7 @@
     "outputs": [
       {
         "internalType": "uint128",
-        "name": "liquidity",
+        "name": "",
         "type": "uint128"
       }
     ],

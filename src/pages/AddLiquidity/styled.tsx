@@ -14,6 +14,10 @@ export const PageWrapper = styled(BodyWrapper)<{ wide: boolean }>`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     max-width: 480px;
   `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    max-width: 100%!important;
+    overflow-x: scroll;
+  `};
 `
 
 export const Wrapper = styled.div`

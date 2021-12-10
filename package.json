@@ -162,6 +162,9 @@
   "dependencies": {
     "@apollo/client": "^3.4.11",
     "@fontsource/montserrat": "^4.5.1",
+    "@sentry/integrations": "^6.15.0",
+    "@sentry/react": "^6.15.0",
+    "@sentry/tracing": "^6.15.0",
     "bignumber.js": "^9.0.1",
     "hash-emoji": "^0.0.4",
     "numbro": "^2.3.5",

@@ -45,6 +45,8 @@ import SettingsTab from '../../components/Settings'
 import { RowFixed } from '../../components/Row'
 import usePrevious from '../../hooks/usePrevious'
 
+import ReactGA from 'react-ga'
+
 const pulsating = (color: string) => keyframes`
   0% {
     border-color: rgba(32, 38, 53, 1);
@@ -879,7 +881,20 @@ export default function AddLiquidityPage({
                           initial={noLiquidity}
                           disabled={!startPriceTypedValue && !price}
                         />
-                        {!noLiquidity && <FullRangeButton onClick={getSetFullRange}>Full Range</FullRangeButton>}
+                        {!noLiquidity && (
+                          <FullRangeButton
+                            onClick={() => {
+                              getSetFullRange()
+
+                              ReactGA.event({
+                                category: 'Liquidity',
+                                action: 'Full Range Clicked',
+                              })
+                            }}
+                          >
+                            Full Range
+                          </FullRangeButton>
+                        )}
                       </PriceRangeInputs>
 
                       {/* <Row>

@@ -466,9 +466,12 @@ export function StakerEventCard({
           <Subtitle>Reward</Subtitle>
           <RewardSymbol>{rewardToken}</RewardSymbol>
         </div>
-        <RewardAmount title={reward}>
+        {
+          reward &&
+          <RewardAmount title={reward}>
           {('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}
         </RewardAmount>
+        }
       </RewardWrapper>
       <div style={{ position: 'relative' }}>
         <div
@@ -494,19 +497,27 @@ export function StakerEventCard({
           <Subtitle style={{ color: '#ef71b8' }}>Bonus</Subtitle>
           <RewardSymbol>{bonusRewardToken}</RewardSymbol>
         </div>
-        <RewardAmount title={bonusReward}>
+        {
+          bonusReward &&
+          <RewardAmount title={bonusReward}>
           {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
         </RewardAmount>
+        }
       </RewardWrapper>
       <StakeInfo active>
         <div>
           <>
             <Subtitle>Start</Subtitle>
             <div>
-              <span>{new Date(startTime * 1000).toLocaleString().split(',')[0]}</span>
+              <span>{
+                startTime &&
+                new Date(startTime * 1000).toLocaleString().split(',')[0]
+              }</span>
             </div>
             <div>
-              <span>{`${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+              <span>{startTime &&
+              `${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`
+              }</span>
             </div>
           </>
         </div>
@@ -514,10 +525,16 @@ export function StakerEventCard({
         <div>
           <Subtitle>End</Subtitle>
           <div>
-            <span>{new Date(endTime * 1000).toLocaleString().split(',')[0]}</span>
+            <span>{
+              endTime &&
+              new Date(endTime * 1000).toLocaleString().split(',')[0]
+            }</span>
           </div>
           <div>
-            <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+            {
+              endTime &&
+              <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+            }
           </div>
         </div>
       </StakeInfo>

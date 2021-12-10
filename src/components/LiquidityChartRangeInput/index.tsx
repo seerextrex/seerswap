@@ -17,6 +17,8 @@ import { Bound } from 'state/mint/v3/actions'
 import { FeeAmount } from 'lib/src'
 import { ZoomLevels } from './types'
 
+import ReactGA from 'react-ga'
+
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOW]: {
     initialMin: 0.5,
@@ -140,6 +142,14 @@ export default function LiquidityChartRangeInput({
     },
     [price, ticksAtLimit]
   )
+
+  if (isError) {
+    ReactGA.exception({
+      ...error,
+      category: 'Liquidity',
+      fatal: false,
+    })
+  }
 
   return (
     <AutoColumn gap="md" style={{ minHeight: '200px' }}>

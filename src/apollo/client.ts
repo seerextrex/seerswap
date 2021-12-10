@@ -49,3 +49,18 @@ export const farmingClient = new ApolloClient({
         },
     },
 })
+
+export const testClient = new ApolloClient({
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/fuzzyswap',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    }
+})

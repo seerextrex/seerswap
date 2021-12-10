@@ -55,6 +55,8 @@ import { Link } from 'react-router-dom'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 import usePrevious from '../../hooks/usePrevious'
 
+import ReactGA from 'react-ga'
+
 const ZERO = JSBI.BigInt(0)
 
 const DEFAULT_MIGRATE_SLIPPAGE_TOLERANCE = new Percent(75, 10_000)
@@ -353,6 +355,12 @@ function V2PairMigration({
       .multicall(data)
       .then((gasEstimate) => {
         return migrator.multicall(data, { gasLimit: 10000000 }).then((response: TransactionResponse) => {
+          ReactGA.event({
+            category: 'Migrate',
+            action: `${isNotUniswap ? 'SushiSwap' : 'QuickSwap'}->Algebra`,
+            label: `${currency0.symbol}/${currency1.symbol}`,
+          })
+
           addTransaction(response, {
             type: TransactionType.MIGRATE_LIQUIDITY_V3,
             baseCurrencyId: currencyId(currency0),

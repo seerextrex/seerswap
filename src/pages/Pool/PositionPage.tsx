@@ -47,6 +47,8 @@ import { formatTickPrice } from 'utils/formatTickPrice'
 import { SupportedChainId } from 'constants/chains'
 import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 
+import ReactGA from 'react-ga'
+
 const PageWrapper = styled.div`
   min-width: 800px;
   max-width: 960px;
@@ -499,6 +501,12 @@ export function PositionPage({
           .then((response: TransactionResponse) => {
             setCollectMigrationHash(response.hash)
             setCollecting(false)
+
+            ReactGA.event({
+              category: 'Liquidity',
+              action: 'CollectV3',
+              label: [feeValue0.currency.symbol, feeValue1.currency.symbol].join('/'),
+            })
 
             addTransaction(response, {
               summary: `Collect ${feeValue0.currency.symbol}/${feeValue1.currency.symbol} fees`,

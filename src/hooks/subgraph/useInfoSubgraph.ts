@@ -3,7 +3,13 @@ import { useState } from "react";
 import { Contract, providers } from "ethers";
 import { useActiveWeb3React } from "../web3";
 import { useClients } from "./useClients";
-import { POOLS_FROM_ADDRESSES, TOKENS_FROM_ADDRESSES, TOP_POOLS, TOP_TOKENS } from "../../utils/graphql-queries";
+import {
+    FETCH_FEE_FROM_POOL,
+    POOLS_FROM_ADDRESSES,
+    TOKENS_FROM_ADDRESSES,
+    TOP_POOLS,
+    TOP_TOKENS
+} from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
 import { useDeltaTimestamps } from "../../utils/queries";
@@ -21,7 +27,7 @@ export function useInfoSubgraph() {
 
     const { chainId, account } = useActiveWeb3React()
 
-    const { dataClient } = useClients()
+    const { dataClient, testClient } = useClients()
 
     const [t24, t48, tWeek] = useDeltaTimestamps()
 
@@ -35,6 +41,9 @@ export function useInfoSubgraph() {
 
     const [tokensResult, setTokens] = useState(null);
     const [tokensLoading, setTokensLoading] = useState(null);
+
+    const [feesResult, setFees] = useState(null);
+    const [feesLoading, setFeesLoading] = useState(null);
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -142,8 +151,8 @@ export function useInfoSubgraph() {
             setPools(Object.values(formatted))
 
         } catch (err) {
-            console.error('Info pools fetch', err)
             setPools('failed')
+            throw new Error('Info pools fetch ' + err)
         }
 
         setPoolsLoading(false)
@@ -249,8 +258,8 @@ export function useInfoSubgraph() {
             setTokens(Object.values(formatted))
 
         } catch (err) {
-            console.error('Info tokens fetch', err)
             setTokens('failed')
+            throw new Error('Info tokens fetching ' + err)
         }
 
         setTokensLoading(false)
@@ -270,8 +279,7 @@ export function useInfoSubgraph() {
             return tokens
 
         } catch (err) {
-            console.error('Tokens by time fetch', err);
-            return undefined
+            throw new Error('Tokens fetching by time ' + err)
         }
 
     }
@@ -291,16 +299,36 @@ export function useInfoSubgraph() {
             return pools
 
         } catch (err) {
-            console.error('Pools by time fetch', err);
-            return undefined
+            throw new Error('Pools by time fetching ' + err)
         }
 
+    }
+
+    async function fetchFeePool(pool: string, timestampStart: number, timestampFinish: number) {
+        try {
+            setFeesLoading(true)
+            const {data: { feeHourDatas }, error: error} = await testClient.query({
+                query: FETCH_FEE_FROM_POOL(pool, timestampStart, timestampFinish),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            setFees(feeHourDatas)
+
+        } catch (err) {
+            console.error('Fees failed: ', err);
+            setFees('Failed')
+        }
+
+        setFeesLoading(false)
     }
 
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
+        fetchFees: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool}
     }
 
 

@@ -33,6 +33,9 @@ const RowFixedStyled = styled(RowFixed)`
   min-height: 55px;
   justify-content: space-between;
   flex-direction: column;
+  @media screen and (min-width: 501px) {
+  justify-content: center;
+}
 `
 
 const TextStyled = styled(Text)`

@@ -1,5 +1,9 @@
 overrideExisting: true
-schema: ['https://api.thegraph.com/subgraphs/name/iliaazhel/karasb', 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb-farming', 'https://api.thegraph.com/subgraphs/name/iliaazhel/fuzzyswap']
+schema:
+  [
+    'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb',
+    'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb-farming',
+  ]
 documents: 'src/**/!(*.d).{ts,tsx}'
 generates:
   ./src/state/data/generated.ts:

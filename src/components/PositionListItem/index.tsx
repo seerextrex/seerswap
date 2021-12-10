@@ -282,7 +282,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     <LinkRow to={positionSummaryLink} onFarming={_onFarming}>
       <RowBetween>
         <PrimaryPositionIdData>
-          <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={18} margin />
+          <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin />
           <DataText>
             &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
           </DataText>

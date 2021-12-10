@@ -96,24 +96,28 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
     <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
       <Label>{index + 1}</Label>
       <Label>
-        <LinkWrapper href={`https://polygonscan.com/address/${tokenData.address}`} rel="noopener noreferrer" target="_blank">
-        <RowFixed>
-          <ResponsiveLogo address={tokenData.address} />
-        </RowFixed>
-        <ExtraSmallOnly style={{ marginLeft: '6px' }}>
-          <Label ml="8px">{tokenData.symbol}</Label>
-        </ExtraSmallOnly>
-        <HideExtraSmall style={{ marginLeft: '10px' }}>
+        <LinkWrapper
+          href={`https://polygonscan.com/address/${tokenData.address}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
           <RowFixed>
-            <HoverInlineText text={tokenData.name} />
-            <Label ml="8px" color={theme.text3}>
-              ({tokenData.symbol})
-            </Label>
+            <ResponsiveLogo address={tokenData.address} />
           </RowFixed>
-        </HideExtraSmall>
-        <div style={{marginLeft: '8px'}}>
-          <ExternalLink size={16} color={'white'}/>
-        </div>
+          <ExtraSmallOnly style={{ marginLeft: '6px' }}>
+            <Label ml="8px">{tokenData.symbol}</Label>
+          </ExtraSmallOnly>
+          <HideExtraSmall style={{ marginLeft: '10px' }}>
+            <RowFixed>
+              <HoverInlineText text={tokenData.name} />
+              <Label ml="8px" color={theme.text3}>
+                ({tokenData.symbol})
+              </Label>
+            </RowFixed>
+          </HideExtraSmall>
+          <div style={{ marginLeft: '8px' }}>
+            <ExternalLink size={16} color={'white'} />
+          </div>
         </LinkWrapper>
       </Label>
       <Label end={1} fontWeight={400}>
@@ -171,6 +175,8 @@ export default function InfoTokensTable({
   }, [maxItems, tokenDatas])
 
   const sortedTokens = useMemo(() => {
+    if (!Array.isArray(tokenDatas)) return []
+
     return tokenDatas
       ? tokenDatas
           .filter((x) => !!x && !TOKEN_HIDE.includes(x.address))

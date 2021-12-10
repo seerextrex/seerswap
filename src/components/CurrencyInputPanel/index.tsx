@@ -90,7 +90,7 @@ const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boole
   ${({ swap }) =>
     swap &&
     css`
-      width: 170px;
+      width: 218px;
     `}
 `
 
@@ -241,7 +241,11 @@ export default function CurrencyInputPanel({
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
         <FixedContainer style={{ height: '80px' }}>
-          <AutoColumn gap="sm" justify="center" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+          <AutoColumn
+            gap="sm"
+            justify="center"
+            style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '18px' }}
+          >
             {/* <Lock /> */}
             <TYPE.label fontSize="14px">
               <Trans>Price is outside specified price range. Single-asset deposit only.</Trans>
@@ -277,7 +281,7 @@ export default function CurrencyInputPanel({
                       <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
                     </span>
                   ) : currency ? (
-                    <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'18px'} />
+                    <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'24px'} />
                   ) : null}
                   {pair ? (
                     <StyledTokenName className="pair-name-container">
@@ -310,7 +314,7 @@ export default function CurrencyInputPanel({
                               }}
                               title={balance.toExact()}
                             >
-                              {balance.toSignificant(4)}
+                              {+balance.toFixed() < 0.0001 ? '< 0.0001' : balance.toSignificant(4)}
                             </span>
                           ) : (
                             showBalance &&

@@ -187,7 +187,7 @@ function LinkedCurrency({ chainId, currency }: { chainId?: number; currency?: Cu
     return (
       <ExternalLink href={getExplorerLink(chainId, address, ExplorerDataType.TOKEN)}>
         <RowFixed>
-          <CurrencyLogo currency={currency} size={'25px'} style={{ marginRight: '0.5rem' }} />
+          <CurrencyLogo currency={currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
           <TYPE.main>{currency?.symbol} ↗</TYPE.main>
         </RowFixed>
       </ExternalLink>
@@ -196,7 +196,7 @@ function LinkedCurrency({ chainId, currency }: { chainId?: number; currency?: Cu
 
   return (
     <RowFixed>
-      <CurrencyLogo currency={currency} size={'25px'} style={{ marginRight: '0.5rem' }} />
+      <CurrencyLogo currency={currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
       <TYPE.main>{currency?.symbol}</TYPE.main>
     </RowFixed>
   )
@@ -537,14 +537,14 @@ export function PositionPage({
           <AutoColumn gap="md">
             <RowBetween>
               <RowFixed>
-                <CurrencyLogo currency={feeValueUpper?.currency} size={'20px'} style={{ marginRight: '0.5rem' }} />
+                <CurrencyLogo currency={feeValueUpper?.currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
                 <TYPE.main>{feeValueUpper ? formatCurrencyAmount(feeValueUpper, 4) : '-'}</TYPE.main>
               </RowFixed>
               <TYPE.main>{feeValueUpper?.currency?.symbol}</TYPE.main>
             </RowBetween>
             <RowBetween>
               <RowFixed>
-                <CurrencyLogo currency={feeValueLower?.currency} size={'20px'} style={{ marginRight: '0.5rem' }} />
+                <CurrencyLogo currency={feeValueLower?.currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
                 <TYPE.main>{feeValueLower ? formatCurrencyAmount(feeValueLower, 4) : '-'}</TYPE.main>
               </RowFixed>
               <TYPE.main>{feeValueLower?.currency?.symbol}</TYPE.main>
@@ -617,7 +617,7 @@ export function PositionPage({
             <ResponsiveRow>
               <RowFixed>
                 <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={true} />
-                <TYPE.label fontSize={'24px'} mr="10px">
+                <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
                 </TYPE.label>
                 <Badge style={{ marginRight: '8px' }}>
@@ -767,7 +767,7 @@ export function PositionPage({
                         <RowFixed>
                           <CurrencyLogo
                             currency={feeValueUpper?.currency}
-                            size={'25px'}
+                            size={'24px'}
                             style={{ marginRight: '0.5rem' }}
                           />
                           <TYPE.main>{feeValueUpper?.currency?.symbol}</TYPE.main>
@@ -780,7 +780,7 @@ export function PositionPage({
                         <RowFixed>
                           <CurrencyLogo
                             currency={feeValueLower?.currency}
-                            size={'25px'}
+                            size={'24px'}
                             style={{ marginRight: '0.5rem' }}
                           />
                           <TYPE.main>{feeValueLower?.currency?.symbol}</TYPE.main>

@@ -1,7 +1,7 @@
 import numbro from 'numbro'
 
 // using a currency library here in case we want to add more in future
-export const formatDollarAmount = (num: number | undefined, digits = 2, round = true) => {
+export const formatDollarAmount = (num: number | undefined, digits = 3, round = true) => {
     if (num === 0) return '$0.00'
     if (!num) return '-'
     if (num < 0.001 && digits <= 3) {
@@ -19,7 +19,7 @@ export const formatDollarAmount = (num: number | undefined, digits = 2, round = 
 }
 
 // using a currency library here in case we want to add more in future
-export const formatAmount = (num: number | undefined, digits = 2) => {
+export const formatAmount = (num: number | undefined, digits = 3) => {
     if (num === 0) return '0'
     if (!num) return '-'
     if (num < 0.001) {

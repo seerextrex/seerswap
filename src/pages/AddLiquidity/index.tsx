@@ -74,6 +74,8 @@ import { Interface } from '@ethersproject/abi'
 import { NonfungiblePositionManager as NonFunPosMan } from './nft-manager'
 import _abi from '../../abis/non-fun-pos-man.json'
 
+import ReactGA from 'react-ga'
+
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidity({
@@ -316,6 +318,11 @@ export default function AddLiquidity({
                   : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`,
               })
               setTxHash(response.hash)
+              ReactGA.event({
+                category: 'Liquidity',
+                action: 'Add',
+                label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/'),
+              })
             })
         })
         .catch((error) => {

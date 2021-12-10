@@ -19,8 +19,6 @@ const WETH_ONLY: ChainTokenList = Object.fromEntries(
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON, WETH_POLYGON]
-  // [SupportedChainId.MAINNET]: [...WETH_ONLY[SupportedChainId.MAINNET], DAI, USDC, USDT, WBTC],
-  // [SupportedChainId.OPTIMISM]: [...WETH_ONLY[SupportedChainId.OPTIMISM], DAI_OPTIMISM, USDT_OPTIMISM, WBTC_OPTIMISM],
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 /**
@@ -28,7 +26,6 @@ export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: To
  * tokens.
  */
 export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
-  // [AMPL.address]: [DAI, WMATIC_EXTENDED[SupportedChainId.MAINNET]],
 }
 
 /**
@@ -48,7 +45,10 @@ export const COMMON_BASES: ChainCurrencyList = {
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON]
-  // [SupportedChainId.MAINNET]: [...WETH_ONLY[SupportedChainId.MAINNET], DAI, USDC, USDT, WBTC],
+  [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON]
 }
-export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {}
+export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
+  [SupportedChainId.POLYGON]: [
+    [USDC_POLYGON, USDT_POLYGON]
+  ]
+}

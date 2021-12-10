@@ -21,6 +21,7 @@ import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { Bound } from 'state/mint/v3/actions'
 
 import { ArrowRight } from 'react-feather'
+import usePrevious from '../../hooks/usePrevious'
 
 const LinkRow = styled(Link)`
   align-items: center;
@@ -226,25 +227,53 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     tickLower,
     tickUpper,
     onFarming,
-  } = positionDetails
+  } = positionDetails || {}
 
-  const token0 = useToken(token0Address)
-  const token1 = useToken(token1Address)
+  const prevPositionDetails = usePrevious({ ...positionDetails })
+  const {
+    token0: _token0Address,
+    token1: _token1Address,
+    fee: _feeAmount,
+    liquidity: _liquidity,
+    tickLower: _tickLower,
+    tickUpper: _tickUpper,
+    onFarming: _onFarming,
+  } = useMemo(() => {
+    if (!positionDetails && prevPositionDetails && prevPositionDetails.liquidity) {
+      return { ...prevPositionDetails }
+    }
+    return { ...positionDetails }
+  }, [positionDetails])
+
+  const token0 = useToken(_token0Address)
+  const token1 = useToken(_token1Address)
 
   const currency0 = token0 ? unwrappedToken(token0) : undefined
   const currency1 = token1 ? unwrappedToken(token1) : undefined
 
   // construct Position from details returned
-  const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined, feeAmount)
+  const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined, _feeAmount)
+  const prevPool = usePrevious(pool)
+  const _pool = useMemo(() => {
+    if (!pool && prevPool) {
+      return prevPool
+    }
+    return pool
+  }, [pool])
 
   const position = useMemo(() => {
-    if (pool) {
-      return new Position({ pool, liquidity: liquidity.toString(), tickLower, tickUpper })
+    if (_pool) {
+      return new Position({
+        pool: _pool,
+        liquidity: _liquidity.toString(),
+        tickLower: _tickLower,
+        tickUpper: _tickUpper,
+      })
     }
     return undefined
-  }, [liquidity, pool, tickLower, tickUpper])
+  }, [_liquidity, _pool, _tickLower, _tickUpper])
 
-  const tickAtLimit = useIsTickAtLimit(tickLower, tickUpper)
+  const tickAtLimit = useIsTickAtLimit(_tickLower, _tickUpper)
 
   // prices
   const { priceLower, priceUpper, quote, base } = getPriceOrderingFromPositionForUI(position)
@@ -253,16 +282,16 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
   const currencyBase = base && unwrappedToken(base)
 
   // check if price is within range
-  const outOfRange: boolean = pool ? pool.tickCurrent < tickLower || pool.tickCurrent >= tickUpper : false
+  const outOfRange: boolean = _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false
 
   const positionSummaryLink = '/pool/' + positionDetails.tokenId
 
   const farmingLink = `/farming/farms#${positionDetails.tokenId}`
 
-  const removed = liquidity?.eq(0)
+  const removed = _liquidity?.eq(0)
 
   return (
-    <LinkRow to={positionSummaryLink} onFarming={onFarming}>
+    <LinkRow to={positionSummaryLink} onFarming={_onFarming}>
       <RowBetween>
         <PrimaryPositionIdData>
           <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={18} margin />
@@ -273,7 +302,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
           {/* <Badge>
             <BadgeText><Trans>{new Percent(feeAmount, 1_000_000).toSignificant()}%</Trans></BadgeText>
           </Badge> */}
-          {onFarming && (
+          {_onFarming && (
             <OnFarmingBadge to={farmingLink}>
               <span>Farming</span>
               <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />

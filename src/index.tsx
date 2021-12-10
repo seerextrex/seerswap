@@ -1,5 +1,6 @@
 import 'inter-ui'
 import '@reach/dialog/styles.css'
+import './components/analytics'
 
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client'
 
@@ -8,7 +9,7 @@ import { StrictMode } from 'react'
 import { isMobile } from 'react-device-detect'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { HashRouter } from 'react-router-dom'
+import { HashRouter, BrowserRouter } from 'react-router-dom'
 import Blocklist from './components/Blocklist'
 import { NetworkContextName } from './constants/misc'
 import { LanguageProvider } from './i18n'
@@ -31,8 +32,6 @@ const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 if (!!window.ethereum) {
   window.ethereum.autoRefreshOnNetworkChange = false
 }
-
-const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
 
 const client = new ApolloClient({
   uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb',
@@ -57,7 +56,7 @@ ReactDOM.render(
   <StrictMode>
     <ApolloProvider client={client}>
       <Provider store={store}>
-        <HashRouter>
+        <BrowserRouter>
           <LanguageProvider>
             <Web3ReactProvider getLibrary={getLibrary}>
               <Web3ProviderNetwork getLibrary={getLibrary}>
@@ -71,7 +70,7 @@ ReactDOM.render(
               </Web3ProviderNetwork>
             </Web3ReactProvider>
           </LanguageProvider>
-        </HashRouter>
+        </BrowserRouter>
       </Provider>
     </ApolloProvider>
   </StrictMode>,

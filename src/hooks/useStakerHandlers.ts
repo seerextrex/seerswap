@@ -55,8 +55,8 @@ export function useStakerHandlers() {
             setClaimReward({ hash: result.hash, id: tokenAddress, error: null })
 
         } catch (err) {
-            console.error(err)
             setClaimReward({ error: err })
+            throw new Error('Claiming rewards ' + err)
         }
 
     }, [account, chainId])
@@ -85,12 +85,11 @@ export function useStakerHandlers() {
                 addTransaction(result, {
                     summary: `Rewards were claimed!`
                 })
-                // staked = false
                 setGetRewards({ hash: result.hash, id: token })
             }
         } catch (err) {
-            console.error(err)
             setGetRewards('failed')
+            throw new Error('Getting rewards ' + err)
         }
 
     }, [account, chainId])
@@ -126,8 +125,8 @@ export function useStakerHandlers() {
                 setWithdrawn({ hash: result.hash, id: token })
             }
         } catch (err) {
-            console.error(err)
             setWithdrawn('failed')
+            throw new Error('Withdrawing ' + err)
         }
 
     }, [account, chainId])
@@ -163,9 +162,8 @@ export function useStakerHandlers() {
                 setStaked({ hash: result.hash, id: selectedNFT.tokenId })
             }
         } catch (e) {
-            console.error(e, current)
             setStaked('failed')
-            return
+            throw new Error('Staking ' + current + " " + e)
         }
 
     }, [account, chainId])
@@ -205,8 +203,7 @@ export function useStakerHandlers() {
 
         } catch (e) {
             setTransfered('failed')
-            console.error(e, current)
-            return
+            throw new Error('Staking ' + current + " " + e)
         }
 
     }, [account, chainId])
@@ -244,10 +241,8 @@ export function useStakerHandlers() {
             }
 
         } catch (e) {
-
             setApproved('failed')
-            console.error(e, current)
-            return
+            throw new Error('Approving NFT ' + current + " " + e)
         }
 
     }, [account, chainId])
@@ -290,8 +285,7 @@ export function useStakerHandlers() {
 
         } catch (e) {
             setSendNFTL2('failed')
-            console.error(e)
-            return
+            throw new Error('Send NFT L2 ' + e)
         }
 
     }, [account, chainId])

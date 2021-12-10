@@ -7,6 +7,8 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import { stringToColour } from '../../utils/stringToColour'
 import { getCountdownTime, getStatic, getStaticTime } from '../../utils/time'
 import Loader from '../Loader'
+import AlgebraLogo from '../../assets/images/algebra-logo.png'
+import USDCLogo from '../../assets/images/usdc-logo.png'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -89,6 +91,8 @@ const TokenIcon = styled.div`
   color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
   border-radius: 50%;
   user-select: none;
+  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
+  background-size: contain;
 
   &:last-of-type {
     margin-left: -9px;
@@ -307,6 +311,10 @@ export function StakerEventCard({
     token1,
     rewardToken,
     bonusRewardToken,
+    token0Address,
+    token1Address,
+    rewardAddress,
+    bonusRewardAddress,
     bonusReward,
     createdAtTimestamp,
     reward,
@@ -325,6 +333,10 @@ export function StakerEventCard({
     token1?: string
     createdAtTimestamp?: string
     rewardToken?: string
+    rewardAddress?: string
+    token0Address?: string
+    token1Address?: string
+    bonusRewardAddress?: string
     reward?: number
     startTime?: number
     endTime?: number
@@ -335,6 +347,17 @@ export function StakerEventCard({
   const { account } = useActiveWeb3React()
 
   const toggleWalletModal = useWalletModalToggle()
+
+  const specialTokens = {
+    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
+      name: 'USDC',
+      logo: USDCLogo,
+    },
+    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
+      name: 'ALGB',
+      logo: AlgebraLogo,
+    },
+  }
 
   return skeleton ? (
     <Card>
@@ -410,15 +433,23 @@ export function StakerEventCard({
       )}
       <CardHeader>
         <TokensIcons>
-          <TokenIcon name={token0}>{token0 ? token0.slice(0, 2) : null}</TokenIcon>
-          <TokenIcon
-            style={{
-              marginLeft: '-9px',
-            }}
-            name={token1}
-          >
-            {token1 ? token1.slice(0, 2) : null}
-          </TokenIcon>
+          {token0Address.toLowerCase() in specialTokens ? (
+            <TokenIcon logo={specialTokens[token0Address].logo}></TokenIcon>
+          ) : (
+            <TokenIcon name={token0}>{token0 ? token0.slice(0, 2) : null}</TokenIcon>
+          )}
+          {token1Address.toLowerCase() in specialTokens ? (
+            <TokenIcon logo={specialTokens[token1Address].logo}></TokenIcon>
+          ) : (
+            <TokenIcon
+              style={{
+                marginLeft: '-9px',
+              }}
+              name={token1}
+            >
+              {token1 ? token1.slice(0, 2) : null}
+            </TokenIcon>
+          )}
         </TokensIcons>
         <div>
           <Subtitle>POOL</Subtitle>
@@ -426,14 +457,21 @@ export function StakerEventCard({
         </div>
       </CardHeader>
       <RewardWrapper style={{ marginBottom: '6px' }}>
-        <TokenIcon name={rewardToken}>{rewardToken.slice(0, 2)}</TokenIcon>
+        {rewardAddress.toLowerCase() in specialTokens ? (
+          <TokenIcon logo={specialTokens[rewardAddress].logo}></TokenIcon>
+        ) : (
+          <TokenIcon name={rewardToken}>{rewardToken ? rewardToken.slice(0, 2) : null}</TokenIcon>
+        )}
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle>Reward</Subtitle>
           <RewardSymbol>{rewardToken}</RewardSymbol>
         </div>
-        <RewardAmount title={reward}>
+        {
+          reward &&
+          <RewardAmount title={reward}>
           {('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}
         </RewardAmount>
+        }
       </RewardWrapper>
       <div style={{ position: 'relative' }}>
         <div
@@ -450,24 +488,36 @@ export function StakerEventCard({
         </div>
       </div>
       <RewardWrapper style={{ backgroundColor: '#90175b', borderColor: '#af4cad' }}>
-        <TokenIcon name={bonusRewardToken}>{bonusRewardToken.slice(0, 2)}</TokenIcon>
+        {bonusRewardAddress.toLowerCase() in specialTokens ? (
+          <TokenIcon logo={specialTokens[bonusRewardAddress].logo}></TokenIcon>
+        ) : (
+          <TokenIcon name={bonusRewardAddress}>{bonusRewardAddress ? bonusRewardAddress.slice(0, 2) : null}</TokenIcon>
+        )}
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle style={{ color: '#ef71b8' }}>Bonus</Subtitle>
           <RewardSymbol>{bonusRewardToken}</RewardSymbol>
         </div>
-        <RewardAmount title={bonusReward}>
+        {
+          bonusReward &&
+          <RewardAmount title={bonusReward}>
           {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
         </RewardAmount>
+        }
       </RewardWrapper>
       <StakeInfo active>
         <div>
           <>
             <Subtitle>Start</Subtitle>
             <div>
-              <span>{new Date(startTime * 1000).toLocaleString().split(',')[0]}</span>
+              <span>{
+                startTime &&
+                new Date(startTime * 1000).toLocaleString().split(',')[0]
+              }</span>
             </div>
             <div>
-              <span>{`${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+              <span>{startTime &&
+              `${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`
+              }</span>
             </div>
           </>
         </div>
@@ -475,10 +525,16 @@ export function StakerEventCard({
         <div>
           <Subtitle>End</Subtitle>
           <div>
-            <span>{new Date(endTime * 1000).toLocaleString().split(',')[0]}</span>
+            <span>{
+              endTime &&
+              new Date(endTime * 1000).toLocaleString().split(',')[0]
+            }</span>
           </div>
           <div>
-            <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+            {
+              endTime &&
+              <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+            }
           </div>
         </div>
       </StakeInfo>

@@ -16,12 +16,11 @@ export enum PairState {
   INVALID,
 }
 
-export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
+export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][], sushi?: boolean): [PairState, Pair | null][] {
   const tokens = useMemo(
     () => currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]),
     [currencies]
   )
-
 
   const pairAddresses = useMemo(
     () =>
@@ -31,7 +30,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
           tokenA.chainId === tokenB.chainId &&
           !tokenA.equals(tokenB) &&
           V2_FACTORY_ADDRESSES[tokenA.chainId]
-          ? computePairAddress({ factoryAddress: V2_FACTORY_ADDRESSES[tokenA.chainId], tokenA, tokenB })
+          ? computePairAddress({ factoryAddress: sushi ? '0xc35dadb65012ec5796536bd9864ed8773abc74c4' : V2_FACTORY_ADDRESSES[tokenA.chainId], tokenA, tokenB, hash: sushi ? '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303' : '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' })
           : undefined
       }),
     [tokens]
@@ -54,14 +53,15 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
         PairState.EXISTS,
         new Pair(
           CurrencyAmount.fromRawAmount(token0, reserve0.toString()),
-          CurrencyAmount.fromRawAmount(token1, reserve1.toString())
+          CurrencyAmount.fromRawAmount(token1, reserve1.toString()),
+          sushi
         ),
       ]
     })
   }, [results, tokens])
 }
 
-export function useV2Pair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
+export function useV2Pair(tokenA?: Currency, tokenB?: Currency, sushi?: boolean): [PairState, Pair | null] {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB])
-  return useV2Pairs(inputs)[0]
+  return useV2Pairs(inputs, sushi)[0]
 }

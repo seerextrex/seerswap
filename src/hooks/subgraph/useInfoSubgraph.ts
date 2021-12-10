@@ -151,8 +151,8 @@ export function useInfoSubgraph() {
             setPools(Object.values(formatted))
 
         } catch (err) {
-            console.error('Info pools fetch', err)
             setPools('failed')
+            throw new Error('Info pools fetch ' + err)
         }
 
         setPoolsLoading(false)
@@ -258,8 +258,8 @@ export function useInfoSubgraph() {
             setTokens(Object.values(formatted))
 
         } catch (err) {
-            console.error('Info tokens fetch', err)
             setTokens('failed')
+            throw new Error('Info tokens fetching ' + err)
         }
 
         setTokensLoading(false)
@@ -279,8 +279,7 @@ export function useInfoSubgraph() {
             return tokens
 
         } catch (err) {
-            console.error('Tokens by time fetch', err);
-            return undefined
+            throw new Error('Tokens fetching by time ' + err)
         }
 
     }
@@ -300,8 +299,7 @@ export function useInfoSubgraph() {
             return pools
 
         } catch (err) {
-            console.error('Pools by time fetch', err);
-            return undefined
+            throw new Error('Pools by time fetching ' + err)
         }
 
     }

@@ -17,6 +17,8 @@ import QuestionHelper from '../../components/QuestionHelper'
 import { AutoRow } from '../../components/Row'
 import { Dots } from '../../components/swap/styleds'
 import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
+import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
+import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
@@ -24,8 +26,8 @@ import { BackArrow, StyledInternalLink, TYPE } from '../../theme'
 import { BodyWrapper } from '../AppBody'
 
 const MigrateSushiPositionCardStyled = styled(MigrateSushiPositionCard)`
-
 `
+import { Helmet } from 'react-helmet'
 
 function EmptyState({ message }: { message: ReactNode }) {
   return (
@@ -58,26 +60,26 @@ export default function MigrateV2() {
   const theme = useContext(ThemeContext)
   const { account, chainId } = useActiveWeb3React()
 
+  const networkFailed = useIsNetworkFailed()
+
   const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
 
   // calculate v2 + sushi pair contract addresses for all token pairs
-  const tokenPairsWithLiquidityTokens = useMemo(
-    () =>
-      trackedTokenPairs.map((tokens) => {
-        // sushi liquidity token or null
-        const sushiLiquidityToken = chainId === 137 || chainId === 42 ? toSushiLiquidityToken(tokens) : null
+  const tokenPairsWithLiquidityTokens = useMemo(() => {
+    return trackedTokenPairs.map((tokens) => {
+      // sushi liquidity token or null
+      const sushiLiquidityToken = chainId === 137 || chainId === 42 ? toSushiLiquidityToken(tokens) : null
 
-        return {
-          v2liquidityToken: v2FactoryAddress ? toV2LiquidityToken(tokens) : undefined,
-          sushiLiquidityToken,
-          tokens,
-        }
-      }),
-    [trackedTokenPairs, chainId, v2FactoryAddress]
-  )
+      return {
+        v2liquidityToken: v2FactoryAddress ? toV2LiquidityToken(tokens) : undefined,
+        sushiLiquidityToken,
+        tokens,
+      }
+    })
+  }, [trackedTokenPairs, chainId, v2FactoryAddress])
 
   //  get pair liquidity token addresses for balance-fetching purposes
   const allLiquidityTokens = useMemo(() => {
@@ -108,32 +110,51 @@ export default function MigrateV2() {
   const tokenPairsWithSushiBalance = useMemo(() => {
     if (fetchingPairBalances) return []
 
-    console.log(
-      'sushi',
-      tokenPairsWithLiquidityTokens.filter(
+    return tokenPairsWithLiquidityTokens
+      .filter(
         ({ sushiLiquidityToken }) => !!sushiLiquidityToken && pairBalances[sushiLiquidityToken.address]?.greaterThan(0)
       )
-    )
-
-    return tokenPairsWithLiquidityTokens.filter(
-      ({ sushiLiquidityToken }) => !!sushiLiquidityToken && pairBalances[sushiLiquidityToken.address]?.greaterThan(0)
-    )
+      .map((tokenPairsWithLiquidityTokens) => tokenPairsWithLiquidityTokens.tokens)
   }, [fetchingPairBalances, tokenPairsWithLiquidityTokens, pairBalances])
 
   const v2Pairs = useV2Pairs(tokenPairsWithV2Balance)
-  const v2IsLoading = fetchingPairBalances || v2Pairs.some(([pairState]) => pairState === PairState.LOADING)
+  const previousv2Pairs = usePreviousNonEmptyArray(v2Pairs)
+  const _v2Pairs = useMemo(() => {
+    if (v2Pairs.length === 0 && previousv2Pairs) {
+      return previousv2Pairs
+    }
+
+    return v2Pairs
+  }, [v2Pairs])
+
+  const v2SushiPairs = useV2Pairs(tokenPairsWithSushiBalance, true)
+  const previousv2SushiPairs = usePreviousNonEmptyArray(v2SushiPairs)
+  const _v2SushiPairs = useMemo(() => {
+    if (v2SushiPairs.length === 0 && previousv2SushiPairs) {
+      return previousv2SushiPairs
+    }
+
+    return v2SushiPairs
+  }, [v2SushiPairs])
+
+  const v2IsLoading =
+    fetchingPairBalances ||
+    v2Pairs.some(([pairState]) => pairState === PairState.LOADING) ||
+    v2SushiPairs.some(([pairState]) => pairState === PairState.LOADING)
 
   return (
     <>
+      <Helmet>
+        <title>Algebra — Migrate Liquidity</title>
+      </Helmet>
       <BodyWrapper style={{ padding: 24 }}>
         <AutoColumn gap="16px">
-          <AutoRow style={{ alignItems: 'center', justifyContent: 'space-between' }} gap="8px">
+          <AutoRow style={{ alignItems: 'center', justifyContent: 'center' }} gap="8px">
             <TYPE.mediumHeader>Migrate Liquidity</TYPE.mediumHeader>
           </AutoRow>
 
-          <TYPE.body style={{ marginBottom: 8, fontWeight: 400 }}>
-            For each pool shown below, click migrate to remove your liquidity from previous DEX and deposit it into
-            Algebra.
+          <TYPE.body style={{ marginBottom: 8, fontWeight: 400, textAlign: 'center' }}>
+            Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra.
           </TYPE.body>
 
           {!account ? (
@@ -142,35 +163,35 @@ export default function MigrateV2() {
                 Connect to a wallet to view your liquidity.
               </TYPE.body>
             </LightCard>
-          ) : v2IsLoading ? (
+          ) : v2IsLoading && !networkFailed ? (
             <LightCard padding="40px">
               <TYPE.body color={theme.text3} textAlign="center">
                 <Dots>Loading</Dots>
               </TYPE.body>
             </LightCard>
-          ) : v2Pairs.filter(([, pair]) => !!pair).length > 0 || tokenPairsWithSushiBalance.length > 0 ? (
+          ) : _v2Pairs.filter(([, pair]) => !!pair).length > 0 ||
+            _v2SushiPairs.filter(([, pair]) => !!pair).length > 0 ? (
             <>
-              {v2Pairs.filter(([, pair]) => !!pair).length > 0 && (
+              {_v2Pairs.filter(([, pair]) => !!pair).length > 0 && (
                 <>
-                  {v2Pairs
+                  {_v2Pairs
                     .filter(([, pair]) => !!pair)
                     .map(([, pair]) => (
                       <MigrateV2PositionCard key={(pair as Pair).liquidityToken.address} pair={pair as Pair} />
                     ))}
                 </>
               )}
-              {tokenPairsWithSushiBalance.length > 0 && (
+              {_v2SushiPairs.filter(([, pair]) => !!pair).length > 0 && (
                 <>
-                  {tokenPairsWithSushiBalance.map(({ sushiLiquidityToken, tokens }) => {
-                    return (
-                      <MigrateSushiPositionCardStyled
-                        key={(sushiLiquidityToken as Token).address}
-                        tokenA={tokens[0]}
-                        tokenB={tokens[1]}
-                        liquidityToken={sushiLiquidityToken as Token}
+                  {_v2SushiPairs
+                    .filter(([, pair]) => !!pair)
+                    .map(([, pair]) => (
+                      <MigrateV2PositionCard
+                        key={(pair as Pair).liquidityToken.address}
+                        sushi={true}
+                        pair={pair as Pair}
                       />
-                    )
-                  })}
+                    ))}
                 </>
               )}
             </>
@@ -179,9 +200,9 @@ export default function MigrateV2() {
           )}
           <AutoColumn justify={'center'} gap="md">
             <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-              Don’t see one of your tokens?{' '}
-              <StyledInternalLink id="import-pool-link" to={'/pool/v2/find'}>
-                Import it.
+              Don’t see one of your pools?{' '}
+              <StyledInternalLink id="import-pool-link" to={'/pool/find'}>
+                Find it.
               </StyledInternalLink>
             </Text>
           </AutoColumn>

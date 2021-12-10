@@ -16,6 +16,10 @@ import { PageTitle } from '../PageTitle'
 import { useLocation, useParams } from 'react-router'
 import StakerMyStakesMobile from './StakerMyStakesMobile'
 
+import AlgebraLogo from '../../assets/images/algebra-logo.png'
+import USDCLogo from '../../assets/images/usdc-logo.png'
+import WMATICLogo from '../../assets/images/matic-logo.png'
+
 const skeletonAnimation = keyframes`
   100% {
     transform: translateX(100%);
@@ -65,6 +69,8 @@ export const TokenIcon = styled.div`
   user-select: none;
 
   ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
+  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
+  background-size: contain;
   &:nth-of-type(2) {
     margin-left: -8px;
   }
@@ -275,6 +281,21 @@ export function StakerMyStakes({
 }) {
   const { account } = useActiveWeb3React()
 
+  const specialTokens = {
+    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
+      name: 'USDC',
+      logo: USDCLogo,
+    },
+    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
+      name: 'ALGB',
+      logo: AlgebraLogo,
+    },
+    ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
+      name: 'WMATIC',
+      logo: WMATICLogo,
+    },
+  }
+
   const { getRewardsHandler, getRewardsHash, withdrawHandler, withdrawnHash, sendNFTL2Handler, sendNFTL2Hash } =
   useStakerHandlers() || {}
 
@@ -409,8 +430,16 @@ export function StakerMyStakes({
         <StakePool>
           {staked && (
             <>
-              <TokenIcon name={el.pool.token0.symbol}>{el.pool.token0.symbol.slice(0, 2)}</TokenIcon>
-              <TokenIcon name={el.pool.token1.symbol}>{el.pool.token1.symbol.slice(0, 2)}</TokenIcon>
+              {el.pool.token0.id.toLowerCase() in specialTokens ? (
+                <TokenIcon logo={specialTokens[el.pool.token0.id].logo}></TokenIcon>
+              ) : (
+                <TokenIcon name={el.pool.token0.symbol}>{el.pool.token0.symbol.slice(0, 2)}</TokenIcon>
+              )}
+              {el.pool.token1.id.toLowerCase() in specialTokens ? (
+                <TokenIcon logo={specialTokens[el.pool.token1.id].logo}></TokenIcon>
+              ) : (
+                <TokenIcon name={el.pool.token1.symbol}>{el.pool.token1.symbol.slice(0, 2)}</TokenIcon>
+              )}
               <TokensNames>
                 <div>{el.pool.token0.symbol}</div>
                 <div>{el.pool.token1.symbol}</div>
@@ -421,7 +450,11 @@ export function StakerMyStakes({
         {/* <StakeSeparator>for</StakeSeparator> */}
         {staked && (
           <StakeReward>
-            <TokenIcon name={el.rewardToken.symbol}>{el.rewardToken.symbol.slice(0, 2)}</TokenIcon>
+            {el.rewardToken.id.toLowerCase() in specialTokens ? (
+              <TokenIcon logo={specialTokens[el.rewardToken.id].logo} name={''}></TokenIcon>
+            ) : (
+              <TokenIcon name={el.rewardToken.symbol}>{el.rewardToken.symbol.slice(0, 2)}</TokenIcon>
+            )}
             <TokensNames>
               <div>{formatReward(el.earned)}</div>
               <div>{el.rewardToken.symbol}</div>
@@ -430,7 +463,11 @@ export function StakerMyStakes({
         )}
         {staked && (
           <StakeReward>
-            <TokenIcon name={el.bonusRewardToken}>{el.bonusRewardToken.symbol.slice(0, 2)}</TokenIcon>
+            {el.bonusRewardToken.id.toLowerCase() in specialTokens ? (
+              <TokenIcon logo={specialTokens[el.bonusRewardToken.id].logo} name={''}></TokenIcon>
+            ) : (
+              <TokenIcon name={el.bonusRewardToken.symbol}>{el.bonusRewardToken.symbol.slice(0, 2)}</TokenIcon>
+            )}
             <TokensNames>
               <div>{formatReward(el.bonusEarned)}</div>
               <div>{el.bonusRewardToken.symbol}</div>

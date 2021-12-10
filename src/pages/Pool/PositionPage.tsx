@@ -45,6 +45,7 @@ import { Bound } from 'state/mint/v3/actions'
 import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { formatTickPrice } from 'utils/formatTickPrice'
 import { SupportedChainId } from 'constants/chains'
+import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
 
@@ -336,10 +337,26 @@ export function PositionPage({
     fee: feeAmount,
   } = positionDetails || {}
 
-  const removed = liquidity?.eq(0)
+  const prevPositionDetails = usePrevious({ ...positionDetails })
+  const {
+    token0: _token0Address,
+    token1: _token1Address,
+    fee: _feeAmount,
+    liquidity: _liquidity,
+    tickLower: _tickLower,
+    tickUpper: _tickUpper,
+    onFarming: _onFarming,
+  } = useMemo(() => {
+    if (!positionDetails && prevPositionDetails && prevPositionDetails.liquidity) {
+      return { ...prevPositionDetails }
+    }
+    return { ...positionDetails }
+  }, [positionDetails])
 
-  const token0 = useToken(token0Address)
-  const token1 = useToken(token1Address)
+  const removed = _liquidity?.eq(0)
+
+  const token0 = useToken(_token0Address)
+  const token1 = useToken(_token1Address)
 
   const metadata = usePositionTokenURI(parsedTokenId)
 
@@ -350,15 +367,28 @@ export function PositionPage({
   const [receiveWETH, setReceiveWETH] = useState(false)
 
   // construct Position from details returned
-  const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined, feeAmount || 500)
+  const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined, _feeAmount || 500)
+  const [prevPoolState, prevPool] = usePrevious([poolState, pool]) || []
+  const [_poolState, _pool] = useMemo(() => {
+    if (!pool && prevPool && prevPoolState) {
+      return [prevPoolState, prevPool]
+    }
+    return [poolState, pool]
+  }, [pool, poolState])
+
   const position = useMemo(() => {
-    if (pool && liquidity && typeof tickLower === 'number' && typeof tickUpper === 'number') {
-      return new Position({ pool, liquidity: liquidity.toString(), tickLower, tickUpper })
+    if (_pool && _liquidity && typeof _tickLower === 'number' && typeof _tickUpper === 'number') {
+      return new Position({
+        pool: _pool,
+        liquidity: _liquidity.toString(),
+        tickLower: _tickLower,
+        tickUpper: _tickUpper,
+      })
     }
     return undefined
-  }, [liquidity, pool, tickLower, tickUpper])
+  }, [_liquidity, _pool, _tickLower, _tickUpper])
 
-  const tickAtLimit = useIsTickAtLimit(tickLower, tickUpper)
+  const tickAtLimit = useIsTickAtLimit(_tickLower, _tickUpper)
 
   const pricesFromPosition = getPriceOrderingFromPositionForUI(position)
   const [manuallyInverted, setManuallyInverted] = useState(false)
@@ -377,17 +407,17 @@ export function PositionPage({
   const currencyBase = inverted ? currency1 : currency0
 
   const ratio = useMemo(() => {
-    return priceLower && pool && priceUpper
+    return priceLower && _pool && priceUpper
       ? getRatio(
           inverted ? priceUpper.invert() : priceLower,
-          pool.token0Price,
+          _pool.token0Price,
           inverted ? priceLower.invert() : priceUpper
         )
       : undefined
-  }, [inverted, pool, priceLower, priceUpper])
+  }, [inverted, _pool, priceLower, priceUpper])
 
   // fees
-  const [feeValue0, feeValue1] = useV3PositionFees(pool ?? undefined, positionDetails?.tokenId, receiveWETH)
+  const [feeValue0, feeValue1] = useV3PositionFees(_pool ?? undefined, positionDetails?.tokenId, receiveWETH)
 
   const [collecting, setCollecting] = useState<boolean>(false)
   const [collectMigrationHash, setCollectMigrationHash] = useState<string | null>(null)
@@ -412,12 +442,28 @@ export function PositionPage({
     return amount0.add(amount1)
   }, [price0, price1, feeValue0, feeValue1])
 
+  const prevFiatValueOfFees = usePrevious(fiatValueOfFees)
+  const _fiatValueOfFees = useMemo(() => {
+    if (!fiatValueOfFees && prevFiatValueOfFees) {
+      return prevFiatValueOfFees
+    }
+    return fiatValueOfFees
+  }, [fiatValueOfFees])
+
   const fiatValueOfLiquidity: CurrencyAmount<Token> | null = useMemo(() => {
     if (!price0 || !price1 || !position) return null
     const amount0 = price0.quote(position.amount0)
     const amount1 = price1.quote(position.amount1)
     return amount0.add(amount1)
   }, [price0, price1, position])
+
+  const prevFiatValueOfLiquidity = usePrevious(fiatValueOfLiquidity)
+  const _fiatValueOfLiquidity = useMemo(() => {
+    if (!fiatValueOfLiquidity && prevFiatValueOfLiquidity) {
+      return prevFiatValueOfLiquidity
+    }
+    return fiatValueOfLiquidity
+  }, [fiatValueOfLiquidity])
 
   const addTransaction = useTransactionAdder()
   const positionManager = useV3NFTPositionManagerContract()
@@ -480,8 +526,8 @@ export function PositionPage({
   const feeValueLower = inverted ? feeValue1 : feeValue0
 
   // check if price is within range
-  const below = pool && typeof tickLower === 'number' ? pool.tickCurrent < tickLower : undefined
-  const above = pool && typeof tickUpper === 'number' ? pool.tickCurrent >= tickUpper : undefined
+  const below = _pool && typeof _tickLower === 'number' ? _pool.tickCurrent < _tickLower : undefined
+  const above = _pool && typeof _tickUpper === 'number' ? _pool.tickCurrent >= _tickUpper : undefined
   const inRange: boolean = typeof below === 'boolean' && typeof above === 'boolean' ? !below && !above : false
 
   function modalHeader() {
@@ -529,7 +575,7 @@ export function PositionPage({
       !onOptimisticChain
   )
 
-  return loading || poolState === PoolState.LOADING ? (
+  return loading || _poolState === PoolState.LOADING ? (
     <LoadingRows>
       <div />
       <div />
@@ -613,39 +659,6 @@ export function PositionPage({
             <RowBetween></RowBetween>
           </AutoColumn>
           <ResponsiveRow align="flex-start">
-            {/* {'result' in metadata ? (
-              <DarkCard
-                width="100%"
-                height="100%"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
-                  marginRight: '12px',
-                }}
-              >
-                <div style={{ marginRight: 12 }}>
-                  <NFT image={metadata.result.image} height={400} />
-                </div>
-                {typeof chainId === 'number' && owner && !ownsNFT ? (
-                  <ExternalLink href={getExplorerLink(chainId, owner, ExplorerDataType.ADDRESS)}>
-                    <Trans>Owner</Trans>
-                  </ExternalLink>
-                ) : null}
-              </DarkCard>
-            ) : (
-              <DarkCard
-                width="100%"
-                height="100%"
-                style={{
-                  marginRight: '12px',
-                  minWidth: '340px',
-                }}
-              >
-                <Loader />
-              </DarkCard>
-            )} */}
             <AutoColumn gap="sm" style={{ width: '100%', height: '100%' }}>
               <DarkCard>
                 <AutoColumn gap="md" style={{ width: '100%' }}>
@@ -653,9 +666,9 @@ export function PositionPage({
                     <Label>
                       <Trans>Liquidity</Trans>
                     </Label>
-                    {fiatValueOfLiquidity?.greaterThan(new Fraction(1, 100)) ? (
+                    {_fiatValueOfLiquidity?.greaterThan(new Fraction(1, 100)) ? (
                       <TYPE.largeHeader fontSize="36px" fontWeight={500}>
-                        <Trans>${fiatValueOfLiquidity.toFixed(2, { groupSeparator: ',' })}</Trans>
+                        <Trans>${_fiatValueOfLiquidity.toFixed(2, { groupSeparator: ',' })}</Trans>
                       </TYPE.largeHeader>
                     ) : (
                       <TYPE.largeHeader color={theme.text1} fontSize="36px" fontWeight={500}>
@@ -707,9 +720,9 @@ export function PositionPage({
                         <Label>
                           <Trans>Unclaimed fees</Trans>
                         </Label>
-                        {fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
+                        {_fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
                           <TYPE.largeHeader color={theme.green1} fontSize="36px" fontWeight={500}>
-                            <Trans>${fiatValueOfFees.toFixed(2, { groupSeparator: ',' })}</Trans>
+                            <Trans>${_fiatValueOfFees.toFixed(2, { groupSeparator: ',' })}</Trans>
                           </TYPE.largeHeader>
                         ) : (
                           <TYPE.largeHeader color={theme.text1} fontSize="36px" fontWeight={500}>
@@ -871,7 +884,7 @@ export function PositionPage({
               </RowBetween>
               <CurrentPriceCard
                 inverted={inverted}
-                pool={pool}
+                pool={_pool}
                 currencyQuote={currencyQuote}
                 currencyBase={currencyBase}
               />

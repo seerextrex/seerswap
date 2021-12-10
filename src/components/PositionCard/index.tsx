@@ -331,7 +331,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                   padding="8px"
                   $borderRadius="8px"
                   as={Link}
-                  to={`/add/v2/${currencyId(currency0, chainId)}/${currencyId(currency1, chainId)}`}
+                  to={`/add/${currencyId(currency0, chainId)}/${currencyId(currency1, chainId)}`}
                   width="32%"
                 >
                   <Trans>Add</Trans>

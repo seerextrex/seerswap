@@ -43,6 +43,7 @@ import PDFAlgebra from '../../assets/pdf/Algebra_Tech_Paper.pdf'
 import { darken } from 'polished'
 import SettingsTab from '../../components/Settings'
 import { RowFixed } from '../../components/Row'
+import usePrevious from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
 
@@ -373,7 +374,19 @@ export default function AddLiquidityPage({
     tokenId ? BigNumber.from(tokenId) : undefined
   )
   const hasExistingPosition = !!existingPositionDetails && !positionLoading
+
   const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails)
+  const prevExistingPosition = usePrevious(existingPosition)
+  const _existingPosition = useMemo(() => {
+    if (!existingPosition && prevExistingPosition) {
+      return {
+        ...prevExistingPosition,
+      }
+    }
+    return {
+      ...existingPosition,
+    }
+  }, [existingPosition])
 
   const feeAmount = 500
 
@@ -386,6 +399,15 @@ export default function AddLiquidityPage({
 
   // mint state
   const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
+
+  const derivedMintInfo = useV3DerivedMintInfo(
+    baseCurrency ?? undefined,
+    quoteCurrency ?? undefined,
+    feeAmount,
+    baseCurrency ?? undefined,
+    _existingPosition
+  )
+  const prevDerivedMintInfo = usePrevious({ ...derivedMintInfo })
 
   const {
     pool,
@@ -407,13 +429,16 @@ export default function AddLiquidityPage({
     invertPrice,
     ticksAtLimit,
     dynamicFee,
-  } = useV3DerivedMintInfo(
-    baseCurrency ?? undefined,
-    quoteCurrency ?? undefined,
-    feeAmount,
-    baseCurrency ?? undefined,
-    existingPosition
-  )
+  } = useMemo(() => {
+    if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
+      return {
+        ...prevDerivedMintInfo,
+      }
+    }
+    return {
+      ...derivedMintInfo,
+    }
+  }, [derivedMintInfo])
 
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
     useV3MintActionHandlers(noLiquidity)

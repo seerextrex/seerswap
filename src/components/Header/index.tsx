@@ -324,7 +324,7 @@ export default function Header() {
         <NetworkCard />
         <HeaderElement>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {chainId === 137 && account && userEthBalance ? (
+            {(chainId === 137 && account && userEthBalance) || networkFailed ? (
               <BalanceText
                 style={{ flexShrink: 0 }}
                 pl="0.75rem"

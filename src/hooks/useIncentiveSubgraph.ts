@@ -57,6 +57,8 @@ export function useIncentiveSubgraph() {
             const _event: any = {
                 ...events[i],
                 token0: pool.token0.symbol,
+                token0Address: pool.token0.id,
+                token1Address: pool.token1.id,
                 token1: pool.token1.symbol,
                 rewardAddress: events[i].rewardToken,
                 bonusRewardAddress: events[i].bonusRewardToken,

@@ -34,6 +34,12 @@ import Modal from '../components/Modal'
 import { useCallback, useEffect, useState } from 'react'
 import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
+
+import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
+import { useIsNetworkFailed } from '../hooks/useIsNetworkFailed'
+import Loader from '../components/Loader'
+        
 import { useInfoSubgraph } from '../hooks/subgraph/useInfoSubgraph'
 import FeeChartRangeInput from '../components/FeeChartRangeInput'
 import PoolInfoPage from './PoolInfoPage'
@@ -84,6 +90,16 @@ const BugReportLink = styled.a`
   text-decoration: none;
 `
 
+const NetworkFailedCard = styled.div`
+  position: fixed;
+  bottom: 3rem;
+  right: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #390909;
+  border: 1px solid #852020;
+`
+
 const GlobalStyle = createGlobalStyle`
   button {
     cursor: pointer;
@@ -112,6 +128,8 @@ export default function App() {
     },
   })
 
+  const networkFailed = useIsNetworkFailed()
+
   return (
     <Sentry.ErrorBoundary>
       <GlobalStyle />
@@ -136,6 +154,18 @@ export default function App() {
             >
               <span>⚠️</span> <span>Contracts are being audited. Please use with caution.</span> <span>⚠️</span>
             </div>
+            {networkFailed && (
+              <NetworkFailedCard>
+                <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon network failed</div>
+                <div style={{ display: 'flex' }}>
+                  <span>Reconnecting...</span>
+                  <Loader
+                    style={{ display: 'inline-block', marginLeft: 'auto', marginRight: 'auto' }}
+                    stroke={'white'}
+                  />
+                </div>
+              </NetworkFailedCard>
+            )}
             <BugReportLink
               target="_blank"
               rel="noopener noreferrer"
@@ -158,7 +188,7 @@ export default function App() {
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/swap" component={Swap} />
 
-              <Route exact strict path="/pool/v2/find" component={PoolFinder} />
+              <Route exact strict path="/pool/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={PoolPage} />
               <Route exact strict path="/pool/:tokenId" component={PositionPage} />
 

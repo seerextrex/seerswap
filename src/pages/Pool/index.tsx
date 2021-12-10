@@ -7,7 +7,7 @@ import { RowBetween, RowFixed } from 'components/Row'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { useV3Positions } from 'hooks/useV3Positions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { Inbox } from 'react-feather'
 import { Link } from 'react-router-dom'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -17,6 +17,7 @@ import { TYPE } from 'theme'
 import { PositionDetails } from 'types/position'
 import { LoadingRows } from './styleds'
 import { Helmet } from 'react-helmet'
+import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 870px;
@@ -124,6 +125,13 @@ export default function Pool() {
   ) ?? [[], []]
 
   const filteredPositions = [...openPositions, ...(userHideClosedPositions ? [] : closedPositions)]
+  const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
+  const _filteredPositions = useMemo(() => {
+    if (filteredPositions.length === 0 && prevFilteredPositions) {
+      return prevFilteredPositions
+    }
+    return filteredPositions
+  }, [filteredPositions])
 
   const showConnectAWallet = Boolean(!account)
 
@@ -176,8 +184,8 @@ export default function Pool() {
                   <div />
                   <div />
                 </LoadingRows>
-              ) : filteredPositions && filteredPositions.length > 0 ? (
-                <PositionList positions={filteredPositions} />
+              ) : _filteredPositions && _filteredPositions.length > 0 ? (
+                <PositionList positions={_filteredPositions} />
               ) : (
                 <NoLiquidity>
                   <TYPE.body color={theme.text3} textAlign="center">

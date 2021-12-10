@@ -29,11 +29,6 @@ interface FeeChartRangeInputProps {
   startDate: number
 }
 
-export enum ChartScale {
-  MONTH,
-  DAY,
-}
-
 function useWindowSize() {
   const [size, setSize] = useState([0, 0])
   useLayoutEffect(() => {
@@ -119,7 +114,7 @@ export default function FeeChartRangeInput({
               height: 300,
               margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 },
             }}
-            scale={span}
+            span={span}
             startDate={startDate}
           />
         </React.Fragment>

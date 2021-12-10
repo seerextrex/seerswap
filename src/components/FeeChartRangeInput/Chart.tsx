@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import * as d3 from 'd3'
-import { ChartScale, daysCount } from './index'
+import { daysCount } from './index'
+
+import dayjs from 'dayjs'
+import { ChartSpan } from '../../pages/PoolInfoPage'
 
 function sameDay(d1, d2) {
   return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
@@ -27,11 +30,11 @@ interface ChartInterface {
     margin: { top: number; right: number; bottom: number; left: number }
   }
 
-  scale: ChartScale
+  span: ChartSpan
   startDate: number
 }
 
-export default function Chart({ feeData = [], scale, dimensions, startDate }: ChartInterface) {
+export default function Chart({ feeData = [], span, dimensions, startDate }: ChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
@@ -47,7 +50,7 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
 
   const chartData = useMemo(() => {
     if (feeData.length === 0) return []
-    // console.log(scale)
+
     return feeData.map((item) => ({
       time: new Date(item.timestamp * 1000),
       fee: item.fee / item.changesCount / 10000,
@@ -60,22 +63,15 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
 
   const tickWidth = useMemo(() => {
     //Todo auto length
-    return dimensions.width / 7
-  }, [dimensions, feeData])
-
-  // const xDomain = isScale ? [d3.min(chartData, (d) => +d.time - 1), d3.max(chartData, (d) => +d.time + 1)] : [1, days]
-  // console.log(days)
-
-  const xScale = useMemo(() => {
-    console.log([new Date(d3.min(chartData, (d) => +d.time)), new Date(d3.max(chartData, (d) => +d.time))])
-    return (
-      d3
-        .scaleTime()
-        // .domain([new Date(startDate * 1000).getTime(), Date.now()])
-        .domain([d3.min(chartData, (d) => new Date(d.time)), d3.max(chartData, (d) => new Date(d.time))])
-        .range([0, width])
-    )
-  }, [scale, chartData])
+    switch (span) {
+      case ChartSpan.DAY:
+        return dimensions.width / 24
+      case ChartSpan.MONTH:
+        return dimensions.width / 30
+      case ChartSpan.WEEK:
+        return dimensions.width / 7
+    }
+  }, [span, dimensions, feeData])
 
   const _chartData = useMemo(() => {
     if (chartData.length === 0) return
@@ -123,14 +119,15 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
 
     const newA = []
 
-    // for (let i = 1; i < chartData[0].time; i++) {
-    //   newA.push({ time: i, start: 0, low: 0, high: 0, end: 0, fee: d3.min(chartData, (d) => +d.fee) })
-    // }
-
-    console.log([...newA, ...res])
-
     return [...newA, ...res]
   }, [chartData, feeData])
+
+  const xScale = useMemo(() => {
+    return d3
+      .scaleTime()
+      .domain([d3.min(_chartData, (d) => new Date(d.time)), d3.max(_chartData, (d) => new Date(d.time))])
+      .range([0, width])
+  }, [span, dimensions, _chartData])
 
   // useEffect(() => {
   //   const kek: any[] = []
@@ -208,17 +205,25 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
     .style('opacity', 1)
     .style('display', 'none')
 
+  const xTicks = useMemo(() => {
+    switch (span) {
+      case ChartSpan.DAY:
+        return 24
+      case ChartSpan.MONTH:
+        return 30
+      case ChartSpan.WEEK:
+        return 7
+    }
+  }, [span])
+
   useEffect(() => {
     if (feeData.length === 0) return
-
-    console.log('_data', _chartData)
 
     const svgEl = d3.select(svgRef.current)
     svgEl.selectAll('*').remove()
 
     const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-    //mouse events
     svgEl.on('mouseenter', () => {
       Line.style('display', 'block')
       InfoRectGroup.style('display', 'block')
@@ -231,14 +236,11 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
       Focus.style('display', 'none')
     })
 
-    // xAxis
-    // const xTicks = scale === 0 ? 24 : scale === 1 ? 7 : days
-    const xTicks = 8
     const xAxisGroup = svg.append('g').attr('transform', `translate(0, ${height})`).call(
-      d3.axisBottom(xScale).ticks(xTicks).tickSize(-height).tickSizeOuter(0)
+      d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0)
       // .tickFormat('%H')
     )
-    xAxisGroup.select('.domain').remove()
+    // xAxisGroup.select('.domain').remove()
     xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
 
     // yAxis
@@ -296,6 +298,7 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
           .line()
           .curve(d3.curveBumpX)
           .x(function (d) {
+            console.log('d time', d.time, xScale(d.time))
             return xScale(d.time)
           })
           .y(function (d) {
@@ -321,11 +324,14 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
       .selectAll('.tick')
       .nodes()
       .map((el, i) => {
+        console.log('EL', el)
         const xTranslate = d3
           .select(el)
           .attr('transform')
           .match(/\((.*?)\)/)[1]
           .split(',')[0]
+
+        d3.select(el).attr('transform', `translate(${+xTranslate + +tickWidth}, 0)`)
 
         const rect = d3
           .create('svg:rect')
@@ -336,14 +342,15 @@ export default function Chart({ feeData = [], scale, dimensions, startDate }: Ch
           .attr('fill', 'transparent')
           .on('mouseover', (e) => {
             const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
+            const date = new Date(_chartData[i]?.time)
             Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
             InfoRectGroup.attr(
               'transform',
               `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
             )
             InfoRectFeeText.property('innerHTML', `Fee: ${_chartData[i]?.fee.toFixed(3)}`)
-            InfoRectDateText.property('innerHTML', `${_chartData[i]?.time}/3/12`)
-            Focus.attr('transform', `translate(${xScale(_chartData[i]?.time)},${y(_chartData[i]?.fee)})`)
+            InfoRectDateText.property('innerHTML', `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`)
+            Focus.attr('transform', `translate(${xTranslate},${y(_chartData[i]?.fee)})`)
           })
 
         svg.node().append(rect.node())

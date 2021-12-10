@@ -27,14 +27,14 @@ const BodyWrapper = styled.div`
 const ChartWrapper = styled.div`
   width: 100%;
 `
-enum ChartType {
+export enum ChartType {
   VOLUME,
   TVL,
   LIQUIDITY,
   FEES,
 }
 
-enum ChartSpan {
+export enum ChartSpan {
   DAY,
   WEEK,
   MONTH,

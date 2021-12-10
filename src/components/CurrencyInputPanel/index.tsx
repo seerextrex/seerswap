@@ -29,6 +29,9 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   background-color: transparent;
   z-index: 1;
   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 100%!important;
+  `}
 `
 
 const FixedContainer = styled.div`
@@ -104,7 +107,7 @@ const InputRow = styled.div<{ selected: boolean }>`
   padding: ${({ hideCurrency }) => (hideCurrency ? '1rem 1rem 0.75rem 0' : '1rem 1rem 0.75rem 1rem')};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
     flex-direction: column;
-    height: 120px;
+    // height: 120px;
   }`}
 `
 
@@ -138,6 +141,7 @@ const NumericalInputStyled = styled(NumericalInput)`
     width: 100%;
     text-align: left!important;
     font-size: 18px!important;
+    margin: 15px 0 10px;
   }`}
 `
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`

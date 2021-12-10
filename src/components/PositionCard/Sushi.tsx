@@ -25,6 +25,18 @@ const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
     `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
   position: relative;
   overflow: hidden;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 2rem;
+    `};
+`
+const RowFixedStyled = styled(RowFixed)`
+  min-height: 55px;
+  justify-content: space-between;
+  flex-direction: column;
+`
+
+const TextStyled = styled(Text)`
+margin-left: 0 !important;
 `
 
 interface PositionCardProps {
@@ -47,7 +59,7 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
         <FixedHeightRow>
           <AutoRow gap="8px">
             <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={20} />
-            <Text fontWeight={500} fontSize={20}>
+            <TextStyled fontWeight={500} fontSize={window.innerWidth < 501 ? 18 : 20}>
               {!currency0 || !currency1 ? (
                 <Dots>
                   <Trans>Loading</Trans>
@@ -55,13 +67,16 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
               ) : (
                 `${currency0.symbol}/${currency1.symbol}`
               )}
-            </Text>
+            </TextStyled>
 
-            <Badge variant={BadgeVariant.WARNING} style={{ backgroundColor: '#48062b', color: '#f241a5' }}>
+            {window.innerWidth > 501 ? <Badge variant={BadgeVariant.WARNING} style={{ backgroundColor: '#48062b', color: '#f241a5' }}>
               SushiSwap
-            </Badge>
+            </Badge> : null}
           </AutoRow>
-          <RowFixed gap="8px">
+          <RowFixedStyled gap="8px">
+            {window.innerWidth < 501 ? <Badge variant={BadgeVariant.WARNING} style={{ backgroundColor: '#48062b', color: '#f241a5' }}>
+              SushiSwap
+            </Badge> : null}
             <ButtonEmpty
               padding="0px 35px 0px 0px"
               $borderRadius="12px"
@@ -71,7 +86,7 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
             >
               <Trans>Migrate</Trans>
             </ButtonEmpty>
-          </RowFixed>
+          </RowFixedStyled>
         </FixedHeightRow>
       </AutoColumn>
     </StyledPositionCard>

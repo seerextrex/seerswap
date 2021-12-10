@@ -13,9 +13,9 @@ import { useActiveWeb3React } from '../../hooks/web3'
 import { SupportedChainId } from '../../constants/chains'
 
 const MobileWrapper = styled(AutoColumn)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
+  // ${({ theme }) => theme.mediaWidth.upToSmall`
+  //   display: none;
+  // `};
 `
 
 const BaseWrapper = styled.div<{ disable?: boolean }>`

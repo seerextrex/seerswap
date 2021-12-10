@@ -135,10 +135,10 @@ const HeaderLinks = styled(Row)`
     top: unset;
   }
   
-  @media (max-width: 400px) {
+  @media (max-width: 500px) {
     display: flex;
     max-width: 100%;
-    margin-left: 10px;
+    //margin-left: 10px;
   }
 `
 
@@ -295,35 +295,33 @@ export default function Header() {
           <img width={'160px'} src={window.innerWidth < 501 ? Logo_logo : darkMode ? LogoDark : Logo} alt="logo" />
         </AlgIcon>
       </Title>
-      <div>
-        <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            Swap
-          </StyledNavLink>
-          <StyledNavLink
-            id={`pool-nav-link`}
-            to={'/pool'}
-            isActive={(match, { pathname }) =>
-              Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/increase') ||
-              pathname.startsWith('/find')
-            }
-          >
-            Pool
-          </StyledNavLink>
-          <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
-            Farming
-          </StyledNavLink>
-          <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
-            Migrate
-          </StyledNavLink>
-          <StyledNavLink id={`info-nav-link`} to={'/info'}>
-            Info
-          </StyledNavLink>
-        </HeaderLinks>
-      </div>
+      <HeaderLinks>
+        <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+          Swap
+        </StyledNavLink>
+        <StyledNavLink
+          id={`pool-nav-link`}
+          to={'/pool'}
+          isActive={(match, { pathname }) =>
+            Boolean(match) ||
+            pathname.startsWith('/add') ||
+            pathname.startsWith('/remove') ||
+            pathname.startsWith('/increase') ||
+            pathname.startsWith('/find')
+          }
+        >
+          Pool
+        </StyledNavLink>
+        <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
+          Farming
+        </StyledNavLink>
+        <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
+          Migrate
+        </StyledNavLink>
+        <StyledNavLink id={`info-nav-link`} to={'/info'}>
+          Info
+        </StyledNavLink>
+      </HeaderLinks>
 
       <HeaderControls>
         <NetworkCard />

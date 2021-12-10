@@ -56,6 +56,10 @@ const LinkRow = styled(Link)`
     row-gap: 12px;
   `};
 
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 0;
+  `};
+
   ${({ onFarming }) =>
     onFarming &&
     css`
@@ -85,6 +89,10 @@ const OnFarmingBadge = styled(Link)`
 
 const DataLineItem = styled.div`
   font-size: 14px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 12px!important;
+`};
+  
 `
 
 const RangeLineItem = styled(DataLineItem)`
@@ -115,6 +123,10 @@ const RangeText = styled.span`
   /* background-color: ${({ theme }) => theme.bg2}; */
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  background-color: ${({ theme }) => theme.bg2};
+    padding: 0;
+`};
 `
 
 const ExtentsText = styled.span`

@@ -9,7 +9,7 @@ import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { PairState, useV2Pairs } from 'hooks/useV2Pairs'
 import { ReactNode, useContext, useMemo } from 'react'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 
 import { LightCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
@@ -22,6 +22,10 @@ import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { BackArrow, StyledInternalLink, TYPE } from '../../theme'
 import { BodyWrapper } from '../AppBody'
+
+const MigrateSushiPositionCardStyled = styled(MigrateSushiPositionCard)`
+
+`
 
 function EmptyState({ message }: { message: ReactNode }) {
   return (
@@ -159,7 +163,7 @@ export default function MigrateV2() {
                 <>
                   {tokenPairsWithSushiBalance.map(({ sushiLiquidityToken, tokens }) => {
                     return (
-                      <MigrateSushiPositionCard
+                      <MigrateSushiPositionCardStyled
                         key={(sushiLiquidityToken as Token).address}
                         tokenA={tokens[0]}
                         tokenB={tokens[1]}

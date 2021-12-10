@@ -62,6 +62,9 @@ const Rewards = styled.div`
 const RewardsRow = styled.div`
   display: flex;
   margin-bottom: 8px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: column;
+  `}
 `
 
 const Reward = styled.div`
@@ -84,6 +87,10 @@ const Reward = styled.div`
   &:not(:nth-of-type(3n)) {
     margin-right: 8px;
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     width: 100%;
+     margin-bottom: 20px;
+  `}
 `
 
 const RewardTokenIcon = styled.div`
@@ -299,7 +306,7 @@ export function StakerMyRewards({
                     <RewardTokenIcon name={rew.symbol}>{rew.rewardAddress}</RewardTokenIcon>
                   )}
                   <RewardTokenInfo>
-                    <div title={rew.amount}>{formatReward(rew.amount)}</div>
+                    <div title={rew.amount}>{window.innerWidth < 501 ? rew.amount : formatReward(rew.amount)}</div>
                     <div title={rew.symbol}>{rew.symbol}</div>
                   </RewardTokenInfo>
                   {isLoading(rew.rewardAddress) ? (

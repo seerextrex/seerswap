@@ -35,6 +35,9 @@ export const Arrow = styled.div<{ faded: boolean }>`
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: #202635;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 800px;
+  `};
 `
 
 const ResponsiveGrid = styled.div`
@@ -51,19 +54,19 @@ const ResponsiveGrid = styled.div`
     }
   }
 
-  @media screen and (max-width: 500px) {
-    grid-template-columns: 20px 1.5fr repeat(1, 1fr);
-    & :nth-child(5) {
-      display: none;
-    }
-  }
-
-  @media screen and (max-width: 480px) {
-    grid-template-columns: 2.5fr repeat(1, 1fr);
-    > *:nth-child(1) {
-      display: none;
-    }
-  }
+  //@media screen and (max-width: 500px) {
+  //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);
+  //  & :nth-child(5) {
+  //    display: none;
+  //  }
+  //}
+  //
+  //@media screen and (max-width: 480px) {
+  //  grid-template-columns: 2.5fr repeat(1, 1fr);
+  //  > *:nth-child(1) {
+  //    display: none;
+  //  }
+  //}
 `
 
 const SORT_FIELD = {

@@ -14,6 +14,7 @@ import Modal from '../Modal'
 import { PageTitle } from '../PageTitle'
 
 import { useLocation, useParams } from 'react-router'
+import StakerMyStakesMobile from './StakerMyStakesMobile'
 
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import USDCLogo from '../../assets/images/usdc-logo.png'
@@ -28,6 +29,7 @@ const skeletonAnimation = keyframes`
 const skeletonGradient = css`
   position: relative;
   overflow: hidden;
+
   &::after {
     position: absolute;
     top: 0;
@@ -35,13 +37,11 @@ const skeletonGradient = css`
     bottom: 0;
     left: 0;
     transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      rgba(91, 105, 141, 0) 0,
-      rgba(91, 105, 141, 0.2) 25%,
-      rgba(91, 105, 141, 0.5) 60%,
-      rgba(91, 105, 141, 0)
-    );
+    background-image: linear-gradient(90deg,
+    rgba(91, 105, 141, 0) 0,
+    rgba(91, 105, 141, 0.2) 25%,
+    rgba(91, 105, 141, 0.5) 60%,
+    rgba(91, 105, 141, 0));
     animation-name: ${skeletonAnimation};
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
@@ -56,7 +56,7 @@ const Stakes = styled.div`
   overflow-x: hidden;
 `
 
-const TokenIcon = styled.div`
+export const TokenIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,10 +69,8 @@ const TokenIcon = styled.div`
   user-select: none;
 
   ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
-
   background: ${({ logo }) => (logo ? `url(${logo})` : '')};
   background-size: contain;
-
   &:nth-of-type(2) {
     margin-left: -8px;
   }
@@ -92,19 +90,19 @@ const Stake = styled.div`
   }
 
   ${({ navigatedTo }) =>
-    navigatedTo &&
-    css`
-      background-color: #1a1029;
-    `}
+          navigatedTo &&
+          css`
+            background-color: #1a1029;
+          `}
 `
 
-const StakeId = styled.div`
+export const StakeId = styled.div`
   display: flex;
   align-items: center;
   min-width: 96px !important;
 `
 
-const StakePool = styled.div`
+export const StakePool = styled.div`
   display: flex;
 `
 const StakeSeparator = styled.div`
@@ -116,7 +114,7 @@ const StakeSeparator = styled.div`
   margin: 0 1rem;
 `
 
-const StakeReward = styled.div`
+export const StakeReward = styled.div`
   display: flex;
 
   & > ${TokenIcon} {
@@ -124,7 +122,7 @@ const StakeReward = styled.div`
   }
 `
 
-const StakeCountdown = styled.div`
+export const StakeCountdown = styled.div`
   font-size: 16px;
   margin: auto;
 
@@ -133,16 +131,16 @@ const StakeCountdown = styled.div`
 
   & > * {
     ${({ skeleton }) =>
-      skeleton
-        ? css`
-            width: 80px;
-            height: 16px;
-            background: #3d4a6a;
-            border-radius: 4px;
+            skeleton
+                    ? css`
+                      width: 80px;
+                      height: 16px;
+                      background: #3d4a6a;
+                      border-radius: 4px;
 
-            ${skeletonGradient}
-          `
-        : null}
+                      ${skeletonGradient}
+                    `
+                    : null}
   }
 `
 
@@ -152,7 +150,7 @@ const StakeActions = styled.div`
   justify-content: flex-end;
 `
 
-const StakeButton = styled.button`
+export const StakeButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
@@ -161,19 +159,19 @@ const StakeButton = styled.button`
   min-width: 126px;
 
   ${({ disabled }) =>
-    disabled &&
-    css`
-      opacity: 0.4;
-      cursor: default;
-    `}
+          disabled &&
+          css`
+            opacity: 0.4;
+            cursor: default;
+          `}
 
   ${({ skeleton }) =>
-    skeleton
-      ? css`
-          ${skeletonGradient}
-          width: 80px;
-        `
-      : null}
+          skeleton
+                  ? css`
+                    ${skeletonGradient}
+                    width: 80px;
+                  `
+                  : null}
 `
 
 const StakeListHeader = styled.div`
@@ -181,28 +179,34 @@ const StakeListHeader = styled.div`
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #202635;
+
   & > * {
     max-width: calc(100% / 6);
     min-width: calc(100% / 6);
     font-weight: 500;
     color: #ababab;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding-bottom: 0;
+    `};
 `
 
-const TokensNames = styled.div`
+export const TokensNames = styled.div`
   margin-left: 1rem;
+
   & > * {
     ${({ skeleton }) =>
-      skeleton
-        ? css`
-            width: 40px;
-            height: 16px;
-            background: #3d4a6a;
-            margin-bottom: 3px;
-            border-radius: 4px;
-            ${skeletonGradient}
-          `
-        : null}
+            skeleton
+                    ? css`
+                      width: 40px;
+                      height: 16px;
+                      background: #3d4a6a;
+                      margin-bottom: 3px;
+                      border-radius: 4px;
+                      ${skeletonGradient}
+                    `
+                    : null}
   }
 `
 
@@ -251,7 +255,7 @@ const SendNFTButton = styled.button`
   }
 `
 
-const MoreButton = styled.button`
+export const MoreButton = styled.button`
   border: none;
   background-color: transparent;
 `
@@ -265,11 +269,11 @@ const SendNFTWarning = styled.div`
 `
 
 export function StakerMyStakes({
-  data,
-  refreshing,
-  now,
-  fetchHandler,
-}: {
+                                 data,
+                                 refreshing,
+                                 now,
+                                 fetchHandler
+                               }: {
   data: any
   refreshing: boolean
   now: number
@@ -293,7 +297,7 @@ export function StakerMyStakes({
   }
 
   const { getRewardsHandler, getRewardsHash, withdrawHandler, withdrawnHash, sendNFTL2Handler, sendNFTL2Hash } =
-    useStakerHandlers() || {}
+  useStakerHandlers() || {}
 
   const { hash } = useLocation()
 
@@ -557,7 +561,7 @@ export function StakerMyStakes({
               </SendNFTWarning>
               <div style={{ marginBottom: '1rem' }}>
                 <RecipientInput
-                  placeholder="Enter a recipient"
+                  placeholder='Enter a recipient'
                   value={recipient}
                   onChange={(v) => {
                     setRecipient(v.target.value)
@@ -625,16 +629,23 @@ export function StakerMyStakes({
       ) : shallowPositions && shallowPositions.length !== 0 ? (
         <>
           {stakedNFTs && (
-            <>
+            <> {window.innerWidth > 500 && (
               <StakeListHeader>
-                <div style={{ minWidth: '96px' }}>ID</div>
+                <div style={{ minWidth: `${window.innerWidth < 500 ? '' : '96px'}` }}>ID</div>
                 <div>Pool</div>
                 <div>Earned</div>
                 <div>Bonus</div>
                 <div>End time</div>
                 <div></div>
               </StakeListHeader>
-              <Stakes>{getTable(stakedNFTs, true)}</Stakes>
+            )}
+              {/* eslint-disable-next-line react/jsx-no-undef */}
+              <Stakes>{window.innerWidth < 500 ?
+                <StakerMyStakesMobile position={stakedNFTs[0]} modalHandler={setSendModal}
+                                      getRewardsHandler={getRewardsHandler}
+                                      gettingReward={gettingReward}
+                                      setGettingReward={setGettingReward}
+                /> : getTable(stakedNFTs, true)}</Stakes>
             </>
           )}
           {inactiveNFTs && (

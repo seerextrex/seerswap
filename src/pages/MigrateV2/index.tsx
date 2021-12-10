@@ -9,7 +9,7 @@ import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { PairState, useV2Pairs } from 'hooks/useV2Pairs'
 import { ReactNode, useContext, useMemo } from 'react'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 
 import { LightCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
@@ -25,6 +25,8 @@ import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { BackArrow, StyledInternalLink, TYPE } from '../../theme'
 import { BodyWrapper } from '../AppBody'
 
+const MigrateSushiPositionCardStyled = styled(MigrateSushiPositionCard)`
+`
 import { Helmet } from 'react-helmet'
 
 function EmptyState({ message }: { message: ReactNode }) {

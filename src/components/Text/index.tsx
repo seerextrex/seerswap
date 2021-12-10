@@ -12,6 +12,9 @@ export const Label = styled(TYPE.label)<{ end?: number }>`
   @media screen and (max-width: 640px) {
     font-size: 14px;
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    justify-content: start;
+  `};
 `
 
 export const ClickableText = styled(Label)`
@@ -25,4 +28,7 @@ export const ClickableText = styled(Label)`
   @media screen and (max-width: 640px) {
     font-size: 12px;
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    justify-content: start;
+  `};
 `

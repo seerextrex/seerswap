@@ -110,6 +110,7 @@ function theme(darkMode: boolean): DefaultTheme {
     shadow1: darkMode ? '#000' : '#2F80ED',
 
     // media queries
+
     mediaWidth: mediaWidthTemplates,
 
     // css snippets

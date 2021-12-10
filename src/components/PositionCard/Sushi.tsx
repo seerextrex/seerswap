@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
+import { NavLink } from 'react-router-dom'
 
 import { unwrappedToken } from '../../utils/unwrappedToken'
 import { ButtonEmpty } from '../Button'
 import { transparentize } from 'polished'
 import { CardNoise } from '../earn/styled'
+import { ArrowLeft } from 'react-feather'
 
 import { useColor } from '../../hooks/useColor'
 
@@ -22,9 +24,35 @@ import Badge, { BadgeVariant } from 'components/Badge'
 const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   border: none;
   background: ${({ theme, bgColor }) =>
-    `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
+          `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
   position: relative;
   overflow: hidden;
+  @media screen and (min-width: 501px) {
+    padding: 2rem;
+  }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 2rem;
+    `};
+`
+const RowFixedStyled = styled(RowFixed)`
+  min-height: 55px;
+  justify-content: space-between;
+  flex-direction: column;
+  @media screen and (min-width: 501px) {
+    justify-content: center;
+  }
+`
+
+const TextStyled = styled(Text)`
+  margin-left: 0 !important;
+`
+const ArrowBack = styled(NavLink)`
+  z-index: 100;
+  text-decoration: none;
+  color: white;
+  position: absolute;
+  left: 3%;
+  top: 5%;
 `
 
 interface PositionCardProps {
@@ -42,8 +70,11 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
 
   return (
     <StyledPositionCard border={border} bgColor={backgroundColor}>
+      <ArrowBack to={'/pool/v2/find'}>
+        <ArrowLeft />
+      </ArrowBack>
       <CardNoise />
-      <AutoColumn gap="12px">
+      <AutoColumn gap='12px'>
         <FixedHeightRow>
           <AutoRow gap="8px">
             <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
@@ -55,8 +86,7 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
               ) : (
                 `${currency0.symbol}/${currency1.symbol}`
               )}
-            </Text>
-
+            </TextStyled>
             <Badge
               variant={BadgeVariant.WARNING}
               ref={(element) => {
@@ -76,15 +106,15 @@ export default function SushiPositionCard({ tokenA, tokenB, liquidityToken, bord
           </AutoRow>
           <RowFixed gap="8px" style={{ minWidth: '110px' }}>
             <ButtonEmpty
-              padding="0px 35px 0px 0px"
-              $borderRadius="12px"
-              width="fit-content"
+              padding='0px 35px 0px 0px'
+              $borderRadius='12px'
+              width='fit-content'
               as={Link}
               to={`/migrate/${liquidityToken.address}`}
             >
               <Trans>Migrate</Trans>
             </ButtonEmpty>
-          </RowFixed>
+          </RowFixedStyled>
         </FixedHeightRow>
       </AutoColumn>
     </StyledPositionCard>

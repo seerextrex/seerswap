@@ -37,6 +37,9 @@ export const Arrow = styled.div<{ faded: boolean }>`
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: #202635;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 600px;
+  `};
 `
 
 const ResponsiveGrid = styled.div`
@@ -46,29 +49,33 @@ const ResponsiveGrid = styled.div`
 
   grid-template-columns: 20px 3fr repeat(4, 1fr);
 
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 20px 1.5fr repeat(3, 1fr);
-    & :nth-child(4) {
-      display: none;
-    }
-  }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     grid-template-columns: 20px 2fr repeat(4, 1fr);
+  `};
 
-  @media screen and (max-width: 800px) {
-    grid-template-columns: 20px 1.5fr repeat(2, 1fr);
-    & :nth-child(6) {
-      display: none;
-    }
-  }
+  //@media screen and (max-width: 900px) {
+  //  grid-template-columns: 20px 1.5fr repeat(3, 1fr);
+  //  & :nth-child(4) {
+  //    display: none;
+  //  }
+  //}
+  //
+  //@media screen and (max-width: 800px) {
+  //  grid-template-columns: 20px 1.5fr repeat(2, 1fr);
+  //  & :nth-child(6) {
+  //    display: none;
+  //  }
+  //}
 
-  @media screen and (max-width: 670px) {
-    grid-template-columns: repeat(2, 1fr);
-    > *:first-child {
-      display: none;
-    }
-    > *:nth-child(3) {
-      display: none;
-    }
-  }
+  //@media screen and (max-width: 670px) {
+  //  grid-template-columns: repeat(2, 1fr);
+  //  > *:first-child {
+  //    display: none;
+  //  }
+  //  > *:nth-child(3) {
+  //    display: none;
+  //  }
+  //}
 `
 
 const LinkWrapper = styled.a`

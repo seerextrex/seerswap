@@ -96,13 +96,6 @@ export function useBestV3TradeExactIn(
 
     const isSyncing = quotesResults.some(({ syncing }) => syncing)
 
-    // const newTrade = Trade.createUncheckedTrade({
-    //   route: bestRoute,
-    //   tradeType: TradeType.EXACT_INPUT,
-    //   inputAmount: amountIn,
-    //   outputAmount: CurrencyAmount.fromRawAmount(currencyOut, amountOut.toString()),
-    // })
-
     return {
       state: isSyncing ? V3TradeState.SYNCING : V3TradeState.VALID,
       trade: Trade.createUncheckedTrade({

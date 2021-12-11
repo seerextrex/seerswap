@@ -56,7 +56,7 @@ ReactDOM.render(
   <StrictMode>
     <ApolloProvider client={client}>
       <Provider store={store}>
-        <BrowserRouter>
+        <HashRouter>
           <LanguageProvider>
             <Web3ReactProvider getLibrary={getLibrary}>
               <Web3ProviderNetwork getLibrary={getLibrary}>
@@ -70,7 +70,7 @@ ReactDOM.render(
               </Web3ProviderNetwork>
             </Web3ReactProvider>
           </LanguageProvider>
-        </BrowserRouter>
+        </HashRouter>
       </Provider>
     </ApolloProvider>
   </StrictMode>,

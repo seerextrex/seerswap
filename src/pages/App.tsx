@@ -143,17 +143,6 @@ export default function App() {
             <Header />
           </HeaderWrapper>
           <BodyWrapper style={{ zIndex: 2 }}>
-            <div
-              style={{
-                padding: '1rem',
-                backgroundColor: '#702498',
-                borderRadius: '8px',
-                marginTop: '-2rem',
-                marginBottom: '2rem',
-              }}
-            >
-              <span>⚠️</span> <span>Contracts are being audited. Please use with caution.</span> <span>⚠️</span>
-            </div>
             {networkFailed && (
               <NetworkFailedCard>
                 <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon network failed</div>

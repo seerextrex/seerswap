@@ -262,7 +262,7 @@ export default function CurrencyInputPanel({
           <AutoColumn
             gap="sm"
             justify="center"
-            style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '18px' }}
+            style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '18px', position: 'absolute', bottom: '10%'}}
           >
             {/* <Lock /> */}
             <TYPE.label fontSize="14px">
@@ -274,7 +274,7 @@ export default function CurrencyInputPanel({
       <Container hideInput={hideInput}>
         <InputRow
           hideCurrency={hideCurrency}
-          style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}
+          style={hideInput ? { borderRadius: '8px' } : {}}
           selected={!onCurrencySelect}
         >
           {!hideCurrency && (

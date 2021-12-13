@@ -371,6 +371,93 @@ export default function AddLiquidity({
         !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
       }`
 
+    const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
+        useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)
+
+  const Buttons = () =>
+      addIsUnsupported ? (
+          <ButtonPrimary disabled={true} $borderRadius="12px" padding={'12px'}>
+            <TYPE.main mb="4px">
+              <Trans>Unsupported Asset</Trans>
+            </TYPE.main>
+          </ButtonPrimary>
+      ) : !account ? (
+          <ButtonLight onClick={toggleWalletModal} $borderRadius="12px" padding={'12px'}>
+            <Trans>Connect wallet</Trans>
+          </ButtonLight>
+      ) : (
+          <AutoColumn gap={'md'}>
+            {(approvalA === ApprovalState.NOT_APPROVED ||
+                    approvalA === ApprovalState.PENDING ||
+                    approvalB === ApprovalState.NOT_APPROVED ||
+                    approvalB === ApprovalState.PENDING) &&
+                isValid && (
+                    <RowBetween>
+                      {showApprovalA && (
+                          <ButtonPrimary
+                              onClick={approveACallback}
+                              style={{ color: '#ed1185', background: '#400f29' }}
+                              disabled={approvalA === ApprovalState.PENDING}
+                              width={showApprovalB ? '48%' : '100%'}
+                          >
+                            {approvalA === ApprovalState.PENDING ? (
+                                <Dots>
+                                  <Trans>Approving {currencies[Field.CURRENCY_A]?.symbol}</Trans>
+                                </Dots>
+                            ) : (
+                                <Trans>Approve {currencies[Field.CURRENCY_A]?.symbol}</Trans>
+                            )}
+                          </ButtonPrimary>
+                      )}
+                      {showApprovalB && (
+                          <ButtonPrimary
+                              onClick={approveBCallback}
+                              style={{ color: '#ed1185', background: '#400f29' }}
+                              disabled={approvalB === ApprovalState.PENDING}
+                              width={showApprovalA ? '48%' : '100%'}
+                          >
+                            {approvalB === ApprovalState.PENDING ? (
+                                <Dots>
+                                  <Trans>Approving {currencies[Field.CURRENCY_B]?.symbol}</Trans>
+                                </Dots>
+                            ) : (
+                                <Trans>Approve {currencies[Field.CURRENCY_B]?.symbol}</Trans>
+                            )}
+                          </ButtonPrimary>
+                      )}
+                    </RowBetween>
+                )}
+            {mustCreateSeparately && (
+                <ButtonError onClick={onCreate} disabled={!isValid || attemptingTxn || !position}>
+                  {attemptingTxn ? (
+                      <Dots>
+                        <Trans>Confirm Create</Trans>
+                      </Dots>
+                  ) : (
+                      <Text fontWeight={500}>{errorMessage ? errorMessage : <Trans>Create</Trans>}</Text>
+                  )}
+                </ButtonError>
+            )}
+            <ButtonError
+                onClick={() => {
+                  expertMode ? onAdd() : setShowConfirm(true)
+                }}
+                style={{ color: '#ed1185', background: '#400f29' }}
+                disabled={
+                    mustCreateSeparately ||
+                    !isValid ||
+                    (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
+                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
+                }
+                error={!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]}
+            >
+              <Text fontWeight={500}>
+                {mustCreateSeparately ? <Trans>Add</Trans> : errorMessage ? errorMessage : <Trans>Preview</Trans>}
+              </Text>
+            </ButtonError>
+          </AutoColumn>
+      )
+
   return (
     <>
       <ScrollablePage>
@@ -470,6 +557,240 @@ export default function AddLiquidity({
                   </AutoColumn>
                 </DynamicSection>
               </div>
+                {!hasExistingPosition ? (
+                    <>
+                        <HideMedium>
+                            <Buttons />
+                        </HideMedium>
+                        <RightContainer gap="lg">
+                            <DynamicSection gap="md" disabled={invalidPool}>
+                                {!noLiquidity ? (
+                                    <>
+                                        <RowBetween>
+                                            <TYPE.label>
+                                                <Trans>Set Price Range</Trans>
+                                            </TYPE.label>
+                                        </RowBetween>
+
+                                        {price && baseCurrency && quoteCurrency && !noLiquidity && (
+                                            <AutoRow gap="4px" justify="center" style={{ marginTop: '0.5rem' }}>
+                                                <Trans>
+                                                    <TYPE.main fontWeight={500} textAlign="center" fontSize={12} color="text1">
+                                                        Current Price:
+                                                    </TYPE.main>
+                                                    <TYPE.body fontWeight={500} textAlign="center" fontSize={12} color="text1">
+                                                        <HoverInlineText
+                                                            maxCharacters={20}
+                                                            text={invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}
+                                                        />
+                                                    </TYPE.body>
+                                                    <TYPE.body color="text2" fontSize={12}>
+                                                        {quoteCurrency?.symbol} per {baseCurrency.symbol}
+                                                    </TYPE.body>
+                                                </Trans>
+                                            </AutoRow>
+                                        )}
+
+                                        {/* <LiquidityChartRangeInput
+                            currencyA={baseCurrency ?? undefined}
+                            currencyB={quoteCurrency ?? undefined}
+                            feeAmount={dynamicFee}
+                            ticksAtLimit={ticksAtLimit}
+                            price={
+                              price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined
+                            }
+                            priceLower={priceLower}
+                            priceUpper={priceUpper}
+                            onLeftRangeInput={onLeftRangeInput}
+                            onRightRangeInput={onRightRangeInput}
+                            interactive={!hasExistingPosition}
+                          /> */}
+                                    </>
+                                ) : (
+                                    <AutoColumn gap="md">
+                                        <RowBetween>
+                                            <TYPE.label>
+                                                <Trans>Set Starting Price</Trans>
+                                            </TYPE.label>
+                                        </RowBetween>
+                                        {noLiquidity && (
+                                            <BlueCard
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    padding: '1rem 1rem',
+                                                }}
+                                            >
+                                                <TYPE.body
+                                                    fontSize={14}
+                                                    style={{ fontWeight: 500 }}
+                                                    textAlign="left"
+                                                    color={theme.primaryText1}
+                                                >
+                                                    {mustCreateSeparately ? (
+                                                        <Trans>
+                                                            {`This pool must be initialized on ${
+                                                                chainId && CHAIN_INFO ? CHAIN_INFO[chainId].label : ''
+                                                            } before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount.`}
+                                                        </Trans>
+                                                    ) : (
+                                                        <Trans>
+                                                            This pool must be initialized before you can add liquidity. To initialize, select a
+                                                            starting price for the pool. Then, enter your liquidity price range and deposit
+                                                            amount. Gas fees will be higher than usual due to the initialization transaction.
+                                                        </Trans>
+                                                    )}
+                                                </TYPE.body>
+                                            </BlueCard>
+                                        )}
+                                        <OutlineCard padding="12px">
+                                            <StyledInput
+                                                className="start-price-input"
+                                                value={startPriceTypedValue}
+                                                onUserInput={onStartPriceInput}
+                                            />
+                                        </OutlineCard>
+                                        <RowBetween style={{ backgroundColor: theme.bg0, padding: '12px', borderRadius: '12px' }}>
+                                            <TYPE.main>
+                                                <Trans>Current {baseCurrency?.symbol} Price:</Trans>
+                                            </TYPE.main>
+                                            <TYPE.main>
+                                                {price ? (
+                                                    <TYPE.main>
+                                                        <RowFixed>
+                                                            <HoverInlineText
+                                                                maxCharacters={20}
+                                                                text={invertPrice ? price?.invert()?.toSignificant(5) : price?.toSignificant(5)}
+                                                            />{' '}
+                                                            <span style={{ marginLeft: '4px' }}>{quoteCurrency?.symbol}</span>
+                                                        </RowFixed>
+                                                    </TYPE.main>
+                                                ) : (
+                                                    '-'
+                                                )}
+                                            </TYPE.main>
+                                        </RowBetween>
+                                    </AutoColumn>
+                                )}
+                            </DynamicSection>
+
+                            <DynamicSection gap="md" disabled={invalidPool || (noLiquidity && !startPriceTypedValue)}>
+                                <StackedContainer>
+                                    <StackedItem style={{ opacity: showCapitalEfficiencyWarning ? '0.05' : 1 }}>
+                                        <AutoColumn gap="md">
+                                            {noLiquidity && (
+                                                <RowBetween>
+                                                    <TYPE.label>
+                                                        <Trans>Set Price Range</Trans>
+                                                    </TYPE.label>
+                                                </RowBetween>
+                                            )}
+                                            <RangeSelector
+                                                priceLower={priceLower}
+                                                priceUpper={priceUpper}
+                                                getDecrementLower={getDecrementLower}
+                                                getIncrementLower={getIncrementLower}
+                                                getDecrementUpper={getDecrementUpper}
+                                                getIncrementUpper={getIncrementUpper}
+                                                onLeftRangeInput={onLeftRangeInput}
+                                                onRightRangeInput={onRightRangeInput}
+                                                currencyA={baseCurrency}
+                                                currencyB={quoteCurrency}
+                                                feeAmount={dynamicFee}
+                                                ticksAtLimit={ticksAtLimit}
+                                            />
+                                        </AutoColumn>
+                                    </StackedItem>
+
+                                    {showCapitalEfficiencyWarning && (
+                                        <StackedItem zIndex={1}>
+                                            <YellowCard
+                                                padding="15px"
+                                                $borderRadius="12px"
+                                                height="100%"
+                                                style={{
+                                                    borderColor: theme.yellow3,
+                                                    border: '1px solid',
+                                                }}
+                                            >
+                                                <AutoColumn gap="8px" style={{ height: '100%' }}>
+                                                    <RowFixed>
+                                                        <AlertTriangle stroke={theme.yellow3} size="16px" />
+                                                        <TYPE.yellow ml="12px" fontSize="15px">
+                                                            <Trans>Efficiency Comparison</Trans>
+                                                        </TYPE.yellow>
+                                                    </RowFixed>
+                                                    <RowFixed>
+                                                        <TYPE.yellow ml="12px" fontSize="13px" margin={0} fontWeight={400}>
+                                                            <Trans>
+                                                                Full range positions may earn less fees than concentrated positions. Learn more{' '}
+                                                                <ExternalLink
+                                                                    style={{ color: theme.yellow3, textDecoration: 'underline' }}
+                                                                    href={''}
+                                                                >
+                                                                    here
+                                                                </ExternalLink>
+                                                                .
+                                                            </Trans>
+                                                        </TYPE.yellow>
+                                                    </RowFixed>
+                                                    <Row>
+                                                        <ButtonYellow
+                                                            padding="8px"
+                                                            marginRight="8px"
+                                                            $borderRadius="8px"
+                                                            width="auto"
+                                                            onClick={() => {
+                                                                setShowCapitalEfficiencyWarning(false)
+                                                                getSetFullRange()
+                                                            }}
+                                                        >
+                                                            <TYPE.black fontSize={13} color="black">
+                                                                <Trans>I Understand</Trans>
+                                                            </TYPE.black>
+                                                        </ButtonYellow>
+                                                    </Row>
+                                                </AutoColumn>
+                                            </YellowCard>
+                                        </StackedItem>
+                                    )}
+                                </StackedContainer>
+
+                                {outOfRange ? (
+                                    <YellowCard padding="8px 12px" $borderRadius="12px">
+                                        <RowBetween>
+                                            <AlertTriangle stroke={theme.yellow3} size="16px" />
+                                            <TYPE.yellow ml="12px" fontSize="12px">
+                                                <Trans>
+                                                    Your position will not earn fees or be used in trades until the market price moves into
+                                                    your range.
+                                                </Trans>
+                                            </TYPE.yellow>
+                                        </RowBetween>
+                                    </YellowCard>
+                                ) : null}
+
+                                {invalidRange ? (
+                                    <YellowCard padding="8px 12px" $borderRadius="12px">
+                                        <RowBetween>
+                                            <AlertTriangle stroke={theme.yellow3} size="16px" />
+                                            <TYPE.yellow ml="12px" fontSize="12px">
+                                                <Trans>Invalid range selected. The min price must be lower than the max price.</Trans>
+                                            </TYPE.yellow>
+                                        </RowBetween>
+                                    </YellowCard>
+                                ) : null}
+                            </DynamicSection>
+
+                            <MediumOnly>
+                                <Buttons />
+                            </MediumOnly>
+                        </RightContainer>
+                    </>
+                ) : (
+                    <Buttons />
+                )}
             </ResponsiveTwoColumns>
           </Wrapper>
         </PageWrapper>

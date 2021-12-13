@@ -4,6 +4,11 @@ import { Contract, providers } from "ethers";
 import { useActiveWeb3React } from "../web3";
 import { useClients } from "./useClients";
 import {
+    FETCH_FEE_FROM_POOL,
+    CHART_FEE_LAST_ENTRY,
+    CHART_FEE_POOL_DATA,
+    CHART_POOL_DATA,
+    CHART_POOL_LAST_ENTRY,
     POOLS_FROM_ADDRESSES,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
@@ -43,6 +48,9 @@ export function useInfoSubgraph() {
 
     const [feesResult, setFees] = useState(null);
     const [feesLoading, setFeesLoading] = useState(null);
+
+    const [chartPoolData, setChartPoolData] = useState(null)
+    const [chartPoolDataLoading, setChartPoolDataLoading] = useState(null)
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -302,17 +310,58 @@ export function useInfoSubgraph() {
 
     }
 
-    async function fetchFeePool(pool: string, timestampStart: number, timestampFinish: number) {
+    async function fetchLastEntry(pool) {
         try {
-            setFeesLoading(true)
-            const { data: { feeHourDatas }, error: error } = await testClient.query({
-                query: FETCH_FEE_FROM_POOL(pool, timestampStart, timestampFinish),
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_LAST_ENTRY(pool),
                 fetchPolicy: 'network-only'
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            setFees(feeHourDatas)
+            return feeHourDatas
+
+        } catch (err) {
+            console.error('Fees last failed: ', err);
+        }
+    }
+
+    async function fetchPoolLastEntry(pool) {
+        try {
+
+            const { data: { poolDayDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_LAST_ENTRY(pool),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            return poolDayDatas
+
+        } catch (err) {
+            console.error('Fees last failed: ', err);
+        }
+    }
+
+    async function fetchFeePool(pool: string, startTimestamp: number, endTimestamp: number) {
+        try {
+            setFeesLoading(true)
+
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_POOL_DATA(pool, startTimestamp, endTimestamp),
+                fetchPolicy: 'network-only'
+            })
+
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const _feeHourData = feeHourDatas.length === 0 ? await fetchLastEntry(pool) : feeHourDatas
+
+            if (_feeHourData.length !== 0) {
+                setFees(_feeHourData)
+            } else {
+                setFees([])
+            }
 
         } catch (err) {
             console.error('Fees failed: ', err);
@@ -322,11 +371,40 @@ export function useInfoSubgraph() {
         setFeesLoading(false)
     }
 
+    async function fetchChartPoolData(pool: string, startTimestamp: number, endTimestamp: number) {
+        try {
+
+            setChartPoolDataLoading(true)
+
+            const { data: { poolDayDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_DATA(pool, startTimestamp, endTimestamp),
+                fetchPolicy: 'network-only',
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const _poolDayDatas = poolDayDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolDayDatas
+
+            if (_poolDayDatas.length !== 0) {
+                setChartPoolData(_poolDayDatas)
+            } else {
+                setChartPoolData([])
+            }
+
+        } catch (err) {
+            console.error('Chart pool data failed: ', err)
+            setChartPoolData(false)
+        }
+
+        setChartPoolDataLoading(false)
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
-        fetchFees: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool }
+        fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData }
     }
 
 

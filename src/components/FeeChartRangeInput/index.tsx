@@ -23,7 +23,7 @@ const MockLoading = styled.div`
 interface FeeChartRangeInputProps {
   data: any
   refreshing: boolean
-  fetchHandler: (id: string, start: number, end: number) => any
+  fetchHandlers: Array<(id: string, start: number, end: number) => any>
   id: string
   span: number
   startDate: number
@@ -68,36 +68,16 @@ export function daysCount(month: number, year: number) {
 export default function FeeChartRangeInput({
   data,
   refreshing,
-  fetchHandler,
+  fetchHandlers,
   id,
   span,
   startDate,
 }: FeeChartRangeInputProps) {
   const windowWidth = useWindowSize()
 
-  // const [startDate, setStartDate] = useState(getDateAgo(currentData, 1))
-
-  // useEffect(() => {
-  //   if (span === 0) {
-  //     setStartDate(getDateAgo(currentData, 1))
-  //   }
-  //   if (span === 1) {
-  //     setStartDate(getDateAgo(currentData, 8))
-  //   }
-  //   if (span === 2) {
-  //     setStartDate(currentData.setMonth(currentData.getMonth() - 1))
-  //   }
-  //   fetchHandler(id, Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
-  //   // console.log(Math.floor(startDate / 1000), Math.floor(new Date().getTime() / 1000))
-  // }, [span])
-
   useEffect(() => {
-    console.log('DD', data)
+    console.log('NEW DATA', data)
   }, [data])
-
-  useEffect(() => {
-    // console.log(data, span)
-  }, [data, span])
 
   return (
     <Wrapper>
@@ -106,7 +86,7 @@ export default function FeeChartRangeInput({
           <Loader stroke={'white'} size={'25px'} />
         </MockLoading>
       ) : (
-        <React.Fragment>
+        <>
           <Chart
             feeData={data || undefined}
             dimensions={{
@@ -117,7 +97,7 @@ export default function FeeChartRangeInput({
             span={span}
             startDate={startDate}
           />
-        </React.Fragment>
+        </>
       )}
     </Wrapper>
   )

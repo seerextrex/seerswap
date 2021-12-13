@@ -57,8 +57,7 @@ query fetchPool {
     }
 }`
 
-// , timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"
-export const FETCH_FEE_FROM_POOL = (pool: string, timestampStart: number, timestampFinish: number) => {
+export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => {
   return gql`
   query feeHourData {
     feeHourDatas (first: 1000, where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
@@ -75,6 +74,56 @@ export const FETCH_FEE_FROM_POOL = (pool: string, timestampStart: number, timest
   }
 `
 }
+
+export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
+  query lastFeeHourData {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}" }) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+
+export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
+query lastPoolDayData {
+ 
+  poolDayDatas(
+      first: 1
+      where: { pool: "${pool}" }
+      orderBy: date, orderDirection: desc,
+    ) {
+      date
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
+export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimestamp) => gql`
+  query poolDayData {
+    poolDayDatas (
+      first: 1000
+      where: { pool: "${pool}", date_gte: ${startTimestamp}, date_lte: ${endTimestamp} }
+      orderBy: date
+      orderDirection: asc
+      subgraphError: allow
+    ) {
+      date
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
 
 export const LAST_EVENT = () => gql`
 query lastEvent {

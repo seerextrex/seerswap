@@ -40,29 +40,28 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
 
-  const days = useMemo(() => {
-    if (feeData.length === 0) return 0
-    return daysCount(
-      new Date(feeData[0].timestamp * 1000).getMonth(),
-      new Date(feeData[0].timestamp * 1000).getFullYear()
-    )
-  }, [feeData])
-
   const chartData = useMemo(() => {
+    console.log('FEE DATAAA', feeData)
     if (feeData.length === 0) return []
 
     return feeData.map((item) => ({
       time: new Date(item.timestamp * 1000),
       fee: item.fee / item.changesCount / 10000,
-      start: item.startFee,
-      end: item.endFee,
-      high: item.maxFee,
-      low: item.minFee,
     }))
   }, [feeData])
 
+  const xTicks = useMemo(() => {
+    switch (span) {
+      case ChartSpan.DAY:
+        return 24
+      case ChartSpan.MONTH:
+        return 30
+      case ChartSpan.WEEK:
+        return 7
+    }
+  }, [span])
+
   const tickWidth = useMemo(() => {
-    //Todo auto length
     switch (span) {
       case ChartSpan.DAY:
         return dimensions.width / 24
@@ -74,10 +73,17 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
   }, [span, dimensions, feeData])
 
   const _chartData = useMemo(() => {
-    if (chartData.length === 0) return
+    if (chartData.length === 0) return []
 
     let sameDays = []
     const res = []
+
+    if (chartData.length === 1) {
+      res.push({
+        fee: chartData[0].fee,
+        time: chartData[0].time,
+      })
+    }
 
     for (let i = 1; i < chartData.length; i++) {
       if (sameDay(new Date(chartData[i].time), new Date(chartData[i - 1].time))) {
@@ -102,7 +108,7 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
       }
     }
 
-    if (res.length !== 0) {
+    if (sameDays.length !== 0) {
       res.push(
         sameDays.reduce(
           (prev, cur) => {
@@ -117,43 +123,58 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
       res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
     }
 
-    const newA = []
+    console.log(res, sameDays)
 
-    return [...newA, ...res]
+    let _data = []
+
+    if (res.length < xTicks) {
+      const _span = span !== ChartSpan.DAY ? 'day' : 'hour'
+
+      const firstRealDay = dayjs(res[0].timestamp).startOf(_span)
+      const lastRealDay = dayjs(res[res.length - 1].timestamp).startOf(_span)
+
+      const firstAdditionalDay = dayjs(Date.now())
+        .subtract(xTicks - 1, _span)
+        .startOf(_span)
+      const lastAdditionalDay = dayjs(Date.now()).startOf(_span)
+
+      if (firstRealDay > firstAdditionalDay) {
+        for (
+          let i = firstAdditionalDay.unix();
+          i < firstRealDay.unix();
+          i += span === ChartSpan.DAY ? 3600 : 24 * 3600
+        ) {
+          _data.push({
+            time: new Date(i * 1000),
+            fee: res[0].fee,
+          })
+        }
+      }
+
+      if (res.length !== 1) {
+        _data = [..._data, ...res]
+      }
+
+      if (lastRealDay < lastAdditionalDay) {
+        for (let i = lastRealDay.unix(); i < lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
+          _data.push({
+            time: new Date(i * 1000),
+            fee: res[res.length - 1].fee,
+          })
+        }
+      }
+    }
+
+    return [..._data]
   }, [chartData, feeData])
 
   const xScale = useMemo(() => {
+    console.log('CHAAA', _chartData)
     return d3
       .scaleTime()
       .domain([d3.min(_chartData, (d) => new Date(d.time)), d3.max(_chartData, (d) => new Date(d.time))])
       .range([0, width])
   }, [span, dimensions, _chartData])
-
-  // useEffect(() => {
-  //   const kek: any[] = []
-  //   for (let i = 0; i < feeData.length; i++) {
-  //     if (feeData[i - 1] !== undefined) {
-  //       if (
-  //         new Date(feeData[i - 1].timestamp * 1000).getHours() + 1 !==
-  //         new Date(feeData[i].timestamp * 1000).getHours()
-  //       ) {
-  //         for (
-  //           let j = new Date(feeData[i - 1].timestamp * 1000).getHours();
-  //           j < new Date(feeData[i].timestamp * 1000).getHours();
-  //           j++
-  //         ) {
-  //           kek.push(j)
-  //         }
-  //       } else {
-  //         kek.push(new Date(feeData[i].timestamp * 1000).getHours())
-  //       }
-  //     }
-  //   }
-  //   console.log(
-  //     kek,
-  //     feeData.map((item) => new Date(item.timestamp * 1000).getHours())
-  //   )
-  // }, [feeData])
 
   const Line = d3
     .create('svg:line')
@@ -205,17 +226,6 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
     .style('opacity', 1)
     .style('display', 'none')
 
-  const xTicks = useMemo(() => {
-    switch (span) {
-      case ChartSpan.DAY:
-        return 24
-      case ChartSpan.MONTH:
-        return 30
-      case ChartSpan.WEEK:
-        return 7
-    }
-  }, [span])
-
   useEffect(() => {
     if (feeData.length === 0) return
 
@@ -236,14 +246,13 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
       Focus.style('display', 'none')
     })
 
-    const xAxisGroup = svg.append('g').attr('transform', `translate(0, ${height})`).call(
-      d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0)
-      // .tickFormat('%H')
-    )
-    // xAxisGroup.select('.domain').remove()
+    const xAxisGroup = svg
+      .append('g')
+      .attr('transform', `translate(0, ${height})`)
+      .call(d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0))
     xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
+    xAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
 
-    // yAxis
     const y = d3
       .scaleLinear()
       .domain([d3.min(_chartData, (d) => +d.fee - 0.01), d3.max(_chartData, (d) => +d.fee + 0.01)])
@@ -298,7 +307,6 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
           .line()
           .curve(d3.curveBumpX)
           .x(function (d) {
-            console.log('d time', d.time, xScale(d.time))
             return xScale(d.time)
           })
           .y(function (d) {
@@ -324,14 +332,17 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
       .selectAll('.tick')
       .nodes()
       .map((el, i) => {
-        console.log('EL', el)
         const xTranslate = d3
           .select(el)
           .attr('transform')
           .match(/\((.*?)\)/)[1]
           .split(',')[0]
 
-        d3.select(el).attr('transform', `translate(${+xTranslate + +tickWidth}, 0)`)
+        if (i % 2 === 0 && span !== ChartSpan.WEEK) {
+          d3.select(el).attr('display', 'none')
+        }
+
+        // d3.select(el).attr('transform', `translate(${+xTranslate + +tickWidth}, 0)`)
 
         const rect = d3
           .create('svg:rect')
@@ -349,7 +360,14 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
               `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
             )
             InfoRectFeeText.property('innerHTML', `Fee: ${_chartData[i]?.fee.toFixed(3)}`)
-            InfoRectDateText.property('innerHTML', `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`)
+            InfoRectDateText.property(
+              'innerHTML',
+              span === ChartSpan.DAY
+                ? `${date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()}:${
+                    date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+                  }:${date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()}`
+                : `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`
+            )
             Focus.attr('transform', `translate(${xTranslate},${y(_chartData[i]?.fee)})`)
           })
 
@@ -359,7 +377,7 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
     svg.append(() => InfoRectGroup.node())
     svg.append(() => Line.node())
     svg.append(() => Focus.node())
-  }, [feeData])
+  }, [feeData, dimensions])
 
-  return <svg ref={svgRef} width={svgWidth} height={svgHeight} />
+  return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
 }

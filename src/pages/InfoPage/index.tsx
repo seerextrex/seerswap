@@ -9,6 +9,8 @@ import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { InfoPools } from '../../components/InfoPools'
 import { InfoTokens } from '../../components/InfoTokens'
 import { PageTitle } from '../../components/PageTitle'
+import FeeChartRangeInput from '../../components/FeeChartRangeInput'
+import PoolInfoPage from '../PoolInfoPage'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 995px;

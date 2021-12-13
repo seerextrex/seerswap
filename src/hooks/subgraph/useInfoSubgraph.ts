@@ -283,7 +283,6 @@ export function useInfoSubgraph() {
 
     }
 
-
     async function fetchPoolsByTime(blockNumber: number, tokenAddresses) {
 
         try {
@@ -303,10 +302,31 @@ export function useInfoSubgraph() {
 
     }
 
+    async function fetchFeePool(pool: string, timestampStart: number, timestampFinish: number) {
+        try {
+            setFeesLoading(true)
+            const { data: { feeHourDatas }, error: error } = await testClient.query({
+                query: FETCH_FEE_FROM_POOL(pool, timestampStart, timestampFinish),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            setFees(feeHourDatas)
+
+        } catch (err) {
+            console.error('Fees failed: ', err);
+            setFees('Failed')
+        }
+
+        setFeesLoading(false)
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
+        fetchFees: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool }
     }
 
 

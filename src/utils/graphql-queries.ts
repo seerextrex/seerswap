@@ -92,14 +92,15 @@ export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
 `
 
 export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
-query lastPoolDayData {
+query lastPoolHourData {
  
-  poolDayDatas(
+  poolHourDatas(
       first: 1
       where: { pool: "${pool}" }
-      orderBy: date, orderDirection: desc,
+      orderBy: periodStartUnix, 
+      orderDirection: desc,
     ) {
-      date
+      periodStartUnix
       volumeUSD
       tvlUSD
       feesUSD
@@ -108,15 +109,15 @@ query lastPoolDayData {
 `
 
 export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimestamp) => gql`
-  query poolDayData {
-    poolDayDatas (
+  query poolHourData {
+    poolHourDatas (
       first: 1000
-      where: { pool: "${pool}", date_gte: ${startTimestamp}, date_lte: ${endTimestamp} }
-      orderBy: date
+      where: { pool: "${pool}", periodStartUnix_gte: ${startTimestamp}, periodStartUnix_lte: ${endTimestamp} }
+      orderBy: periodStartUnix
       orderDirection: asc
       subgraphError: allow
     ) {
-      date
+      periodStartUnix
       volumeUSD
       tvlUSD
       feesUSD

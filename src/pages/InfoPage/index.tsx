@@ -105,6 +105,7 @@ export function InfoPage() {
                     blocksFetched={blocksFetched}
                   ></InfoPools>
                 </Route>
+                <Route exact path={`${path}/pools/:id`} component={PoolInfoPage} />
                 <Route exact path={`${path}/tokens`}>
                   <Helmet>
                     <title>Algebra — Info • Tokens</title>

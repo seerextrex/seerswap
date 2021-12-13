@@ -58,7 +58,7 @@ export default function PoolInfoPage({
   } = useInfoSubgraph()
 
   const [span, setSpan] = useState(ChartSpan.DAY)
-  const [type, setType] = useState(ChartType.TVL)
+  const [type, setType] = useState(ChartType.FEES)
 
   const startTimestamp = useMemo(() => {
     const day = dayjs()
@@ -109,7 +109,6 @@ export default function PoolInfoPage({
 
   useEffect(() => {
     if (type === ChartType.FEES) {
-      console.log('s fees')
       fetchFeePoolFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
     } else {
       fetchChartPoolDataFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
@@ -120,6 +119,18 @@ export default function PoolInfoPage({
     if (!id) return
     fetchPoolFn(id)
   }, [id])
+
+  const data = useMemo(() => {
+    if (type === ChartType.FEES) {
+      return feesResult
+    } else {
+      return chartPoolData
+    }
+  }, [feesResult, chartPoolData, type, span])
+
+  const refreshing = useMemo(() => {
+    return feesLoading || chartPoolDataLoading
+  }, [feesLoading, chartPoolDataLoading])
 
   return (
     <Wrapper>
@@ -136,25 +147,14 @@ export default function PoolInfoPage({
                 type={type}
                 setSpan={setSpan}
               />
-              {type === ChartType.FEES ? (
                 <FeeChartRangeInput
-                  data={feesResult}
-                  fetchHandlers={[fetchFeePoolFn, fetchChartPoolDataFn]}
-                  refreshing={feesLoading}
+                  data={data}
+                  refreshing={refreshing}
                   id={id}
                   span={span}
+                  type={type}
                   startDate={startTimestamp}
                 />
-              ) : (
-                <FeeChartRangeInput
-                  data={chartPoolData}
-                  fetchHandlers={[fetchFeePoolFn, fetchChartPoolDataFn]}
-                  refreshing={chartPoolDataLoading}
-                  id={id}
-                  span={span}
-                  startDate={startTimestamp}
-                />
-              )}
             </ChartWrapper>
           </BodyWrapper>
         </>

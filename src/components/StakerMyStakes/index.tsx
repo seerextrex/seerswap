@@ -646,9 +646,9 @@ export function StakerMyStakes({
       ) : shallowPositions && shallowPositions.length !== 0 ? (
         <>
           {stakedNFTs && (
-            <> {window.innerWidth > 500 && (
+            <>
               <StakeListHeader>
-                <div style={{ minWidth: `${window.innerWidth < 500 ? '' : '96px'}` }}>ID</div>
+                <div style={{ minWidth: '96px' }}>ID</div>
                 <div>Pool</div>
                 <div>Earned</div>
                 <div>Bonus</div>
@@ -656,39 +656,6 @@ export function StakerMyStakes({
                 <div></div>
               </StakeListHeader>
               <Stakes>{getTable(stakedNFTs, true)}</Stakes>
-              {' '}
-              {window.innerWidth > 500 && (
-                <StakeListHeader>
-                  <div style={{ minWidth: `${window.innerWidth < 500 ? '' : '96px'}` }}>ID</div>
-                  <div>Pool</div>
-                  <div>Earned</div>
-                  <div>Bonus</div>
-                  <div>End time</div>
-                  <div></div>
-                </StakeListHeader>
-              )}
-              {/* eslint-disable-next-line react/jsx-no-undef */}
-              <Stakes>
-                {window.innerWidth < 500 ? (
-                  <StakerMyStakesMobile
-                    position={stakedNFTs[0]}
-                    modalHandler={setSendModal}
-                    getRewardsHandler={getRewardsHandler}
-                    gettingReward={gettingReward}
-                    setGettingReward={setGettingReward}
-                  />
-                ) : (
-                  getTable(stakedNFTs, true)
-                )}
-              </Stakes>
-            )}
-              {/* eslint-disable-next-line react/jsx-no-undef */}
-              <Stakes>{window.innerWidth < 500 ?
-                <StakerMyStakesMobile position={stakedNFTs[0]} modalHandler={setSendModal}
-                                      getRewardsHandler={getRewardsHandler}
-                                      gettingReward={gettingReward}
-                                      setGettingReward={setGettingReward}
-                /> : getTable(stakedNFTs, true)}</Stakes>
             </>
           )}
           {inactiveNFTs && (

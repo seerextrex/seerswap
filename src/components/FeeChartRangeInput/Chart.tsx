@@ -3,52 +3,28 @@ import * as d3 from 'd3'
 import { daysCount } from './index'
 
 import dayjs from 'dayjs'
-import { ChartSpan } from '../../pages/PoolInfoPage'
+import { ChartSpan, ChartType } from '../../pages/PoolInfoPage'
 
 function sameDay(d1, d2) {
   return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
 }
 
 interface ChartInterface {
-  feeData:
-    | {
-        changesCount: number
-        fee: number
-        id: string
-        pool: string
-        timestamp: number
-        endFee: number
-        maxFee: number
-        minFee: number
-        startFee: number
-      }[]
-    | undefined
-
+  feeData,
   dimensions: {
     width: number
     height: number
     margin: { top: number; right: number; bottom: number; left: number }
   }
-
   span: ChartSpan
-  startDate: number
+  type: ChartType
 }
 
-export default function Chart({ feeData = [], span, dimensions, startDate }: ChartInterface) {
+export default function Chart({ feeData = [], span, type, dimensions }: ChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
-
-  const chartData = useMemo(() => {
-    console.log('FEE DATAAA', feeData)
-    if (feeData.length === 0) return []
-
-    return feeData.map((item) => ({
-      time: new Date(item.timestamp * 1000),
-      fee: item.fee / item.changesCount / 10000,
-    }))
-  }, [feeData])
 
   const xTicks = useMemo(() => {
     switch (span) {
@@ -73,35 +49,35 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
   }, [span, dimensions, feeData])
 
   const _chartData = useMemo(() => {
-    if (chartData.length === 0) return []
+    if (feeData.length === 0) return []
 
     let sameDays = []
     const res = []
 
-    if (chartData.length === 1) {
+    if (feeData.length === 1) {
       res.push({
-        fee: chartData[0].fee,
-        time: chartData[0].time,
+        value: feeData[0].value,
+        timestamp: feeData[0].timestamp,
       })
     }
 
-    for (let i = 1; i < chartData.length; i++) {
-      if (sameDay(new Date(chartData[i].time), new Date(chartData[i - 1].time))) {
-        sameDays.push(chartData[i])
+    for (let i = 1; i < feeData.length; i++) {
+      if (sameDay(new Date(feeData[i].timestamp), new Date(feeData[i - 1].timestamp))) {
+        sameDays.push(feeData[i])
       } else {
         if (sameDays.length !== 0) {
           res.push(
             sameDays.reduce(
               (prev, cur) => {
-                return { time: cur.time, fee: prev.fee + cur.fee }
+                return { timestamp: cur.timestamp, value: prev.value + cur.value }
               },
               {
-                fee: 0,
-                time: null,
+                value: 0,
+                timestamp: null,
               }
             )
           )
-          res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
+          res[res.length - 1].value = res[res.length - 1].value / sameDays.length
         }
 
         sameDays = []
@@ -112,15 +88,15 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
       res.push(
         sameDays.reduce(
           (prev, cur) => {
-            return { time: cur.time, fee: prev.fee + cur.fee }
+            return { timestamp: cur.timestamp, value: prev.value + cur.value }
           },
           {
-            fee: 0,
-            time: null,
+            value: 0,
+            timestamp: null,
           }
         )
       )
-      res[res.length - 1].fee = res[res.length - 1].fee / sameDays.length
+      res[res.length - 1].value = res[res.length - 1].value / sameDays.length
     }
 
     console.log(res, sameDays)
@@ -145,8 +121,8 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
           i += span === ChartSpan.DAY ? 3600 : 24 * 3600
         ) {
           _data.push({
-            time: new Date(i * 1000),
-            fee: res[0].fee,
+            timestamp: new Date(i * 1000),
+            value: res[0].value,
           })
         }
       }
@@ -158,23 +134,22 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
       if (lastRealDay < lastAdditionalDay) {
         for (let i = lastRealDay.unix(); i < lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
           _data.push({
-            time: new Date(i * 1000),
-            fee: res[res.length - 1].fee,
+            timestamp: new Date(i * 1000),
+            value: res[res.length - 1].value,
           })
         }
       }
     }
 
     return [..._data]
-  }, [chartData, feeData])
+  }, [feeData])
 
   const xScale = useMemo(() => {
-    console.log('CHAAA', _chartData)
     return d3
       .scaleTime()
-      .domain([d3.min(_chartData, (d) => new Date(d.time)), d3.max(_chartData, (d) => new Date(d.time))])
+      .domain([d3.min(_chartData, (d) => new Date(d.timestamp)), d3.max(_chartData, (d) => new Date(d.timestamp))])
       .range([0, width])
-  }, [span, dimensions, _chartData])
+  }, [span, _chartData])
 
   const Line = d3
     .create('svg:line')
@@ -255,14 +230,14 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
 
     const y = d3
       .scaleLinear()
-      .domain([d3.min(_chartData, (d) => +d.fee - 0.01), d3.max(_chartData, (d) => +d.fee + 0.01)])
+      .domain([d3.min(_chartData, (d) => +d.value - 0.01), d3.max(_chartData, (d) => +d.value + 0.01)])
       .range([height, 0])
 
     const yAxisGroup = svg.append('g').call(
       d3
         .axisLeft(y)
         .ticks(10)
-        .tickFormat((val) => `${val}%`)
+        .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : `$${val}`}`)
         .tickSize(-width)
     )
 
@@ -307,10 +282,10 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
           .line()
           .curve(d3.curveBumpX)
           .x(function (d) {
-            return xScale(d.time)
+            return xScale(d.timestamp)
           })
           .y(function (d) {
-            return y(d.fee)
+            return y(d.value)
           })
       )
 
@@ -323,9 +298,9 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
         d3
           .area()
           .curve(d3.curveBumpX)
-          .x((d) => xScale(d.time))
-          .y0((d) => y(d3.min(_chartData, (d) => +d.fee - 0.01)))
-          .y1((d) => y(d.fee))
+          .x((d) => xScale(d.timestamp))
+          .y0((d) => y(d3.min(_chartData, (d) => +d.value - 0.01)))
+          .y1((d) => y(d.value))
       )
 
     xAxisGroup
@@ -353,13 +328,13 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
           .attr('fill', 'transparent')
           .on('mouseover', (e) => {
             const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
-            const date = new Date(_chartData[i]?.time)
+            const date = new Date(_chartData[i]?.timestamp)
             Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
             InfoRectGroup.attr(
               'transform',
               `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
             )
-            InfoRectFeeText.property('innerHTML', `Fee: ${_chartData[i]?.fee.toFixed(3)}`)
+            InfoRectFeeText.property('innerHTML', `${type === ChartType.FEES ? 'Fee' : 'Volume'} ${Number(_chartData[i]?.value).toFixed(3)}`)
             InfoRectDateText.property(
               'innerHTML',
               span === ChartSpan.DAY
@@ -368,7 +343,7 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
                   }:${date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()}`
                 : `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`
             )
-            Focus.attr('transform', `translate(${xTranslate},${y(_chartData[i]?.fee)})`)
+            Focus.attr('transform', `translate(${xTranslate},${y(_chartData[i]?.value)})`)
           })
 
         svg.node().append(rect.node())
@@ -377,7 +352,7 @@ export default function Chart({ feeData = [], span, dimensions, startDate }: Cha
     svg.append(() => InfoRectGroup.node())
     svg.append(() => Line.node())
     svg.append(() => Focus.node())
-  }, [feeData, dimensions])
+  }, [feeData])
 
   return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
 }

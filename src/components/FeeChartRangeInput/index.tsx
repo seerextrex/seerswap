@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useMemo, useState } from 'react'
 import Chart from './Chart'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components/macro'
@@ -7,6 +7,7 @@ import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { useEffect } from 'react'
 import Loader from '../Loader'
 import { PageTitle } from '../PageTitle'
+import { ChartType } from '../../pages/PoolInfoPage'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -23,25 +24,25 @@ const MockLoading = styled.div`
 interface FeeChartRangeInputProps {
   data: any
   refreshing: boolean
-  fetchHandlers: Array<(id: string, start: number, end: number) => any>
   id: string
   span: number
+  type: number
   startDate: number
 }
 
-function useWindowSize() {
-  const [size, setSize] = useState([0, 0])
-  useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight])
-    }
+// function useWindowSize() {
+//   const [size, setSize] = useState([0, 0])
+//   useLayoutEffect(() => {
+//     function updateSize() {
+//       setSize([window.innerWidth, window.innerHeight])
+//     }
 
-    window.addEventListener('resize', updateSize)
-    updateSize()
-    return () => window.removeEventListener('resize', updateSize)
-  }, [])
-  return size
-}
+//     window.addEventListener('resize', updateSize)
+//     updateSize()
+//     return () => window.removeEventListener('resize', updateSize)
+//   }, [])
+//   return size
+// }
 
 export function daysCount(month: number, year: number) {
   switch (month) {
@@ -68,15 +69,34 @@ export function daysCount(month: number, year: number) {
 export default function FeeChartRangeInput({
   data,
   refreshing,
-  fetchHandlers,
-  id,
   span,
+  type,
   startDate,
 }: FeeChartRangeInputProps) {
-  const windowWidth = useWindowSize()
 
-  useEffect(() => {
-    console.log('NEW DATA', data)
+  // const windowWidth = useWindowSize()
+
+  const windowWidth = useMemo(() => {
+      return window.innerWidth
+  }, [window.innerWidth])
+
+  const formattedData = useMemo(() => {
+    if (!data) return undefined
+    if (data.length === 0) return []
+
+    const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? 'volumeUSD' : 'feesUSD'
+
+    if (type === ChartType.FEES)  {
+        return data.map((el) => ({
+        timestamp: new Date(el.timestamp * 1000),
+        value: el.fee / el.changesCount / 10000,
+      }))
+    } else {
+      return data.map(el => ({
+        timestamp: new Date(el.periodStartUnix * 1000) ,
+        value: el[field]
+      }))
+    }
   }, [data])
 
   return (
@@ -88,14 +108,14 @@ export default function FeeChartRangeInput({
       ) : (
         <>
           <Chart
-            feeData={data || undefined}
+            feeData={formattedData || undefined}
             dimensions={{
               width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 950,
               height: 300,
               margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 },
             }}
             span={span}
-            startDate={startDate}
+            type={type}
           />
         </>
       )}

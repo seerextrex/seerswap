@@ -329,14 +329,14 @@ export function useInfoSubgraph() {
     async function fetchPoolLastEntry(pool) {
         try {
 
-            const { data: { poolDayDatas }, error: error } = await dataClient.query({
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
                 query: CHART_POOL_LAST_ENTRY(pool),
                 fetchPolicy: 'network-only'
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            return poolDayDatas
+            return poolHourDatas
 
         } catch (err) {
             console.error('Fees last failed: ', err);
@@ -376,17 +376,17 @@ export function useInfoSubgraph() {
 
             setChartPoolDataLoading(true)
 
-            const { data: { poolDayDatas }, error: error } = await dataClient.query({
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
                 query: CHART_POOL_DATA(pool, startTimestamp, endTimestamp),
                 fetchPolicy: 'network-only',
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            const _poolDayDatas = poolDayDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolDayDatas
+            const _poolHourDatas = poolHourDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolHourDatas
 
-            if (_poolDayDatas.length !== 0) {
-                setChartPoolData(_poolDayDatas)
+            if (_poolHourDatas.length !== 0) {
+                setChartPoolData(_poolHourDatas)
             } else {
                 setChartPoolData([])
             }

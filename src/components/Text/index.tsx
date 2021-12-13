@@ -30,5 +30,6 @@ export const ClickableText = styled(Label)`
   }
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     justify-content: start;
+    min-width: 93px !important;
   `};
 `

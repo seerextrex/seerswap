@@ -46,6 +46,9 @@ const FocusedOutlineCard = styled(OutlineCard)<{ active?: boolean; pulsing?: boo
 
   &:first-of-type {
     margin-right: ${({ initial }) => (initial ? '1rem' : '')};
+    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin: 0 0 1rem 0;
+  `}
   }
 `
 

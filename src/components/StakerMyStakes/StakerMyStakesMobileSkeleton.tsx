@@ -4,15 +4,6 @@ import {Send} from 'react-feather'
 import {TokenIcon, TokensNames} from './index'
 import FarmingPositionInfo from '../FarmingPositionInfo'
 
-interface StakerMyStakesMobileProps {
-    position?: any
-    modalHandler: any
-    getRewardsHandler: any
-    gettingReward: any
-    setGettingReward: any
-    now: number
-}
-
 const skeletonAnimation = keyframes`
   100% {
     transform: translateX(100%);
@@ -79,6 +70,7 @@ const StakeRewardStyled = styled.div`
 const StakeButtonStyled = styled.button`
   border: none;
   border-radius: 8px;
+  height: 32px;
   padding: 8px 12px;
   background-color: ${({skeleton}) => (skeleton ? '#3d4a6a' : '#4829bb')};
   color: white;
@@ -101,8 +93,15 @@ const StakeButtonStyled = styled.button`
   width: 80%;
 `
 const MoreButtonStyled = styled.button`
+  ${({skeleton}) =>
+          skeleton
+                  ? css`
+                    ${skeletonGradient}
+                  `
+                  : null}
   width: 20%;
-  background-color: #040b1e;
+  height: 32px;
+  background-color: #3d4a6a;
   border: none;
   border-radius: 8px;
   padding: 6px 3px 4px;
@@ -113,20 +112,6 @@ const Wrapper = styled.div`
   border-radius: 10px;
   padding: 15px;
 `
-const Title = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
-`
-const TitleCell = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 58px;
-  align-items: start;
-  height: 100%;
-`
 const ButtonsWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -134,85 +119,49 @@ const ButtonsWrapper = styled.div`
   margin-top: 10px;
 `
 
-export default function StakerMyStakesMobile(
-    {
-        position,
-        modalHandler,
-        getRewardsHandler,
-        gettingReward,
-        setGettingReward,
-        now
-    }: StakerMyStakesMobileProps) {
-
-    function getCountdownTime(time) {
-        const timestamp = (time * 1000 - now) / 1000
-        const days = Math.floor(timestamp / (24 * 60 * 60))
-        const hours = Math.floor(timestamp / (60 * 60)) % 24
-        const minutes = Math.floor(timestamp / 60) % 60
-        const seconds = Math.floor(timestamp / 1) % 60
-
-        function format(digit: number) {
-            return digit < 10 ? `0${digit}` : digit
-        }
-
-        return `${days > 0 ? `${days}d ` : ''}${format(hours)}:${format(minutes)}:${format(seconds)}`
-    }
+export default function StakerMyStakesMobileSkeleton() {
 
     return (
         <Wrapper>
             ID:
             <StakeIdStyled>
-                <FarmingPositionInfo el={position}/>
+                <TokenIcon skeleton/>
             </StakeIdStyled>
             Pool:
             <StakePoolStyled>
                 <>
-                    <TokenIcon name={position.pool.token0.symbol}>{position.pool.token0.symbol.slice(0, 2)}</TokenIcon>
-                    <TokenIcon name={position.pool.token1.symbol}>{position.pool.token1.symbol.slice(0, 2)}</TokenIcon>
+                    <TokenIcon skeleton/>
+                    <TokenIcon skeleton/>
                     <TokensNames>
-                        <div>{position.pool.token0.symbol}</div>
-                        <div>{position.pool.token1.symbol}</div>
+                        <div></div>
+                        <div></div>
                     </TokensNames>
                 </>
             </StakePoolStyled>
             Status:
             <StakeCountdownStyled>
-                {position.ended || position.endTime * 1000 < Date.now() ? 'Finished' : getCountdownTime(position.endTime)}
+                <div style={{color: 'transparent', margin: '10px 15px'}}>dasdad</div>
             </StakeCountdownStyled>
             Earned:
             <StakeRewardStyled>
-                <TokenIcon name={position.rewardToken.symbol}>{position.rewardToken.symbol.slice(0, 2)}</TokenIcon>
+                <TokenIcon skeleton/>
                 <TokensNames>
-                    <div>{position.earned}</div>
-                    <div>{position.rewardToken.symbol}</div>
+                    <div></div>
+                    <div></div>
                 </TokensNames>
             </StakeRewardStyled>
             Bonus:
             <StakeRewardStyled>
-                <TokenIcon name={position.bonusRewardToken}>{position.bonusRewardToken.symbol.slice(0, 2)}</TokenIcon>
+                <TokenIcon skeleton/>
                 <TokensNames>
-                    <div>{position.bonusEarned}</div>
-                    <div>{position.bonusRewardToken.symbol}</div>
+                    <div></div>
+                    <div></div>
                 </TokensNames>
             </StakeRewardStyled>
             <ButtonsWrapper>
-                <StakeButtonStyled
-                    disabled={gettingReward.id && gettingReward.state !== 'done'}
-                    onClick={() => {
-                        setGettingReward({id: position.tokenId, state: 'pending'})
-                        getRewardsHandler(position.tokenId, {...position})
-                    }}
-                >
-                    {false ? (
-                        <span>
-                        <Loader size={'18px'} stroke={'white'} style={{margin: 'auto'}}/>
-                      </span>
-                    ) : (
-                        <span>{`Collect reward`}</span>
-                    )}
+                <StakeButtonStyled skeleton>
                 </StakeButtonStyled>
-                <MoreButtonStyled style={{marginLeft: '8px'}} onClick={() => modalHandler(position.L2tokenId)}>
-                    <Send color={'white'} size={18}/>
+                <MoreButtonStyled skeleton style={{marginLeft: '8px'}}>
                 </MoreButtonStyled>
             </ButtonsWrapper>
         </Wrapper>

@@ -303,7 +303,7 @@ export function StakerMyRewards({
                   {rew.rewardAddress.toLowerCase() in specialTokens ? (
                     <RewardTokenIcon logo={specialTokens[rew.rewardAddress].logo}></RewardTokenIcon>
                   ) : (
-                    <RewardTokenIcon name={rew.symbol}>{rew.rewardAddress}</RewardTokenIcon>
+                    <RewardTokenIcon name={rew.symbol}>{rew.symbol.slice(0,2)}</RewardTokenIcon>
                   )}
                   <RewardTokenInfo>
                     <div title={rew.amount}>{window.innerWidth < 501 ? rew.amount : formatReward(rew.amount)}</div>

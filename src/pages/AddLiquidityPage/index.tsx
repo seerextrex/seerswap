@@ -315,6 +315,9 @@ const AddLiquidityMessage = styled.div`
   border-radius: 8px;
   padding: 14px 16px;
   font-size: 13px;
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    margin-bottom: 15px;
+  `}
 `
 
 const AddLiquidityButton = styled.button`
@@ -821,7 +824,7 @@ export default function AddLiquidityPage({
                     <span style={{ display: 'flex' }}>
                       <PoolInfoItemValue style={{ marginTop: '-1px' }}>
                         <StyledInput
-                          style={{ textAlign: 'right', backgroundColor: 'transparent' }}
+                          style={{ textAlign: `${window.innerWidth < 501 ? 'left' : 'right'}`, backgroundColor: 'transparent' }}
                           // placeholder={}
                           className='start-price-input'
                           value={startPriceTypedValue}

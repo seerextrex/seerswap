@@ -7,6 +7,10 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import { stringToColour } from '../../utils/stringToColour'
 import Loader from '../Loader'
 
+import AlgebraLogo from '../../assets/images/algebra-logo.png'
+import USDCLogo from '../../assets/images/usdc-logo.png'
+import WMATICLogo from '../../assets/images/matic-logo.png'
+
 const skeletonAnimation = keyframes`
   100% {
     transform: translateX(100%);
@@ -58,6 +62,9 @@ const Rewards = styled.div`
 const RewardsRow = styled.div`
   display: flex;
   margin-bottom: 8px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: column;
+  `}
 `
 
 const Reward = styled.div`
@@ -80,6 +87,10 @@ const Reward = styled.div`
   &:not(:nth-of-type(3n)) {
     margin-right: 8px;
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     width: 100%;
+     margin-bottom: 20px;
+  `}
 `
 
 const RewardTokenIcon = styled.div`
@@ -93,6 +104,9 @@ const RewardTokenIcon = styled.div`
   background-color: ${({ name }) => (name ? stringToColour(name).background : '#3d4a6a')};
   border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
   color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
+
+  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
+  background-size: contain;
 
   ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
 `
@@ -166,6 +180,21 @@ export function StakerMyRewards({
   fetchHandler: () => any
 }) {
   const allTransactions = useAllTransactions()
+
+  const specialTokens = {
+    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
+      name: 'USDC',
+      logo: USDCLogo,
+    },
+    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
+      name: 'ALGB',
+      logo: AlgebraLogo,
+    },
+    ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
+      name: 'WMATIC',
+      logo: WMATICLogo,
+    },
+  }
 
   const sortedRecentTransactions = useMemo(() => {
     const txs = Object.values(allTransactions)
@@ -271,9 +300,13 @@ export function StakerMyRewards({
                       <Loader style={{ margin: 'auto' }} size={'18px'} stroke={'white'} />
                     </LoadingShim>
                   )}
-                  <RewardTokenIcon name={rew.symbol}>{rew.symbol.slice(0, 2)}</RewardTokenIcon>
+                  {rew.rewardAddress.toLowerCase() in specialTokens ? (
+                    <RewardTokenIcon logo={specialTokens[rew.rewardAddress].logo}></RewardTokenIcon>
+                  ) : (
+                    <RewardTokenIcon name={rew.symbol}>{rew.rewardAddress}</RewardTokenIcon>
+                  )}
                   <RewardTokenInfo>
-                    <div title={rew.amount}>{formatReward(rew.amount)}</div>
+                    <div title={rew.amount}>{window.innerWidth < 501 ? rew.amount : formatReward(rew.amount)}</div>
                     <div title={rew.symbol}>{rew.symbol}</div>
                   </RewardTokenInfo>
                   {isLoading(rew.rewardAddress) ? (

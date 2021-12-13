@@ -1,5 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client"
-import { blockClient, client, farmingClient, testClient } from '../../apollo/client'
+import { blockClient, client, farmingClient } from '../../apollo/client'
 import { SupportedChainId } from "../../constants/chains"
 import { useActiveWeb3React } from "../web3"
 
@@ -33,31 +33,19 @@ export function useFarmingClient(): ApolloClient<NormalizedCacheObject> {
     }
 }
 
-export function useTestClient(): ApolloClient<NormalizedCacheObject> {
-    const { chainId } = useActiveWeb3React()
-    switch (chainId) {
-        case SupportedChainId.POLYGON:
-            return testClient
-        default:
-            return testClient
-    }
-}
 
 export function useClients(): {
     dataClient: ApolloClient<NormalizedCacheObject>
     farmingClient: ApolloClient<NormalizedCacheObject>
     blockClient: ApolloClient<NormalizedCacheObject>
-    testClient: ApolloClient<NormalizedCacheObject>
 } {
     const dataClient = useDataClient()
     const farmingClient = useFarmingClient()
     const blockClient = useBlockClient()
-    const testClient = useTestClient()
 
     return {
         dataClient,
         farmingClient,
-        blockClient,
-        testClient
+        blockClient
     }
 }

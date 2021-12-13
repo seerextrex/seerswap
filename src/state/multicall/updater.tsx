@@ -57,7 +57,7 @@ async function fetchChunk(
     if (error.code === -32000 || error.message?.indexOf('header not found') !== -1) {
       throw new RetryableError(`header not found for block number ${blockNumber}`)
     }
-    console.error('Failed to fetch chunk', error)
+    // console.error('Failed to fetch chunk', error)
     throw error
   }
 }
@@ -230,7 +230,7 @@ export default function Updater(): null {
               console.debug('Cancelled fetch for blockNumber', latestBlockNumber, chunk, chainId)
               return
             }
-            console.error('Failed to fetch multicall chunk', chunk, chainId, error)
+            // console.error('Failed to fetch multicall chunk', chunk, chainId, error)
             dispatch(
               errorFetchingMulticallResults({
                 calls: chunk,

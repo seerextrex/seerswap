@@ -2,7 +2,7 @@ import { Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
 import { encodeRouteToPath, Route, Trade } from 'lib/src'
 import { SupportedChainId } from 'constants/chains'
 import { BigNumber } from 'ethers'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSingleContractMultipleData } from '../state/multicall/hooks'
 import { useAllV3Routes } from './useAllV3Routes'
 import { useV3Quoter } from './useContract'
@@ -96,13 +96,6 @@ export function useBestV3TradeExactIn(
 
     const isSyncing = quotesResults.some(({ syncing }) => syncing)
 
-    // const newTrade = Trade.createUncheckedTrade({
-    //   route: bestRoute,
-    //   tradeType: TradeType.EXACT_INPUT,
-    //   inputAmount: amountIn,
-    //   outputAmount: CurrencyAmount.fromRawAmount(currencyOut, amountOut.toString()),
-    // })
-
     return {
       state: isSyncing ? V3TradeState.SYNCING : V3TradeState.VALID,
       trade: Trade.createUncheckedTrade({
@@ -158,6 +151,7 @@ export function useBestV3TradeExactOut(
     const { bestRoute, amountIn } = quotesResults.reduce(
       (currentBest: { bestRoute: Route<Currency, Currency> | null; amountIn: BigNumber | null }, { result }, i) => {
         if (!result) return currentBest
+
 
         if (currentBest.amountIn === null) {
           return {

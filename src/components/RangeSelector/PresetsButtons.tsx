@@ -6,6 +6,8 @@ import styled from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
 import { FeeAmount } from 'lib/src'
 
+import ReactGA from 'react-ga'
+
 const Button = styled(ButtonOutlined).attrs(() => ({
   padding: '4px',
   borderRadius: '8px',

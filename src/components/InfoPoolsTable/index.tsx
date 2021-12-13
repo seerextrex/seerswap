@@ -35,6 +35,9 @@ export const Arrow = styled.div<{ faded: boolean }>`
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: #202635;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 800px;
+  `};
 `
 
 const ResponsiveGrid = styled.div`
@@ -51,19 +54,19 @@ const ResponsiveGrid = styled.div`
     }
   }
 
-  @media screen and (max-width: 500px) {
-    grid-template-columns: 20px 1.5fr repeat(1, 1fr);
-    & :nth-child(5) {
-      display: none;
-    }
-  }
-
-  @media screen and (max-width: 480px) {
-    grid-template-columns: 2.5fr repeat(1, 1fr);
-    > *:nth-child(1) {
-      display: none;
-    }
-  }
+  //@media screen and (max-width: 500px) {
+  //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);
+  //  & :nth-child(5) {
+  //    display: none;
+  //  }
+  //}
+  //
+  //@media screen and (max-width: 480px) {
+  //  grid-template-columns: 2.5fr repeat(1, 1fr);
+  //  > *:nth-child(1) {
+  //    display: none;
+  //  }
+  //}
 `
 
 const SORT_FIELD = {
@@ -83,11 +86,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   const { chainId } = useActiveWeb3React()
 
   return (
-<<<<<<< Updated upstream
-    <NavLink to={`/info/pools/${poolData.address}`} style={{textDecoration: 'none'}}>
-=======
     <NavLink to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
->>>>>>> Stashed changes
       <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
         <Label fontWeight={400}>{index + 1}</Label>
         <Label fontWeight={400}>
@@ -144,6 +143,8 @@ export default function InfoPoolsTable({
   }, [maxItems, poolDatas])
 
   const sortedPools = useMemo(() => {
+    if (!Array.isArray(poolDatas)) return []
+
     return poolDatas
       ? poolDatas
           .filter((x) => !!x && !POOL_HIDE.includes(x.address))

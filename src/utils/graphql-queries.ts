@@ -262,14 +262,14 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
               symbol 
               name
               decimals
-              derivedETH
+              derivedMatic
           }
           token1 {
               id
               symbol 
               name
               decimals
-              derivedETH
+              derivedMatic
           }
           token0Price
           token1Price
@@ -308,7 +308,7 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
           id
           symbol
           name
-          derivedETH
+          derivedMatic
           volumeUSD
           volume
           txCount

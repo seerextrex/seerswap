@@ -57,6 +57,8 @@ export function useIncentiveSubgraph() {
             const _event: any = {
                 ...events[i],
                 token0: pool.token0.symbol,
+                token0Address: pool.token0.id,
+                token1Address: pool.token1.id,
                 token1: pool.token1.symbol,
                 rewardAddress: events[i].rewardToken,
                 bonusRewardAddress: events[i].bonusRewardToken,
@@ -65,7 +67,7 @@ export function useIncentiveSubgraph() {
                 bonusRewardToken: bonusRewardToken.symbol,
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }
-
+            
             _events.push({ ..._event })
         }
 
@@ -86,7 +88,7 @@ export function useIncentiveSubgraph() {
             return tokens[0]
 
         } catch (err) {
-            console.error('fethcing token failed', err)
+            throw new Error('Fetch token ' + err)
         }
     }
 
@@ -103,7 +105,7 @@ export function useIncentiveSubgraph() {
             return pools[0]
 
         } catch (err) {
-            console.error('fetchign pools failed', err)
+            throw new Error('Fetch pools ' + err)
         }
     }
 
@@ -121,7 +123,7 @@ export function useIncentiveSubgraph() {
 
 
         } catch (err) {
-            console.error('fetching incentives failed', err)
+            throw new Error('Fetch incentives ' + err)
         }
     }
 
@@ -151,8 +153,6 @@ export function useIncentiveSubgraph() {
                     provider
                 )
 
-                // const { symbol, name, decimals } = await fetchToken(reward.rewardAddress)
-
                 const symbol = await rewardContract.symbol()
                 const name = await rewardContract.name()
                 const decimals = await rewardContract.decimals()
@@ -172,7 +172,7 @@ export function useIncentiveSubgraph() {
             setRewardsResult(newRewards)
 
         } catch (err) {
-            console.error('Rewards fetch', err)
+            throw new Error('Reward fetching ' + err)
             setRewardsResult('failed')
         }
 
@@ -202,7 +202,7 @@ export function useIncentiveSubgraph() {
 
         } catch (err) {
             setFutureEventsLoading(null)
-            console.error('error while fetching future icnentvies', err)
+            throw new Error('Future incentives fetching ' + err)
         }
 
         setFutureEventsLoading(false)
@@ -233,7 +233,7 @@ export function useIncentiveSubgraph() {
 
         } catch (err) {
             setCurrentEventsLoading(null)
-            console.error('error while fetching current icnentvies', err)
+            throw new Error('Error while fetching current incentives ' + err)
         }
 
         setCurrentEventsLoading(false)
@@ -384,8 +384,8 @@ export function useIncentiveSubgraph() {
             setTransferredPositions(_positions)
 
         } catch (err) {
-            console.error(err)
             setTransferredPositionsLoading(null)
+            throw new Error('Transferred positions' + err)
         }
 
         setTransferredPositionsLoading(false)
@@ -436,8 +436,8 @@ export function useIncentiveSubgraph() {
             setPositionsForPool(_positions)
 
         } catch (err) {
-            console.error(err)
             setPositionsForPoolLoading(null)
+            throw new Error('Positions for pools ' + err)
         }
 
         setPositionsForPoolLoading(false)
@@ -471,7 +471,7 @@ export function useIncentiveSubgraph() {
 
         } catch (err) {
             setPositionsOnFarmerLoading(null)
-            console.error('error while fetching positons on farmer', err)
+            throw new Error('Fetching positions on farmer ' + err)
         }
 
     }

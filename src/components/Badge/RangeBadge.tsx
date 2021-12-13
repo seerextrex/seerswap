@@ -9,6 +9,7 @@ const BadgeWrapper = styled.div`
   font-size: 14px;
   display: flex;
   justify-content: flex-end;
+  user-select: none;
 `
 
 const BadgeText = styled.div`

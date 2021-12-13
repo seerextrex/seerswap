@@ -65,10 +65,10 @@ export function usePools(
 
       if (!globalState || !liquidity) return [PoolState.NOT_EXISTS, null]
 
-      if (!globalState.sqrtPriceX96 || globalState.sqrtPriceX96.eq(0)) return [PoolState.NOT_EXISTS, null]
+      if (!globalState.price || globalState.price.eq(0)) return [PoolState.NOT_EXISTS, null]
 
       try {
-        return [PoolState.EXISTS, new Pool(token0, token1, globalState.fee, globalState.sqrtPriceX96, liquidity[0], globalState.tick)]
+        return [PoolState.EXISTS, new Pool(token0, token1, globalState.fee, globalState.price, liquidity[0], globalState.tick)]
       } catch (error) {
         return [PoolState.NOT_EXISTS, null]
       }

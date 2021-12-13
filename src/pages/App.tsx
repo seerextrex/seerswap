@@ -31,12 +31,24 @@ import MigrateV2 from './MigrateV2'
 import { InfoPage } from './InfoPage'
 import { ExternalLink } from 'react-feather'
 import Modal from '../components/Modal'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
+
+import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
+import { useIsNetworkFailed } from '../hooks/useIsNetworkFailed'
+import Loader from '../components/Loader'
+        
 import { useInfoSubgraph } from '../hooks/subgraph/useInfoSubgraph'
 import FeeChartRangeInput from '../components/FeeChartRangeInput'
 import PoolInfoPage from './PoolInfoPage'
+import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
+
+import * as Sentry from '@sentry/react'
+import { Integrations } from '@sentry/tracing'
+
+import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -78,24 +90,52 @@ const BugReportLink = styled.a`
   text-decoration: none;
 `
 
+const NetworkFailedCard = styled.div`
+  position: fixed;
+  bottom: 3rem;
+  right: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #390909;
+  border: 1px solid #852020;
+`
+
 const GlobalStyle = createGlobalStyle`
   button {
     cursor: pointer;
   }
 `
+
+Sentry.init({
+  dsn: 'https://fbf2161b766648b58456a3501f72e21a@o1085550.ingest.sentry.io/6096418',
+  integrations: [
+    new Integrations.BrowserTracing(),
+    new OfflineIntegration({
+      maxStoredEvents: 30,
+    }),
+    new CaptureConsoleIntegration({
+      levels: ['error'],
+    }),
+  ],
+  tracesSampleRate: 1.0,
+  attachStacktrace: true,
+})
+
 export default function App() {
-  //TODO
   Object.defineProperty(Pool.prototype, 'tickSpacing', {
     get() {
       return 60
     },
   })
 
+  const networkFailed = useIsNetworkFailed()
+
   return (
-    <ErrorBoundary>
+    <Sentry.ErrorBoundary>
       <GlobalStyle />
       <Route component={DarkModeQueryParamReader} />
       <Route component={ApeModeQueryParamReader} />
+      <Route component={GoogleAnalyticsReporter} />
       <Web3ReactManager>
         <AppWrapper>
           <CautionModal />
@@ -103,17 +143,18 @@ export default function App() {
             <Header />
           </HeaderWrapper>
           <BodyWrapper style={{ zIndex: 2 }}>
-            <div
-              style={{
-                padding: '1rem',
-                backgroundColor: '#702498',
-                borderRadius: '8px',
-                marginTop: '-2rem',
-                marginBottom: '2rem',
-              }}
-            >
-              <span>⚠️</span> <span>Contracts are being audited. Please use with caution.</span> <span>⚠️</span>
-            </div>
+            {networkFailed && (
+              <NetworkFailedCard>
+                <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon network failed</div>
+                <div style={{ display: 'flex' }}>
+                  <span>Reconnecting...</span>
+                  <Loader
+                    style={{ display: 'inline-block', marginLeft: 'auto', marginRight: 'auto' }}
+                    stroke={'white'}
+                  />
+                </div>
+              </NetworkFailedCard>
+            )}
             <BugReportLink
               target="_blank"
               rel="noopener noreferrer"
@@ -136,7 +177,7 @@ export default function App() {
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/swap" component={Swap} />
 
-              <Route exact strict path="/pool/v2/find" component={PoolFinder} />
+              <Route exact strict path="/pool/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={PoolPage} />
               <Route exact strict path="/pool/:tokenId" component={PositionPage} />
 
@@ -160,6 +201,6 @@ export default function App() {
           </BodyWrapper>
         </AppWrapper>
       </Web3ReactManager>
-    </ErrorBoundary>
+    </Sentry.ErrorBoundary>
   )
 }

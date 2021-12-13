@@ -29,6 +29,9 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   background-color: transparent;
   z-index: 1;
   width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 100%!important;
+  `}
 `
 
 const FixedContainer = styled.div`
@@ -90,14 +93,22 @@ const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boole
   ${({ swap }) =>
     swap &&
     css`
-      width: 170px;
+      width: 218px;
     `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    width: 100%;
+    margin: 10px 0 0 0;
+  }`}
 `
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ hideCurrency }) => (hideCurrency ? '1rem 1rem 0.75rem 0' : '1rem 1rem 0.75rem 1rem')};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    flex-direction: column;
+    // height: 120px;
+  }`}
 `
 
 const LabelRow = styled.div`
@@ -125,7 +136,14 @@ const Aligner = styled.span`
   width: 100%;
   position: relative;
 `
-
+const NumericalInputStyled = styled(NumericalInput)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    width: 100%;
+    text-align: left!important;
+    font-size: 18px!important;
+    margin: 15px 0 10px;
+  }`}
+`
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   margin: 0 0.25rem 0 0.35rem;
   height: 35%;
@@ -241,7 +259,11 @@ export default function CurrencyInputPanel({
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
         <FixedContainer style={{ height: '80px' }}>
-          <AutoColumn gap="sm" justify="center" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+          <AutoColumn
+            gap="sm"
+            justify="center"
+            style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '18px' }}
+          >
             {/* <Lock /> */}
             <TYPE.label fontSize="14px">
               <Trans>Price is outside specified price range. Single-asset deposit only.</Trans>
@@ -277,7 +299,7 @@ export default function CurrencyInputPanel({
                       <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
                     </span>
                   ) : currency ? (
-                    <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'18px'} />
+                    <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'24px'} />
                   ) : null}
                   {pair ? (
                     <StyledTokenName className="pair-name-container">
@@ -310,7 +332,7 @@ export default function CurrencyInputPanel({
                               }}
                               title={balance.toExact()}
                             >
-                              {balance.toSignificant(4)}
+                              {+balance.toFixed() < 0.0001 ? '< 0.0001' : balance.toSignificant(4)}
                             </span>
                           ) : (
                             showBalance &&
@@ -336,7 +358,7 @@ export default function CurrencyInputPanel({
           )}
           {!hideInput && (
             <>
-              <NumericalInput
+              <NumericalInputStyled
                 style={{ backgroundColor: 'transparent', textAlign: hideCurrency ? 'left' : 'right', fontSize: '20px' }}
                 className="token-amount-input"
                 value={value}

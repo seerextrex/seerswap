@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import useScrollPosition from '@react-hook/window-scroll'
 import { darken } from 'polished'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
@@ -10,6 +10,7 @@ import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components/macro'
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
+import Logo_logo from  '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import Modal from '../Modal'
 import Row from '../Row'
@@ -17,6 +18,8 @@ import Web3Status from '../Web3Status'
 import NetworkCard from './NetworkCard'
 import UniBalanceContent from './UniBalanceContent'
 import { deviceSizes } from '../../pages/styled'
+import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
+import usePrevious from '../../hooks/usePrevious'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
@@ -52,6 +55,9 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
     padding:  1rem;
     grid-template-columns: 36px 1fr;
   `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    padding: 0.5rem 1rem;
+  }`}
 `
 
 const HeaderControls = styled.div`
@@ -108,10 +114,8 @@ const HeaderLinks = styled(Row)`
     // border: 1px solid ${({ theme }) => theme.bg2};
     // box-shadow: 0px 6px 10px rgb(0 0 0 / 2%);
   `};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0;
-    background-color: black;
-  `}
+
+
 
   @media (max-width: 1366px) {
     grid-auto-flow: unset;
@@ -131,6 +135,12 @@ const HeaderLinks = styled(Row)`
     z-index: 99;
     position: fixed;
     top: unset;
+  }
+  
+  @media (max-width: 500px) {
+    display: flex;
+    max-width: 100%;
+    //margin-left: 10px;
   }
 `
 
@@ -210,6 +220,11 @@ const AlgIcon = styled.div`
       width: 130px;
     }
   }`}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    & > img {
+      width: 30px;
+    }
+  }`}
 `
 
 const activeClassName = 'ACTIVE'
@@ -233,6 +248,9 @@ const StyledNavLink = styled(NavLink).attrs({
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border-radius: 16px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 14px 15px;
   `}
 
   &.${activeClassName} {
@@ -258,6 +276,18 @@ export default function Header() {
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
+  const prevEthBalance = usePrevious(userEthBalance)
+
+  const _userEthBalance = useMemo(() => {
+    if (!userEthBalance) {
+      return prevEthBalance
+    }
+
+    return userEthBalance
+  }, [userEthBalance])
+
+  const networkFailed = useIsNetworkFailed()
+
   const [darkMode] = useDarkModeManager()
 
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
@@ -271,11 +301,12 @@ export default function Header() {
     chainValue = 'MATIC'
   }
 
+  console.log( window.innerWidth)
   return (
     <HeaderFrame showBackground={scrollY > 45}>
       <Title href=".">
         <AlgIcon>
-          <img width={'160px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+          <img width={'160px'} src={window.innerWidth < 501 ? Logo_logo : darkMode ? LogoDark : Logo} alt="logo" />
         </AlgIcon>
       </Title>
       <HeaderLinks>
@@ -309,38 +340,21 @@ export default function Header() {
       <HeaderControls>
         <NetworkCard />
         <HeaderElement>
-          {/* {availableClaim && !showClaimPopup && (
-            <UNIWrapper onClick={toggleClaimModal}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                <TYPE.white padding="0 2px">
-                  {claimTxn && !claimTxn?.receipt ? (
-                    <Dots>
-                      <Trans>Claiming UNI</Trans>
-                    </Dots>
-                  ) : (
-                    <Trans>Claim UNI</Trans>
-                  )}
-                </TYPE.white>
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )} */}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {chainId === 137 && account && userEthBalance ? (
+            {(chainId === 137 && account && userEthBalance) || networkFailed ? (
               <BalanceText
                 style={{ flexShrink: 0 }}
+                pl="0.75rem"
                 pt="0.75rem"
                 pb="0.75rem"
-                pl="0.75rem"
                 pr="0.5rem"
                 fontWeight={500}
               >
-                {userEthBalance?.toSignificant(3)} {chainValue}{' '}
+                {_userEthBalance?.toSignificant(3)} {chainValue}
               </BalanceText>
             ) : null}
             <Web3Status />
           </AccountElement>
-          {/* <Menu /> */}
         </HeaderElement>
       </HeaderControls>
     </HeaderFrame>

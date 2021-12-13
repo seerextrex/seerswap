@@ -186,7 +186,7 @@ const StepCounter = ({
             fontSize="20px"
             disabled={disabled || locked}
             onUserInput={(val) => {
-              setLocalValue(val)
+              setLocalValue(val.trim())
             }}
           />
         </InputRow>

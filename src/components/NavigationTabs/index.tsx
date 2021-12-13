@@ -90,8 +90,9 @@ export function FindPoolTabs({ origin }: { origin: string }) {
           <StyledArrowLeft />
         </HistoryLink>
         <ActiveText>
-          <Trans>Import V2 Pool</Trans>
+          <Trans>Migrate from SushiSwap or QuickSwap</Trans>
         </ActiveText>
+        <div></div>
       </RowBetween>
     </Tabs>
   )
@@ -145,7 +146,7 @@ export function AddRemoveTabs({
           {creating ? (
             <Trans>Create a pair</Trans>
           ) : adding ? (
-            <Trans>Add Liquidity</Trans>
+            <Trans>Increase Liquidity</Trans>
           ) : (
             <Trans>Remove Liquidity</Trans>
           )}

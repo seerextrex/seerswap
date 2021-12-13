@@ -68,6 +68,8 @@ const Badge = styled.div<PropsWithChildren<BadgeProps>>`
   padding: 4px 6px;
   justify-content: center;
   font-weight: 500;
+  user-select: none;
+  cursor: default;
 `
 
 export default Badge

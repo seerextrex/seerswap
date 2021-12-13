@@ -43,9 +43,10 @@ interface PositionCardProps {
   showUnwrapped?: boolean
   border?: string
   stakedBalance?: CurrencyAmount<Token> // optional balance to indicate that liquidity is deposited in mining pool
+  sushi?: boolean
 }
 
-export default function V2PositionCard({ pair, border, stakedBalance }: PositionCardProps) {
+export default function V2PositionCard({ pair, border, stakedBalance, sushi }: PositionCardProps) {
   const { account, chainId } = useActiveWeb3React()
 
   const currency0 = unwrappedToken(pair.token0)
@@ -87,7 +88,7 @@ export default function V2PositionCard({ pair, border, stakedBalance }: Position
       <AutoColumn gap="12px">
         <FixedHeightRow>
           <AutoRow gap="8px">
-            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={20} />
+            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
             <Text fontWeight={500} fontSize={20}>
               {!currency0 || !currency1 ? (
                 <Dots>
@@ -97,11 +98,24 @@ export default function V2PositionCard({ pair, border, stakedBalance }: Position
                 `${currency0.symbol}/${currency1.symbol}`
               )}
             </Text>
-            <Badge variant={BadgeVariant.WARNING} style={{ backgroundColor: '#0f2e40', color: '#48b9cd' }}>
-              QuickSwap
+            <Badge
+              variant={BadgeVariant.WARNING}
+              style={{
+                backgroundColor: sushi ? '#0f2e40' : '#48062b',
+                color: sushi ? '#48b9cd' : '#f241a5',
+                minWidth: '100px',
+              }}
+              ref={(element) => {
+                if (element) {
+                  element.style.setProperty('margin-left', 'auto', 'important')
+                  element.style.setProperty('margin-right', '6rem', 'important')
+                }
+              }}
+            >
+              {sushi ? 'SushiSwap' : 'QuickSwap'}
             </Badge>
           </AutoRow>
-          <RowFixed gap="8px">
+          <RowFixed gap="8px" style={{ minWidth: '110px' }}>
             <ButtonEmpty
               padding="6px 8px"
               $borderRadius="12px"
@@ -110,12 +124,12 @@ export default function V2PositionCard({ pair, border, stakedBalance }: Position
             >
               {showMore ? (
                 <>
-                  <Trans>Manage</Trans>
+                  <Trans>Expand</Trans>
                   <ChevronUp size="20" style={{ marginLeft: '10px' }} />
                 </>
               ) : (
                 <>
-                  <Trans>Manage</Trans>
+                  <Trans>Expand</Trans>
                   <ChevronDown size="20" style={{ marginLeft: '10px' }} />
                 </>
               )}
@@ -154,7 +168,7 @@ export default function V2PositionCard({ pair, border, stakedBalance }: Position
                   <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                     {token0Deposited?.toSignificant(6)}
                   </Text>
-                  <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currency0} />
+                  <CurrencyLogo size="24px" style={{ marginLeft: '8px' }} currency={currency0} />
                 </RowFixed>
               ) : (
                 '-'
@@ -172,7 +186,7 @@ export default function V2PositionCard({ pair, border, stakedBalance }: Position
                   <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                     {token1Deposited?.toSignificant(6)}
                   </Text>
-                  <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currency1} />
+                  <CurrencyLogo size="24px" style={{ marginLeft: '8px' }} currency={currency1} />
                 </RowFixed>
               ) : (
                 '-'
@@ -197,19 +211,10 @@ export default function V2PositionCard({ pair, border, stakedBalance }: Position
                   $borderRadius="8px"
                   as={Link}
                   to={`/migrate/${pair.liquidityToken.address}`}
-                  width="64%"
+                  width="100%"
                 >
                   <Trans>Migrate</Trans>
                 </ButtonPrimary>
-                <ButtonSecondary
-                  padding="8px"
-                  $borderRadius="8px"
-                  as={Link}
-                  width="32%"
-                  to={`/remove/v2/${currencyId(currency0, chainId)}/${currencyId(currency1, chainId)}`}
-                >
-                  <Trans>Remove</Trans>
-                </ButtonSecondary>
               </RowBetween>
             )}
           </AutoColumn>

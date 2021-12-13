@@ -59,6 +59,8 @@ import { usePoolDynamicFee } from '../../hooks/usePoolDynamicFee'
 import { usePool } from '../../hooks/usePools'
 import { Helmet } from 'react-helmet'
 
+import ReactGA from 'react-ga'
+
 const StyledInfo = styled(Info)`
   opacity: 0.4;
   color: ${({ theme }) => theme.text1};
@@ -225,6 +227,11 @@ export default function Swap({ history }: RouteComponentProps) {
       }
     } else {
       await approveCallback()
+      ReactGA.event({
+        category: 'Swap',
+        action: 'Approve',
+        label: [trade?.inputAmount.currency.symbol, toggledVersion].join('/'),
+      })
     }
   }, [approveCallback, gatherPermitSignature, signatureState])
 
@@ -262,6 +269,21 @@ export default function Swap({ history }: RouteComponentProps) {
     swapCallback()
       .then((hash) => {
         setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
+        ReactGA.event({
+          category: 'Swap',
+          action:
+            recipient === null
+              ? 'Swap w/o Send'
+              : (recipientAddress ?? recipient) === account
+              ? 'Swap w/o Send + recipient'
+              : 'Swap w/ Send',
+          label: [
+            trade?.inputAmount?.currency?.symbol,
+            trade?.outputAmount?.currency?.symbol,
+            getTradeVersion(trade),
+            'MH',
+          ].join('/'),
+        })
       })
       .catch((error) => {
         setSwapState({
@@ -330,6 +352,10 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleMaxInput = useCallback(() => {
     maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.toExact())
+    ReactGA.event({
+      category: 'Swap',
+      action: 'Max',
+    })
   }, [maxInputAmount, onUserInput])
 
   const handleOutputSelect = useCallback(
@@ -397,7 +423,13 @@ export default function Swap({ history }: RouteComponentProps) {
                 shallow={false}
                 swap
               />
-              <ArrowWrapper clickable>
+              <ArrowWrapper
+                clickable
+                onClick={() => {
+                  setApprovalSubmitted(false) // reset 2 step UI for approvals
+                  onSwitchTokens()
+                }}
+              >
                 {/* <ArrowDown
                   size="16"
                   onClick={() => {
@@ -406,17 +438,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   }}
                   color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.text1 : theme.text3}
                 /> */}
-                <svg
-                  onClick={() => {
-                    setApprovalSubmitted(false) // reset 2 step UI for approvals
-                    onSwitchTokens()
-                  }}
-                  width="11"
-                  height="21"
-                  viewBox="0 0 11 21"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                <svg width="11" height="21" viewBox="0 0 11 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M10.0287 6.01207C10.2509 6.2384 10.6112 6.2384 10.8334 6.01207C11.0555 5.78575 11.0555 5.4188 10.8334 5.19247L5.90232 0.169745C5.68012 -0.0565819 5.31988 -0.0565819 5.09768 0.169745L0.166647 5.19247C-0.055548 5.4188 -0.055548 5.78575 0.166647 6.01207C0.388841 6.2384 0.749091 6.2384 0.971286 6.01207L5.5 1.39915L10.0287 6.01207Z"
                     fill="#abaaaa"
@@ -474,6 +496,12 @@ export default function Swap({ history }: RouteComponentProps) {
                       setShowInverted={setShowInverted}
                     />
                     <MouseoverTooltipContent
+                      onOpen={() => {
+                        ReactGA.event({
+                          category: 'Swap',
+                          action: 'Transaction Details Tooltip Open',
+                        })
+                      }}
                       content={<AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />}
                     >
                       <StyledInfo />
@@ -553,7 +581,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         <span style={{ display: 'flex', alignItems: 'center', background: '#5d32ed', color: 'white' }}>
                           <CurrencyLogo
                             currency={currencies[Field.INPUT]}
-                            size={'20px'}
+                            size={'24px'}
                             style={{ marginRight: '8px', flexShrink: 0 }}
                           />
                           {/* we need to shorten this string on mobile */}

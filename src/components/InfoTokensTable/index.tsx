@@ -37,6 +37,9 @@ export const Arrow = styled.div<{ faded: boolean }>`
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: #202635;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 600px;
+  `};
 `
 
 const ResponsiveGrid = styled.div`
@@ -46,29 +49,33 @@ const ResponsiveGrid = styled.div`
 
   grid-template-columns: 20px 3fr repeat(4, 1fr);
 
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 20px 1.5fr repeat(3, 1fr);
-    & :nth-child(4) {
-      display: none;
-    }
-  }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     grid-template-columns: 20px 2fr repeat(4, 1fr);
+  `};
 
-  @media screen and (max-width: 800px) {
-    grid-template-columns: 20px 1.5fr repeat(2, 1fr);
-    & :nth-child(6) {
-      display: none;
-    }
-  }
+  //@media screen and (max-width: 900px) {
+  //  grid-template-columns: 20px 1.5fr repeat(3, 1fr);
+  //  & :nth-child(4) {
+  //    display: none;
+  //  }
+  //}
+  //
+  //@media screen and (max-width: 800px) {
+  //  grid-template-columns: 20px 1.5fr repeat(2, 1fr);
+  //  & :nth-child(6) {
+  //    display: none;
+  //  }
+  //}
 
-  @media screen and (max-width: 670px) {
-    grid-template-columns: repeat(2, 1fr);
-    > *:first-child {
-      display: none;
-    }
-    > *:nth-child(3) {
-      display: none;
-    }
-  }
+  //@media screen and (max-width: 670px) {
+  //  grid-template-columns: repeat(2, 1fr);
+  //  > *:first-child {
+  //    display: none;
+  //  }
+  //  > *:nth-child(3) {
+  //    display: none;
+  //  }
+  //}
 `
 
 const LinkWrapper = styled.a`
@@ -96,24 +103,28 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
     <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
       <Label>{index + 1}</Label>
       <Label>
-        <LinkWrapper href={`https://polygonscan.com/address/${tokenData.address}`} rel="noopener noreferrer" target="_blank">
-        <RowFixed>
-          <ResponsiveLogo address={tokenData.address} />
-        </RowFixed>
-        <ExtraSmallOnly style={{ marginLeft: '6px' }}>
-          <Label ml="8px">{tokenData.symbol}</Label>
-        </ExtraSmallOnly>
-        <HideExtraSmall style={{ marginLeft: '10px' }}>
+        <LinkWrapper
+          href={`https://polygonscan.com/address/${tokenData.address}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
           <RowFixed>
-            <HoverInlineText text={tokenData.name} />
-            <Label ml="8px" color={theme.text3}>
-              ({tokenData.symbol})
-            </Label>
+            <ResponsiveLogo address={tokenData.address} />
           </RowFixed>
-        </HideExtraSmall>
-        <div style={{marginLeft: '8px'}}>
-          <ExternalLink size={16} color={'white'}/>
-        </div>
+          <ExtraSmallOnly style={{ marginLeft: '6px' }}>
+            <Label ml="8px">{tokenData.symbol}</Label>
+          </ExtraSmallOnly>
+          <HideExtraSmall style={{ marginLeft: '10px' }}>
+            <RowFixed>
+              <HoverInlineText text={tokenData.name} />
+              <Label ml="8px" color={theme.text3}>
+                ({tokenData.symbol})
+              </Label>
+            </RowFixed>
+          </HideExtraSmall>
+          <div style={{ marginLeft: '8px' }}>
+            <ExternalLink size={16} color={'white'} />
+          </div>
         </LinkWrapper>
       </Label>
       <Label end={1} fontWeight={400}>
@@ -171,6 +182,8 @@ export default function InfoTokensTable({
   }, [maxItems, tokenDatas])
 
   const sortedTokens = useMemo(() => {
+    if (!Array.isArray(tokenDatas)) return []
+
     return tokenDatas
       ? tokenDatas
           .filter((x) => !!x && !TOKEN_HIDE.includes(x.address))

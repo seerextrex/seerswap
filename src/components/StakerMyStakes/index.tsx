@@ -442,9 +442,26 @@ export function StakerMyStakes({
           {staked ? (
             el.endTime * 1000 > Date.now() ? (
               // <StakeButton onClick={() => setSendModal(el.L2tokenId)}>Send NFT</StakeButton>
-              <MoreButton onClick={() => setSendModal(el.L2tokenId)}>
-                <Send color={'white'} size={18} />
-              </MoreButton>
+              <>
+                <StakeButton
+                  disabled={gettingReward.id && gettingReward.state !== 'done'}
+                  onClick={() => {
+                    setGettingReward({ id: el.tokenId, state: 'pending' })
+                    getRewardsHandler(el.tokenId, { ...el })
+                  }}
+                >
+                  {gettingReward && gettingReward.id === el.tokenId && gettingReward.state !== 'done' ? (
+                    <span>
+                      <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto' }} />
+                    </span>
+                  ) : (
+                    <span>{`Undeposit`}</span>
+                  )}
+                </StakeButton>
+                <MoreButton onClick={() => setSendModal(el.L2tokenId)}>
+                  <Send color={'white'} size={18} />
+                </MoreButton>
+              </>
             ) : (
               staked && (
                 <>
@@ -588,6 +605,7 @@ export function StakerMyStakes({
         <>
           {stakedNFTs && (
             <>
+<<<<<<< Updated upstream
               <StakeListHeader>
                 <div style={{ minWidth: '96px' }}>ID</div>
                 <div>Pool</div>
@@ -597,6 +615,33 @@ export function StakerMyStakes({
                 <div></div>
               </StakeListHeader>
               <Stakes>{getTable(stakedNFTs, true)}</Stakes>
+=======
+              {' '}
+              {window.innerWidth > 500 && (
+                <StakeListHeader>
+                  <div style={{ minWidth: `${window.innerWidth < 500 ? '' : '96px'}` }}>ID</div>
+                  <div>Pool</div>
+                  <div>Earned</div>
+                  <div>Bonus</div>
+                  <div>End time</div>
+                  <div></div>
+                </StakeListHeader>
+              )}
+              {/* eslint-disable-next-line react/jsx-no-undef */}
+              <Stakes>
+                {window.innerWidth < 500 ? (
+                  <StakerMyStakesMobile
+                    position={stakedNFTs[0]}
+                    modalHandler={setSendModal}
+                    getRewardsHandler={getRewardsHandler}
+                    gettingReward={gettingReward}
+                    setGettingReward={setGettingReward}
+                  />
+                ) : (
+                  getTable(stakedNFTs, true)
+                )}
+              </Stakes>
+>>>>>>> Stashed changes
             </>
           )}
           {inactiveNFTs && (

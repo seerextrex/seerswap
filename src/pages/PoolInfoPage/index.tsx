@@ -53,11 +53,12 @@ export default function PoolInfoPage({
   } = useInfoPoolChart()
 
   const {
-    fetchFees: { feesResult, feesLoading, fetchFeePoolFn },
+    fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn },
+    fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn },
   } = useInfoSubgraph()
 
   const [span, setSpan] = useState(ChartSpan.DAY)
-  const [type, setType] = useState(ChartType.FEES)
+  const [type, setType] = useState(ChartType.TVL)
 
   const startTimestamp = useMemo(() => {
     const day = dayjs()
@@ -107,7 +108,12 @@ export default function PoolInfoPage({
   ]
 
   useEffect(() => {
-    fetchFeePoolFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
+    if (type === ChartType.FEES) {
+      console.log('s fees')
+      fetchFeePoolFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
+    } else {
+      fetchChartPoolDataFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
+    }
   }, [span, type])
 
   useEffect(() => {
@@ -130,14 +136,25 @@ export default function PoolInfoPage({
                 type={type}
                 setSpan={setSpan}
               />
-              <FeeChartRangeInput
-                data={feesResult}
-                fetchHandler={fetchFeePoolFn}
-                refreshing={feesLoading}
-                id={id}
-                span={span}
-                startDate={startTimestamp}
-              />
+              {type === ChartType.FEES ? (
+                <FeeChartRangeInput
+                  data={feesResult}
+                  fetchHandlers={[fetchFeePoolFn, fetchChartPoolDataFn]}
+                  refreshing={feesLoading}
+                  id={id}
+                  span={span}
+                  startDate={startTimestamp}
+                />
+              ) : (
+                <FeeChartRangeInput
+                  data={chartPoolData}
+                  fetchHandlers={[fetchFeePoolFn, fetchChartPoolDataFn]}
+                  refreshing={chartPoolDataLoading}
+                  id={id}
+                  span={span}
+                  startDate={startTimestamp}
+                />
+              )}
             </ChartWrapper>
           </BodyWrapper>
         </>

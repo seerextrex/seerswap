@@ -83,7 +83,11 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   const { chainId } = useActiveWeb3React()
 
   return (
+<<<<<<< Updated upstream
     <NavLink to={`/info/pools/${poolData.address}`} style={{textDecoration: 'none'}}>
+=======
+    <NavLink to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
+>>>>>>> Stashed changes
       <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
         <Label fontWeight={400}>{index + 1}</Label>
         <Label fontWeight={400}>

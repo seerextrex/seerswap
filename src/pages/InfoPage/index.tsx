@@ -9,7 +9,10 @@ import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { InfoPools } from '../../components/InfoPools'
 import { InfoTokens } from '../../components/InfoTokens'
 import { PageTitle } from '../../components/PageTitle'
+<<<<<<< Updated upstream
 import FeeChartRangeInput from '../../components/FeeChartRangeInput'
+=======
+>>>>>>> Stashed changes
 import PoolInfoPage from '../PoolInfoPage'
 
 const PageWrapper = styled(AutoColumn)`

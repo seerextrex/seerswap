@@ -196,7 +196,12 @@ export default function Pool() {
                   </TYPE.body>
                   {showConnectAWallet && (
                     <ButtonPrimary
-                      style={{ marginTop: '2em', padding: '8px 16px', background: '#5d32ed', color: 'white' }}
+                      style={{
+                        marginTop: '2em',
+                        padding: '8px 16px',
+                        background: theme.winterMainButton,
+                        color: 'white',
+                      }}
                       onClick={toggleWalletModal}
                     >
                       <Trans>Connect a wallet</Trans>

@@ -51,22 +51,22 @@ const Base = styled(RebassButton)<
 `
 
 export const ButtonPrimary = styled(Base)`
-  background-color: ${({ theme }) => theme.primary1};
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.winterMainButton)};
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
   &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
   &:active {
-    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.1, theme.primary1)};
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.winterMainButton)};
+    background-color: ${({ theme }) => darken(0.1, theme.winterMainButton)};
   }
   &:disabled {
     background-color: ${({ theme, altDisabledStyle, disabled }) =>
-      altDisabledStyle ? (disabled ? theme.primary1 : theme.bg2) : theme.bg2};
+      altDisabledStyle ? (disabled ? theme.winterMainButton : theme.winterDisabledButton) : theme.winterDisabledButton};
     color: ${({ theme }) => theme.text2};
     cursor: auto;
     box-shadow: none;
@@ -110,16 +110,16 @@ export const ButtonGray = styled(Base)`
   font-weight: 500;
 
   &:hover {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg2)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.winterDisabledButton)};
   }
   &:active {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.1, theme.bg2)};
+    background-color: ${({ theme, disabled }) => !disabled && darken(0.1, theme.winterDisabledButton)};
   }
 `
 
 export const ButtonSecondary = styled(Base)`
   border: 1px solid ${({ theme }) => theme.primary4};
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.winterMainButton};
   background-color: transparent;
   font-size: 16px;
   border-radius: 12px;
@@ -146,7 +146,7 @@ export const ButtonSecondary = styled(Base)`
 `
 
 export const ButtonOutlined = styled(Base)`
-  border: 1px solid ${({ theme }) => theme.bg2};
+  border: 1px solid ${({ theme }) => theme.winterDisabledButton};
   background-color: transparent;
   color: ${({ theme }) => theme.text1};
   &:focus {
@@ -187,7 +187,7 @@ export const ButtonYellow = styled(Base)`
 
 export const ButtonEmpty = styled(Base)`
   background-color: transparent;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.winterMainButton};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -236,14 +236,14 @@ const ButtonConfirmedStyle = styled(Base)`
 
   &:disabled {
     opacity: 50%;
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => theme.winterDisabledButton};
     color: ${({ theme }) => theme.text2};
     cursor: auto;
   }
 `
 
 const ButtonErrorStyle = styled(Base)`
-  background-color: ${({ theme }) => theme.primary1};
+  background-color: ${({ theme }) => theme.winterMainButton};
 
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.red1)};
@@ -309,14 +309,14 @@ export function ButtonDropdownLight({ disabled = false, children, ...rest }: { d
 
 const ActiveOutlined = styled(ButtonOutlined)`
   border: 1px solid;
-  border-color: ${({ theme }) => theme.primary1};
+  border-color: ${({ theme }) => theme.winterMainButton};
 `
 
 const Circle = styled.div`
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.primary1};
+  background-color: ${({ theme }) => theme.winterMainButton};
   display: flex;
   align-items: center;
   justify-content: center;

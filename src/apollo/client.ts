@@ -36,7 +36,7 @@ export const client = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming',
+    uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra-farming',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

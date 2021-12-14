@@ -16,7 +16,7 @@ export const SmallMaxButton = styled(MaxButton)`
   font-size: 12px;
   background: transparent;
   color: white;
-  border: 1px solid #5d32ed;
+  border: 1px solid ${({ theme }) => theme.winterMainButton}
 `
 
 export const ResponsiveHeaderText = styled(Text)`

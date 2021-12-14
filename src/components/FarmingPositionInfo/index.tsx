@@ -22,7 +22,7 @@ const PositionIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #5d32ed;
+  background-color: ${({ theme }) => theme.winterMainButton};
   cursor: pointer;
 `
 

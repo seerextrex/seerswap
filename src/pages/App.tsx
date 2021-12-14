@@ -39,7 +39,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
 import { useIsNetworkFailed } from '../hooks/useIsNetworkFailed'
 import Loader from '../components/Loader'
-        
+
 import { useInfoSubgraph } from '../hooks/subgraph/useInfoSubgraph'
 import FeeChartRangeInput from '../components/FeeChartRangeInput'
 import PoolInfoPage from './PoolInfoPage'
@@ -50,10 +50,30 @@ import { Integrations } from '@sentry/tracing'
 
 import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations'
 
+import BG from '../assets/images/bg.png'
+
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
+  height: 100%;
+`
+
+const Background = styled.div`
+  background-image: url(${BG});
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat, repeat;
+  background-size: cover, auto;
+  background-origin: padding-box, padding-box;
+  background-clip: border-box, border-box;
+  background-attachment: fixed;
+  background-position: 100% center, 0% 0%;
 `
 
 const BodyWrapper = styled.div`
@@ -201,6 +221,7 @@ export default function App() {
           </BodyWrapper>
         </AppWrapper>
       </Web3ReactManager>
+      <Background />
     </Sentry.ErrorBoundary>
   )
 }

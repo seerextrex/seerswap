@@ -58,8 +58,8 @@ const MockScreen = styled.div`
 `
 
 const ConnectWalletButton = styled.button`
-  border: 1px solid #5d32ed;
-  background-color: #5d32ed;
+  border: 1px solid ${({ theme }) => theme.winterMainButton};
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   padding: 8px 12px;
   font-size: 16px;

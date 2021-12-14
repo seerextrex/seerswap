@@ -55,6 +55,10 @@ export interface Colors {
   error: Color
   success: Color
   warning: Color
+
+  winterBackground: Color,
+  winterMainButton: Color,
+  winterDisabledButton: Color
 }
 
 declare module 'styled-components/macro' {

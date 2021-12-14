@@ -60,6 +60,7 @@ import { usePool } from '../../hooks/usePools'
 import { Helmet } from 'react-helmet'
 
 import ReactGA from 'react-ga'
+import { opacify } from 'polished'
 
 const StyledInfo = styled(Info)`
   opacity: 0.4;
@@ -382,7 +383,7 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleDismissTokenWarning}
       />
       <NetworkAlert />
-      <AppBody style={{ backgroundColor: 'rgba(0,0,0,.6)' }}>
+      <AppBody>
         <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
         <Wrapper id="swap-page">
           <ConfirmSwapModal
@@ -430,22 +431,14 @@ export default function Swap({ history }: RouteComponentProps) {
                   onSwitchTokens()
                 }}
               >
-                {/* <ArrowDown
-                  size="16"
-                  onClick={() => {
-                    setApprovalSubmitted(false) // reset 2 step UI for approvals
-                    onSwitchTokens()
-                  }}
-                  color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.text1 : theme.text3}
-                /> */}
                 <svg width="11" height="21" viewBox="0 0 11 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M10.0287 6.01207C10.2509 6.2384 10.6112 6.2384 10.8334 6.01207C11.0555 5.78575 11.0555 5.4188 10.8334 5.19247L5.90232 0.169745C5.68012 -0.0565819 5.31988 -0.0565819 5.09768 0.169745L0.166647 5.19247C-0.055548 5.4188 -0.055548 5.78575 0.166647 6.01207C0.388841 6.2384 0.749091 6.2384 0.971286 6.01207L5.5 1.39915L10.0287 6.01207Z"
-                    fill="#abaaaa"
+                    fill="#031F34"
                   />
                   <path
                     d="M10.0287 14.9879C10.2509 14.7616 10.6112 14.7616 10.8334 14.9879C11.0555 15.2143 11.0555 15.5812 10.8334 15.8075L5.90232 20.8303C5.68012 21.0566 5.31988 21.0566 5.09768 20.8303L0.166646 15.8075C-0.0555484 15.5812 -0.0555484 15.2143 0.166646 14.9879C0.388841 14.7616 0.749091 14.7616 0.971285 14.9879L5.5 19.6009L10.0287 14.9879Z"
-                    fill="#abaaaa"
+                    fill="#031F34"
                   />
                 </svg>
               </ArrowWrapper>
@@ -521,7 +514,7 @@ export default function Swap({ history }: RouteComponentProps) {
               ) : !account ? (
                 <ButtonLight
                   style={{
-                    backgroundColor: '#5d32ed',
+                    backgroundColor: theme.winterMainButton,
                     color: 'white',
                   }}
                   onClick={toggleWalletModal}
@@ -561,7 +554,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         approvalSubmitted ||
                         signatureState === UseERC20PermitState.SIGNED
                       }
-                      style={{ background: '#5d32ed', color: 'white' }}
+                      style={{ background: theme.winterMainButton, color: 'white' }}
                       width="100%"
                       altDisabledStyle={approvalState === ApprovalState.PENDING} // show solid button while waiting
                       confirmed={
@@ -574,11 +567,18 @@ export default function Swap({ history }: RouteComponentProps) {
                           flexWrap: 'nowrap',
                           display: 'flex',
                           justifyContent: 'center',
-                          background: '#5d32ed',
+                          background: theme.winterMainButton,
                           color: 'white',
                         }}
                       >
-                        <span style={{ display: 'flex', alignItems: 'center', background: '#5d32ed', color: 'white' }}>
+                        <span
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            background: theme.winterMainButton,
+                            color: 'white',
+                          }}
+                        >
                           <CurrencyLogo
                             currency={currencies[Field.INPUT]}
                             size={'24px'}
@@ -631,7 +631,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           priceImpactTooHigh ||
                           priceImpactSeverity
                             ? '#200714'
-                            : '#5d32ed',
+                            : theme.winterMainButton,
                         color:
                           !isValid ||
                           (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
@@ -645,7 +645,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           priceImpactTooHigh ||
                           priceImpactSeverity
                             ? '1px solid #2d1421'
-                            : '1px solid #5d32ed',
+                            : `1px solid ${({ theme }) => theme.winterMainButton}`,
                       }}
                       width="100%"
                       id="swap-button"

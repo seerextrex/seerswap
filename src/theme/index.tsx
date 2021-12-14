@@ -93,6 +93,10 @@ function colors(darkMode: boolean): Colors {
     // dont wanna forget these blue yet
     blue4: darkMode ? '#400f29' : '#C4D9F8',
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
+
+    winterBackground: 'rgba(91, 183, 255, 0.6)',
+    winterMainButton: '#008FFF',
+    winterDisabledButton: '#17517c',
   }
 }
 

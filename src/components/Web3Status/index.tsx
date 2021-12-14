@@ -1,10 +1,10 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { darken } from 'polished'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { Activity } from 'react-feather'
 import { t, Trans } from '@lingui/macro'
-import styled, { css } from 'styled-components/macro'
+import styled, { css, ThemeContext } from 'styled-components/macro'
 import { injected } from '../../connectors'
 import { NetworkContextName } from '../../constants/misc'
 import useENSName from '../../hooks/useENSName'
@@ -154,6 +154,8 @@ function Web3StatusInner() {
   const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
 
+  const theme = useContext(ThemeContext)
+
   if (account) {
     return (
       <Web3StatusConnected
@@ -189,7 +191,11 @@ function Web3StatusInner() {
     return (
       <Web3StatusConnect
         id="connect-wallet"
-        style={{ border: '1px solid #5d32ed', backgroundColor: '#5d32ed', color: 'white' }}
+        style={{
+          border: `1px solid ${theme.winterMainButton}`,
+          backgroundColor: theme.winterMainButton,
+          color: 'white',
+        }}
         onClick={toggleWalletModal}
         faded={!account}
       >

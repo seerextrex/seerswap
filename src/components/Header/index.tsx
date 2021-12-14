@@ -10,7 +10,7 @@ import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components/macro'
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
-import Logo_logo from  '../../assets/svg/alg-logo-svg.svg'
+import Logo_logo from '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import Modal from '../Modal'
 import Row from '../Row'
@@ -20,6 +20,9 @@ import UniBalanceContent from './UniBalanceContent'
 import { deviceSizes } from '../../pages/styled'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 import usePrevious from '../../hooks/usePrevious'
+
+import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+import WoodenRope from '../../assets/svg/wooden-rope.svg'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
@@ -41,6 +44,7 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
   box-shadow: 0px 0px 0px 1px ${({ theme, showBackground }) => (showBackground ? theme.bg2 : 'transparent;')};
   transition: background-position 0.1s, box-shadow 0.1s;
   background-blend-mode: hard-light;
+  padding-top: 55px;
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
     grid-template-columns: 48px 1fr 1fr;
@@ -65,6 +69,11 @@ const HeaderControls = styled.div`
   flex-direction: row;
   align-items: center;
   justify-self: flex-end;
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
 `
 
 const HeaderElement = styled.div`
@@ -87,13 +96,18 @@ const HeaderLinks = styled(Row)`
   left: 50%;
   justify-self: center;
   // background-color: ${({ theme }) => theme.bg0};
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
   width: fit-content;
   padding: 4px;
   border-radius: 16px;
   display: grid;
   grid-auto-flow: column;
   grid-gap: 30px;
-  overflow: auto;
+  overflow: visible;
   align-items: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`
     // justify-self: center;  
@@ -115,7 +129,23 @@ const HeaderLinks = styled(Row)`
     // box-shadow: 0px 6px 10px rgb(0 0 0 / 2%);
   `};
 
+  &::before,
+  &::after {
+    content: '';
+    background-image: url(${WoodenRope});
+    width: 5px;
+    height: 51px;
+    position: absolute;
+    top: -55px;
+  }
 
+  &::before {
+    left: 15%;
+  }
+
+  &::after {
+    right: 15%;
+  }
 
   @media (max-width: 1366px) {
     grid-auto-flow: unset;
@@ -136,7 +166,7 @@ const HeaderLinks = styled(Row)`
     position: fixed;
     top: unset;
   }
-  
+
   @media (max-width: 500px) {
     display: flex;
     max-width: 100%;
@@ -196,6 +226,11 @@ const Title = styled.a`
   justify-self: flex-start;
   margin-right: 12px;
   text-decoration: none;
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     // justify-self: center;
   `};
@@ -258,7 +293,7 @@ const StyledNavLink = styled(NavLink).attrs({
     font-weight: 600;
     // color: ${({ theme }) => theme.text1};
     // background-color: ${({ theme }) => theme.bg2};
-    background-color: #0f2e40;
+    // background-color: #0f2e40;
     color: #48b9cd;
   }
 
@@ -266,7 +301,7 @@ const StyledNavLink = styled(NavLink).attrs({
     & :hover,
     &:focus {
       color: ${({ theme }) => darken(0.1, theme.text1)};
-      background-color: rgba(15, 46, 64, 0.4);
+      // background-color: rgba(15, 46, 64, 0.4);
     }
   }
 `

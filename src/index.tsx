@@ -34,7 +34,7 @@ if (!!window.ethereum) {
 }
 
 const client = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb',
+  uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
   cache: new InMemoryCache(),
 })
 

@@ -207,6 +207,7 @@ interface CurrencyInputPanelProps {
   disabled: boolean
   shallow: boolean
   swap: boolean
+  page: string
 }
 
 export default function CurrencyInputPanel({
@@ -234,6 +235,7 @@ export default function CurrencyInputPanel({
   disabled,
   shallow = false,
   swap = false,
+  page,
   ...rest
 }: CurrencyInputPanelProps) {
   const { chainId } = useActiveWeb3React()
@@ -254,6 +256,7 @@ export default function CurrencyInputPanel({
       currency.name = 'Matic'
     }
   }
+  console.log(page)
 
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
@@ -274,7 +277,7 @@ export default function CurrencyInputPanel({
       <Container hideInput={hideInput}>
         <InputRow
           hideCurrency={hideCurrency}
-          style={hideInput ? { borderRadius: '8px' } : {}}
+          style={hideInput ? { borderRadius: '8px', padding: `${page === 'pool' ? '0' : ''}`} : {padding: `${page === 'pool' ? '0' : ''}`}}
           selected={!onCurrencySelect}
         >
           {!hideCurrency && (

@@ -84,6 +84,9 @@ const Stake = styled.div`
   font-family: Montserrat;
   width: 100%;
 
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    display: none;
+  `}
   & > * {
     &:not(:last-of-type) {
       max-width: calc(100% / 6);
@@ -191,6 +194,7 @@ const StakeListHeader = styled.div`
 
   ${({theme}) => theme.mediaWidth.upToExtraSmall`
     padding-bottom: 0;
+    display: none;
     `};
 `
 
@@ -593,7 +597,7 @@ export function StakerMyStakes({
                     )}
                 </SendModal>
             </Modal>
-            { refreshing || !shallowPositions ? (
+            {refreshing || !shallowPositions ? (
                 window.innerWidth < 501 ? <StakerMyStakesMobileSkeleton/> :
                     <Stakes>
                         {[0, 1, 2].map((el, i) => (
@@ -633,23 +637,23 @@ export function StakerMyStakes({
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>
                     {stakedNFTs && (
-                        <> {window.innerWidth > 500 && (
-                            <StakeListHeader>
-                                <div style={{minWidth: `${window.innerWidth < 500 ? '' : '96px'}`}}>ID</div>
-                                <div>Pool</div>
-                                <div>Earned</div>
-                                <div>Bonus</div>
-                                <div>End time</div>
-                                <div></div>
-                            </StakeListHeader>
-                        )}
-                            <Stakes>{window.innerWidth < 500 ?
+                        <> <StakeListHeader>
+                            <div style={{minWidth: `${window.innerWidth < 500 ? '' : '96px'}`}}>ID</div>
+                            <div>Pool</div>
+                            <div>Earned</div>
+                            <div>Bonus</div>
+                            <div>End time</div>
+                            <div/>
+                        </StakeListHeader>
+                            <Stakes>
                                 <StakerMyStakesMobile position={stakedNFTs[0]} modalHandler={setSendModal}
                                                       getRewardsHandler={getRewardsHandler}
                                                       gettingReward={gettingReward}
                                                       setGettingReward={setGettingReward}
                                                       now={now}
-                                /> : getTable(stakedNFTs, true)}</Stakes>
+                                />
+                                {getTable(stakedNFTs, true)}
+                            </Stakes>
                         </>
                     )}
                     {inactiveNFTs && (

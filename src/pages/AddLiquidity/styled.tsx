@@ -51,6 +51,9 @@ export const DynamicSection = styled(AutoColumn)<{ disabled?: boolean }>`
 
 export const CurrencyDropdown = styled(CurrencyInputPanel)`
   width: ${({ centered }) => (centered ? '100%' : '50%')};
+  ${({theme}) => theme.mediaWidth.upToMedium`
+    width: 100%;
+  `}
 `
 
 export const StyledInput = styled(Input)`

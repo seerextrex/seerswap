@@ -301,7 +301,6 @@ export default function Header() {
     chainValue = 'MATIC'
   }
 
-  console.log( window.innerWidth)
   return (
     <HeaderFrame showBackground={scrollY > 45}>
       <Title href=".">

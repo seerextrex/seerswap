@@ -112,6 +112,10 @@ const Wrapper = styled.div`
   background-color: #202635;
   border-radius: 10px;
   padding: 15px;
+  
+  @media screen and (min-width: 501px) {
+    display: none;
+  }
 `
 const Title = styled.div`
   display: flex;

@@ -995,6 +995,7 @@ export default function AddLiquidityPage({
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper}
                           shallow={true}
+                          page={'pool'}
                         />
                         <div style={{ display: 'flex' }}>
                           <div style={{ width: '100%' }}>
@@ -1050,6 +1051,7 @@ export default function AddLiquidityPage({
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
                           shallow={true}
+                          page={'pool'}
                         />
                         <div style={{ display: 'flex' }}>
                           <div style={{ width: '100%' }}>

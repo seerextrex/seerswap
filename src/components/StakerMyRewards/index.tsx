@@ -62,7 +62,7 @@ const Rewards = styled.div`
 const RewardsRow = styled.div`
   display: flex;
   margin-bottom: 8px;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
 `
@@ -87,7 +87,7 @@ const Reward = styled.div`
   &:not(:nth-of-type(3n)) {
     margin-right: 8px;
   }
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
      width: 100%;
      margin-bottom: 20px;
   `}

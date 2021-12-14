@@ -183,10 +183,6 @@ export function CurrencySearch({
     filteredTokens.length === 0 || (debouncedQuery.length > 2 && !isAddressSearch) ? debouncedQuery : undefined
   )
 
-useEffect(() => {
-  console.log(filteredSortedTokensWithETH)
-}, [filteredSortedTokensWithETH])
-
   return (
     <ContentWrapper>
       <PaddedColumn gap="16px">

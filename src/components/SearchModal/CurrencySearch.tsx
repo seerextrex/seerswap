@@ -25,6 +25,8 @@ import { Edit } from 'react-feather'
 import useDebounce from 'hooks/useDebounce'
 
 import ReactGA from 'react-ga'
+import getTokenList from "../../utils/getTokenList";
+import {useFetchListCallback} from "../../hooks/useFetchListCallback";
 
 const ContentWrapper = styled(Column)`
   width: 100%;
@@ -180,6 +182,10 @@ export function CurrencySearch({
   const filteredInactiveTokens = useSearchInactiveTokenLists(
     filteredTokens.length === 0 || (debouncedQuery.length > 2 && !isAddressSearch) ? debouncedQuery : undefined
   )
+
+useEffect(() => {
+  console.log(filteredSortedTokensWithETH)
+}, [filteredSortedTokensWithETH])
 
   return (
     <ContentWrapper>

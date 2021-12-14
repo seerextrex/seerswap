@@ -145,6 +145,11 @@ const NFTImage = styled.img`
   /* Ensures SVG appears on top of canvas. */
   z-index: 1;
 `
+const RowFixedStyled = styled(RowFixed)`
+${({theme}) => theme.mediaWidth.upToExtraSmall`
+  width: 100%;
+`}
+`
 
 function CurrentPriceCard({
   inverted,
@@ -615,7 +620,7 @@ export function PositionPage({
               </HoverText>
             </Link>
             <ResponsiveRow>
-              <RowFixed>
+              <RowFixedStyled>
                 <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={true} />
                 <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
@@ -626,9 +631,9 @@ export function PositionPage({
                   </BadgeText>
                 </Badge>
                 <RangeBadge removed={removed} inRange={inRange} />
-              </RowFixed>
+              </RowFixedStyled>
               {ownsNFT && (
-                <RowFixed>
+                <RowFixedStyled>
                   {currency0 && currency1 && tokenId ? (
                     <ButtonGray
                       as={Link}
@@ -653,7 +658,7 @@ export function PositionPage({
                       <Trans>Remove Liquidity</Trans>
                     </ResponsiveButtonPrimary>
                   ) : null}
-                </RowFixed>
+                </RowFixedStyled>
               )}
             </ResponsiveRow>
             <RowBetween></RowBetween>

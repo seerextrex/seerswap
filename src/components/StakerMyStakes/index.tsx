@@ -643,7 +643,6 @@ export function StakerMyStakes({
                                 <div></div>
                             </StakeListHeader>
                         )}
-                            {/* eslint-disable-next-line react/jsx-no-undef */}
                             <Stakes>{window.innerWidth < 500 ?
                                 <StakerMyStakesMobile position={stakedNFTs[0]} modalHandler={setSendModal}
                                                       getRewardsHandler={getRewardsHandler}

@@ -60,6 +60,7 @@ import { usePool } from '../../hooks/usePools'
 import { Helmet } from 'react-helmet'
 
 import ReactGA from 'react-ga'
+import getTokenList from "../../utils/getTokenList";
 
 const StyledInfo = styled(Info)`
   opacity: 0.4;
@@ -255,6 +256,8 @@ export default function Swap({ history }: RouteComponentProps) {
     recipient,
     signatureData
   )
+
+
 
   const [singleHopOnly] = useUserSingleHopOnly()
 

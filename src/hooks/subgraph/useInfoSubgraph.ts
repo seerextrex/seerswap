@@ -12,7 +12,9 @@ import {
     POOLS_FROM_ADDRESSES,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
-    TOP_TOKENS
+    TOP_TOKENS,
+    CHART_FEE_LAST_NOT_EMPTY,
+    CHART_POOL_LAST_NOT_EMPTY
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
@@ -326,6 +328,53 @@ export function useInfoSubgraph() {
         }
     }
 
+    async function fetchLastNotEmptyEntry(pool: string, timestamp: string) {
+        try {
+
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_LAST_NOT_EMPTY(pool, timestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (feeHourDatas.length === 0) return []
+
+            return feeHourDatas
+
+        } catch (err) {
+            console.error('Fees last not empty failed:', err)
+        }
+    }
+
+    async function fetchPoolLastNotEmptyEntry(pool: string, timestamp: string) {
+        try {
+
+            console.log(`  query lastNotEmptyPoolHourData {
+                poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: "${pool}", periodStartUnix_lt: ${timestamp} }) {
+                  periodStartUnix
+                  volumeUSD
+                  tvlUSD
+                  feesUSD
+                }
+              }`)
+
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_LAST_NOT_EMPTY(pool, timestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (poolHourDatas.length === 0) return []
+
+            return poolHourDatas
+
+        } catch (err) {
+            console.error('Pool last not empty failed:', err)
+        }
+    }
+
     async function fetchPoolLastEntry(pool) {
         try {
 
@@ -352,15 +401,22 @@ export function useInfoSubgraph() {
                 fetchPolicy: 'network-only'
             })
 
-
             if (error) throw new Error(`${error.name} ${error.message}`)
 
             const _feeHourData = feeHourDatas.length === 0 ? await fetchLastEntry(pool) : feeHourDatas
 
+            const previousData = await fetchLastNotEmptyEntry(pool, _feeHourData[0].timestamp)
+
             if (_feeHourData.length !== 0) {
-                setFees(_feeHourData)
+                setFees({
+                    data: _feeHourData,
+                    previousData: previousData || []
+                })
             } else {
-                setFees([])
+                setFees({
+                    data: [],
+                    previousData: previousData || []
+                })
             }
 
         } catch (err) {
@@ -385,10 +441,18 @@ export function useInfoSubgraph() {
 
             const _poolHourDatas = poolHourDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolHourDatas
 
+            const previousData = await fetchPoolLastNotEmptyEntry(pool, poolHourDatas[0].periodStartUnix)
+
             if (_poolHourDatas.length !== 0) {
-                setChartPoolData(_poolHourDatas)
+                setChartPoolData({
+                    data: _poolHourDatas,
+                    previousData: previousData || []
+                })
             } else {
-                setChartPoolData([])
+                setChartPoolData({
+                    data: [],
+                    previousData: previousData || []
+                })
             }
 
         } catch (err) {

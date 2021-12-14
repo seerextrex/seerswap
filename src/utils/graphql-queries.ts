@@ -90,6 +90,32 @@ export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
     }
   }
 `
+export const CHART_FEE_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
+  query lastNotEmptyHourData {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}", timestamp_lt: ${timestamp} }) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+
+export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
+  query lastNotEmptyPoolHourData {
+    poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: "${pool}", periodStartUnix_lt: ${timestamp} }) {
+      periodStartUnix
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
 
 export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
 query lastPoolHourData {

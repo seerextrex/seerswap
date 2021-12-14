@@ -22,7 +22,10 @@ const MockLoading = styled.div`
 `
 
 interface FeeChartRangeInputProps {
-  data: any
+  fetchedData: {
+    data: Array<any>
+    previousData: Array<any>
+  }
   refreshing: boolean
   id: string
   span: number
@@ -67,37 +70,48 @@ export function daysCount(month: number, year: number) {
 }
 
 export default function FeeChartRangeInput({
-  data,
+  fetchedData,
   refreshing,
   span,
   type,
   startDate,
 }: FeeChartRangeInputProps) {
-
   // const windowWidth = useWindowSize()
 
   const windowWidth = useMemo(() => {
-      return window.innerWidth
+    return window.innerWidth
   }, [window.innerWidth])
 
   const formattedData = useMemo(() => {
-    if (!data) return undefined
-    if (data.length === 0) return []
+    if (!fetchedData) return undefined
+    if (fetchedData.data.length === 0) return []
 
     const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? 'volumeUSD' : 'feesUSD'
 
-    if (type === ChartType.FEES)  {
-        return data.map((el) => ({
-        timestamp: new Date(el.timestamp * 1000),
-        value: el.fee / el.changesCount / 10000,
-      }))
+    if (type === ChartType.FEES) {
+      return {
+        data: fetchedData.data.map((el) => ({
+          timestamp: new Date(el.timestamp * 1000),
+          value: el.fee / el.changesCount / 10000,
+        })),
+        previousData: fetchedData.previousData.map((el) => ({
+          timestamp: new Date(el.timestamp * 1000),
+          value: el.fee / 10000,
+        })),
+      }
     } else {
-      return data.map(el => ({
-        timestamp: new Date(el.periodStartUnix * 1000) ,
-        value: el[field]
-      }))
+      return {
+        data: fetchedData.data.map((el) => ({
+          timestamp: new Date(el.periodStartUnix * 1000),
+          value: +el[field],
+        })),
+        previousData: fetchedData.previousData.map((el) => ({
+          timestamp: new Date(el.periodStartUnix * 1000),
+          value: +el[field],
+        })),
+      }
     }
-  }, [data])
+  }, [fetchedData])
 
   return (
     <Wrapper>

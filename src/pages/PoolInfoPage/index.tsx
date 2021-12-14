@@ -30,7 +30,6 @@ const ChartWrapper = styled.div`
 export enum ChartType {
   VOLUME,
   TVL,
-  LIQUIDITY,
   FEES,
 }
 
@@ -58,7 +57,7 @@ export default function PoolInfoPage({
   } = useInfoSubgraph()
 
   const [span, setSpan] = useState(ChartSpan.DAY)
-  const [type, setType] = useState(ChartType.FEES)
+  const [type, setType] = useState(ChartType.TVL)
 
   const startTimestamp = useMemo(() => {
     const day = dayjs()
@@ -81,10 +80,6 @@ export default function PoolInfoPage({
     {
       type: ChartType.TVL,
       title: 'TVL',
-    },
-    {
-      type: ChartType.LIQUIDITY,
-      title: 'Liquidity',
     },
     {
       type: ChartType.FEES,
@@ -126,7 +121,7 @@ export default function PoolInfoPage({
     } else {
       return chartPoolData
     }
-  }, [feesResult, chartPoolData, type, span])
+  }, [feesResult, chartPoolData])
 
   const refreshing = useMemo(() => {
     return feesLoading || chartPoolDataLoading
@@ -147,14 +142,14 @@ export default function PoolInfoPage({
                 type={type}
                 setSpan={setSpan}
               />
-                <FeeChartRangeInput
-                  data={data}
-                  refreshing={refreshing}
-                  id={id}
-                  span={span}
-                  type={type}
-                  startDate={startTimestamp}
-                />
+              <FeeChartRangeInput
+                fetchedData={data || undefined}
+                refreshing={refreshing}
+                id={id}
+                span={span}
+                type={type}
+                startDate={startTimestamp}
+              />
             </ChartWrapper>
           </BodyWrapper>
         </>

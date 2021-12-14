@@ -10,7 +10,7 @@ function sameDay(d1, d2) {
 }
 
 interface ChartInterface {
-  feeData,
+  feeData
   dimensions: {
     width: number
     height: number
@@ -20,11 +20,24 @@ interface ChartInterface {
   type: ChartType
 }
 
-export default function Chart({ feeData = [], span, type, dimensions }: ChartInterface) {
+export default function Chart({ feeData: { data, previousData } = {}, span, type, dimensions }: ChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
+
+  const firstNonEmptyValue = useMemo(() => {
+    if (!previousData) return null
+
+    if (previousData[0]) {
+      return {
+        value: previousData[0].value,
+        timestamp: previousData[0].timestamp,
+      }
+    } else {
+      return null
+    }
+  }, [data, previousData])
 
   const xTicks = useMemo(() => {
     switch (span) {
@@ -46,30 +59,36 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
       case ChartSpan.WEEK:
         return dimensions.width / 7
     }
-  }, [span, dimensions, feeData])
+  }, [span, dimensions, data])
 
   const _chartData = useMemo(() => {
-    if (feeData.length === 0) return []
+    if (data.length === 0) return []
 
     let sameDays = []
-    const res = []
+    let res = []
 
-    if (feeData.length === 1) {
+    if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0].timestamp))) {
       res.push({
-        value: feeData[0].value,
-        timestamp: feeData[0].timestamp,
+        value: data[0].value,
+        timestamp: data[0].timestamp,
       })
     }
 
-    for (let i = 1; i < feeData.length; i++) {
-      if (sameDay(new Date(feeData[i].timestamp), new Date(feeData[i - 1].timestamp))) {
-        sameDays.push(feeData[i])
+    for (let i = 1; i < data.length; i++) {
+      if (sameDay(new Date(data[i].timestamp), new Date(data[i - 1].timestamp))) {
+        sameDays.push(data[i])
       } else {
         if (sameDays.length !== 0) {
           res.push(
             sameDays.reduce(
               (prev, cur) => {
-                return { timestamp: cur.timestamp, value: prev.value + cur.value }
+                return {
+                  timestamp: cur.timestamp,
+                  value:
+                    span === ChartSpan.DAY || type === ChartType.FEES
+                      ? prev.value + cur.value
+                      : Math.max(prev.value, cur.value),
+                }
               },
               {
                 value: 0,
@@ -77,18 +96,32 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
               }
             )
           )
-          res[res.length - 1].value = res[res.length - 1].value / sameDays.length
+          if (type === ChartType.FEES) {
+            res[res.length - 1].value = res[res.length - 1].value / sameDays.length
+          }
+        } else {
+          res.push({
+            value: data[i].value,
+            timestamp: data[i].timestamp,
+          })
         }
-
         sameDays = []
       }
     }
+
+    console.log('SAME DAYS', sameDays)
 
     if (sameDays.length !== 0) {
       res.push(
         sameDays.reduce(
           (prev, cur) => {
-            return { timestamp: cur.timestamp, value: prev.value + cur.value }
+            return {
+              timestamp: cur.timestamp,
+              value:
+                span === ChartSpan.DAY || type === ChartType.FEES
+                  ? prev.value + cur.value
+                  : Math.max(prev.value, cur.value),
+            }
           },
           {
             value: 0,
@@ -96,10 +129,16 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
           }
         )
       )
-      res[res.length - 1].value = res[res.length - 1].value / sameDays.length
+      if (type === ChartType.FEES) {
+        res[res.length - 1].value = res[res.length - 1].value / sameDays.length
+      }
     }
 
-    console.log(res, sameDays)
+    if (res.length === 0) {
+      res = res.concat([...data])
+    }
+
+    console.log('RES', sameDays, res)
 
     let _data = []
 
@@ -114,6 +153,8 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
         .startOf(_span)
       const lastAdditionalDay = dayjs(Date.now()).startOf(_span)
 
+      console.log(firstRealDay, firstAdditionalDay, lastRealDay, lastAdditionalDay)
+
       if (firstRealDay > firstAdditionalDay) {
         for (
           let i = firstAdditionalDay.unix();
@@ -122,14 +163,55 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
         ) {
           _data.push({
             timestamp: new Date(i * 1000),
-            value: res[0].value,
+            value: firstNonEmptyValue ? firstNonEmptyValue.value : 0,
           })
         }
       }
 
-      if (res.length !== 1) {
-        _data = [..._data, ...res]
+      console.log('first', [..._data])
+
+      _data.push({
+        timestamp: new Date(res[0].timestamp),
+        value: res[0].value,
+      })
+
+      let last = _data[_data.length - 1]
+
+      for (let i = 1; i < res.length; i++) {
+        console.log('res l', res[i])
+        const isNext = dayjs(res[i].timestamp)
+          .subtract(1, span === ChartSpan.DAY ? 'hours' : 'days')
+          .isSame(dayjs(res[i - 1].timestamp))
+
+        if (isNext) {
+          _data.push({
+            timestamp: new Date(res[i].timestamp * 1000),
+            value: res[i].value,
+          })
+        } else {
+          const difference = dayjs(res[i].timestamp).diff(last.timestamp, span === ChartSpan.DAY ? 'hours' : 'days')
+
+          for (let j = 1; j <= difference; j++) {
+            const nextDay = new Date(
+              dayjs(last.timestamp)
+                .add(1, span === ChartSpan.DAY ? 'hours' : 'days')
+                .unix() * 1000
+            )
+
+            _data.push({
+              timestamp: nextDay,
+              value: last.value,
+            })
+
+            last = _data[_data.length - 1]
+          }
+        }
+        last = res[i]
       }
+
+      _data.push(last)
+
+      console.log('second', [..._data])
 
       if (lastRealDay < lastAdditionalDay) {
         for (let i = lastRealDay.unix(); i < lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
@@ -139,10 +221,14 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
           })
         }
       }
+    } else {
+      _data = [...res]
     }
 
+    console.log('third', [..._data])
+
     return [..._data]
-  }, [feeData])
+  }, [data, previousData])
 
   const xScale = useMemo(() => {
     return d3
@@ -202,7 +288,9 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
     .style('display', 'none')
 
   useEffect(() => {
-    if (feeData.length === 0) return
+    if (data.length === 0) return
+
+    console.log('_chartData', _chartData)
 
     const svgEl = d3.select(svgRef.current)
     svgEl.selectAll('*').remove()
@@ -334,7 +422,12 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
               'transform',
               `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
             )
-            InfoRectFeeText.property('innerHTML', `${type === ChartType.FEES ? 'Fee' : 'Volume'} ${Number(_chartData[i]?.value).toFixed(3)}`)
+            InfoRectFeeText.property(
+              'innerHTML',
+              `${type === ChartType.FEES ? 'Fee:' : type === ChartType.TVL ? 'TVL:' : 'Volume:'} ${
+                type !== ChartType.FEES ? '$' : ''
+              }${Number(_chartData[i]?.value).toFixed(2)}${type === ChartType.FEES ? '%' : ''}`
+            )
             InfoRectDateText.property(
               'innerHTML',
               span === ChartSpan.DAY
@@ -343,7 +436,7 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
                   }:${date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()}`
                 : `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`
             )
-            Focus.attr('transform', `translate(${xTranslate},${y(_chartData[i]?.value)})`)
+            Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
           })
 
         svg.node().append(rect.node())
@@ -352,7 +445,7 @@ export default function Chart({ feeData = [], span, type, dimensions }: ChartInt
     svg.append(() => InfoRectGroup.node())
     svg.append(() => Line.node())
     svg.append(() => Focus.node())
-  }, [feeData])
+  }, [data])
 
   return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
 }

@@ -6,6 +6,7 @@ import Modal from '../Modal'
 const CautionModalInner = styled.div`
   padding: 2rem;
   line-height: 26px;
+  color: #080064;
 `
 
 const CautionList = styled.ul`
@@ -37,8 +38,8 @@ const AgreeButton = styled.button`
 const agreementItems = [
   'Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool.',
   'You use Algebra at your own risk and without warranties of any kind. Algebra is not liable for potential losses.',
-  'Before using Algebra, you should review the relevant documentation to make sure you understand how Algebra works. ',
-  'You are responsible for doing your own diligence to understand the risks they present.',
+  'Before using Algebra, you should review the relevant documentation to make sure you understand how Algebra works.',
+  'You are responsible for completing your own due diligence to understand the risks of trading crypto.',
 ]
 
 export default function CautionModal() {
@@ -56,7 +57,7 @@ export default function CautionModal() {
     <Modal isOpen={cautionModal}>
       <CautionModalInner>
         <div style={{ textAlign: 'center', marginBottom: '2rem', fontWeight: 600 }}>
-          Welcome to Algebra, first DEX on Polygon with concentrated liquidity support!
+          Welcome to Algebra, the first concentrated liquidity DEX on Polygon!
         </div>
         <p style={{ textAlign: 'center' }}>
           Check out our{' '}
@@ -67,13 +68,13 @@ export default function CautionModal() {
           >
             Tech Paper
           </a>{' '}
-          and take a look on what{' '}
+          and read about concentrated liquidity{' '}
           <a target="_blank" rel="noreferrer noopener" href={'https://arxiv.org/pdf/2110.01368.pdf'}>
             concentrated liquidity is
           </a>
           .
         </p>
-        <p>By confirming this, you acknowledge that you understand the following statements and accept these terms:</p>
+        <p>Please confirm that you agree with the following paragraphs:</p>
         <CautionList>
           {agreementItems.map((el, i) => (
             <CautionListItem key={i}>{el}</CautionListItem>

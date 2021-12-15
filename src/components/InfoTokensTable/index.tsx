@@ -100,7 +100,7 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
               <HoverInlineText text={tokenData.name} />
               <Label ml="8px" color={'#dedede'}>
                 ({tokenData.symbol})
-              </LabelTitle>
+              </Label>
             </RowFixed>
           </HideExtraSmall>
           <div style={{ marginLeft: '8px' }}>

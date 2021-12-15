@@ -1,25 +1,25 @@
-import {isAddress} from '@ethersproject/address'
-import {useCallback, useMemo, useState} from 'react'
-import {useEffect} from 'react'
-import {CheckCircle, Frown, Send} from 'react-feather'
-import styled, {keyframes, css} from 'styled-components/macro'
-import {useIncentiveSubgraph} from '../../hooks/useIncentiveSubgraph'
-import {useStakerHandlers} from '../../hooks/useStakerHandlers'
-import {useActiveWeb3React} from '../../hooks/web3'
-import {useAllTransactions} from '../../state/transactions/hooks'
-import {stringToColour} from '../../utils/stringToColour'
+import { isAddress } from '@ethersproject/address'
+import { useCallback, useMemo, useState } from 'react'
+import { useEffect } from 'react'
+import { CheckCircle, Frown, Send } from 'react-feather'
+import styled, { keyframes, css } from 'styled-components/macro'
+import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
+import { useStakerHandlers } from '../../hooks/useStakerHandlers'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { useAllTransactions } from '../../state/transactions/hooks'
+import { stringToColour } from '../../utils/stringToColour'
 import FarmingPositionInfo from '../FarmingPositionInfo'
 import Loader from '../Loader'
 import Modal from '../Modal'
-import {PageTitle} from '../PageTitle'
+import { PageTitle } from '../PageTitle'
 
-import {useLocation, useParams} from 'react-router'
+import { useLocation, useParams } from 'react-router'
 import StakerMyStakesMobile from './StakerMyStakesMobile'
 
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import USDCLogo from '../../assets/images/usdc-logo.png'
 import WMATICLogo from '../../assets/images/matic-logo.png'
-import StakerMyStakesMobileSkeleton from "./StakerMyStakesMobileSkeleton";
+import StakerMyStakesMobileSkeleton from './StakerMyStakesMobileSkeleton'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -41,8 +41,8 @@ const skeletonGradient = css`
     background-image: linear-gradient(
       90deg,
       rgba(91, 105, 141, 0) 0,
-      rgba(94, 131, 225, 0.25) 25%,
-      rgba(94, 131, 225, 0.5) 60%,
+      rgba(91, 105, 141, 0.2) 25%,
+      rgba(91, 105, 141, 0.5) 60%,
       rgba(91, 105, 141, 0)
     );
     animation-name: ${skeletonAnimation};
@@ -65,14 +65,14 @@ export const TokenIcon = styled.div`
   justify-content: center;
   width: 35px;
   height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
+  background-color: ${({ name }) => (name ? stringToColour(name).background : '#3d4a6a')};
+  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
+  color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
   border-radius: 50%;
   user-select: none;
 
-  ${({skeleton}) => (skeleton ? skeletonGradient : null)}
-  background: ${({logo}) => (logo ? `url(${logo})` : '')};
+  ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
+  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
   background-size: contain;
 
   &:nth-of-type(2) {
@@ -86,7 +86,7 @@ const Stake = styled.div`
   font-family: Montserrat;
   width: 100%;
 
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `}
   & > * {
@@ -137,13 +137,12 @@ export const StakeCountdown = styled.div`
   min-width: 94px !important;
 
   & > * {
-
     ${({ skeleton }) =>
       skeleton
         ? css`
             width: 80px;
             height: 16px;
-            background: #5aa7df;
+            background: #3d4a6a;
             border-radius: 4px;
 
             ${skeletonGradient}
@@ -162,8 +161,7 @@ export const StakeButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
-
-  background-color: ${({ skeleton, theme }) => (skeleton ? '#5aa7df' : theme.winterMainButton)};
+  background-color: ${({ skeleton }) => (skeleton ? '#3d4a6a' : '#4829bb')};
   color: white;
   min-width: 126px;
 
@@ -181,7 +179,6 @@ export const StakeButton = styled.button`
           width: 80px;
         `
       : null}
-
 `
 
 const StakeListHeader = styled.div`
@@ -197,7 +194,7 @@ const StakeListHeader = styled.div`
     color: #ababab;
   }
 
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding-bottom: 0;
     display: none;
     `};
@@ -207,13 +204,12 @@ export const TokensNames = styled.div`
   margin-left: 1rem;
 
   & > * {
-
     ${({ skeleton }) =>
       skeleton
         ? css`
             width: 40px;
             height: 16px;
-            background: #5aa7df;
+            background: #3d4a6a;
             margin-bottom: 3px;
             border-radius: 4px;
             ${skeletonGradient}
@@ -281,271 +277,270 @@ const SendNFTWarning = styled.div`
 `
 
 export function StakerMyStakes({
-                                   data,
-                                   refreshing,
-                                   now,
-                                   fetchHandler
-                               }: {
-    data: any
-    refreshing: boolean
-    now: number
-    fetchHandler: () => any
+  data,
+  refreshing,
+  now,
+  fetchHandler,
+}: {
+  data: any
+  refreshing: boolean
+  now: number
+  fetchHandler: () => any
 }) {
-    const {account} = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
-    const specialTokens = {
-        ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
-            name: 'USDC',
-            logo: USDCLogo,
-        },
-        ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
-            name: 'ALGB',
-            logo: AlgebraLogo,
-        },
-        ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
-            name: 'WMATIC',
-            logo: WMATICLogo,
-        },
-    }
+  const specialTokens = {
+    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
+      name: 'USDC',
+      logo: USDCLogo,
+    },
+    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
+      name: 'ALGB',
+      logo: AlgebraLogo,
+    },
+    ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
+      name: 'WMATIC',
+      logo: WMATICLogo,
+    },
+  }
 
-    const {getRewardsHandler, getRewardsHash, withdrawHandler, withdrawnHash, sendNFTL2Handler, sendNFTL2Hash} =
+  const { getRewardsHandler, getRewardsHash, withdrawHandler, withdrawnHash, sendNFTL2Handler, sendNFTL2Hash } =
     useStakerHandlers() || {}
 
-    const {hash} = useLocation()
+  const { hash } = useLocation()
 
-    const [sendModal, setSendModal] = useState(false)
-    const [recipient, setRecipient] = useState('')
+  const [sendModal, setSendModal] = useState(false)
+  const [recipient, setRecipient] = useState('')
 
-    const sendNFTHandler = useCallback(
-        (v) => {
-            if (!isAddress(recipient) || recipient === account) {
-                return
-            }
+  const sendNFTHandler = useCallback(
+    (v) => {
+      if (!isAddress(recipient) || recipient === account) {
+        return
+      }
 
-            sendNFTL2Handler(recipient, v)
-        },
-        [recipient]
-    )
+      sendNFTL2Handler(recipient, v)
+    },
+    [recipient]
+  )
 
-    const [gettingReward, setGettingReward] = useState({id: null, state: null})
-    const [unstaking, setUnstaking] = useState({id: null, state: null})
-    const [sending, setSending] = useState({id: null, state: null})
+  const [gettingReward, setGettingReward] = useState({ id: null, state: null })
+  const [unstaking, setUnstaking] = useState({ id: null, state: null })
+  const [sending, setSending] = useState({ id: null, state: null })
 
-    const [shallowPositions, setShallowPositions] = useState(null)
+  const [shallowPositions, setShallowPositions] = useState(null)
 
-    const allTransactions = useAllTransactions()
+  const allTransactions = useAllTransactions()
 
-    const sortedRecentTransactions = useMemo(() => {
-        const txs = Object.values(allTransactions)
-        return txs
-            .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
-            .sort((a, b) => b.addedTime - a.addedTime)
-    }, [allTransactions])
+  const sortedRecentTransactions = useMemo(() => {
+    const txs = Object.values(allTransactions)
+    return txs
+      .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
+      .sort((a, b) => b.addedTime - a.addedTime)
+  }, [allTransactions])
 
-    const confirmed = useMemo(
-        () => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
-        [sortedRecentTransactions, allTransactions]
-    )
+  const confirmed = useMemo(
+    () => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
+    [sortedRecentTransactions, allTransactions]
+  )
 
-    useEffect(() => {
-        setShallowPositions(data)
-    }, [data])
+  useEffect(() => {
+    setShallowPositions(data)
+  }, [data])
 
-    const stakedNFTs = useMemo(() => {
-        if (!shallowPositions) return
-        const _positions = shallowPositions.filter((pos) => pos.staked && pos.transfered)
-        return _positions.length > 0 ? _positions : undefined
-    }, [shallowPositions])
+  const stakedNFTs = useMemo(() => {
+    if (!shallowPositions) return
+    const _positions = shallowPositions.filter((pos) => pos.staked && pos.transfered)
+    return _positions.length > 0 ? _positions : undefined
+  }, [shallowPositions])
 
-    const inactiveNFTs = useMemo(() => {
-        if (!shallowPositions) return
-        const _positions = shallowPositions.filter((pos) => !pos.staked && pos.transfered)
-        return _positions.length > 0 ? _positions : undefined
-    }, [shallowPositions])
+  const inactiveNFTs = useMemo(() => {
+    if (!shallowPositions) return
+    const _positions = shallowPositions.filter((pos) => !pos.staked && pos.transfered)
+    return _positions.length > 0 ? _positions : undefined
+  }, [shallowPositions])
 
-    useEffect(() => {
-        if (!sending.state) return
+  useEffect(() => {
+    if (!sending.state) return
 
-        if (sendNFTL2Hash === 'failed') {
-            setSending({id: null, state: null})
-        } else if (sendNFTL2Hash && confirmed.includes(sendNFTL2Hash.hash)) {
-            setSending({id: sendNFTL2Hash.id, state: 'done'})
-            setShallowPositions(shallowPositions.filter((el) => el.l2TokenId === sendNFTL2Hash.id))
-        }
-    }, [sendNFTL2Hash, confirmed])
-
-    useEffect(() => {
-        if (!gettingReward.state) return
-
-        if (getRewardsHash === 'failed') {
-            setGettingReward({id: null, state: null})
-        } else if (getRewardsHash && confirmed.includes(getRewardsHash.hash)) {
-            setGettingReward({id: getRewardsHash.id, state: 'done'})
-            setShallowPositions(
-                shallowPositions.map((el) => {
-                    if (el.tokenId === getRewardsHash.id) {
-                        el.staked = false
-                    }
-                    return el
-                })
-            )
-        }
-    }, [getRewardsHash, confirmed])
-
-    useEffect(() => {
-        if (!unstaking.state) return
-
-        if (withdrawnHash === 'failed') {
-            setUnstaking({id: null, state: null})
-        } else if (withdrawnHash && confirmed.includes(withdrawnHash.hash)) {
-            setUnstaking({id: withdrawnHash.id, state: 'done'})
-            setShallowPositions(
-                shallowPositions.map((el) => {
-                    if (el.tokenId === withdrawnHash.id) {
-                        el.transfered = false
-                    }
-                    return el
-                })
-            )
-        }
-    }, [withdrawnHash, confirmed])
-
-    useEffect(() => {
-        fetchHandler()
-    }, [account])
-
-    function getCountdownTime(time) {
-        const timestamp = (time * 1000 - now) / 1000
-        const days = Math.floor(timestamp / (24 * 60 * 60))
-        const hours = Math.floor(timestamp / (60 * 60)) % 24
-        const minutes = Math.floor(timestamp / 60) % 60
-        const seconds = Math.floor(timestamp / 1) % 60
-
-        function format(digit: number) {
-            return digit < 10 ? `0${digit}` : digit
-        }
-
-        return `${days > 0 ? `${days}d ` : ''}${format(hours)}:${format(minutes)}:${format(seconds)}`
+    if (sendNFTL2Hash === 'failed') {
+      setSending({ id: null, state: null })
+    } else if (sendNFTL2Hash && confirmed.includes(sendNFTL2Hash.hash)) {
+      setSending({ id: sendNFTL2Hash.id, state: 'done' })
+      setShallowPositions(shallowPositions.filter((el) => el.l2TokenId === sendNFTL2Hash.id))
     }
-  
-    function formatReward(earned) {
-        const _earned = String(earned)
-        return _earned.length > 8 ? `${_earned.slice(0, 8)}..` : _earned
+  }, [sendNFTL2Hash, confirmed])
+
+  useEffect(() => {
+    if (!gettingReward.state) return
+
+    if (getRewardsHash === 'failed') {
+      setGettingReward({ id: null, state: null })
+    } else if (getRewardsHash && confirmed.includes(getRewardsHash.hash)) {
+      setGettingReward({ id: getRewardsHash.id, state: 'done' })
+      setShallowPositions(
+        shallowPositions.map((el) => {
+          if (el.tokenId === getRewardsHash.id) {
+            el.staked = false
+          }
+          return el
+        })
+      )
+    }
+  }, [getRewardsHash, confirmed])
+
+  useEffect(() => {
+    if (!unstaking.state) return
+
+    if (withdrawnHash === 'failed') {
+      setUnstaking({ id: null, state: null })
+    } else if (withdrawnHash && confirmed.includes(withdrawnHash.hash)) {
+      setUnstaking({ id: withdrawnHash.id, state: 'done' })
+      setShallowPositions(
+        shallowPositions.map((el) => {
+          if (el.tokenId === withdrawnHash.id) {
+            el.transfered = false
+          }
+          return el
+        })
+      )
+    }
+  }, [withdrawnHash, confirmed])
+
+  useEffect(() => {
+    fetchHandler()
+  }, [account])
+
+  function getCountdownTime(time) {
+    const timestamp = (time * 1000 - now) / 1000
+    const days = Math.floor(timestamp / (24 * 60 * 60))
+    const hours = Math.floor(timestamp / (60 * 60)) % 24
+    const minutes = Math.floor(timestamp / 60) % 60
+    const seconds = Math.floor(timestamp / 1) % 60
+
+    function format(digit: number) {
+      return digit < 10 ? `0${digit}` : digit
     }
 
-    function getTable(positions, staked: boolean) {
-        return positions.map((el, i) => (
-            <Stake key={i} navigatedTo={hash === `#${el.tokenId}`}>
-                <StakeId>
-                    <FarmingPositionInfo el={el}/>
-                </StakeId>
-                <StakePool>
-                    {staked && (
-                        <>
-                            {el.pool.token0.id.toLowerCase() in specialTokens ? (
-                                <TokenIcon logo={specialTokens[el.pool.token0.id].logo}></TokenIcon>
-                            ) : (
-                                <TokenIcon name={el.pool.token0.symbol}>{el.pool.token0.symbol.slice(0, 2)}</TokenIcon>
-                            )}
-                            {el.pool.token1.id.toLowerCase() in specialTokens ? (
-                                <TokenIcon logo={specialTokens[el.pool.token1.id].logo}></TokenIcon>
-                            ) : (
-                                <TokenIcon name={el.pool.token1.symbol}>{el.pool.token1.symbol.slice(0, 2)}</TokenIcon>
-                            )}
-                            <TokensNames>
-                                <div>{el.pool.token0.symbol}</div>
-                                <div>{el.pool.token1.symbol}</div>
-                            </TokensNames>
-                        </>
-                    )}
-                </StakePool>
-                {/* <StakeSeparator>for</StakeSeparator> */}
-                {staked && (
-                    <StakeReward>
-                        {el.rewardToken.id.toLowerCase() in specialTokens ? (
-                            <TokenIcon logo={specialTokens[el.rewardToken.id].logo} name={''}></TokenIcon>
-                        ) : (
-                            <TokenIcon name={el.rewardToken.symbol}>{el.rewardToken.symbol.slice(0, 2)}</TokenIcon>
-                        )}
-                        <TokensNames>
-                            <div>{formatReward(el.earned)}</div>
-                            <div>{el.rewardToken.symbol}</div>
-                        </TokensNames>
-                    </StakeReward>
-                )}
-                {staked && (
-                    <StakeReward>
-                        {el.bonusRewardToken.id.toLowerCase() in specialTokens ? (
-                            <TokenIcon logo={specialTokens[el.bonusRewardToken.id].logo} name={''}></TokenIcon>
-                        ) : (
-                            <TokenIcon
-                                name={el.bonusRewardToken.symbol}>{el.bonusRewardToken.symbol.slice(0, 2)}</TokenIcon>
-                        )}
-                        <TokensNames>
-                            <div>{formatReward(el.bonusEarned)}</div>
-                            <div>{el.bonusRewardToken.symbol}</div>
-                        </TokensNames>
-                    </StakeReward>
-                )}
-                {/* <StakeSeparator>by</StakeSeparator> */}
-                {staked && (
-                    <StakeCountdown>
-                        {el.ended || el.endTime * 1000 < Date.now() ? 'Finished' : getCountdownTime(el.endTime)}
-                    </StakeCountdown>
-                )}
-                <StakeActions>
-                    {staked ? (
-                        el.endTime * 1000 > Date.now() ? (
-                            // <StakeButton onClick={() => setSendModal(el.L2tokenId)}>Send NFT</StakeButton>
-                            <MoreButton onClick={() => setSendModal(el.L2tokenId)}>
-                                <Send color={'white'} size={18}/>
-                            </MoreButton>
-                        ) : (
-                            staked && (
-                                <>
-                                    <StakeButton
-                                        disabled={gettingReward.id && gettingReward.state !== 'done'}
-                                        onClick={() => {
-                                            setGettingReward({id: el.tokenId, state: 'pending'})
-                                            getRewardsHandler(el.tokenId, {...el})
-                                        }}
-                                    >
-                                        {gettingReward && gettingReward.id === el.tokenId && gettingReward.state !== 'done' ? (
-                                            <span>
-                        <Loader size={'18px'} stroke={'white'} style={{margin: 'auto'}}/>
+    return `${days > 0 ? `${days}d ` : ''}${format(hours)}:${format(minutes)}:${format(seconds)}`
+  }
 
+  function formatReward(earned) {
+    const _earned = String(earned)
+    return _earned.length > 8 ? `${_earned.slice(0, 8)}..` : _earned
+  }
+
+  function getTable(positions, staked: boolean) {
+    return positions.map((el, i) => (
+      <Stake key={i} navigatedTo={hash === `#${el.tokenId}`}>
+        <StakeId>
+          <FarmingPositionInfo el={el} />
+        </StakeId>
+        <StakePool>
+          {staked && (
+            <>
+              {el.pool.token0.id.toLowerCase() in specialTokens ? (
+                <TokenIcon logo={specialTokens[el.pool.token0.id].logo}></TokenIcon>
+              ) : (
+                <TokenIcon name={el.pool.token0.symbol}>{el.pool.token0.symbol.slice(0, 2)}</TokenIcon>
+              )}
+              {el.pool.token1.id.toLowerCase() in specialTokens ? (
+                <TokenIcon logo={specialTokens[el.pool.token1.id].logo}></TokenIcon>
+              ) : (
+                <TokenIcon name={el.pool.token1.symbol}>{el.pool.token1.symbol.slice(0, 2)}</TokenIcon>
+              )}
+              <TokensNames>
+                <div>{el.pool.token0.symbol}</div>
+                <div>{el.pool.token1.symbol}</div>
+              </TokensNames>
+            </>
+          )}
+        </StakePool>
+        {/* <StakeSeparator>for</StakeSeparator> */}
+        {staked && (
+          <StakeReward>
+            {el.rewardToken.id.toLowerCase() in specialTokens ? (
+              <TokenIcon logo={specialTokens[el.rewardToken.id].logo} name={''}></TokenIcon>
+            ) : (
+              <TokenIcon name={el.rewardToken.symbol}>{el.rewardToken.symbol.slice(0, 2)}</TokenIcon>
+            )}
+            <TokensNames>
+              <div>{formatReward(el.earned)}</div>
+              <div>{el.rewardToken.symbol}</div>
+            </TokensNames>
+          </StakeReward>
+        )}
+        {staked && (
+          <StakeReward>
+            {el.bonusRewardToken.id.toLowerCase() in specialTokens ? (
+              <TokenIcon logo={specialTokens[el.bonusRewardToken.id].logo} name={''}></TokenIcon>
+            ) : (
+              <TokenIcon name={el.bonusRewardToken.symbol}>{el.bonusRewardToken.symbol.slice(0, 2)}</TokenIcon>
+            )}
+            <TokensNames>
+              <div>{formatReward(el.bonusEarned)}</div>
+              <div>{el.bonusRewardToken.symbol}</div>
+            </TokensNames>
+          </StakeReward>
+        )}
+        {/* <StakeSeparator>by</StakeSeparator> */}
+        {staked && (
+          <StakeCountdown>
+            {el.ended || el.endTime * 1000 < Date.now() ? 'Finished' : getCountdownTime(el.endTime)}
+          </StakeCountdown>
+        )}
+        <StakeActions>
+          {staked ? (
+            el.endTime * 1000 > Date.now() ? (
+              // <StakeButton onClick={() => setSendModal(el.L2tokenId)}>Send NFT</StakeButton>
+              <MoreButton onClick={() => setSendModal(el.L2tokenId)}>
+                <Send color={'white'} size={18} />
+              </MoreButton>
+            ) : (
+              staked && (
+                <>
+                  <StakeButton
+                    disabled={gettingReward.id && gettingReward.state !== 'done'}
+                    onClick={() => {
+                      setGettingReward({ id: el.tokenId, state: 'pending' })
+                      getRewardsHandler(el.tokenId, { ...el })
+                    }}
+                  >
+                    {gettingReward && gettingReward.id === el.tokenId && gettingReward.state !== 'done' ? (
+                      <span>
+                        <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto' }} />
                       </span>
-                                        ) : (
-                                            <span>{`Collect reward`}</span>
-                                        )}
-                                    </StakeButton>
-                                    <MoreButton style={{marginLeft: '8px'}} onClick={() => setSendModal(el.L2tokenId)}>
-                                        <Send color={'white'} size={18}/>
-                                    </MoreButton>
-                                </>
-                            )
-                        )
                     ) : (
-                        <StakeButton
-                            disabled={unstaking.id && unstaking.state !== 'done'}
-                            onClick={() => {
-                                setUnstaking({id: el.tokenId, state: 'pending'})
-                                withdrawHandler(el.tokenId, {...el})
-                            }}
-                        >
-                            {unstaking && unstaking.id === el.tokenId && unstaking.state !== 'done' ? (
-                                <span>
-                  <Loader size={'18px'} stroke={'white'} style={{margin: 'auto'}}/>
-                </span>
-                            ) : (
-                                <span>{`Withdraw NFT`}</span>
-                            )}
-                        </StakeButton>
+                      <span>{`Collect reward`}</span>
                     )}
-                </StakeActions>
-            </Stake>
-        ))
-    }
+                  </StakeButton>
+                  <MoreButton style={{ marginLeft: '8px' }} onClick={() => setSendModal(el.L2tokenId)}>
+                    <Send color={'white'} size={18} />
+                  </MoreButton>
+                </>
+              )
+            )
+          ) : (
+            <StakeButton
+              disabled={unstaking.id && unstaking.state !== 'done'}
+              onClick={() => {
+                setUnstaking({ id: el.tokenId, state: 'pending' })
+                withdrawHandler(el.tokenId, { ...el })
+              }}
+            >
+              {unstaking && unstaking.id === el.tokenId && unstaking.state !== 'done' ? (
+                <span>
+                  <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto' }} />
+                </span>
+              ) : (
+                <span>{`Withdraw NFT`}</span>
+              )}
+            </StakeButton>
+          )}
+        </StakeActions>
+      </Stake>
+    ))
+  }
+
   return (
     <>
       <Modal
@@ -604,36 +599,40 @@ export function StakerMyStakes({
         </SendModal>
       </Modal>
       {refreshing || !shallowPositions ? (
-        <Stakes style={{ height: '400px' }}>
-          {[0, 1, 2].map((el, i) => (
-            <Stake key={i}>
-              <StakePool>
-                {/* {JSON.parse(el.pool)} */}
-                <TokenIcon skeleton></TokenIcon>
-                <TokenIcon skeleton></TokenIcon>
-                <TokensNames skeleton>
-                  <div>{}</div>
-                  <div>{}</div>
-                </TokensNames>
-              </StakePool>
-              {/* <StakeSeparator>for</StakeSeparator> */}
-              <StakeReward>
-                <TokenIcon skeleton>{}</TokenIcon>
-                <TokensNames skeleton>
-                  <div>{}</div>
-                  <div>{}</div>
-                </TokensNames>
-              </StakeReward>
-              {/* <StakeSeparator>by</StakeSeparator> */}
-              <StakeCountdown skeleton>
-                <div></div>
-              </StakeCountdown>
-              <StakeActions>
-                <StakeButton skeleton></StakeButton>
-              </StakeActions>
-            </Stake>
-          ))}
-        </Stakes>
+        window.innerWidth < 501 ? (
+          <StakerMyStakesMobileSkeleton />
+        ) : (
+          <Stakes>
+            {[0, 1, 2].map((el, i) => (
+              <Stake key={i}>
+                <StakePool>
+                  {/* {JSON.parse(el.pool)} */}
+                  <TokenIcon skeleton></TokenIcon>
+                  <TokenIcon skeleton></TokenIcon>
+                  <TokensNames skeleton>
+                    <div>{}</div>
+                    <div>{}</div>
+                  </TokensNames>
+                </StakePool>
+                {/* <StakeSeparator>for</StakeSeparator> */}
+                <StakeReward>
+                  <TokenIcon skeleton>{}</TokenIcon>
+                  <TokensNames skeleton>
+                    <div>{}</div>
+                    <div>{}</div>
+                  </TokensNames>
+                </StakeReward>
+                {/* <StakeSeparator>by</StakeSeparator> */}
+                <StakeCountdown skeleton>
+                  <div></div>
+                </StakeCountdown>
+                <StakeActions>
+                  <StakeButton skeleton></StakeButton>
+                </StakeActions>
+              </Stake>
+            ))}
+          </Stakes>
+        )
       ) : shallowPositions && shallowPositions.length === 0 ? (
         <EmptyMock>
           <div>No farms</div>
@@ -643,15 +642,26 @@ export function StakerMyStakes({
         <>
           {stakedNFTs && (
             <>
+              {' '}
               <StakeListHeader>
-                <div style={{ minWidth: '96px' }}>ID</div>
+                <div style={{ minWidth: `${window.innerWidth < 500 ? '' : '96px'}` }}>ID</div>
                 <div>Pool</div>
                 <div>Earned</div>
                 <div>Bonus</div>
                 <div>End time</div>
-                <div></div>
+                <div />
               </StakeListHeader>
-              <Stakes>{getTable(stakedNFTs, true)}</Stakes>
+              <Stakes>
+                <StakerMyStakesMobile
+                  position={stakedNFTs[0]}
+                  modalHandler={setSendModal}
+                  getRewardsHandler={getRewardsHandler}
+                  gettingReward={gettingReward}
+                  setGettingReward={setGettingReward}
+                  now={now}
+                />
+                {getTable(stakedNFTs, true)}
+              </Stakes>
             </>
           )}
           {inactiveNFTs && (
@@ -668,5 +678,7 @@ export function StakerMyStakes({
             </>
           )}
         </>
-    )
+      ) : null}
+    </>
+  )
 }

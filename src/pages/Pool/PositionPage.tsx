@@ -150,7 +150,7 @@ const NFTImage = styled.img`
   z-index: 1;
 `
 const RowFixedStyled = styled(RowFixed)`
-${({theme}) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   width: 100%;
 `}
 `
@@ -727,7 +727,7 @@ export function PositionPage({
                           <Trans>Unclaimed fees</Trans>
                         </Label>
                         {_fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
-                          <TYPE.largeHeader color={theme.green1} fontSize="36px" fontWeight={500}>
+                          <TYPE.largeHeader color={'#33FF89'} fontSize="36px" fontWeight={500}>
                             <Trans>${_fiatValueOfFees.toFixed(2, { groupSeparator: ',' })}</Trans>
                           </TYPE.largeHeader>
                         ) : (

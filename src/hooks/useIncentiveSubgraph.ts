@@ -67,7 +67,7 @@ export function useIncentiveSubgraph() {
                 bonusRewardToken: bonusRewardToken.symbol,
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }
-            
+
             _events.push({ ..._event })
         }
 
@@ -228,7 +228,7 @@ export function useIncentiveSubgraph() {
                 return
             }
 
-            setCurrentEvents(await getEvents(currentEvents))
+            setCurrentEvents(await getEvents(currentEvents.filter(el => el.id !== '0x5091ad63349a004342a9c834b950a4713dd9a10755a291e9f6713e234a97e7e6')))
             setCurrentEventsLoading(false)
 
         } catch (err) {

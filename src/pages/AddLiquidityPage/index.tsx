@@ -385,7 +385,9 @@ const HigherPrice = styled.div`
   left: -1px;
   text-align: center;
 `
-
+const CurrencyInputPanelStyled = styled(CurrencyInputPanel)`
+height: 40px !important;
+`
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidityPage({

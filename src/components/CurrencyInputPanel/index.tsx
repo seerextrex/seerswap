@@ -110,6 +110,12 @@ const InputRow = styled.div<{ selected: boolean }>`
     // height: 120px;
   }`}
 `
+const AutoColumnStyled = styled(AutoColumn)`
+  left: 1rem;
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  bottom: -25% !important;
+  `}
+`
 
 const LabelRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -261,8 +267,8 @@ export default function CurrencyInputPanel({
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
-        <FixedContainer style={{ height: '80px' }}>
-          <AutoColumn
+        <FixedContainer style={{ height: `${page === 'pool' ? '30px' : '80px'}`}}>
+          <AutoColumnStyled
             gap="sm"
             justify="center"
             style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '18px', position: 'absolute', bottom: '10%'}}
@@ -271,7 +277,7 @@ export default function CurrencyInputPanel({
             <TYPE.label fontSize="14px">
               <Trans>Price is outside specified price range. Single-asset deposit only.</Trans>
             </TYPE.label>
-          </AutoColumn>
+          </AutoColumnStyled>
         </FixedContainer>
       )}
       <Container hideInput={hideInput}>

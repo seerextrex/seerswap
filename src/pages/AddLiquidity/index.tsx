@@ -360,6 +360,8 @@ export default function AddLiquidity({
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
   // we need an existence check on parsed amounts for single-asset deposits
+    const showApprovalA = approvalA !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_A]
+    const showApprovalB = approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B]
 
   const pendingText = mustCreateSeparately
     ? `Creating ${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} ${
@@ -512,7 +514,7 @@ export default function AddLiquidity({
                   />
                 )}
               </AutoColumn>
-              <div>
+              <div style={{marginBottom: '10%'}}>
                 <DynamicSection
                   disabled={tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange}
                 >

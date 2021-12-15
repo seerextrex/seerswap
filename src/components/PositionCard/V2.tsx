@@ -44,7 +44,11 @@ const RowFixedMigrate = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin: -20px;
   `}
-
+`
+const AutoColumnInfo = styled(AutoColumn)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-top: 30px;
+  `}
 `
 
 interface PositionCardProps {
@@ -147,7 +151,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
         </FixedHeightRow>
 
         {showMore && (
-          <AutoColumn gap="8px">
+          <AutoColumnInfo gap="8px">
             <FixedHeightRow>
               <Text fontSize={16} fontWeight={500}>
                 <Trans>Your total pool tokens:</Trans>
@@ -226,7 +230,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                 </ButtonPrimary>
               </RowBetween>
             )}
-          </AutoColumn>
+          </AutoColumnInfo>
         )}
       </AutoColumn>
     </StyledPositionCard>

@@ -253,9 +253,10 @@ export function useUserAddedTokens(): Token[] {
         fetchList('https://unpkg.com/quickswap-default-token-list@1.0.39/build/quickswap-default.tokenlist.json')
             .then(res => {
                 let stepTokens = {}
-
                 res.tokens.map(item => {
-                    stepTokens = {...stepTokens, [item.address]: item}
+                    if (item.chainId === 137) {
+                        stepTokens = {...stepTokens, [item.address]: item}
+                    }
                 })
                 setMap({137: stepTokens})
             })
@@ -345,6 +346,7 @@ export function useTrackedTokenPairs(): [Token, Token][] {
     return useMemo(() => {
         // dedupes pairs of tokens in the combined list
         const keyed = combinedList.reduce<{ [key: string]: [Token, Token] }>((memo, [tokenA, tokenB]) => {
+            // console.log(tokenA, tokenB, 'kekeke')
             const sorted = tokenA.sortsBefore(tokenB)
             const key = sorted ? `${tokenA.address}:${tokenB.address}` : `${tokenB.address}:${tokenA.address}`
             if (memo[key]) return memo

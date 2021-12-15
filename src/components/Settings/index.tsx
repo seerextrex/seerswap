@@ -23,7 +23,7 @@ const StyledMenuIcon = styled(Settings)`
 
   > * {
     // stroke: ${({ theme }) => theme.text2};
-    stroke: #00c2ac;
+    stroke: white;
   }
 
   :hover {
@@ -80,8 +80,8 @@ const StyledMenu = styled.div`
 const MenuFlyout = styled.span`
   min-width: 20.125rem;
   // background-color: ${({ theme }) => theme.bg2};
-  background-color: rgba(0, 0, 0, 1);
-  border: 1px solid ${({ theme }) => theme.bg3};
+  background-color: #b3e6ff;
+  color: #080064;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 12px;
@@ -196,7 +196,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
             </Text>
             <RowBetween>
               <RowFixed>
-                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
                   <Trans>Toggle Expert Mode</Trans>
                 </TYPE.black>
                 <QuestionHelper
@@ -223,7 +223,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
             </RowBetween>
             <RowBetween>
               <RowFixed>
-                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
                   <Trans>Disable Multihops</Trans>
                 </TYPE.black>
                 <QuestionHelper text={<Trans>Restricts swaps to direct pairs only.</Trans>} />

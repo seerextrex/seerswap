@@ -37,11 +37,13 @@ const skeletonGradient = css`
     bottom: 0;
     left: 0;
     transform: translateX(-100%);
-    background-image: linear-gradient(90deg,
-    rgba(91, 105, 141, 0) 0,
-    rgba(91, 105, 141, 0.2) 25%,
-    rgba(91, 105, 141, 0.5) 60%,
-    rgba(91, 105, 141, 0));
+    background-image: linear-gradient(
+      90deg,
+      rgba(91, 105, 141, 0) 0,
+      rgba(94, 131, 225, 0.25) 25%,
+      rgba(94, 131, 225, 0.5) 60%,
+      rgba(91, 105, 141, 0)
+    );
     animation-name: ${skeletonAnimation};
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
@@ -62,9 +64,9 @@ export const TokenIcon = styled.div`
   justify-content: center;
   width: 35px;
   height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#3d4a6a')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
+  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
+  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
+  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
   border-radius: 50%;
   user-select: none;
 
@@ -90,10 +92,10 @@ const Stake = styled.div`
   }
 
   ${({ navigatedTo }) =>
-          navigatedTo &&
-          css`
-            background-color: #1a1029;
-          `}
+    navigatedTo &&
+    css`
+      background-color: #1a1029;
+    `}
 `
 
 export const StakeId = styled.div`
@@ -131,16 +133,16 @@ export const StakeCountdown = styled.div`
 
   & > * {
     ${({ skeleton }) =>
-            skeleton
-                    ? css`
-                      width: 80px;
-                      height: 16px;
-                      background: #3d4a6a;
-                      border-radius: 4px;
+      skeleton
+        ? css`
+            width: 80px;
+            height: 16px;
+            background: #5aa7df;
+            border-radius: 4px;
 
-                      ${skeletonGradient}
-                    `
-                    : null}
+            ${skeletonGradient}
+          `
+        : null}
   }
 `
 
@@ -154,24 +156,24 @@ export const StakeButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
-  background-color: ${({ skeleton }) => (skeleton ? '#3d4a6a' : '#4829bb')};
+  background-color: ${({ skeleton, theme }) => (skeleton ? '#5aa7df' : theme.winterMainButton)};
   color: white;
   min-width: 126px;
 
   ${({ disabled }) =>
-          disabled &&
-          css`
-            opacity: 0.4;
-            cursor: default;
-          `}
+    disabled &&
+    css`
+      opacity: 0.4;
+      cursor: default;
+    `}
 
   ${({ skeleton }) =>
-          skeleton
-                  ? css`
-                    ${skeletonGradient}
-                    width: 80px;
-                  `
-                  : null}
+    skeleton
+      ? css`
+          ${skeletonGradient}
+          width: 80px;
+        `
+      : null}
 `
 
 const StakeListHeader = styled.div`
@@ -197,16 +199,16 @@ export const TokensNames = styled.div`
 
   & > * {
     ${({ skeleton }) =>
-            skeleton
-                    ? css`
-                      width: 40px;
-                      height: 16px;
-                      background: #3d4a6a;
-                      margin-bottom: 3px;
-                      border-radius: 4px;
-                      ${skeletonGradient}
-                    `
-                    : null}
+      skeleton
+        ? css`
+            width: 40px;
+            height: 16px;
+            background: #5aa7df;
+            margin-bottom: 3px;
+            border-radius: 4px;
+            ${skeletonGradient}
+          `
+        : null}
   }
 `
 
@@ -269,11 +271,11 @@ const SendNFTWarning = styled.div`
 `
 
 export function StakerMyStakes({
-                                 data,
-                                 refreshing,
-                                 now,
-                                 fetchHandler
-                               }: {
+  data,
+  refreshing,
+  now,
+  fetchHandler,
+}: {
   data: any
   refreshing: boolean
   now: number
@@ -297,7 +299,7 @@ export function StakerMyStakes({
   }
 
   const { getRewardsHandler, getRewardsHash, withdrawHandler, withdrawnHash, sendNFTL2Handler, sendNFTL2Hash } =
-  useStakerHandlers() || {}
+    useStakerHandlers() || {}
 
   const { hash } = useLocation()
 
@@ -578,7 +580,7 @@ export function StakerMyStakes({
               </SendNFTWarning>
               <div style={{ marginBottom: '1rem' }}>
                 <RecipientInput
-                  placeholder='Enter a recipient'
+                  placeholder="Enter a recipient"
                   value={recipient}
                   onChange={(v) => {
                     setRecipient(v.target.value)
@@ -608,7 +610,7 @@ export function StakerMyStakes({
         </SendModal>
       </Modal>
       {refreshing || !shallowPositions ? (
-        <Stakes>
+        <Stakes style={{ height: '400px' }}>
           {[0, 1, 2].map((el, i) => (
             <Stake key={i}>
               <StakePool>

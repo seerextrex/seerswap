@@ -221,7 +221,6 @@ export default function App() {
           </BodyWrapper>
         </AppWrapper>
       </Web3ReactManager>
-      <Background />
     </Sentry.ErrorBoundary>
   )
 }

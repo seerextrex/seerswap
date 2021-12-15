@@ -32,7 +32,7 @@ const SmallButton = styled(ButtonGray)`
   margin-left: 10px;
   background: #759fe3;
   &:hover {
-    background-color: ${darken(0.001, '#0f2e40')};
+    background-color: ${darken(0.05, '#759fe3')};
   }
 `
 

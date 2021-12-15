@@ -187,7 +187,7 @@ export const Brush = ({
             <g transform={`translate(${Math.max(0, xScale(localBrushExtent[0]))}, 0)`}>
               <svg width={xScale(localBrushExtent[1]) - xScale(localBrushExtent[0])}>
                 <line
-                  stroke="#9868FF"
+                  stroke="#267cc1"
                   strokeWidth="3"
                   x1="0"
                   x2={xScale(localBrushExtent[1])}
@@ -209,10 +209,10 @@ export const Brush = ({
                   <path
                     d="M12.5 7C12.5 10.0376 10.0376 12.5 7 12.5C3.96243 12.5 1.5 10.0376 1.5 7C1.5 3.96243 3.96243 1.5 7 1.5C10.0376 1.5 12.5 3.96243 12.5 7Z"
                     fill="white"
-                    stroke="#8C5CF2"
+                    stroke="#267cc1"
                     strokeWidth="3"
                   />
-                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke="#8C5CF2" strokeWidth="2"></line>
+                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke="#267cc1" strokeWidth="2"></line>
                 </g>
 
                 <LabelGroup
@@ -240,10 +240,10 @@ export const Brush = ({
                   <path
                     d="M12.5 7C12.5 10.0376 10.0376 12.5 7 12.5C3.96243 12.5 1.5 10.0376 1.5 7C1.5 3.96243 3.96243 1.5 7 1.5C10.0376 1.5 12.5 3.96243 12.5 7Z"
                     fill="white"
-                    stroke="#8C5CF2"
+                    stroke="#267cc1"
                     strokeWidth="3"
                   />
-                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke="#8C5CF2" strokeWidth="2"></line>
+                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke="#267cc1" strokeWidth="2"></line>
                 </g>
 
                 <LabelGroup

@@ -146,8 +146,8 @@ export const ButtonSecondary = styled(Base)`
 `
 
 export const ButtonOutlined = styled(Base)`
-  border: 1px solid ${({ theme }) => theme.winterDisabledButton};
-  background-color: transparent;
+  // border: 1px solid ${({ theme }) => theme.winterDisabledButton};
+  background-color: ${({ theme }) => 'rgba(60,97,126,0.5)'};
   color: ${({ theme }) => theme.text1};
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
@@ -187,7 +187,8 @@ export const ButtonYellow = styled(Base)`
 
 export const ButtonEmpty = styled(Base)`
   background-color: transparent;
-  color: ${({ theme }) => theme.winterMainButton};
+  // color: ${({ theme }) => theme.winterMainButton};
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;

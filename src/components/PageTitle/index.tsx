@@ -12,7 +12,7 @@ const Title = styled.div`
   font-size: 21px;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #202635;
+  border-bottom: 1px solid #2a7ed2;
 `
 const TitleName = styled.span`
   margin-right: 1rem;

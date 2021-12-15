@@ -133,7 +133,7 @@ function CurrencyRow({
         <Text title={currency.name} fontWeight={500}>
           {currency.symbol}
         </Text>
-        <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
+        <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300} style={{ color: '#080064' }}>
           {!currency.isNative && !isOnSelectedList && customAdded ? (
             <Trans>{currency.name} • Added by user</Trans>
           ) : (

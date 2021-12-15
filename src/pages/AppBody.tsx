@@ -10,6 +10,7 @@ export const BodyWrapper = styled.div<{ margin?: string; maxWidth?: string }>`
   width: 100%;
   background: ${({ theme }) => theme.winterBackground};
   border-radius: 50px;
+  margin-top: 5rem;
 
   &::before,
   &::after {
@@ -19,7 +20,7 @@ export const BodyWrapper = styled.div<{ margin?: string; maxWidth?: string }>`
   }
 
   &::after {
-    background-image: url(${IcicleSecond});
+    // background-image: url(${IcicleSecond});
     right: 0;
     width: 51px;
     height: 90px;
@@ -28,7 +29,7 @@ export const BodyWrapper = styled.div<{ margin?: string; maxWidth?: string }>`
 
   &::before {
     bottom: -94px;
-    background-image: url(${IcicleFirst});
+    // background-image: url(${IcicleFirst});
     width: 62px;
     height: 140px;
   }

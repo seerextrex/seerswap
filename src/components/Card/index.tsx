@@ -10,21 +10,21 @@ const Card = styled(Box)<{ width?: string; padding?: string; border?: string; $b
 export default Card
 
 export const LightCard = styled(Card)`
-  // border: 1px solid ${({ theme }) => theme.bg2};
+  // border: 1px solid ${({ theme }) => 'rgba(60, 97, 126, 0.5)'};
   background-color: ${({ theme }) => '#2f567b'};
   color: white;
 `
 
 export const LightGreyCard = styled(Card)`
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => 'rgba(60, 97, 126, 0.5)'};
 `
 
 export const GreyCard = styled(Card)`
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => 'rgba(60, 97, 126, 0.5)'};
 `
 
 export const DarkGreyCard = styled(Card)`
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => 'rgba(60, 97, 126, 0.5)'};
 `
 
 export const DarkCard = styled(Card)`

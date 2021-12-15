@@ -71,7 +71,7 @@ export function ImportToken({ tokens, list, onBack, onDismiss, handleCurrencySel
         {tokens.map((token) => {
           return (
             <Card
-              backgroundColor={theme.bg2}
+              backgroundColor={'rgba(60, 97, 126, 0.5)'}
               key={'import' + token.address}
               className=".token-warning-container"
               padding="2rem"
@@ -92,14 +92,14 @@ export function ImportToken({ tokens, list, onBack, onDismiss, handleCurrencySel
                     <AddressText fontSize={12}>{token.address}</AddressText>
                   </ExternalLink>
                 )}
-                <WarningWrapper $borderRadius="4px" padding="4px" highWarning={true}>
+                {/* <WarningWrapper $borderRadius="4px" padding="4px" highWarning={true}>
                   <RowFixed>
                     <AlertCircle stroke={theme.red1} size="10px" />
                     <TYPE.body color={theme.red1} ml="4px" fontSize="10px" fontWeight={500}>
                       <Trans>Unknown Source</Trans>
                     </TYPE.body>
                   </RowFixed>
-                </WarningWrapper>
+                </WarningWrapper> */}
               </AutoColumn>
             </Card>
           )
@@ -109,7 +109,7 @@ export function ImportToken({ tokens, list, onBack, onDismiss, handleCurrencySel
           altDisabledStyle={true}
           $borderRadius="20px"
           padding="10px 1rem"
-          style={{ background: '#400f29', color: '#fd2699' }}
+          // style={{ background: '#400f29', color: '#fd2699' }}
           onClick={() => {
             tokens.map((token) => addToken(token))
             handleCurrencySelect && handleCurrencySelect(tokens[0])

@@ -20,6 +20,7 @@ const TokenSection = styled.div<{ dim?: boolean }>`
   grid-template-columns: auto minmax(auto, 1fr) auto;
   grid-gap: 16px;
   align-items: center;
+  color: #080064;
 
   opacity: ${({ dim }) => (dim ? '0.4' : '1')};
 `
@@ -66,9 +67,13 @@ export default function ImportRow({
       <CurrencyLogo currency={token} size={'24px'} style={{ opacity: dim ? '0.6' : '1' }} />
       <AutoColumn gap="4px" style={{ opacity: dim ? '0.6' : '1' }}>
         <AutoRow>
-          <TYPE.body fontWeight={500}>{token.symbol}</TYPE.body>
+          <TYPE.body style={{ color: '#080064' }} fontWeight={500}>
+            {token.symbol}
+          </TYPE.body>
           <TYPE.darkGray ml="8px" fontWeight={300}>
-            <NameOverflow title={token.name}>{token.name}</NameOverflow>
+            <NameOverflow style={{ color: '#080064' }} title={token.name}>
+              {token.name}
+            </NameOverflow>
           </TYPE.darkGray>
         </AutoRow>
       </AutoColumn>

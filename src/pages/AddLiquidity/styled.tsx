@@ -5,12 +5,11 @@ import Input from 'components/NumericalInput'
 import { BodyWrapper } from 'pages/AppBody'
 
 export const PageWrapper = styled(BodyWrapper)<{ wide: boolean }>`
-  max-width: ${({ wide }) => (wide ? '880px' : '880px')};
+  max-width: ${({ wide }) => (wide ? '880px' : '480px')};
   width: 100%;
-  background-color: ${({ theme }) => theme.winterBackground}
+  background-color: ${({ theme }) => theme.winterBackground};
 
   padding: ${({ wide }) => (wide ? '30px 40px' : '0')};
-  margin-top: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     max-width: 480px;
@@ -52,6 +51,9 @@ export const DynamicSection = styled(AutoColumn)<{ disabled?: boolean }>`
 
 export const CurrencyDropdown = styled(CurrencyInputPanel)`
   width: ${({ centered }) => (centered ? '100%' : '50%')};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+  `}
 `
 
 export const StyledInput = styled(Input)`
@@ -72,7 +74,7 @@ export const ResponsiveTwoColumns = styled.div<{ wide: boolean }>`
 
   padding-top: 20px;
 
-  // border-top: 1px solid ${({ theme }) => theme.bg2};
+  border-top: 1px solid ${({ theme }) => '#2a7ed2'};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;

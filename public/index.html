@@ -58,14 +58,17 @@
 
       #background-image {
         position: fixed;
-        top: 0;
         left: 0;
+        top: 0;
         right: 0;
-        pointer-events: none;
-        width: 200vw;
-        height: 200vh;
-        transform: translate(-50vw, -100vh);
-        z-index: -1;
+        bottom: 0;
+        background-repeat: no-repeat, repeat;
+        background-size: cover, auto;
+        background-origin: padding-box, padding-box;
+        background-clip: border-box, border-box;
+        background-attachment: fixed;
+        background-position: 100% center, 0% 0%;
+        background-image: url('https://i.imgur.com/Ni5qsuA.png');
       }
 
       html {

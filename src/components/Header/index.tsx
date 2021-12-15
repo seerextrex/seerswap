@@ -163,9 +163,9 @@ const HeaderLinks = styled(Row)`
     content: '';
     background-image: url(${WoodenRope});
     width: 5px;
-    height: 51px;
+    height: 54px;
     position: absolute;
-    top: -55px;
+    top: -58px;
   }
 
   &::before {
@@ -213,7 +213,7 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: rgba(158, 183, 205, 0.72);
+  background-color: #713937;
   border-radius: 8px;
   white-space: nowrap;
   width: 100%;

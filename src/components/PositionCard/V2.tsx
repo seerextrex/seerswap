@@ -32,8 +32,7 @@ import Badge, { BadgeVariant } from '../Badge'
 
 const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   border: none;
-  background: ${({ theme, bgColor }) =>
-    `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
+  background: rgba(60, 97, 126, 0.5);
   position: relative;
   overflow: hidden;
 `
@@ -101,7 +100,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
             <Badge
               variant={BadgeVariant.WARNING}
               style={{
-                backgroundColor: sushi ? '#0f2e40' : '#48062b',
+                backgroundColor: 'white',
                 color: sushi ? '#48b9cd' : '#f241a5',
                 minWidth: '100px',
               }}

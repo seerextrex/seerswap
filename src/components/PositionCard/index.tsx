@@ -35,8 +35,6 @@ export const FixedHeightRow = styled(RowBetween)`
 
 const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   border: none;
-  background: ${({ theme, bgColor }) =>
-    `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
   position: relative;
   overflow: hidden;
 `
@@ -106,7 +104,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border, sushi
                 </Text>
                 <Badge
                   style={{
-                    backgroundColor: sushi ? '#400f29' : '#0f2e40',
+                    backgroundColor: 'white',
                     color: sushi ? '#ed1185' : '#48b9cd',
                     minWidth: '100px',
                   }}

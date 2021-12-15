@@ -70,7 +70,8 @@ export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
 export const StyledInternalLink = styled(Link)`
   text-decoration: none;
   cursor: pointer;
-  color: ${({ theme }) => theme.winterMainButton};
+  // color: ${({ theme }) => theme.winterMainButton};
+  color: #f9ff47;
   font-weight: 500;
 
   :hover {

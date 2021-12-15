@@ -130,7 +130,7 @@ const MaxButton = styled.button`
   font-weight: 600;
 
   &:hover {
-    background-color: ${darken(0.01, '#0f2e40')};
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
 `
 
@@ -183,7 +183,7 @@ const PoolInfoItemValue = styled.span`
 `
 
 const PoolInfoItemValueMetric = styled.span`
-  color: #b7b7b7;
+  color: white;
   font-size: 12px;
   line-height: 21px;
   white-space: nowrap;
@@ -195,7 +195,7 @@ const TechPaperHint = styled.div`
   display: flex;
   visibility: hidden;
   flex-direction: column;
-  background-color: #9c7edc;
+  background-color: ${({ theme }) => theme.winterBackground};
   padding: 1rem;
   border-radius: 8px;
   color: white;
@@ -225,7 +225,7 @@ const TechPaperDownloadButton = styled.a`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: #7b4ed9;
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   border: none;
   border-radius: 6px;
@@ -233,7 +233,7 @@ const TechPaperDownloadButton = styled.a`
   text-decoration: none;
 
   &:hover {
-    background-color: ${darken(0.05, '#7b4ed9')}
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)}
   }
 }
 `
@@ -245,7 +245,7 @@ const HelperCirlce = styled.span`
   border-radius: 50%;
   width: 18px;
   height: 18px;
-  background-color: #9c7edc;
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   font-size: 12px;
   cursor: pointer;
@@ -280,7 +280,7 @@ const Warning = styled.div`
 `
 const Error = styled(Warning)`
   color: white;
-  background-color: #ff8c8c;
+  background-color: #be4d4d;
   width: 100%;
   text-align: center;
 `
@@ -325,7 +325,7 @@ const AddLiquidityButton = styled.button`
   // width: 100%;
   padding: 8px 16px;
   height: 2.8rem;
-  background: rgb(96, 31, 179) none repeat scroll 0% 0%;
+  background: ${({ theme }) => theme.winterMainButton};
   cursor: pointer;
   color: white;
   border: medium none;
@@ -336,8 +336,8 @@ const AddLiquidityButton = styled.button`
   white-space: nowrap;
 
   &:disabled {
-    background-color: #2c1051;
-    color: #5f3794;
+    background-color: ${({ theme }) => darken(0.2, theme.winterMainButton)};
+    color: ${darken(0.35, 'white')};
     font-weight: 600;
   }
 `
@@ -353,18 +353,22 @@ const FullRangeButton = styled.button`
   padding: 7px;
 
   &:hover {
-    background-color: ${darken(0.01, '#0f2e40')};
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
 `
 
 const ApproveButton = styled.button`
-  background: #601fb3;
+  background: ${({ theme }) => theme.winterMainButton};
   padding: 10px;
   border-radius: 8px;
   border: none;
   margin: 25px auto auto;
   width: 100%;
   color: white;
+
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
 `
 
 const PairNotSelectedMock = styled.div`

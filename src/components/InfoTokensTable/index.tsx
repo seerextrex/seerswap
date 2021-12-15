@@ -36,7 +36,7 @@ export const Arrow = styled.div<{ faded: boolean }>`
 
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
-  background-color: #202635;
+  background-color: background-color: rgba(60, 97, 126, 0.5);
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     min-width: 600px;
   `};
@@ -100,7 +100,7 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
   const theme = useTheme()
 
   return (
-    <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
+    <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
       <Label>{index + 1}</Label>
       <Label>
         <LinkWrapper
@@ -117,7 +117,7 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
           <HideExtraSmall style={{ marginLeft: '10px' }}>
             <RowFixed>
               <HoverInlineText text={tokenData.name} />
-              <Label ml="8px" color={theme.text3}>
+              <Label ml="8px" color={'#dedede'}>
                 ({tokenData.symbol})
               </Label>
             </RowFixed>
@@ -223,24 +223,24 @@ export default function InfoTokensTable({
     <Wrapper style={{ borderRadius: '8px' }}>
       {sortedTokens.length > 0 ? (
         <AutoColumn gap="16px">
-          <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
-            <Label color={theme.text2}>#</Label>
-            <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.name)}>
+          <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
+            <Label color={'#dedede'}>#</Label>
+            <ClickableText color={'#dedede'} onClick={() => handleSort(SORT_FIELD.name)}>
               Name {arrow(SORT_FIELD.name)}
             </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.priceUSD)}>
+            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.priceUSD)}>
               Price {arrow(SORT_FIELD.priceUSD)}
             </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.priceUSDChange)}>
+            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.priceUSDChange)}>
               Price Change {arrow(SORT_FIELD.priceUSDChange)}
             </ClickableText>
             {/* <ClickableText end={1} onClick={() => handleSort(SORT_FIELD.priceUSDChangeWeek)}>
             7d {arrow(SORT_FIELD.priceUSDChangeWeek)}
           </ClickableText> */}
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
+            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
               Volume 24H {arrow(SORT_FIELD.volumeUSD)}
             </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
+            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
               TVL {arrow(SORT_FIELD.tvlUSD)}
             </ClickableText>
           </ResponsiveGrid>

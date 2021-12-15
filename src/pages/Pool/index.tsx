@@ -219,7 +219,7 @@ export default function Pool() {
             </MainContentWrapper>
 
             <ResponsiveRow>
-              {closedPositions.length > 0 ? (
+              {/* {closedPositions.length > 0 ? (
                 <ShowInactiveToggle>
                   <label>
                     <TYPE.body onClick={() => setUserHideClosedPositions(!userHideClosedPositions)}>
@@ -232,7 +232,7 @@ export default function Pool() {
                     checked={!userHideClosedPositions}
                   />
                 </ShowInactiveToggle>
-              ) : null}
+              ) : null} */}
             </ResponsiveRow>
           </AutoColumn>
         </AutoColumn>

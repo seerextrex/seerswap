@@ -30,8 +30,8 @@ const skeletonGradient = css`
     background-image: linear-gradient(
       90deg,
       rgba(91, 105, 141, 0) 0,
-      rgba(91, 105, 141, 0.2) 25%,
-      rgba(91, 105, 141, 0.5) 60%,
+      rgba(94, 131, 225, 0.25) 25%,
+      rgba(94, 131, 225, 0.5) 60%,
       rgba(91, 105, 141, 0)
     );
     animation-name: ${skeletonAnimation};
@@ -91,6 +91,13 @@ const Reward = styled.div`
      width: 100%;
      margin-bottom: 20px;
   `}
+
+  ${({ skeleton }) =>
+    skeleton &&
+    css`
+      background-color: #89c4ef;
+      border: none;
+    `}
 `
 
 const RewardTokenIcon = styled.div`
@@ -101,9 +108,9 @@ const RewardTokenIcon = styled.div`
   margin-right: 1rem;
   width: 35px;
   height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#3d4a6a')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
+  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
+  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
+  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
 
   background: ${({ logo }) => (logo ? `url(${logo})` : '')};
   background-size: contain;
@@ -119,7 +126,7 @@ const RewardTokenInfo = styled.div`
         ? css`
             width: 40px;
             height: 16px;
-            background: #3d4a6a;
+            background: #5aa7df;
             margin-bottom: 3px;
             border-radius: 4px;
             ${skeletonGradient}
@@ -143,7 +150,7 @@ const RewardClaimButton = styled.button`
     skeleton
       ? css`
           width: 60px;
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           ${skeletonGradient};
         `
       : null}

@@ -161,10 +161,10 @@ export default function PoolFinder() {
       <Helmet>
         <title>Algebra — Find Pool</title>
       </Helmet>
-      <AppBody>
+      <AppBody style={{ padding: '10px 30px' }}>
         <FindPoolTabs origin={query.get('origin') ?? '/migrate'} />
         <AutoColumn style={{ padding: '1rem' }} gap="md">
-          <BlueCard>
+          <BlueCard style={{ backgroundColor: '#3d76a9' }}>
             <AutoColumn gap="10px">
               <TYPE.link fontWeight={400} color={'primaryText1'}>
                 <Trans>Select a token to find your liquidity on SushiSwap or QuickSwap.</Trans>
@@ -192,7 +192,7 @@ export default function PoolFinder() {
           </ButtonDropdownLight>
 
           <ColumnCenter>
-            <Plus size="16" color="#888D9B" />
+            <Plus size="16" color="white" />
           </ColumnCenter>
 
           <ButtonDropdownLight

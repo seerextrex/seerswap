@@ -496,7 +496,7 @@ export function StakerEventCard({
         {bonusRewardAddress.toLowerCase() in specialTokens ? (
           <TokenIcon logo={specialTokens[bonusRewardAddress].logo}></TokenIcon>
         ) : (
-          <TokenIcon name={bonusRewardAddress}>{bonusRewardAddress ? bonusRewardAddress.slice(0, 2) : null}</TokenIcon>
+          <TokenIcon name={bonusRewardToken}>{bonusRewardToken ? bonusRewardToken.slice(0, 2) : null}</TokenIcon>
         )}
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle style={{ color: '#ef71b8' }}>Bonus</Subtitle>

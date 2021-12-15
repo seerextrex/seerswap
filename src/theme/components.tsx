@@ -176,14 +176,14 @@ function handleClickExternalLink(event: React.MouseEvent<HTMLAnchorElement>) {
 
   // don't prevent default, don't redirect if it's a new tab
   if (target === '_blank' || event.ctrlKey || event.metaKey) {
-    ReactGA.outboundLink({ label: anonymizedHref }, () => {
-      window.location.href = anonymizedHref
-    })
+    // ReactGA.outboundLink({ label: anonymizedHref }, () => {
+    //   window.location.href = anonymizedHref
+    // })
   } else {
     event.preventDefault()
-    ReactGA.outboundLink({ label: anonymizedHref }, () => {
-      window.location.href = anonymizedHref
-    })
+    // ReactGA.outboundLink({ label: anonymizedHref }, () => {
+    //   window.location.href = anonymizedHref
+    // })
   }
 }
 

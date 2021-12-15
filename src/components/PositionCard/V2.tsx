@@ -35,6 +35,19 @@ const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   background: rgba(60, 97, 126, 0.5);
   position: relative;
   overflow: hidden;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 40px 20px;
+  `}
+`
+const RowFixedMigrate = styled(RowFixed)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin: -20px;
+  `}
+`
+const AutoColumnInfo = styled(AutoColumn)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-top: 30px;
+  `}
 `
 
 interface PositionCardProps {
@@ -106,7 +119,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
               }}
               ref={(element) => {
                 if (element) {
-                  element.style.setProperty('margin-left', 'auto', 'important')
+                  element.style.setProperty('margin-left', `${window.innerWidth < 600 ? '0' : 'auto'}`, 'important')
                   element.style.setProperty('margin-right', '6rem', 'important')
                 }
               }}
@@ -114,7 +127,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
               {sushi ? 'SushiSwap' : 'QuickSwap'}
             </Badge>
           </AutoRow>
-          <RowFixed gap="8px" style={{ minWidth: '110px' }}>
+          <RowFixedMigrate gap="8px" style={{ minWidth: '110px' }}>
             <ButtonEmpty
               padding="6px 8px"
               $borderRadius="12px"
@@ -133,11 +146,11 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                 </>
               )}
             </ButtonEmpty>
-          </RowFixed>
+          </RowFixedMigrate>
         </FixedHeightRow>
 
         {showMore && (
-          <AutoColumn gap="8px">
+          <AutoColumnInfo gap="8px">
             <FixedHeightRow>
               <Text fontSize={16} fontWeight={500}>
                 <Trans>Your total pool tokens:</Trans>
@@ -216,7 +229,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                 </ButtonPrimary>
               </RowBetween>
             )}
-          </AutoColumn>
+          </AutoColumnInfo>
         )}
       </AutoColumn>
     </StyledPositionCard>

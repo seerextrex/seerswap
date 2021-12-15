@@ -4,7 +4,7 @@ import { SupportedLocale } from 'constants/locales'
 import { L2_DEADLINE_FROM_NOW } from 'constants/misc'
 import JSBI from 'jsbi'
 import flatMap from 'lodash.flatmap'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
@@ -28,6 +28,7 @@ import {
   updateUserSingleHopOnly,
   updateUserSlippageTolerance,
 } from './actions'
+import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 
 function serializeToken(token: Token): SerializedToken {
   return {
@@ -243,6 +244,21 @@ export function useUserAddedTokens(): Token[] {
   const { chainId } = useActiveWeb3React()
   const serializedTokensMap = useAppSelector(({ user: { tokens } }) => tokens)
 
+  // console.log(serializedTokensMap, 'tokMapppp')
+
+  // useEffect(() => {
+  //     fetchList('https://unpkg.com/quickswap-default-token-list@1.0.39/build/quickswap-default.tokenlist.json')
+  //         .then(res => {
+  //             let stepTokens = {}
+  //             res.tokens.map(item => {
+  //                 if (item.chainId === 137) {
+  //                     stepTokens = {...stepTokens, [item.address]: item}
+  //                 }
+  //             })
+  //             setMap({137: stepTokens})
+  //         })
+  // }, [])
+
   return useMemo(() => {
     if (!chainId) return []
     return Object.values(serializedTokensMap?.[chainId] ?? {}).map(deserializeToken)
@@ -327,6 +343,7 @@ export function useTrackedTokenPairs(): [Token, Token][] {
   return useMemo(() => {
     // dedupes pairs of tokens in the combined list
     const keyed = combinedList.reduce<{ [key: string]: [Token, Token] }>((memo, [tokenA, tokenB]) => {
+      // console.log(tokenA, tokenB, 'kekeke')
       const sorted = tokenA.sortsBefore(tokenB)
       const key = sorted ? `${tokenA.address}:${tokenB.address}` : `${tokenB.address}:${tokenA.address}`
       if (memo[key]) return memo

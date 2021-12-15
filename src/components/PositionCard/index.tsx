@@ -32,6 +32,20 @@ import { computePairAddress, Pair } from '../../utils/computePairAddress'
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
 `
+const FixedHeightRowCurrency = styled(FixedHeightRow)`
+  
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+    align-items: self-start;
+    height: 60px;
+  `}
+`
+
+const RowFixedLogo = styled(RowFixed)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-left: 10px;
+  `}
+`
 
 const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   border: none;
@@ -96,8 +110,8 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border, sushi
                 </MigrateShortcut>
               </RowFixed>
             </FixedHeightRow>
-            <FixedHeightRow onClick={() => setShowMore(!showMore)}>
-              <RowFixed>
+            <FixedHeightRowCurrency onClick={() => setShowMore(!showMore)}>
+              <RowFixedLogo>
                 <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={24} />
                 <Text style={{ marginLeft: '5px', marginRight: '5px' }} fontWeight={500} fontSize={20}>
                   {currency0.symbol}/{currency1.symbol}
@@ -111,13 +125,13 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border, sushi
                 >
                   {sushi ? 'SushiSwap' : 'QuickSwap'}
                 </Badge>
-              </RowFixed>
+              </RowFixedLogo>
               <RowFixed>
                 <Text fontWeight={500} fontSize={20}>
                   {userPoolBalance ? userPoolBalance.toExact() : '-'}
                 </Text>
               </RowFixed>
-            </FixedHeightRow>
+            </FixedHeightRowCurrency>
             <AutoColumn gap="4px">
               <FixedHeightRow>
                 <Text fontSize={16} fontWeight={500}>

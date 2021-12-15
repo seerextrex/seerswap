@@ -73,9 +73,10 @@ export function useAllV3Routes(
     if (poolsLoading || !chainId || !pools || !currencyIn || !currencyOut) return { loading: true, routes: [] }
 
     //Hack
-    const singleIfWrapped = (currencyIn.isNative || currencyOut.isNative)
+    // const singleIfWrapped = (currencyIn.isNative || currencyOut.isNative)
+    const singleIfWrapped = false
 
-    const routes = computeAllRoutes(currencyIn, currencyOut, pools, chainId, [], [], currencyIn, (singleHopOnly || singleIfWrapped) ? 1 : 2)
+    const routes = computeAllRoutes(currencyIn, currencyOut, pools, chainId, [], [], currencyIn, (singleHopOnly || singleIfWrapped) ? 1 : 3)
     return { loading: false, routes }
   }, [chainId, currencyIn, currencyOut, pools, poolsLoading, singleHopOnly])
 }

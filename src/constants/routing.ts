@@ -45,7 +45,7 @@ export const COMMON_BASES: ChainCurrencyList = {
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON]
+  [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON, WETH_POLYGON]
 }
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
   [SupportedChainId.POLYGON]: [

@@ -99,7 +99,7 @@ function TransactionSubmittedContent({
   const { addToken, success } = useAddTokenToMetamask(currencyToAdd)
 
   return (
-    <Wrapper>
+    <Wrapper style={{ color: 'black' }}>
       <Section inline={inline}>
         {!inline && (
           <RowBetween>
@@ -137,7 +137,10 @@ function TransactionSubmittedContent({
               )}
             </ButtonLight>
           )}
-          <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0', color: '#4cc1d5', background: '#0f2e40' }}>
+          <ButtonPrimary
+            onClick={onDismiss}
+            style={{ margin: '20px 0 0 0', color: 'white', background: theme.winterMainButton }}
+          >
             <Text fontWeight={500} fontSize={20}>
               {inline ? <Trans>Return</Trans> : <Trans>Close</Trans>}
             </Text>

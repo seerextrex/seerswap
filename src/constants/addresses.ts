@@ -5,35 +5,35 @@ import { SupportedChainId } from './chains'
 type AddressMap = { [chainId: number]: string }
 
 export const V3_CORE_FACTORY_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x1a10A28A0Ee400B64057e3edFA778BB4b71D5e32'
+  [SupportedChainId.POLYGON]: '0x8C1EB1e5325049B412B7E71337116BEF88a29b3A'
 }
 
 export const POOL_DEPLOYER_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xEFCB993e113ea8197C17c6f4959495929Be0B68e'
+  [SupportedChainId.POLYGON]: '0x218a510d4d6aEA897961ab6Deb74443521A88839'
 }
 
 export const QUOTER_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xCA15103cA6EcFDE3C494d1f8Ba88f7C9fb77D35a'
+  [SupportedChainId.POLYGON]: '0xAaaCfe8F51B8baA4286ea97ddF145e946d5e7f46'
 }
 
 export const SWAP_ROUTER_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x9751aE80170Dc1a3D504C2fCCfB0e9B788C5C29a'
+  [SupportedChainId.POLYGON]: '0x89D6B81A1Ef25894620D05ba843d83B0A296239e'
 }
 
 export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x5744Bb3Ae9bED6cD7330276ea5b7AfEEc1A8dD4f'
+  [SupportedChainId.POLYGON]: '0x21F5F8b46621cFa77D4f296A901cDB7AfDBB6A18'
 }
 
 export const MULTICALL_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xB575C387E3928A9C126524B6533924D7329c5947'
+  [SupportedChainId.POLYGON]: '0xFB8CcFDa4889C6D399B62EA49Cca3cE9d3fF077e'
 }
 
 export const V3_MIGRATOR_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x3a208a5385e00910f052b401fbfcc936afefcca8',
+  [SupportedChainId.POLYGON]: '0x76716bc0ae7639191c479C2432aC1f271f13dBd9',
 }
 
 export const STAKER_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x1247037095FEBe4AF9630B22a25aE9838E02a5E1'
+  [SupportedChainId.POLYGON]: '0x9cF9cEc31AB2827354e18436663b75b6f32D4C71'
 }
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {

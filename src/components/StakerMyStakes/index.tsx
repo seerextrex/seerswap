@@ -421,7 +421,7 @@ export function StakerMyStakes({
 
         return `${days > 0 ? `${days}d ` : ''}${format(hours)}:${format(minutes)}:${format(seconds)}`
     }
-
+  
     function formatReward(earned) {
         const _earned = String(earned)
         return _earned.length > 8 ? `${_earned.slice(0, 8)}..` : _earned
@@ -507,6 +507,7 @@ export function StakerMyStakes({
                                         {gettingReward && gettingReward.id === el.tokenId && gettingReward.state !== 'done' ? (
                                             <span>
                         <Loader size={'18px'} stroke={'white'} style={{margin: 'auto'}}/>
+
                       </span>
                                         ) : (
                                             <span>{`Collect reward`}</span>

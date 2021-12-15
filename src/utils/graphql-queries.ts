@@ -57,7 +57,100 @@ query fetchPool {
     }
 }`
 
-// , timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"
+export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => {
+  return gql`
+  query feeHourData {
+    feeHourDatas (first: 1000, where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+}
+
+export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
+  query lastFeeHourData {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}" }) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+export const CHART_FEE_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
+  query lastNotEmptyHourData {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}", timestamp_lt: ${timestamp} }) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+
+export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
+  query lastNotEmptyPoolHourData {
+    poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: "${pool}", periodStartUnix_lt: ${timestamp} }) {
+      periodStartUnix
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
+export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
+query lastPoolHourData {
+ 
+  poolHourDatas(
+      first: 1
+      where: { pool: "${pool}" }
+      orderBy: periodStartUnix, 
+      orderDirection: desc,
+    ) {
+      periodStartUnix
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
+export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimestamp) => gql`
+  query poolHourData {
+    poolHourDatas (
+      first: 1000
+      where: { pool: "${pool}", periodStartUnix_gte: ${startTimestamp}, periodStartUnix_lte: ${endTimestamp} }
+      orderBy: periodStartUnix
+      orderDirection: asc
+      subgraphError: allow
+    ) {
+      periodStartUnix
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
 
 export const LAST_EVENT = () => gql`
 query lastEvent {

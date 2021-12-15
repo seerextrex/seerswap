@@ -9,6 +9,8 @@ import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { InfoPools } from '../../components/InfoPools'
 import { InfoTokens } from '../../components/InfoTokens'
 import { PageTitle } from '../../components/PageTitle'
+import FeeChartRangeInput from '../../components/FeeChartRangeInput'
+import PoolInfoPage from '../PoolInfoPage'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 995px;
@@ -103,6 +105,7 @@ export function InfoPage() {
                     blocksFetched={blocksFetched}
                   ></InfoPools>
                 </Route>
+                <Route exact path={`${path}/pools/:id`} component={PoolInfoPage} />
                 <Route exact path={`${path}/tokens`}>
                   <Helmet>
                     <title>Algebra — Info • Tokens</title>

@@ -9,12 +9,10 @@ const ToolbarWrapper = styled.div`
   justify-content: space-between;
 `
 const ToolbarChartTypeWrapper = styled.div``
-
 const ToolbarOptions = styled.ul`
   margin: 0;
   padding: 0;
 `
-
 const ToolbarOptionsItem = styled.li`
   display: inline-flex;
   padding: 6px 10px;
@@ -40,60 +38,16 @@ const ToolbarOptionsItem = styled.li`
     `}
 `
 
-enum ChartType {
-  VOLUME,
-  TVL,
-  LIQUIDITY,
-  FEES,
-}
 
-enum ChartSpan {
-  DAY,
-  WEEK,
-  MONTH,
-}
+export default function PoolInfoChartToolbar({chartTypes, chartSpans, type, span, setType, setSpan} : {
+  chartTypes: any
+  chartSpans: any
+  type: number
+  span: number
+  setType: any
+  setSpan: any
+}) {
 
-export default function PoolInfoChartToolbar() {
-  const [span, setSpan] = useState(ChartSpan.DAY)
-  const [type, setType] = useState(ChartType.FEES)
-
-  const chartTypes = [
-    {
-      type: ChartType.VOLUME,
-      title: 'Volume',
-    },
-    {
-      type: ChartType.TVL,
-      title: 'TVL',
-    },
-    {
-      type: ChartType.LIQUIDITY,
-      title: 'Liquidity',
-    },
-    {
-      type: ChartType.FEES,
-      title: 'Fees',
-    },
-  ]
-
-  const chartSpans = [
-    {
-      type: ChartSpan.DAY,
-      title: 'Day',
-    },
-    {
-      type: ChartSpan.WEEK,
-      title: 'Week',
-    },
-    {
-      type: ChartSpan.MONTH,
-      title: 'Month',
-    },
-  ]
-
-  useEffect(() => {
-    console.log(span, type)
-  }, [span, type])
 
   return (
     <ToolbarWrapper>

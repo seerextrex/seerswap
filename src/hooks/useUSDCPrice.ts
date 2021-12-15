@@ -11,7 +11,7 @@ import { useActiveWeb3React } from './web3'
 const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
   //TODO
   // [SupportedChainId.BINANCE]: CurrencyAmount.fromRawAmount(USDC_BINANCE, 100_000e6),
-  [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 100_000e5),
+  [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 100_000e3),
 }
 
 /**
@@ -23,7 +23,7 @@ export default function useUSDCPrice(currency?: Currency): Price<Currency, Token
 
   const amountOut = chainId ? STABLECOIN_AMOUNT_OUT[chainId] : undefined
   const stablecoin = amountOut?.currency
-  
+
   const v3USDCTrade = useBestV3TradeExactOut(currency, amountOut)
 
   return useMemo(() => {

@@ -14,7 +14,7 @@ import {
   useV3MintState,
   useV3MintActionHandlers,
   useRangeHopCallbacks,
-  useV3DerivedMintInfo
+  useV3DerivedMintInfo,
 } from '../../state/mint/v3/hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
@@ -86,11 +86,11 @@ const TokenItem = styled.div`
   width: 100%;
   // height: 120px;
   ${({ noPadding }) =>
-          !noPadding &&
-          css`
-            padding: 1rem;
-            border: 1px solid #202635;
-          `}
+    !noPadding &&
+    css`
+      padding: 1rem;
+      border: 1px solid #202635;
+    `}
   border-radius: 1rem;
 
   &:first-of-type {
@@ -102,11 +102,11 @@ const TokenItem = styled.div`
   }
 
   ${({ highPrice }) =>
-          highPrice &&
-          css`
-            border-color: #d33636;
-            border-radius: 1rem 1rem 0 0;
-          `}
+    highPrice &&
+    css`
+      border-color: #d33636;
+      border-radius: 1rem 1rem 0 0;
+    `}
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin: 0 0 1rem 0!important;
   `}
@@ -391,11 +391,11 @@ height: 40px !important;
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidityPage({
-                                           match: {
-                                             params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId }
-                                           },
-                                           history
-                                         }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
+  match: {
+    params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId },
+  },
+  history,
+}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
   const expertMode = useIsExpertMode()
@@ -472,7 +472,7 @@ export default function AddLiquidityPage({
       ...derivedMintInfo,
     }
   }, [derivedMintInfo])
-  
+
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
     useV3MintActionHandlers(noLiquidity)
 
@@ -495,35 +495,20 @@ export default function AddLiquidityPage({
   // get formatted amounts
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? ''
+    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   }
 
   const usdcValues = {
     [Field.CURRENCY_A]: useUSDCValue(parsedAmounts[Field.CURRENCY_A]),
-    [Field.CURRENCY_B]: useUSDCValue(parsedAmounts[Field.CURRENCY_B])
+    [Field.CURRENCY_B]: useUSDCValue(parsedAmounts[Field.CURRENCY_B]),
   }
-
-  const usdcAIsGreaterThen10000 = useMemo(() => {
-    if (!usdcValues[Field.CURRENCY_A]) {
-      return
-    }
-
-    return +usdcValues[Field.CURRENCY_A].toFixed().split('.')[0] >= 10000
-  }, [parsedAmounts])
-
-  const usdcBIsGreaterThen10000 = useMemo(() => {
-    if (!usdcValues[Field.CURRENCY_B]) {
-      return
-    }
-    return +usdcValues[Field.CURRENCY_B].toFixed().split('.')[0] >= 10000
-  }, [parsedAmounts])
 
   // get the max amounts user can add
   const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field])
+        [field]: maxAmountSpend(currencyBalances[field]),
       }
     },
     {}
@@ -533,7 +518,7 @@ export default function AddLiquidityPage({
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
+        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
       }
     },
     {}
@@ -566,31 +551,31 @@ export default function AddLiquidityPage({
       const { calldata, value } =
         hasExistingPosition && tokenId
           ? NonFunPosMan.addCallParameters(position, {
-            tokenId,
-            slippageTolerance: allowedSlippage,
-            deadline: deadline.toString(),
-            useNative
-          })
+              tokenId,
+              slippageTolerance: allowedSlippage,
+              deadline: deadline.toString(),
+              useNative,
+            })
           : NonFunPosMan.addCallParameters(position, {
-            slippageTolerance: allowedSlippage,
-            recipient: account,
-            deadline: deadline.toString(),
-            useNative,
-            createPool: noLiquidity
-          })
+              slippageTolerance: allowedSlippage,
+              recipient: account,
+              deadline: deadline.toString(),
+              useNative,
+              createPool: noLiquidity,
+            })
 
       const { calldata: calldata2, value: _value } = NonFunPosMan.addCallParameters(position, {
         slippageTolerance: allowedSlippage,
         recipient: account,
         deadline: deadline.toString(),
         useNative,
-        createPool: noLiquidity
+        createPool: noLiquidity,
       })
 
       const txn: { to: string; data: string; value: string } = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
         data: calldata,
-        value
+        value,
       }
 
       setAttemptingTxn(true)
@@ -602,7 +587,7 @@ export default function AddLiquidityPage({
           const newTxn = {
             ...txn,
             gasLimit: calculateGasMargin(chainId, estimate),
-            gasPrice: 70000000000
+            gasPrice: 70000000000,
           }
 
           return library
@@ -613,7 +598,7 @@ export default function AddLiquidityPage({
               addTransaction(response, {
                 summary: noLiquidity
                   ? t`Create pool and add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
-                  : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
+                  : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`,
               })
               setTxHash(response.hash)
             })
@@ -726,13 +711,13 @@ export default function AddLiquidityPage({
 
   const pendingText = mustCreateSeparately
     ? `Creating ${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} ${
-      dynamicFee ? dynamicFee / 10000 : ''
-    }% Pool`
+        dynamicFee ? dynamicFee / 10000 : ''
+      }% Pool`
     : `Supplying ${!depositADisabled ? parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) : ''} ${
-      !depositADisabled ? currencies[Field.CURRENCY_A]?.symbol : ''
-    } ${!outOfRange ? 'and' : ''} ${!depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ''} ${
-      !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
-    }`
+        !depositADisabled ? currencies[Field.CURRENCY_A]?.symbol : ''
+      } ${!outOfRange ? 'and' : ''} ${!depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ''} ${
+        !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
+      }`
 
   return (
     <>
@@ -757,7 +742,7 @@ export default function AddLiquidityPage({
                 onCurrencySelect={handleCurrencyASelect}
                 showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                 currency={currencies[Field.CURRENCY_A]}
-                id='add-liquidity-input-tokena'
+                id="add-liquidity-input-tokena"
                 showCommonBases
                 showBalance={false}
               />
@@ -774,7 +759,7 @@ export default function AddLiquidityPage({
                 }}
                 showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                 currency={currencies[Field.CURRENCY_B]}
-                id='add-liquidity-input-tokenb'
+                id="add-liquidity-input-tokenb"
                 showCommonBases
                 showBalance={false}
               />
@@ -797,7 +782,7 @@ export default function AddLiquidityPage({
                           Check out how dynamic fee is calculated
                         </div>
                         <div style={{ marginTop: '10px', width: '100%' }}>
-                          <TechPaperDownloadButton download='Algebra-Tech-Paper.pdf' href={PDFAlgebra}>
+                          <TechPaperDownloadButton download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
                             <span>
                               <Download size={16} color={'white'} />
                             </span>
@@ -828,7 +813,7 @@ export default function AddLiquidityPage({
                         <StyledInput
                           style={{ textAlign: `${window.innerWidth < 501 ? 'left' : 'right'}`, backgroundColor: 'transparent' }}
                           // placeholder={}
-                          className='start-price-input'
+                          className="start-price-input"
                           value={startPriceTypedValue}
                           onUserInput={onStartPriceInput}
                         />
@@ -864,7 +849,7 @@ export default function AddLiquidityPage({
                                   Check out how dynamic fee is calculated
                                 </div>
                                 <div style={{ marginTop: '10px', width: '100%' }}>
-                                  <TechPaperDownloadButton download='Algebra-Tech-Paper.pdf' href={PDFAlgebra}>
+                                  <TechPaperDownloadButton download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
                                     <span>
                                       <Download size={16} color={'white'} />
                                     </span>
@@ -953,10 +938,10 @@ export default function AddLiquidityPage({
                     style={
                       (!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange
                         ? {
-                          opacity: 0.2,
-                          userSelect: 'none',
-                          pointerEvents: 'none'
-                        }
+                            opacity: 0.2,
+                            userSelect: 'none',
+                            pointerEvents: 'none',
+                          }
                         : {}
                     }
                   >
@@ -967,13 +952,9 @@ export default function AddLiquidityPage({
                     <TokenPair
                       style={{
                         height: `${window.innerWidth < 500 ? '' : '145px'}`,
-                        marginBottom: usdcAIsGreaterThen10000 || usdcBIsGreaterThen10000 ? '2rem' : '1rem'
                       }}
                     >
-                      <TokenItem highPrice={usdcAIsGreaterThen10000}>
-                        {usdcAIsGreaterThen10000 && (
-                          <HigherPrice>During Alpha limit is $10,000 in one token</HigherPrice>
-                        )}
+                      <TokenItem highPrice={false}>
                         {!atMaxAmounts[Field.CURRENCY_A] && !depositADisabled && (
                           <MaxButton
                             disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
@@ -992,7 +973,7 @@ export default function AddLiquidityPage({
                           onCurrencySelect={handleCurrencyASelect}
                           showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                           currency={currencies[Field.CURRENCY_A]}
-                          id='add-liquidity-input-tokena'
+                          id="add-liquidity-input-tokena"
                           showCommonBases
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper}
@@ -1009,7 +990,7 @@ export default function AddLiquidityPage({
                               }}
                               showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                               currency={currencies[Field.CURRENCY_A]}
-                              id='add-liquidity-input-tokena'
+                              id="add-liquidity-input-tokena"
                               fiatValue={usdcValues[Field.CURRENCY_A]}
                               showCommonBases
                               locked={depositADisabled}
@@ -1030,10 +1011,7 @@ export default function AddLiquidityPage({
                           )}
                         </div>
                       </TokenItem>
-                      <TokenItem highPrice={usdcBIsGreaterThen10000}>
-                        {usdcBIsGreaterThen10000 && (
-                          <HigherPrice>During Alpha limit is $10,000 in one token</HigherPrice>
-                        )}
+                      <TokenItem highPrice={false}>
                         {!atMaxAmounts[Field.CURRENCY_B] && !depositBDisabled && (
                           <MaxButton
                             disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
@@ -1048,7 +1026,7 @@ export default function AddLiquidityPage({
                           onUserInput={onFieldBInput}
                           onCurrencySelect={handleCurrencyBSelect}
                           currency={currencies[Field.CURRENCY_B]}
-                          id='add-liquidity-input-tokenb'
+                          id="add-liquidity-input-tokenb"
                           showCommonBases
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
@@ -1066,7 +1044,7 @@ export default function AddLiquidityPage({
                               showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                               fiatValue={usdcValues[Field.CURRENCY_B]}
                               currency={currencies[Field.CURRENCY_B]}
-                              id='add-liquidity-input-tokenb'
+                              id="add-liquidity-input-tokenb"
                               showCommonBases
                               locked={depositBDisabled}
                               hideCurrency={true}
@@ -1098,7 +1076,13 @@ export default function AddLiquidityPage({
                     <span style={{ marginLeft: '10px' }}>Due to pool creating gas fee will be higher</span>
                   </AddLiquidityMessage>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: `${window.innerWidth < 500 ? '' : '1rem'}` }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginTop: `${window.innerWidth < 500 ? '' : '1rem'}`,
+                  }}
+                >
                   {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (
                     <Error style={{ position: 'relative', padding: '14px 16px', marginRight: '1rem', top: 0 }}>
                       {errorMessage}
@@ -1114,9 +1098,7 @@ export default function AddLiquidityPage({
                       mustCreateSeparately ||
                       !isValid ||
                       (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                      (approvalB !== ApprovalState.APPROVED && !depositBDisabled) ||
-                      usdcAIsGreaterThen10000 ||
-                      usdcBIsGreaterThen10000
+                      (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
                     }
                   >
                     Add Liquidity

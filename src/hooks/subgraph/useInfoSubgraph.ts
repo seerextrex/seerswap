@@ -4,10 +4,17 @@ import { Contract, providers } from "ethers";
 import { useActiveWeb3React } from "../web3";
 import { useClients } from "./useClients";
 import {
+    FETCH_FEE_FROM_POOL,
+    CHART_FEE_LAST_ENTRY,
+    CHART_FEE_POOL_DATA,
+    CHART_POOL_DATA,
+    CHART_POOL_LAST_ENTRY,
     POOLS_FROM_ADDRESSES,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
-    TOP_TOKENS
+    TOP_TOKENS,
+    CHART_FEE_LAST_NOT_EMPTY,
+    CHART_POOL_LAST_NOT_EMPTY
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
@@ -43,6 +50,9 @@ export function useInfoSubgraph() {
 
     const [feesResult, setFees] = useState(null);
     const [feesLoading, setFeesLoading] = useState(null);
+
+    const [chartPoolData, setChartPoolData] = useState(null)
+    const [chartPoolDataLoading, setChartPoolDataLoading] = useState(null)
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -283,7 +293,6 @@ export function useInfoSubgraph() {
 
     }
 
-
     async function fetchPoolsByTime(blockNumber: number, tokenAddresses) {
 
         try {
@@ -303,10 +312,163 @@ export function useInfoSubgraph() {
 
     }
 
+    async function fetchLastEntry(pool) {
+        try {
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_LAST_ENTRY(pool),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            return feeHourDatas
+
+        } catch (err) {
+            console.error('Fees last failed: ', err);
+        }
+    }
+
+    async function fetchLastNotEmptyEntry(pool: string, timestamp: string) {
+        try {
+
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_LAST_NOT_EMPTY(pool, timestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (feeHourDatas.length === 0) return []
+
+            return feeHourDatas
+
+        } catch (err) {
+            console.error('Fees last not empty failed:', err)
+        }
+    }
+
+    async function fetchPoolLastNotEmptyEntry(pool: string, timestamp: string) {
+        try {
+
+            console.log(`  query lastNotEmptyPoolHourData {
+                poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: "${pool}", periodStartUnix_lt: ${timestamp} }) {
+                  periodStartUnix
+                  volumeUSD
+                  tvlUSD
+                  feesUSD
+                }
+              }`)
+
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_LAST_NOT_EMPTY(pool, timestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (poolHourDatas.length === 0) return []
+
+            return poolHourDatas
+
+        } catch (err) {
+            console.error('Pool last not empty failed:', err)
+        }
+    }
+
+    async function fetchPoolLastEntry(pool) {
+        try {
+
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_LAST_ENTRY(pool),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            return poolHourDatas
+
+        } catch (err) {
+            console.error('Fees last failed: ', err);
+        }
+    }
+
+    async function fetchFeePool(pool: string, startTimestamp: number, endTimestamp: number) {
+        try {
+            setFeesLoading(true)
+
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_POOL_DATA(pool, startTimestamp, endTimestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const _feeHourData = feeHourDatas.length === 0 ? await fetchLastEntry(pool) : feeHourDatas
+
+            const previousData = await fetchLastNotEmptyEntry(pool, _feeHourData[0].timestamp)
+
+            if (_feeHourData.length !== 0) {
+                setFees({
+                    data: _feeHourData,
+                    previousData: previousData || []
+                })
+            } else {
+                setFees({
+                    data: [],
+                    previousData: previousData || []
+                })
+            }
+
+        } catch (err) {
+            console.error('Fees failed: ', err);
+            setFees('Failed')
+        }
+
+        setFeesLoading(false)
+    }
+
+    async function fetchChartPoolData(pool: string, startTimestamp: number, endTimestamp: number) {
+        try {
+
+            setChartPoolDataLoading(true)
+
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_DATA(pool, startTimestamp, endTimestamp),
+                fetchPolicy: 'network-only',
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const _poolHourDatas = poolHourDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolHourDatas
+
+            const previousData = await fetchPoolLastNotEmptyEntry(pool, poolHourDatas[0].periodStartUnix)
+
+            if (_poolHourDatas.length !== 0) {
+                setChartPoolData({
+                    data: _poolHourDatas,
+                    previousData: previousData || []
+                })
+            } else {
+                setChartPoolData({
+                    data: [],
+                    previousData: previousData || []
+                })
+            }
+
+        } catch (err) {
+            console.error('Chart pool data failed: ', err)
+            setChartPoolData(false)
+        }
+
+        setChartPoolDataLoading(false)
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
+        fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData }
     }
 
 

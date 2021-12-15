@@ -25,8 +25,7 @@ import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { BackArrow, StyledInternalLink, TYPE } from '../../theme'
 import { BodyWrapper } from '../AppBody'
 
-const MigrateSushiPositionCardStyled = styled(MigrateSushiPositionCard)`
-`
+const MigrateSushiPositionCardStyled = styled(MigrateSushiPositionCard)``
 import { Helmet } from 'react-helmet'
 
 function EmptyState({ message }: { message: ReactNode }) {

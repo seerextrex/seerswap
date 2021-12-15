@@ -52,6 +52,10 @@ import ReactGA from 'react-ga'
 const PageWrapper = styled.div`
   min-width: 800px;
   max-width: 960px;
+  background-color: ${({ theme }) => theme.winterBackground};
+  border-radius: 50px;
+  padding: 30px 40px;
+  margin-top: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 680px;
@@ -99,7 +103,7 @@ const ExtentsText = styled.span`
 
 const HoverText = styled(TYPE.main)`
   text-decoration: none;
-  color: ${({ theme }) => theme.text3};
+  color: white;
   :hover {
     color: ${({ theme }) => theme.text1};
     text-decoration: none;
@@ -559,10 +563,7 @@ export function PositionPage({
         <TYPE.italic>
           <Trans>Collecting fees will withdraw currently available fees for you.</Trans>
         </TYPE.italic>
-        <ButtonPrimary
-          style={{ color: '#f51189', background: '#400f29', border: '1px solid #540c33' }}
-          onClick={collect}
-        >
+        <ButtonPrimary style={{ color: 'white', background: theme.winterMainButton }} onClick={collect}>
           <Trans>Collect</Trans>
         </ButtonPrimary>
       </AutoColumn>
@@ -641,7 +642,7 @@ export function PositionPage({
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"
-                      style={{ marginRight: '8px', background: '#0f2e40', color: '#4cc1d5' }}
+                      style={{ marginRight: '8px', background: theme.winterMainButton, color: 'white' }}
                     >
                       <Trans>Increase Liquidity</Trans>
                     </ButtonGray>
@@ -652,7 +653,7 @@ export function PositionPage({
                       to={`/remove/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
-                      style={{ background: '#0f2e40', color: '#4cc1d5' }}
+                      style={{ background: theme.winterMainButton, color: 'white' }}
                       $borderRadius="12px"
                     >
                       <Trans>Remove Liquidity</Trans>
@@ -740,16 +741,22 @@ export function PositionPage({
                           disabled={collecting || !!collectMigrationHash}
                           confirmed={!!collectMigrationHash && !isCollectPending}
                           width="fit-content"
-                          style={{ borderRadius: '12px', color: '#4cc1d5', background: '#0f2e40' }}
+                          style={{ borderRadius: '12px', color: 'white', background: theme.winterMainButton }}
                           padding="4px 8px"
                           onClick={() => setShowConfirm(true)}
                         >
                           {!!collectMigrationHash && !isCollectPending ? (
-                            <TYPE.main style={{ color: '#4cc1d5' }} color={theme.text1}>
+                            <TYPE.main
+                              style={{ color: 'white', background: theme.winterMainButton }}
+                              color={theme.text1}
+                            >
                               <Trans> Collected</Trans>
                             </TYPE.main>
                           ) : isCollectPending || collecting ? (
-                            <TYPE.main style={{ color: '#4cc1d5' }} color={theme.text1}>
+                            <TYPE.main
+                              style={{ color: 'white', background: theme.winterMainButton }}
+                              color={theme.text1}
+                            >
                               {' '}
                               <Dots>
                                 <Trans>Collecting</Trans>
@@ -757,7 +764,10 @@ export function PositionPage({
                             </TYPE.main>
                           ) : (
                             <>
-                              <TYPE.main style={{ color: '#4cc1d5' }} color={theme.white}>
+                              <TYPE.main
+                                style={{ color: 'white', background: theme.winterMainButton }}
+                                color={theme.white}
+                              >
                                 <Trans>Collect fees</Trans>
                               </TYPE.main>
                             </>

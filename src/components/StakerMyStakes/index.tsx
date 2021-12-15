@@ -38,11 +38,13 @@ const skeletonGradient = css`
     bottom: 0;
     left: 0;
     transform: translateX(-100%);
-    background-image: linear-gradient(90deg,
-    rgba(91, 105, 141, 0) 0,
-    rgba(91, 105, 141, 0.2) 25%,
-    rgba(91, 105, 141, 0.5) 60%,
-    rgba(91, 105, 141, 0));
+    background-image: linear-gradient(
+      90deg,
+      rgba(91, 105, 141, 0) 0,
+      rgba(94, 131, 225, 0.25) 25%,
+      rgba(94, 131, 225, 0.5) 60%,
+      rgba(91, 105, 141, 0)
+    );
     animation-name: ${skeletonAnimation};
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
@@ -63,9 +65,9 @@ export const TokenIcon = styled.div`
   justify-content: center;
   width: 35px;
   height: 35px;
-  background-color: ${({name}) => (name ? stringToColour(name).background : '#3d4a6a')};
-  border: 1px solid ${({name}) => (name ? stringToColour(name).border : '#3d4a6a')};
-  color: ${({name}) => (name ? stringToColour(name).text : '#3d4a6a')};
+  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
+  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
+  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
   border-radius: 50%;
   user-select: none;
 
@@ -94,11 +96,11 @@ const Stake = styled.div`
     }
   }
 
-  ${({navigatedTo}) =>
-          navigatedTo &&
-          css`
-            background-color: #1a1029;
-          `}
+  ${({ navigatedTo }) =>
+    navigatedTo &&
+    css`
+      background-color: #1a1029;
+    `}
 `
 
 export const StakeId = styled.div`
@@ -135,17 +137,18 @@ export const StakeCountdown = styled.div`
   min-width: 94px !important;
 
   & > * {
-    ${({skeleton}) =>
-            skeleton
-                    ? css`
-                      width: 80px;
-                      height: 16px;
-                      background: #3d4a6a;
-                      border-radius: 4px;
 
-                      ${skeletonGradient}
-                    `
-                    : null}
+    ${({ skeleton }) =>
+      skeleton
+        ? css`
+            width: 80px;
+            height: 16px;
+            background: #5aa7df;
+            border-radius: 4px;
+
+            ${skeletonGradient}
+          `
+        : null}
   }
 `
 
@@ -159,24 +162,26 @@ export const StakeButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
-  background-color: ${({skeleton}) => (skeleton ? '#3d4a6a' : '#4829bb')};
+
+  background-color: ${({ skeleton, theme }) => (skeleton ? '#5aa7df' : theme.winterMainButton)};
   color: white;
   min-width: 126px;
 
-  ${({disabled}) =>
-          disabled &&
-          css`
-            opacity: 0.4;
-            cursor: default;
-          `}
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      opacity: 0.4;
+      cursor: default;
+    `}
 
-  ${({skeleton}) =>
-          skeleton
-                  ? css`
-                    ${skeletonGradient}
-                    width: 80px;
-                  `
-                  : null}
+  ${({ skeleton }) =>
+    skeleton
+      ? css`
+          ${skeletonGradient}
+          width: 80px;
+        `
+      : null}
+
 `
 
 const StakeListHeader = styled.div`
@@ -202,17 +207,18 @@ export const TokensNames = styled.div`
   margin-left: 1rem;
 
   & > * {
-    ${({skeleton}) =>
-            skeleton
-                    ? css`
-                      width: 40px;
-                      height: 16px;
-                      background: #3d4a6a;
-                      margin-bottom: 3px;
-                      border-radius: 4px;
-                      ${skeletonGradient}
-                    `
-                    : null}
+
+    ${({ skeleton }) =>
+      skeleton
+        ? css`
+            width: 40px;
+            height: 16px;
+            background: #5aa7df;
+            margin-bottom: 3px;
+            border-radius: 4px;
+            ${skeletonGradient}
+          `
+        : null}
   }
 `
 
@@ -540,138 +546,127 @@ export function StakerMyStakes({
             </Stake>
         ))
     }
-
-    return (
-        <>
-            <Modal
-                isOpen={sendModal}
-                onDismiss={() => {
-                    if (sending.state !== 'pending') {
-                        setSendModal(false)
-                        setRecipient('')
-                        setTimeout(() => setSending({id: null, state: null}))
-                    }
-                }}
-            >
-                <SendModal style={{alignItems: sending && sending.state === 'done' ? 'center' : ''}}>
-                    {sending.state === 'done' ? (
-                        <>
-                            <CheckCircle size={'35px'} stroke={'#27AE60'}/>
-                            <div style={{marginTop: '1rem'}}>{`NFT was sent!`}</div>
-                        </>
-                    ) : (
-                        <>
-                            <ModalTitle>Send NFT to another account</ModalTitle>
-                            <SendNFTWarning>
-                                {
-                                    'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'
-                                }
-                            </SendNFTWarning>
-                            <div style={{marginBottom: '1rem'}}>
-                                <RecipientInput
-                                    placeholder='Enter a recipient'
-                                    value={recipient}
-                                    onChange={(v) => {
-                                        setRecipient(v.target.value)
-                                    }}
-                                />
-                            </div>
-                            <div>
-                                <SendNFTButton
-                                    disabled={!isAddress(recipient) || recipient === account}
-                                    onClick={() => {
-                                        setSending({id: sendModal, state: 'pending'})
-                                        sendNFTHandler(sendModal)
-                                    }}
-                                >
-                                    {sending && sending.id === sendModal && sending.state !== 'done' ? (
-                                        <span style={{display: 'inline-flex', alignItems: 'center'}}>
-                      <Loader size={'18px'} stroke={'white'} style={{margin: 'auto 10px auto'}}/>
+  return (
+    <>
+      <Modal
+        isOpen={sendModal}
+        onDismiss={() => {
+          if (sending.state !== 'pending') {
+            setSendModal(false)
+            setRecipient('')
+            setTimeout(() => setSending({ id: null, state: null }))
+          }
+        }}
+      >
+        <SendModal style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
+          {sending.state === 'done' ? (
+            <>
+              <CheckCircle size={'35px'} stroke={'#27AE60'} />
+              <div style={{ marginTop: '1rem' }}>{`NFT was sent!`}</div>
+            </>
+          ) : (
+            <>
+              <ModalTitle>Send NFT to another account</ModalTitle>
+              <SendNFTWarning>
+                {
+                  'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'
+                }
+              </SendNFTWarning>
+              <div style={{ marginBottom: '1rem' }}>
+                <RecipientInput
+                  placeholder="Enter a recipient"
+                  value={recipient}
+                  onChange={(v) => {
+                    setRecipient(v.target.value)
+                  }}
+                />
+              </div>
+              <div>
+                <SendNFTButton
+                  disabled={!isAddress(recipient) || recipient === account}
+                  onClick={() => {
+                    setSending({ id: sendModal, state: 'pending' })
+                    sendNFTHandler(sendModal)
+                  }}
+                >
+                  {sending && sending.id === sendModal && sending.state !== 'done' ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto 10px auto' }} />
                       <span>Sending</span>
                     </span>
-                                    ) : (
-                                        <span>{`Send NFT`}</span>
-                                    )}
-                                </SendNFTButton>
-                            </div>
-                        </>
-                    )}
-                </SendModal>
-            </Modal>
-            {refreshing || !shallowPositions ? (
-                window.innerWidth < 501 ? <StakerMyStakesMobileSkeleton/> :
-                    <Stakes>
-                        {[0, 1, 2].map((el, i) => (
-                            <Stake key={i}>
-                                <StakePool>
-                                    {/* {JSON.parse(el.pool)} */}
-                                    <TokenIcon skeleton></TokenIcon>
-                                    <TokenIcon skeleton></TokenIcon>
-                                    <TokensNames skeleton>
-                                        <div>{}</div>
-                                        <div>{}</div>
-                                    </TokensNames>
-                                </StakePool>
-                                {/* <StakeSeparator>for</StakeSeparator> */}
-                                <StakeReward>
-                                    <TokenIcon skeleton>{}</TokenIcon>
-                                    <TokensNames skeleton>
-                                        <div>{}</div>
-                                        <div>{}</div>
-                                    </TokensNames>
-                                </StakeReward>
-                                {/* <StakeSeparator>by</StakeSeparator> */}
-                                <StakeCountdown skeleton>
-                                    <div></div>
-                                </StakeCountdown>
-                                <StakeActions>
-                                    <StakeButton skeleton></StakeButton>
-                                </StakeActions>
-                            </Stake>
-                        ))}
-                    </Stakes>
-            ) : shallowPositions && shallowPositions.length === 0 ? (
-                <EmptyMock>
-                    <div>No farms</div>
-                    <Frown size={35} stroke={'white'}/>
-                </EmptyMock>
-            ) : shallowPositions && shallowPositions.length !== 0 ? (
-                <>
-                    {stakedNFTs && (
-                        <> <StakeListHeader>
-                            <div style={{minWidth: `${window.innerWidth < 500 ? '' : '96px'}`}}>ID</div>
-                            <div>Pool</div>
-                            <div>Earned</div>
-                            <div>Bonus</div>
-                            <div>End time</div>
-                            <div/>
-                        </StakeListHeader>
-                            <Stakes>
-                                <StakerMyStakesMobile position={stakedNFTs[0]} modalHandler={setSendModal}
-                                                      getRewardsHandler={getRewardsHandler}
-                                                      gettingReward={gettingReward}
-                                                      setGettingReward={setGettingReward}
-                                                      now={now}
-                                />
-                                {getTable(stakedNFTs, true)}
-                            </Stakes>
-                        </>
-                    )}
-                    {inactiveNFTs && (
-                        <>
-                            <PageTitle title={'Inactive NFT-s'}></PageTitle>
-                            <StakeListHeader>
-                                <div style={{minWidth: '96px'}}>ID</div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </StakeListHeader>
-                            <Stakes>{getTable(inactiveNFTs, false)}</Stakes>
-                        </>
-                    )}
-                </>
-            ) : null}
+                  ) : (
+                    <span>{`Send NFT`}</span>
+                  )}
+                </SendNFTButton>
+              </div>
+            </>
+          )}
+        </SendModal>
+      </Modal>
+      {refreshing || !shallowPositions ? (
+        <Stakes style={{ height: '400px' }}>
+          {[0, 1, 2].map((el, i) => (
+            <Stake key={i}>
+              <StakePool>
+                {/* {JSON.parse(el.pool)} */}
+                <TokenIcon skeleton></TokenIcon>
+                <TokenIcon skeleton></TokenIcon>
+                <TokensNames skeleton>
+                  <div>{}</div>
+                  <div>{}</div>
+                </TokensNames>
+              </StakePool>
+              {/* <StakeSeparator>for</StakeSeparator> */}
+              <StakeReward>
+                <TokenIcon skeleton>{}</TokenIcon>
+                <TokensNames skeleton>
+                  <div>{}</div>
+                  <div>{}</div>
+                </TokensNames>
+              </StakeReward>
+              {/* <StakeSeparator>by</StakeSeparator> */}
+              <StakeCountdown skeleton>
+                <div></div>
+              </StakeCountdown>
+              <StakeActions>
+                <StakeButton skeleton></StakeButton>
+              </StakeActions>
+            </Stake>
+          ))}
+        </Stakes>
+      ) : shallowPositions && shallowPositions.length === 0 ? (
+        <EmptyMock>
+          <div>No farms</div>
+          <Frown size={35} stroke={'white'} />
+        </EmptyMock>
+      ) : shallowPositions && shallowPositions.length !== 0 ? (
+        <>
+          {stakedNFTs && (
+            <>
+              <StakeListHeader>
+                <div style={{ minWidth: '96px' }}>ID</div>
+                <div>Pool</div>
+                <div>Earned</div>
+                <div>Bonus</div>
+                <div>End time</div>
+                <div></div>
+              </StakeListHeader>
+              <Stakes>{getTable(stakedNFTs, true)}</Stakes>
+            </>
+          )}
+          {inactiveNFTs && (
+            <>
+              <PageTitle title={'Inactive NFT-s'}></PageTitle>
+              <StakeListHeader>
+                <div style={{ minWidth: '96px' }}>ID</div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </StakeListHeader>
+              <Stakes>{getTable(inactiveNFTs, false)}</Stakes>
+            </>
+          )}
         </>
     )
 }

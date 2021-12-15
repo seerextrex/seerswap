@@ -34,7 +34,7 @@ export const Arrow = styled.div<{ faded: boolean }>`
 `
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
-  background-color: #202635;
+  background-color: rgba(60, 97, 126, 0.5);
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     min-width: 800px;
   `};
@@ -86,8 +86,9 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   const { chainId } = useActiveWeb3React()
 
   return (
-    <NavLink to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
-      <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
+    // <NavLink to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
+    <NavLink to={'/info/pools'} style={{ textDecoration: 'none' }}>
+      <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
         <Label fontWeight={400}>{index + 1}</Label>
         <Label fontWeight={400}>
           <RowFixed>
@@ -95,7 +96,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
             <TYPE.label ml="8px">
               {poolData.token0.symbol}/{poolData.token1.symbol}
             </TYPE.label>
-            <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#35405b' }}>
+            <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#02365e' }}>
               {feeTierPercent(poolData.fee)}
             </GreyBadge>
           </RowFixed>
@@ -184,18 +185,18 @@ export default function InfoPoolsTable({
     <Wrapper style={{ borderRadius: '8px' }}>
       {sortedPools.length > 0 ? (
         <AutoColumn gap="16px">
-          <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
-            <Label color={theme.text2}>#</Label>
-            <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.feeTier)}>
+          <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
+            <Label color={'#dedede'}>#</Label>
+            <ClickableText color={'#dedede'} onClick={() => handleSort(SORT_FIELD.feeTier)}>
               Pool {arrow(SORT_FIELD.feeTier)}
             </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
+            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
               Volume 24H {arrow(SORT_FIELD.volumeUSD)}
             </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
+            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
               Volume 7D {arrow(SORT_FIELD.volumeUSDWeek)}
             </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
+            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
               TVL {arrow(SORT_FIELD.tvlUSD)}
             </ClickableText>
           </ResponsiveGrid>

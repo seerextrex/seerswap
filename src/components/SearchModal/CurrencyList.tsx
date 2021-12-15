@@ -119,34 +119,29 @@ function CurrencyRow({
     const customAdded = useIsUserAddedToken(currency)
     // const balance = useCurrencyBalance(account ?? undefined, currency)
 
-    // only show add or remove buttons if not on selected list
-    return (
-        <MenuItem
-            style={style}
-            className={`token-item-${key}`}
-            onClick={() => (isSelected ? null : onSelect())}
-            disabled={isSelected}
-            selected={otherSelected}
-        >
-            <CurrencyLogo currency={currency} size={'24px'}/>
-            <Column>
-                <Text title={currency.name} fontWeight={500}>
-                    {currency.symbol}
-                </Text>
-                <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
-                    {!currency.isNative && !isOnSelectedList && customAdded ? (
-                        <Trans>{currency.name} • Added by user</Trans>
-                    ) : (
-                        'Matic'
-                    )}
-                </TYPE.darkGray>
-            </Column>
-            <TokenTags currency={currency}/>
-            {/* {showCurrencyAmount && (
-        <RowFixed style={{ justifySelf: 'flex-end' }}>
-          {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
-        </RowFixed>
-      )} */}
+  // only show add or remove buttons if not on selected list
+  return (
+    <MenuItem
+      style={style}
+      className={`token-item-${key}`}
+      onClick={() => (isSelected ? null : onSelect())}
+      disabled={isSelected}
+      selected={otherSelected}
+    >
+      <CurrencyLogo currency={currency} size={'24px'} />
+      <Column>
+        <Text title={currency.name} fontWeight={500}>
+          {currency.symbol}
+        </Text>
+        <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300} style={{ color: '#080064' }}>
+          {!currency.isNative && !isOnSelectedList && customAdded ? (
+            <Trans>{currency.name} • Added by user</Trans>
+          ) : (
+            'Matic'
+          )}
+        </TYPE.darkGray>
+      </Column>
+      <TokenTags currency={currency} />
         </MenuItem>
     )
 }

@@ -39,7 +39,7 @@ const LinkRow = styled(Link)`
   text-decoration: none;
   font-weight: 500;
   // background-color: ${({ theme }) => theme.bg1};
-  background-color: rgba(5, 4, 11, 0.7);
+  background-color: rgba(60, 97, 126, 0.5);
 
   &:last-of-type {
     margin: 8px 0 0 0;
@@ -93,7 +93,6 @@ const DataLineItem = styled.div`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 12px!important;
 `};
-  
 `
 
 const RangeLineItem = styled(DataLineItem)`
@@ -113,7 +112,7 @@ const RangeLineItem = styled(DataLineItem)`
 
 const DoubleArrow = styled.span`
   margin: 0 2px;
-  color: ${({ theme }) => theme.text3};
+  color: white;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 4px;
     padding: 20px;
@@ -131,7 +130,7 @@ const RangeText = styled.span`
 `
 
 const ExtentsText = styled.span`
-  color: ${({ theme }) => theme.text3};
+  color: white;
   font-size: 14px;
   margin-right: 4px;
   ${({ theme }) => theme.mediaWidth.upToSmall`

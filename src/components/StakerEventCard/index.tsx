@@ -29,8 +29,8 @@ const skeletonGradient = css`
     background-image: linear-gradient(
       90deg,
       rgba(91, 105, 141, 0) 0,
-      rgba(91, 105, 141, 0.2) 25%,
-      rgba(91, 105, 141, 0.5) 60%,
+      rgba(94, 131, 225, 0.25) 25%,
+      rgba(94, 131, 225, 0.5) 60%,
       rgba(91, 105, 141, 0)
     );
     animation-name: ${skeletonAnimation};
@@ -74,6 +74,12 @@ const Card = styled.div`
     width: 100%;
     margin-bottom: 1rem;
   }`}
+
+  ${({ skeleton }) =>
+    skeleton &&
+    css`
+      background-color: #89c4ef;
+    `}
 `
 const CardHeader = styled.div`
   display: flex;
@@ -86,9 +92,9 @@ const TokenIcon = styled.div`
   justify-content: center;
   width: 35px;
   height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#3d4a6a')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
+  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
+  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
+  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
   border-radius: 50%;
   user-select: none;
   background: ${({ logo }) => (logo ? `url(${logo})` : '')};
@@ -117,7 +123,7 @@ const Subtitle = styled.div`
       ? css`
           width: 50px;
           height: 15.2px;
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           border-radius: 6px;
           margin-bottom: 3px;
 
@@ -130,7 +136,7 @@ const PoolsSymbols = styled.div`
   ${({ skeleton }) =>
     skeleton
       ? css`
-          background: #3d4a6a;
+          background: #5aa7df;
           border-radius: 6px;
           height: 16.2px;
 
@@ -154,8 +160,8 @@ const RewardWrapper = styled.div`
   ${({ skeleton }) =>
     skeleton
       ? css`
-          background-color: #273149;
-          border: 1px solid #3d4a6a;
+          background-color: #5aa7df;
+          border: 1px solid #5aa7df;
 
           ${skeletonAnimation}
         `
@@ -169,7 +175,7 @@ const RewardAmount = styled.div`
   ${({ skeleton }) =>
     skeleton
       ? css`
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           width: 70px;
           height: 19.2px;
           border-radius: 6px;
@@ -183,7 +189,7 @@ const RewardSymbol = styled.div`
   ${({ skeleton }) =>
     skeleton
       ? css`
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           height: 16.2px;
           width: 50px;
           border-radius: 6px;
@@ -204,7 +210,7 @@ const StakeDate = styled.div`
       ? css`
           width: 100px;
           height: 16.2px;
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           border-radius: 6px;
 
           &:not(:last-of-type) {
@@ -227,7 +233,7 @@ const EventProgress = styled.div`
   ${({ skeleton }) =>
     skeleton
       ? css`
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           margin-top: 3px;
           ${skeletonGradient}
         `
@@ -246,7 +252,7 @@ const EventEndTime = styled.div`
           & > span {
             display: inline-block;
             border-radius: 6px;
-            background-color: #3d4a6a;
+            background-color: #5aa7df;
             height: 13px;
             width: 100px;
             ${skeletonGradient}
@@ -272,7 +278,7 @@ const StakeButton = styled.button`
   width: 100%;
   border: none;
   // background-color: #4829bb;
-  background: linear-gradient(90deg, rgba(72, 41, 187, 1) 0%, rgba(188, 49, 255, 1) 100%);
+  background: ${({ theme }) => theme.winterMainButton};
   color: white;
   border-radius: 8px;
   padding: 8px 12px;
@@ -282,7 +288,7 @@ const StakeButton = styled.button`
   ${({ skeleton }) =>
     skeleton
       ? css`
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           height: 32px;
           ${skeletonGradient};
         `
@@ -360,7 +366,7 @@ export function StakerEventCard({
   }
 
   return skeleton ? (
-    <Card>
+    <Card skeleton>
       <CardHeader>
         <TokensIcons>
           <TokenIcon skeleton></TokenIcon>
@@ -385,7 +391,7 @@ export function StakerEventCard({
             position: 'absolute',
             left: 'calc(50% - 11px)',
             top: '-15px',
-            backgroundColor: '#242a3b',
+            backgroundColor: '#5aa7df',
             borderRadius: '50%',
             padding: '3px',
           }}
@@ -466,12 +472,11 @@ export function StakerEventCard({
           <Subtitle>Reward</Subtitle>
           <RewardSymbol>{rewardToken}</RewardSymbol>
         </div>
-        {
-          reward &&
+        {reward && (
           <RewardAmount title={reward}>
-          {('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}
-        </RewardAmount>
-        }
+            {('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}
+          </RewardAmount>
+        )}
       </RewardWrapper>
       <div style={{ position: 'relative' }}>
         <div
@@ -497,27 +502,21 @@ export function StakerEventCard({
           <Subtitle style={{ color: '#ef71b8' }}>Bonus</Subtitle>
           <RewardSymbol>{bonusRewardToken}</RewardSymbol>
         </div>
-        {
-          bonusReward &&
+        {bonusReward && (
           <RewardAmount title={bonusReward}>
-          {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
-        </RewardAmount>
-        }
+            {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
+          </RewardAmount>
+        )}
       </RewardWrapper>
       <StakeInfo active>
         <div>
           <>
             <Subtitle>Start</Subtitle>
             <div>
-              <span>{
-                startTime &&
-                new Date(startTime * 1000).toLocaleString().split(',')[0]
-              }</span>
+              <span>{startTime && new Date(startTime * 1000).toLocaleString().split(',')[0]}</span>
             </div>
             <div>
-              <span>{startTime &&
-              `${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`
-              }</span>
+              <span>{startTime && `${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
             </div>
           </>
         </div>
@@ -525,16 +524,10 @@ export function StakerEventCard({
         <div>
           <Subtitle>End</Subtitle>
           <div>
-            <span>{
-              endTime &&
-              new Date(endTime * 1000).toLocaleString().split(',')[0]
-            }</span>
+            <span>{endTime && new Date(endTime * 1000).toLocaleString().split(',')[0]}</span>
           </div>
           <div>
-            {
-              endTime &&
-              <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
-            }
+            {endTime && <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>}
           </div>
         </div>
       </StakeInfo>

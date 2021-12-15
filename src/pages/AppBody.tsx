@@ -1,16 +1,38 @@
 import React from 'react'
 import styled from 'styled-components/macro'
+import IcicleFirst from '../assets/svg/icicle-first.svg'
+import IcicleSecond from '../assets/svg/icicle-second.svg'
 
 export const BodyWrapper = styled.div<{ margin?: string; maxWidth?: string }>`
   position: relative;
-  margin-top: ${({ margin }) => margin ?? '0px'};
+  margin: auto;
   max-width: ${({ maxWidth }) => maxWidth ?? '610px'};
   width: 100%;
-  background: ${({ theme }) => theme.bg0};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 24px;
-  margin-top: 1rem;
+  background: ${({ theme }) => theme.winterBackground};
+  border-radius: 50px;
+  margin-top: 5rem;
+
+  &::before,
+  &::after {
+    display: block;
+    content: '';
+    position: absolute;
+  }
+
+  &::after {
+    // background-image: url(${IcicleSecond});
+    right: 0;
+    width: 51px;
+    height: 90px;
+    bottom: -45px;
+  }
+
+  &::before {
+    bottom: -94px;
+    // background-image: url(${IcicleFirst});
+    width: 62px;
+    height: 140px;
+  }
 `
 
 /**

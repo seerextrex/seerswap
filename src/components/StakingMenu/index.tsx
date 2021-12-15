@@ -19,18 +19,19 @@ const MenuListItem = styled.li`
   justify-content: center;
   width: 20%;
   padding: 10px 0;
-  background-color: #202635;
+  font-weight: 600;
+  // background-color: #202635;
   color: white;
   text-decoration: none;
   border-radius: 0;
   &:not(:first-of-type) {
-    border-left: 1px solid #2c313f;
+    // border-left: 1px solid #2c313f;
   }
   &:first-of-type {
-    border-radius: 8px 0 0 8px;
+    // border-radius: 8px 0 0 8px;
   }
   &:last-of-type {
-    border-radius: 0 8px 8px 0;
+    // border-radius: 0 8px 8px 0;
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
@@ -92,7 +93,9 @@ export function StakingMenu() {
           as={NavLink}
           to={`/farming/${el.link}`}
           activeStyle={{
-            background: '#2a87d9',
+            borderBottom: '3px solid #ffbf00',
+            color: '#ffd967',
+            fontWeight: 600,
           }}
           key={i}
         >

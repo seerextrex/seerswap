@@ -7,10 +7,11 @@ import { Text } from 'rebass'
 import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances } from 'state/wallet/hooks'
-import styled from 'styled-components/macro'
+import styled, { keyframes } from 'styled-components/macro'
 import Logo from '../../assets/svg/logo.svg'
+import WinterLogo from '../../assets/images/winter-logo.png'
 import LogoDark from '../../assets/svg/logo_white.svg'
-import Logo_logo from  '../../assets/svg/alg-logo-svg.svg'
+import Logo_logo from '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import Modal from '../Modal'
 import Row from '../Row'
@@ -20,6 +21,10 @@ import UniBalanceContent from './UniBalanceContent'
 import { deviceSizes } from '../../pages/styled'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 import usePrevious from '../../hooks/usePrevious'
+
+import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+import WoodenRope from '../../assets/svg/wooden-rope.svg'
+import LogoIcicles from '../../assets/svg/logo-icicles.svg'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
@@ -41,6 +46,7 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
   box-shadow: 0px 0px 0px 1px ${({ theme, showBackground }) => (showBackground ? theme.bg2 : 'transparent;')};
   transition: background-position 0.1s, box-shadow 0.1s;
   background-blend-mode: hard-light;
+  padding-top: 50px;
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
     grid-template-columns: 48px 1fr 1fr;
@@ -60,11 +66,43 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
   }`}
 `
 
+const swingAnimation = keyframes`
+0% { transform: rotate(1deg); }
+100% { transform: rotate(-1deg); }
+`
+
 const HeaderControls = styled.div`
   display: flex;
+  position: relative;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   justify-self: flex-end;
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
+  width: 440px;
+  height: 64px;
+  border-radius: 16px;
+  &::before,
+  &::after {
+    content: '';
+    background-image: url(${WoodenRope});
+    width: 5px;
+    height: 51px;
+    position: absolute;
+    top: -55px;
+  }
+
+  &::before {
+    left: 15%;
+  }
+
+  &::after {
+    right: 15%;
+  }
 `
 
 const HeaderElement = styled.div`
@@ -87,13 +125,18 @@ const HeaderLinks = styled(Row)`
   left: 50%;
   justify-self: center;
   // background-color: ${({ theme }) => theme.bg0};
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
   width: fit-content;
-  padding: 4px;
+  padding: 0 16px;
   border-radius: 16px;
   display: grid;
   grid-auto-flow: column;
   grid-gap: 30px;
-  overflow: auto;
+  overflow: visible;
   align-items: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`
     // justify-self: center;  
@@ -115,7 +158,29 @@ const HeaderLinks = styled(Row)`
     // box-shadow: 0px 6px 10px rgb(0 0 0 / 2%);
   `};
 
+  &::before,
+  &::after {
+    content: '';
+    background-image: url(${WoodenRope});
+    width: 5px;
+    height: 54px;
+    position: absolute;
+    top: -58px;
+  }
 
+  &::before {
+    left: 15%;
+  }
+
+  &::after {
+    right: 15%;
+  }
+
+  // animation-name: ${swingAnimation};
+  // animation-duration: 5s;
+  // animation-iteration-count: infinite;
+  // animation-timing-function: ease-in-out;
+  // animation-direction: alternate;
 
   @media (max-width: 1366px) {
     grid-auto-flow: unset;
@@ -136,7 +201,7 @@ const HeaderLinks = styled(Row)`
     position: fixed;
     top: unset;
   }
-  
+
   @media (max-width: 500px) {
     display: flex;
     max-width: 100%;
@@ -148,37 +213,14 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg1)};
-  border-radius: 12px;
+  background-color: #713937;
+  border-radius: 8px;
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
 
   :focus {
     border: 1px solid blue;
-  }
-`
-
-const UNIAmount = styled(AccountElement)`
-  color: white;
-  padding: 4px 8px;
-  height: 36px;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
-`
-
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.8;
-  }
-
-  :active {
-    opacity: 0.9;
   }
 `
 
@@ -189,30 +231,79 @@ const BalanceText = styled(Text)`
   cursor: default;
 `
 
+const LogoWrapper = styled.div`
+  position: relative;
+`
+
 const Title = styled.a`
   display: flex;
+  z-index: 5;
+  position: relative;
+  width: 300px;
+  height: 64px;
   align-items: center;
+  border-radius: 16px;
   pointer-events: auto;
   justify-self: flex-start;
-  margin-right: 12px;
   text-decoration: none;
+  background-color: #b38280;
+  border: 4px solid #9eb7cd;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     // justify-self: center;
   `};
   :hover {
     cursor: pointer;
   }
+
+  &::before,
+  &::after {
+    content: '';
+    background-image: url(${WoodenRope});
+    width: 5px;
+    height: 51px;
+    position: absolute;
+    top: -55px;
+  }
+
+  &::before {
+    left: 15%;
+  }
+
+  &::after {
+    right: 15%;
+  }
+`
+
+const TitleIce = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: RGBA(51, 182, 255, 0.5);
+  border-radius: 11px;
+`
+const TitleIcicle = styled.div`
+  background-image: url(${LogoIcicles});
+  background-repeat: no-repeat;
+  background-size: 98%;
+  width: 100%;
+  height: 106px;
+  position: absolute;
+  display: block;
+  z-index: 4;
+  top: 10px;
 `
 
 const AlgIcon = styled.div`
-  transition: transform 0.3s ease;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   & > img {
-    width: 160px;
-  }
-
-  :hover {
-    transform: scale(1.2);
+    width: calc(100% - 30px);
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
@@ -234,17 +325,17 @@ const StyledNavLink = styled(NavLink).attrs({
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
-  border-radius: 160px;
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: white;
   font-size: 1rem;
   width: fit-content;
-  font-weight: 500;
+  font-weight: 600;
   padding: 14px 20px;
   word-break: break-word;
   white-space: nowrap;
+  border-bottom: 3px solid transparent;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border-radius: 16px;
@@ -254,19 +345,16 @@ const StyledNavLink = styled(NavLink).attrs({
   `}
 
   &.${activeClassName} {
-    // border-radius: 12px;
     font-weight: 600;
-    // color: ${({ theme }) => theme.text1};
-    // background-color: ${({ theme }) => theme.bg2};
-    background-color: #0f2e40;
-    color: #48b9cd;
+    color: #ffd967;
+    border-bottom: 3px solid #ffbf00;
   }
 
   &:not(.${activeClassName}) {
     & :hover,
     &:focus {
       color: ${({ theme }) => darken(0.1, theme.text1)};
-      background-color: rgba(15, 46, 64, 0.4);
+      // background-color: rgba(15, 46, 64, 0.4);
     }
   }
 `
@@ -302,12 +390,17 @@ export default function Header() {
   }
 
   return (
-    <HeaderFrame showBackground={scrollY > 45}>
-      <Title href=".">
-        <AlgIcon>
-          <img width={'160px'} src={window.innerWidth < 501 ? Logo_logo : darkMode ? LogoDark : Logo} alt="logo" />
-        </AlgIcon>
-      </Title>
+    <HeaderFrame showBackground={false}>
+      <LogoWrapper>
+        <Title href=".">
+          <TitleIce>
+            <AlgIcon>
+              <img width={'calc(100% - 10px)'} src={window.innerWidth < 501 ? Logo_logo : WinterLogo} alt="logo" />
+            </AlgIcon>
+          </TitleIce>
+        </Title>
+        <TitleIcicle></TitleIcicle>
+      </LogoWrapper>
       <HeaderLinks>
         <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
           Swap

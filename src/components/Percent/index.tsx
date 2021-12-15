@@ -5,7 +5,7 @@ import styled from 'styled-components/macro'
 const Wrapper = styled(TYPE.main)<{ fontWeight: number; fontSize: string; negative: boolean; neutral: boolean }>`
   font-size: ${({ fontSize }) => fontSize};
   font-weight: ${({ fontWeight }) => fontWeight};
-  color: ${({ theme, negative }) => (negative ? theme.red1 : theme.green1)};
+  color: ${({ theme, negative }) => (negative ? '#FF0606' : '#33FF89')};
 `
 
 export interface LogoProps {

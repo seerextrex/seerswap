@@ -413,7 +413,7 @@ function V2PairMigration({
             <Badge
               variant={BadgeVariant.WARNING}
               style={{
-                backgroundColor: _isNotUniswap ? '#0f2e40' : '#48062b',
+                backgroundColor: 'white',
                 color: _isNotUniswap ? '#48b9cd' : '#f241a5',
               }}
             >
@@ -441,7 +441,9 @@ function V2PairMigration({
           </RowBetween>
 
           {noLiquidity && (
-            <BlueCard style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <BlueCard
+              style={{ display: 'flex', backgroundColor: '#0e3459', flexDirection: 'column', alignItems: 'center' }}
+            >
               <AlertCircle color={theme.text1} style={{ marginBottom: '12px', opacity: 0.8 }} />
               <TYPE.body fontSize={14} style={{ marginBottom: 8, fontWeight: 500, opacity: 0.8 }} textAlign="center">
                 You are the first liquidity provider for this Algebra pool. Your liquidity will migrate at the current{' '}

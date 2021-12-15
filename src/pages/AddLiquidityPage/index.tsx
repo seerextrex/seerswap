@@ -62,6 +62,9 @@ const pulsating = (color: string) => keyframes`
 const PageWrapper = styled.div`
   max-width: 900px;
   width: 100%;
+  background-color: ${({ theme }) => theme.winterBackground};
+  border-radius: 50px;
+  margin-top: 5rem;
 `
 const LiquidityWrapper = styled.div`
   display: flex;
@@ -69,7 +72,8 @@ const LiquidityWrapper = styled.div`
   width: 100%;
   background: #020018;
   padding: 2rem;
-  border-radius: 1rem;
+  border-radius: 50px;
+  background-color: ${({ theme }) => theme.winterBackground};
 `
 const TokenPair = styled.div`
   display: flex;
@@ -84,12 +88,13 @@ const TokenItem = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  background-color: rgba(60, 97, 126, 0.5);
   // height: 120px;
   ${({ noPadding }) =>
     !noPadding &&
     css`
       padding: 1rem;
-      border: 1px solid #202635;
+      // border: 1px solid #202635;
     `}
   border-radius: 1rem;
 
@@ -104,7 +109,8 @@ const TokenItem = styled.div`
   ${({ highPrice }) =>
     highPrice &&
     css`
-      border-color: #d33636;
+
+      // border-color: #d33636;
       border-radius: 1rem 1rem 0 0;
     `}
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -119,13 +125,13 @@ const MaxButton = styled.button`
   border: none;
   border-radius: 6px;
   padding: 8px 12px;
-  background: #0f2e40;
-  color: #43adc1;
+  background: ${({ theme }) => theme.winterMainButton};
+  color: white;
   font-family: Montserrat;
   font-weight: 600;
 
   &:hover {
-    background-color: ${darken(0.01, '#0f2e40')};
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
 `
 
@@ -144,7 +150,7 @@ const PoolInfoItem = styled.div`
   width: 100%;
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #202635;
+  background-color: rgba(60, 97, 126, 0.5);
 
   animation: ${({ pulse }) => pulse && pulsating('red')} 3s linear infinite;
 
@@ -178,7 +184,7 @@ const PoolInfoItemValue = styled.span`
 `
 
 const PoolInfoItemValueMetric = styled.span`
-  color: #b7b7b7;
+  color: white;
   font-size: 12px;
   line-height: 21px;
   white-space: nowrap;
@@ -190,7 +196,7 @@ const TechPaperHint = styled.div`
   display: flex;
   visibility: hidden;
   flex-direction: column;
-  background-color: #9c7edc;
+  background-color: ${({ theme }) => theme.winterBackground};
   padding: 1rem;
   border-radius: 8px;
   color: white;
@@ -220,7 +226,7 @@ const TechPaperDownloadButton = styled.a`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: #7b4ed9;
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   border: none;
   border-radius: 6px;
@@ -228,7 +234,7 @@ const TechPaperDownloadButton = styled.a`
   text-decoration: none;
 
   &:hover {
-    background-color: ${darken(0.05, '#7b4ed9')}
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)}
   }
 }
 `
@@ -240,7 +246,7 @@ const HelperCirlce = styled.span`
   border-radius: 50%;
   width: 18px;
   height: 18px;
-  background-color: #9c7edc;
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   font-size: 12px;
   cursor: pointer;
@@ -259,7 +265,6 @@ const Title = styled.div`
   font-family: Montserrat;
   font-weight: 600;
   padding: 1rem 0;
-  border-top: 1px solid #202635;
   margin-top: 1rem;
 `
 
@@ -275,8 +280,8 @@ const Warning = styled.div`
   font-weight: 500;
 `
 const Error = styled(Warning)`
-  color: #ed0f24;
-  background-color: #2a0909;
+  color: white;
+  background-color: #be4d4d;
   width: 100%;
   text-align: center;
 `
@@ -294,7 +299,7 @@ const PriceRangeChart = styled.div`
   height: 100%;
   flex: 2;
   border-radius: 6px;
-  border: 1px solid #202635;
+  background: rgba(60, 97, 126, 0.5);
 `
 const PriceRangeInputs = styled.div`
   height: 100%;
@@ -324,7 +329,7 @@ const AddLiquidityButton = styled.button`
   // width: 100%;
   padding: 8px 16px;
   height: 2.8rem;
-  background: rgb(96, 31, 179) none repeat scroll 0% 0%;
+  background: ${({ theme }) => theme.winterMainButton};
   cursor: pointer;
   color: white;
   border: medium none;
@@ -335,16 +340,16 @@ const AddLiquidityButton = styled.button`
   white-space: nowrap;
 
   &:disabled {
-    background-color: #2c1051;
-    color: #5f3794;
+    background-color: ${({ theme }) => darken(0.2, theme.winterMainButton)};
+    color: ${darken(0.35, 'white')};
     font-weight: 600;
   }
 `
 
 const FullRangeButton = styled.button`
   width: 100%;
-  background: #0f2e40;
-  color: #43adc1;
+  background: ${({ theme }) => theme.winterMainButton};
+  color: white;
   border: none;
   font-family: Montserrat;
   font-weight: 600;
@@ -352,18 +357,22 @@ const FullRangeButton = styled.button`
   padding: 7px;
 
   &:hover {
-    background-color: ${darken(0.01, '#0f2e40')};
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
 `
 
 const ApproveButton = styled.button`
-  background: #601fb3;
+  background: ${({ theme }) => theme.winterMainButton};
   padding: 10px;
   border-radius: 8px;
   border: none;
   margin: 25px auto auto;
   width: 100%;
   color: white;
+
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
 `
 
 const PairNotSelectedMock = styled.div`
@@ -952,6 +961,7 @@ export default function AddLiquidityPage({
                     <TokenPair
                       style={{
                         height: `${window.innerWidth < 500 ? '' : '145px'}`,
+                        marginBottom: '1rem',
                       }}
                     >
                       <TokenItem highPrice={false}>
@@ -1070,12 +1080,6 @@ export default function AddLiquidityPage({
                 </>
               )}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {noLiquidity && account && (
-                  <AddLiquidityMessage>
-                    <AlertCircle size={16} color={'currentColor'} />
-                    <span style={{ marginLeft: '10px' }}>Due to pool creating gas fee will be higher</span>
-                  </AddLiquidityMessage>
-                )}
                 <div
                   style={{
                     display: 'flex',

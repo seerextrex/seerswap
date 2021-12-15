@@ -37,7 +37,7 @@ const CloseIcon = styled.div`
 
 const CloseColor = styled(Close)`
   path {
-    stroke: ${({ theme }) => theme.text4};
+    stroke: ${({ theme }) => '#080064'};
   }
 `
 
@@ -69,6 +69,8 @@ const ContentWrapper = styled.div`
 
 const UpperSection = styled.div`
   position: relative;
+
+  color: #080064;
 
   h5 {
     margin: 0;

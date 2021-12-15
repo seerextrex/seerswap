@@ -22,15 +22,15 @@ function pickBackgroundColor(variant: BadgeVariant | undefined, theme: DefaultTh
     case BadgeVariant.NEGATIVE:
       return theme.error
     case BadgeVariant.POSITIVE:
-      return theme.success
+      return '#02365e'
     case BadgeVariant.PRIMARY:
-      return theme.primary1
+      return '#02365e'
     case BadgeVariant.WARNING:
       return theme.warning
     case BadgeVariant.WARNING_OUTLINE:
       return 'transparent'
     default:
-      return theme.bg2
+      return '#02365e'
   }
 }
 

@@ -315,6 +315,9 @@ const AddLiquidityMessage = styled.div`
   border-radius: 8px;
   padding: 14px 16px;
   font-size: 13px;
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    margin-bottom: 15px;
+  `}
 `
 
 const AddLiquidityButton = styled.button`
@@ -382,7 +385,9 @@ const HigherPrice = styled.div`
   left: -1px;
   text-align: center;
 `
-
+const CurrencyInputPanelStyled = styled(CurrencyInputPanel)`
+height: 40px !important;
+`
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidityPage({
@@ -806,7 +811,7 @@ export default function AddLiquidityPage({
                     <span style={{ display: 'flex' }}>
                       <PoolInfoItemValue style={{ marginTop: '-1px' }}>
                         <StyledInput
-                          style={{ textAlign: 'right', backgroundColor: 'transparent' }}
+                          style={{ textAlign: `${window.innerWidth < 501 ? 'left' : 'right'}`, backgroundColor: 'transparent' }}
                           // placeholder={}
                           className="start-price-input"
                           value={startPriceTypedValue}
@@ -973,6 +978,7 @@ export default function AddLiquidityPage({
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper}
                           shallow={true}
+                          page={'pool'}
                         />
                         <div style={{ display: 'flex' }}>
                           <div style={{ width: '100%' }}>
@@ -1025,6 +1031,7 @@ export default function AddLiquidityPage({
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
                           shallow={true}
+                          page={'pool'}
                         />
                         <div style={{ display: 'flex' }}>
                           <div style={{ width: '100%' }}>

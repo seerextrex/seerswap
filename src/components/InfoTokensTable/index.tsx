@@ -52,30 +52,6 @@ const ResponsiveGrid = styled.div`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
      grid-template-columns: 20px 2fr repeat(4, 1fr);
   `};
-
-  //@media screen and (max-width: 900px) {
-  //  grid-template-columns: 20px 1.5fr repeat(3, 1fr);
-  //  & :nth-child(4) {
-  //    display: none;
-  //  }
-  //}
-  //
-  //@media screen and (max-width: 800px) {
-  //  grid-template-columns: 20px 1.5fr repeat(2, 1fr);
-  //  & :nth-child(6) {
-  //    display: none;
-  //  }
-  //}
-
-  //@media screen and (max-width: 670px) {
-  //  grid-template-columns: repeat(2, 1fr);
-  //  > *:first-child {
-  //    display: none;
-  //  }
-  //  > *:nth-child(3) {
-  //    display: none;
-  //  }
-  //}
 `
 
 const LinkWrapper = styled.a`
@@ -92,6 +68,11 @@ const ResponsiveLogo = styled(CurrencyLogo)`
     width: 16px;
     height: 16px;
   }
+`
+const LabelTitle = styled(Label)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 93px !important;                                    
+  `};
 `
 
 export const TOKEN_HIDE = []
@@ -117,9 +98,9 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
           <HideExtraSmall style={{ marginLeft: '10px' }}>
             <RowFixed>
               <HoverInlineText text={tokenData.name} />
-              <Label ml="8px" color={theme.text3}>
+              <LabelTitle ml="8px" color={theme.text3}>
                 ({tokenData.symbol})
-              </Label>
+              </LabelTitle>
             </RowFixed>
           </HideExtraSmall>
           <div style={{ marginLeft: '8px' }}>
@@ -127,18 +108,18 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
           </div>
         </LinkWrapper>
       </Label>
-      <Label end={1} fontWeight={400}>
+      <LabelTitle end={1} fontWeight={400}>
         {formatDollarAmount(tokenData.priceUSD)}
-      </Label>
-      <Label end={1} fontWeight={400}>
+      </LabelTitle>
+      <LabelTitle end={1} fontWeight={400}>
         <Percent value={tokenData.priceUSDChange} fontWeight={400} />
-      </Label>
-      <Label end={1} fontWeight={400}>
+      </LabelTitle>
+      <LabelTitle end={1} fontWeight={400}>
         {formatDollarAmount(tokenData.volumeUSD)}
-      </Label>
-      <Label end={1} fontWeight={400}>
+      </LabelTitle>
+      <LabelTitle end={1} fontWeight={400}>
         {formatDollarAmount(tokenData.tvlUSD)}
-      </Label>
+      </LabelTitle>
     </ResponsiveGrid>
   )
 }

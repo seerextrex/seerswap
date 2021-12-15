@@ -38,7 +38,7 @@ export abstract class SelfPermit {
   public static INTERFACE: Interface = new Interface(abi)
 
   protected constructor() {
-    console.log()
+    // console.log()
   }
 
   protected static encodePermit(token: Token, options: PermitOptions) {

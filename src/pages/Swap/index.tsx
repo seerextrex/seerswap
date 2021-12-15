@@ -257,8 +257,6 @@ export default function Swap({ history }: RouteComponentProps) {
     signatureData
   )
 
-
-
   const [singleHopOnly] = useUserSingleHopOnly()
 
   const handleSwap = useCallback(() => {
@@ -639,14 +637,14 @@ export default function Swap({ history }: RouteComponentProps) {
                           (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
                           priceImpactTooHigh ||
                           priceImpactSeverity
-                            ? '#8a255a'
+                            ? 'rgb(195, 197, 203)'
                             : 'white',
                         border:
                           !isValid ||
                           (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
                           priceImpactTooHigh ||
                           priceImpactSeverity
-                            ? '1px solid #2d1421'
+                            ? '1px solid #073c66'
                             : `1px solid ${({ theme }) => theme.winterMainButton}`,
                       }}
                       width="100%"

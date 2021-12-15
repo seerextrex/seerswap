@@ -25,8 +25,8 @@ import { Edit } from 'react-feather'
 import useDebounce from 'hooks/useDebounce'
 
 import ReactGA from 'react-ga'
-import getTokenList from "../../utils/getTokenList";
-import {useFetchListCallback} from "../../hooks/useFetchListCallback";
+// import getTokenList from "../../utils/getTokenList";
+// import {useFetchListCallback} from "../../hooks/useFetchListCallback";
 
 const ContentWrapper = styled(Column)`
   width: 100%;

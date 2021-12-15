@@ -401,7 +401,7 @@ export default function Swap({ history }: RouteComponentProps) {
           />
 
           <AutoColumn gap={'md'}>
-            <div style={{ padding: '5px', backgroundColor: 'rgba(50,50,50,0.6)', borderRadius: '14px' }}>
+            <div style={{ padding: '5px', backgroundColor: 'rgba(60,97,126,0.5)', borderRadius: '14px' }}>
               <CurrencyInputPanel
                 label={
                   independentField === Field.OUTPUT && !showWrap ? <Trans>From (at most)</Trans> : <Trans>From</Trans>

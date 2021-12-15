@@ -5,9 +5,10 @@ export const ToggleWrapper = styled.button<{ width?: string }>`
   align-items: center;
   width: ${({ width }) => width ?? '100%'};
   padding: 1px;
-  background: ${({ theme }) => theme.bg1};
+  background: ${({ theme }) => '#2f567b'};
   border-radius: 8px;
-  border: ${({ theme }) => '1px solid ' + theme.bg2};
+  // border: ${({ theme }) => '1px solid ' + theme.bg2};
+  border: none;
   cursor: pointer;
   outline: none;
 `
@@ -20,8 +21,9 @@ export const ToggleElement = styled.span<{ isActive?: boolean; fontSize?: string
   border-radius: 6px;
   justify-content: center;
   height: 100%;
-  background: ${({ theme, isActive }) => (isActive ? theme.bg0 : 'none')};
-  color: ${({ theme, isActive }) => (isActive ? theme.text1 : theme.text3)};
+  background: ${({ theme, isActive }) => (isActive ? theme.winterMainButton : 'none')};
+  // color: ${({ theme, isActive }) => (isActive ? theme.text1 : theme.text3)};
+  color: white;
   font-size: ${({ fontSize }) => fontSize ?? '1rem'};
   font-weight: 500;
   white-space: nowrap;

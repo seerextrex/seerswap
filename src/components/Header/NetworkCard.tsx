@@ -195,7 +195,7 @@ export default function NetworkCard() {
       <div
         style={{
           padding: '8px 12px',
-          backgroundColor: '#0d0a25',
+          backgroundColor: 'rgba(158, 183, 205, 0.7)',
           borderRadius: '6px',
           marginRight: '10px',
           display: 'flex',

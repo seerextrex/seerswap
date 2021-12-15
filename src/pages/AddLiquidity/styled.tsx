@@ -5,11 +5,12 @@ import Input from 'components/NumericalInput'
 import { BodyWrapper } from 'pages/AppBody'
 
 export const PageWrapper = styled(BodyWrapper)<{ wide: boolean }>`
-  max-width: ${({ wide }) => (wide ? '880px' : '480px')};
+  max-width: ${({ wide }) => (wide ? '880px' : '880px')};
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: ${({ theme }) => theme.winterBackground}
 
   padding: ${({ wide }) => (wide ? '30px 40px' : '0')};
+  margin-top: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     max-width: 480px;
@@ -71,7 +72,7 @@ export const ResponsiveTwoColumns = styled.div<{ wide: boolean }>`
 
   padding-top: 20px;
 
-  border-top: 1px solid ${({ theme }) => theme.bg2};
+  // border-top: 1px solid ${({ theme }) => theme.bg2};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;

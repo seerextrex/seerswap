@@ -35,8 +35,7 @@ const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   align-items: center;
-  padding: 0.5rem;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   user-select: none;
   :focus {
@@ -63,7 +62,7 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
 
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
+    // border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
     color: ${({ theme }) => theme.primaryText1};
   }
 
@@ -71,12 +70,12 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
     faded &&
     css`
       background-color: ${({ theme }) => theme.primary5};
-      border: 1px solid ${({ theme }) => theme.primary5};
+      // border: 1px solid ${({ theme }) => theme.primary5};
       color: ${({ theme }) => theme.primaryText1};
 
       :hover,
       :focus {
-        border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
+        // border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
         color: ${({ theme }) => darken(0.05, theme.primaryText1)};
       }
     `}
@@ -84,15 +83,15 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg0)};
-  border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg1)};
+  // border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg1)};
   color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
   font-weight: 500;
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.bg3)};
+    // border: 1px solid ${({ theme }) => darken(0.05, theme.bg3)};
 
     :focus {
-      border: 1px solid ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : darken(0.1, theme.bg2))};
+      // border: 1px solid ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : darken(0.1, theme.bg2))};
     }
   }
 `
@@ -160,7 +159,7 @@ function Web3StatusInner() {
     return (
       <Web3StatusConnected
         id="web3-status-connected"
-        style={{ background: '#0f1940', color: 'white' }}
+        style={{ background: 'transparent', color: 'white', border: 'none' }}
         onClick={toggleWalletModal}
         pending={hasPendingTransactions}
       >
@@ -195,6 +194,7 @@ function Web3StatusInner() {
           border: `1px solid ${theme.winterMainButton}`,
           backgroundColor: theme.winterMainButton,
           color: 'white',
+          padding: '10px 36px',
         }}
         onClick={toggleWalletModal}
         faded={!account}

@@ -124,7 +124,7 @@ export function AddRemoveTabs({
 
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+      <RowBetween style={{ padding: '1rem 40px 0 40px' }}>
         <StyledHistoryLink
           to={poolLink}
           onClick={() => {
@@ -136,12 +136,12 @@ export function AddRemoveTabs({
           }}
           flex={children ? '1' : undefined}
         >
-          <StyledArrowLeft stroke={theme.text2} />
+          <StyledArrowLeft stroke={'white'} />
         </StyledHistoryLink>
         <TYPE.mediumHeader
           fontWeight={500}
           fontSize={20}
-          style={{ flex: '1', margin: 'auto', textAlign: children ? 'start' : 'center' }}
+          style={{ flex: '1', padding: '1rem 40px 0 40px', margin: 'auto', textAlign: children ? 'start' : 'center' }}
         >
           {creating ? (
             <Trans>Create a pair</Trans>

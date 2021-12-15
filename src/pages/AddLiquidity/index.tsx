@@ -429,7 +429,10 @@ export default function AddLiquidity({
                 <DynamicSection
                   disabled={tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange}
                 >
-                  <AutoColumn gap="md">
+                  <AutoColumn
+                    style={{ background: '#2f567b', padding: '1rem', borderRadius: '1rem', zIndex: '5' }}
+                    gap="md"
+                  >
                     <TYPE.label>
                       {hasExistingPosition ? <Trans>Add more liquidity</Trans> : <Trans>Deposit Amounts</Trans>}
                     </TYPE.label>

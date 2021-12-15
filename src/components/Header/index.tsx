@@ -9,6 +9,7 @@ import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import styled, { keyframes } from 'styled-components/macro'
 import Logo from '../../assets/svg/logo.svg'
+import WinterLogo from '../../assets/images/winter-logo.png'
 import LogoDark from '../../assets/svg/logo_white.svg'
 import Logo_logo from '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
@@ -75,6 +76,7 @@ const HeaderControls = styled.div`
   position: relative;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   justify-self: flex-end;
   background-color: #b38280;
   border: 4px solid #713937;
@@ -129,7 +131,7 @@ const HeaderLinks = styled(Row)`
   background-repeat: repeat;
   background-size: 27px 40px;
   width: fit-content;
-  padding: 4px;
+  padding: 0 16px;
   border-radius: 16px;
   display: grid;
   grid-auto-flow: column;
@@ -211,37 +213,14 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg1)};
-  border-radius: 12px;
+  background-color: rgba(158, 183, 205, 0.72);
+  border-radius: 8px;
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
 
   :focus {
     border: 1px solid blue;
-  }
-`
-
-const UNIAmount = styled(AccountElement)`
-  color: white;
-  padding: 4px 8px;
-  height: 36px;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
-`
-
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.8;
-  }
-
-  :active {
-    opacity: 0.9;
   }
 `
 
@@ -268,7 +247,7 @@ const Title = styled.a`
   justify-self: flex-start;
   text-decoration: none;
   background-color: #b38280;
-  border: 4px solid #9EB7CD;
+  border: 4px solid #9eb7cd;
   background-image: url(${WoodenSlob});
   background-repeat: repeat;
   background-size: 27px 40px;
@@ -301,32 +280,30 @@ const Title = styled.a`
 const TitleIce = styled.div`
   width: 100%;
   height: 100%;
-  background-color: RGBA(51, 182, 255,0.5);
+  background-color: RGBA(51, 182, 255, 0.5);
   border-radius: 11px;
-
 `
 const TitleIcicle = styled.div`
-background-image: url(${LogoIcicles});
-background-repeat: no-repeat;
-background-size: 98%;
-width: 100%;
-height: 106px;
-position: absolute;
-display: block;
-z-index: 4;
-top: 10px;
+  background-image: url(${LogoIcicles});
+  background-repeat: no-repeat;
+  background-size: 98%;
+  width: 100%;
+  height: 106px;
+  position: absolute;
+  display: block;
+  z-index: 4;
+  top: 10px;
 `
 
 const AlgIcon = styled.div`
-
-height: 100%;
-width: 100%;
-display: flex;
-align-items: center;
-justify-content: center;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   & > img {
-    width: 160px;
+    width: calc(100% - 30px);
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
@@ -348,17 +325,17 @@ const StyledNavLink = styled(NavLink).attrs({
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
-  border-radius: 160px;
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: white;
   font-size: 1rem;
   width: fit-content;
-  font-weight: 500;
+  font-weight: 600;
   padding: 14px 20px;
   word-break: break-word;
   white-space: nowrap;
+  border-bottom: 3px solid transparent;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border-radius: 16px;
@@ -368,12 +345,9 @@ const StyledNavLink = styled(NavLink).attrs({
   `}
 
   &.${activeClassName} {
-    // border-radius: 12px;
     font-weight: 600;
-    // color: ${({ theme }) => theme.text1};
-    // background-color: ${({ theme }) => theme.bg2};
-    // background-color: #0f2e40;
-    color: #48b9cd;
+    color: #ffd967;
+    border-bottom: 3px solid #ffbf00;
   }
 
   &:not(.${activeClassName}) {
@@ -416,15 +390,15 @@ export default function Header() {
   }
 
   return (
-    <HeaderFrame showBackground={scrollY > 45}>
+    <HeaderFrame showBackground={false}>
       <LogoWrapper>
-      <Title href=".">
-        <TitleIce>
-          <AlgIcon>
-            <img width={'160px'} src={window.innerWidth < 501 ? Logo_logo : darkMode ? LogoDark : Logo} alt="logo" />
-          </AlgIcon>
-        </TitleIce>
-      </Title>
+        <Title href=".">
+          <TitleIce>
+            <AlgIcon>
+              <img width={'calc(100% - 10px)'} src={window.innerWidth < 501 ? Logo_logo : WinterLogo} alt="logo" />
+            </AlgIcon>
+          </TitleIce>
+        </Title>
         <TitleIcicle></TitleIcicle>
       </LogoWrapper>
       <HeaderLinks>

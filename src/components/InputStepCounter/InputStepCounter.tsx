@@ -37,11 +37,11 @@ const SmallButton = styled(ButtonGray)`
 `
 
 const FocusedOutlineCard = styled(OutlineCard)<{ active?: boolean; pulsing?: boolean }>`
-  background-color: unset;
+  background-color: rgba(60, 97, 126, 0.5);
   position: relative;
   padding: 1rem;
   border-radius: 10px;
-  border: 1px solid #202635;
+  // border: 1px solid #202635;
   margin-bottom: ${({ initial }) => (initial ? '' : '1rem')};
 
   &:first-of-type {
@@ -66,7 +66,8 @@ const StyledInput = styled(NumericalInput)<{ usePercent?: boolean }>`
 `
 
 const InputTitle = styled(TYPE.small)`
-  color: ${({ theme }) => theme.text2};
+  // color: ${({ theme }) => theme.text2};
+  color: white;
   font-size: 12px;
   font-weight: 600;
   font-family: Montserrat;

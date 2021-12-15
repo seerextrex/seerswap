@@ -18,9 +18,12 @@ import { PositionDetails } from 'types/position'
 import { LoadingRows } from './styleds'
 import { Helmet } from 'react-helmet'
 import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
+import { darken } from 'polished'
+import Loader from '../../components/Loader'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 870px;
+  margin: auto;
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -71,21 +74,19 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
 `
 
 const MigrateButtonPrimary = styled(ResponsiveButtonPrimary)`
-  background-color: transparent;
-  border: 1px solid #36f;
   margin-right: 1rem;
   &:hover {
-    background-color: #040f31;
+    // background-color: ${({ theme }) => darken('0.2', theme.winterMainButton)};
   }
 `
 
 const MainContentWrapper = styled.main`
-  // background-color: ${({ theme }) => theme.bg0};
-  background-color: rgba(0, 0, 0, 0.6);
   padding: 30px 40px;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
+  color: white;
+  padding-top: 0;
 `
 
 const ShowInactiveToggle = styled.div`
@@ -148,19 +149,24 @@ export default function Pool() {
       </Helmet>
       <PageWrapper>
         <SwapPoolTabs active={'pool'} />
-        <AutoColumn gap="lg" justify="center">
+        <AutoColumn gap="lg" justify="center" style={{ backgroundColor: theme.winterBackground, borderRadius: '50px' }}>
           <AutoColumn gap="lg" style={{ width: '100%' }}>
-            <TitleRow style={{ marginTop: '1rem' }} padding={'0'}>
+            <TitleRow style={{ marginTop: '1rem', padding: '1rem 40px' }} padding={'0'}>
               <TYPE.body fontSize={'20px'}>
                 <Trans>Pools Overview</Trans>
               </TYPE.body>
               <ButtonRow>
-                <MigrateButtonPrimary id="join-pool-button" as={Link} style={{ color: '#36f' }} to={`/migrate`}>
+                <MigrateButtonPrimary
+                  id="join-pool-button"
+                  as={Link}
+                  style={{ color: theme.winterMainButton, color: 'white' }}
+                  to={`/migrate`}
+                >
                   <Trans>Migrate Pool</Trans>
                 </MigrateButtonPrimary>
                 <ResponsiveButtonPrimary
                   id="join-pool-button"
-                  style={{ background: '#0f2e40', color: '#4cc1d5' }}
+                  style={{ background: theme.winterMainButton, color: 'white' }}
                   as={Link}
                   to={`/add/${chainSymbol}`}
                 >
@@ -170,25 +176,26 @@ export default function Pool() {
             </TitleRow>
             <MainContentWrapper>
               {positionsLoading ? (
-                <LoadingRows>
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                </LoadingRows>
+                // <LoadingRows>
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                // </LoadingRows>
+                <Loader style={{ margin: 'auto' }} stroke="white" size={'30px'} />
               ) : _filteredPositions && _filteredPositions.length > 0 ? (
                 <PositionList positions={_filteredPositions} />
               ) : (
                 <NoLiquidity>
-                  <TYPE.body color={theme.text3} textAlign="center">
+                  <TYPE.body color={'white'} textAlign="center">
                     {/* <Inbox size={48} strokeWidth={1} style={{ marginBottom: '.5rem' }} /> */}
                     <div>
                       <Trans>You do not have any liquidity positions.</Trans>

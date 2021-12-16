@@ -49,9 +49,14 @@ const ButtonRow = styled(RowFixed)`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
-    flex-direction: row-reverse;
+    flex-direction: column-reverse;
+
+    & > *:not(:last-child) {
+      margin-left: 0;
+      margin-top: 1rem;
+    }
   `};
 `
 const NoLiquidity = styled.div`
@@ -70,6 +75,7 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
     width: 100%;
+    margin: 0;
   `};
 `
 
@@ -78,6 +84,10 @@ const MigrateButtonPrimary = styled(ResponsiveButtonPrimary)`
   &:hover {
     // background-color: ${({ theme }) => darken('0.2', theme.winterMainButton)};
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0;
+  `}
 `
 
 const MainContentWrapper = styled.main`
@@ -149,7 +159,7 @@ export default function Pool() {
       </Helmet>
       <PageWrapper>
         <SwapPoolTabs active={'pool'} />
-        <AutoColumn gap="lg" justify="center" style={{ backgroundColor: theme.winterBackground, borderRadius: '50px' }}>
+        <AutoColumn gap="lg" justify="center" style={{ backgroundColor: theme.winterBackground, borderRadius: '20px' }}>
           <AutoColumn gap="lg" style={{ width: '100%' }}>
             <TitleRow style={{ marginTop: '1rem', padding: '1rem 40px' }} padding={'0'}>
               <TYPE.body fontSize={'20px'}>

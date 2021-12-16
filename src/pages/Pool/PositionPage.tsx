@@ -53,7 +53,7 @@ const PageWrapper = styled.div`
   min-width: 800px;
   max-width: 960px;
   background-color: ${({ theme }) => theme.winterBackground};
-  border-radius: 50px;
+  border-radius: 20px;
   padding: 30px 40px;
   margin-top: 5rem;
 
@@ -65,12 +65,8 @@ const PageWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 600px;
     max-width: 600px;
+    margin-top: 1rem;
   `};
-
-  @media only screen and (max-width: 620px) {
-    min-width: 500px;
-    max-width: 500px;
-  }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     min-width: 340px;
@@ -153,6 +149,43 @@ const RowFixedStyled = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   width: 100%;
 `}
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+
+    & > * {
+      margin-bottom: 1rem;
+    }
+  `}
+`
+
+const FeeBadge = styled(Badge)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      margin-right: 0;
+      margin-top: 1rem;
+    `}
+`
+
+const PriceRow = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      flex-direction: column;
+    `}
+`
+
+const LoadingMock = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.winterBackground};
+  height: 400px;
+  width: 500px;
+  border-radius: 20px;
+  margin-top: 5rem;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: 100%;
+  margin-top: 1rem;
+  `}
 `
 
 function CurrentPriceCard({
@@ -582,20 +615,9 @@ export function PositionPage({
   )
 
   return loading || _poolState === PoolState.LOADING ? (
-    <LoadingRows>
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-    </LoadingRows>
+    <LoadingMock>
+      <Loader stroke={'white'} size={'30px'} />
+    </LoadingMock>
   ) : (
     <>
       <PageWrapper>
@@ -626,11 +648,11 @@ export function PositionPage({
                 <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
                 </TYPE.label>
-                <Badge style={{ marginRight: '8px' }}>
+                <FeeBadge style={{ marginRight: '8px' }}>
                   <BadgeText>
                     <Trans>{new Percent(existingPosition?.pool?.fee || 500, 1_000_000).toSignificant()}%</Trans>
                   </BadgeText>
-                </Badge>
+                </FeeBadge>
                 <RangeBadge removed={removed} inRange={inRange} />
               </RowFixedStyled>
               {ownsNFT && (
@@ -849,7 +871,7 @@ export function PositionPage({
                 </RowFixed>
               </RowBetween>
 
-              <RowBetween>
+              <PriceRow>
                 <LightCard padding="12px" width="100%">
                   <AutoColumn gap="8px" justify="center">
                     <ExtentsText>
@@ -896,7 +918,7 @@ export function PositionPage({
                     )}
                   </AutoColumn>
                 </LightCard>
-              </RowBetween>
+              </PriceRow>
               <CurrentPriceCard
                 inverted={inverted}
                 pool={_pool}

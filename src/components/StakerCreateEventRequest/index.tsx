@@ -25,7 +25,7 @@ export default function StakerCreateEventRequest() {
     <Wrapper>
       <Clipboard color={'white'} size={'35px'} />
       <div style={{ maxWidth: '500px' }}>
-        <div style={{ margin: '2rem 0' }}>Please sign the form to request your Event</div>
+        <div style={{ margin: '2rem 0', textAlign: 'center' }}>Please sign the form to request your Event</div>
         <div>
           <RequestButton
             target="_blank"

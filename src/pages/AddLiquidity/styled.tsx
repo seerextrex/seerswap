@@ -38,6 +38,7 @@ export const ScrollablePage = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  border-radius: 20px;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     max-width: 480px;
     margin: 0 auto;

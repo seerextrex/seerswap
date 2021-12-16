@@ -26,6 +26,8 @@ import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import LogoIcicles from '../../assets/svg/logo-icicles.svg'
 
+import { isMobile } from 'react-device-detect'
+
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
   grid-template-columns: 120px 1fr 120px;
@@ -78,14 +80,16 @@ const HeaderControls = styled.div`
   align-items: center;
   justify-content: center;
   justify-self: flex-end;
-  background-color: #b38280;
-  border: 4px solid #713937;
-  background-image: url(${WoodenSlob});
   background-repeat: repeat;
   background-size: 27px 40px;
   width: 440px;
   height: 64px;
   border-radius: 16px;
+
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+
   &::before,
   &::after {
     content: '';
@@ -103,6 +107,10 @@ const HeaderControls = styled.div`
   &::after {
     right: 15%;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 0 1rem;
+  `}
 `
 
 const HeaderElement = styled.div`
@@ -124,7 +132,6 @@ const HeaderLinks = styled(Row)`
   transform: translateX(-50%);
   left: 50%;
   justify-self: center;
-  // background-color: ${({ theme }) => theme.bg0};
   background-color: #b38280;
   border: 4px solid #713937;
   background-image: url(${WoodenSlob});
@@ -151,11 +158,7 @@ const HeaderLinks = styled(Row)`
     z-index: 99;
     position: fixed;
     bottom: 1rem;
-    // transform: translate(-50%);
     margin: 0 auto;
-    // background-color: ${({ theme }) => theme.bg0};
-    // border: 1px solid ${({ theme }) => theme.bg2};
-    // box-shadow: 0px 6px 10px rgb(0 0 0 / 2%);
   `};
 
   &::before,
@@ -176,37 +179,44 @@ const HeaderLinks = styled(Row)`
     right: 15%;
   }
 
-  // animation-name: ${swingAnimation};
-  // animation-duration: 5s;
-  // animation-iteration-count: infinite;
-  // animation-timing-function: ease-in-out;
-  // animation-direction: alternate;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    overflow: auto;
+    width: calc(100% - 1rem);
+    margin-right: -1rem;
+    &::before, &::after {
+      display: none;
+    }
 
-  @media (max-width: 1366px) {
-    grid-auto-flow: unset;
-    left: 65px;
-    top: 100px;
-  }
+  `} // @media (max-width: 1366px) {
+  //   grid-auto-flow: unset;
+  //   left: 65px;
+  //   top: 100px;
+  // }
 
-  @media (max-width: 1144px) {
-    grid-auto-flow: column;
-    transform: translateX(-50%);
-    left: 50%;
-    background-color: black;
-    bottom: 1rem;
-    flex-direction: row;
-    justify-content: space-between;
-    justify-self: center;
-    z-index: 99;
-    position: fixed;
-    top: unset;
-  }
+  // @media (max-width: 1144px) {
+  //   grid-auto-flow: column;
+  //   transform: translateX(-50%);
+  //   left: 50%;
+  //   bottom: 1rem;
+  //   flex-direction: row;
+  //   justify-content: space-between;
+  //   justify-self: center;
+  //   z-index: 99;
+  //   position: fixed;
+  //   top: unset;
+  // }
 
-  @media (max-width: 500px) {
-    display: flex;
-    max-width: 100%;
-    //margin-left: 10px;
-  }
+  // @media (max-width: 500px) {
+  //   display: flex;
+  //   max-width: 100%;
+  // }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+
+  &::before,
+&::after {
+  display: none;
+}
+`}
 `
 
 const AccountElement = styled.div<{ active: boolean }>`
@@ -222,12 +232,13 @@ const AccountElement = styled.div<{ active: boolean }>`
   :focus {
     border: 1px solid blue;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: 14px;
+  `}
 `
 
 const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
   cursor: default;
 `
 
@@ -251,9 +262,6 @@ const Title = styled.a`
   background-image: url(${WoodenSlob});
   background-repeat: repeat;
   background-size: 27px 40px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    // justify-self: center;
-  `};
   :hover {
     cursor: pointer;
   }
@@ -275,6 +283,16 @@ const Title = styled.a`
   &::after {
     right: 15%;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100px;
+    margin-right: 10px;
+
+    &::before,
+  &::after {
+    display: none;
+  }
+  `}
 `
 
 const TitleIce = styled.div`
@@ -293,6 +311,10 @@ const TitleIcicle = styled.div`
   display: block;
   z-index: 4;
   top: 10px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `}
 `
 
 const AlgIcon = styled.div`
@@ -338,7 +360,7 @@ const StyledNavLink = styled(NavLink).attrs({
   border-bottom: 3px solid transparent;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    border-radius: 16px;
+    // border-radius: 16px;
   `}
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 14px 15px;
@@ -429,7 +451,7 @@ export default function Header() {
         </StyledNavLink>
       </HeaderLinks>
 
-      <HeaderControls>
+      <HeaderControls account={!!account}>
         <NetworkCard />
         <HeaderElement>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
@@ -442,7 +464,7 @@ export default function Header() {
                 pr="0.5rem"
                 fontWeight={500}
               >
-                {_userEthBalance?.toSignificant(3)} {chainValue}
+                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
               </BalanceText>
             ) : null}
             <Web3Status />

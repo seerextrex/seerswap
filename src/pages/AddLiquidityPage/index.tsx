@@ -63,7 +63,7 @@ const PageWrapper = styled.div`
   max-width: 900px;
   width: 100%;
   background-color: ${({ theme }) => theme.winterBackground};
-  border-radius: 50px;
+  border-radius: 20px;
   margin-top: 5rem;
 `
 const LiquidityWrapper = styled.div`
@@ -72,7 +72,7 @@ const LiquidityWrapper = styled.div`
   width: 100%;
   background: #020018;
   padding: 2rem;
-  border-radius: 50px;
+  border-radius: 20px;
   background-color: ${({ theme }) => theme.winterBackground};
 `
 const TokenPair = styled.div`
@@ -109,7 +109,6 @@ const TokenItem = styled.div`
   ${({ highPrice }) =>
     highPrice &&
     css`
-
       // border-color: #d33636;
       border-radius: 1rem 1rem 0 0;
     `}
@@ -278,6 +277,10 @@ const Warning = styled.div`
   color: #e55d47;
   border-radius: 6px;
   font-weight: 500;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    top: -1rem;
+  `}
 `
 const Error = styled(Warning)`
   color: white;
@@ -320,7 +323,7 @@ const AddLiquidityMessage = styled.div`
   border-radius: 8px;
   padding: 14px 16px;
   font-size: 13px;
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin-bottom: 15px;
   `}
 `
@@ -395,7 +398,7 @@ const HigherPrice = styled.div`
   text-align: center;
 `
 const CurrencyInputPanelStyled = styled(CurrencyInputPanel)`
-height: 40px !important;
+  height: 40px !important;
 `
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
@@ -820,7 +823,10 @@ export default function AddLiquidityPage({
                     <span style={{ display: 'flex' }}>
                       <PoolInfoItemValue style={{ marginTop: '-1px' }}>
                         <StyledInput
-                          style={{ textAlign: `${window.innerWidth < 501 ? 'left' : 'right'}`, backgroundColor: 'transparent' }}
+                          style={{
+                            textAlign: `${window.innerWidth < 501 ? 'left' : 'right'}`,
+                            backgroundColor: 'transparent',
+                          }}
                           // placeholder={}
                           className="start-price-input"
                           value={startPriceTypedValue}
@@ -847,27 +853,6 @@ export default function AddLiquidityPage({
                       {outOfRange && (
                         <Warning>
                           <span>Warning: Price is out of range</span>
-                          <span>
-                            <HelperCirlce style={{ marginLeft: '10px', backgroundColor: '#af461c' }}>
-                              <span style={{ userSelect: 'none' }}>?</span>
-                              <TechPaperHint>
-                                <TechPaperHintTitle>
-                                  <span style={{ fontSize: '16px', fontWeight: 600 }}>📄 Tech paper</span>
-                                </TechPaperHintTitle>
-                                <div style={{ fontSize: '14px', lineHeight: '18px', marginTop: '10px' }}>
-                                  Check out how dynamic fee is calculated
-                                </div>
-                                <div style={{ marginTop: '10px', width: '100%' }}>
-                                  <TechPaperDownloadButton download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
-                                    <span>
-                                      <Download size={16} color={'white'} />
-                                    </span>
-                                    <span style={{ marginLeft: '10px' }}>Download .PDF</span>
-                                  </TechPaperDownloadButton>
-                                </div>
-                              </TechPaperHint>
-                            </HelperCirlce>
-                          </span>
                         </Warning>
                       )}
                       {invalidRange && <Error>Error: The Min price must be lower than the Max price</Error>}

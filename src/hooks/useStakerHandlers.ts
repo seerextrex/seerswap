@@ -56,7 +56,9 @@ export function useStakerHandlers() {
 
         } catch (err) {
             setClaimReward({ error: err })
-            throw new Error('Claiming rewards ' + err)
+            if (err.code !== 4001) {
+                throw new Error('Claiming rewards ' + err.message)
+            }
         }
 
     }, [account, chainId])
@@ -89,7 +91,9 @@ export function useStakerHandlers() {
             }
         } catch (err) {
             setGetRewards('failed')
-            throw new Error('Getting rewards ' + err)
+            if (err.code !== 4001) {
+                throw new Error('Getting rewards ' + err.message)
+            }
         }
 
     }, [account, chainId])
@@ -126,7 +130,9 @@ export function useStakerHandlers() {
             }
         } catch (err) {
             setWithdrawn('failed')
-            throw new Error('Withdrawing ' + err)
+            if (err.code !== 4001) {
+                throw new Error('Withdrawing ' + err)
+            }
         }
 
     }, [account, chainId])
@@ -161,9 +167,11 @@ export function useStakerHandlers() {
 
                 setStaked({ hash: result.hash, id: selectedNFT.tokenId })
             }
-        } catch (e) {
+        } catch (err) {
             setStaked('failed')
-            throw new Error('Staking ' + current + " " + e)
+            if (err.code !== 4001) {
+                throw new Error('Staking ' + current + " " + err.message)
+            }
         }
 
     }, [account, chainId])
@@ -201,9 +209,11 @@ export function useStakerHandlers() {
 
             }
 
-        } catch (e) {
+        } catch (err) {
             setTransfered('failed')
-            throw new Error('Staking ' + current + " " + e)
+            if (err.code !== 4001) {
+                throw new Error('Staking ' + current + " " + err.message)
+            }
         }
 
     }, [account, chainId])
@@ -240,9 +250,11 @@ export function useStakerHandlers() {
 
             }
 
-        } catch (e) {
+        } catch (err) {
             setApproved('failed')
-            throw new Error('Approving NFT ' + current + " " + e)
+            if (err.code !== 4001) {
+                throw new Error('Approving NFT ' + current + " " + err.message)
+            }
         }
 
     }, [account, chainId])
@@ -283,9 +295,11 @@ export function useStakerHandlers() {
 
             setSendNFTL2({ hash: result.hash, id: l2TokenId })
 
-        } catch (e) {
+        } catch (err) {
             setSendNFTL2('failed')
-            throw new Error('Send NFT L2 ' + e)
+            if (err.code !== 4001) {
+                throw new Error('Send NFT L2 ' + err.message)
+            }
         }
 
     }, [account, chainId])

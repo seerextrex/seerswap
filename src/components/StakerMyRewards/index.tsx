@@ -72,11 +72,11 @@ const Reward = styled.div`
   position: relative;
   padding: 8px 16px;
   border-radius: 16px;
-  border: 1px solid #202635;
+  border: 1px solid rgba(60, 97, 126, 0.5);
   font-family: Montserrat;
   width: calc(33% - 4px);
   height: 55px;
-  background: #202635;
+  background: rgba(60, 97, 126, 0.5);
 
   & > * {
     &:not(${LoadingShim}) {
@@ -90,6 +90,9 @@ const Reward = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
      width: 100%;
      margin-bottom: 20px;
+     &:not(:nth-of-type(3n)) {
+      margin-right: 0;
+    }
   `}
 
   ${({ skeleton }) =>
@@ -138,7 +141,7 @@ const RewardTokenInfo = styled.div`
 const RewardClaimButton = styled.button`
   border: none;
   border-radius: 8px;
-  background-color: #4829bb;
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   margin: 0 0 0 auto;
   padding: 8px 12px;
@@ -310,10 +313,10 @@ export function StakerMyRewards({
                   {rew.rewardAddress.toLowerCase() in specialTokens ? (
                     <RewardTokenIcon logo={specialTokens[rew.rewardAddress].logo}></RewardTokenIcon>
                   ) : (
-                    <RewardTokenIcon name={rew.symbol}>{rew.symbol.slice(0,2)}</RewardTokenIcon>
+                    <RewardTokenIcon name={rew.symbol}>{rew.symbol.slice(0, 2)}</RewardTokenIcon>
                   )}
                   <RewardTokenInfo>
-                    <div title={rew.amount}>{window.innerWidth < 501 ? rew.amount : formatReward(rew.amount)}</div>
+                    <div title={rew.amount}>{formatReward(rew.amount)}</div>
                     <div title={rew.symbol}>{rew.symbol}</div>
                   </RewardTokenInfo>
                   {isLoading(rew.rewardAddress) ? (

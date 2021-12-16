@@ -56,7 +56,9 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: Sta
         })
         .catch((error: any) => {
           setAttempting(false)
-          throw new Error('Claiming reward ' + error)
+          if (err.code !== 4001) {
+            throw new Error('Claiming reward ' + error.message)
+          }
         })
     }
   }

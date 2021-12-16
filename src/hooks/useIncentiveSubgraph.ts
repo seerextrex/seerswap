@@ -172,8 +172,8 @@ export function useIncentiveSubgraph() {
             setRewardsResult(newRewards)
 
         } catch (err) {
-            throw new Error('Reward fetching ' + err)
             setRewardsResult('failed')
+            throw new Error('Reward fetching ' + err.message)
         }
 
         setRewardsLoading(false)

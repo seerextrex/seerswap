@@ -24,6 +24,7 @@ const TransactionStatusText = styled.span`
   font-size: 0.825rem;
   ${({ theme }) => theme.flexRowNoWrap};
   align-items: center;
+  color: #080064;
 `
 
 export default function CopyHelper(props: { toCopy: string; children?: React.ReactNode }) {

@@ -38,7 +38,6 @@ const LinkRow = styled(Link)`
   padding: 16px;
   text-decoration: none;
   font-weight: 500;
-  // background-color: ${({ theme }) => theme.bg1};
   background-color: rgba(60, 97, 126, 0.5);
 
   &:last-of-type {
@@ -48,25 +47,24 @@ const LinkRow = styled(Link)`
     text-align: center;
   }
 
-  @media screen and (min-width: ${MEDIA_WIDTHS.upToSmall}px) {
-    /* flex-direction: row; */
-  }
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     row-gap: 12px;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 0;
+    padding: 14px 0;
   `};
 
   ${({ onFarming }) =>
     onFarming &&
     css`
-      border: 1px solid #702498;
-      background-color: rgba(25, 24, 30, 0.7);
+      border: 1px solid #30b2e6;
+      background-color: rgba(60, 97, 126, 0.5);
     `}
+`
+
+const PositionHeader = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
 `
 
 const BadgeText = styled.div`
@@ -81,7 +79,7 @@ const OnFarmingBadge = styled(Link)`
   display: flex;
   align-items: center;
   padding: 4px 6px;
-  background-color: #702498;
+  background-color: #30b2e6;
   color: white;
   font-size: 14px;
   border-radius: 6px;
@@ -91,6 +89,7 @@ const OnFarmingBadge = styled(Link)`
 const DataLineItem = styled.div`
   font-size: 14px;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  background-color: transparent;
     padding: 12px!important;
 `};
 `
@@ -104,7 +103,7 @@ const RangeLineItem = styled(DataLineItem)`
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => 'transparent'};
     border-radius: 12px;
     padding: 8px 0;
 `};
@@ -120,11 +119,10 @@ const DoubleArrow = styled.span`
 `
 
 const RangeText = styled.span`
-  /* background-color: ${({ theme }) => theme.bg2}; */
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => 'transparent'};
     padding: 0;
 `};
 `
@@ -145,6 +143,10 @@ const PrimaryPositionIdData = styled.div`
   > * {
     margin-right: 8px;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-bottom: 1rem;
+  `}
 `
 
 const DataText = styled.div`
@@ -154,6 +156,12 @@ const DataText = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 14px;
   `};
+`
+
+const StatusBadge = styled(RangeBadge)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-top: 1rem;
+  `}
 `
 
 interface PositionListItemProps {
@@ -291,7 +299,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
 
   return (
     <LinkRow to={positionSummaryLink} onFarming={_onFarming}>
-      <RowBetween>
+      <PositionHeader>
         <PrimaryPositionIdData>
           <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin />
           <DataText>
@@ -308,8 +316,8 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
             </OnFarmingBadge>
           )}
         </PrimaryPositionIdData>
-        <RangeBadge removed={removed} inRange={!outOfRange} />
-      </RowBetween>
+        <StatusBadge removed={removed} inRange={!outOfRange} />
+      </PositionHeader>
 
       {priceLower && priceUpper ? (
         <RangeLineItem>

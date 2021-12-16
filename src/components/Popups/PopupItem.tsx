@@ -20,7 +20,7 @@ const Popup = styled.div`
   display: inline-block;
   width: 100%;
   padding: 1em;
-  background-color: ${({ theme }) => theme.bg0};
+  background-color: ${({ theme }) => theme.winterBackground};
   position: relative;
   border-radius: 10px;
   padding: 20px;
@@ -86,9 +86,8 @@ export default function PopupItem({
 
   return (
     <Popup>
-      <StyledClose color={theme.text2} onClick={removeThisPopup} />
+      <StyledClose color={'#080064'} onClick={removeThisPopup} />
       {popupContent}
-      {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}
     </Popup>
   )
 }

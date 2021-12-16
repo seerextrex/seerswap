@@ -56,6 +56,7 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
   background-color: ${({ theme }) => theme.primary4};
   border: none;
+  padding: 10px 36px;
 
   color: ${({ theme }) => theme.primaryText1};
   font-weight: 500;
@@ -79,21 +80,20 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
         color: ${({ theme }) => darken(0.05, theme.primaryText1)};
       }
     `}
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      padding: 10px 16px;
+    `}
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg0)};
-  // border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg1)};
   color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
   font-weight: 500;
-  :hover,
-  :focus {
-    // border: 1px solid ${({ theme }) => darken(0.05, theme.bg3)};
 
-    :focus {
-      // border: 1px solid ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : darken(0.1, theme.bg2))};
-    }
-  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: 15px;
+  `}
 `
 
 const Text = styled.p`
@@ -105,6 +105,10 @@ const Text = styled.p`
   font-size: 1rem;
   width: fit-content;
   font-weight: 500;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 11px;
+  `}
 `
 
 const NetworkIcon = styled(Activity)`
@@ -191,10 +195,9 @@ function Web3StatusInner() {
       <Web3StatusConnect
         id="connect-wallet"
         style={{
-          border: `1px solid ${theme.winterMainButton}`,
-          backgroundColor: theme.winterMainButton,
+          border: `1px solid ${theme.winterBackground}`,
+          backgroundColor: '#5bb7ff',
           color: 'white',
-          padding: '10px 36px',
         }}
         onClick={toggleWalletModal}
         faded={!account}

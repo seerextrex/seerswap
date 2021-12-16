@@ -55,6 +55,14 @@ const MenuWrapper = styled.div`
     margin: 0 -2rem 1rem -2rem;
     padding: 0 1rem;
   }`}
+
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+
+  &::before,
+&::after {
+  display: none;
+}
+`}
 `
 
 const BodyWrapper = styled.div`
@@ -62,7 +70,7 @@ const BodyWrapper = styled.div`
   flex-direction: column;
   background-color: ${({ theme }) => theme.winterBackground};
   padding: 2rem 40px;
-  border-radius: 50px;
+  border-radius: 20px;
 `
 
 const MockScreen = styled.div`

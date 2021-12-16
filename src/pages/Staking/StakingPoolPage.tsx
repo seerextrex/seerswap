@@ -5,7 +5,7 @@ import PositionList from 'components/PositionList'
 import { RowBetween, RowFixed } from 'components/Row'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { pointer } from 'd3'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { Inbox } from 'react-feather'
 import { Link, useParams } from 'react-router-dom'
 import styled, { ThemeContext } from 'styled-components/macro'
@@ -193,6 +193,8 @@ export default function StakingPoolPage() {
     setModal(false)
   }, [isModal])
 
+  const theme = useContext(ThemeContext)
+
   return (
     <>
       <PageWrapper>
@@ -287,8 +289,8 @@ export default function StakingPoolPage() {
                         border: 'none',
                         padding: '8px 16px',
                         borderRadius: '8px',
-                        color: '#ed1185',
-                        backgroundColor: '#400f29',
+                        color: 'white',
+                        backgroundColor: theme.winterMainButton,
                       }}
                     >
                       Collect

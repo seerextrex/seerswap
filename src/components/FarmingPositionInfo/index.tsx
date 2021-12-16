@@ -31,6 +31,7 @@ const PositionInfoModal = styled.div`
   flex-direction: column;
   padding: 2rem;
   width: 100%;
+  color: #080064;
 `
 
 const PositionInfoRow = styled.div`
@@ -86,7 +87,7 @@ export default function FarmingPositionInfo({ el }: { el: any }) {
           <div style={{ marginBottom: '2rem', textAlign: 'center', justifyContent: 'center', display: 'flex' }}>
             <span>Position Info</span>
             <span onClick={() => setPositionModal(false)} style={{ marginLeft: 'auto', cursor: 'pointer' }}>
-              <X size={18} color={'white'} />
+              <X size={18} color={'#080064'} />
             </span>
           </div>
           <PositionInfoRow>

@@ -58,6 +58,7 @@ const MenuWrapper = styled.div`
   margin-top: 2rem;
   padding: 0 1rem;
   font-weight: 600;
+  z-index: 999;
 
   background-color: #b38280;
   border: 4px solid #713937;
@@ -86,19 +87,32 @@ const MenuWrapper = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
-    min-width: calc(100% + 3rem);
     overflow: auto;
-    margin: 0 -2rem 1rem -2rem;
-    padding: 0 1rem;
+    position: fixed;
+    width: calc(100% - 1rem);
+    margin-left: -0.5rem;
+    margin-top: 1rem;
   }`}
+
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+
+  &::before,
+&::after {
+  display: none;
+}
+`}
 `
 
 const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) => theme.winterBackground};
-  padding: 2rem 40px;
-  border-radius: 50px;
+  padding: 2rem;
+  border-radius: 20px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-top: 6rem;
+  `}
 `
 
 const MockScreen = styled.div`
@@ -107,6 +121,10 @@ const MockScreen = styled.div`
   align-items: center;
   justify-content: center;
   height: 300px;
+
+  & > p {
+    text-align: center;
+  }
 `
 
 const ConnectWalletButton = styled.button`

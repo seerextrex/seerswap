@@ -56,7 +56,7 @@ const Card = styled.div`
   flex-direction: column;
   padding: 1rem;
   border-radius: 1rem;
-  background: #313644;
+  background: rgba(60, 97, 126, 0.5);
   width: calc(33% - 8px);
 
   ${({ refreshing }) =>
@@ -98,6 +98,7 @@ const TokenIcon = styled.div`
   border-radius: 50%;
   user-select: none;
   background: ${({ logo }) => (logo ? `url(${logo})` : '')};
+  background-repeat: no-repeat;
   background-size: contain;
 
   &:last-of-type {
@@ -113,7 +114,7 @@ const TokensIcons = styled.div`
 `
 
 const Subtitle = styled.div`
-  color: #969292;
+  color: white;
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 600;
@@ -148,8 +149,7 @@ const PoolsSymbols = styled.div`
 const RewardWrapper = styled.div`
   display: flex;
   padding: 8px;
-  background-color: #206175;
-  border: 1px solid #409ab6;
+  background-color: #2b5e91;
   border-radius: 8px;
   margin-bottom: 1rem;
 
@@ -226,7 +226,7 @@ const EventProgress = styled.div`
   height: 16px;
   margin-top: 6px;
   border-radius: 6px;
-  background-color: #22252f;
+  background-color: white;
   position: relative;
   padding: 4px;
 
@@ -267,7 +267,7 @@ const EventProgressInner = styled.div.attrs(({ progress }) => ({
   },
 }))`
   height: 100%;
-  background-color: #4829bb;
+  background-color: #5bb7ff;
   border-radius: 6px;
   transition-duration: 0.5s;
 
@@ -469,7 +469,7 @@ export function StakerEventCard({
           <TokenIcon name={rewardToken}>{rewardToken ? rewardToken.slice(0, 2) : null}</TokenIcon>
         )}
         <div style={{ marginLeft: '1rem' }}>
-          <Subtitle>Reward</Subtitle>
+          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Reward</Subtitle>
           <RewardSymbol>{rewardToken}</RewardSymbol>
         </div>
         {reward && (
@@ -484,7 +484,7 @@ export function StakerEventCard({
             position: 'absolute',
             left: 'calc(50% - 11px)',
             top: '-15px',
-            backgroundColor: '#242a3b',
+            backgroundColor: 'rgb(19, 56, 93)',
             borderRadius: '50%',
             padding: '3px',
           }}
@@ -492,14 +492,14 @@ export function StakerEventCard({
           <Plus style={{ display: 'block' }} size={18}></Plus>
         </div>
       </div>
-      <RewardWrapper style={{ backgroundColor: '#90175b', borderColor: '#af4cad' }}>
+      <RewardWrapper>
         {bonusRewardAddress.toLowerCase() in specialTokens ? (
           <TokenIcon logo={specialTokens[bonusRewardAddress].logo}></TokenIcon>
         ) : (
           <TokenIcon name={bonusRewardToken}>{bonusRewardToken ? bonusRewardToken.slice(0, 2) : null}</TokenIcon>
         )}
         <div style={{ marginLeft: '1rem' }}>
-          <Subtitle style={{ color: '#ef71b8' }}>Bonus</Subtitle>
+          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Bonus</Subtitle>
           <RewardSymbol>{bonusRewardToken}</RewardSymbol>
         </div>
         {bonusReward && (

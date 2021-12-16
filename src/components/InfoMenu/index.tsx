@@ -44,6 +44,14 @@ const MenuList = styled.ul`
     min-width: 100%;
     display: flex;
   }`}
+
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+
+  &::before,
+  &::after {
+    display: none;
+  }
+`}
 `
 
 const MenuListItem = styled.li`

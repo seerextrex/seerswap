@@ -433,7 +433,7 @@ export default function AddLiquidityPage({
     }
   }, [existingPosition])
 
-  const feeAmount = 500
+  const feeAmount = 100
 
   const baseCurrency = useCurrency(currencyIdA)
   const currencyB = useCurrency(currencyIdB)

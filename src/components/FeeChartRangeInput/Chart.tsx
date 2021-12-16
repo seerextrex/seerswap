@@ -5,10 +5,6 @@ import { daysCount } from './index'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../pages/PoolInfoPage'
 
-function sameDay(d1, d2) {
-  return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
-}
-
 interface ChartInterface {
   feeData
   dimensions: {
@@ -18,9 +14,10 @@ interface ChartInterface {
   }
   span: ChartSpan
   type: ChartType
+  isMobile: boolean
 }
 
-export default function Chart({ feeData: { data, previousData } = {}, span, type, dimensions }: ChartInterface) {
+export default function Chart({ feeData: { data, previousData } = {}, span, type, dimensions, isMobile }: ChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
@@ -64,6 +61,8 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
   const _chartData = useMemo(() => {
     if (data.length === 0) return []
 
+    const _span = span !== ChartSpan.DAY ? 'day' : 'hour'
+
     let sameDays = []
     let res = []
 
@@ -75,7 +74,7 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
     }
 
     for (let i = 1; i < data.length; i++) {
-      if (sameDay(new Date(data[i].timestamp), new Date(data[i - 1].timestamp))) {
+      if (dayjs(data[i].timestamp).startOf(_span).isSame(dayjs(data[i - 1].timestamp).startOf(_span))) {
         sameDays.push(data[i])
       } else {
         if (sameDays.length !== 0) {
@@ -138,17 +137,21 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       res = res.concat([...data])
     }
 
+    res = res.map( date => ({
+      timestamp: new Date(dayjs(date.timestamp).startOf(_span).unix() * 1000),
+      value: date.value
+    }))
+
     console.log('RES', sameDays, res)
 
     let _data = []
 
     if (res.length < xTicks) {
-      const _span = span !== ChartSpan.DAY ? 'day' : 'hour'
 
       const firstRealDay = dayjs(res[0].timestamp).startOf(_span)
       const lastRealDay = dayjs(res[res.length - 1].timestamp).startOf(_span)
 
-      const firstAdditionalDay = dayjs(Date.now())
+      const firstAdditionalDay = dayjs(Date.now()).startOf(_span)
         .subtract(xTicks - 1, _span)
         .startOf(_span)
       const lastAdditionalDay = dayjs(Date.now()).startOf(_span)
@@ -179,24 +182,26 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
 
       for (let i = 1; i < res.length; i++) {
         console.log('res l', res[i])
-        const isNext = dayjs(res[i].timestamp)
-          .subtract(1, span === ChartSpan.DAY ? 'hours' : 'days')
-          .isSame(dayjs(res[i - 1].timestamp))
+        const isNext = dayjs(res[i].timestamp).startOf(_span)
+          .subtract(1, _span)
+          .isSame(dayjs(res[i - 1].timestamp).startOf(_span))
 
         if (isNext) {
           _data.push({
-            timestamp: new Date(res[i].timestamp * 1000),
+            timestamp: new Date(dayjs(res[i].timestamp).startOf(_span).unix() * 1000),
             value: res[i].value,
           })
         } else {
-          const difference = dayjs(res[i].timestamp).diff(last.timestamp, span === ChartSpan.DAY ? 'hours' : 'days')
+          const difference = dayjs(res[i].timestamp).startOf(_span).diff(last.timestamp, _span)
 
           for (let j = 1; j <= difference; j++) {
             const nextDay = new Date(
-              dayjs(last.timestamp)
-                .add(1, span === ChartSpan.DAY ? 'hours' : 'days')
+              dayjs(last.timestamp).startOf(_span)
+                .add(1, _span).startOf(_span)
                 .unix() * 1000
             )
+            
+            console.log('diff', j, nextDay)
 
             _data.push({
               timestamp: nextDay,
@@ -209,12 +214,13 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
         last = res[i]
       }
 
-      _data.push(last)
+      // _data.push(last)
 
       console.log('second', [..._data])
 
       if (lastRealDay < lastAdditionalDay) {
-        for (let i = lastRealDay.unix(); i < lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
+        for (let i = lastRealDay.add(1, _span).unix(); i <= lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
+          console.log('here', new Date(i * 1000), )
           _data.push({
             timestamp: new Date(i * 1000),
             value: res[res.length - 1].value,
@@ -281,7 +287,7 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
   const Focus = d3
     .create('svg:circle')
     .style('fill', 'white')
-    .attr('stroke', '#00cab2')
+    .attr('stroke', '#63c0f8')
     .attr('stroke-width', '2')
     .attr('r', 5.5)
     .style('opacity', 1)
@@ -309,6 +315,12 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       Focus.style('display', 'none')
     })
 
+    svgEl.on('tap', () => {
+      Line.style('display', 'block')
+      InfoRectGroup.style('display', 'block')
+      Focus.style('display', 'block')
+    })
+
     const xAxisGroup = svg
       .append('g')
       .attr('transform', `translate(0, ${height})`)
@@ -318,7 +330,7 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
 
     const y = d3
       .scaleLinear()
-      .domain([d3.min(_chartData, (d) => +d.value - 0.01), d3.max(_chartData, (d) => +d.value + 0.01)])
+      .domain([d3.min(_chartData, (d) => d.value > 0 ? d.value - d.value * 0.2 : 0), d3.max(_chartData, (d) => +d.value + d.value * 0.2)])
       .range([height, 0])
 
     const yAxisGroup = svg.append('g').call(
@@ -345,11 +357,11 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       .data([
         {
           offset: '0%',
-          color: 'rgba(4,120,106,0.75)',
+          color: 'rgba(99, 192, 248, 0.75)',
         },
         {
           offset: '100%',
-          color: 'rgba(163,218,211,0)',
+          color: 'rgba(99, 192, 248, 0)',
         },
       ])
       .enter()
@@ -362,7 +374,7 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       .append('path')
       .datum(_chartData)
       .attr('fill', 'none')
-      .attr('stroke', '#00cab2')
+      .attr('stroke', '#63c0f8')
       .attr('stroke-width', 2)
       .attr(
         'd',
@@ -387,7 +399,7 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
           .area()
           .curve(d3.curveBumpX)
           .x((d) => xScale(d.timestamp))
-          .y0((d) => y(d3.min(_chartData, (d) => +d.value - 0.01)))
+          .y0((d) => y(d3.min(_chartData, (d) => d.value > 0 ? d.value - d.value * 0.2 : 0)))
           .y1((d) => y(d.value))
       )
 
@@ -401,11 +413,46 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
           .match(/\((.*?)\)/)[1]
           .split(',')[0]
 
-        if (i % 2 === 0 && span !== ChartSpan.WEEK) {
+        if (isMobile && span !== ChartSpan.WEEK) {
+          d3.select(el).selectAll("text")  
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-65)");
+        }
+
+        if (isMobile && i % 2 === 0) {
+          d3.select(el).attr('display', 'none')
+        } else if (i % 2 === 0 && span !== ChartSpan.WEEK) {
           d3.select(el).attr('display', 'none')
         }
 
         // d3.select(el).attr('transform', `translate(${+xTranslate + +tickWidth}, 0)`)
+
+        const hoverHandle = function (e) {
+          const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
+          const date = new Date(_chartData[i]?.timestamp)
+          Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
+          InfoRectGroup.attr(
+            'transform',
+            `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
+          )
+          InfoRectFeeText.property(
+            'innerHTML',
+            `${type === ChartType.FEES ? 'Fee:' : type === ChartType.TVL ? 'TVL:' : 'Volume:'} ${
+              type !== ChartType.FEES ? '$' : ''
+            }${Number(_chartData[i]?.value).toFixed(2)}${type === ChartType.FEES ? '%' : ''}`
+          )
+          InfoRectDateText.property(
+            'innerHTML',
+            span === ChartSpan.DAY
+              ? `${date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()}:${
+                  date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+                }:${date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()}`
+              : `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`
+          )
+          Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
+        }
 
         const rect = d3
           .create('svg:rect')
@@ -414,30 +461,8 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
           .attr('width', `${tickWidth}px`)
           .attr('height', `${dimensions.height}px`)
           .attr('fill', 'transparent')
-          .on('mouseover', (e) => {
-            const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
-            const date = new Date(_chartData[i]?.timestamp)
-            Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
-            InfoRectGroup.attr(
-              'transform',
-              `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
-            )
-            InfoRectFeeText.property(
-              'innerHTML',
-              `${type === ChartType.FEES ? 'Fee:' : type === ChartType.TVL ? 'TVL:' : 'Volume:'} ${
-                type !== ChartType.FEES ? '$' : ''
-              }${Number(_chartData[i]?.value).toFixed(2)}${type === ChartType.FEES ? '%' : ''}`
-            )
-            InfoRectDateText.property(
-              'innerHTML',
-              span === ChartSpan.DAY
-                ? `${date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()}:${
-                    date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-                  }:${date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()}`
-                : `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`
-            )
-            Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
-          })
+          .on('mouseover', hoverHandle)
+          .on('touchmove', hoverHandle)
 
         svg.node().append(rect.node())
       })

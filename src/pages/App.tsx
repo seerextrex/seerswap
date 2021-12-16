@@ -116,8 +116,17 @@ const NetworkFailedCard = styled.div`
   right: 1rem;
   padding: 1rem;
   border-radius: 8px;
-  background-color: #390909;
+  background-color: #f65c5c;
   border: 1px solid #852020;
+
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    position: unset;
+    width: calc(100% - 2rem);
+    left: unset;
+    right: unset;
+    margin-bottom: 0;
+    margin-top: 0.5rem;
+  `}
 `
 
 const GlobalStyle = createGlobalStyle`

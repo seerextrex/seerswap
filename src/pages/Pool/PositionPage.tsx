@@ -650,7 +650,7 @@ export function PositionPage({
                 </TYPE.label>
                 <FeeBadge style={{ marginRight: '8px' }}>
                   <BadgeText>
-                    <Trans>{new Percent(existingPosition?.pool?.fee || 500, 1_000_000).toSignificant()}%</Trans>
+                    <Trans>{new Percent(existingPosition?.pool?.fee || 100, 1_000_000).toSignificant()}%</Trans>
                   </BadgeText>
                 </FeeBadge>
                 <RangeBadge removed={removed} inRange={inRange} />

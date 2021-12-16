@@ -82,8 +82,8 @@ const HeaderControls = styled.div`
   justify-self: flex-end;
   background-repeat: repeat;
   background-size: 27px 40px;
-  width: 440px;
   height: 64px;
+  padding: 1rem;
   border-radius: 16px;
 
   background-color: #b38280;
@@ -287,11 +287,6 @@ const Title = styled.a`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100px;
     margin-right: 10px;
-
-    &::before,
-  &::after {
-    display: none;
-  }
   `}
 `
 

@@ -88,10 +88,7 @@ const MenuWrapper = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     overflow: auto;
-    position: fixed;
-    width: calc(100% - 1rem);
-    margin-left: -0.5rem;
-    margin-top: 1rem;
+    width: 100%;
   }`}
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
@@ -111,7 +108,6 @@ const BodyWrapper = styled.div`
   border-radius: 20px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-top: 6rem;
   `}
 `
 

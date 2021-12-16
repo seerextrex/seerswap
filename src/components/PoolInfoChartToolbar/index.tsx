@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import styled, { css } from 'styled-components/macro'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import styled, { css, ThemeContext } from 'styled-components/macro'
 import { lighten } from 'polished'
 
 const ToolbarWrapper = styled.div`
@@ -7,8 +7,26 @@ const ToolbarWrapper = styled.div`
   padding: 1rem 0 0;
   display: flex;
   justify-content: space-between;
+
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+    &:first-of-type {
+      margin-bottom: 1rem;
+    }
+  `}
 `
-const ToolbarChartTypeWrapper = styled.div``
+const ToolbarChartTypeWrapper = styled.div`
+  ${({theme}) => theme.mediaWidth.upToSmall`
+  &:first-of-type {
+    margin-bottom: 1rem;
+  }
+`}`
+
+const ToolbarOptionsTitle = styled.div`
+  margin-bottom: 1rem;
+  font-weight: 500;
+`
+
 const ToolbarOptions = styled.ul`
   margin: 0;
   padding: 0;
@@ -48,10 +66,12 @@ export default function PoolInfoChartToolbar({chartTypes, chartSpans, type, span
   setSpan: any
 }) {
 
+  const theme = useContext(ThemeContext)
 
   return (
     <ToolbarWrapper>
       <ToolbarChartTypeWrapper>
+        <ToolbarOptionsTitle>Chart type</ToolbarOptionsTitle>
         <ToolbarOptions>
           {chartTypes.map((el, i) => (
             <ToolbarOptionsItem selected={type === el.type} onClick={() => setType(el.type)} key={i}>
@@ -61,6 +81,7 @@ export default function PoolInfoChartToolbar({chartTypes, chartSpans, type, span
         </ToolbarOptions>
       </ToolbarChartTypeWrapper>
       <ToolbarChartTypeWrapper>
+      <ToolbarOptionsTitle>Chart span</ToolbarOptionsTitle>
         <ToolbarOptions>
           {chartSpans.map((el, i) => (
             <ToolbarOptionsItem selected={span === el.type} onClick={() => setSpan(el.type)} key={i}>

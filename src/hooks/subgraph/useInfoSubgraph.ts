@@ -154,6 +154,7 @@ export function useInfoSubgraph() {
                     priceUSD,
                     priceUSDChange,
                     priceUSDChangeWeek,
+                    apr: isNaN(feesUSD * 365 / tvlUSD * 100) ? 0 : feesUSD * 365 / tvlUSD * 100
                 }
 
                 return accum

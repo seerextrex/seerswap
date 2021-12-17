@@ -19,6 +19,17 @@ export const formatDollarAmount = (num: number | undefined, digits = 3, round = 
 }
 
 // using a currency library here in case we want to add more in future
+
+export const formatPercent = (num: number | undefined, digits = 2, round = true) => {
+    if (num === 0) return '-'
+    if (!num) return '-'
+    if (num < 0.001 && digits <= 3) {
+        return '<0.01%'
+    }
+
+    return parseFloat(num.toString()).toFixed(2) + '%'
+}
+
 export const formatAmount = (num: number | undefined, digits = 3) => {
     if (num === 0) return '0'
     if (!num) return '-'

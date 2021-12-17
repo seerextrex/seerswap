@@ -71,6 +71,7 @@ const StyledInfo = styled(Info)`
     opacity: 0.8;
   }
 `
+const MaxButton = styled.button``
 
 export default function Swap({ history }: RouteComponentProps) {
   const { account } = useActiveWeb3React()
@@ -446,7 +447,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 value={formattedAmounts[Field.OUTPUT]}
                 onUserInput={handleTypeOutput}
                 label={independentField === Field.INPUT && !showWrap ? <Trans>To (at least)</Trans> : <Trans>To</Trans>}
-                showMaxButton={true}
+                showMaxButton={false}
                 hideBalance={false}
                 fiatValue={fiatValueOutput ?? undefined}
                 priceImpact={priceImpact}

@@ -20,6 +20,7 @@ import { AutoColumn } from 'components/Column'
 import { FiatValue } from './FiatValue'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 import Loader from '../Loader'
+import useUSDCPrice from '../../hooks/useUSDCPrice'
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -188,6 +189,19 @@ const StyledBalanceMax = styled.button<{ disabled?: boolean }>`
   `};
 `
 
+const MaxButton = styled.button`
+  background-color: #245376;
+  border-radius: 6px;
+  color: white;
+  margin-right: 10px;
+  border: none;
+  padding: 4px 6px;
+
+  &:hover {
+    background-color: ${darken(0.05, '#245376')};
+  }
+`
+
 interface CurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void
@@ -253,6 +267,8 @@ export default function CurrencyInputPanel({
 
   const balance = useCurrencyBalance(account ?? undefined, currency)
 
+  const currentPrice = useUSDCPrice(currency)
+
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
@@ -287,6 +303,7 @@ export default function CurrencyInputPanel({
           </AutoColumnStyled>
         </FixedContainer>
       )}
+
       <Container hideInput={hideInput}>
         <InputRow
           hideCurrency={hideCurrency}
@@ -376,6 +393,7 @@ export default function CurrencyInputPanel({
               </Aligner>
             </CurrencySelect>
           )}
+          {swap && currency && showMaxButton && <MaxButton onClick={onMax}>Max</MaxButton>}
           {!hideInput && (
             <>
               <NumericalInputStyled
@@ -391,12 +409,22 @@ export default function CurrencyInputPanel({
             </>
           )}
         </InputRow>
-        {!hideInput && !hideBalance && !locked && value && (
+        {!hideInput && !hideBalance && !locked && value ? (
           <FiatRow shallow={shallow}>
             <RowBetween>
               <FiatValue fiatValue={fiatValue} priceImpact={priceImpact} />
             </RowBetween>
           </FiatRow>
+        ) : currency && swap && currentPrice ? (
+          <FiatRow>
+            <RowBetween>{`1 ${currency.symbol} = $${currentPrice.toFixed()}`}</RowBetween>
+          </FiatRow>
+        ) : (
+          currency && (
+            <FiatRow>
+              <RowBetween>Estimating...</RowBetween>
+            </FiatRow>
+          )
         )}
       </Container>
       {onCurrencySelect && (

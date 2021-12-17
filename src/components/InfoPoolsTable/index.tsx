@@ -6,7 +6,7 @@ import { DarkGreyCard, GreyBadge } from 'components/Card'
 import Loader, { LoadingRows } from 'components/Loader'
 import { AutoColumn } from 'components/Column'
 import { RowFixed } from 'components/Row'
-import { formatDollarAmount } from 'utils/numbers'
+import { formatDollarAmount, formatPercent } from 'utils/numbers'
 import { PoolData } from 'state/pools/reducer'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { feeTierPercent } from 'utils'
@@ -32,6 +32,18 @@ export const Arrow = styled.div<{ faded: boolean }>`
     cursor: pointer;
   }
 `
+
+const LabelStyled = styled(Label)`
+  font-size: 14px;
+  justify-content: flex-start;
+`
+
+const ClickableTextStyled = styled(ClickableText)`
+  font-size: 14px;
+  justify-content: flex-start;
+  text-align: start;
+`
+
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: rgba(60, 97, 126, 0.5);
@@ -42,13 +54,14 @@ const Wrapper = styled(DarkGreyCard)`
 
 const ResponsiveGrid = styled.div`
   display: grid;
+  position: relative;
   grid-gap: 1em;
   align-items: center;
 
-  grid-template-columns: 20px 3.5fr repeat(3, 1fr);
+  grid-template-columns: 20px 2.3fr repeat(5, 1fr);
 
   @media screen and (max-width: 900px) {
-    grid-template-columns: 20px 1.5fr repeat(3, 1fr);
+    grid-template-columns: 20px 1.5fr repeat(5, 1fr);
     & :nth-child(3) {
       display: none;
     }
@@ -69,11 +82,28 @@ const ResponsiveGrid = styled.div`
   //}
 `
 
+const AprInfo = styled.span`
+  background-color: #02365e;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  z-index: 101;
+`
+
 const SORT_FIELD = {
   feeTier: 'feeTier',
   volumeUSD: 'volumeUSD',
   tvlUSD: 'tvlUSD',
   volumeUSDWeek: 'volumeUSDWeek',
+  feesUSD: 'feesUSD',
+  apr: 'apr',
 }
 
 export const POOL_HIDE = [
@@ -88,8 +118,8 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   return (
     <NavLink to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
       <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
-        <Label fontWeight={400}>{index + 1}</Label>
-        <Label fontWeight={400}>
+        <LabelStyled fontWeight={400}>{index + 1}</LabelStyled>
+        <LabelStyled fontWeight={400}>
           <RowFixed>
             <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} />
             <TYPE.label ml="8px">
@@ -99,16 +129,22 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
               {feeTierPercent(poolData.fee)}
             </GreyBadge>
           </RowFixed>
-        </Label>
-        <Label end={1} fontWeight={400}>
+        </LabelStyled>
+        <LabelStyled end={1} fontWeight={400}>
           {formatDollarAmount(poolData.volumeUSD)}
-        </Label>
-        <Label end={1} fontWeight={400}>
+        </LabelStyled>
+        <LabelStyled end={1} fontWeight={400}>
           {formatDollarAmount(poolData.volumeUSDWeek)}
-        </Label>
-        <Label end={1} fontWeight={400}>
+        </LabelStyled>
+        <LabelStyled end={1} fontWeight={400}>
           {formatDollarAmount(poolData.totalValueLockedUSD)}
-        </Label>
+        </LabelStyled>
+        <LabelStyled end={1} fontWeight={400}>
+          {formatDollarAmount(poolData.feesUSD)}
+        </LabelStyled>
+        <LabelStyled end={1} fontWeight={400}>
+          {formatPercent(poolData.apr)}
+        </LabelStyled>
       </ResponsiveGrid>
     </NavLink>
   )
@@ -186,18 +222,25 @@ export default function InfoPoolsTable({
         <AutoColumn gap="16px">
           <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
             <Label color={'#dedede'}>#</Label>
-            <ClickableText color={'#dedede'} onClick={() => handleSort(SORT_FIELD.feeTier)}>
+            <ClickableTextStyled color={'#dedede'} onClick={() => handleSort(SORT_FIELD.feeTier)}>
               Pool {arrow(SORT_FIELD.feeTier)}
-            </ClickableText>
-            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
               Volume 24H {arrow(SORT_FIELD.volumeUSD)}
-            </ClickableText>
-            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
               Volume 7D {arrow(SORT_FIELD.volumeUSDWeek)}
-            </ClickableText>
-            <ClickableText color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
               TVL {arrow(SORT_FIELD.tvlUSD)}
-            </ClickableText>
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.feesUSD)}>
+              Fees 24H {arrow(SORT_FIELD.feesUSD)}
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
+              APR {arrow(SORT_FIELD.apr)}
+              {/* <AprInfo title={'based on 24h volume'}>?</AprInfo> */}
+            </ClickableTextStyled>
           </ResponsiveGrid>
           {sortedPools.map((poolData, i) => {
             if (poolData) {

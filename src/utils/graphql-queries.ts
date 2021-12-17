@@ -306,6 +306,7 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
           totalValueLockedToken0
           totalValueLockedToken1
           totalValueLockedUSD
+          feesUSD
         }
       }
       `

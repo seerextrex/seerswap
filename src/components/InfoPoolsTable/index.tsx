@@ -47,8 +47,8 @@ const ClickableTextStyled = styled(ClickableText)`
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: rgba(60, 97, 126, 0.5);
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    min-width: 800px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    min-width: 900px;
   `};
 `
 
@@ -60,8 +60,8 @@ const ResponsiveGrid = styled.div`
 
   grid-template-columns: 20px 2.3fr repeat(5, 1fr);
 
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 20px 1.5fr repeat(5, 1fr);
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 20px 2.1fr repeat(5, 1fr);
     & :nth-child(3) {
       display: none;
     }

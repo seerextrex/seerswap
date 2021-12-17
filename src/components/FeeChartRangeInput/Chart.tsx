@@ -17,7 +17,13 @@ interface ChartInterface {
   isMobile: boolean
 }
 
-export default function Chart({ feeData: { data, previousData } = {}, span, type, dimensions, isMobile }: ChartInterface) {
+export default function Chart({
+  feeData: { data, previousData } = {},
+  span,
+  type,
+  dimensions,
+  isMobile,
+}: ChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
@@ -74,7 +80,11 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
     }
 
     for (let i = 1; i < data.length; i++) {
-      if (dayjs(data[i].timestamp).startOf(_span).isSame(dayjs(data[i - 1].timestamp).startOf(_span))) {
+      if (
+        dayjs(data[i].timestamp)
+          .startOf(_span)
+          .isSame(dayjs(data[i - 1].timestamp).startOf(_span))
+      ) {
         sameDays.push(data[i])
       } else {
         if (sameDays.length !== 0) {
@@ -135,24 +145,21 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       res = res.concat([...data])
     }
 
-<<<<<<< HEAD
-=======
-    res = res.map( date => ({
+    res = res.map((date) => ({
       timestamp: new Date(dayjs(date.timestamp).startOf(_span).unix() * 1000),
-      value: date.value
+      value: date.value,
     }))
 
     console.log('RES', sameDays, res)
 
->>>>>>> 2ce2127a92d5aa17ba92c7973b6410179edd7b50
     let _data = []
 
     if (res.length < xTicks) {
-
       const firstRealDay = dayjs(res[0].timestamp).startOf(_span)
       const lastRealDay = dayjs(res[res.length - 1].timestamp).startOf(_span)
 
-      const firstAdditionalDay = dayjs(Date.now()).startOf(_span)
+      const firstAdditionalDay = dayjs(Date.now())
+        .startOf(_span)
         .subtract(xTicks - 1, _span)
         .startOf(_span)
       const lastAdditionalDay = dayjs(Date.now()).startOf(_span)
@@ -178,16 +185,11 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       let last = _data[_data.length - 1]
 
       for (let i = 1; i < res.length; i++) {
-<<<<<<< HEAD
-        const isNext = dayjs(res[i].timestamp)
-          .subtract(1, span === ChartSpan.DAY ? 'hours' : 'days')
-          .isSame(dayjs(res[i - 1].timestamp))
-=======
         console.log('res l', res[i])
-        const isNext = dayjs(res[i].timestamp).startOf(_span)
+        const isNext = dayjs(res[i].timestamp)
+          .startOf(_span)
           .subtract(1, _span)
           .isSame(dayjs(res[i - 1].timestamp).startOf(_span))
->>>>>>> 2ce2127a92d5aa17ba92c7973b6410179edd7b50
 
         if (isNext) {
           _data.push({
@@ -198,12 +200,8 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
           const difference = dayjs(res[i].timestamp).startOf(_span).diff(last.timestamp, _span)
 
           for (let j = 1; j <= difference; j++) {
-            const nextDay = new Date(
-              dayjs(last.timestamp).startOf(_span)
-                .add(1, _span).startOf(_span)
-                .unix() * 1000
-            )
-            
+            const nextDay = new Date(dayjs(last.timestamp).startOf(_span).add(1, _span).startOf(_span).unix() * 1000)
+
             console.log('diff', j, nextDay)
 
             _data.push({
@@ -220,8 +218,12 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       // _data.push(last)
 
       if (lastRealDay < lastAdditionalDay) {
-        for (let i = lastRealDay.add(1, _span).unix(); i <= lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
-          console.log('here', new Date(i * 1000), )
+        for (
+          let i = lastRealDay.add(1, _span).unix();
+          i <= lastAdditionalDay.unix();
+          i += span === ChartSpan.DAY ? 3600 : 24 * 3600
+        ) {
+          console.log('here', new Date(i * 1000))
           _data.push({
             timestamp: new Date(i * 1000),
             value: res[res.length - 1].value,
@@ -327,7 +329,10 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
 
     const y = d3
       .scaleLinear()
-      .domain([d3.min(_chartData, (d) => d.value > 0 ? d.value - d.value * 0.2 : 0), d3.max(_chartData, (d) => +d.value + d.value * 0.2)])
+      .domain([
+        d3.min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
+        d3.max(_chartData, (d) => +d.value + d.value * 0.2),
+      ])
       .range([height, 0])
 
     const yAxisGroup = svg.append('g').call(
@@ -396,7 +401,7 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
           .area()
           .curve(d3.curveBumpX)
           .x((d) => xScale(d.timestamp))
-          .y0((d) => y(d3.min(_chartData, (d) => d.value > 0 ? d.value - d.value * 0.2 : 0)))
+          .y0((d) => y(d3.min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
           .y1((d) => y(d.value))
       )
 
@@ -411,11 +416,12 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
           .split(',')[0]
 
         if (isMobile && span !== ChartSpan.WEEK) {
-          d3.select(el).selectAll("text")  
-          .style("text-anchor", "end")
-          .attr("dx", "-.8em")
-          .attr("dy", ".15em")
-          .attr("transform", "rotate(-65)");
+          d3.select(el)
+            .selectAll('text')
+            .style('text-anchor', 'end')
+            .attr('dx', '-.8em')
+            .attr('dy', '.15em')
+            .attr('transform', 'rotate(-65)')
         }
 
         if (isMobile && i % 2 === 0) {

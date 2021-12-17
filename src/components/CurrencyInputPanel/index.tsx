@@ -200,6 +200,12 @@ const MaxButton = styled.button`
   &:hover {
     background-color: ${darken(0.05, '#245376')};
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 100%;
+      margin-top: 10px;
+      margin-right: 0;
+  `}
 `
 
 interface CurrencyInputPanelProps {

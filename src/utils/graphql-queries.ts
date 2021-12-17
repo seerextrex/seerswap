@@ -54,7 +54,9 @@ query fetchPool {
             decimals
             symbol
         }
-
+        sqrtPrice
+        liquidity
+        tick
     }
 }`
 
@@ -364,3 +366,28 @@ export const GET_BLOCKS = (timestamps: string[]) => {
   queryString += '}'
   return gql(queryString)
 }
+
+
+//Ticks
+
+export const FETCH_TICKS = () => gql`
+query surroundingTicks(
+  $poolAddress: String!
+  $tickIdxLowerBound: BigInt!
+  $tickIdxUpperBound: BigInt!
+  $skip: Int!
+) {
+  ticks(
+    subgraphError: allow
+    first: 1000
+    skip: $skip
+    where: { poolAddress: $poolAddress, tickIdx_lte: $tickIdxUpperBound, tickIdx_gte: $tickIdxLowerBound }
+  ) {
+    tickIdx
+    liquidityGross
+    liquidityNet
+    price0
+    price1
+  }
+}
+`

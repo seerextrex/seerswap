@@ -54,6 +54,7 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
 
   const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1)
 
+  const [processedData, setProcessedData] = useState(null)
   const ref = useRef(null)
 
   const formattedAddress0 = isAddress(data?.token0?.address)
@@ -72,64 +73,73 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
       : undefined
   }, [formattedAddress1, data])
 
-  const formattedData = useMemo(async () => {
-    if (!data || !data.ticksProcessed) return undefined
+  useEffect(() => {
+    if (!data || !data.ticksProcessed) return
 
-    const newData = await Promise.all(
-      data.ticksProcessed.map(async (t, i) => {
-        const active = t.tickIdx === data.activeTickIdx
-        const sqrtPriceX96 = TickMath.getSqrtRatioAtTick(t.tickIdx)
-        const mockTicks = [
-          {
-            index: t.tickIdx - 60,
-            liquidityGross: t.liquidityGross,
-            liquidityNet: JSBI.multiply(t.liquidityNet, JSBI.BigInt('-1')),
-          },
-          {
-            index: t.tickIdx,
-            liquidityGross: t.liquidityGross,
-            liquidityNet: t.liquidityNet,
-          },
-        ]
-        const pool =
-          token0 && token1
-            ? new Pool(token0, token1, 500, sqrtPriceX96, t.liquidityActive, t.tickIdx, mockTicks)
+    async function processTicks() {
+      const _data = await Promise.all(
+        data.ticksProcessed.map(async (t, i) => {
+          const active = t.tickIdx === data.activeTickIdx
+          const sqrtPriceX96 = TickMath.getSqrtRatioAtTick(t.tickIdx)
+          const mockTicks = [
+            {
+              index: t.tickIdx - 60,
+              liquidityGross: t.liquidityGross,
+              liquidityNet: JSBI.multiply(t.liquidityNet, JSBI.BigInt('-1')),
+            },
+            {
+              index: t.tickIdx,
+              liquidityGross: t.liquidityGross,
+              liquidityNet: t.liquidityNet,
+            },
+          ]
+          const pool =
+            token0 && token1
+              ? new Pool(token0, token1, 500, sqrtPriceX96, t.liquidityActive, t.tickIdx, mockTicks)
+              : undefined
+          const nextSqrtX96 = data.ticksProcessed[i - 1]
+            ? TickMath.getSqrtRatioAtTick(data.ticksProcessed[i - 1].tickIdx)
             : undefined
-        const nextSqrtX96 = data.ticksProcessed[i - 1]
-          ? TickMath.getSqrtRatioAtTick(data.ticksProcessed[i - 1].tickIdx)
-          : undefined
-        const maxAmountToken0 = token0 ? CurrencyAmount.fromRawAmount(token0, MAX_UINT128.toString()) : undefined
-        const outputRes0 =
-          pool && maxAmountToken0 ? await pool.getOutputAmount(maxAmountToken0, nextSqrtX96) : undefined
+          const maxAmountToken0 = token0 ? CurrencyAmount.fromRawAmount(token0, MAX_UINT128.toString()) : undefined
+          const outputRes0 =
+            pool && maxAmountToken0 ? await pool.getOutputAmount(maxAmountToken0, nextSqrtX96) : undefined
 
-        const token1Amount = outputRes0?.[0] as CurrencyAmount<Token> | undefined
+          const token1Amount = outputRes0?.[0] as CurrencyAmount<Token> | undefined
 
-        const amount0 = token1Amount ? parseFloat(token1Amount.toExact()) * parseFloat(t.price1) : 0
-        const amount1 = token1Amount ? parseFloat(token1Amount.toExact()) : 0
+          const amount0 = token1Amount ? parseFloat(token1Amount.toExact()) * parseFloat(t.price1) : 0
+          const amount1 = token1Amount ? parseFloat(token1Amount.toExact()) : 0
 
-        return {
-          index: i,
-          isCurrent: active,
-          activeLiquidity: parseFloat(t.liquidityActive.toString()),
-          price0: parseFloat(t.price0),
-          price1: parseFloat(t.price1),
-          tvlToken0: amount0,
-          tvlToken1: amount1,
-        }
-      })
-    )
-    // offset the values to line off bars with TVL used to swap across bar
-    newData?.map((entry, i) => {
-      if (i > 0) {
-        newData[i - 1].tvlToken0 = entry.tvlToken0
-        newData[i - 1].tvlToken1 = entry.tvlToken1
-      }
-    })
+          return {
+            index: i,
+            isCurrent: active,
+            activeLiquidity: parseFloat(t.liquidityActive.toString()),
+            price0: parseFloat(t.price0),
+            price1: parseFloat(t.price1),
+            tvlToken0: amount0,
+            tvlToken1: amount1,
+          }
+        })
+      )
 
-    console.log('TICK DATA', newData)
+      setProcessedData(_data)
+    }
 
-    return newData
+    processTicks()
   }, [data, token0, token1])
+
+  const formattedData = useMemo(() => {
+    if (!processedData) return undefined
+
+    console.log('PRICESS', processedData)
+    // offset the values to line off bars with TVL used to swap across bar
+    return processedData
+    // return processedData.map((entry, i) => {
+    //   if (i > 0) {
+    //     processedData[i - 1].tvlToken0 = entry.tvlToken0
+    //     processedData[i - 1].tvlToken1 = entry.tvlToken1
+    //   }
+    // })
+  }, [processedData])
 
   return (
     <Wrapper ref={ref}>
@@ -139,7 +149,7 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
         </MockLoading>
       ) : (
         <BarChart
-          data={formattedData}
+          data={formattedData || undefined}
           dimensions={{
             width: isMobile ? ref?.current?.offsetWidth - 100 || 0 : 850,
             height: 300,

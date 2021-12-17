@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as d3 from 'd3'
-import { scaleLinear } from 'd3'
+import { scaleBand, scaleLinear } from 'd3'
 
 interface BarChartInterface {
   data
@@ -12,7 +12,7 @@ interface BarChartInterface {
   isMobile: boolean
 }
 
-export default function BarChart({ data = [], dimensions, isMobile }: BarChartInterface) {
+export default function BarChart({ data, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
@@ -24,21 +24,28 @@ export default function BarChart({ data = [], dimensions, isMobile }: BarChartIn
     return dimensions.width / xTicks
   }, [dimensions])
 
-  const maxXScale = useMemo(() => data.reduce((acc, el) => (el.price0 > acc ? el.price0 : acc), 0), [data])
-
-  const { xScale, yScale } = useMemo(() => {
-    const scales = {
-      xScale: scaleLinear().domain([0, xTicks]).range([0, width]),
-      yScale: scaleLinear()
-        .domain([0, d3.max(data, (v) => v.activeLiquidity)])
-        .range([height, 0]),
-    }
-
-    return scales
-  }, [current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom])
+  // const maxXScale = useMemo(() => data.reduce((acc, el) => (el.price0 > acc ? el.price0 : acc), 0), [data])
 
   useEffect(() => {
-    if (data.length === 0) return
+    if (!data || data.length === 0 || !Array.isArray(data)) return
+    console.log('DDDDDDDDDDDDDDDDDDD', data)
+
+    const xDomain = new d3.InternSet([0, d3.max(data, (d) => d.price0)])
+    const yDomain = [0, d3.max(data, (v) => v.activeLiquidity)]
+
+    const I = d3.range(data.length).filter((i) => xDomain.has(data[i]))
+
+    const xScale = d3.scaleBand(xDomain, [0, width]).padding(0.1)
+    const yScale = d3.scaleLinear(yDomain, [height, 0])
+    // const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+    // const yAxis = d3.axisLeft(yScale).ticks(height / 40);
+
+    // const xScale = scaleBand()
+    //   .domain([0, d3.max(data, (d) => d.price0)])
+    //   .range([0, width])
+    // const yScale = scaleLinear()
+    //   .domain([d3.min(data, (v) => v.activeLiquidity), d3.max(data, (v) => v.activeLiquidity)])
+    //   .range([height, 0])
 
     const svgEl = d3.select(svgRef.current)
     svgEl.selectAll('*').remove()
@@ -63,12 +70,12 @@ export default function BarChart({ data = [], dimensions, isMobile }: BarChartIn
     //   Focus.style('display', 'block')
     // })
 
-    const xAxisGroup = svg
-      .append('g')
-      .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0))
-    xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
-    xAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
+    // const xAxisGroup = svg
+    //   .append('g')
+    //   .attr('transform', `translate(0, ${height})`)
+    //   .call(d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0))
+    // xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
+    // xAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
 
     // const y = d3
     //   .scaleLinear()
@@ -78,13 +85,7 @@ export default function BarChart({ data = [], dimensions, isMobile }: BarChartIn
     //   ])
     //   .range([height, 0])
 
-    // const yAxisGroup = svg.append('g').call(
-    //   d3
-    //     .axisLeft(y)
-    //     .ticks(10)
-    //     .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : `$${val}`}`)
-    //     .tickSize(-width)
-    // )
+    // const yAxisGroup = svg.append('g').call(d3.axisLeft(yScale).ticks(10).tickSize(-width))
 
     // yAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0.1)').attr('id', 'xline')
     // yAxisGroup.select('.domain').remove()
@@ -134,20 +135,32 @@ export default function BarChart({ data = [], dimensions, isMobile }: BarChartIn
     //       })
     //   )
 
+    ////////
     // svg
     //   .append('path')
-    //   .datum(_chartData)
-    //   .attr('fill', 'url(#gradient)')
+    //   .datum(data)
+    //   .attr('fill', 'red')
     //   .attr(
     //     'd',
     //     d3
     //       .area()
     //       .curve(d3.curveBumpX)
-    //       .x((d) => xScale(d.timestamp))
-    //       .y0((d) => y(d3.min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
-    //       .y1((d) => y(d.value))
+    //       .x((d) => xScale(d.price0))
+    //       .y0((d) => yScale(d3.min(data, (v) => v.activeLiquidity)))
+    //       .y1((d) => yScale(d.activeLiquidity))
     //   )
+    /////
 
+    const bar = svg
+      .append('g')
+      .attr('fill', 'red')
+      .selectAll('rect')
+      .data(data)
+      .join('rect')
+      .attr('x', (i) => xScale(i.price0))
+      .attr('y', (i) => yScale(i.activeLiquidity))
+      .attr('height', (i) => yScale(0) - yScale(i.activeLiquidity))
+      .attr('width', xScale.bandwidth())
     // xAxisGroup
     //   .selectAll('.tick')
     //   .nodes()

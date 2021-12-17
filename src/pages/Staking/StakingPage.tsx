@@ -71,7 +71,7 @@ const MenuWrapper = styled.div`
   &::before,
   &::after {
     content: '';
-    background-image: url(${WoodenRope});
+    // background-image: url(${WoodenRope});
     width: 5px;
     height: 51px;
     position: absolute;

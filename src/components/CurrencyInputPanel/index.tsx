@@ -113,7 +113,7 @@ const InputRow = styled.div<{ selected: boolean }>`
 `
 const AutoColumnStyled = styled(AutoColumn)`
   left: 1rem;
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   bottom: -25% !important;
   `}
 `
@@ -263,16 +263,22 @@ export default function CurrencyInputPanel({
       currency.name = 'Matic'
     }
   }
-  console.log(page)
 
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
-        <FixedContainer style={{ height: `${page === 'pool' ? '30px' : '80px'}`}}>
+        <FixedContainer style={{ height: `${page === 'pool' ? '30px' : '80px'}` }}>
           <AutoColumnStyled
             gap="sm"
             justify="center"
-            style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '18px', position: 'absolute', bottom: '10%'}}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              marginTop: '18px',
+              position: 'absolute',
+              bottom: '10%',
+            }}
           >
             {/* <Lock /> */}
             <TYPE.label fontSize="14px">
@@ -284,7 +290,11 @@ export default function CurrencyInputPanel({
       <Container hideInput={hideInput}>
         <InputRow
           hideCurrency={hideCurrency}
-          style={hideInput ? { borderRadius: '8px', padding: `${page === 'pool' ? '0' : ''}`} : {padding: `${page === 'pool' ? '0' : ''}`}}
+          style={
+            hideInput
+              ? { borderRadius: '8px', padding: `${page === 'pool' ? '0' : ''}` }
+              : { padding: `${page === 'pool' ? '0' : ''}` }
+          }
           selected={!onCurrencySelect}
         >
           {!hideCurrency && (

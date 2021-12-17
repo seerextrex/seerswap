@@ -109,8 +109,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       }
     }
 
-    console.log('SAME DAYS', sameDays)
-
     if (sameDays.length !== 0) {
       res.push(
         sameDays.reduce(
@@ -138,8 +136,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       res = res.concat([...data])
     }
 
-    console.log('RES', sameDays, res)
-
     let _data = []
 
     if (res.length < xTicks) {
@@ -152,8 +148,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
         .subtract(xTicks - 1, _span)
         .startOf(_span)
       const lastAdditionalDay = dayjs(Date.now()).startOf(_span)
-
-      console.log(firstRealDay, firstAdditionalDay, lastRealDay, lastAdditionalDay)
 
       if (firstRealDay > firstAdditionalDay) {
         for (
@@ -168,8 +162,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
         }
       }
 
-      console.log('first', [..._data])
-
       _data.push({
         timestamp: new Date(res[0].timestamp),
         value: res[0].value,
@@ -178,7 +170,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
       let last = _data[_data.length - 1]
 
       for (let i = 1; i < res.length; i++) {
-        console.log('res l', res[i])
         const isNext = dayjs(res[i].timestamp)
           .subtract(1, span === ChartSpan.DAY ? 'hours' : 'days')
           .isSame(dayjs(res[i - 1].timestamp))
@@ -211,8 +202,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
 
       _data.push(last)
 
-      console.log('second', [..._data])
-
       if (lastRealDay < lastAdditionalDay) {
         for (let i = lastRealDay.unix(); i < lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
           _data.push({
@@ -224,8 +213,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
     } else {
       _data = [...res]
     }
-
-    console.log('third', [..._data])
 
     return [..._data]
   }, [data, previousData])
@@ -289,8 +276,6 @@ export default function Chart({ feeData: { data, previousData } = {}, span, type
 
   useEffect(() => {
     if (data.length === 0) return
-
-    console.log('_chartData', _chartData)
 
     const svgEl = d3.select(svgRef.current)
     svgEl.selectAll('*').remove()

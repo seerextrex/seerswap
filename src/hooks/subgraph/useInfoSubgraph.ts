@@ -97,9 +97,10 @@ export function useInfoSubgraph() {
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
                         ? get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD)
-                        : current
-                            ? [parseFloat(current.volumeUSD), 0]
-                            : [0, 0]
+                        : current && oneDay ?
+                            [parseFloat(current.volumeUSD) - parseFloat(oneDay.volumeUSD), 0] : current
+                                ? [parseFloat(current.volumeUSD), 0]
+                                : [0, 0]
 
                 const volumeUSDWeek =
                     current && week
@@ -107,6 +108,7 @@ export function useInfoSubgraph() {
                         : current
                             ? parseFloat(current.volumeUSD)
                             : 0
+
                 const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
                 const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
                 const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
@@ -349,15 +351,6 @@ export function useInfoSubgraph() {
 
     async function fetchPoolLastNotEmptyEntry(pool: string, timestamp: string) {
         try {
-
-            console.log(`  query lastNotEmptyPoolHourData {
-                poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: "${pool}", periodStartUnix_lt: ${timestamp} }) {
-                  periodStartUnix
-                  volumeUSD
-                  tvlUSD
-                  feesUSD
-                }
-              }`)
 
             const { data: { poolHourDatas }, error: error } = await dataClient.query({
                 query: CHART_POOL_LAST_NOT_EMPTY(pool, timestamp),

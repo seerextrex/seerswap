@@ -39,7 +39,7 @@ const StyledCloseIcon = styled(X)`
   }
 
   > * {
-    stroke: ${({ theme }) => theme.text1};
+    stroke: ${({ theme }) => '#080064'};
   }
 `
 
@@ -111,7 +111,7 @@ const ModalContentWrapper = styled.div`
   align-items: center;
   justify-content: center;
   padding: 2rem 0;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => '#b3e6ff'};
   border-radius: 20px;
 `
 

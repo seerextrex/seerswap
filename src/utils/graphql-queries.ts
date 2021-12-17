@@ -43,6 +43,7 @@ export const FETCH_POOL = poolId => gql`
 query fetchPool {
     pools(where: { id: "${poolId}" }) {
         id
+        fee
         token0 {
             id
             decimals

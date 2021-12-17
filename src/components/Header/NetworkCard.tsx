@@ -172,9 +172,13 @@ const NetwordCardWrapper = styled.div`
   display: flex;
   align-items: center;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  // ${({ theme }) => theme.mediaWidth.upToSmall`
+  //   display: none;
+  // `};
+
+  ${({theme}) => theme.mediaWidth.upToLarge`
     display: none;
-  `}
+  `};
 `
 
 const ChainWrapper = styled.span`

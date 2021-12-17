@@ -14,6 +14,7 @@ import PoolInfoPage from '../PoolInfoPage'
 
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
+import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 995px;
@@ -50,19 +51,11 @@ const MenuWrapper = styled.div`
   font-weight: 600;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
-    min-width: calc(100% + 3rem);
     overflow: auto;
-    margin: 0 -2rem 1rem -2rem;
-    padding: 0 1rem;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }`}
-
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-
-  &::before,
-&::after {
-  display: none;
-}
-`}
 `
 
 const BodyWrapper = styled.div`
@@ -71,6 +64,10 @@ const BodyWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
   padding: 2rem 40px;
   border-radius: 20px;
+
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    // margin-top: 6rem
+  `}
 `
 
 const MockScreen = styled.div`

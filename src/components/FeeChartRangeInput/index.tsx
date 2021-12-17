@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useState } from 'react'
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Chart from './Chart'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components/macro'
@@ -9,14 +9,31 @@ import Loader from '../Loader'
 import { PageTitle } from '../PageTitle'
 import { ChartType } from '../../pages/PoolInfoPage'
 
+import { isMobile } from 'react-device-detect'
+
 const Wrapper = styled.div`
   width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 10px;
+  background-color: #052445;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    margin-left: -2.5rem;
+    margin-right: -2.5rem;
+    width: unset;
+    border-radius: 20px;
+    // height: 440px;
+  `}
 `
 const MockLoading = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 385px;
+  height: 360px;
   padding: 0 16px;
   max-width: 1000px;
 `
@@ -78,9 +95,11 @@ export default function FeeChartRangeInput({
 }: FeeChartRangeInputProps) {
   // const windowWidth = useWindowSize()
 
-  const windowWidth = useMemo(() => {
-    return window.innerWidth
-  }, [window.innerWidth])
+  const ref = useRef(null)
+
+  useEffect(() => {
+    console.log('ref', ref.current.offsetWidth)
+  }, [ref.current])
 
   const formattedData = useMemo(() => {
     if (!fetchedData) return undefined
@@ -114,7 +133,7 @@ export default function FeeChartRangeInput({
   }, [fetchedData])
 
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       {refreshing ? (
         <MockLoading>
           <Loader stroke={'white'} size={'25px'} />
@@ -124,10 +143,11 @@ export default function FeeChartRangeInput({
           <Chart
             feeData={formattedData || undefined}
             dimensions={{
-              width: windowWidth[0] < 1100 ? windowWidth[0] - 200 : 950,
+              width: isMobile ? (ref?.current?.offsetWidth - 100) || 0 : 850,
               height: 300,
-              margin: { top: 30, right: windowWidth[0] < 961 ? 0 : 0, bottom: 30, left: 40 },
+              margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 50 },
             }}
+            isMobile={isMobile}
             span={span}
             type={type}
           />

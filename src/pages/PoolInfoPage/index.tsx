@@ -12,21 +12,34 @@ import { usePool } from '../../hooks/usePools'
 import { useActiveWeb3React } from '../../hooks/web3'
 
 import dayjs from 'dayjs'
+import Loader from '../../components/Loader'
 
 const Wrapper = styled.div`
   min-width: 995px;
   max-width: 995px;
   display: flex;
   flex-direction: column;
+
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    min-width: unset;
+    width: 100%;
+  `}
 `
 const BodyWrapper = styled.div`
   display: flex;
-  height: 600px;
+  height: 480px;
   width: 100%;
 `
 const ChartWrapper = styled.div`
   width: 100%;
 `
+const LoaderMock = styled.div`
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
 export enum ChartType {
   VOLUME,
   TVL,
@@ -83,7 +96,7 @@ export default function PoolInfoPage({
     },
     {
       type: ChartType.FEES,
-      title: 'Fees',
+      title: 'Pool fee',
     },
   ]
 
@@ -129,9 +142,9 @@ export default function PoolInfoPage({
 
   return (
     <Wrapper>
-      {poolResult && (
+      {poolResult ? (
         <>
-          <PoolInfoHeader token0={poolResult.token0.id} token1={poolResult.token1.id} fee={''} />
+          <PoolInfoHeader token0={poolResult.token0.id} token1={poolResult.token1.id} fee={poolResult.fee} />
           <BodyWrapper>
             <ChartWrapper>
               <PoolInfoChartToolbar
@@ -153,7 +166,9 @@ export default function PoolInfoPage({
             </ChartWrapper>
           </BodyWrapper>
         </>
-      )}
+      ): <LoaderMock>
+        <Loader stroke={'white'} size={'30px'} />
+      </LoaderMock> }
     </Wrapper>
   )
 }

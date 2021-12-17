@@ -25,7 +25,7 @@ const MenuList = styled.ul`
   &::before,
   &::after {
     content: '';
-    background-image: url(${WoodenRope});
+    // background-image: url(${WoodenRope});
     width: 5px;
     height: 51px;
     position: absolute;
@@ -44,6 +44,14 @@ const MenuList = styled.ul`
     min-width: 100%;
     display: flex;
   }`}
+
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+
+  &::before,
+  &::after {
+    display: none;
+  }
+`}
 `
 
 const MenuListItem = styled.li`

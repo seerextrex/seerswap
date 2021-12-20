@@ -46,7 +46,17 @@ const MockLoading = styled.div`
   max-width: 1000px;
 `
 
-export default function LiquidityBarChart({ data, refreshing }: { data: any; refreshing: boolean }) {
+export default function LiquidityBarChart({
+  data,
+  token0,
+  token1,
+  refreshing,
+}: {
+  data: any
+  token0: string
+  token1: string
+  refreshing: boolean
+}) {
   // const [poolTickData, updatePoolTickData] = usePoolTickData(address)
 
   //   const [ticksToFetch, setTicksToFetch] = useState(INITIAL_TICKS_TO_FETCH)
@@ -61,13 +71,13 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
   const formattedAddress1 = isAddress(data?.token1?.address)
 
   // parsed tokens
-  const token0 = useMemo(() => {
+  const _token0 = useMemo(() => {
     return data && formattedAddress0 && formattedAddress1
       ? new Token(1, formattedAddress0, data.token0.decimals)
       : undefined
   }, [formattedAddress0, formattedAddress1, data])
 
-  const token1 = useMemo(() => {
+  const _token1 = useMemo(() => {
     return data && formattedAddress1 && formattedAddress1
       ? new Token(1, formattedAddress1, data.token1.decimals)
       : undefined
@@ -95,12 +105,12 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
           ]
           const pool =
             token0 && token1
-              ? new Pool(token0, token1, 500, sqrtPriceX96, t.liquidityActive, t.tickIdx, mockTicks)
+              ? new Pool(_token0, _token1, 500, sqrtPriceX96, t.liquidityActive, t.tickIdx, mockTicks)
               : undefined
           const nextSqrtX96 = data.ticksProcessed[i - 1]
             ? TickMath.getSqrtRatioAtTick(data.ticksProcessed[i - 1].tickIdx)
             : undefined
-          const maxAmountToken0 = token0 ? CurrencyAmount.fromRawAmount(token0, MAX_UINT128.toString()) : undefined
+          const maxAmountToken0 = token0 ? CurrencyAmount.fromRawAmount(_token0, MAX_UINT128.toString()) : undefined
           const outputRes0 =
             pool && maxAmountToken0 ? await pool.getOutputAmount(maxAmountToken0, nextSqrtX96) : undefined
 
@@ -117,6 +127,8 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
             price1: parseFloat(t.price1),
             tvlToken0: amount0,
             tvlToken1: amount1,
+            token0: token0,
+            token1: token1,
           }
         })
       )
@@ -130,15 +142,7 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
   const formattedData = useMemo(() => {
     if (!processedData) return undefined
 
-    console.log('PRICESS', processedData)
-    // offset the values to line off bars with TVL used to swap across bar
     return processedData
-    // return processedData.map((entry, i) => {
-    //   if (i > 0) {
-    //     processedData[i - 1].tvlToken0 = entry.tvlToken0
-    //     processedData[i - 1].tvlToken1 = entry.tvlToken1
-    //   }
-    // })
   }, [processedData])
 
   return (
@@ -151,9 +155,9 @@ export default function LiquidityBarChart({ data, refreshing }: { data: any; ref
         <BarChart
           data={formattedData || undefined}
           dimensions={{
-            width: isMobile ? ref?.current?.offsetWidth - 100 || 0 : 850,
+            width: isMobile ? ref?.current?.offsetWidth || 0 : 850,
             height: 300,
-            margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 50 },
+            margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 0 },
           }}
           isMobile={isMobile}
         />

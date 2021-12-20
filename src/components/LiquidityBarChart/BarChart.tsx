@@ -18,142 +18,117 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
 
-  const xTicks = 601
+  const activeTickIdx = useMemo(() => {
+    if (!data) return
 
-  const tickWidth = useMemo(() => {
-    return dimensions.width / xTicks
-  }, [dimensions])
+    let idx
+    for (const i of data) {
+      if (i.isCurrent === true) {
+        idx = i.index
+      }
+    }
 
-  // const maxXScale = useMemo(() => data.reduce((acc, el) => (el.price0 > acc ? el.price0 : acc), 0), [data])
+    return idx
+  }, [data])
+
+  const token0 = useMemo(() => {
+    if (!data) return
+    return data[0].token0
+  }, [data])
+
+  const token1 = useMemo(() => {
+    if (!data) return
+    return data[0].token1
+  }, [data])
 
   useEffect(() => {
-    if (!data || data.length === 0 || !Array.isArray(data)) return
-    console.log('DDDDDDDDDDDDDDDDDDD', data)
+    if (!data || data.length === 0 || !Array.isArray(data) || !activeTickIdx) return
 
-    const xDomain = new d3.InternSet([0, d3.max(data, (d) => d.price0)])
+    const xDomain = new Set(data.map((v) => v.price0))
     const yDomain = [0, d3.max(data, (v) => v.activeLiquidity)]
 
-    const I = d3.range(data.length).filter((i) => xDomain.has(data[i]))
-
-    const xScale = d3.scaleBand(xDomain, [0, width]).padding(0.1)
+    const xScale = d3.scaleBand(xDomain, [0, width])
     const yScale = d3.scaleLinear(yDomain, [height, 0])
-    // const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
-    // const yAxis = d3.axisLeft(yScale).ticks(height / 40);
-
-    // const xScale = scaleBand()
-    //   .domain([0, d3.max(data, (d) => d.price0)])
-    //   .range([0, width])
-    // const yScale = scaleLinear()
-    //   .domain([d3.min(data, (v) => v.activeLiquidity), d3.max(data, (v) => v.activeLiquidity)])
-    //   .range([height, 0])
 
     const svgEl = d3.select(svgRef.current)
     svgEl.selectAll('*').remove()
 
+    const InfoRectGroup = d3.create('svg:g').style('pointer-events', 'none').style('display', 'none')
+
+    const InfoRect = d3
+      .create('svg:rect')
+      .append('rect')
+      .attr('id', 'info-label')
+      .attr('width', '200px')
+      .attr('height', '90px')
+      .attr('rx', '6')
+      .style('fill', '#12151d')
+
+    const InfoRectPrice0 = d3
+      .create('svg:text')
+      .attr('transform', 'translate(16, 25)')
+      .attr('fill', 'white')
+      .attr('font-weight', '600')
+      .attr('font-size', '12px')
+
+    const InfoRectPrice1 = d3
+      .create('svg:text')
+      .attr('transform', 'translate(16, 50)')
+      .attr('fill', 'white')
+      .attr('font-weight', '600')
+      .attr('font-size', '12px')
+
+    const InfoRectPriceLocked = d3
+      .create('svg:text')
+      .attr('transform', 'translate(16, 75)')
+      .attr('fill', 'white')
+      .attr('font-weight', '600')
+      .attr('font-size', '12px')
+
+    const InfoCurrentCircle = d3
+      .create('svg:circle')
+      .attr('fill', '#fffb0f')
+      .attr('r', '5px')
+      .attr('cx', '180px')
+      .attr('cy', '21px')
+      .attr('display', 'none')
+
+    InfoRectGroup.node().append(InfoRect.node())
+    InfoRectGroup.node().append(InfoRectPrice0.node())
+    InfoRectGroup.node().append(InfoRectPrice1.node())
+    InfoRectGroup.node().append(InfoRectPriceLocked.node())
+    InfoRectGroup.node().append(InfoCurrentCircle.node())
+
     const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-    // svgEl.on('mouseenter', () => {
-    //   Line.style('display', 'block')
-    //   InfoRectGroup.style('display', 'block')
-    //   Focus.style('display', 'block')
-    // })
+    svgEl.on('mouseenter', () => {
+      InfoRectGroup.style('display', 'block')
+    })
 
-    // svgEl.on('mouseleave', () => {
-    //   Line.style('display', 'none')
-    //   InfoRectGroup.style('display', 'none')
-    //   Focus.style('display', 'none')
-    // })
+    svgEl.on('mouseleave', () => {
+      InfoRectGroup.style('display', 'none')
+    })
 
-    // svgEl.on('tap', () => {
-    //   Line.style('display', 'block')
-    //   InfoRectGroup.style('display', 'block')
-    //   Focus.style('display', 'block')
-    // })
+    svgEl.on('tap', () => {
+      InfoRectGroup.style('display', 'block')
+    })
 
-    // const xAxisGroup = svg
-    //   .append('g')
-    //   .attr('transform', `translate(0, ${height})`)
-    //   .call(d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0))
-    // xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
-    // xAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
+    svg
+      .append('circle')
+      .attr('fill', 'yellow')
+      .attr('r', '5px')
+      .attr('cx', xScale(data[activeTickIdx].price0))
+      .attr('cy', height + 10)
 
-    // const y = d3
-    //   .scaleLinear()
-    //   .domain([
-    //     d3.min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
-    //     d3.max(_chartData, (d) => +d.value + d.value * 0.2),
-    //   ])
-    //   .range([height, 0])
-
-    // const yAxisGroup = svg.append('g').call(d3.axisLeft(yScale).ticks(10).tickSize(-width))
-
-    // yAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0.1)').attr('id', 'xline')
-    // yAxisGroup.select('.domain').remove()
-    // yAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
-
-    //Gradient
-    // svg
-    //   .append('linearGradient')
-    //   .attr('id', 'gradient')
-    //   .attr('x1', '0%')
-    //   .attr('y1', '0%')
-    //   .attr('x2', '0%')
-    //   .attr('y2', '100%')
-    //   .selectAll('stop')
-    //   .data([
-    //     {
-    //       offset: '0%',
-    //       color: 'rgba(99, 192, 248, 0.75)',
-    //     },
-    //     {
-    //       offset: '100%',
-    //       color: 'rgba(99, 192, 248, 0)',
-    //     },
-    //   ])
-    //   .enter()
-    //   .append('stop')
-    //   .attr('offset', (d) => d.offset)
-    //   .attr('stop-color', (d) => d.color)
-
-    // Chart data visualize
-    // svg
-    //   .append('path')
-    //   .datum(_chartData)
-    //   .attr('fill', 'none')
-    //   .attr('stroke', '#63c0f8')
-    //   .attr('stroke-width', 2)
-    //   .attr(
-    //     'd',
-    //     d3
-    //       .line()
-    //       .curve(d3.curveBumpX)
-    //       .x(function (d) {
-    //         return xScale(d.timestamp)
-    //       })
-    //       .y(function (d) {
-    //         return y(d.value)
-    //       })
-    //   )
-
-    ////////
-    // svg
-    //   .append('path')
-    //   .datum(data)
-    //   .attr('fill', 'red')
-    //   .attr(
-    //     'd',
-    //     d3
-    //       .area()
-    //       .curve(d3.curveBumpX)
-    //       .x((d) => xScale(d.price0))
-    //       .y0((d) => yScale(d3.min(data, (v) => v.activeLiquidity)))
-    //       .y1((d) => yScale(d.activeLiquidity))
-    //   )
-    /////
+    svg
+      .append('text')
+      .attr('transform', `translate(${xScale(data[activeTickIdx].price0) + 10}, ${height + 14})`)
+      .attr('fill', 'yellow')
+      .attr('font-size', '12px')
+      .property('innerHTML', 'Current price')
 
     const bar = svg
       .append('g')
-      .attr('fill', 'red')
       .selectAll('rect')
       .data(data)
       .join('rect')
@@ -161,75 +136,51 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
       .attr('y', (i) => yScale(i.activeLiquidity))
       .attr('height', (i) => yScale(0) - yScale(i.activeLiquidity))
       .attr('width', xScale.bandwidth())
-    // xAxisGroup
-    //   .selectAll('.tick')
-    //   .nodes()
-    //   .map((el, i) => {
-    //     const xTranslate = d3
-    //       .select(el)
-    //       .attr('transform')
-    //       .match(/\((.*?)\)/)[1]
-    //       .split(',')[0]
+      .attr('fill', (v) => (v.isCurrent ? '#fffb0f' : '#63c0f8'))
 
-    //     if (isMobile && span !== ChartSpan.WEEK) {
-    //       d3.select(el)
-    //         .selectAll('text')
-    //         .style('text-anchor', 'end')
-    //         .attr('dx', '-.8em')
-    //         .attr('dy', '.15em')
-    //         .attr('transform', 'rotate(-65)')
-    //     }
+    svg
+      .append('g')
+      .attr('fill', 'transparent')
+      .selectAll('rect')
+      .data(data)
+      .join('rect')
+      .attr('x', (i) => xScale(i.price0))
+      .attr('y', 0)
+      .attr('height', height)
+      .attr('width', xScale.bandwidth())
+      .on('mouseover', (d, v) => {
+        const highlight = d3.select(d.target)
+        highlight.attr('fill', 'rgba(255,255,255,0.5)')
+        const xTranslate = xScale(v.price0)
+        const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
+        InfoRectGroup.attr(
+          'transform',
+          `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
+        )
 
-    //     if (isMobile && i % 2 === 0) {
-    //       d3.select(el).attr('display', 'none')
-    //     } else if (i % 2 === 0 && span !== ChartSpan.WEEK) {
-    //       d3.select(el).attr('display', 'none')
-    //     }
+        if (v.index === activeTickIdx) {
+          InfoCurrentCircle.attr('display', 'block')
+        } else {
+          InfoCurrentCircle.attr('display', 'none')
+        }
 
-    //     // d3.select(el).attr('transform', `translate(${+xTranslate + +tickWidth}, 0)`)
+        InfoRectPrice0.property('innerHTML', `${data[0].token0} Price: ${v.price0.toFixed(2)} ${data[0].token1}`)
+        InfoRectPrice1.property('innerHTML', `${data[0].token1} Price: ${v.price1.toFixed(2)} ${data[0].token0}`)
+        console.log(v.index, token0, token1, activeTickIdx)
+        InfoRectPriceLocked.property(
+          'innerHTML',
+          `${v.index < activeTickIdx ? token0 : token1} Locked: ${v.tvlToken0.toFixed(2)} ${
+            v.index >= activeTickIdx ? token1 : token0
+          }`
+        )
+      })
+      .on('mouseleave', (d) => {
+        const rect = d3.select(d.target)
+        rect.attr('fill', 'transparent')
+      })
 
-    //     const hoverHandle = function (e) {
-    //       const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
-    //       const date = new Date(_chartData[i]?.timestamp)
-    //       Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
-    //       InfoRectGroup.attr(
-    //         'transform',
-    //         `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
-    //       )
-    //       InfoRectFeeText.property(
-    //         'innerHTML',
-    //         `${type === ChartType.FEES ? 'Fee:' : type === ChartType.TVL ? 'TVL:' : 'Volume:'} ${
-    //           type !== ChartType.FEES ? '$' : ''
-    //         }${Number(_chartData[i]?.value).toFixed(2)}${type === ChartType.FEES ? '%' : ''}`
-    //       )
-    //       InfoRectDateText.property(
-    //         'innerHTML',
-    //         span === ChartSpan.DAY
-    //           ? `${date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()}:${
-    //               date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-    //             }:${date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()}`
-    //           : `${date.getDate()}/${date.getMonth() - 1}/${date.getFullYear()}`
-    //       )
-    //       Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
-    //     }
-
-    //     const rect = d3
-    //       .create('svg:rect')
-    //       .attr('x', `${xTranslate - tickWidth / 2}px`)
-    //       .attr('y', `-${0}px`)
-    //       .attr('width', `${tickWidth}px`)
-    //       .attr('height', `${dimensions.height}px`)
-    //       .attr('fill', 'transparent')
-    //       .on('mouseover', hoverHandle)
-    //       .on('touchmove', hoverHandle)
-
-    //     svg.node().append(rect.node())
-    //   })
-
-    // svg.append(() => InfoRectGroup.node())
-    // svg.append(() => Line.node())
-    // svg.append(() => Focus.node())
-  }, [data])
+    svg.append(() => InfoRectGroup.node())
+  }, [data, activeTickIdx])
 
   return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
 }

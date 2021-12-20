@@ -89,8 +89,8 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
   const ref = useRef(null)
 
   const formattedData = useMemo(() => {
-    if (!fetchedData) return undefined
-    if (fetchedData.data.length === 0) return []
+    if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return []
+    // if (fetchedData.data.length === 0) return []
 
     const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? 'volumeUSD' : 'feesUSD'
 

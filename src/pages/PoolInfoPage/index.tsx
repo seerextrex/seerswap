@@ -175,7 +175,12 @@ export default function PoolInfoPage({
               />
               {type === ChartType.LIQUIDITY ? (
                 // <DensityChart address={id} />
-                <LiquidityBarChart data={data || undefined} refreshing={refreshing}></LiquidityBarChart>
+                <LiquidityBarChart
+                  data={data || undefined}
+                  token0={poolResult.token0.symbol}
+                  token1={poolResult.token1.symbol}
+                  refreshing={refreshing}
+                ></LiquidityBarChart>
               ) : (
                 <FeeChartRangeInput
                   fetchedData={data || undefined}

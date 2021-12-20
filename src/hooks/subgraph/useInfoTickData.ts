@@ -227,7 +227,9 @@ export function useInfoTickData() {
             setTicksResult({
                 ticksProcessed,
                 tickSpacing,
-                activeTickIdx
+                activeTickIdx,
+                token0,
+                token1
             })
 
         } catch (err) {

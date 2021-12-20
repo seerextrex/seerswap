@@ -37,9 +37,7 @@ const MainContentWrapper = styled.div`
   border-radius: 20px;
   display: flex;
   flex-direction: column;
-  ${({ theme }) => theme.mediaWidth.upToSmall`{
-    min-width: 100%;
-  }`}
+  min-width: 100%;
 `
 const MenuWrapper = styled.div`
   display: flex;
@@ -66,7 +64,7 @@ const BodyWrapper = styled.div`
   border-radius: 20px;
 
   ${({theme}) => theme.mediaWidth.upToSmall`
-    // margin-top: 6rem
+    padding: 1rem 20px;
   `}
 `
 

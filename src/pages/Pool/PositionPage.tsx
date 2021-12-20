@@ -63,8 +63,8 @@ const PageWrapper = styled.div`
   `};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 600px;
-    max-width: 600px;
+    min-width: 100%;
+    max-width: 100%;
     margin-top: 1rem;
   `};
 
@@ -147,10 +147,7 @@ const NFTImage = styled.img`
 `
 const RowFixedStyled = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-  width: 100%;
-`}
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+   width: 100%;
     flex-direction: column;
 
     & > * {
@@ -160,8 +157,8 @@ const RowFixedStyled = styled(RowFixed)`
 `
 
 const FeeBadge = styled(Badge)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-      margin-right: 0;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+      margin-right: 0!important;
       margin-top: 1rem;
     `}
 `

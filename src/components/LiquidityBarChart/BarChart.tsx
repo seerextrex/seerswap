@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as d3 from 'd3'
 import { scaleBand, scaleLinear } from 'd3'
+import styled from 'styled-components/macro'
 
 interface BarChartInterface {
   data
@@ -11,6 +12,16 @@ interface BarChartInterface {
   }
   isMobile: boolean
 }
+
+const ChartSvg = styled.svg`
+  overflow: visible;
+  background-color: #081a2d;
+  border-radius: 10px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background-color: unset;
+  `}
+`
 
 export default function BarChart({ data, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
@@ -183,12 +194,5 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
     svg.append(() => InfoRectGroup.node())
   }, [data, activeTickIdx])
 
-  return (
-    <svg
-      ref={svgRef}
-      style={{ overflow: 'visible', backgroundColor: '#081a2d', borderRadius: '10px' }}
-      width={svgWidth}
-      height={svgHeight}
-    />
-  )
+  return <ChartSvg ref={svgRef} width={svgWidth} height={svgHeight} />
 }

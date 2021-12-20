@@ -22,8 +22,8 @@ const Wrapper = styled.div`
   justify-content: center;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-left: -2.5rem;
-    margin-right: -2.5rem;
+    margin-left: -1.3rem;
+    margin-right: -1.3rem;
     width: unset;
     border-radius: 20px;
     // height: 440px;
@@ -130,7 +130,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
           <Chart
             feeData={formattedData || undefined}
             dimensions={{
-              width: isMobile ? ref?.current?.offsetWidth - 100 || 0 : 850,
+              width: isMobile ? ref?.current?.offsetWidth - 130 || 0 : 850,
               height: 300,
               margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 50 },
             }}

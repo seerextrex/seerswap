@@ -21,7 +21,7 @@ const PoolInfoWrapper = styled.div`
   display: flex;
   align-items: center;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     align-items: flex-start;
   `}
@@ -37,7 +37,7 @@ const PoolFee = styled.span`
   background: #02365e;
   border-radius: 6px;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-left: 0;
     margin-top: 1rem;
   `}
@@ -50,8 +50,8 @@ export function PoolInfoHeader({ token0, token1, fee }: { token0: string; token1
   return (
     <Header>
       <Navigation to={'/info/pools'}>
-        <ArrowLeft style={{marginRight: '8px'}} size={15}/>
-        <span>Back to pool table</span>
+        <ArrowLeft style={{ marginRight: '8px' }} size={15} />
+        <span>Back to pools table</span>
       </Navigation>
       <PoolInfoWrapper>
         <PoolTitle>

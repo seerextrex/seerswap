@@ -18,7 +18,7 @@ import { useInfoTickData } from '../../hooks/subgraph/useInfoTickData'
 import LiquidityBarChart from '../../components/LiquidityBarChart'
 
 const Wrapper = styled.div`
-  min-width: 995px;
+  min-width: 915px;
   max-width: 995px;
   display: flex;
   flex-direction: column;
@@ -78,7 +78,7 @@ export default function PoolInfoPage({
   } = useInfoTickData()
 
   const [span, setSpan] = useState(ChartSpan.DAY)
-  const [type, setType] = useState(ChartType.LIQUIDITY)
+  const [type, setType] = useState(ChartType.VOLUME)
 
   const startTimestamp = useMemo(() => {
     const day = dayjs()

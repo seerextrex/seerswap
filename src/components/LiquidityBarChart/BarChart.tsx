@@ -51,6 +51,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
     const yScale = d3.scaleLinear(yDomain, [height, 0])
 
     const svgEl = d3.select(svgRef.current)
+
     svgEl.selectAll('*').remove()
 
     const InfoRectGroup = d3.create('svg:g').style('pointer-events', 'none').style('display', 'none')
@@ -59,7 +60,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
       .create('svg:rect')
       .append('rect')
       .attr('id', 'info-label')
-      .attr('width', '200px')
+      .attr('width', '220px')
       .attr('height', '90px')
       .attr('rx', '6')
       .style('fill', '#12151d')
@@ -155,7 +156,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
         const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
         InfoRectGroup.attr(
           'transform',
-          `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
+          `translate(${isOverflowing ? Number(xTranslate) - 220 - 16 : Number(xTranslate) + 16},10)`
         )
 
         if (v.index === activeTickIdx) {
@@ -166,7 +167,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
 
         InfoRectPrice0.property('innerHTML', `${data[0].token0} Price: ${v.price0.toFixed(2)} ${data[0].token1}`)
         InfoRectPrice1.property('innerHTML', `${data[0].token1} Price: ${v.price1.toFixed(2)} ${data[0].token0}`)
-        console.log(v.index, token0, token1, activeTickIdx)
+
         InfoRectPriceLocked.property(
           'innerHTML',
           `${v.index < activeTickIdx ? token0 : token1} Locked: ${v.tvlToken0.toFixed(2)} ${
@@ -182,5 +183,12 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
     svg.append(() => InfoRectGroup.node())
   }, [data, activeTickIdx])
 
-  return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
+  return (
+    <svg
+      ref={svgRef}
+      style={{ overflow: 'visible', backgroundColor: '#081a2d', borderRadius: '10px' }}
+      width={svgWidth}
+      height={svgHeight}
+    />
+  )
 }

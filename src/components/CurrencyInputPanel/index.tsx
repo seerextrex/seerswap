@@ -109,7 +109,7 @@ const InputRow = styled.div<{ selected: boolean }>`
   padding: ${({ hideCurrency }) => (hideCurrency ? '1rem 1rem 0.75rem 0' : '1rem 1rem 0.75rem 1rem')};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
     flex-direction: column;
-    // height: 120px;
+    align-items: stretch;
   }`}
 `
 const AutoColumnStyled = styled(AutoColumn)`
@@ -167,28 +167,6 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
   font-size:  ${({ active }) => (active ? '16px' : '16px')};
 `
 
-const StyledBalanceMax = styled.button<{ disabled?: boolean }>`
-  background-color: transparent;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  color: ${({ theme }) => theme.primaryText1};
-  opacity: ${({ disabled }) => (!disabled ? 1 : 0.4)};
-  pointer-events: ${({ disabled }) => (!disabled ? 'initial' : 'none')};
-  margin-left: 0.25rem;
-
-  :focus {
-    outline: none;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0.5rem;
-  `};
-`
-
 const MaxButton = styled.button`
   background-color: #245376;
   border-radius: 6px;
@@ -196,6 +174,10 @@ const MaxButton = styled.button`
   margin-right: 10px;
   border: none;
   padding: 4px 6px;
+
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    margin: 10px 0 0 0;
+  `}
 
   &:hover {
     background-color: ${darken(0.05, '#245376')};

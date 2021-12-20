@@ -22,6 +22,7 @@ import WMATICLogo from '../../assets/images/matic-logo.png'
 import StakerMyStakesMobileSkeleton from './StakerMyStakesMobileSkeleton'
 
 import { isMobile } from 'react-device-detect'
+import {log} from "util";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -96,7 +97,7 @@ const Stake = styled.div`
     }
   }
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     // display: none;
     flex-direction: column;
     background: rgba(60, 97, 126, 0.5);
@@ -154,7 +155,7 @@ const StakeSeparator = styled.div`
   margin: 0 1rem;
 `
 
-export const StakeReward = styled.div`
+export const StakeReward = styled.div<{reward?: string}>`
   display: flex;
   align-items: center;
 
@@ -165,7 +166,7 @@ export const StakeReward = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
   margin-bottom: 1rem;
   &::before {
-    content: "Reward";
+    content: "${p => p.reward || 'Reward'}";
     margin-right: 1rem;
   }
 `}
@@ -246,7 +247,7 @@ const StakeListHeader = styled.div`
     color: white;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     padding-bottom: 0;
     display: none;
     `};
@@ -510,7 +511,7 @@ export function StakerMyStakes({
         </StakePool>
         {/* <StakeSeparator>for</StakeSeparator> */}
         {staked && (
-          <StakeReward>
+          <StakeReward reward={'Reward'}>
             {el.rewardToken.id.toLowerCase() in specialTokens ? (
               <TokenIcon logo={specialTokens[el.rewardToken.id].logo} name={''}></TokenIcon>
             ) : (
@@ -523,7 +524,7 @@ export function StakerMyStakes({
           </StakeReward>
         )}
         {staked && (
-          <StakeReward>
+          <StakeReward reward={'Bonus'}>
             {el.bonusRewardToken.id.toLowerCase() in specialTokens ? (
               <TokenIcon logo={specialTokens[el.bonusRewardToken.id].logo} name={''}></TokenIcon>
             ) : (

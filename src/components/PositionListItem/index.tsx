@@ -84,6 +84,10 @@ const OnFarmingBadge = styled(Link)`
   font-size: 14px;
   border-radius: 6px;
   text-decoration: none;
+  
+  ${({theme}) => theme.mediaWidth.upToSmall`
+  margin-right: 1rem;
+  `}
 `
 
 const DataLineItem = styled.div`
@@ -161,6 +165,14 @@ const DataText = styled.div`
 const StatusBadge = styled(RangeBadge)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-top: 1rem;
+  `}
+`
+const StatusRow = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  ${({theme}) => theme.mediaWidth.upToSmall`
+  width: fit-content;
   `}
 `
 
@@ -309,14 +321,16 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
           {/* <Badge>
             <BadgeText><Trans>{new Percent(feeAmount, 1_000_000).toSignificant()}%</Trans></BadgeText>
           </Badge> */}
-          {_onFarming && (
-            <OnFarmingBadge to={farmingLink}>
-              <span>Farming</span>
-              <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
-            </OnFarmingBadge>
-          )}
         </PrimaryPositionIdData>
-        <StatusBadge removed={removed} inRange={!outOfRange} />
+        <StatusRow>
+          {_onFarming && (
+              <OnFarmingBadge to={farmingLink}>
+                <span>Farming</span>
+                <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
+              </OnFarmingBadge>
+          )}
+          <StatusBadge removed={removed} inRange={!outOfRange} />
+        </StatusRow>
       </PositionHeader>
 
       {priceLower && priceUpper ? (

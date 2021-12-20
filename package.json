@@ -167,6 +167,7 @@
     "@sentry/tracing": "^6.15.0",
     "bignumber.js": "^9.0.1",
     "hash-emoji": "^0.0.4",
+    "lodash.keyby": "^4.6.0",
     "numbro": "^2.3.5",
     "random-gradient": "^0.0.2",
     "react-helmet": "^6.1.0",

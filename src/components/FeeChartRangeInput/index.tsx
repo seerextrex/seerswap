@@ -20,8 +20,8 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  ${({theme}) => theme.mediaWidth.upToSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-left: -2.5rem;
     margin-right: -2.5rem;
     width: unset;
@@ -47,7 +47,6 @@ interface FeeChartRangeInputProps {
   id: string
   span: number
   type: number
-  startDate: number
 }
 
 // function useWindowSize() {
@@ -86,24 +85,12 @@ export function daysCount(month: number, year: number) {
   }
 }
 
-export default function FeeChartRangeInput({
-  fetchedData,
-  refreshing,
-  span,
-  type,
-  startDate,
-}: FeeChartRangeInputProps) {
-  // const windowWidth = useWindowSize()
-
+export default function FeeChartRangeInput({ fetchedData, refreshing, span, type }: FeeChartRangeInputProps) {
   const ref = useRef(null)
 
-  useEffect(() => {
-    console.log('ref', ref.current.offsetWidth)
-  }, [ref.current])
-
   const formattedData = useMemo(() => {
-    if (!fetchedData) return undefined
-    if (fetchedData.data.length === 0) return []
+    if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return []
+    // if (fetchedData.data.length === 0) return []
 
     const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? 'volumeUSD' : 'feesUSD'
 
@@ -143,7 +130,7 @@ export default function FeeChartRangeInput({
           <Chart
             feeData={formattedData || undefined}
             dimensions={{
-              width: isMobile ? (ref?.current?.offsetWidth - 100) || 0 : 850,
+              width: isMobile ? ref?.current?.offsetWidth - 100 || 0 : 850,
               height: 300,
               margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 50 },
             }}

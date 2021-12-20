@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import styled, { css, ThemeContext } from 'styled-components/macro'
 import { lighten } from 'polished'
+import { ChartType } from '../../pages/PoolInfoPage'
 
 const ToolbarWrapper = styled.div`
   width: 100%;
@@ -8,7 +9,7 @@ const ToolbarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     &:first-of-type {
       margin-bottom: 1rem;
@@ -16,11 +17,12 @@ const ToolbarWrapper = styled.div`
   `}
 `
 const ToolbarChartTypeWrapper = styled.div`
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   &:first-of-type {
     margin-bottom: 1rem;
   }
-`}`
+`}
+`
 
 const ToolbarOptionsTitle = styled.div`
   margin-bottom: 1rem;
@@ -56,8 +58,14 @@ const ToolbarOptionsItem = styled.li`
     `}
 `
 
-
-export default function PoolInfoChartToolbar({chartTypes, chartSpans, type, span, setType, setSpan} : {
+export default function PoolInfoChartToolbar({
+  chartTypes,
+  chartSpans,
+  type,
+  span,
+  setType,
+  setSpan,
+}: {
   chartTypes: any
   chartSpans: any
   type: number
@@ -65,9 +73,6 @@ export default function PoolInfoChartToolbar({chartTypes, chartSpans, type, span
   setType: any
   setSpan: any
 }) {
-
-  const theme = useContext(ThemeContext)
-
   return (
     <ToolbarWrapper>
       <ToolbarChartTypeWrapper>
@@ -80,16 +85,18 @@ export default function PoolInfoChartToolbar({chartTypes, chartSpans, type, span
           ))}
         </ToolbarOptions>
       </ToolbarChartTypeWrapper>
-      <ToolbarChartTypeWrapper>
-      <ToolbarOptionsTitle>Chart span</ToolbarOptionsTitle>
-        <ToolbarOptions>
-          {chartSpans.map((el, i) => (
-            <ToolbarOptionsItem selected={span === el.type} onClick={() => setSpan(el.type)} key={i}>
-              {el.title}
-            </ToolbarOptionsItem>
-          ))}
-        </ToolbarOptions>
-      </ToolbarChartTypeWrapper>
+      {type !== ChartType.LIQUIDITY && (
+        <ToolbarChartTypeWrapper>
+          <ToolbarOptionsTitle>Chart span</ToolbarOptionsTitle>
+          <ToolbarOptions>
+            {chartSpans.map((el, i) => (
+              <ToolbarOptionsItem selected={span === el.type} onClick={() => setSpan(el.type)} key={i}>
+                {el.title}
+              </ToolbarOptionsItem>
+            ))}
+          </ToolbarOptions>
+        </ToolbarChartTypeWrapper>
+      )}
     </ToolbarWrapper>
   )
 }

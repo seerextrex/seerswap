@@ -65,7 +65,7 @@ export default function Chart({
   }, [span, dimensions, data])
 
   const _chartData = useMemo(() => {
-    if (data.length === 0) return []
+    if (!data || data.length === 0) return []
 
     const _span = span !== ChartSpan.DAY ? 'day' : 'hour'
 
@@ -295,7 +295,7 @@ export default function Chart({
     .style('display', 'none')
 
   useEffect(() => {
-    if (data.length === 0) return
+    if (!data || data.length === 0) return
 
     const svgEl = d3.select(svgRef.current)
     svgEl.selectAll('*').remove()

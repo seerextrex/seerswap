@@ -45,7 +45,7 @@ const RowFixedMigrate = styled(RowFixed)`
   `}
 `
 const AutoColumnInfo = styled(AutoColumn)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-top: 30px;
   `}
 `

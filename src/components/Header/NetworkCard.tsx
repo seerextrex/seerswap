@@ -176,7 +176,7 @@ const NetwordCardWrapper = styled.div`
   //   display: none;
   // `};
 
-  ${({theme}) => theme.mediaWidth.upToLarge`
+  ${({theme}) => theme.mediaWidth.upToSmall`
     display: none;
   `};
 `

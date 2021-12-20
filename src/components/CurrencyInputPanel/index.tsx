@@ -426,7 +426,8 @@ export default function CurrencyInputPanel({
             <RowBetween>{`1 ${currency.symbol} = $${currentPrice.toFixed()}`}</RowBetween>
           </FiatRow>
         ) : (
-          currency && (
+          currency &&
+          swap && (
             <FiatRow>
               <RowBetween>Estimating...</RowBetween>
             </FiatRow>

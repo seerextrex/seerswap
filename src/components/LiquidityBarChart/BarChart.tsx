@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as d3 from 'd3'
-import { scaleBand, scaleLinear } from 'd3'
+import { active, scaleBand, scaleLinear } from 'd3'
 
 interface BarChartInterface {
   data
@@ -9,27 +9,15 @@ interface BarChartInterface {
     height: number
     margin: { top: number; right: number; bottom: number; left: number }
   }
+  activeTickIdx: number
   isMobile: boolean
 }
 
-export default function BarChart({ data, dimensions, isMobile }: BarChartInterface) {
+export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
-
-  const activeTickIdx = useMemo(() => {
-    if (!data) return
-
-    let idx
-    for (const i of data) {
-      if (i.isCurrent === true) {
-        idx = i.index
-      }
-    }
-
-    return idx
-  }, [data])
 
   const token0 = useMemo(() => {
     if (!data) return
@@ -41,8 +29,14 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
     return data[0].token1
   }, [data])
 
+  const activeTickIdxInRange = useMemo(() => {
+    if (!activeTickIdx || !data || data.length === 0) return
+
+    return data.findIndex((v) => v.index === activeTickIdx)
+  }, [activeTickIdx, data])
+
   useEffect(() => {
-    if (!data || data.length === 0 || !Array.isArray(data) || !activeTickIdx) return
+    if (!data || data.length === 0 || !Array.isArray(data) || !activeTickIdxInRange) return
 
     const xDomain = new Set(data.map((v) => v.price0))
     const yDomain = [0, d3.max(data, (v) => v.activeLiquidity)]
@@ -136,19 +130,22 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
         }
       })
 
-    svg
-      .append('circle')
-      .attr('fill', 'yellow')
-      .attr('r', '5px')
-      .attr('cx', xScale(data[activeTickIdx].price0))
-      .attr('cy', -9)
+    if (activeTickIdxInRange) {
+      console.log(activeTickIdxInRange, data[0].index, data[data.length - 1].index)
+      svg
+        .append('circle')
+        .attr('fill', 'yellow')
+        .attr('r', '5px')
+        .attr('cx', xScale(data[activeTickIdxInRange].price0))
+        .attr('cy', -9)
 
-    svg
-      .append('text')
-      .attr('transform', `translate(${xScale(data[activeTickIdx].price0) + 10}, ${-5})`)
-      .attr('fill', 'yellow')
-      .attr('font-size', '12px')
-      .property('innerHTML', 'Current price')
+      svg
+        .append('text')
+        .attr('transform', `translate(${xScale(data[activeTickIdxInRange].price0) + 10}, ${-5})`)
+        .attr('fill', 'yellow')
+        .attr('font-size', '12px')
+        .property('innerHTML', 'Current price')
+    }
 
     const bar = svg
       .append('g')
@@ -181,7 +178,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
           `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
         )
 
-        if (v.index === activeTickIdx) {
+        if (v.index === activeTickIdxInRange) {
           InfoCurrentCircle.attr('display', 'block')
         } else {
           InfoCurrentCircle.attr('display', 'none')
@@ -199,12 +196,12 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
           'innerHTML',
           `${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(2)} ${data[0].token0}`
         )
-        console.log(v.index, token0, token1, activeTickIdx)
+        console.log(v.index, token0, token1, activeTickIdxInRange)
         InfoRectPriceLocked.property(
           'innerHTML',
-          `${v.index < activeTickIdx ? token0 : token1} Locked: ${
+          `${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${
             isLowerTVL ? v.tvlToken0.toFixed(4) : v.tvlToken0.toFixed(2)
-          } ${v.index >= activeTickIdx ? token1 : token0}`
+          } ${v.index >= activeTickIdxInRange ? token1 : token0}`
         )
       })
       .on('mouseleave', (d, v) => {
@@ -213,7 +210,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
       })
 
     svg.append(() => InfoRectGroup.node())
-  }, [data, activeTickIdx])
+  }, [data, activeTickIdxInRange])
 
   return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
 }

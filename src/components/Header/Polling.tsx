@@ -13,7 +13,7 @@ const StyledPolling = styled.div`
   right: 0;
   bottom: 0;
   padding: 1rem;
-  color: ${({ theme }) => theme.green1};
+  color: rgb(91, 183, 255);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
@@ -21,6 +21,7 @@ const StyledPolling = styled.div`
 `
 const StyledPollingNumber = styled(TYPE.small)<{ breathe: boolean; hovering: boolean }>`
   transition: opacity 0.25s ease;
+  color: #2f567b;
   opacity: ${({ breathe, hovering }) => (hovering ? 0.7 : breathe ? 1 : 0.5)};
   :hover {
     opacity: 1;
@@ -34,7 +35,7 @@ const StyledPollingDot = styled.div`
   margin-left: 0.5rem;
   border-radius: 50%;
   position: relative;
-  background-color: ${({ theme }) => theme.green1};
+  background-color: rgb(91, 183, 255);
 `
 
 const rotate360 = keyframes`
@@ -53,7 +54,7 @@ const Spinner = styled.div`
   border-top: 1px solid transparent;
   border-right: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  border-left: 2px solid ${({ theme }) => theme.green1};
+  border-left: 2px solid rgb(91, 183, 255);
   background: transparent;
   width: 14px;
   height: 14px;

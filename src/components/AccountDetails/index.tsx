@@ -136,7 +136,7 @@ const AddressLink = styled(ExternalLink)<{ hasENS: boolean; isENS: boolean }>`
   font-size: 0.825rem;
   display: flex;
   :hover {
-    color: ${({ theme }) => theme.text2};
+    color: #080064;
   }
 `
 

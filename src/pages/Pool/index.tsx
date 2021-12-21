@@ -72,6 +72,7 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   border-radius: 12px;
   padding: 6px 8px;
   width: fit-content;
+ 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
     width: 100%;
@@ -81,9 +82,6 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
 
 const MigrateButtonPrimary = styled(ResponsiveButtonPrimary)`
   margin-right: 1rem;
-  &:hover {
-    // background-color: ${({ theme }) => darken('0.2', theme.winterMainButton)};
-  }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;
@@ -176,7 +174,7 @@ export default function Pool() {
                 </MigrateButtonPrimary>
                 <ResponsiveButtonPrimary
                   id="join-pool-button"
-                  style={{ background: theme.winterMainButton, color: 'white' }}
+                  style={{ color: 'white' }}
                   as={Link}
                   to={`/add/${chainSymbol}`}
                 >

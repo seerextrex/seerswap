@@ -29,9 +29,7 @@ const LinkRow = styled(Link)`
   display: flex;
   cursor: pointer;
   user-select: none;
-  display: flex;
   flex-direction: column;
-
   justify-content: space-between;
   color: ${({ theme }) => theme.text1};
   margin: 8px 0;
@@ -84,6 +82,7 @@ const OnFarmingBadge = styled(Link)`
   font-size: 14px;
   border-radius: 6px;
   text-decoration: none;
+  margin-right: auto;
   
   ${({theme}) => theme.mediaWidth.upToSmall`
   margin-right: 1rem;
@@ -170,7 +169,7 @@ const StatusBadge = styled(RangeBadge)`
 const StatusRow = styled.div`
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-end;
   ${({theme}) => theme.mediaWidth.upToSmall`
   width: fit-content;
   `}

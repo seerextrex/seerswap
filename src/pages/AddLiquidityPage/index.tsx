@@ -78,7 +78,7 @@ const LiquidityWrapper = styled.div`
 const TokenPair = styled.div`
   display: flex;
   width: 100%;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column; 
   `}
 `
@@ -112,7 +112,7 @@ const TokenItem = styled.div`
       // border-color: #d33636;
       border-radius: 1rem 1rem 0 0;
     `}
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0 0 1rem 0!important;
   `}
 `
@@ -137,7 +137,7 @@ const MaxButton = styled.button`
 const PoolInfo = styled.div`
   display: flex;
   margin-top: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column; 
   `}
 `
@@ -161,7 +161,7 @@ const PoolInfoItem = styled.div`
     margin-left: 0.5rem;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 5px 0!important;
     flex-direction: column;
   `}
@@ -171,7 +171,7 @@ const PoolInfoItemTitle = styled.span`
   font-weight: 600;
   white-space: nowrap;
   margin-right: 10px;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   margin: 2px 5px 0 0;
   `}
 `
@@ -294,7 +294,7 @@ const PriceRangeWrapper = styled.div`
   width: 100%;
   // height: 250px;
   // margin-bottom: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
 `
@@ -308,7 +308,7 @@ const PriceRangeInputs = styled.div`
   height: 100%;
   flex: 1;
   margin-left: ${({ initial }) => (initial ? '0' : '1rem')};
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
    margin: 1rem 0 0 0;
   `}
 `
@@ -323,7 +323,7 @@ const AddLiquidityMessage = styled.div`
   border-radius: 8px;
   padding: 14px 16px;
   font-size: 13px;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-bottom: 15px;
   `}
 `
@@ -1069,7 +1069,7 @@ export default function AddLiquidityPage({
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    marginTop: `${window.innerWidth < 500 ? '' : '1rem'}`,
+                    marginTop: `${window.innerWidth < 721 ? '120px' : '1rem'}`,
                   }}
                 >
                   {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (

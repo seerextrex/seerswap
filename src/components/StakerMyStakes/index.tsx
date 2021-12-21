@@ -23,6 +23,7 @@ import StakerMyStakesMobileSkeleton from './StakerMyStakesMobileSkeleton'
 
 import { isMobile } from 'react-device-detect'
 import {log} from "util";
+import {darken} from "polished";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -176,8 +177,8 @@ export const StakeCountdown = styled.div`
   font-size: 16px;
   margin: auto;
 
-  max-width: 94px !important;
-  min-width: 94px !important;
+  max-width: 100px !important;
+  min-width: 100px !important;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-bottom: 1rem;
@@ -213,6 +214,10 @@ export const StakeButton = styled.button`
   background-color: ${({ skeleton, theme }) => (skeleton ? '#5aa7df' : theme.winterMainButton)};
   color: white;
   min-width: 126px;
+
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
 
   ${({ disabled }) =>
     disabled &&

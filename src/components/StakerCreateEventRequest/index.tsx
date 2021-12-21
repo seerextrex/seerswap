@@ -1,5 +1,6 @@
 import { Clipboard, ExternalLink } from 'react-feather'
 import styled from 'styled-components/macro'
+import {darken} from "polished";
 
 const Wrapper = styled.div`
   display: flex;
@@ -18,6 +19,11 @@ const RequestButton = styled.a`
   text-decoration: none;
   display: flex;
   justify-content: center;
+
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
+  
 `
 
 export default function StakerCreateEventRequest() {

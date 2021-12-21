@@ -29,7 +29,7 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   // background-color: ${({ theme, hideInput }) => (hideInput ? 'transparent' : theme.bg2)};
   background-color: transparent;
   z-index: 1;
-  width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+  width: 100% !important;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     width: 100%!important;
   `}
@@ -145,10 +145,12 @@ const Aligner = styled.span`
   position: relative;
 `
 const NumericalInputStyled = styled(NumericalInput)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
-    width: 100%;
-    text-align: left!important;
+  ${({theme}) => theme.mediaWidth.upToSmall`
     font-size: 18px!important;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    text-align: left!important;
+    width: 100%;
     margin: 15px 0 10px;
   }`}
 `
@@ -183,7 +185,7 @@ const MaxButton = styled.button`
     background-color: ${darken(0.05, '#245376')};
   }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
       width: 100%;
       margin-top: 10px;
       margin-right: 0;

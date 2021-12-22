@@ -10,13 +10,10 @@ const PageWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
 
   padding: ${({ wide }) => (wide ? '30px 40px' : '0')};
-
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    max-width: 480px;
-  `};
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    max-width: 100%!important;
+    max-width: 720px!important;
     overflow-x: scroll;
+    border-radius: 8px;
   `};
 `
 

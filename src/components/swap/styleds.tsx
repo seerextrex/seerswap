@@ -26,6 +26,10 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
   background-color: #759fe3;
   border: none;
   z-index: 2;
+  
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  margin-top: -15px;
+  `}
 
   ${({ clickable }) =>
     clickable

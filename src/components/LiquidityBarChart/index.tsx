@@ -32,11 +32,10 @@ const Wrapper = styled.div`
   justify-content: center;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-left: -2.5rem;
-    margin-right: -2.5rem;
+    margin-left: -1.3rem;
+    margin-right: -1.3rem;
     width: unset;
     border-radius: 20px;
-    // height: 440px;
   `}
 `
 const MockLoading = styled.div`
@@ -46,6 +45,10 @@ const MockLoading = styled.div`
   height: 360px;
   padding: 0 16px;
   max-width: 1000px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `}
 `
 
 const ZoomButtonsWrapper = styled.div`

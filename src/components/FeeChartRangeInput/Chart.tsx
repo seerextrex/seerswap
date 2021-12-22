@@ -172,7 +172,7 @@ export default function Chart({
         ) {
           _data.push({
             timestamp: new Date(i * 1000),
-            value: firstNonEmptyValue ? firstNonEmptyValue.value : 0,
+            value: type === ChartType.VOLUME ? 0 : firstNonEmptyValue ? firstNonEmptyValue.value : 0,
           })
         }
       }
@@ -202,11 +202,9 @@ export default function Chart({
           for (let j = 1; j <= difference; j++) {
             const nextDay = new Date(dayjs(last.timestamp).startOf(_span).add(1, _span).startOf(_span).unix() * 1000)
 
-            console.log('diff', j, nextDay)
-
             _data.push({
               timestamp: nextDay,
-              value: last.value,
+              value: type === ChartType.VOLUME ? 0 : last.value,
             })
 
             last = _data[_data.length - 1]
@@ -223,10 +221,9 @@ export default function Chart({
           i <= lastAdditionalDay.unix();
           i += span === ChartSpan.DAY ? 3600 : 24 * 3600
         ) {
-          console.log('here', new Date(i * 1000))
           _data.push({
             timestamp: new Date(i * 1000),
-            value: res[res.length - 1].value,
+            value: type === ChartType.VOLUME ? 0 : res[res.length - 1].value,
           })
         }
       }

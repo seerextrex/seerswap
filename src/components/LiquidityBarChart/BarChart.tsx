@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as d3 from 'd3'
-import { active, scaleBand, scaleLinear } from 'd3'
+
+import { scaleBand, scaleLinear } from 'd3'
+import styled from 'styled-components/macro'
 
 interface BarChartInterface {
   data
@@ -13,6 +15,15 @@ interface BarChartInterface {
   isMobile: boolean
 }
 
+const ChartSvg = styled.svg`
+  overflow: visible;
+  background-color: #081a2d;
+  border-radius: 10px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background-color: unset;
+  `}
+`
 export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
@@ -45,6 +56,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
     const yScale = d3.scaleLinear(yDomain, [height, 0])
 
     const svgEl = d3.select(svgRef.current)
+
     svgEl.selectAll('*').remove()
 
     const InfoRectGroup = d3.create('svg:g').style('pointer-events', 'none').style('display', 'none')
@@ -175,7 +187,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
         const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
         InfoRectGroup.attr(
           'transform',
-          `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
+          `translate(${isOverflowing ? Number(xTranslate) - 220 - 16 : Number(xTranslate) + 16},10)`
         )
 
         if (v.index === activeTickIdxInRange) {
@@ -196,7 +208,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
           'innerHTML',
           `${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(2)} ${data[0].token0}`
         )
-        console.log(v.index, token0, token1, activeTickIdxInRange)
+       
         InfoRectPriceLocked.property(
           'innerHTML',
           `${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${
@@ -212,5 +224,5 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
     svg.append(() => InfoRectGroup.node())
   }, [data, activeTickIdxInRange])
 
-  return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
+  return <ChartSvg ref={svgRef} width={svgWidth} height={svgHeight} />
 }

@@ -56,6 +56,10 @@ const ToolbarOptionsItem = styled.li`
       background-color: #2a87d9;
       cursor: default;
     `}
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-bottom: 10px;
+  `}
 `
 
 export default function PoolInfoChartToolbar({

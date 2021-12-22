@@ -76,8 +76,14 @@ const ZoomButton = styled.button`
     margin-left: 10px;
   }
 
-  &:hover {
-    background-color: ${darken(0.1, '#a9c6e6')};
+  &:not(:disabled) {
+    &:hover {
+      background-color: ${darken(0.1, '#a9c6e6')};
+    }
+  }
+
+  &:disabled {
+    opacity: 0.3;
   }
 `
 
@@ -218,8 +224,12 @@ export default function LiquidityBarChart({
       ) : (
         <>
           <ZoomButtonsWrapper>
-            <ZoomButton onClick={handleZoomIn}>+</ZoomButton>
-            <ZoomButton onClick={handleZoomOut}>-</ZoomButton>
+            <ZoomButton disabled={zoom === MAX_ZOOM} onClick={handleZoomIn}>
+              +
+            </ZoomButton>
+            <ZoomButton disabled={zoom === 2} onClick={handleZoomOut}>
+              -
+            </ZoomButton>
           </ZoomButtonsWrapper>
           <BarChart
             data={formattedData || undefined}

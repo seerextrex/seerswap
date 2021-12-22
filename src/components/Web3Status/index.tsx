@@ -39,6 +39,7 @@ const Web3StatusGeneric = styled(ButtonSecondary)`
   cursor: pointer;
   user-select: none;
   :focus {
+    box-shadow: none;
     outline: none;
   }
 `

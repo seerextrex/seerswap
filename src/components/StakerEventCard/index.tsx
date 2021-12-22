@@ -9,6 +9,7 @@ import { getCountdownTime, getStatic, getStaticTime } from '../../utils/time'
 import Loader from '../Loader'
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import USDCLogo from '../../assets/images/usdc-logo.png'
+import {darken} from "polished";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -285,6 +286,9 @@ const StakeButton = styled.button`
   font-weight: 500;
   margin-top: 10px;
 
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
   ${({ skeleton }) =>
     skeleton
       ? css`

@@ -63,8 +63,8 @@ import ReactGA from 'react-ga'
 import { opacify } from 'polished'
 
 const StyledInfo = styled(Info)`
-  opacity: 0.4;
-  color: ${({ theme }) => theme.text1};
+  opacity: 0.6;
+  color: #2f567b;
   height: 16px;
   width: 16px;
   :hover {

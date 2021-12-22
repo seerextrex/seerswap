@@ -10,6 +10,7 @@ const BadgeWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   user-select: none;
+  margin-right: 0.5rem;
 `
 
 const BadgeText = styled.div`

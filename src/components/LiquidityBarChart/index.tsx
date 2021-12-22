@@ -85,7 +85,7 @@ export default function LiquidityBarChart({
 }) {
   const [zoom, setZoom] = useState(3)
 
-  const MAX_ZOOM = 6
+  const MAX_ZOOM = 10
 
   const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1)
 
@@ -167,11 +167,20 @@ export default function LiquidityBarChart({
   const formattedData = useMemo(() => {
     if (!processedData || processedData.length === 0) return undefined
 
-    const chunk = Math.round(processedData.length / zoom)
+    if (zoom === 1) return processedData
 
-    console.log(zoom, processedData, chunk, processedData.slice(chunk, chunk * 2))
+    const middle = Math.round(processedData.length / 2)
+    const chunkLength = Math.round(processedData.length / zoom)
 
-    return processedData.slice(chunk, chunk * 2)
+    console.log(
+      zoom,
+      processedData,
+      middle,
+      chunkLength,
+      processedData.slice(middle - chunkLength, middle + chunkLength)
+    )
+
+    return processedData.slice(middle - chunkLength, middle + chunkLength)
   }, [processedData, zoom])
 
   const activeTickIdx = useMemo(() => {

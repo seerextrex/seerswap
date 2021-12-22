@@ -35,6 +35,8 @@ const Wrapper = styled.div`
     margin-left: -1.3rem;
     margin-right: -1.3rem;
     width: unset;
+    display: flex;
+    flex-direction: column;
     border-radius: 20px;
   `}
 `
@@ -56,6 +58,10 @@ const ZoomButtonsWrapper = styled.div`
   position: absolute;
   right: 1rem;
   top: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    position: static;
+  `}
 `
 
 const ZoomButton = styled.button`
@@ -86,7 +92,7 @@ export default function LiquidityBarChart({
   token1: string
   refreshing: boolean
 }) {
-  const [zoom, setZoom] = useState(3)
+  const [zoom, setZoom] = useState(5)
 
   const MAX_ZOOM = 10
 
@@ -227,7 +233,7 @@ export default function LiquidityBarChart({
             data={formattedData || undefined}
             activeTickIdx={activeTickIdx}
             dimensions={{
-              width: isMobile ? ref?.current?.offsetWidth || 0 : 850,
+              width: isMobile ? ref?.current?.offsetWidth - 10 || 0 : 850,
               height: 300,
               margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 0 },
             }}

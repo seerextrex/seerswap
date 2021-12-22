@@ -299,19 +299,19 @@ export default function Chart({
 
     const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-    svgEl.on('mouseenter', () => {
+    svg.on('mouseenter', () => {
       Line.style('display', 'block')
       InfoRectGroup.style('display', 'block')
       Focus.style('display', 'block')
     })
 
-    svgEl.on('mouseleave', () => {
+    svg.on('mouseleave', () => {
       Line.style('display', 'none')
       InfoRectGroup.style('display', 'none')
       Focus.style('display', 'none')
     })
 
-    svgEl.on('tap', () => {
+    svg.on('tap', () => {
       Line.style('display', 'block')
       InfoRectGroup.style('display', 'block')
       Focus.style('display', 'block')
@@ -387,6 +387,13 @@ export default function Chart({
             return y(d.value)
           })
       )
+      .transition()
+      .duration(1000)
+      .ease(d3.easeCircleOut)
+      .attrTween('stroke-dasharray', function () {
+        const length = this.getTotalLength()
+        return d3.interpolate(`0,${length}`, `${length},${length}`)
+      })
 
     svg
       .append('path')
@@ -401,6 +408,12 @@ export default function Chart({
           .y0((d) => y(d3.min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
           .y1((d) => y(d.value))
       )
+      .style('opacity', 0)
+      .transition()
+      .delay(900)
+      .duration(500)
+      .ease(d3.easeCircleOut)
+      .style('opacity', 1)
 
     xAxisGroup
       .selectAll('.tick')

@@ -17,12 +17,7 @@ interface BarChartInterface {
 
 const ChartSvg = styled.svg`
   overflow: visible;
-  background-color: #081a2d;
   border-radius: 10px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    background-color: unset;
-  `}
 `
 export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
@@ -107,15 +102,15 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
 
     const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-    svgEl.on('mouseenter', () => {
+    svg.on('mouseenter', () => {
       InfoRectGroup.style('display', 'block')
     })
 
-    svgEl.on('mouseleave', () => {
+    svg.on('mouseleave', () => {
       InfoRectGroup.style('display', 'none')
     })
 
-    svgEl.on('tap', () => {
+    svg.on('tap', () => {
       InfoRectGroup.style('display', 'block')
     })
 
@@ -148,12 +143,12 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
         .append('circle')
         .attr('fill', 'yellow')
         .attr('r', '5px')
-        .attr('cx', xScale(data[activeTickIdxInRange].price0))
+        .attr('cx', xScale(data[activeTickIdxInRange].price0) + 2)
         .attr('cy', -9)
 
       svg
         .append('text')
-        .attr('transform', `translate(${xScale(data[activeTickIdxInRange].price0) + 10}, ${-5})`)
+        .attr('transform', `translate(${xScale(data[activeTickIdxInRange].price0) + 15}, ${-5})`)
         .attr('fill', 'yellow')
         .attr('font-size', '12px')
         .property('innerHTML', 'Current price')
@@ -208,7 +203,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
           'innerHTML',
           `${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(2)} ${data[0].token0}`
         )
-       
+
         InfoRectPriceLocked.property(
           'innerHTML',
           `${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${

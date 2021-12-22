@@ -181,14 +181,6 @@ export default function LiquidityBarChart({
     const middle = Math.round(processedData.length / 2)
     const chunkLength = Math.round(processedData.length / zoom)
 
-    console.log(
-      zoom,
-      processedData,
-      middle,
-      chunkLength,
-      processedData.slice(middle - chunkLength, middle + chunkLength)
-    )
-
     return processedData.slice(middle - chunkLength, middle + chunkLength)
   }, [processedData, zoom])
 

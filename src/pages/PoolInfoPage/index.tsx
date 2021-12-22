@@ -131,10 +131,8 @@ export default function PoolInfoPage({
     if (type === ChartType.FEES) {
       fetchFeePoolFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
     } else if (type === ChartType.LIQUIDITY) {
-      console.log(1)
       fetchTicksSurroundingPriceFn(id)
     } else {
-      console.log(2)
       fetchChartPoolDataFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
     }
   }, [span, type])

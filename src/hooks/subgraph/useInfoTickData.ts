@@ -37,8 +37,6 @@ export function useInfoTickData() {
                 },
             })
 
-            console.log('DATAAAAAAA', data)
-
             if (loading) {
                 continue
             }

@@ -138,7 +138,6 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
       })
 
     if (activeTickIdxInRange) {
-      console.log(activeTickIdxInRange, data[0].index, data[data.length - 1].index)
       svg
         .append('circle')
         .attr('fill', 'yellow')

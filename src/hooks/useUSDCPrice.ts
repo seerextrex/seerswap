@@ -28,7 +28,6 @@ export default function useUSDCPrice(currency?: Currency): Price<Currency, Token
 
   return useMemo(() => {
 
-    console.log(currency)
     if (!currency || !stablecoin) {
       return undefined
     }

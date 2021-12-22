@@ -67,8 +67,6 @@ function useCallsData(
     const callKeys: string[] = JSON.parse(serializedCallKeys)
     if (!chainId || callKeys.length === 0) return undefined
     const calls = callKeys.map((key) => parseCallKey(key))
-    if (methodName === 'quoteExactOutput')
-      console.log(methodName, calls)
 
     dispatch(
       addMulticallListeners({

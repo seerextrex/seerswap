@@ -150,8 +150,6 @@ export default function Chart({
       value: date.value,
     }))
 
-    console.log('RES', sameDays, res)
-
     let _data = []
 
     if (res.length < xTicks) {
@@ -185,7 +183,6 @@ export default function Chart({
       let last = _data[_data.length - 1]
 
       for (let i = 1; i < res.length; i++) {
-        console.log('res l', res[i])
         const isNext = dayjs(res[i].timestamp)
           .startOf(_span)
           .subtract(1, _span)

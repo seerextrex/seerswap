@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useInfoTickData } from '../../hooks/subgraph/useInfoTickData'
 import BarChart from './BarChart'
 
@@ -18,8 +18,10 @@ import { Token, CurrencyAmount } from '@uniswap/sdk-core'
 import { Pool } from '../../lib/src'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { darken } from 'polished'
 
 const Wrapper = styled.div`
+  position: relative;
   width: 100%;
   padding: 1rem;
   margin-top: 1rem;
@@ -49,6 +51,30 @@ const MockLoading = styled.div`
   `}
 `
 
+const ZoomButtonsWrapper = styled.div`
+  display: flex;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+`
+
+const ZoomButton = styled.button`
+  border-radius: 50%;
+  border: none;
+  width: 32px;
+  height: 32px;
+  background-color: #a9c6e6;
+  color: #052445;
+  font-weight: 700;
+  &:last-of-type {
+    margin-left: 10px;
+  }
+
+  &:hover {
+    background-color: ${darken(0.1, '#a9c6e6')};
+  }
+`
+
 export default function LiquidityBarChart({
   data,
   token0,
@@ -60,10 +86,9 @@ export default function LiquidityBarChart({
   token1: string
   refreshing: boolean
 }) {
-  // const [poolTickData, updatePoolTickData] = usePoolTickData(address)
+  const [zoom, setZoom] = useState(3)
 
-  //   const [ticksToFetch, setTicksToFetch] = useState(INITIAL_TICKS_TO_FETCH)
-  //   const amountTicks = ticksToFetch * 2 + 1
+  const MAX_ZOOM = 10
 
   const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1)
 
@@ -143,10 +168,48 @@ export default function LiquidityBarChart({
   }, [data, token0, token1])
 
   const formattedData = useMemo(() => {
-    if (!processedData) return undefined
+    if (!processedData || processedData.length === 0) return undefined
 
-    return processedData
-  }, [processedData])
+    if (zoom === 1) return processedData
+
+    const middle = Math.round(processedData.length / 2)
+    const chunkLength = Math.round(processedData.length / zoom)
+
+    console.log(
+      zoom,
+      processedData,
+      middle,
+      chunkLength,
+      processedData.slice(middle - chunkLength, middle + chunkLength)
+    )
+
+    return processedData.slice(middle - chunkLength, middle + chunkLength)
+  }, [processedData, zoom])
+
+  const activeTickIdx = useMemo(() => {
+    if (!processedData) return
+
+    let idx
+    for (const i of formattedData) {
+      if (i.isCurrent === true) {
+        idx = i.index
+      }
+    }
+
+    return idx
+  }, [processedData, zoom])
+
+  const handleZoomIn = useCallback(() => {
+    if (zoom < MAX_ZOOM) {
+      setZoom(zoom + 1)
+    }
+  }, [processedData, zoom])
+
+  const handleZoomOut = useCallback(() => {
+    if (zoom > 0) {
+      setZoom(zoom - 1)
+    }
+  }, [processedData, zoom])
 
   return (
     <Wrapper ref={ref}>
@@ -155,15 +218,22 @@ export default function LiquidityBarChart({
           <Loader stroke={'white'} size={'25px'} />
         </MockLoading>
       ) : (
-        <BarChart
-          data={formattedData || undefined}
-          dimensions={{
-            width: isMobile ? ref?.current?.offsetWidth || 0 : 850,
-            height: 300,
-            margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 0 },
-          }}
-          isMobile={isMobile}
-        />
+        <>
+          <ZoomButtonsWrapper>
+            <ZoomButton onClick={handleZoomIn}>+</ZoomButton>
+            <ZoomButton onClick={handleZoomOut}>-</ZoomButton>
+          </ZoomButtonsWrapper>
+          <BarChart
+            data={formattedData || undefined}
+            activeTickIdx={activeTickIdx}
+            dimensions={{
+              width: isMobile ? ref?.current?.offsetWidth || 0 : 850,
+              height: 300,
+              margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 0 },
+            }}
+            isMobile={isMobile}
+          />
+        </>
       )}
     </Wrapper>
   )

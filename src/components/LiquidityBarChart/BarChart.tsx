@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as d3 from 'd3'
+
 import { scaleBand, scaleLinear } from 'd3'
 import styled from 'styled-components/macro'
 
@@ -10,6 +11,7 @@ interface BarChartInterface {
     height: number
     margin: { top: number; right: number; bottom: number; left: number }
   }
+  activeTickIdx: number
   isMobile: boolean
 }
 
@@ -22,25 +24,11 @@ const ChartSvg = styled.svg`
     background-color: unset;
   `}
 `
-
-export default function BarChart({ data, dimensions, isMobile }: BarChartInterface) {
+export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
   const svgWidth = width + margin.left + margin.right + 10
   const svgHeight = height + margin.bottom + margin.top
-
-  const activeTickIdx = useMemo(() => {
-    if (!data) return
-
-    let idx
-    for (const i of data) {
-      if (i.isCurrent === true) {
-        idx = i.index
-      }
-    }
-
-    return idx
-  }, [data])
 
   const token0 = useMemo(() => {
     if (!data) return
@@ -52,8 +40,14 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
     return data[0].token1
   }, [data])
 
+  const activeTickIdxInRange = useMemo(() => {
+    if (!activeTickIdx || !data || data.length === 0) return
+
+    return data.findIndex((v) => v.index === activeTickIdx)
+  }, [activeTickIdx, data])
+
   useEffect(() => {
-    if (!data || data.length === 0 || !Array.isArray(data) || !activeTickIdx) return
+    if (!data || data.length === 0 || !Array.isArray(data) || !activeTickIdxInRange) return
 
     const xDomain = new Set(data.map((v) => v.price0))
     const yDomain = [0, d3.max(data, (v) => v.activeLiquidity)]
@@ -101,7 +95,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
       .create('svg:circle')
       .attr('fill', '#fffb0f')
       .attr('r', '5px')
-      .attr('cx', '180px')
+      .attr('cx', '200px')
       .attr('cy', '21px')
       .attr('display', 'none')
 
@@ -125,34 +119,59 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
       InfoRectGroup.style('display', 'block')
     })
 
-    svg
-      .append('circle')
-      .attr('fill', 'yellow')
-      .attr('r', '5px')
-      .attr('cx', xScale(data[activeTickIdx].price0))
-      .attr('cy', height + 10)
+    const xAxisGroup = svg
+      .append('g')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3
+          .axisBottom(xScale)
+          .ticks(601)
+          .tickFormat((v) => (v < 0.01 ? v.toFixed(4) : v.toFixed(2)))
+          .tickSizeOuter(0)
+      )
+    xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
+    xAxisGroup
+      .selectAll('text')
+      .attr('opacity', 0.5)
+      .attr('color', 'white')
+      .attr('font-size', '0.75rem')
+      .nodes()
+      .map((el, i) => {
+        if (i % 75 !== 0) {
+          d3.select(el).attr('display', 'none')
+        }
+      })
 
-    svg
-      .append('text')
-      .attr('transform', `translate(${xScale(data[activeTickIdx].price0) + 10}, ${height + 14})`)
-      .attr('fill', 'yellow')
-      .attr('font-size', '12px')
-      .property('innerHTML', 'Current price')
+    if (activeTickIdxInRange) {
+      console.log(activeTickIdxInRange, data[0].index, data[data.length - 1].index)
+      svg
+        .append('circle')
+        .attr('fill', 'yellow')
+        .attr('r', '5px')
+        .attr('cx', xScale(data[activeTickIdxInRange].price0))
+        .attr('cy', -9)
+
+      svg
+        .append('text')
+        .attr('transform', `translate(${xScale(data[activeTickIdxInRange].price0) + 10}, ${-5})`)
+        .attr('fill', 'yellow')
+        .attr('font-size', '12px')
+        .property('innerHTML', 'Current price')
+    }
 
     const bar = svg
       .append('g')
       .selectAll('rect')
       .data(data)
       .join('rect')
+      .attr('fill', '#63c0f8')
       .attr('x', (i) => xScale(i.price0))
       .attr('y', (i) => yScale(i.activeLiquidity))
       .attr('height', (i) => yScale(0) - yScale(i.activeLiquidity))
       .attr('width', xScale.bandwidth())
-      .attr('fill', (v) => (v.isCurrent ? '#fffb0f' : '#63c0f8'))
 
     svg
       .append('g')
-      .attr('fill', 'transparent')
       .selectAll('rect')
       .data(data)
       .join('rect')
@@ -160,6 +179,7 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
       .attr('y', 0)
       .attr('height', height)
       .attr('width', xScale.bandwidth())
+      .attr('fill', (v) => (v.isCurrent ? '#fffb0f' : 'transparent'))
       .on('mouseover', (d, v) => {
         const highlight = d3.select(d.target)
         highlight.attr('fill', 'rgba(255,255,255,0.5)')
@@ -170,29 +190,39 @@ export default function BarChart({ data, dimensions, isMobile }: BarChartInterfa
           `translate(${isOverflowing ? Number(xTranslate) - 220 - 16 : Number(xTranslate) + 16},10)`
         )
 
-        if (v.index === activeTickIdx) {
+        if (v.index === activeTickIdxInRange) {
           InfoCurrentCircle.attr('display', 'block')
         } else {
           InfoCurrentCircle.attr('display', 'none')
         }
 
-        InfoRectPrice0.property('innerHTML', `${data[0].token0} Price: ${v.price0.toFixed(2)} ${data[0].token1}`)
-        InfoRectPrice1.property('innerHTML', `${data[0].token1} Price: ${v.price1.toFixed(2)} ${data[0].token0}`)
+        const isLower0 = v.price0 < 0.01
+        const isLower1 = v.price1 < 0.01
+        const isLowerTVL = v.tvlToken0 < 0.01
 
+        InfoRectPrice0.property(
+          'innerHTML',
+          `${data[0].token0} Price: ${isLower0 ? v.price0.toFixed(4) : v.price0.toFixed(2)} ${data[0].token1}`
+        )
+        InfoRectPrice1.property(
+          'innerHTML',
+          `${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(2)} ${data[0].token0}`
+        )
+       
         InfoRectPriceLocked.property(
           'innerHTML',
-          `${v.index < activeTickIdx ? token0 : token1} Locked: ${v.tvlToken0.toFixed(2)} ${
-            v.index >= activeTickIdx ? token1 : token0
-          }`
+          `${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${
+            isLowerTVL ? v.tvlToken0.toFixed(4) : v.tvlToken0.toFixed(2)
+          } ${v.index >= activeTickIdxInRange ? token1 : token0}`
         )
       })
-      .on('mouseleave', (d) => {
+      .on('mouseleave', (d, v) => {
         const rect = d3.select(d.target)
-        rect.attr('fill', 'transparent')
+        rect.attr('fill', v.isCurrent ? '#fffb0f' : 'transparent')
       })
 
     svg.append(() => InfoRectGroup.node())
-  }, [data, activeTickIdx])
+  }, [data, activeTickIdxInRange])
 
   return <ChartSvg ref={svgRef} width={svgWidth} height={svgHeight} />
 }

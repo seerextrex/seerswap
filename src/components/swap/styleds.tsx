@@ -22,7 +22,7 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
   position: relative;
   margin-top: -32px;
   margin-bottom: -14px;
-  left: calc(50% - 16px);
+  left: calc(50% - 11px);
   background-color: #759fe3;
   border: none;
   z-index: 2;

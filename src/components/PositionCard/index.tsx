@@ -127,8 +127,8 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border, sushi
                 </Badge>
               </RowFixedLogo>
               <RowFixed>
-                <Text fontWeight={500} fontSize={20}>
-                  {userPoolBalance ? userPoolBalance.toExact() : '-'}
+                <Text fontWeight={500} fontSize={20} title={userPoolBalance.toExact()} style={{cursor: 'default'}}>
+                  {userPoolBalance ? parseFloat(userPoolBalance.toExact()).toFixed(6) : '-'}
                 </Text>
               </RowFixed>
             </FixedHeightRowCurrency>

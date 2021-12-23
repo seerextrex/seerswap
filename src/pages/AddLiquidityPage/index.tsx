@@ -128,6 +128,7 @@ const MaxButton = styled.button`
   color: white;
   font-family: Montserrat;
   font-weight: 600;
+  z-index: 10;
 
   &:hover {
     background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};

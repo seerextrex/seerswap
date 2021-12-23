@@ -444,7 +444,7 @@ export default function AddLiquidity({
           onClick={() => {
             expertMode ? onAdd() : setShowConfirm(true)
           }}
-          style={{ color: 'white', background: theme.winterMainButton }}
+          style={{ color: 'white' }}
           disabled={
             mustCreateSeparately ||
             !isValid ||
@@ -485,7 +485,7 @@ export default function AddLiquidity({
               )}
               bottomContent={() => (
                 <ButtonPrimary
-                  style={{ marginTop: '1rem', color: 'white', background: theme.winterMainButton }}
+                  style={{ marginTop: '1rem', color: 'white'}}
                   onClick={onAdd}
                 >
                   <Text fontWeight={500} fontSize={20}>

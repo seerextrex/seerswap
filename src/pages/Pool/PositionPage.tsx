@@ -48,6 +48,7 @@ import { SupportedChainId } from 'constants/chains'
 import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
+import {MouseoverTooltip} from "../../components/Tooltip";
 
 const PageWrapper = styled.div`
   min-width: 800px;
@@ -645,26 +646,34 @@ export function PositionPage({
                 <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
                 </TYPE.label>
-                <FeeBadge style={{ marginRight: '8px' }}>
-                  <BadgeText>
-                    <Trans>{new Percent(existingPosition?.pool?.fee || 100, 1_000_000).toSignificant()}%</Trans>
-                  </BadgeText>
-                </FeeBadge>
+                <MouseoverTooltip
+                    text={
+                      <Trans>
+                        Current pool fee.
+                      </Trans>
+                    }
+                >
+                  <FeeBadge style={{ marginRight: '8px' }}>
+                    <BadgeText>
+                      <Trans>{new Percent(existingPosition?.pool?.fee || 100, 1_000_000).toSignificant()}%</Trans>
+                    </BadgeText>
+                  </FeeBadge>
+                </MouseoverTooltip>
                 <RangeBadge removed={removed} inRange={inRange} />
               </RowFixedStyled>
               {ownsNFT && (
                 <RowFixedStyled>
                   {currency0 && currency1 && tokenId ? (
-                    <ButtonGray
+                    <ResponsiveButtonPrimary
                       as={Link}
                       to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"
-                      style={{ marginRight: '8px', background: theme.winterMainButton, color: 'white' }}
+                      style={{ marginRight: '8px', color: 'white' }}
                     >
                       <Trans>Increase Liquidity</Trans>
-                    </ButtonGray>
+                    </ResponsiveButtonPrimary>
                   ) : null}
                   {tokenId && !removed ? (
                     <ResponsiveButtonPrimary
@@ -672,7 +681,7 @@ export function PositionPage({
                       to={`/remove/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
-                      style={{ background: theme.winterMainButton, color: 'white' }}
+                      style={{ color: 'white' }}
                       $borderRadius="12px"
                     >
                       <Trans>Remove Liquidity</Trans>
@@ -760,20 +769,20 @@ export function PositionPage({
                           disabled={collecting || !!collectMigrationHash}
                           confirmed={!!collectMigrationHash && !isCollectPending}
                           width="fit-content"
-                          style={{ borderRadius: '12px', color: 'white', background: theme.winterMainButton }}
+                          style={{ borderRadius: '12px', color: 'white' }}
                           padding="4px 8px"
                           onClick={() => setShowConfirm(true)}
                         >
                           {!!collectMigrationHash && !isCollectPending ? (
                             <TYPE.main
-                              style={{ color: 'white', background: theme.winterMainButton }}
+                              style={{ color: 'white' }}
                               color={theme.text1}
                             >
                               <Trans> Collected</Trans>
                             </TYPE.main>
                           ) : isCollectPending || collecting ? (
                             <TYPE.main
-                              style={{ color: 'white', background: theme.winterMainButton }}
+                              style={{ color: 'white' }}
                               color={theme.text1}
                             >
                               {' '}
@@ -784,7 +793,7 @@ export function PositionPage({
                           ) : (
                             <>
                               <TYPE.main
-                                style={{ color: 'white', background: theme.winterMainButton }}
+                                style={{ color: 'white' }}
                                 color={theme.white}
                               >
                                 <Trans>Collect fees</Trans>

@@ -177,8 +177,8 @@ export const StakeCountdown = styled.div`
   font-size: 16px;
   margin: auto;
 
-  max-width: 100px !important;
-  min-width: 100px !important;
+  max-width: 105px !important;
+  min-width: 105px !important;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-bottom: 1rem;

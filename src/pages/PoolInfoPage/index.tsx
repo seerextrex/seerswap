@@ -22,8 +22,12 @@ const Wrapper = styled.div`
   max-width: 995px;
   display: flex;
   flex-direction: column;
+  
+  ${({theme}) => theme.mediaWidth.upToSmall`
+  padding-bottom: 10rem;
+  `}
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: unset;
     width: 100%;
   `}

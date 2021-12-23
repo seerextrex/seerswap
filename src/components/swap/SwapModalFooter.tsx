@@ -30,7 +30,6 @@ export default function SwapModalFooter({
           disabled={disabledConfirm}
           style={{
             margin: '10px 0 0 0',
-            background: theme.winterMainButton,
             color: 'white',
             border: `1px solid ${theme.winterMainButton}`,
           }}

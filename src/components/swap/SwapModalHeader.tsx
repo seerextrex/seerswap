@@ -162,7 +162,7 @@ export default function SwapModalHeader({
 
       <AutoColumn justify="flex-start" gap="sm" style={{ padding: '.75rem 1rem' }}>
         {trade.tradeType === TradeType.EXACT_INPUT ? (
-          <TYPE.italic color={'#2f567b'} fontWeight={400} textAlign="left" style={{ width: '100%' }}>
+          <TYPE.italic color={theme.winterDisabledButton} fontWeight={400} textAlign="left" style={{ width: '100%' }}>
             <Trans>
               Output is estimated. You will receive at least{' '}
               <b>
@@ -172,7 +172,7 @@ export default function SwapModalHeader({
             </Trans>
           </TYPE.italic>
         ) : (
-          <TYPE.italic fontWeight={400} textAlign="left" style={{ width: '100%' }}>
+          <TYPE.italic color={theme.winterDisabledButton} fontWeight={400} textAlign="left" style={{ width: '100%' }}>
             <Trans>
               Input is estimated. You will sell at most{' '}
               <b>

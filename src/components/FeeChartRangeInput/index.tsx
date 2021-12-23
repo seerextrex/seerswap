@@ -9,7 +9,7 @@ import Loader from '../Loader'
 import { PageTitle } from '../PageTitle'
 import { ChartType } from '../../pages/PoolInfoPage'
 
-import { isMobile } from 'react-device-detect'
+import { isMobile, isTablet } from 'react-device-detect'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -48,20 +48,6 @@ interface FeeChartRangeInputProps {
   span: number
   type: number
 }
-
-// function useWindowSize() {
-//   const [size, setSize] = useState([0, 0])
-//   useLayoutEffect(() => {
-//     function updateSize() {
-//       setSize([window.innerWidth, window.innerHeight])
-//     }
-
-//     window.addEventListener('resize', updateSize)
-//     updateSize()
-//     return () => window.removeEventListener('resize', updateSize)
-//   }, [])
-//   return size
-// }
 
 export function daysCount(month: number, year: number) {
   switch (month) {
@@ -130,7 +116,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
           <Chart
             feeData={formattedData || undefined}
             dimensions={{
-              width: isMobile ? ref?.current?.offsetWidth - 200 || 0 : 850,
+              width: isTablet || isMobile ? ref?.current?.offsetWidth - 130 || 0 : 810,
               height: 300,
               margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 },
             }}

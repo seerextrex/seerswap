@@ -114,7 +114,8 @@ const InputRow = styled.div<{ selected: boolean }>`
 `
 const AutoColumnStyled = styled(AutoColumn)`
   left: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  bottom: -13% !important;
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
   bottom: -25% !important;
   `}
 `
@@ -135,6 +136,13 @@ const LabelRow = styled.div`
 const FiatRow = styled(LabelRow)`
   justify-content: flex-end;
   padding: ${({ shallow }) => (shallow ? '0' : '0 1rem 1rem')};
+  
+  span {
+    &:hover {
+      color: white;
+      cursor: default;
+    }
+  }
 `
 
 const Aligner = styled.span`

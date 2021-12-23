@@ -130,9 +130,9 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
           <Chart
             feeData={formattedData || undefined}
             dimensions={{
-              width: isMobile ? ref?.current?.offsetWidth - 130 || 0 : 850,
+              width: isMobile ? ref?.current?.offsetWidth - 200 || 0 : 850,
               height: 300,
-              margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 50 },
+              margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 },
             }}
             isMobile={isMobile}
             span={span}

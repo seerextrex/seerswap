@@ -333,7 +333,7 @@ export default function Chart({
       d3
         .axisLeft(y)
         .ticks(10)
-        .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : `$${val}`}`)
+        .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : `$${val >= 1000 ? `${+val / 1000}k` : val}`}`)
         .tickSize(-width)
     )
 
@@ -451,7 +451,9 @@ export default function Chart({
             'innerHTML',
             `${type === ChartType.FEES ? 'Fee:' : type === ChartType.TVL ? 'TVL:' : 'Volume:'} ${
               type !== ChartType.FEES ? '$' : ''
-            }${Number(_chartData[i]?.value).toFixed(2)}${type === ChartType.FEES ? '%' : ''}`
+            }${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : 2)}${
+              type === ChartType.FEES ? '%' : ''
+            }`
           )
           InfoRectDateText.property(
             'innerHTML',

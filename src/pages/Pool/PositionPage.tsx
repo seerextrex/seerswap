@@ -655,16 +655,16 @@ export function PositionPage({
               {ownsNFT && (
                 <RowFixedStyled>
                   {currency0 && currency1 && tokenId ? (
-                    <ButtonGray
+                    <ResponsiveButtonPrimary
                       as={Link}
                       to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"
-                      style={{ marginRight: '8px', background: theme.winterMainButton, color: 'white' }}
+                      style={{ marginRight: '8px', color: 'white' }}
                     >
                       <Trans>Increase Liquidity</Trans>
-                    </ButtonGray>
+                    </ResponsiveButtonPrimary>
                   ) : null}
                   {tokenId && !removed ? (
                     <ResponsiveButtonPrimary
@@ -672,7 +672,7 @@ export function PositionPage({
                       to={`/remove/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
-                      style={{ background: theme.winterMainButton, color: 'white' }}
+                      style={{ color: 'white' }}
                       $borderRadius="12px"
                     >
                       <Trans>Remove Liquidity</Trans>

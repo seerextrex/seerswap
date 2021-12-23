@@ -86,7 +86,7 @@ export default function PopupItem({
 
   return (
     <Popup>
-      <StyledClose color={'#080064'} onClick={removeThisPopup} />
+      <StyledClose color={theme.winterDisabledButton} onClick={removeThisPopup} />
       {popupContent}
     </Popup>
   )

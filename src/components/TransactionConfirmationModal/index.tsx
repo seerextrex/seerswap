@@ -108,7 +108,7 @@ function TransactionSubmittedContent({
           </RowBetween>
         )}
         <ConfirmedIcon inline={inline}>
-          <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'} color={theme.primary1} />
+          <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'} color={theme.winterMainButton} />
         </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
           <Text fontWeight={500} fontSize={20} textAlign="center">
@@ -116,7 +116,7 @@ function TransactionSubmittedContent({
           </Text>
           {chainId && hash && (
             <ExternalLink href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
-              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
+              <Text fontWeight={500} fontSize={14} color={theme.winterMainButton}>
                 <Trans>View on Explorer</Trans>
               </Text>
             </ExternalLink>
@@ -139,7 +139,7 @@ function TransactionSubmittedContent({
           )}
           <ButtonPrimary
             onClick={onDismiss}
-            style={{ margin: '20px 0 0 0', color: 'white', background: theme.winterMainButton }}
+            style={{ margin: '20px 0 0 0', color: 'white'}}
           >
             <Text fontWeight={500} fontSize={20}>
               {inline ? <Trans>Return</Trans> : <Trans>Close</Trans>}

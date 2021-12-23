@@ -521,7 +521,7 @@ export function StakeModal({
           ) : NFTsForStake ? (
             <StakeButton onClick={stakeNFTs}>{`Deposit NFT #${NFTsForStake.tokenId}`}</StakeButton>
           ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-            <StakeButton>{`Select NFTs`}</StakeButton>
+            <StakeButton>{`Select NFT`}</StakeButton>
           ) : null}
         </ModalWrapper>
       )}

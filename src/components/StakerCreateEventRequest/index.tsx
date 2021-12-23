@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 const RequestButton = styled.a`
   border: none;
   border-radius: 8px;
-  background-color: #36f;
+  background-color: ${({theme}) => theme.winterMainButton};
   padding: 8px 16px;
   color: white;
   text-decoration: none;

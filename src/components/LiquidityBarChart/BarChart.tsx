@@ -196,11 +196,11 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
 
         InfoRectPrice0.property(
           'innerHTML',
-          `${data[0].token0} Price: ${isLower0 ? v.price0.toFixed(4) : v.price0.toFixed(2)} ${data[0].token1}`
+          `${data[0].token0} Price: ${isLower0 ? v.price0.toFixed(4) : v.price0.toFixed(3)} ${data[0].token1}`
         )
         InfoRectPrice1.property(
           'innerHTML',
-          `${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(2)} ${data[0].token0}`
+          `${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(3)} ${data[0].token0}`
         )
 
         InfoRectPriceLocked.property(

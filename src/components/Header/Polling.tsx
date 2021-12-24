@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components/macro'
 import { useActiveWeb3React } from '../../hooks/web3'
 
 import { useBlockNumber } from '../../state/application/hooks'
+import { useAppSelector } from '../../state/hooks'
 import { ExternalLink, TYPE } from '../../theme'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 

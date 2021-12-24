@@ -26,6 +26,7 @@ import ThemeProvider, { ThemedGlobalStyle } from './theme'
 import RadialGradientByChainUpdater from './theme/RadialGradientByChainUpdater'
 import getLibrary from './utils/getLibrary'
 import '@fontsource/montserrat'
+import GasUpdater from './state/application/gasUpdater'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
@@ -48,6 +49,7 @@ function Updaters() {
       <TransactionUpdater />
       <MulticallUpdater />
       <LogsUpdater />
+      <GasUpdater />
     </>
   )
 }

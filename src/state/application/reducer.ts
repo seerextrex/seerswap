@@ -7,6 +7,7 @@ import {
   ApplicationModal,
   setOpenModal,
   updateChainId,
+  updateGasPrice,
 } from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
@@ -15,6 +16,7 @@ export interface ApplicationState {
   // used by RTK-Query to build dynamic subgraph urls
   readonly chainId: number | null
   readonly blockNumber: { readonly [chainId: number]: number }
+  readonly gasPrice: number
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
 }
@@ -22,6 +24,7 @@ export interface ApplicationState {
 const initialState: ApplicationState = {
   chainId: null,
   blockNumber: {},
+  gasPrice: 70,
   popupList: [],
   openModal: null,
 }
@@ -39,6 +42,9 @@ export default createReducer(initialState, (builder) =>
       } else {
         state.blockNumber[chainId] = Math.max(blockNumber, state.blockNumber[chainId])
       }
+    })
+    .addCase(updateGasPrice, (state, action) => {
+      state.gasPrice = action.payload
     })
     .addCase(setOpenModal, (state, action) => {
       state.openModal = action.payload

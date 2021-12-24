@@ -11,10 +11,21 @@ import { Currency } from '@uniswap/sdk-core'
 import RateToggle from 'components/RateToggle'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import RangeBadge from 'components/Badge/RangeBadge'
-import { ThemeContext } from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 import JSBI from 'jsbi'
 import { Bound } from 'state/mint/v3/actions'
 import { formatTickPrice } from 'utils/formatTickPrice'
+
+const RowBetweenHeader = styled(RowBetween)`
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: column;
+  `}
+`
+const RowFixedStyled = styled(RowFixed)`
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+     margin-bottom: 10px;
+  `}
+`
 
 export const PositionPreview = ({
   position,
@@ -61,8 +72,8 @@ export const PositionPreview = ({
 
   return (
     <AutoColumn gap="md" style={{ marginTop: '0.5rem' }}>
-      <RowBetween style={{ marginBottom: '0.5rem' }}>
-        <RowFixed>
+      <RowBetweenHeader style={{ marginBottom: '0.5rem' }}>
+        <RowFixedStyled>
           <DoubleCurrencyLogo
             currency0={currency0 ?? undefined}
             currency1={currency1 ?? undefined}
@@ -72,9 +83,9 @@ export const PositionPreview = ({
           <TYPE.label ml="10px" fontSize="24px">
             {currency0?.symbol} / {currency1?.symbol}
           </TYPE.label>
-        </RowFixed>
-        <RangeBadge removed={removed} inRange={inRange} />
-      </RowBetween>
+        </RowFixedStyled>
+        <RangeBadge removed={removed} inRange={inRange}/>
+      </RowBetweenHeader>
 
       <LightCard>
         <AutoColumn gap="md">

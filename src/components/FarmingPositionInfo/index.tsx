@@ -1,5 +1,5 @@
 import { Position } from '@uniswap/v3-sdk'
-import { useMemo, useState } from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import { useToken } from '../../hooks/Tokens'
 import { usePool } from '../../hooks/usePools'
 import useIsTickAtLimit from '../../hooks/useIsTickAtLimit'
@@ -82,7 +82,7 @@ export default function FarmingPositionInfo({ el }: { el: any }) {
 
   return (
     <>
-      <Modal isOpen={positionModal}>
+      <Modal isOpen={positionModal} onHide={() => {setPositionModal(false)}}>
         <PositionInfoModal>
           <div style={{ marginBottom: '2rem', textAlign: 'center', justifyContent: 'center', display: 'flex' }}>
             <span>Position Info</span>
@@ -97,6 +97,18 @@ export default function FarmingPositionInfo({ el }: { el: any }) {
               <span style={{ marginLeft: '10px' }}>
                 {currencyQuote?.symbol}/{currencyBase?.symbol}
               </span>
+            </PositionInfoRowValue>
+          </PositionInfoRow>
+          <PositionInfoRow>
+            <PositionInfoRowTitle>{position?.amount0.currency.symbol}</PositionInfoRowTitle>
+            <PositionInfoRowValue>
+              {position?.amount0.toSignificant(4)}
+            </PositionInfoRowValue>
+          </PositionInfoRow>
+          <PositionInfoRow>
+            <PositionInfoRowTitle>{position?.amount1.currency.symbol}</PositionInfoRowTitle>
+            <PositionInfoRowValue>
+              {position?.amount1.toSignificant(4)}
             </PositionInfoRowValue>
           </PositionInfoRow>
           <PositionInfoRow>

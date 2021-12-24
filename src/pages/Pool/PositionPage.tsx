@@ -124,9 +124,13 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   border-radius: 12px;
   padding: 6px 8px;
   width: fit-content;
+  margin-right: 8px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
-    width: 49%;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-right: 0;
+     width: 49%;
   `};
 `
 
@@ -591,10 +595,10 @@ export function PositionPage({
             </RowBetween>
           </AutoColumn>
         </LightCard>
-        <TYPE.italic>
+        <TYPE.italic color={theme.winterDisabledButton}>
           <Trans>Collecting fees will withdraw currently available fees for you.</Trans>
         </TYPE.italic>
-        <ButtonPrimary style={{ color: 'white', background: theme.winterMainButton }} onClick={collect}>
+        <ButtonPrimary style={{ color: 'white' }} onClick={collect}>
           <Trans>Collect</Trans>
         </ButtonPrimary>
       </AutoColumn>
@@ -670,7 +674,7 @@ export function PositionPage({
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"
-                      style={{ marginRight: '8px', color: 'white' }}
+                      style={{ color: 'white' }}
                     >
                       <Trans>Increase Liquidity</Trans>
                     </ResponsiveButtonPrimary>

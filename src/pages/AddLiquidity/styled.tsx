@@ -16,7 +16,7 @@ export const PageWrapper = styled(BodyWrapper)<{ wide: boolean }>`
   `};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     max-width: 100%!important;
-    overflow-x: scroll;
+    
   `};
 `
 

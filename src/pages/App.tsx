@@ -51,6 +51,8 @@ import { Integrations } from '@sentry/tracing'
 import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations'
 
 import BG from '../assets/images/bg.png'
+
+import { GasPrice } from '../components/Header/GasPrice'
 import {useFarmingActionsHandlers} from "../state/farming/hooks";
 
 const AppWrapper = styled.div`
@@ -120,7 +122,7 @@ const NetworkFailedCard = styled.div`
   background-color: #f65c5c;
   border: 1px solid #852020;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     position: unset;
     width: calc(100% - 2rem);
     left: unset;
@@ -205,6 +207,7 @@ export default function App() {
             </BugReportLink>
             <Popups />
             <Polling />
+            <GasPrice />
             <Switch>
               <Route strict path="/farming" component={StakingPage} />
 

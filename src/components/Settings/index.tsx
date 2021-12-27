@@ -224,13 +224,13 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
-                  <Trans>Disable Multihops</Trans>
+                  <Trans>Multihops</Trans>
                 </TYPE.black>
                 <QuestionHelper text={<Trans>Restricts swaps to direct pairs only.</Trans>} />
               </RowFixed>
               <Toggle
                 id="toggle-disable-multihop-button"
-                isActive={singleHopOnly}
+                isActive={!singleHopOnly}
                 toggle={() => {
                   setSingleHopOnly(!singleHopOnly)
                 }}

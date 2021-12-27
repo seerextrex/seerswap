@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import useScrollPosition from '@react-hook/window-scroll'
 import { darken } from 'polished'
-import { useMemo, useState } from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
@@ -27,6 +27,8 @@ import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import LogoIcicles from '../../assets/svg/logo-icicles.svg'
 
 import { isMobile } from 'react-device-detect'
+import {useFarmingActionsHandlers} from "../../state/farming/hooks";
+import {useAppSelector} from "../../state/hooks";
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
@@ -359,6 +361,7 @@ const StyledNavLink = styled(NavLink).attrs({
   word-break: break-word;
   white-space: nowrap;
   border-bottom: 3px solid transparent;
+  position: relative;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 14px 15px;
   `}
@@ -377,8 +380,19 @@ const StyledNavLink = styled(NavLink).attrs({
     }
   }
 `
+export const FarmingInfoLabel = styled.span`
+  padding: 5px;
+  background-color: #ffd967;
+  position: absolute;
+  border-radius: 50%;
+  top: 30%;
+  right: 5%;
+  display: ${p => !p.isEvents ? 'none': 'block'};
+`
 
 export default function Header() {
+  const {startTime} = useAppSelector(state => state.farming)
+  const {onIsFarmingGet} = useFarmingActionsHandlers()
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -395,6 +409,8 @@ export default function Header() {
 
   const networkFailed = useIsNetworkFailed()
 
+  const [isEvents, setEvents] = useState(false)
+
   const [darkMode] = useDarkModeManager()
 
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
@@ -407,6 +423,12 @@ export default function Header() {
   if (chainId === 137) {
     chainValue = 'MATIC'
   }
+
+  useEffect(() => {
+    if (startTime.trim()){
+      setEvents(true)
+    }
+  },[startTime])
 
   return (
     <HeaderFrame showBackground={false}>
@@ -439,6 +461,8 @@ export default function Header() {
         </StyledNavLink>
         <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
           Farming
+          <FarmingInfoLabel
+          isEvents={isEvents}/>
         </StyledNavLink>
         <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
           Migrate

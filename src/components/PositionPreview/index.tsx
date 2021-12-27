@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext, ReactNode } from 'react'
+import {useState, useCallback, useContext, ReactNode, useEffect} from 'react'
 import { Position } from 'lib/src'
 import { LightCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
@@ -11,10 +11,25 @@ import { Currency } from '@uniswap/sdk-core'
 import RateToggle from 'components/RateToggle'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import RangeBadge from 'components/Badge/RangeBadge'
-import { ThemeContext } from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 import JSBI from 'jsbi'
 import { Bound } from 'state/mint/v3/actions'
 import { formatTickPrice } from 'utils/formatTickPrice'
+
+const RowBetweenHeader = styled(RowBetween)`
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: column;
+    align-items: start;
+  `}
+`
+const RowFixedStyled = styled(RowFixed)`
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+     margin-bottom: 10px;
+  `}
+  ${({theme}) => theme.mediaWidth.upToSmall`
+     margin-left: 12px;
+  `}
+`
 
 export const PositionPreview = ({
   position,
@@ -61,20 +76,20 @@ export const PositionPreview = ({
 
   return (
     <AutoColumn gap="md" style={{ marginTop: '0.5rem' }}>
-      <RowBetween style={{ marginBottom: '0.5rem' }}>
-        <RowFixed>
+      <RowBetweenHeader style={{ marginBottom: '0.5rem' }}>
+        <RowFixedStyled>
           <DoubleCurrencyLogo
             currency0={currency0 ?? undefined}
             currency1={currency1 ?? undefined}
             size={24}
             margin={true}
           />
-          <TYPE.label ml="10px" fontSize="24px">
+          <TYPE.label ml="10px" fontSize="24px" color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>
             {currency0?.symbol} / {currency1?.symbol}
           </TYPE.label>
-        </RowFixed>
-        <RangeBadge removed={removed} inRange={inRange} />
-      </RowBetween>
+        </RowFixedStyled>
+        <RangeBadge removed={removed} inRange={inRange}/>
+      </RowBetweenHeader>
 
       <LightCard>
         <AutoColumn gap="md">
@@ -109,7 +124,7 @@ export const PositionPreview = ({
 
       <AutoColumn gap="md">
         <RowBetween>
-          {title ? <TYPE.main>{title}</TYPE.main> : <div />}
+          {title ? <TYPE.main color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>{title}</TYPE.main> : <div />}
           <RateToggle
             currencyA={sorted ? currency0 : currency1}
             currencyB={sorted ? currency1 : currency0}

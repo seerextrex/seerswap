@@ -141,7 +141,7 @@ export function AddRemoveTabs({
         <TYPE.mediumHeader
           fontWeight={500}
           fontSize={20}
-          style={{ flex: '1', padding: '1rem 40px 0 40px', margin: 'auto', textAlign: children ? 'start' : 'center' }}
+          style={{ flex: '1', padding: '1rem 0', margin: 'auto', textAlign: children ? 'start' : 'center' }}
         >
           {creating ? (
             <Trans>Create a pair</Trans>

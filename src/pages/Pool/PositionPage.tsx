@@ -67,6 +67,7 @@ const PageWrapper = styled.div`
     min-width: 100%;
     max-width: 100%;
     margin-top: 1rem;
+    padding: 30px 10px;
   `};
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -112,7 +113,7 @@ const DoubleArrow = styled.span`
   margin: 0 1rem;
 `
 const ResponsiveRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-direction: column;
     align-items: flex-start;
     row-gap: 16px;
@@ -124,9 +125,13 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   border-radius: 12px;
   padding: 6px 8px;
   width: fit-content;
+  margin-right: 8px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
-    width: 49%;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-right: 0;
+     width: 49%;
   `};
 `
 
@@ -156,7 +161,12 @@ const RowFixedStyled = styled(RowFixed)`
     }
   `}
 `
-
+const RowFixedStyledButtons = styled(RowFixedStyled)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: unset;
+    gap: .5rem;
+  `}
+`
 const FeeBadge = styled(Badge)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
       margin-right: 0!important;
@@ -591,10 +601,10 @@ export function PositionPage({
             </RowBetween>
           </AutoColumn>
         </LightCard>
-        <TYPE.italic>
+        <TYPE.italic color={theme.winterDisabledButton}>
           <Trans>Collecting fees will withdraw currently available fees for you.</Trans>
         </TYPE.italic>
-        <ButtonPrimary style={{ color: 'white', background: theme.winterMainButton }} onClick={collect}>
+        <ButtonPrimary style={{ color: 'white' }} onClick={collect}>
           <Trans>Collect</Trans>
         </ButtonPrimary>
       </AutoColumn>
@@ -662,7 +672,7 @@ export function PositionPage({
                 <RangeBadge removed={removed} inRange={inRange} />
               </RowFixedStyled>
               {ownsNFT && (
-                <RowFixedStyled>
+                <RowFixedStyledButtons>
                   {currency0 && currency1 && tokenId ? (
                     <ResponsiveButtonPrimary
                       as={Link}
@@ -670,7 +680,7 @@ export function PositionPage({
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"
-                      style={{ marginRight: '8px', color: 'white' }}
+                      style={{ color: 'white' }}
                     >
                       <Trans>Increase Liquidity</Trans>
                     </ResponsiveButtonPrimary>
@@ -687,7 +697,7 @@ export function PositionPage({
                       <Trans>Remove Liquidity</Trans>
                     </ResponsiveButtonPrimary>
                   ) : null}
-                </RowFixedStyled>
+                </RowFixedStyledButtons>
               )}
             </ResponsiveRow>
             <RowBetween></RowBetween>
@@ -701,7 +711,7 @@ export function PositionPage({
                       <Trans>Liquidity</Trans>
                     </Label>
                     {_fiatValueOfLiquidity?.greaterThan(new Fraction(1, 100)) ? (
-                      <TYPE.largeHeader fontSize="36px" fontWeight={500}>
+                      <TYPE.largeHeader fontSize="30px" fontWeight={500}>
                         <Trans>${_fiatValueOfLiquidity.toFixed(2, { groupSeparator: ',' })}</Trans>
                       </TYPE.largeHeader>
                     ) : (
@@ -716,7 +726,7 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyQuote} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? position?.amount0.toSignificant(4) : position?.amount1.toSignificant(4)}
+                            {inverted ? formatCurrencyAmount(position?.amount0,4) : formatCurrencyAmount(position?.amount1,4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>
@@ -731,7 +741,7 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyBase} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? position?.amount1.toSignificant(4) : position?.amount0.toSignificant(4)}
+                            {inverted ? formatCurrencyAmount(position?.amount0,4) : formatCurrencyAmount(position?.amount1,4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>

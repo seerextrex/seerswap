@@ -83,7 +83,8 @@ interface ModalProps {
   minHeight?: number | false
   maxHeight?: number
   initialFocusRef?: React.RefObject<any>
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  onHide?: () => void
 }
 
 export default function Modal({
@@ -93,6 +94,7 @@ export default function Modal({
   maxHeight = 90,
   initialFocusRef,
   children,
+  onHide
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -124,6 +126,7 @@ export default function Modal({
               onDismiss={onDismiss}
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
+              onClick={onHide}
             >
               <StyledDialogContent
                 {...(isMobile

@@ -14,6 +14,7 @@ import burnV3 from './burn/v3/reducer'
 import logs from './logs/slice'
 import multicall from './multicall/reducer'
 import staking from './staking/reducer'
+import farming from './farming/reducer'
 import { api as dataApi } from './data/slice'
 // import { incentiveApi } from "./data/slice"
 import { routingApi } from './routing/slice'
@@ -36,6 +37,7 @@ const store = configureStore({
     logs,
     [dataApi.reducerPath]: dataApi.reducer,
     [routingApi.reducerPath]: routingApi.reducer,
+    farming
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true })

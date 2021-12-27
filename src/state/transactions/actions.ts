@@ -177,6 +177,7 @@ export const addTransaction = createAction<{
   info: TransactionInfo
 }>('transactions/addTransaction')
 export const clearAllTransactions = createAction<{ chainId: number }>('transactions/clearAllTransactions')
+export const clearOneTransaction = createAction<{ chainId: number; hash: string }>('transactions/clearOneTransaction')
 export const finalizeTransaction = createAction<{
   chainId: number
   hash: string

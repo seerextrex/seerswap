@@ -67,6 +67,7 @@ const PageWrapper = styled.div`
     min-width: 100%;
     max-width: 100%;
     margin-top: 1rem;
+    padding: 30px 10px;
   `};
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -160,12 +161,12 @@ const RowFixedStyled = styled(RowFixed)`
     }
   `}
 `
-const RowFixedStyledLogo = styled(RowFixedStyled)`
-  ${({theme}) => theme.mediaWidth.upToSmall`
-    margin-left: 12px
+const RowFixedStyledButtons = styled(RowFixedStyled)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: unset;
+    gap: .5rem;
   `}
 `
-
 const FeeBadge = styled(Badge)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
       margin-right: 0!important;
@@ -650,7 +651,7 @@ export function PositionPage({
               </HoverText>
             </Link>
             <ResponsiveRow>
-              <RowFixedStyledLogo>
+              <RowFixedStyled>
                 <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={true} />
                 <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
@@ -669,9 +670,9 @@ export function PositionPage({
                   </FeeBadge>
                 </MouseoverTooltip>
                 <RangeBadge removed={removed} inRange={inRange} />
-              </RowFixedStyledLogo>
+              </RowFixedStyled>
               {ownsNFT && (
-                <RowFixedStyled>
+                <RowFixedStyledButtons>
                   {currency0 && currency1 && tokenId ? (
                     <ResponsiveButtonPrimary
                       as={Link}
@@ -696,7 +697,7 @@ export function PositionPage({
                       <Trans>Remove Liquidity</Trans>
                     </ResponsiveButtonPrimary>
                   ) : null}
-                </RowFixedStyled>
+                </RowFixedStyledButtons>
               )}
             </ResponsiveRow>
             <RowBetween></RowBetween>
@@ -710,7 +711,7 @@ export function PositionPage({
                       <Trans>Liquidity</Trans>
                     </Label>
                     {_fiatValueOfLiquidity?.greaterThan(new Fraction(1, 100)) ? (
-                      <TYPE.largeHeader fontSize="36px" fontWeight={500}>
+                      <TYPE.largeHeader fontSize="30px" fontWeight={500}>
                         <Trans>${_fiatValueOfLiquidity.toFixed(2, { groupSeparator: ',' })}</Trans>
                       </TYPE.largeHeader>
                     ) : (
@@ -725,7 +726,7 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyQuote} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? position?.amount0.toSignificant(4) : position?.amount1.toSignificant(4)}
+                            {inverted ? formatCurrencyAmount(position?.amount0,4) : formatCurrencyAmount(position?.amount1,4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>
@@ -740,7 +741,7 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyBase} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? position?.amount1.toSignificant(4) : position?.amount0.toSignificant(4)}
+                            {inverted ? formatCurrencyAmount(position?.amount0,4) : formatCurrencyAmount(position?.amount1,4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>

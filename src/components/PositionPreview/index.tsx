@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext, ReactNode } from 'react'
+import {useState, useCallback, useContext, ReactNode, useEffect} from 'react'
 import { Position } from 'lib/src'
 import { LightCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
@@ -84,7 +84,7 @@ export const PositionPreview = ({
             size={24}
             margin={true}
           />
-          <TYPE.label ml="10px" fontSize="24px">
+          <TYPE.label ml="10px" fontSize="24px" color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>
             {currency0?.symbol} / {currency1?.symbol}
           </TYPE.label>
         </RowFixedStyled>
@@ -124,7 +124,7 @@ export const PositionPreview = ({
 
       <AutoColumn gap="md">
         <RowBetween>
-          {title ? <TYPE.main>{title}</TYPE.main> : <div />}
+          {title ? <TYPE.main color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>{title}</TYPE.main> : <div />}
           <RateToggle
             currencyA={sorted ? currency0 : currency1}
             currencyB={sorted ? currency1 : currency0}

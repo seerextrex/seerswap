@@ -51,7 +51,9 @@ import { Integrations } from '@sentry/tracing'
 import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations'
 
 import BG from '../assets/images/bg.png'
+
 import { GasPrice } from '../components/Header/GasPrice'
+import {useFarmingActionsHandlers} from "../state/farming/hooks";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -158,7 +160,14 @@ export default function App() {
     },
   })
 
+  const {onIsFarming} = useFarmingActionsHandlers()
+
   const networkFailed = useIsNetworkFailed()
+
+  useEffect(() => {
+    onIsFarming()
+  },[])
+
 
   return (
     <Sentry.ErrorBoundary>

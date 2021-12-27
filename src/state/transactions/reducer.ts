@@ -1,10 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit'
 import {
-  addTransaction,
-  checkedTransaction,
-  clearAllTransactions,
-  finalizeTransaction,
-  SerializableTransactionReceipt,
+    addTransaction,
+    checkedTransaction,
+    clearAllTransactions, clearOneTransaction,
+    finalizeTransaction,
+    SerializableTransactionReceipt,
 } from './actions'
 
 const now = () => new Date().getTime()
@@ -42,6 +42,13 @@ export default createReducer(initialState, (builder) =>
     .addCase(clearAllTransactions, (transactions, { payload: { chainId } }) => {
       if (!transactions[chainId]) return
       transactions[chainId] = {}
+    })
+    .addCase(clearOneTransaction, (transactions, {payload: {chainId, hash}}) => {
+      if (!transactions[chainId]) return
+
+        const txs = transactions[chainId] ?? {}
+        delete txs[hash]
+        transactions[chainId] = txs
     })
     .addCase(checkedTransaction, (transactions, { payload: { chainId, hash, blockNumber } }) => {
       const tx = transactions[chainId]?.[hash]

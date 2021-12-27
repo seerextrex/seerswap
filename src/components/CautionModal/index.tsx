@@ -68,7 +68,7 @@ export default function CautionModal() {
           >
             Tech Paper
           </a>{' '}
-          and read about concentrated liquidity{' '}
+          and read what{' '}
           <a target="_blank" rel="noreferrer noopener" href={'https://arxiv.org/pdf/2110.01368.pdf'}>
             concentrated liquidity is
           </a>

@@ -2,6 +2,8 @@ import styled from 'styled-components/macro'
 import { Calendar, Zap, PlusCircle, Award, AlignJustify } from 'react-feather'
 import { Link, NavLink } from 'react-router-dom'
 import { deviceSizes } from '../../pages/styled'
+import {FarmingInfoLabel} from "../Header";
+import {useAppSelector} from "../../state/hooks";
 
 const MenuList = styled.ul`
   padding: 0;
@@ -20,6 +22,7 @@ const MenuListItem = styled.li`
   width: 20%;
   padding: 10px 0;
   font-weight: 600;
+  position: relative;
   // background-color: #202635;
   color: white;
   text-decoration: none;
@@ -86,6 +89,7 @@ const stakingMenuList = [
 ]
 
 export function StakingMenu() {
+  const {startTime} = useAppSelector(state => state.farming)
   return (
     <MenuList>
       {stakingMenuList.map((el, i) => (
@@ -99,6 +103,7 @@ export function StakingMenu() {
           }}
           key={i}
         >
+          {el.title === 'Future events' ? <FarmingInfoLabel isEvents={startTime.trim()}/> : null}
           <MenuListItemIcon>{el.icon}</MenuListItemIcon>
           <MenuListItemTitle>{el.title}</MenuListItemTitle>
         </MenuListItem>

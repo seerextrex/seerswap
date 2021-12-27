@@ -57,7 +57,7 @@ const Container = styled.div<{ hideInput: boolean }>`
   // }
 `
 
-const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean }>`
+const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean; page?: string}>`
   align-items: center;
   font-size: 24px;
   font-weight: 500;
@@ -77,8 +77,8 @@ const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boole
   margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
   :focus,
   :hover {
-    background-color: ${({ selected, theme }) =>
-      selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
+    background-color: ${({ selected, theme, page }) =>
+      page === 'addLiq'? 'unset': selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
   }
 
   ${({ shallow }) =>
@@ -277,7 +277,9 @@ export default function CurrencyInputPanel({
       currency.name = 'Matic'
     }
   }
-
+  // if (balance) {
+  //   console.log
+  // }
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
@@ -314,20 +316,22 @@ export default function CurrencyInputPanel({
         >
           {!hideCurrency && (
             <CurrencySelect
+              page={page}
               selected={!!currency}
               hideInput={hideInput}
               className="open-currency-select-button"
               // style={{ backgroundColor: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
               shallow={shallow}
               swap={swap}
-              disabled={shallow}
+              disabled={shallow && page !== 'addLiq'}
               onClick={() => {
                 if (onCurrencySelect) {
                   setModalOpen(true)
                 }
               }}
             >
-              <Aligner centered={centered}>
+              <Aligner centered={centered}
+                       title={ balance ? balance.toSignificant(4) : ''}>
                 <RowFixed>
                   {pair ? (
                     <span style={{ marginRight: '0.5rem' }}>
@@ -354,9 +358,11 @@ export default function CurrencyInputPanel({
                           }}
                         >
                           <span>
-                            {shallow && showBalance && balance
+                            {
+                              shallow && showBalance && balance && page === 'addLiq' && balance.toSignificant(4) < 0.0001? `< 0.0001 ${currency.symbol}` :
+                                  shallow && showBalance && balance
                               ? `${balance.toSignificant(4)} ${currency.symbol}`
-                              : currency.symbol}
+                                      :currency.symbol}
                           </span>
                           {showBalance && balance && !shallow ? (
                             <span
@@ -391,7 +397,7 @@ export default function CurrencyInputPanel({
               </Aligner>
             </CurrencySelect>
           )}
-          {swap && currency && showMaxButton && <MaxButton onClick={onMax}>Max</MaxButton>}
+          {(swap || page === 'addLiq') && !locked && currency && showMaxButton && <MaxButton onClick={onMax}>Max</MaxButton>}
           {!hideInput && (
             <>
               <NumericalInputStyled

@@ -544,6 +544,7 @@ export default function AddLiquidity({
                       hideInput={depositADisabled}
                       shallow={true}
                       showBalance={!depositADisabled}
+                      page={'addLiq'}
                     />
 
                     <CurrencyInputPanel
@@ -561,6 +562,7 @@ export default function AddLiquidity({
                       hideInput={depositBDisabled}
                       showBalance={!depositBDisabled}
                       shallow={true}
+                      page={'addLiq'}
                     />
                   </AutoColumn>
                 </DynamicSection>

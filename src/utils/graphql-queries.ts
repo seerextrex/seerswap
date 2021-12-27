@@ -3,6 +3,15 @@ import { STAKER_ADDRESS } from "../constants/addresses";
 
 //Farming
 
+export const ONE_FARMING_EVENT = () => gql`
+query incentive {
+   incentives(orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: ${Math.round(Date.now()/1000)}}) {
+    startTime,
+    endTime
+  }
+}
+`
+
 export const FETCH_REWARDS = account => gql`
 query fetchRewards {
     rewards(orderBy: amount, orderDirection: desc, where: {owner: "${account}"}) {

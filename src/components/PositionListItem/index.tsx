@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import {useEffect, useMemo} from 'react'
 import { Position } from 'lib/src'
 import Badge from 'components/Badge'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -237,6 +237,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 }
 
 export default function PositionListItem({ positionDetails }: PositionListItemProps) {
+
   const {
     token0: token0Address,
     token1: token1Address,
@@ -246,6 +247,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     tickUpper,
     onFarming,
   } = positionDetails || {}
+
 
   const prevPositionDetails = usePrevious({ ...positionDetails })
   const {
@@ -262,6 +264,8 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     }
     return { ...positionDetails }
   }, [positionDetails])
+
+
 
   const token0 = useToken(_token0Address)
   const token1 = useToken(_token1Address)
@@ -298,6 +302,10 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
 
   const currencyQuote = quote && unwrappedToken(quote)
   const currencyBase = base && unwrappedToken(base)
+
+  // useEffect(() => {
+  //   console.log(currencyQuote, currencyBase)
+  // }, [currencyQuote, currencyBase])
 
   // check if price is within range
   const outOfRange: boolean = _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false

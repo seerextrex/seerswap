@@ -407,7 +407,7 @@ function V2PairMigration({
             <RowFixed style={{ marginLeft: '8px' }}>
               <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={24} />
               <TYPE.mediumHeader style={{ marginLeft: '8px' }}>
-                {currency0.symbol}/{currency1.symbol} LP Tokens
+                {currency1.symbol}/{currency0.symbol} LP Tokens
               </TYPE.mediumHeader>
             </RowFixed>
             <Badge
@@ -434,7 +434,7 @@ function V2PairMigration({
             <RowFixed style={{ marginLeft: '8px' }}>
               <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={24} />
               <TYPE.mediumHeader style={{ marginLeft: '8px' }}>
-                {currency0.symbol}/{currency1.symbol} LP NFT
+                {currency1.symbol}/{currency0.symbol} LP NFT
               </TYPE.mediumHeader>
             </RowFixed>
             <Badge variant={BadgeVariant.PRIMARY}>Algebra</Badge>

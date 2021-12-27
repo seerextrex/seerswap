@@ -741,7 +741,7 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyBase} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? formatCurrencyAmount(position?.amount0,4) : formatCurrencyAmount(position?.amount1,4)}
+                            {inverted ? formatCurrencyAmount(position?.amount1,4) : formatCurrencyAmount(position?.amount0,4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>

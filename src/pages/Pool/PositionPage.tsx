@@ -112,7 +112,7 @@ const DoubleArrow = styled.span`
   margin: 0 1rem;
 `
 const ResponsiveRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-direction: column;
     align-items: flex-start;
     row-gap: 16px;
@@ -158,6 +158,11 @@ const RowFixedStyled = styled(RowFixed)`
     & > * {
       margin-bottom: 1rem;
     }
+  `}
+`
+const RowFixedStyledLogo = styled(RowFixedStyled)`
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    margin-left: 12px
   `}
 `
 
@@ -645,7 +650,7 @@ export function PositionPage({
               </HoverText>
             </Link>
             <ResponsiveRow>
-              <RowFixedStyled>
+              <RowFixedStyledLogo>
                 <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={true} />
                 <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
@@ -664,7 +669,7 @@ export function PositionPage({
                   </FeeBadge>
                 </MouseoverTooltip>
                 <RangeBadge removed={removed} inRange={inRange} />
-              </RowFixedStyled>
+              </RowFixedStyledLogo>
               {ownsNFT && (
                 <RowFixedStyled>
                   {currency0 && currency1 && tokenId ? (

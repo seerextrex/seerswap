@@ -17,5 +17,5 @@ const GasPriceWrapper = styled.div`
 export function GasPrice() {
   const gasPrice = useAppSelector((state) => state.application.gasPrice)
 
-  return <GasPriceWrapper>{`Gas price: ${gasPrice}`}</GasPriceWrapper>
+  return <GasPriceWrapper>{`Gas price: ${Math.round(gasPrice)}`}</GasPriceWrapper>
 }

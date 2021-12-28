@@ -1,5 +1,5 @@
 import { Currency } from '@uniswap/sdk-core'
-import React, { useMemo } from 'react'
+import React, {useEffect, useMemo} from 'react'
 import styled from 'styled-components/macro'
 import MaticLogo from '../../assets/images/matic-logo.png'
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
@@ -7,12 +7,12 @@ import useHttpLocations from '../../hooks/useHttpLocations'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
 import { stringToColour } from '../../utils/stringToColour'
-import Logo from '../Logo'
+import {specialTokens} from './SpecialTokens'
 
 export const getTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 
-const StyledEthereumLogo = styled.img<{ size: string }>`
+const StyledImgLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
@@ -47,13 +47,17 @@ export default function CurrencyLogo({
 
   const { chainId } = useActiveWeb3React()
 
+    useEffect(() => {
+        // console.log(currency)
+    }, [currency])
+
   let logo
 
   if (chainId === 137) {
     logo = MaticLogo
   }
 
-  if (!currency) return <div></div>
+  if (!currency) return <div/>
 
   // const srcs: string[] = useMemo(() => {
   //   if (!currency || currency.isNative) return []
@@ -68,13 +72,18 @@ export default function CurrencyLogo({
   //   return []
   // }, [currency, uriLocations])
 
-  if (currency?.wrapped.address.toLowerCase() === '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'.toLowerCase()) {
-    return <StyledEthereumLogo src={AlgebraLogo} size={size} style={style} {...rest} />
+    if(currency?.address?.toLowerCase() in specialTokens) {
+        return <StyledImgLogo src={specialTokens[currency?.address.toLowerCase()].logo} size={size} style={style} {...rest}/>
+    }
+
+  if (currency?.wrapped?.address.toLowerCase() === '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'.toLowerCase()) {
+    return <StyledImgLogo src={AlgebraLogo} size={size} style={style} {...rest} />
   }
 
-  if (currency?.isNative) {
-    return <StyledEthereumLogo src={logo} size={size} style={style} {...rest} />
-  }
+    if (currency?.isNative) {
+        return <StyledImgLogo src={logo} size={size} style={style} {...rest} />
+    }
+    // console.log(specialTokens[currency.address.toLowerCase()])
 
   return (
     <StyledLogo

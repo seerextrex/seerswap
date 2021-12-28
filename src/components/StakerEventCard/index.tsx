@@ -10,6 +10,7 @@ import Loader from '../Loader'
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import USDCLogo from '../../assets/images/usdc-logo.png'
 import {darken} from "polished";
+import CurrencyLogo from "../CurrencyLogo";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -358,17 +359,6 @@ export function StakerEventCard({
 
   const toggleWalletModal = useWalletModalToggle()
 
-  const specialTokens = {
-    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
-      name: 'USDC',
-      logo: USDCLogo,
-    },
-    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
-      name: 'ALGB',
-      logo: AlgebraLogo,
-    },
-  }
-
   return skeleton ? (
     <Card skeleton>
       <CardHeader>
@@ -443,23 +433,8 @@ export function StakerEventCard({
       )}
       <CardHeader>
         <TokensIcons>
-          {token0Address.toLowerCase() in specialTokens ? (
-            <TokenIcon logo={specialTokens[token0Address].logo}></TokenIcon>
-          ) : (
-            <TokenIcon name={token0}>{token0 ? token0.slice(0, 2) : null}</TokenIcon>
-          )}
-          {token1Address.toLowerCase() in specialTokens ? (
-            <TokenIcon logo={specialTokens[token1Address].logo}></TokenIcon>
-          ) : (
-            <TokenIcon
-              style={{
-                marginLeft: '-9px',
-              }}
-              name={token1}
-            >
-              {token1 ? token1.slice(0, 2) : null}
-            </TokenIcon>
-          )}
+            <CurrencyLogo currency={{address: token0Address, symbol: token0}} size={'35px'}/>
+            <CurrencyLogo currency={{address: token1Address, symbol: token1}} size={'35px'}/>
         </TokensIcons>
         <div>
           <Subtitle>POOL</Subtitle>
@@ -467,11 +442,7 @@ export function StakerEventCard({
         </div>
       </CardHeader>
       <RewardWrapper style={{ marginBottom: '6px' }}>
-        {rewardAddress.toLowerCase() in specialTokens ? (
-          <TokenIcon logo={specialTokens[rewardAddress].logo}></TokenIcon>
-        ) : (
-          <TokenIcon name={rewardToken}>{rewardToken ? rewardToken.slice(0, 2) : null}</TokenIcon>
-        )}
+          <CurrencyLogo currency={{address: rewardAddress, symbol: rewardToken}} size={'35px'}/>
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Reward</Subtitle>
           <RewardSymbol>{rewardToken}</RewardSymbol>
@@ -497,11 +468,7 @@ export function StakerEventCard({
         </div>
       </div>
       <RewardWrapper>
-        {bonusRewardAddress.toLowerCase() in specialTokens ? (
-          <TokenIcon logo={specialTokens[bonusRewardAddress].logo}></TokenIcon>
-        ) : (
-          <TokenIcon name={bonusRewardToken}>{bonusRewardToken ? bonusRewardToken.slice(0, 2) : null}</TokenIcon>
-        )}
+          <CurrencyLogo currency={{address: bonusRewardAddress, symbol: bonusRewardAddress}} size={'35px'}/>
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Bonus</Subtitle>
           <RewardSymbol>{bonusRewardToken}</RewardSymbol>

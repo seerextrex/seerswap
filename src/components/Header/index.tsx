@@ -130,7 +130,7 @@ const HeaderElement = styled.div`
 `
 
 const HeaderLinks = styled(Row)`
-  position: fixed;
+  position: absolute;
   transform: translateX(-50%);
   left: 50%;
   justify-self: center;
@@ -167,21 +167,20 @@ const HeaderLinks = styled(Row)`
   }
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
-    position: relative;
-    transform: unset;
-    left: unset;
+  position: relative;
+  transform: unset;
+  left: unset;
   `}
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
   position: fixed;
+  bottom: 1rem;
   transform: translateX(-50%);
   left: 50%;
   flex-direction: row;
   justify-content: space-between;
   justify-self: center;
   z-index: 99;
-  position: fixed;
-  bottom: 1rem;
   margin: 0 auto;
 
   &::before,

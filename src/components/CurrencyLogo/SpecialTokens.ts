@@ -3,6 +3,7 @@ import USDCLogo from '../../assets/images/usdc-logo.png'
 import WMATICLogo from '../../assets/images/matic-logo.png'
 import EtherLogo from '../../assets/images/ether-logo.png'
 import USDTLogo from '../../assets/images/USDT-logo.png'
+import RBCLogo from '../../assets/images/rubic-logo.png'
 
 export const specialTokens = {
     ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
@@ -24,5 +25,9 @@ export const specialTokens = {
     ['0xc2132d05d31c914a87c6611c10748aeb04b58e8f']: {
         name: 'USDT',
         logo: USDTLogo
+    },
+    ['0xc3cffdaf8f3fdf07da6d5e3a89b8723d5e385ff8']: {
+        name: 'RBC',
+        logo: RBCLogo
     }
 }

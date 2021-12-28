@@ -1,7 +1,7 @@
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from './chains'
-import { ExtendedEther, WMATIC_EXTENDED, USDC_POLYGON, ALGEBRA_POLYGON, WETH_POLYGON, USDT_POLYGON } from './tokens'
+import { ExtendedEther, WMATIC_EXTENDED, USDC_POLYGON, ALGEBRA_POLYGON, WETH_POLYGON, USDT_POLYGON, RUBIC_POLYGON } from './tokens'
 
 type ChainTokenList = {
   readonly [chainId: number]: Token[]
@@ -38,7 +38,8 @@ export const COMMON_BASES: ChainCurrencyList = {
     WMATIC_EXTENDED[SupportedChainId.POLYGON],
     ALGEBRA_POLYGON,
     WETH_POLYGON,
-    USDT_POLYGON
+    USDT_POLYGON,
+    RUBIC_POLYGON
   ]
 }
 

@@ -34,14 +34,14 @@ const Wrapper = styled.div`
 `
 const BodyWrapper = styled.div`
   display: flex;
-  height: 550px;
+  // height: 550px;
   width: 100%;
 `
 const ChartWrapper = styled.div`
   width: 100%;
 `
 const LoaderMock = styled.div`
-  height: 550px;
+  height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;

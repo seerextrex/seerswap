@@ -43,6 +43,14 @@ export const ALGEBRA_POLYGON = new Token(
   'Algebra'
 )
 
+export const RUBIC_POLYGON = new Token(
+  SupportedChainId.POLYGON,
+  '0xc3cffdaf8f3fdf07da6d5e3a89b8723d5e385ff8',
+  18,
+  'RBC',
+  'Rubic'
+)
+
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
   ...WMATIC

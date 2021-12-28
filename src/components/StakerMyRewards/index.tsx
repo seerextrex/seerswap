@@ -10,6 +10,7 @@ import Loader from '../Loader'
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import USDCLogo from '../../assets/images/usdc-logo.png'
 import WMATICLogo from '../../assets/images/matic-logo.png'
+import CurrencyLogo from "../CurrencyLogo";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -191,21 +192,6 @@ export function StakerMyRewards({
 }) {
   const allTransactions = useAllTransactions()
 
-  const specialTokens = {
-    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
-      name: 'USDC',
-      logo: USDCLogo,
-    },
-    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
-      name: 'ALGB',
-      logo: AlgebraLogo,
-    },
-    ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
-      name: 'WMATIC',
-      logo: WMATICLogo,
-    },
-  }
-
   const sortedRecentTransactions = useMemo(() => {
     const txs = Object.values(allTransactions)
     return txs
@@ -310,11 +296,7 @@ export function StakerMyRewards({
                       <Loader style={{ margin: 'auto' }} size={'18px'} stroke={'white'} />
                     </LoadingShim>
                   )}
-                  {rew.rewardAddress.toLowerCase() in specialTokens ? (
-                    <RewardTokenIcon logo={specialTokens[rew.rewardAddress].logo}></RewardTokenIcon>
-                  ) : (
-                    <RewardTokenIcon name={rew.symbol}>{rew.symbol.slice(0, 2)}</RewardTokenIcon>
-                  )}
+                  <CurrencyLogo currency={{address: rew.rewardAddress, symbol: rew.symbol}} size={'35px'} style={{marginRight: '10px'}}/>
                   <RewardTokenInfo>
                     <div title={rew.amount}>{formatReward(rew.amount)}</div>
                     <div title={rew.symbol}>{rew.symbol}</div>

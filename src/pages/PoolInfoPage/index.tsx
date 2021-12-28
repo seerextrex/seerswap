@@ -22,9 +22,9 @@ const Wrapper = styled.div`
   max-width: 995px;
   display: flex;
   flex-direction: column;
-  
-  ${({theme}) => theme.mediaWidth.upToSmall`
-  padding-bottom: 10rem;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  // padding-bottom: 10rem;
   `}
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -34,14 +34,14 @@ const Wrapper = styled.div`
 `
 const BodyWrapper = styled.div`
   display: flex;
-  height: 480px;
+  height: 550px;
   width: 100%;
 `
 const ChartWrapper = styled.div`
   width: 100%;
 `
 const LoaderMock = styled.div`
-  height: 480px;
+  height: 550px;
   display: flex;
   align-items: center;
   justify-content: center;

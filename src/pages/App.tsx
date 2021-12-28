@@ -53,7 +53,7 @@ import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegrat
 import BG from '../assets/images/bg.png'
 
 import { GasPrice } from '../components/Header/GasPrice'
-import {useFarmingActionsHandlers} from "../state/farming/hooks";
+import { useFarmingActionsHandlers } from '../state/farming/hooks'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -83,13 +83,13 @@ const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 120px 16px 0px 16px;
+  padding: 0 16px 0px 16px;
   align-items: center;
   flex: 1;
   z-index: 1;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 5rem 16px 16px 16px;
+    padding: 0 16px 16px 16px;
   `};
 `
 
@@ -97,12 +97,11 @@ const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   width: 100%;
   justify-content: space-between;
-  position: fixed;
   top: 0;
   z-index: 2;
 `
 const Marginer = styled.div`
-  margin-top: 5rem;
+  // margin-top: 5rem;
 `
 
 const BugReportLink = styled.a`
@@ -111,6 +110,10 @@ const BugReportLink = styled.a`
   left: 1rem;
   color: #36f;
   text-decoration: none;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `}
 `
 
 const NetworkFailedCard = styled.div`
@@ -160,14 +163,13 @@ export default function App() {
     },
   })
 
-  const {onIsFarming} = useFarmingActionsHandlers()
+  const { onIsFarming } = useFarmingActionsHandlers()
 
   const networkFailed = useIsNetworkFailed()
 
   useEffect(() => {
     onIsFarming()
-  },[])
-
+  }, [])
 
   return (
     <Sentry.ErrorBoundary>

@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import useScrollPosition from '@react-hook/window-scroll'
 import { darken } from 'polished'
-import {useEffect, useMemo, useState} from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
@@ -27,8 +27,8 @@ import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import LogoIcicles from '../../assets/svg/logo-icicles.svg'
 
 import { isMobile } from 'react-device-detect'
-import {useFarmingActionsHandlers} from "../../state/farming/hooks";
-import {useAppSelector} from "../../state/hooks";
+import { useFarmingActionsHandlers } from '../../state/farming/hooks'
+import { useAppSelector } from '../../state/hooks'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
@@ -130,7 +130,7 @@ const HeaderElement = styled.div`
 `
 
 const HeaderLinks = styled(Row)`
-  position: absolute;
+  position: fixed;
   transform: translateX(-50%);
   left: 50%;
   justify-self: center;
@@ -147,29 +147,6 @@ const HeaderLinks = styled(Row)`
   grid-gap: 30px;
   overflow: visible;
   align-items: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    // justify-self: center;  
-    `};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    justify-self: center;
-  `};
-  @media screen and (max-width: 1500px) {
-    flex-direction: row;
-    justify-content: space-between;
-    justify-self: center;
-    z-index: 99;
-    position: fixed;
-    bottom: 1rem;
-    margin: 0 auto;
-    
-    &::before,
-    &::after {
-      display: none;
-    }
-  }
-  // ${({ theme }) => theme.mediaWidth.upToLarge`
-  //
-  // `};
 
   &::before,
   &::after {
@@ -189,7 +166,35 @@ const HeaderLinks = styled(Row)`
     right: 15%;
   }
 
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    position: relative;
+    transform: unset;
+    left: unset;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  position: fixed;
+  transform: translateX(-50%);
+  left: 50%;
+  flex-direction: row;
+  justify-content: space-between;
+  justify-self: center;
+  z-index: 99;
+  position: fixed;
+  bottom: 1rem;
+  margin: 0 auto;
+
+  &::before,
+  &::after {
+    display: none;
+  }
+`};
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
+  position: fixed;
+  transform: translateX(-50%);
+  left: 50%;
+  bottom: 1rem;
     overflow: auto;
     width: calc(100% - 1rem);
     margin-right: -1rem;
@@ -197,34 +202,7 @@ const HeaderLinks = styled(Row)`
       display: none;
     }
 
-  `} // @media (max-width: 1366px) {
-  //   grid-auto-flow: unset;
-  //   left: 65px;
-  //   top: 100px;
-  // }
-
-  // @media (max-width: 1144px) {
-  //   grid-auto-flow: column;
-  //   transform: translateX(-50%);
-  //   left: 50%;
-  //   bottom: 1rem;
-  //   flex-direction: row;
-  //   justify-content: space-between;
-  //   justify-self: center;
-  //   z-index: 99;
-  //   position: fixed;
-  //   top: unset;
-  // }
-
-  // @media (max-width: 500px) {
-  //   display: flex;
-  //   max-width: 100%;
-  // }
-  
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-
- 
-`}
+  `}
 `
 
 const AccountElement = styled.div<{ active: boolean }>`
@@ -258,7 +236,7 @@ const Title = styled.a`
   display: flex;
   z-index: 5;
   position: relative;
-  width: 300px;
+  width: 250px;
   height: 64px;
   align-items: center;
   border-radius: 16px;
@@ -292,8 +270,12 @@ const Title = styled.a`
     right: 15%;
   }
 
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    width: 200px;
+  `}
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 100px;
+    width: 80px;
     margin-right: 10px;
   `}
 `
@@ -313,7 +295,7 @@ const TitleIcicle = styled.div`
   position: absolute;
   display: block;
   z-index: 4;
-  top: 10px;
+  top: 18px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -387,12 +369,12 @@ export const FarmingInfoLabel = styled.span`
   border-radius: 50%;
   top: 30%;
   right: 5%;
-  display: ${p => !p.isEvents ? 'none': 'block'};
+  display: ${(p) => (!p.isEvents ? 'none' : 'block')};
 `
 
 export default function Header() {
-  const {startTime} = useAppSelector(state => state.farming)
-  const {onIsFarmingGet} = useFarmingActionsHandlers()
+  const { startTime } = useAppSelector((state) => state.farming)
+  const { onIsFarmingGet } = useFarmingActionsHandlers()
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -425,10 +407,10 @@ export default function Header() {
   }
 
   useEffect(() => {
-    if (startTime.trim()){
+    if (startTime.trim()) {
       setEvents(true)
     }
-  },[startTime])
+  }, [startTime])
 
   return (
     <HeaderFrame showBackground={false}>
@@ -461,11 +443,7 @@ export default function Header() {
         </StyledNavLink>
         <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
           Farming
-          <FarmingInfoLabel
-          isEvents={isEvents}/>
-        </StyledNavLink>
-        <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
-          Migrate
+          <FarmingInfoLabel isEvents={isEvents} />
         </StyledNavLink>
         <StyledNavLink id={`info-nav-link`} to={'/info'}>
           Info
@@ -473,9 +451,9 @@ export default function Header() {
       </HeaderLinks>
 
       <HeaderControls account={!!account}>
-        <NetworkCard />
         <HeaderElement>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+            <NetworkCard />
             {(chainId === 137 && account && userEthBalance) || networkFailed ? (
               <BalanceText
                 style={{ flexShrink: 0 }}

@@ -62,12 +62,13 @@ const BodyWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
   padding: 2rem 40px;
   border-radius: 20px;
-  
+  margin-bottom: 5rem;
+
   @media screen and (max-width: 1081px) {
     padding: 2rem 40px 4rem;
   }
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 1rem 20px;
   `}
 `

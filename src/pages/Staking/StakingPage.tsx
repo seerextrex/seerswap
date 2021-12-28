@@ -106,6 +106,7 @@ const BodyWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
   padding: 2rem;
   border-radius: 20px;
+  margin-bottom: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
   `}

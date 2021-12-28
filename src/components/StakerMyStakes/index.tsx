@@ -261,6 +261,10 @@ const StakeListHeader = styled.div`
 
 export const TokensNames = styled.div`
   margin-left: 1rem;
+  ${({theme}) => theme.mediaWidth.upToMedium`
+    margin-left: .2rem;
+    font-size: 14px;
+  `}
 
   & > * {
     ${({ skeleton }) =>

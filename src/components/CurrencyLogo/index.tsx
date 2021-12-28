@@ -28,9 +28,9 @@ const StyledLogo = styled.div<{ size: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  fontsize: 14px;
-  fontfamily: Montserrat;
-  fontweight: 600;
+  font-size: 14px;
+  font-family: Montserrat,serif;
+  font-weight: 600;
 `
 
 export default function CurrencyLogo({
@@ -93,10 +93,12 @@ export default function CurrencyLogo({
         background: stringToColour(currency?.symbol).background,
         color: stringToColour(currency?.symbol).text,
         border: stringToColour(currency?.symbol).border,
+
         fontSize: size === '18px' ? '8px' : size === '24px' ? '12px' : '14px',
       }}
+      {...rest}
     >
-      {currency?.symbol.slice(0, 2)}
+        {currency?.symbol.slice(0, 2)}
     </StyledLogo>
   )
 }

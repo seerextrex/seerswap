@@ -125,7 +125,7 @@ export function MinimalPositionCard({pair, showUnwrapped = false, border, sushi}
                                 <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false}
                                                     size={24}/>
                                 <Text style={{marginLeft: '5px', marginRight: '5px'}} fontWeight={500} fontSize={20}>
-                                    {currency0.symbol}/{currency1.symbol}
+                                    {currency1.symbol}/{currency0.symbol}
                                 </Text>
                                 <Badge
                                     style={{

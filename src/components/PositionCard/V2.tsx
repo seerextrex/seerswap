@@ -107,7 +107,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                   <Trans>Loading</Trans>
                 </Dots>
               ) : (
-                `${currency0.symbol}/${currency1.symbol}`
+                `${currency1.symbol}/${currency0.symbol}`
               )}
             </Text>
             <Badge

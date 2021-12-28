@@ -197,7 +197,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
-                  <Trans>Toggle Expert Mode</Trans>
+                  <Trans>Expert Mode</Trans>
                 </TYPE.black>
                 <QuestionHelper
                   text={

@@ -65,6 +65,11 @@ const PageWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
   border-radius: 20px;
   margin-top: 5rem;
+  
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+  `}
 `
 const LiquidityWrapper = styled.div`
   display: flex;
@@ -114,6 +119,15 @@ const TokenItem = styled.div`
     `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0 0 1rem 0!important;
+    padding: 1rem 1rem 2rem 1rem;
+  `}
+`
+
+const TokenItemBottomInputWrapper = styled.div`
+  display: flex;
+  
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    height: 60px;
   `}
 `
 
@@ -266,6 +280,9 @@ const Title = styled.div`
   font-weight: 600;
   padding: 1rem 0;
   margin-top: 1rem;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+   margin-top: 1rem;
+  `}
 `
 
 const Warning = styled.div`
@@ -281,6 +298,12 @@ const Warning = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     top: -1rem;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    position: relative;
+    width: 100%;
+    text-align: center;
+    margin-bottom: .4rem;
   `}
 `
 const Error = styled(Warning)`
@@ -328,7 +351,13 @@ const AddLiquidityMessage = styled.div`
     margin-bottom: 15px;
   `}
 `
-
+const ButtonsWrapper = styled.div`
+  display: flex;
+  
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: column;
+  `}
+`
 const AddLiquidityButton = styled.button`
   // width: 100%;
   padding: 8px 16px;
@@ -348,6 +377,11 @@ const AddLiquidityButton = styled.button`
     color: ${darken(0.35, 'white')};
     font-weight: 600;
   }
+  
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    width: 100%;
+    margin-left: unset;
+  `}
 `
 
 const FullRangeButton = styled.button`
@@ -397,6 +431,9 @@ const HigherPrice = styled.div`
   right: -1px;
   left: -1px;
   text-align: center;
+`
+const ApproveButtonContainer = styled.div`
+  margin-top: 1rem;
 `
 const CurrencyInputPanelStyled = styled(CurrencyInputPanel)`
   height: 40px !important;
@@ -758,6 +795,7 @@ export default function AddLiquidityPage({
                 id="add-liquidity-input-tokena"
                 showCommonBases
                 showBalance={false}
+                pool={'page'}
               />
             </TokenItem>
             <TokenItem noPadding>
@@ -775,6 +813,7 @@ export default function AddLiquidityPage({
                 id="add-liquidity-input-tokenb"
                 showCommonBases
                 showBalance={false}
+                page={'page'}
               />
             </TokenItem>
           </TokenPair>
@@ -850,13 +889,13 @@ export default function AddLiquidityPage({
                     }
                   >
                     <Title>
-                      Price Range
                       {outOfRange && (
-                        <Warning>
-                          <span>Warning: Price is out of range</span>
-                        </Warning>
+                          <Warning>
+                            <span>Warning: Price is out of range</span>
+                          </Warning>
                       )}
                       {invalidRange && <Error>Error: The Min price must be lower than the Max price</Error>}
+                      Price Range
                     </Title>
                     <PriceRangeWrapper>
                       {price && baseCurrency && quoteCurrency && !noLiquidity && (
@@ -976,7 +1015,7 @@ export default function AddLiquidityPage({
                           shallow={true}
                           page={'pool'}
                         />
-                        <div style={{ display: 'flex' }}>
+                        <TokenItemBottomInputWrapper>
                           <div style={{ width: '100%' }}>
                             <CurrencyInputPanel
                               value={formattedAmounts[Field.CURRENCY_A]}
@@ -994,18 +1033,19 @@ export default function AddLiquidityPage({
                               hideInput={depositADisabled}
                               disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
                               shallow={true}
+                              page={'pool'}
                             />
                           </div>
                           {showApprovalA && !depositADisabled && (
-                            <div style={{ display: 'flex', width: '100%' }}>
+                            <ApproveButtonContainer style={{ display: 'flex', width: '100%'}}>
                               <ApproveButton onClick={approveACallback} disabled={approvalA === ApprovalState.PENDING}>
                                 {approvalA === ApprovalState.PENDING
                                   ? `Approving ${currencies[Field.CURRENCY_A]?.symbol}`
                                   : `Approve ${currencies[Field.CURRENCY_A]?.symbol}`}
                               </ApproveButton>
-                            </div>
+                            </ApproveButtonContainer>
                           )}
-                        </div>
+                        </TokenItemBottomInputWrapper>
                       </TokenItem>
                       <TokenItem highPrice={false}>
                         {!atMaxAmounts[Field.CURRENCY_B] && !depositBDisabled && (
@@ -1029,7 +1069,7 @@ export default function AddLiquidityPage({
                           shallow={true}
                           page={'pool'}
                         />
-                        <div style={{ display: 'flex' }}>
+                        <TokenItemBottomInputWrapper>
                           <div style={{ width: '100%' }}>
                             <CurrencyInputPanel
                               value={formattedAmounts[Field.CURRENCY_B]}
@@ -1048,31 +1088,25 @@ export default function AddLiquidityPage({
                               showBalance={true}
                               disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
                               shallow={true}
+                              page={'pool'}
                             />
                           </div>
                           {showApprovalB && !depositBDisabled && (
-                            <div style={{ display: 'flex', width: '100%' }}>
+                            <ApproveButtonContainer style={{ display: 'flex', width: '100%' }}>
                               <ApproveButton onClick={approveBCallback} disabled={approvalB === ApprovalState.PENDING}>
                                 {approvalB === ApprovalState.PENDING
                                   ? `Approving ${currencies[Field.CURRENCY_B]?.symbol}`
                                   : `Approve ${currencies[Field.CURRENCY_B]?.symbol}`}
                               </ApproveButton>
-                            </div>
+                            </ApproveButtonContainer>
                           )}
-                        </div>
+                        </TokenItemBottomInputWrapper>
                       </TokenItem>
                     </TokenPair>
                   </div>
                 </>
               )}
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginTop: `${window.innerWidth < 721 ? '120px' : '1rem'}`,
-                  }}
-                >
+              <ButtonsWrapper>
                   {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (
                     <Error style={{ position: 'relative', padding: '14px 16px', marginRight: '1rem', top: 0 }}>
                       {errorMessage}
@@ -1093,8 +1127,7 @@ export default function AddLiquidityPage({
                   >
                     Add Liquidity
                   </AddLiquidityButton>
-                </div>
-              </div>
+              </ButtonsWrapper>
             </>
           ) : account ? (
             <PairNotSelectedMock>Please select a token pair</PairNotSelectedMock>

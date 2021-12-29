@@ -115,7 +115,8 @@ const InputRow = styled.div<{ selected: boolean }>`
 const AutoColumnStyled = styled(AutoColumn)`
   left: 1rem;
   bottom: -13% !important;
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  ${({theme, page}) => theme.mediaWidth.upToExtraSmall`
+  left: ${page === 'addLiq' ? '0' : ''};
   bottom: -25% !important;
   `}
 `
@@ -135,7 +136,8 @@ const LabelRow = styled.div`
 
 const FiatRow = styled(LabelRow)`
   justify-content: flex-end;
-  padding: ${({ shallow }) => (shallow ? '0' : '0 1rem 1rem')};
+  padding: ${({ shallow, page }) => (page === 'addLiq' ? '0 1rem' :shallow ? '0' : '0 1rem 1rem')};
+  margin-top: ${({page})=> (page === 'pool' ? '.3rem' : '0')};
   
   span {
     &:hover {
@@ -143,6 +145,7 @@ const FiatRow = styled(LabelRow)`
       cursor: default;
     }
   }
+  
 `
 
 const Aligner = styled.span`
@@ -159,7 +162,7 @@ const NumericalInputStyled = styled(NumericalInput)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
     text-align: left!important;
     width: 100%;
-    margin: 15px 0 10px;
+    margin: 15px 0 10px!important;
   }`}
 `
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
@@ -178,7 +181,7 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
 `
 
 const MaxButton = styled.button`
-  background-color: #245376;
+  background-color: ${({page, theme}) => page === 'addLiq' ? theme.winterMainButton : '#245376'};
   border-radius: 6px;
   color: white;
   margin-right: 10px;
@@ -190,7 +193,7 @@ const MaxButton = styled.button`
   `}
 
   &:hover {
-    background-color: ${darken(0.05, '#245376')};
+    background-color: ${({page, theme}) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -277,13 +280,11 @@ export default function CurrencyInputPanel({
       currency.name = 'Matic'
     }
   }
-  // if (balance) {
-  //   console.log
-  // }
+
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
-        <FixedContainer style={{ height: `${page === 'pool' ? '30px' : '80px'}` }}>
+        <FixedContainer style={{ height: `${page === 'pool' ? '40px' : '80px'}` }}>
           <AutoColumnStyled
             gap="sm"
             justify="center"
@@ -397,11 +398,11 @@ export default function CurrencyInputPanel({
               </Aligner>
             </CurrencySelect>
           )}
-          {(swap || page === 'addLiq') && !locked && currency && showMaxButton && <MaxButton onClick={onMax}>Max</MaxButton>}
+          {(swap || page === 'addLiq') && !locked && currency && showMaxButton && <MaxButton page={page} onClick={onMax}>Max</MaxButton>}
           {!hideInput && (
             <>
               <NumericalInputStyled
-                style={{ backgroundColor: 'transparent', textAlign: hideCurrency ? 'left' : 'right', fontSize: '20px' }}
+                style={{ backgroundColor: 'transparent', textAlign: hideCurrency ? 'left' : 'right', fontSize: '20px', marginTop: page === 'pool' ? '1rem' : '0'}}
                 className="token-amount-input"
                 value={value}
                 disabled={disabled}
@@ -414,19 +415,19 @@ export default function CurrencyInputPanel({
           )}
         </InputRow>
         {!hideInput && !hideBalance && !locked && value ? (
-          <FiatRow shallow={shallow}>
+          <FiatRow shallow={shallow} page={page}>
             <RowBetween>
               <FiatValue fiatValue={fiatValue} priceImpact={priceImpact} />
             </RowBetween>
           </FiatRow>
         ) : currency && swap && currentPrice ? (
-          <FiatRow>
+          <FiatRow page={page}>
             <RowBetween>{`1 ${currency.symbol} = $${currentPrice.toFixed()}`}</RowBetween>
           </FiatRow>
         ) : (
           currency &&
           swap && (
-            <FiatRow>
+            <FiatRow page={page}>
               <RowBetween>Estimating...</RowBetween>
             </FiatRow>
           )

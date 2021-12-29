@@ -72,6 +72,8 @@ export default function Chart({
     let sameDays = []
     let res = []
 
+    console.log('INITAL DATA', data)
+
     if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0].timestamp))) {
       res.push({
         value: data[0].value,
@@ -79,22 +81,25 @@ export default function Chart({
       })
     }
 
+    console.log('RES', res)
+
     for (let i = 1; i < data.length; i++) {
       if (
         dayjs(data[i].timestamp)
-          .startOf(_span)
+          .startOf(span !== ChartSpan.DAY ? 'day' : _span)
           .isSame(dayjs(data[i - 1].timestamp).startOf(_span))
       ) {
         sameDays.push(data[i])
       } else {
         if (sameDays.length !== 0) {
+          console.log('same days', sameDays)
           res.push(
             sameDays.reduce(
               (prev, cur) => {
                 return {
                   timestamp: cur.timestamp,
                   value:
-                    span === ChartSpan.DAY || type === ChartType.FEES
+                    span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME
                       ? prev.value + cur.value
                       : Math.max(prev.value, cur.value),
                 }
@@ -125,7 +130,7 @@ export default function Chart({
             return {
               timestamp: cur.timestamp,
               value:
-                span === ChartSpan.DAY || type === ChartType.FEES
+                span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME
                   ? prev.value + cur.value
                   : Math.max(prev.value, cur.value),
             }
@@ -201,7 +206,14 @@ export default function Chart({
 
             _data.push({
               timestamp: nextDay,
-              value: type === ChartType.VOLUME ? 0 : last.value,
+              value:
+                type === ChartType.VOLUME
+                  ? dayjs(nextDay)
+                      .startOf(_span)
+                      .isSame(dayjs(new Date(res[i].timestamp)).startOf(_span))
+                    ? res[i].value
+                    : 0
+                  : last.value,
             })
 
             last = _data[_data.length - 1]
@@ -227,6 +239,11 @@ export default function Chart({
     } else {
       _data = [...res]
     }
+
+    console.log(
+      'PROCESSED DATA',
+      _data.reduce((acc, el) => acc + el.value, 0)
+    )
 
     return [..._data]
   }, [data, previousData])

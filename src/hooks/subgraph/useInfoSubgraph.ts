@@ -437,6 +437,9 @@ export function useInfoSubgraph() {
 
             const previousData = await fetchPoolLastNotEmptyEntry(pool, poolHourDatas[0].periodStartUnix)
 
+            console.log('POOL HOURS DATA', poolHourDatas)
+            console.log('LAST NOT EMPTY', previousData)
+
             if (_poolHourDatas.length !== 0) {
                 setChartPoolData({
                     data: _poolHourDatas,

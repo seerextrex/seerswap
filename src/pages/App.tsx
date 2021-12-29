@@ -54,6 +54,7 @@ import BG from '../assets/images/bg.png'
 
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
+import TotalStats from '../components/TotalStats'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -183,6 +184,7 @@ export default function App() {
           <HeaderWrapper style={{ zIndex: 3 }}>
             <Header />
           </HeaderWrapper>
+          <TotalStats></TotalStats>
           <BodyWrapper style={{ zIndex: 2 }}>
             {networkFailed && (
               <NetworkFailedCard>

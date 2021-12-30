@@ -117,7 +117,9 @@ const Stake = styled.div`
   ${({ navigatedTo }) =>
     navigatedTo &&
     css`
-      background-color: unset;
+      background-color: ${({theme}) => darken(0.05, 'rgba(91,183,255,0.6)')};
+      border-radius: 5px;
+      padding: 8px 5px;
     `}
 `
 

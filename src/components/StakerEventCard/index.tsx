@@ -467,18 +467,19 @@ export function StakerEventCard({
           <Plus style={{ display: 'block' }} size={18}></Plus>
         </div>
       </div>
-      <RewardWrapper>
-          <CurrencyLogo currency={{address: bonusRewardAddress, symbol: bonusRewardAddress}} size={'35px'}/>
-        <div style={{ marginLeft: '1rem' }}>
-          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Bonus</Subtitle>
-          <RewardSymbol>{bonusRewardToken}</RewardSymbol>
-        </div>
-        {bonusReward && (
-          <RewardAmount title={bonusReward}>
-            {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
-          </RewardAmount>
-        )}
-      </RewardWrapper>
+        {bonusReward > 0 &&
+            <RewardWrapper>
+            <CurrencyLogo currency={{address: bonusRewardAddress, symbol: bonusRewardAddress}} size={'35px'}/>
+            <div style={{ marginLeft: '1rem' }}>
+                <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Bonus</Subtitle>
+                <RewardSymbol>{bonusRewardToken}</RewardSymbol>
+            </div>
+            {bonusReward && (
+                <RewardAmount title={bonusReward}>
+                    {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
+                </RewardAmount>
+            )}
+        </RewardWrapper>}
       <StakeInfo active>
         <div>
           <>

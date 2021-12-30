@@ -117,7 +117,7 @@ const Stake = styled.div`
   ${({ navigatedTo }) =>
     navigatedTo &&
     css`
-      background-color: #1a1029;
+      background-color: unset;
     `}
 `
 

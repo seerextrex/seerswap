@@ -22,6 +22,7 @@ import { Bound } from 'state/mint/v3/actions'
 
 import { ArrowRight } from 'react-feather'
 import usePrevious from '../../hooks/usePrevious'
+import {darken} from "polished";
 
 const LinkRow = styled(Link)`
   align-items: center;
@@ -87,6 +88,10 @@ const OnFarmingBadge = styled(Link)`
   ${({theme}) => theme.mediaWidth.upToSmall`
   margin-right: 1rem;
   `}
+  
+  &:hover {
+    background-color: ${({theme}) => darken(0.05,'#30b2e6')};
+  }
 `
 
 const DataLineItem = styled.div`

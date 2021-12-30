@@ -14,7 +14,9 @@ import {
     TOP_POOLS,
     TOP_TOKENS,
     CHART_FEE_LAST_NOT_EMPTY,
-    CHART_POOL_LAST_NOT_EMPTY
+    CHART_POOL_LAST_NOT_EMPTY,
+    SWAPS_PER_DAY,
+    ALL_POSITIONS
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
@@ -54,6 +56,74 @@ export function useInfoSubgraph() {
     const [chartPoolData, setChartPoolData] = useState(null)
     const [chartPoolDataLoading, setChartPoolDataLoading] = useState(null)
 
+    async function fetchLeadingAPR() {
+        if (!blocks || blockError || !ethPrices) return
+
+        const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => b.timestamp - a.timestamp)
+
+        try {
+
+            const { data: { swaps }, error } = await dataClient.query({
+                query: SWAPS_PER_DAY(_block24.timestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const { data: { positions }, error: error2 } = await dataClient.query({
+                query: ALL_POSITIONS,
+                fetchPolicy: 'network-only'
+            })
+
+            const swapPools = {}
+
+            for (const swap of swaps) {
+                const id = swap.pool.id
+                swapPools[id] = {
+                    ticks: swapPools[id] ? [...swapPools[id].ticks, swap.tick] : [],
+                    amountUSD: swapPools[id] ? [...swapPools[id].amountUSD, swap.amountUSD] : []
+                }
+            }
+
+            const positionsEarned = {}
+
+            for (const position of positions) {
+                const pool = position.pool.id
+                const positionLiquidity = +position.liquidity
+                const positionPriceUSD = +position.transaction.mints[0].amountUSD
+
+                if (swapPools[pool]) {
+
+                    const tickLiquidity = +position.tickUpper.liquidityGross - +position.tickLower.liquidityGross
+
+                    for (let i = 0; i < swapPools[pool].ticks.length; i++) {
+
+                        if (positionLiquidity && tickLiquidity && position.tickLower.tickIdx <= swapPools[pool].ticks[i] && position.tickUpper.tickIdx >= swapPools[pool].ticks[i]) {
+
+                            const amount = (positionLiquidity * tickLiquidity) >> 128 * positionPriceUSD
+
+                            console.log('here', amount)
+
+                            if (positionsEarned[position.id]) {
+                                positionsEarned[position.id] = +positionsEarned[position.id] + amount
+                            } else {
+                                positionsEarned[position.id] = amount
+                            }
+                            // positionsEarned[position.id] = positionsEarned[position.id] ? positionsEarned[positions.id] + swapPools[pool].amountUSD[i] : swapPools[pool].amountUSD[i]
+                        }
+                    }
+                }
+            }
+
+            // const { data: { positions } }
+
+            console.log('SWWAPS', positionsEarned)
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     async function fetchInfoPools(reload?: boolean) {
 
         if (!blocks || blockError || !ethPrices) return
@@ -75,6 +145,8 @@ export function useInfoSubgraph() {
                 fetchPolicy: 'network-only'
             })
 
+            await fetchLeadingAPR()
+
             if (error) throw new Error(`${_error2.name} ${_error2.message}`)
 
             const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => b.timestamp - a.timestamp)
@@ -88,6 +160,7 @@ export function useInfoSubgraph() {
             const parsedPools48 = parseTokensData(pools48)
             const parsedPoolsWeek = parseTokensData(poolsWeek)
 
+            console.log('block 24', _block24)
             const formatted = poolsAddresses.reduce((accum: { [address: string]: TokenData }, address) => {
                 const current: TokenFields | undefined = parsedPools[address]
                 const oneDay: TokenFields | undefined = parsedPools24[address]
@@ -101,6 +174,10 @@ export function useInfoSubgraph() {
                             [parseFloat(current.volumeUSD) - parseFloat(oneDay.volumeUSD), 0] : current
                                 ? [parseFloat(current.volumeUSD), 0]
                                 : [0, 0]
+
+                if (current.id === '0x49c1c3ac4f301ad71f788398c0de919c35eaf565') {
+                    console.log(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD, get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD), volumeUSD, volumeUSDChange)
+                }
 
                 const volumeUSDWeek =
                     current && week
@@ -133,6 +210,8 @@ export function useInfoSubgraph() {
                         : current
                             ? parseFloat(current.feesUSD)
                             : 0
+
+
 
                 accum[address] = {
                     token0: current.token0,

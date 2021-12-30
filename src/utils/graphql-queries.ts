@@ -5,7 +5,7 @@ import { STAKER_ADDRESS } from "../constants/addresses";
 
 export const ONE_FARMING_EVENT = () => gql`
 query incentive {
-   incentives(orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: ${Math.round(Date.now()/1000)}}) {
+   incentives(orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: ${Math.round(Date.now() / 1000)}}) {
     startTime,
     endTime
   }
@@ -270,6 +270,43 @@ query positionsOwnedForPool {
 }`
 
 //Info
+
+export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
+  query swapsPerDay {
+    swaps (first: 1000, where: {timestamp_gt: ${startTimestamp}, timestamp_lt: ${Math.round(Date.now() / 1000)}} ) {
+      pool {
+        id
+      }
+      timestamp
+      tick
+      amountUSD
+    }
+  }
+`
+export const ALL_POSITIONS = gql`
+query allPositions {
+  positions (first: 1000) {
+    pool {
+      id
+    }
+    id
+    liquidity
+    tickLower {
+      tickIdx
+      liquidityGross
+    }
+    tickUpper {
+      tickIdx
+      liquidityGross
+    }
+    transaction {
+      mints {
+        amountUSD
+      }
+    }
+  }
+}
+`
 
 export const TOP_POOLS = gql`
 query topPools {

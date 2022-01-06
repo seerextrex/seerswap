@@ -170,6 +170,7 @@
     "lodash.keyby": "^4.6.0",
     "numbro": "^2.3.5",
     "random-gradient": "^0.0.2",
+    "react-gtm-module": "^2.0.11",
     "react-helmet": "^6.1.0",
     "swr": "^1.0.1",
     "unfetch": "^4.2.0",

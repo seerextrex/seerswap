@@ -521,15 +521,21 @@ export function StakeModal({
               </StakeButtonLoader>
             </StakeButton>
           ) : NFTsForApprove ? (
-            <StakeButton disabled={submitLoader} onClick={approveNFTs}>
+            <StakeButton disabled={submitLoader} onClick={approveNFTs} id={'farming-approve-nft'} className={'farming-approve-nft'}>
               {`Approve NFT #${NFTsForApprove.tokenId}`}
             </StakeButton>
           ) : NFTsForTransfer ? (
-            <StakeButton onClick={transferNFTs}>{`Transfer NFT #${NFTsForTransfer.tokenId}`}</StakeButton>
+            <StakeButton onClick={transferNFTs} id={'farming-transfer-nft'} className={'farming-transfer-nft'}>
+              {`Transfer NFT #${NFTsForTransfer.tokenId}`}
+            </StakeButton>
           ) : NFTsForStake ? (
-            <StakeButton onClick={stakeNFTs}>{`Deposit NFT #${NFTsForStake.tokenId}`}</StakeButton>
+            <StakeButton onClick={stakeNFTs} id={'farming-deposit-nft'} className={'farming-deposit-nft'}>
+              {`Deposit NFT #${NFTsForStake.tokenId}`}
+            </StakeButton>
           ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-            <StakeButton disabled>{`Select NFT`}</StakeButton>
+            <StakeButton disabled id={'farming-select-nft'} className={'farming-select-nft'}>
+              {`Select NFT`}
+            </StakeButton>
           ) : null}
         </ModalWrapper>
       )}

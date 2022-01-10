@@ -8,6 +8,7 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import Loader from '../Loader'
 import gradient from 'random-gradient'
+import {darken} from "polished";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -155,6 +156,13 @@ const StakeButton = styled.button`
   padding: 1rem;
   color: white;
   border-radius: 8px;
+  &:hover {
+    background: ${({theme}) => darken(0.05, theme.winterMainButton)};
+  }
+  &:disabled {
+    background: ${({ theme }) => theme.winterDisabledButton};
+    cursor: default;
+  }
 `
 
 const StakeButtonLoader = styled.span`
@@ -513,15 +521,21 @@ export function StakeModal({
               </StakeButtonLoader>
             </StakeButton>
           ) : NFTsForApprove ? (
-            <StakeButton disabled={submitLoader} onClick={approveNFTs}>
+            <StakeButton disabled={submitLoader} onClick={approveNFTs} id={'farming-approve-nft'} className={'farming-approve-nft'}>
               {`Approve NFT #${NFTsForApprove.tokenId}`}
             </StakeButton>
           ) : NFTsForTransfer ? (
-            <StakeButton onClick={transferNFTs}>{`Transfer NFT #${NFTsForTransfer.tokenId}`}</StakeButton>
+            <StakeButton onClick={transferNFTs} id={'farming-transfer-nft'} className={'farming-transfer-nft'}>
+              {`Transfer NFT #${NFTsForTransfer.tokenId}`}
+            </StakeButton>
           ) : NFTsForStake ? (
-            <StakeButton onClick={stakeNFTs}>{`Deposit NFT #${NFTsForStake.tokenId}`}</StakeButton>
+            <StakeButton onClick={stakeNFTs} id={'farming-deposit-nft'} className={'farming-deposit-nft'}>
+              {`Deposit NFT #${NFTsForStake.tokenId}`}
+            </StakeButton>
           ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-            <StakeButton>{`Select NFT`}</StakeButton>
+            <StakeButton disabled id={'farming-select-nft'} className={'farming-select-nft'}>
+              {`Select NFT`}
+            </StakeButton>
           ) : null}
         </ModalWrapper>
       )}

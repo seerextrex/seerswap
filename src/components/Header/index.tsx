@@ -274,8 +274,11 @@ const Title = styled.a`
   `}
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 80px;
+    width: 150px;
     margin-right: 10px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 80px;
   `}
 `
 
@@ -369,11 +372,15 @@ export const FarmingInfoLabel = styled.span`
   top: 30%;
   right: 5%;
   display: ${(p) => (!p.isEvents ? 'none' : 'block')};
+  
+  ${({theme}) => theme.mediaWidth.upToMedium`
+  top: 20%;
+  right: 0%;
+  `}
 `
 
 export default function Header() {
   const { startTime } = useAppSelector((state) => state.farming)
-  const { onIsFarmingGet } = useFarmingActionsHandlers()
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']

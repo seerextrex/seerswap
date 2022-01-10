@@ -76,7 +76,7 @@ export function FutureEventsPage({
 
   return (
     <>
-      <Modal isOpen={modalForPool}>
+      <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)}>
         {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}></StakeModal>}
       </Modal>
       <PageWrapper>

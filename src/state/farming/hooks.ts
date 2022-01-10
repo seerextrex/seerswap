@@ -7,7 +7,7 @@ import {isFarming} from "./actions";
 
 export function useFarmingActionsHandlers(): {
     onIsFarming: () => void
-    onIsFarmingGet: () => true
+    // onIsFarmingGet: () => boolean
 } {
 
     const dispatch = useAppDispatch()
@@ -20,28 +20,28 @@ export function useFarmingActionsHandlers(): {
                 query: ONE_FARMING_EVENT(),
                 fetchPolicy: 'cache-first'
             })
-           dispatch(isFarming(incentives[0]))
+           dispatch(isFarming({startTime: incentives[0]?.startTime, endTime: incentives[0]?.endTime}))
         } catch (e) {
             console.log(e)
         }
 
     }, [dispatch])
 
-    const isFarmingGet = useCallback( () => {
-        try {
-            if (startTime.trim() !== ''){
-                return true
-            }
-        return startTime
-        } catch (e) {
-            console.log(e)
-            return false
-        }
-
-    }, [startTime])
+    // const isFarmingGet = useCallback( () => {
+    //     try {
+    //         if (startTime.trim() !== ''){
+    //             return true
+    //         }
+    //     return startTime
+    //     } catch (e) {
+    //         console.log(e)
+    //         return false
+    //     }
+    //
+    // }, [startTime])
 
     return {
         onIsFarming: isFarmingAdd,
-        onIsFarmingGet: isFarmingGet
+        // onIsFarmingGet: isFarmingGet
     }
 }

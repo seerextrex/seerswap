@@ -54,6 +54,7 @@ import BG from '../assets/images/bg.png'
 
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
+import { useActiveWeb3React } from '../hooks/web3'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -163,6 +164,8 @@ export default function App() {
     },
   })
 
+  const { account } = useActiveWeb3React()
+
   const { onIsFarming } = useFarmingActionsHandlers()
 
   const networkFailed = useIsNetworkFailed()
@@ -170,6 +173,18 @@ export default function App() {
   useEffect(() => {
     onIsFarming()
   }, [])
+
+  useEffect(() => {
+    if (!account) return
+
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({
+      event: 'userId',
+      user_id: account,
+    })
+
+    console.log('datalayer', window.dataLayer)
+  }, [account])
 
   return (
     <Sentry.ErrorBoundary>

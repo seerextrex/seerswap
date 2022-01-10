@@ -13,6 +13,7 @@ import { feeTierPercent } from 'utils'
 import { Label, ClickableText } from 'components/Text'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks/web3'
+import { BarChart2 } from 'react-feather'
 
 export const PageButtons = styled.div`
   width: 100%;
@@ -58,10 +59,10 @@ const ResponsiveGrid = styled.div`
   grid-gap: 1em;
   align-items: center;
 
-  grid-template-columns: 20px 2.3fr repeat(5, 1fr);
+  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
 
   @media screen and (max-width: 1000px) {
-    grid-template-columns: 20px 2.1fr repeat(5, 1fr);
+    grid-template-columns: 20px 2.1fr repeat(4, 1fr);
     & :nth-child(3) {
       display: none;
     }
@@ -80,6 +81,16 @@ const ResponsiveGrid = styled.div`
   //    display: none;
   //  }
   //}
+`
+
+const ChartBadge = styled(NavLink)`
+  background: #36f;
+  margin-left: 10px;
+  border-radius: 6px;
+  padding: 2px 3px;
+  & > * {
+    display: block;
+  }
 `
 
 const AprInfo = styled.span`
@@ -116,7 +127,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   const { chainId } = useActiveWeb3React()
 
   return (
-    <NavLink to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
+    <div>
       <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
         <LabelStyled fontWeight={400}>{index + 1}</LabelStyled>
         <LabelStyled fontWeight={400}>
@@ -128,6 +139,9 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
             <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#02365e' }}>
               {feeTierPercent(poolData.fee)}
             </GreyBadge>
+            <ChartBadge to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
+              <BarChart2 size={18} stroke={'white'} />
+            </ChartBadge>
           </RowFixed>
         </LabelStyled>
         <LabelStyled end={1} fontWeight={400}>
@@ -139,14 +153,14 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
         <LabelStyled end={1} fontWeight={400}>
           {formatDollarAmount(poolData.totalValueLockedUSD)}
         </LabelStyled>
-        <LabelStyled end={1} fontWeight={400}>
+        {/* <LabelStyled end={1} fontWeight={400}>
           {formatDollarAmount(poolData.feesUSD)}
-        </LabelStyled>
+        </LabelStyled> */}
         <LabelStyled end={1} fontWeight={400}>
           {formatPercent(poolData.apr)}
         </LabelStyled>
       </ResponsiveGrid>
-    </NavLink>
+    </div>
   )
 }
 
@@ -234,9 +248,9 @@ export default function InfoPoolsTable({
             <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
               TVL {arrow(SORT_FIELD.tvlUSD)}
             </ClickableTextStyled>
-            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.feesUSD)}>
+            {/* <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.feesUSD)}>
               Fees 24H {arrow(SORT_FIELD.feesUSD)}
-            </ClickableTextStyled>
+            </ClickableTextStyled> */}
             <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
               APR {arrow(SORT_FIELD.apr)}
               {/* <AprInfo title={'based on 24h volume'}>?</AprInfo> */}

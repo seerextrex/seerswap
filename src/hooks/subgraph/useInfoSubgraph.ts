@@ -16,7 +16,8 @@ import {
     CHART_FEE_LAST_NOT_EMPTY,
     CHART_POOL_LAST_NOT_EMPTY,
     SWAPS_PER_DAY,
-    ALL_POSITIONS
+    ALL_POSITIONS,
+    TOTAL_STATS
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
@@ -56,73 +57,8 @@ export function useInfoSubgraph() {
     const [chartPoolData, setChartPoolData] = useState(null)
     const [chartPoolDataLoading, setChartPoolDataLoading] = useState(null)
 
-    async function fetchLeadingAPR() {
-        if (!blocks || blockError || !ethPrices) return
-
-        const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => b.timestamp - a.timestamp)
-
-        try {
-
-            const { data: { swaps }, error } = await dataClient.query({
-                query: SWAPS_PER_DAY(_block24.timestamp),
-                fetchPolicy: 'network-only'
-            })
-
-            if (error) throw new Error(`${error.name} ${error.message}`)
-
-            const { data: { positions }, error: error2 } = await dataClient.query({
-                query: ALL_POSITIONS,
-                fetchPolicy: 'network-only'
-            })
-
-            const swapPools = {}
-
-            for (const swap of swaps) {
-                const id = swap.pool.id
-                swapPools[id] = {
-                    ticks: swapPools[id] ? [...swapPools[id].ticks, swap.tick] : [],
-                    amountUSD: swapPools[id] ? [...swapPools[id].amountUSD, swap.amountUSD] : []
-                }
-            }
-
-            const positionsEarned = {}
-
-            for (const position of positions) {
-                const pool = position.pool.id
-                const positionLiquidity = +position.liquidity
-                const positionPriceUSD = +position.transaction.mints[0].amountUSD
-
-                if (swapPools[pool]) {
-
-                    const tickLiquidity = +position.tickUpper.liquidityGross - +position.tickLower.liquidityGross
-
-                    for (let i = 0; i < swapPools[pool].ticks.length; i++) {
-
-                        if (positionLiquidity && tickLiquidity && position.tickLower.tickIdx <= swapPools[pool].ticks[i] && position.tickUpper.tickIdx >= swapPools[pool].ticks[i]) {
-
-                            const amount = (positionLiquidity * tickLiquidity) >> 128 * positionPriceUSD
-
-                            console.log('here', amount)
-
-                            if (positionsEarned[position.id]) {
-                                positionsEarned[position.id] = +positionsEarned[position.id] + amount
-                            } else {
-                                positionsEarned[position.id] = amount
-                            }
-                            // positionsEarned[position.id] = positionsEarned[position.id] ? positionsEarned[positions.id] + swapPools[pool].amountUSD[i] : swapPools[pool].amountUSD[i]
-                        }
-                    }
-                }
-            }
-
-            // const { data: { positions } }
-
-            console.log('SWWAPS', positionsEarned)
-
-        } catch (err) {
-            console.log(err)
-        }
-    }
+    const [totalStats, setTotalStats] = useState(null)
+    const [totalStatsLoading, setTotalStatsLoading] = useState(null)
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -144,8 +80,6 @@ export function useInfoSubgraph() {
                 query: POOLS_FROM_ADDRESSES(undefined, poolsAddresses),
                 fetchPolicy: 'network-only'
             })
-
-            await fetchLeadingAPR()
 
             if (error) throw new Error(`${_error2.name} ${_error2.message}`)
 
@@ -174,10 +108,6 @@ export function useInfoSubgraph() {
                             [parseFloat(current.volumeUSD) - parseFloat(oneDay.volumeUSD), 0] : current
                                 ? [parseFloat(current.volumeUSD), 0]
                                 : [0, 0]
-
-                if (current.id === '0x49c1c3ac4f301ad71f788398c0de919c35eaf565') {
-                    console.log(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD, get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD), volumeUSD, volumeUSDChange)
-                }
 
                 const volumeUSDWeek =
                     current && week
@@ -516,9 +446,6 @@ export function useInfoSubgraph() {
 
             const previousData = await fetchPoolLastNotEmptyEntry(pool, poolHourDatas[0].periodStartUnix)
 
-            console.log('POOL HOURS DATA', poolHourDatas)
-            console.log('LAST NOT EMPTY', previousData)
-
             if (_poolHourDatas.length !== 0) {
                 setChartPoolData({
                     data: _poolHourDatas,
@@ -539,13 +466,36 @@ export function useInfoSubgraph() {
         setChartPoolDataLoading(false)
     }
 
+    async function fetchTotalStats() {
+
+        try {
+
+            setTotalStatsLoading(true)
+
+            const { data: { algebraDayDatas }, error } = await dataClient.query({
+                query: TOTAL_STATS(),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            setTotalStats(algebraDayDatas[0])
+
+        } catch (err) {
+            console.error('total stats failed', err)
+            setTotalStats('Failed')
+        }
+
+        setTotalStatsLoading(false)
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
-        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData }
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
+        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
     }
-
 
 }

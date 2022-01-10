@@ -15,6 +15,7 @@ import PoolInfoPage from '../PoolInfoPage'
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
+import { InfoTotalStats } from '../../components/InfoTotalStats'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 995px;
@@ -95,7 +96,7 @@ export function InfoPage() {
 
   const { path } = useRouteMatch()
 
-  const { fetchInfoPools, fetchInfoTokens, blocksFetched } = useInfoSubgraph() || {}
+  const { fetchInfoPools, fetchInfoTokens, fetchTotalStats, blocksFetched } = useInfoSubgraph() || {}
 
   return (
     <>
@@ -109,6 +110,11 @@ export function InfoPage() {
               <MenuWrapper>
                 <InfoMenu></InfoMenu>
               </MenuWrapper>
+              <InfoTotalStats
+                data={fetchTotalStats.totalStats}
+                refreshHandler={() => fetchTotalStats.fetchTotalStatsFn()}
+                isLoading={fetchTotalStats.totalStatsLoading}
+              ></InfoTotalStats>
               <BodyWrapper>
                 <Switch>
                   <Route exact path={`${path}`}>

@@ -25,7 +25,6 @@ export function useInfoPoolChart() {
                 query: FETCH_POOL(poolId)
             }))
 
-
             if (error) throw new Error(`${error.name} ${error.message}`)
 
             setPoolResult(pools[0])

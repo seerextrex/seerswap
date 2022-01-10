@@ -164,7 +164,12 @@ export default function PoolInfoPage({
     <Wrapper>
       {poolResult ? (
         <>
-          <PoolInfoHeader token0={poolResult.token0.id} token1={poolResult.token1.id} fee={poolResult.fee} />
+          <PoolInfoHeader
+            token0={poolResult.token0.id}
+            token1={poolResult.token1.id}
+            fee={poolResult.fee}
+            collectedFees={poolResult.feesUSD}
+          />
           <BodyWrapper>
             <ChartWrapper>
               <PoolInfoChartToolbar

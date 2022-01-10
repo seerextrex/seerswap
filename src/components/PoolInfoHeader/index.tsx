@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { ArrowLeft } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components/macro'
+import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { useToken } from '../../hooks/Tokens'
 
 const Header = styled.div`
@@ -43,7 +45,26 @@ const PoolFee = styled.span`
   `}
 `
 
-export function PoolInfoHeader({ token0, token1, fee }: { token0: string; token1: string; fee: number }) {
+const PoolCollectedFees = styled.span`
+  margin-left: auto;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-left: 0;
+    margin-top: 1rem;
+  `}
+`
+
+export function PoolInfoHeader({
+  token0,
+  token1,
+  fee,
+  collectedFees,
+}: {
+  token0: string
+  token1: string
+  fee: number
+  collectedFees: string
+}) {
   const _token0 = useToken(token0)
   const _token1 = useToken(token1)
 
@@ -58,6 +79,7 @@ export function PoolInfoHeader({ token0, token1, fee }: { token0: string; token1
           {_token0?.symbol || '...'} / {_token1?.symbol || '...'}
         </PoolTitle>
         <PoolFee>{`${fee / 10000}%`}</PoolFee>
+        <PoolCollectedFees>Total Collected Fees: ${Math.round(+collectedFees) || '...'}</PoolCollectedFees>
       </PoolInfoWrapper>
       <span></span>
     </Header>

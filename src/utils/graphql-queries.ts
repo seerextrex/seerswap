@@ -66,6 +66,7 @@ query fetchPool {
         sqrtPrice
         liquidity
         tick
+        feesUSD
     }
 }`
 
@@ -163,6 +164,15 @@ export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimesta
   }
 `
 
+export const TOTAL_STATS = () => gql`
+  query totalStats {
+    algebraDayDatas (first: 1, orderDirection: desc, orderBy: date) {
+      volumeUSD
+      feesUSD
+      tvlUSD
+    }
+  }
+`
 
 export const LAST_EVENT = () => gql`
 query lastEvent {

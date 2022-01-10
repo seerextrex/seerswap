@@ -12,10 +12,10 @@ const initialState: Farming = {
 
 export default createReducer(initialState, (builder) =>
 builder
-    .addCase(isFarming, (farms, {payload: {endTime, startTime}}) => {
+    .addCase(isFarming, (farms, {payload: {endTime = '', startTime = ''}}) => {
         return {
-            endTime,
-            startTime
+            startTime,
+            endTime
         }
     })
 )

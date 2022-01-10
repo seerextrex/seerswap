@@ -381,7 +381,6 @@ export const FarmingInfoLabel = styled.span`
 
 export default function Header() {
   const { startTime } = useAppSelector((state) => state.farming)
-  const { onIsFarmingGet } = useFarmingActionsHandlers()
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']

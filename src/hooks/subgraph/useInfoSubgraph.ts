@@ -14,7 +14,10 @@ import {
     TOP_POOLS,
     TOP_TOKENS,
     CHART_FEE_LAST_NOT_EMPTY,
-    CHART_POOL_LAST_NOT_EMPTY
+    CHART_POOL_LAST_NOT_EMPTY,
+    SWAPS_PER_DAY,
+    ALL_POSITIONS,
+    TOTAL_STATS
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
@@ -54,6 +57,9 @@ export function useInfoSubgraph() {
     const [chartPoolData, setChartPoolData] = useState(null)
     const [chartPoolDataLoading, setChartPoolDataLoading] = useState(null)
 
+    const [totalStats, setTotalStats] = useState(null)
+    const [totalStatsLoading, setTotalStatsLoading] = useState(null)
+
     async function fetchInfoPools(reload?: boolean) {
 
         if (!blocks || blockError || !ethPrices) return
@@ -88,6 +94,7 @@ export function useInfoSubgraph() {
             const parsedPools48 = parseTokensData(pools48)
             const parsedPoolsWeek = parseTokensData(poolsWeek)
 
+            console.log('block 24', _block24)
             const formatted = poolsAddresses.reduce((accum: { [address: string]: TokenData }, address) => {
                 const current: TokenFields | undefined = parsedPools[address]
                 const oneDay: TokenFields | undefined = parsedPools24[address]
@@ -133,6 +140,8 @@ export function useInfoSubgraph() {
                         : current
                             ? parseFloat(current.feesUSD)
                             : 0
+
+
 
                 accum[address] = {
                     token0: current.token0,
@@ -457,13 +466,36 @@ export function useInfoSubgraph() {
         setChartPoolDataLoading(false)
     }
 
+    async function fetchTotalStats() {
+
+        try {
+
+            setTotalStatsLoading(true)
+
+            const { data: { algebraDayDatas }, error } = await dataClient.query({
+                query: TOTAL_STATS(),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            setTotalStats(algebraDayDatas[0])
+
+        } catch (err) {
+            console.error('total stats failed', err)
+            setTotalStats('Failed')
+        }
+
+        setTotalStatsLoading(false)
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
-        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData }
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
+        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
     }
-
 
 }

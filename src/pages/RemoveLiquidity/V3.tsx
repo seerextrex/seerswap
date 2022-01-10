@@ -37,6 +37,7 @@ import { SupportedChainId } from 'constants/chains'
 import usePrevious from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
+import { useAppSelector } from '../../state/hooks'
 
 const DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
@@ -73,6 +74,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
   const theme = useTheme()
   const { account, chainId, library } = useActiveWeb3React()
+
+  const gasPrice = useAppSelector((state) => state.application.gasPrice)
 
   // flag for receiving WETH
   const [receiveWETH, setReceiveWETH] = useState(false)
@@ -167,7 +170,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         const newTxn = {
           ...txn,
           gasLimit: calculateGasMargin(chainId, estimate),
-          gasPrice: 70000000000,
+          gasPrice: gasPrice * 1000000000,
         }
 
         return library

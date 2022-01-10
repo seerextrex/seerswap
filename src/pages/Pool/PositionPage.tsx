@@ -48,7 +48,8 @@ import { SupportedChainId } from 'constants/chains'
 import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
-import {MouseoverTooltip} from "../../components/Tooltip";
+import { MouseoverTooltip } from '../../components/Tooltip'
+import { useAppSelector } from '../../state/hooks'
 
 const PageWrapper = styled.div`
   min-width: 800px;
@@ -377,6 +378,8 @@ export function PositionPage({
   const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
   const { position: existingPosition } = useDerivedPositionInfo(positionDetails)
 
+  const gasPrice = useAppSelector((state) => state.application.gasPrice)
+
   const {
     token0: token0Address,
     token1: token1Address,
@@ -542,7 +545,7 @@ export function PositionPage({
         const newTxn = {
           ...txn,
           gasLimit: calculateGasMargin(chainId, estimate),
-          gasPrice: 70000000000,
+          gasPrice: gasPrice * 1000000000,
         }
 
         return library
@@ -656,13 +659,7 @@ export function PositionPage({
                 <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
                 </TYPE.label>
-                <MouseoverTooltip
-                    text={
-                      <Trans>
-                        Current pool fee.
-                      </Trans>
-                    }
-                >
+                <MouseoverTooltip text={<Trans>Current pool fee.</Trans>}>
                   <FeeBadge style={{ marginRight: '8px' }}>
                     <BadgeText>
                       <Trans>{new Percent(existingPosition?.pool?.fee || 100, 1_000_000).toSignificant()}%</Trans>
@@ -726,7 +723,9 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyQuote} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? formatCurrencyAmount(position?.amount0,4) : formatCurrencyAmount(position?.amount1,4)}
+                            {inverted
+                              ? formatCurrencyAmount(position?.amount0, 4)
+                              : formatCurrencyAmount(position?.amount1, 4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>
@@ -741,7 +740,9 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyBase} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? formatCurrencyAmount(position?.amount1,4) : formatCurrencyAmount(position?.amount0,4)}
+                            {inverted
+                              ? formatCurrencyAmount(position?.amount1, 4)
+                              : formatCurrencyAmount(position?.amount0, 4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>
@@ -784,17 +785,11 @@ export function PositionPage({
                           onClick={() => setShowConfirm(true)}
                         >
                           {!!collectMigrationHash && !isCollectPending ? (
-                            <TYPE.main
-                              style={{ color: 'white' }}
-                              color={theme.text1}
-                            >
+                            <TYPE.main style={{ color: 'white' }} color={theme.text1}>
                               <Trans> Collected</Trans>
                             </TYPE.main>
                           ) : isCollectPending || collecting ? (
-                            <TYPE.main
-                              style={{ color: 'white' }}
-                              color={theme.text1}
-                            >
+                            <TYPE.main style={{ color: 'white' }} color={theme.text1}>
                               {' '}
                               <Dots>
                                 <Trans>Collecting</Trans>
@@ -802,10 +797,7 @@ export function PositionPage({
                             </TYPE.main>
                           ) : (
                             <>
-                              <TYPE.main
-                                style={{ color: 'white' }}
-                                color={theme.white}
-                              >
+                              <TYPE.main style={{ color: 'white' }} color={theme.white}>
                                 <Trans>Collect fees</Trans>
                               </TYPE.main>
                             </>

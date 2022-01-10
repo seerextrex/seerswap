@@ -46,6 +46,8 @@ import { RowFixed } from '../../components/Row'
 import usePrevious from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
+import { useAppSelector } from '../../state/hooks'
+import { formatUnits } from 'ethers/lib/utils'
 
 const pulsating = (color: string) => keyframes`
   0% {
@@ -65,8 +67,8 @@ const PageWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
   border-radius: 20px;
   margin-top: 5rem;
-  
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin-top: 1rem;
     margin-bottom: 4rem;
   `}
@@ -125,8 +127,8 @@ const TokenItem = styled.div`
 
 const TokenItemBottomInputWrapper = styled.div`
   display: flex;
-  
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     height: 60px;
   `}
 `
@@ -353,8 +355,8 @@ const AddLiquidityMessage = styled.div`
 `
 const ButtonsWrapper = styled.div`
   display: flex;
-  
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     flex-direction: column;
   `}
 `
@@ -377,8 +379,8 @@ const AddLiquidityButton = styled.button`
     color: ${darken(0.35, 'white')};
     font-weight: 600;
   }
-  
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     width: 100%;
     margin-left: unset;
   `}
@@ -451,6 +453,8 @@ export default function AddLiquidityPage({
   const expertMode = useIsExpertMode()
   const addTransaction = useTransactionAdder()
   const positionManager = useV3NFTPositionManagerContract()
+
+  const gasPrice = useAppSelector((state) => state.application.gasPrice)
 
   // check for existing position if tokenId in url
   const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(
@@ -637,7 +641,7 @@ export default function AddLiquidityPage({
           const newTxn = {
             ...txn,
             gasLimit: calculateGasMargin(chainId, estimate),
-            gasPrice: 70000000000,
+            gasPrice: gasPrice * 1000000000,
           }
 
           return library
@@ -890,9 +894,9 @@ export default function AddLiquidityPage({
                   >
                     <Title>
                       {outOfRange && (
-                          <Warning>
-                            <span>Warning: Price is out of range</span>
-                          </Warning>
+                        <Warning>
+                          <span>Warning: Price is out of range</span>
+                        </Warning>
                       )}
                       {invalidRange && <Error>Error: The Min price must be lower than the Max price</Error>}
                       Price Range
@@ -1037,7 +1041,7 @@ export default function AddLiquidityPage({
                             />
                           </div>
                           {showApprovalA && !depositADisabled && (
-                            <ApproveButtonContainer style={{ display: 'flex', width: '100%'}}>
+                            <ApproveButtonContainer style={{ display: 'flex', width: '100%' }}>
                               <ApproveButton onClick={approveACallback} disabled={approvalA === ApprovalState.PENDING}>
                                 {approvalA === ApprovalState.PENDING
                                   ? `Approving ${currencies[Field.CURRENCY_A]?.symbol}`
@@ -1107,26 +1111,26 @@ export default function AddLiquidityPage({
                 </>
               )}
               <ButtonsWrapper>
-                  {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (
-                    <Error style={{ position: 'relative', padding: '14px 16px', marginRight: '1rem', top: 0 }}>
-                      {errorMessage}
-                    </Error>
-                  )}
-                  <AddLiquidityButton
-                    onClick={() => {
-                      // expertMode ? onAdd() : setShowConfirm(true)
-                      onAdd()
-                    }}
-                    disabled={
-                      (!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]) ||
-                      mustCreateSeparately ||
-                      !isValid ||
-                      (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                      (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
-                    }
-                  >
-                    Add Liquidity
-                  </AddLiquidityButton>
+                {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (
+                  <Error style={{ position: 'relative', padding: '14px 16px', marginRight: '1rem', top: 0 }}>
+                    {errorMessage}
+                  </Error>
+                )}
+                <AddLiquidityButton
+                  onClick={() => {
+                    // expertMode ? onAdd() : setShowConfirm(true)
+                    onAdd()
+                  }}
+                  disabled={
+                    (!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]) ||
+                    mustCreateSeparately ||
+                    !isValid ||
+                    (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
+                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
+                  }
+                >
+                  Add Liquidity
+                </AddLiquidityButton>
               </ButtonsWrapper>
             </>
           ) : account ? (

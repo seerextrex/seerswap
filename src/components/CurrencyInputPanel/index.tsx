@@ -274,6 +274,26 @@ export default function CurrencyInputPanel({
     setModalOpen(false)
   }, [setModalOpen])
 
+  const balanceString = useMemo(() => {
+      if (!balance) return 'Loading...'
+
+      const _balance = balance.toFixed()
+
+      if (_balance.split('.')[0].length > 10) {
+        return _balance.slice(0, 7) + '...'
+      }
+
+      if (+balance.toFixed() === 0) {
+        return '0'
+      }
+      if (+balance.toFixed() < 0.0001) {
+        return '< 0.0001'
+      }
+
+    return  +balance.toFixed(3)
+
+  }, [balance])
+
   if (currency && currency.symbol === 'MATIC') {
     if (chainId === 137) {
       currency.symbol = 'MATIC'
@@ -362,7 +382,7 @@ export default function CurrencyInputPanel({
                             {
                               shallow && showBalance && balance && page === 'addLiq' && balance.toSignificant(4) < 0.0001? `< 0.0001 ${currency.symbol}` :
                                   shallow && showBalance && balance
-                              ? `${balance.toSignificant(4)} ${currency.symbol}`
+                              ? `${balanceString} ${currency.symbol}`
                                       :currency.symbol}
                           </span>
                           {showBalance && balance && !shallow ? (
@@ -374,7 +394,7 @@ export default function CurrencyInputPanel({
                               }}
                               title={balance.toExact()}
                             >
-                              {+balance.toFixed() < 0.0001 ? '< 0.0001' : balance.toSignificant(4)}
+                              {balanceString}
                             </span>
                           ) : (
                             showBalance &&

@@ -472,14 +472,34 @@ export function useInfoSubgraph() {
 
             setTotalStatsLoading(true)
 
-            const { data: { algebraDayDatas }, error } = await dataClient.query({
+            const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => b.timestamp - a.timestamp)
+
+            const { data: data, error: error } = await dataClient.query({
                 query: TOTAL_STATS(),
                 fetchPolicy: 'network-only'
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            setTotalStats(algebraDayDatas[0])
+            const { data: data24, error: error24 } = await dataClient.query({
+                query: TOTAL_STATS(_block24.number),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error24) throw new Error(`${error24.name} ${error24.message}`)
+
+            const stats = data.factories[0]
+            const stats24 = data24.factories[0]
+            
+            const volumeUSD =
+            stats && stats24
+              ? parseFloat(stats.totalVolumeUSD) - parseFloat(stats24.totalVolumeUSD)
+              : parseFloat(stats.totalVolumeUSD)
+
+            setTotalStats({
+                tvlUSD: parseFloat(stats.totalValueLockedUSD),
+                volumeUSD: volumeUSD
+            })
 
         } catch (err) {
             console.error('total stats failed', err)

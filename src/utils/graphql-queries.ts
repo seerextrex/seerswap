@@ -164,12 +164,11 @@ export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimesta
   }
 `
 
-export const TOTAL_STATS = () => gql`
+export const TOTAL_STATS = (block?: number) => gql`
   query totalStats {
-    algebraDayDatas (first: 1, orderDirection: desc, orderBy: date) {
-      volumeUSD
-      feesUSD
-      tvlUSD
+    factories ${block ? `(block: { number: ${block} })` : ''} {
+      totalVolumeUSD
+      totalValueLockedUSD
     }
   }
 `

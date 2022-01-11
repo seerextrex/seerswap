@@ -115,7 +115,7 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
         </LinkWrapper>
       </Label>
       <LabelTitleStyled end={1} fontWeight={400}>
-        {formatDollarAmount(tokenData.priceUSD)}
+        {formatDollarAmount(tokenData.priceUSD, 3)}
       </LabelTitleStyled>
       <LabelTitleStyled end={1} fontWeight={400}>
         <Percent value={tokenData.priceUSDChange} fontWeight={400} />

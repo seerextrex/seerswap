@@ -114,6 +114,7 @@ export function InfoPage() {
                 data={fetchTotalStats.totalStats}
                 refreshHandler={() => fetchTotalStats.fetchTotalStatsFn()}
                 isLoading={fetchTotalStats.totalStatsLoading}
+                blocksFetched={blocksFetched}
               ></InfoTotalStats>
               <BodyWrapper>
                 <Switch>

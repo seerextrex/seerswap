@@ -62,19 +62,24 @@ export function InfoTotalStats({
   data,
   isLoading,
   refreshHandler,
+  blocksFetched
 }: {
   data: any
   isLoading: boolean
   refreshHandler: any
+  blocksFetched: boolean
 }) {
+  
   useEffect(() => {
-    refreshHandler()
-  }, [])
+    if (blocksFetched) {
+      refreshHandler()
+    }
+  }, [blocksFetched])
 
   return (
     <TotalStatsWrapper>
-      <StatCard isLoading={isLoading} data={data?.tvlUSD} title={'Total Volume Locked'}></StatCard>
-      <StatCard isLoading={isLoading} data={data?.volumeUSD} title={'Total Trade Volume'}></StatCard>
+      <StatCard isLoading={isLoading} data={data?.tvlUSD} title={'Total Value Locked'}></StatCard>
+      <StatCard isLoading={isLoading} data={data?.volumeUSD} title={'Volume 24H'}></StatCard>
     </TotalStatsWrapper>
   )
 }

@@ -26,7 +26,7 @@ export default function TransactionPopup({
   const theme = useContext(ThemeContext)
 
   return (
-    <RowNoFlex className={success ? `transaction-success-toast ${hash}` : `transaction-failed-toast ${hash}`}>
+    <RowNoFlex id={success ? `transaction-success-toast` : `transaction-failed-toast`} className={hash}>
       <div style={{ paddingRight: 16 }}>
         {success ? <CheckCircle color={'#24ae2c'} size={24} /> : <AlertCircle color={theme.red1} size={24} />}
       </div>

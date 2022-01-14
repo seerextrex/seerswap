@@ -462,8 +462,18 @@ export default function AddLiquidityPage({
   )
   const hasExistingPosition = !!existingPositionDetails && !positionLoading
 
+  const baseCurrency = useCurrency(currencyIdA)
+  const currencyB = useCurrency(currencyIdB)
+
+  // prevent an error if they input ETH/WETH
+  //TODO
+  const quoteCurrency =
+    baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
+
   const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails)
+
   const prevExistingPosition = usePrevious(existingPosition)
+
   const _existingPosition = useMemo(() => {
     if (!existingPosition && prevExistingPosition) {
       return {
@@ -473,16 +483,9 @@ export default function AddLiquidityPage({
     return {
       ...existingPosition,
     }
-  }, [existingPosition])
+  }, [existingPosition, baseCurrency, quoteCurrency])
 
   const feeAmount = 100
-
-  const baseCurrency = useCurrency(currencyIdA)
-  const currencyB = useCurrency(currencyIdB)
-  // prevent an error if they input ETH/WETH
-  //TODO
-  const quoteCurrency =
-    baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
 
   // mint state
   const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
@@ -525,10 +528,17 @@ export default function AddLiquidityPage({
     return {
       ...derivedMintInfo,
     }
-  }, [derivedMintInfo])
+  }, [derivedMintInfo, baseCurrency, quoteCurrency])
 
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
     useV3MintActionHandlers(noLiquidity)
+
+  useEffect(() => {
+    onFieldAInput('')
+    onFieldBInput('')
+    onLeftRangeInput('')
+    onRightRangeInput('')
+  }, [currencyIdA, currencyIdB])
 
   const isValid = !errorMessage && !invalidRange
 
@@ -755,6 +765,16 @@ export default function AddLiquidityPage({
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
+
+  useEffect(() => {
+    console.log(
+      'TIKSSS',
+      pricesAtTicks?.LOWER?.invert().toSignificant(5),
+      pricesAtTicks?.UPPER?.invert().toSignificant(5),
+      pricesAtTicks?.LOWER?.toSignificant(5),
+      pricesAtTicks?.UPPER?.toSignificant(5)
+    )
+  }, [pricesAtTicks])
 
   const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
     useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)

@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router'
 import { useV3NFTPositionManagerContract } from '../../hooks/useContract'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { useTransactionAdder } from '../../state/transactions/hooks'
+import { useAllTransactions, useTransactionAdder } from '../../state/transactions/hooks'
 import { useV3PositionFromTokenId } from '../../hooks/useV3Positions'
 import { useDerivedPositionInfo } from '../../hooks/useDerivedPositionInfo'
 import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
@@ -38,7 +38,7 @@ import { t } from '@lingui/macro'
 import { FeeAmount } from '../../lib/src/constants'
 import { SupportedChainId } from '../../constants/chains'
 import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
-import { AlertCircle, Download } from 'react-feather'
+import { AlertCircle, ArrowLeft, Download } from 'react-feather'
 import PDFAlgebra from '../../assets/pdf/Algebra_Tech_Paper.pdf'
 import { darken } from 'polished'
 import SettingsTab from '../../components/Settings'
@@ -48,6 +48,7 @@ import usePrevious from '../../hooks/usePrevious'
 import ReactGA from 'react-ga'
 import { useAppSelector } from '../../state/hooks'
 import { formatUnits } from 'ethers/lib/utils'
+import { NavLink } from 'react-router-dom'
 
 const pulsating = (color: string) => keyframes`
   0% {
@@ -67,12 +68,23 @@ const PageWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
   border-radius: 20px;
   margin-top: 5rem;
+  margin-bottom: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin-top: 1rem;
     margin-bottom: 4rem;
   `}
 `
+
+const Navigation = styled(NavLink)`
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600
+`
+
 const LiquidityWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -456,6 +468,26 @@ export default function AddLiquidityPage({
 
   const gasPrice = useAppSelector((state) => state.application.gasPrice)
 
+  const allTransactions = useAllTransactions()
+
+  const sortedRecentTransactions = useMemo(() => {
+    const txs = Object.values(allTransactions)
+    return txs
+      .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
+      .sort((a, b) => b.addedTime - a.addedTime)
+  }, [allTransactions])
+
+  const confirmed = useMemo(
+    () => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
+    [sortedRecentTransactions, allTransactions]
+  )
+
+  useEffect(() => {
+    if (confirmed.some(hash => hash === txHash)) {
+      history.push('/pool')
+    } 
+  }, [confirmed])
+
   // check for existing position if tokenId in url
   const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(
     tokenId ? BigNumber.from(tokenId) : undefined
@@ -797,11 +829,21 @@ export default function AddLiquidityPage({
     <>
       <PageWrapper>
         <LiquidityWrapper>
-          <div style={{ marginBottom: '2rem', fontFamily: 'Montserrat', fontSize: '21px', display: 'flex' }}>
-            <span style={{ marginLeft: 'auto' }}>Add Liquidity</span>
-            <RowFixed style={{ marginLeft: 'auto' }}>
+          <div style={{ marginBottom: '2rem', fontFamily: 'Montserrat', fontSize: '21px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{flex: 1}}>
+            <Navigation to={'/pool'}>
+              <ArrowLeft style={{ marginRight: '8px' }} size={15} />
+              <span>Back to pools</span>
+            </Navigation>
+            </div>
+            <div style={{flex: 1, textAlign: 'center'}}>
+            <span>Add Liquidity</span>
+            </div>
+            <div style={{flex: 1}}>
+            <RowFixed style={{marginLeft: 'auto'}}>
               <SettingsTab placeholderSlippage={allowedSlippage} />
             </RowFixed>
+            </div>
           </div>
           <TokenPair>
             <TokenItem noPadding>
@@ -1146,7 +1188,8 @@ export default function AddLiquidityPage({
                     mustCreateSeparately ||
                     !isValid ||
                     (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
+                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled) || 
+                    txHash
                   }
                 >
                   Add Liquidity

@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router'
 import { useV3NFTPositionManagerContract } from '../../hooks/useContract'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { useTransactionAdder } from '../../state/transactions/hooks'
+import { useAllTransactions, useTransactionAdder } from '../../state/transactions/hooks'
 import { useV3PositionFromTokenId } from '../../hooks/useV3Positions'
 import { useDerivedPositionInfo } from '../../hooks/useDerivedPositionInfo'
 import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
@@ -38,7 +38,7 @@ import { t } from '@lingui/macro'
 import { FeeAmount } from '../../lib/src/constants'
 import { SupportedChainId } from '../../constants/chains'
 import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
-import { AlertCircle, Download } from 'react-feather'
+import { AlertCircle, ArrowLeft, Download } from 'react-feather'
 import PDFAlgebra from '../../assets/pdf/Algebra_Tech_Paper.pdf'
 import { darken } from 'polished'
 import SettingsTab from '../../components/Settings'
@@ -48,6 +48,10 @@ import usePrevious from '../../hooks/usePrevious'
 import ReactGA from 'react-ga'
 import { useAppSelector } from '../../state/hooks'
 import { formatUnits } from 'ethers/lib/utils'
+import { NavLink } from 'react-router-dom'
+import { Contract, providers } from 'ethers'
+
+import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
 
 const pulsating = (color: string) => keyframes`
   0% {
@@ -67,12 +71,23 @@ const PageWrapper = styled.div`
   background-color: ${({ theme }) => theme.winterBackground};
   border-radius: 20px;
   margin-top: 5rem;
+  margin-bottom: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin-top: 1rem;
     margin-bottom: 4rem;
   `}
 `
+
+const Navigation = styled(NavLink)`
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+`
+
 const LiquidityWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -454,7 +469,41 @@ export default function AddLiquidityPage({
   const addTransaction = useTransactionAdder()
   const positionManager = useV3NFTPositionManagerContract()
 
+  const _w: any = window
+  const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
+
   const gasPrice = useAppSelector((state) => state.application.gasPrice)
+
+  const allTransactions = useAllTransactions()
+
+  const sortedRecentTransactions = useMemo(() => {
+    const txs = Object.values(allTransactions)
+    return txs
+      .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
+      .sort((a, b) => b.addedTime - a.addedTime)
+  }, [allTransactions])
+
+  const confirmed = useMemo(
+    () => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
+    [sortedRecentTransactions, allTransactions]
+  )
+
+  useEffect(async () => {
+    if (confirmed.some((hash) => hash === txHash)) {
+      const nonFunPosManContract = new Contract(
+        NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
+        NON_FUN_POS_MAN,
+        provider.getSigner()
+      )
+
+      try {
+        const nftNum = await nonFunPosManContract.totalSupply()
+        history.push(`/pool/${nftNum}`)
+      } catch (err) {
+        history.push(`/pool`)
+      }
+    }
+  }, [confirmed])
 
   // check for existing position if tokenId in url
   const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(
@@ -462,8 +511,18 @@ export default function AddLiquidityPage({
   )
   const hasExistingPosition = !!existingPositionDetails && !positionLoading
 
+  const baseCurrency = useCurrency(currencyIdA)
+  const currencyB = useCurrency(currencyIdB)
+
+  // prevent an error if they input ETH/WETH
+  //TODO
+  const quoteCurrency =
+    baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
+
   const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails)
+
   const prevExistingPosition = usePrevious(existingPosition)
+
   const _existingPosition = useMemo(() => {
     if (!existingPosition && prevExistingPosition) {
       return {
@@ -473,16 +532,16 @@ export default function AddLiquidityPage({
     return {
       ...existingPosition,
     }
-  }, [existingPosition])
+  }, [existingPosition, baseCurrency, quoteCurrency])
 
   const feeAmount = 100
 
-  const baseCurrency = useCurrency(currencyIdA)
-  const currencyB = useCurrency(currencyIdB)
-  // prevent an error if they input ETH/WETH
-  //TODO
-  const quoteCurrency =
-    baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
+  useEffect(() => {
+    onFieldAInput('')
+    onFieldBInput('')
+    onLeftRangeInput('')
+    onRightRangeInput('')
+  }, [currencyIdA, currencyIdB])
 
   // mint state
   const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
@@ -525,7 +584,7 @@ export default function AddLiquidityPage({
     return {
       ...derivedMintInfo,
     }
-  }, [derivedMintInfo])
+  }, [derivedMintInfo, baseCurrency, quoteCurrency])
 
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
     useV3MintActionHandlers(noLiquidity)
@@ -617,14 +676,6 @@ export default function AddLiquidityPage({
               useNative,
               createPool: noLiquidity,
             })
-
-      const { calldata: calldata2, value: _value } = NonFunPosMan.addCallParameters(position, {
-        slippageTolerance: allowedSlippage,
-        recipient: account,
-        deadline: deadline.toString(),
-        useNative,
-        createPool: noLiquidity,
-      })
 
       const txn: { to: string; data: string; value: string } = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
@@ -756,6 +807,16 @@ export default function AddLiquidityPage({
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
+  useEffect(() => {
+    console.log(
+      'TIKSSS',
+      pricesAtTicks?.LOWER?.invert().toSignificant(5),
+      pricesAtTicks?.UPPER?.invert().toSignificant(5),
+      pricesAtTicks?.LOWER?.toSignificant(5),
+      pricesAtTicks?.UPPER?.toSignificant(5)
+    )
+  }, [pricesAtTicks])
+
   const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
     useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)
 
@@ -777,11 +838,30 @@ export default function AddLiquidityPage({
     <>
       <PageWrapper>
         <LiquidityWrapper>
-          <div style={{ marginBottom: '2rem', fontFamily: 'Montserrat', fontSize: '21px', display: 'flex' }}>
-            <span style={{ marginLeft: 'auto' }}>Add Liquidity</span>
-            <RowFixed style={{ marginLeft: 'auto' }}>
-              <SettingsTab placeholderSlippage={allowedSlippage} />
-            </RowFixed>
+          <div
+            style={{
+              marginBottom: '2rem',
+              fontFamily: 'Montserrat',
+              fontSize: '21px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ flex: 1 }}>
+              <Navigation to={'/pool'}>
+                <ArrowLeft style={{ marginRight: '8px' }} size={15} />
+                <span>Back to pools</span>
+              </Navigation>
+            </div>
+            <div style={{ flex: 1, textAlign: 'center' }}>
+              <span>Add Liquidity</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <RowFixed style={{ marginLeft: 'auto' }}>
+                <SettingsTab placeholderSlippage={allowedSlippage} />
+              </RowFixed>
+            </div>
           </div>
           <TokenPair>
             <TokenItem noPadding>
@@ -1126,7 +1206,8 @@ export default function AddLiquidityPage({
                     mustCreateSeparately ||
                     !isValid ||
                     (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
+                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled) ||
+                    txHash
                   }
                 >
                   Add Liquidity

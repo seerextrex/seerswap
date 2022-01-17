@@ -380,9 +380,9 @@ export default function CurrencyInputPanel({
                         >
                           <span>
                             {
-                              shallow && showBalance && balance && page === 'addLiq' && balance.toSignificant(4) < 0.0001? `< 0.0001 ${currency.symbol}` :
+                              shallow && showBalance && balance && page === 'addLiq' && balance.toSignificant(4) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
                                   shallow && showBalance && balance
-                              ? `${balanceString} ${currency.symbol}`
+                              ? `Balance: ${balanceString} ${currency.symbol}`
                                       :currency.symbol}
                           </span>
                           {showBalance && balance && !shallow ? (

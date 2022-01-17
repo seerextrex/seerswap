@@ -24,6 +24,8 @@ import Loader from '../../components/Loader'
 const PageWrapper = styled(AutoColumn)`
   max-width: 870px;
   margin: auto;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`

@@ -17,8 +17,9 @@ import {
     CHART_POOL_LAST_NOT_EMPTY,
     SWAPS_PER_DAY,
     ALL_POSITIONS,
-    TOTAL_STATS
+    TOTAL_STATS,
     GET_STAKE,
+    GET_STAKE_HISTORY,
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
@@ -65,7 +66,9 @@ export function useInfoSubgraph() {
     
     const [stakesResult, setStakes] = useState(null);
     const [stakesLoading, setStakesLoading] = useState(null);
-
+  
+    const [stakeHistoriesResult, setHistories] = useState(null);
+    const [historiesLoading, setHistoriesLoading] = useState(null);
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -500,6 +503,29 @@ export function useInfoSubgraph() {
         setChartPoolDataLoading(false)
     }
 
+
+    async function fetchStakingHistory() {
+        try {
+            setHistoriesLoading(true)
+
+            const { data: { histories }, error: error } = await stakerClient.query({
+                query: GET_STAKE_HISTORY(),
+               fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+          
+            setHistoriesLoading(false)
+            setHistories(histories)
+
+        } catch (e) {
+            setHistories('Getting histories failed')
+            setHistoriesLoading(false)
+            console.log(e)
+            return undefined
+        }
+    }
+
     async function fetchTotalStats() {
 
         try {
@@ -543,15 +569,16 @@ export function useInfoSubgraph() {
         setTotalStatsLoading(false)
     }
 
-
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
-        fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
+        getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking},
+        fetchStakedHistory: {historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory},
+      fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
-        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
+        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
         getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking}
     }
-
+    }
 }

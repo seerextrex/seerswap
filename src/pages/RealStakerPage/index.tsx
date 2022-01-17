@@ -262,7 +262,6 @@ export default function RealStakerPage({}) {
 
     //balances
     const balance = useCurrencyBalance(account ?? undefined, baseCurrency)
-
     const _balance = useMemo(() => {
         return balance
     }, [balance])

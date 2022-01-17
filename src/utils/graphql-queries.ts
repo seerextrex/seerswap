@@ -419,7 +419,7 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
 }
 
 export const GET_STAKE = (id: string) => gql`
-query stake {
+query stakeHistory {
   factories {
     currentStakedAmount
     earnedForAllTime
@@ -431,7 +431,20 @@ query stake {
     xALGBAmount
   }
 }
+`
 
+export const GET_STAKE_HISTORY = () => gql`
+query stake {
+  histories {
+  date
+  currentStakedAmount
+  earned
+  ALGBbalance
+  xALGBminted
+  xALGBtotalSupply
+  ALGBfromVault
+}
+}
 `
 
 //Blocklytics

@@ -61,5 +61,6 @@ export function tryParseTick(
     tick = priceToClosestTick(price)
   }
 
+
   return nearestUsableTick(tick, 60)
 }

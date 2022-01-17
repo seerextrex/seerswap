@@ -49,6 +49,9 @@ import ReactGA from 'react-ga'
 import { useAppSelector } from '../../state/hooks'
 import { formatUnits } from 'ethers/lib/utils'
 import { NavLink } from 'react-router-dom'
+import { Contract, providers } from 'ethers'
+
+import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
 
 const pulsating = (color: string) => keyframes`
   0% {
@@ -82,7 +85,7 @@ const Navigation = styled(NavLink)`
   text-decoration: none;
   color: white;
   font-size: 16px;
-  font-weight: 600
+  font-weight: 600;
 `
 
 const LiquidityWrapper = styled.div`
@@ -466,6 +469,9 @@ export default function AddLiquidityPage({
   const addTransaction = useTransactionAdder()
   const positionManager = useV3NFTPositionManagerContract()
 
+  const _w: any = window
+  const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
+
   const gasPrice = useAppSelector((state) => state.application.gasPrice)
 
   const allTransactions = useAllTransactions()
@@ -482,10 +488,21 @@ export default function AddLiquidityPage({
     [sortedRecentTransactions, allTransactions]
   )
 
-  useEffect(() => {
-    if (confirmed.some(hash => hash === txHash)) {
-      history.push('/pool')
-    } 
+  useEffect(async () => {
+    if (confirmed.some((hash) => hash === txHash)) {
+      const nonFunPosManContract = new Contract(
+        NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
+        NON_FUN_POS_MAN,
+        provider.getSigner()
+      )
+
+      try {
+        const nftNum = await nonFunPosManContract.totalSupply()
+        history.push(`/pool/${nftNum}`)
+      } catch (err) {
+        history.push(`/pool`)
+      }
+    }
   }, [confirmed])
 
   // check for existing position if tokenId in url
@@ -518,6 +535,13 @@ export default function AddLiquidityPage({
   }, [existingPosition, baseCurrency, quoteCurrency])
 
   const feeAmount = 100
+
+  useEffect(() => {
+    onFieldAInput('')
+    onFieldBInput('')
+    onLeftRangeInput('')
+    onRightRangeInput('')
+  }, [currencyIdA, currencyIdB])
 
   // mint state
   const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
@@ -564,13 +588,6 @@ export default function AddLiquidityPage({
 
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
     useV3MintActionHandlers(noLiquidity)
-
-  useEffect(() => {
-    onFieldAInput('')
-    onFieldBInput('')
-    onLeftRangeInput('')
-    onRightRangeInput('')
-  }, [currencyIdA, currencyIdB])
 
   const isValid = !errorMessage && !invalidRange
 
@@ -659,14 +676,6 @@ export default function AddLiquidityPage({
               useNative,
               createPool: noLiquidity,
             })
-
-      const { calldata: calldata2, value: _value } = NonFunPosMan.addCallParameters(position, {
-        slippageTolerance: allowedSlippage,
-        recipient: account,
-        deadline: deadline.toString(),
-        useNative,
-        createPool: noLiquidity,
-      })
 
       const txn: { to: string; data: string; value: string } = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
@@ -829,20 +838,29 @@ export default function AddLiquidityPage({
     <>
       <PageWrapper>
         <LiquidityWrapper>
-          <div style={{ marginBottom: '2rem', fontFamily: 'Montserrat', fontSize: '21px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{flex: 1}}>
-            <Navigation to={'/pool'}>
-              <ArrowLeft style={{ marginRight: '8px' }} size={15} />
-              <span>Back to pools</span>
-            </Navigation>
+          <div
+            style={{
+              marginBottom: '2rem',
+              fontFamily: 'Montserrat',
+              fontSize: '21px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ flex: 1 }}>
+              <Navigation to={'/pool'}>
+                <ArrowLeft style={{ marginRight: '8px' }} size={15} />
+                <span>Back to pools</span>
+              </Navigation>
             </div>
-            <div style={{flex: 1, textAlign: 'center'}}>
-            <span>Add Liquidity</span>
+            <div style={{ flex: 1, textAlign: 'center' }}>
+              <span>Add Liquidity</span>
             </div>
-            <div style={{flex: 1}}>
-            <RowFixed style={{marginLeft: 'auto'}}>
-              <SettingsTab placeholderSlippage={allowedSlippage} />
-            </RowFixed>
+            <div style={{ flex: 1 }}>
+              <RowFixed style={{ marginLeft: 'auto' }}>
+                <SettingsTab placeholderSlippage={allowedSlippage} />
+              </RowFixed>
             </div>
           </div>
           <TokenPair>
@@ -1188,7 +1206,7 @@ export default function AddLiquidityPage({
                     mustCreateSeparately ||
                     !isValid ||
                     (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled) || 
+                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled) ||
                     txHash
                   }
                 >

@@ -195,7 +195,6 @@ export function useV3DerivedMintInfo(
     [Field.BONUS_REWARD_TOKEN]: balances[3]
   }
 
-
   // pool
   //TODO
   const [poolState, pool] = usePool(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B], 500)

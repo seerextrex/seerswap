@@ -179,14 +179,21 @@ export const StakeReward = styled.div<{reward?: string}>`
 export const StakeCountdown = styled.div`
   font-size: 16px;
   margin: auto;
+  display: flex;
+  
 
   max-width: 105px !important;
   min-width: 105px !important;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-bottom: 1rem;
+    margin: 0 0 1rem 0;
     max-width: unset !important;
     min-width: unset !important;
+    
+     &::before {
+    content: "End Time";
+    margin-right: 1rem;
+  }
   `}
 
   & > * {
@@ -262,7 +269,7 @@ const StakeListHeader = styled.div`
 `
 
 export const TokensNames = styled.div`
-  margin-left: 1rem;
+  margin-left: .5rem;
   ${({theme}) => theme.mediaWidth.upToMedium`
     margin-left: .2rem;
     font-size: 14px;

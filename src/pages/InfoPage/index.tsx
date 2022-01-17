@@ -70,7 +70,7 @@ const BodyWrapper = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 1rem 20px;
+    padding: 1rem 12px;
   `}
 `
 

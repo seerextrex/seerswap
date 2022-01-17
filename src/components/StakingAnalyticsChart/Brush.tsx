@@ -71,7 +71,7 @@ export default function Brush({data, focusHeight, width, margin, updateChartData
         focus.append('path')
             .datum(data)
             .attr('fill', 'none')
-            .attr('stroke', '#b41870')
+            .attr('stroke', '#63c0f8')
             .attr('stroke-width', 1)
             .attr('d', focusLine(focusX, focusY.copy().range([focusHeight - margin.bottom, 4])))
 

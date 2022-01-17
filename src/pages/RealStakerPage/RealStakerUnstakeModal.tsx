@@ -7,7 +7,6 @@ import RealStakerUnstakeInputRange from './RealStakerUnstakeInputRange'
 import { formatEther } from 'ethers/lib/utils'
 
 const UnStakeModalWrapper = styled(Modal)`
-    
 `
 const ContentModal = styled.div`
   width: 100%;
@@ -42,9 +41,10 @@ export default function RealStakerUnstakeModal(
     unstakeHandler,
     stakedResult,
     fiatValue,
-      allXALGBFreeze
+    allXALGBFreeze
   } : UnstakeModalProps
 ) {
+    // console.log(fiatValue, baseCurrency)
   return (
     <UnStakeModalWrapper
       isOpen={openModal}

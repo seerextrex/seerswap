@@ -18,7 +18,7 @@ const LoaderWrapper = styled.div`
   align-items: center;
   height: 470px;
   margin: 2rem 0;
-  background-color: #313644;
+  background-color: #052445;
   border-radius: 16px;
 `
 const BackButton = styled(NavLink)`
@@ -32,6 +32,11 @@ const BackButton = styled(NavLink)`
      margin:  0 0 0 5px;
    }
 `
+
+const ChartTitle = styled.h2`
+  color: ${({theme}) => theme.winterDisabledButton};
+`
+
 const chartsInfo = [
     {title: 'xALGB Minted', type: 'xALGBminted'},
     {title: 'ALGB From Vault', type: 'ALGBfromVault'},
@@ -47,13 +52,15 @@ export default function StakingAnalyticsPage() {
         fetchStakingHistoryFn()
     }, [])
 
+
+
     return (
         <StakingAnalyticsPageWrapper>
             <BackButton to={'/staking'}><ArrowLeft size={'16px'}/> <p>Staking</p>
             </BackButton>
             {chartsInfo.map((item, i) =>
                     <React.Fragment key={i}>
-                        <h2>{item.title}</h2>
+                        <ChartTitle>{item.title}</ChartTitle>
                         {historiesLoading ?
                             <LoaderWrapper>
                                 <Loader size={'35px'} stroke={'white'}/>

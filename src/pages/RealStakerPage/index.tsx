@@ -34,7 +34,7 @@ import {darken} from "polished"
 
 const PageWrapper = styled.div`
   min-width: ${(props) => props.width};
-  background-color: #202635;
+  background-color: ${({theme}) => theme.winterBackground};
   border-radius: 16px;
   padding: 26px 30px 27px;
 
@@ -53,19 +53,19 @@ export const SilderWrapper = styled.div`
 `
 export const StakerSlider = styled(Slider)`
   &::-webkit-slider-runnable-track {
-    background: #4a5982;
+    background: ${({theme}) => theme.winterDisabledButton};
     height: 5px;
     border-radius: 20px;
   }
 
   &::-moz-range-track {
-    background: #4a5982;
+    background: ${({theme}) => theme.winterDisabledButton};
     height: 5px;
     border-radius: 20px;
   }
 
   &::-moz-range-progress {
-    background-color: #5d32ed;
+    background-color: ${({theme}) => theme.winterMainButton};
     height: 5px;
     border-radius: 20px;
   }
@@ -74,9 +74,9 @@ export const StakerSlider = styled(Slider)`
     -webkit-appearance: none;
     height: ${({size}) => size}px;
     width: ${({size}) => size}px;
-    background-color: #2e3957;
+    background: white;
     border-radius: 100%;
-    border: 7px solid #6f86c9;
+    border: ${({theme}) => `7px solid ${theme.winterMainButton}`};
     transform: translateY(-50%);
     color: ${({theme}) => theme.bg1};
 
@@ -90,9 +90,9 @@ export const StakerSlider = styled(Slider)`
   &::-moz-range-thumb {
     height: ${({size}) => size}px;
     width: ${({size}) => size}px;
-    background-color: #2e3957;
+    background: white;
     border-radius: 100%;
-    border: 7px solid #6f86c9;
+    border: ${({theme}) => `7px solid ${theme.winterMainButton}`};
     color: ${({theme}) => theme.bg1};
 
     &:hover,
@@ -114,7 +114,7 @@ export const StakeButton = styled(ButtonConfirmed)`
 const EarnedStakedWrapper = styled.div`
   margin: 27px 0;
   min-width: ${(props) => props.width};
-  background-color: #202635;
+  background-color: ${({theme}) => theme.winterBackground};
   padding: 25px 33px 30px;
   border-radius: 16px;
 
@@ -129,13 +129,16 @@ const StakerStatisticWrapper = styled(NavLink)`
   min-width: 765px;
   height: 107px;
   text-decoration: none;
-
+  background-color: ${({theme}) => theme.winterBackground};
+  border-radius: 16px;
+  
   h2,
   p {
     color: white;
     text-decoration: none;
     margin: 0 0 0 27px;
     font-size: 16px;
+    position: relative;
   }
 
   h2 {
@@ -432,7 +435,8 @@ export default function RealStakerPage({}) {
     const enterHandler = useCallback((e) => {
         if (e.charCode === 13) {
             if (!(+amountValue > +balance?.toSignificant(4))) {
-                stakerHandler(amountValue)
+                console.log(amountValue)
+                // stakerHandler(amountValue)
                 onPercentSelectForSlider(0)
                 if (percentForSlider === 0) {
                     setAmountValue('')
@@ -537,7 +541,7 @@ export default function RealStakerPage({}) {
                     />
                 </ResBlocksWrapper>
             </EarnedStakedWrapper>
-            <StakerStatisticWrapper to={''}>
+            <StakerStatisticWrapper to={'staking/analytics'}>
                 <StakerStatisticBackground src={StakerStatistic}/>
                 <h2>Statistics</h2>
                 <p>APY / APR / Fees →</p>

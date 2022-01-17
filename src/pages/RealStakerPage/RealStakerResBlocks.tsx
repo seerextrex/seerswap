@@ -8,13 +8,13 @@ import Frozen from "./Frozen"
 
 const PageWrapper = styled.div`
   min-width: ${props => props.width};
-  background-color: #111621;
+  background-color: rgba(60, 97, 126, 0.5);
   border-radius: 16px;
   position: relative;
   padding: 1.5rem 1rem 1rem;
 
   h2 {
-    color: #687086;
+    color: white;
     font-size: 16px;
     margin: 0;
   }

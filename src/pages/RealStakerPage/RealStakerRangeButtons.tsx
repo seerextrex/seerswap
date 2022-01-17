@@ -4,7 +4,7 @@ import { SmallMaxButton } from '../RemoveLiquidity/styled'
 import {darken} from "polished"
 
 const StakerSmallMaxButton = styled(SmallMaxButton)`
-  background: #4A5982;
+  background: ${({theme}) => theme.winterMainButton};
   border: 1px solid transparent;
   box-sizing: border-box;
 `

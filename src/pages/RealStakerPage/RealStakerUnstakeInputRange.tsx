@@ -5,7 +5,7 @@ import { useCurrency } from '../../hooks/Tokens'
 
 const CurrencyInputPanelWrapper = styled.div`
   width: 100%;
-  background-color: #111621;
+  background-color: ${({theme}) => theme.winterDisabledButton};
   margin: 26px 0 32px;
   border-radius: 16px;
   padding: 21px 0 20px 24px;
@@ -34,6 +34,7 @@ const UnstakeTitle = styled.div`
   font-weight: 600;
   display: flex;
   align-items: center;
+  color: white;
   img {
     margin-right: 10px;
   }
@@ -60,7 +61,7 @@ export default function RealStakerUnstakeInputRange ({baseCurrency, amountValue,
       <CurrencyDropdown
           style={{width: '100%'}}
         onUserInput={(e) => {setAmountValue(e)}}
-        currency={baseCurrency}
+        currency={ALGBCurrency}
         value={amountValue}
         hideInput={false}
         hideCurrency={true}

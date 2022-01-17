@@ -4,15 +4,16 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import * as d3 from 'd3'
 import Brush from './Brush'
 import {BigNumber} from 'ethers'
-import {formatEther} from 'ethers/lib/utils'
+import {formatEther, formatUnits, parseUnits} from 'ethers/lib/utils'
 import {isMobile} from 'react-device-detect'
 import RangeButtons from "./RangeButtons"
 import dayjs from "dayjs"
+import {it} from "make-plural/plurals"
 
 const StakingAnalyticsChartWrapper = styled.div`
   max-width: 1000px;
   width: 100%;
-  background-color: #313644;
+  background-color: #052445;
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -49,7 +50,6 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
     const wrapper = useRef(null)
     // const dimensions =
     const margin = isMobile ? {left: 30, top: 30, right: 10, bottom: 50} :{left: 50, top: 30, right: 30, bottom: 30}
-    const borderedData: ChardDataInterface[] = []
     const [span, setSpan] = useState('Day')
 
 
@@ -94,8 +94,13 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
         if (stakeHistoriesResult) {
             if (type === 'apr') {
                 setChartData(stakeHistoriesResult.map(item => {
+                    // console.log(item.currentStakedAmount, BigNumber.from(item.currentStakedAmount))
+                    // console.log(BigNumber.from(item.ALGBfromVault).div(BigNumber.from(item.currentStakedAmount)))
+                    const s = BigNumber.from(item.ALGBfromVault).div(BigNumber.from(item.currentStakedAmount)).mul(parseUnits('365', 18)).mul(BigNumber.from(100))
+                    console.log(formatUnits(s, 18))
+                    console.log(BigNumber.from('365'))
                     return {
-                        value: formatEther(BigNumber.from(item.earned).div(BigNumber.from(item.currentStakedAmount))) * 365 * 100,
+                        value: formatUnits(BigNumber.from(item.ALGBfromVault).div(BigNumber.from(item.currentStakedAmount)).mul(BigNumber.from('365')).mul(BigNumber.from('100')), 18),
                         date: convertDate(new Date(item.date * 1000))
                     }
                 }))
@@ -124,11 +129,11 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
         return {value: '0', date: item}
     }), [chartData])
 
-    fullDateData.map(item => {
+    const borderedData = useMemo(() => fullDateData.filter(item => {
         if (item.date >= chartBorder[0] && item.date <= chartBorder[1]) {
-            borderedData.push(item)
+            return true
         }
-    })
+    }), [chartBorder])
 
     const X = useMemo(() => d3.map(fullDateData, d => new Date(d.date)), [fullDateData])
 

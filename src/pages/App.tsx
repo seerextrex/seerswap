@@ -58,6 +58,7 @@ import BG from '../assets/images/bg.png'
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
 import { useActiveWeb3React } from '../hooks/web3'
+import RealStakerPage from "./RealStakerPage"
 
 const AppWrapper = styled.div`
   display: flex;

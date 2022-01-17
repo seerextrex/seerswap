@@ -268,6 +268,7 @@ export default function CurrencyInputPanel({
 
   const balance = useCurrencyBalance(account ?? undefined, currency)
 
+  // console.log(currency, 'cur panel')
   const currentPrice = useUSDCPrice(currency)
 
   const handleDismissSearch = useCallback(() => {

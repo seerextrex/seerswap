@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 
 const CurrencyInputPanelWrapper = styled.div`
   width: 100%;
-  background-color: #111621;
+  background-color: ${({theme}) => theme.winterDisabledButton};
   margin: 26px 0 32px 0;
   border-radius: 16px;
   padding: 20px 24px;
@@ -18,12 +18,13 @@ const CurrencyTop = styled(CurrencyDropdown)`
   span {
     font-size: 21px;
   }
+  div {
+    padding: 0;
+  }
 `
 
 const CurrencyBottom = styled(CurrencyDropdown)`
-
   span {
-    color: #8c909c;
     cursor: default;
     &:hover {
       cursor: default;

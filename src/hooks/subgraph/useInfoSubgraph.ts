@@ -516,6 +516,7 @@ export function useInfoSubgraph() {
             if (error) throw new Error(`${error.name} ${error.message}`)
           
             setHistoriesLoading(false)
+            console.log(histories)
             setHistories(histories)
 
         } catch (e) {
@@ -579,6 +580,5 @@ export function useInfoSubgraph() {
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
         fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
         getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking}
-    }
     }
 }

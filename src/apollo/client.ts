@@ -35,6 +35,21 @@ export const client = new ApolloClient({
     },
 })
 
+export const stakerClient = new ApolloClient({
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-staking',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+})
+
 export const farmingClient = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra-farming',
     cache: new InMemoryCache(),

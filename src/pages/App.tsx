@@ -34,6 +34,8 @@ import Modal from '../components/Modal'
 import { useCallback, useEffect, useState } from 'react'
 import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
+import RealStakerPage from './RealStakerPage'
+import {useInternet} from "../hooks/useInternet"
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
@@ -136,6 +138,16 @@ const NetworkFailedCard = styled.div`
   `}
 `
 
+const InternetError = styled.div`
+  width: 100%;
+  height: 100vh;
+  background-color: #040b1e;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+`
+
 const GlobalStyle = createGlobalStyle`
   button {
     cursor: pointer;
@@ -163,6 +175,7 @@ export default function App() {
       return 60
     },
   })
+  const internet = useInternet()
 
   const { account } = useActiveWeb3React()
 
@@ -198,6 +211,9 @@ export default function App() {
           <HeaderWrapper style={{ zIndex: 3 }}>
             <Header />
           </HeaderWrapper>
+          { !internet && <InternetError>
+            Network ERROR
+          </InternetError>}
           <BodyWrapper style={{ zIndex: 2 }}>
             {networkFailed && (
               <NetworkFailedCard>
@@ -251,6 +267,8 @@ export default function App() {
 
               <Route exact strict path="/migrate" component={MigrateV2} />
               <Route exact strict path="/migrate/:address" component={MigrateV2Pair} />
+
+              <Route exact strict path="/staking" component={RealStakerPage} />
 
               <Route component={RedirectPathToSwapOnly} />
             </Switch>

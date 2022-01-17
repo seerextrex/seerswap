@@ -451,6 +451,9 @@ export default function Header() {
           Farming
           <FarmingInfoLabel isEvents={isEvents} />
         </StyledNavLink>
+        <StyledNavLink id={`staking-nav-link`} to={'/staking'}>
+          Staking
+        </StyledNavLink>
         <StyledNavLink id={`info-nav-link`} to={'/info'}>
           Info
         </StyledNavLink>

@@ -69,6 +69,7 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
   position: relative;
   padding: 0 0.75rem;
   flex: 1;
+  background-color: white;
   border: ${({ theme, active, warning }) =>
     active ? `1px solid ${warning ? theme.red1 : theme.primary1}` : warning && `1px solid ${theme.red1}`};
   :hover {
@@ -80,6 +81,8 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
     width: 100%;
     height: 100%;
     border: 0px;
+    background: transparent;
+    color: black;
     border-radius: 2rem;
   }
 `
@@ -150,8 +153,8 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
           setDeadline(parsed)
         }
       } catch (error) {
-        console.error(error)
         setDeadlineError(DeadlineError.InvalidInput)
+        throw new Error('Transaction Deadline' + error)
       }
     }
   }
@@ -162,7 +165,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
     <AutoColumn gap="md">
       <AutoColumn gap="sm">
         <RowFixed>
-          <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+          <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
             <Trans>Slippage tolerance</Trans>
           </TYPE.black>
           <QuestionHelper
@@ -173,7 +176,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
         </RowFixed>
         <RowBetween>
           <Option
-            style={{ background: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
+            style={{ background: theme.winterMainButton, color: 'white', borderColor: theme.winterMainButton }}
             onClick={() => {
               parseSlippageInput('')
             }}
@@ -232,7 +235,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
       {showCustomDeadlineRow && (
         <AutoColumn gap="sm">
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black fontSize={14} fontWeight={400} color={'#080064'}>
               <Trans>Transaction deadline</Trans>
             </TYPE.black>
             <QuestionHelper
@@ -258,7 +261,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
                 color={deadlineError ? 'red' : ''}
               />
             </OptionCustom>
-            <TYPE.body style={{ paddingLeft: '8px' }} fontSize={14}>
+            <TYPE.body style={{ paddingLeft: '8px', color: '#080064' }} fontSize={14}>
               <Trans>minutes</Trans>
             </TYPE.body>
           </RowFixed>

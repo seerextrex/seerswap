@@ -5,39 +5,39 @@ import { SupportedChainId } from './chains'
 type AddressMap = { [chainId: number]: string }
 
 export const V3_CORE_FACTORY_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xDE06B9980087B1c91904ef18aD0db6aC731F088d'
+  [SupportedChainId.POLYGON]: '0x8C1EB1e5325049B412B7E71337116BEF88a29b3A'
 }
 
 export const POOL_DEPLOYER_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xD028fbf1FB3d46F23Fd4adD0978623820B5FDB5C'
+  [SupportedChainId.POLYGON]: '0x218a510d4d6aEA897961ab6Deb74443521A88839'
 }
 
 export const QUOTER_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x185ff5E4597fabE76dcC99Fbd8287d9cD72ad80F'
+  [SupportedChainId.POLYGON]: '0xAaaCfe8F51B8baA4286ea97ddF145e946d5e7f46'
 }
 
 export const SWAP_ROUTER_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x71E6CF257a3cBdC39308c52C39e3FdcE3B1De820'
+  [SupportedChainId.POLYGON]: '0x89D6B81A1Ef25894620D05ba843d83B0A296239e'
 }
 
 export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xF96F8EAc702515156Dab971E480f99460bC0502C'
+  [SupportedChainId.POLYGON]: '0x21F5F8b46621cFa77D4f296A901cDB7AfDBB6A18'
 }
 
 export const MULTICALL_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x4f2caE8469A0F2E8654fE3db6DaA70E299ba9c2B'
+  [SupportedChainId.POLYGON]: '0xFB8CcFDa4889C6D399B62EA49Cca3cE9d3fF077e'
 }
 
 export const V3_MIGRATOR_ADDRESSES: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x602bf7e6b6788Fdc97aab1dF8B9Ed8A0E0edE1Bd',
+  [SupportedChainId.POLYGON]: '0x76716bc0ae7639191c479C2432aC1f271f13dBd9',
 }
 
 export const STAKER_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xFB78Fed89a9e053a0A3eFb0F5EB5C85DbBb12d8b'
+  [SupportedChainId.POLYGON]: '0x9cF9cEc31AB2827354e18436663b75b6f32D4C71'
 }
 
 export const REAL_STAKER_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xfc10730039738926e8bed82578b970f1155485b0'
+  [SupportedChainId.POLYGON]: '0x32CFF674763b06B983C0D55Ef2e41B84D16855bb'
 }
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {

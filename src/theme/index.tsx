@@ -93,6 +93,10 @@ function colors(darkMode: boolean): Colors {
     // dont wanna forget these blue yet
     blue4: darkMode ? '#400f29' : '#C4D9F8',
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
+
+    winterBackground: 'rgba(91, 183, 255, 0.6)',
+    winterMainButton: '#008FFF',
+    winterDisabledButton: '#17517c',
   }
 }
 
@@ -110,6 +114,7 @@ function theme(darkMode: boolean): DefaultTheme {
     shadow1: darkMode ? '#000' : '#2F80ED',
 
     // media queries
+
     mediaWidth: mediaWidthTemplates,
 
     // css snippets
@@ -133,7 +138,8 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 }
 
 const TextWrapper = styled(Text)<{ color: keyof Colors }>`
-  color: ${({ color, theme }) => (theme as any)[color]};
+  // color: ${({ color, theme }) => (theme as any)[color]};
+  color: white;
 `
 
 export const TYPE = {

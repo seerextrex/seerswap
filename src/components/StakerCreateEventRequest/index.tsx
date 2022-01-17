@@ -1,5 +1,6 @@
 import { Clipboard, ExternalLink } from 'react-feather'
 import styled from 'styled-components/macro'
+import {darken} from "polished";
 
 const Wrapper = styled.div`
   display: flex;
@@ -12,12 +13,17 @@ const Wrapper = styled.div`
 const RequestButton = styled.a`
   border: none;
   border-radius: 8px;
-  background-color: #36f;
+  background-color: ${({theme}) => theme.winterMainButton};
   padding: 8px 16px;
   color: white;
   text-decoration: none;
   display: flex;
   justify-content: center;
+
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
+  
 `
 
 export default function StakerCreateEventRequest() {
@@ -25,7 +31,7 @@ export default function StakerCreateEventRequest() {
     <Wrapper>
       <Clipboard color={'white'} size={'35px'} />
       <div style={{ maxWidth: '500px' }}>
-        <div style={{ margin: '2rem 0' }}>Please sign the form to request your Event</div>
+        <div style={{ margin: '2rem 0', textAlign: 'center' }}>Please sign the form to request your Event</div>
         <div>
           <RequestButton
             target="_blank"

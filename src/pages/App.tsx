@@ -19,7 +19,7 @@ import StakingPage from './Staking/StakingPage'
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import { Pool } from 'lib/src'
 import StakingPoolPage from './Staking/StakingPoolPage'
-import { NewIncentivePage } from './Staking/NewIncentivePage'
+// import { NewIncentivePage } from './Staking/NewIncentivePage'
 import { RedirectDuplicateTokenStakingIds } from './Staking/redirects'
 import { CurrentEventsPage } from './CurrentEventsPage'
 import { FutureEventsPage } from './FutureEventsPage'
@@ -31,43 +31,81 @@ import MigrateV2 from './MigrateV2'
 import { InfoPage } from './InfoPage'
 import { ExternalLink } from 'react-feather'
 import Modal from '../components/Modal'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
-import RealStakerPage from './RealStakerPage'
+
 import StakingAnalyticsPage from './StakingAnalyticsPage'
+import {useInternet} from "../hooks/useInternet"
+
+import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
+import { useIsNetworkFailed } from '../hooks/useIsNetworkFailed'
+import Loader from '../components/Loader'
+
+import { useInfoSubgraph } from '../hooks/subgraph/useInfoSubgraph'
+import FeeChartRangeInput from '../components/FeeChartRangeInput'
+import PoolInfoPage from './PoolInfoPage'
+import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
+
+import * as Sentry from '@sentry/react'
+import { Integrations } from '@sentry/tracing'
+
+import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations'
+
+import BG from '../assets/images/bg.png'
+
+import { GasPrice } from '../components/Header/GasPrice'
+import { useFarmingActionsHandlers } from '../state/farming/hooks'
+import { useActiveWeb3React } from '../hooks/web3'
 
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
+  height: 100%;
+`
+
+const Background = styled.div`
+  background-image: url(${BG});
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat, repeat;
+  background-size: cover, auto;
+  background-origin: padding-box, padding-box;
+  background-clip: border-box, border-box;
+  background-attachment: fixed;
+  background-position: 100% center, 0% 0%;
 `
 
 const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 120px 16px 0px 16px;
+  padding: 0 16px 0px 16px;
   align-items: center;
   flex: 1;
   z-index: 1;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 5rem 16px 16px 16px;
+    padding: 0 16px 16px 16px;
   `};
 `
 
 const HeaderWrapper = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
+  ${({ theme }) => theme.flexRowNoWrap};
   width: 100%;
   justify-content: space-between;
-  position: fixed;
   top: 0;
   z-index: 2;
 `
-
 const Marginer = styled.div`
-  margin-top: 5rem;
+  // margin-top: 5rem;
 `
 
 const BugReportLink = styled.a`
@@ -76,6 +114,39 @@ const BugReportLink = styled.a`
   left: 1rem;
   color: #36f;
   text-decoration: none;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `}
+`
+
+const NetworkFailedCard = styled.div`
+  position: fixed;
+  bottom: 3rem;
+  right: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #f65c5c;
+  border: 1px solid #852020;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    position: unset;
+    width: calc(100% - 2rem);
+    left: unset;
+    right: unset;
+    margin-bottom: 0;
+    margin-top: 0.5rem;
+  `}
+`
+
+const InternetError = styled.div`
+  width: 100%;
+  height: 100vh;
+  background-color: #040b1e;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 `
 
 const GlobalStyle = createGlobalStyle`
@@ -83,37 +154,80 @@ const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 `
+
+Sentry.init({
+  dsn: 'https://fbf2161b766648b58456a3501f72e21a@o1085550.ingest.sentry.io/6096418',
+  integrations: [
+    new Integrations.BrowserTracing(),
+    new OfflineIntegration({
+      maxStoredEvents: 30,
+    }),
+    new CaptureConsoleIntegration({
+      levels: ['error'],
+    }),
+  ],
+  tracesSampleRate: 1.0,
+  attachStacktrace: true,
+})
+
 export default function App() {
-  //TODO
   Object.defineProperty(Pool.prototype, 'tickSpacing', {
     get() {
       return 60
     },
   })
+  const internet = useInternet()
+
+  const { account } = useActiveWeb3React()
+
+  const { onIsFarming } = useFarmingActionsHandlers()
+
+  const networkFailed = useIsNetworkFailed()
+
+  useEffect(() => {
+    onIsFarming()
+  }, [])
+
+  useEffect(() => {
+    if (!account) return
+
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({
+      event: 'userId',
+      user_id: account,
+    })
+
+    console.log('datalayer', window.dataLayer)
+  }, [account])
 
   return (
-    <ErrorBoundary>
+    <Sentry.ErrorBoundary>
       <GlobalStyle />
       <Route component={DarkModeQueryParamReader} />
       <Route component={ApeModeQueryParamReader} />
+      <Route component={GoogleAnalyticsReporter} />
       <Web3ReactManager>
         <AppWrapper>
           <CautionModal />
           <HeaderWrapper style={{ zIndex: 3 }}>
             <Header />
           </HeaderWrapper>
+          { !internet && <InternetError>
+            Network ERROR
+          </InternetError>}
           <BodyWrapper style={{ zIndex: 2 }}>
-            <div
-              style={{
-                padding: '1rem',
-                backgroundColor: '#702498',
-                borderRadius: '8px',
-                marginTop: '-2rem',
-                marginBottom: '2rem',
-              }}
-            >
-              <span>⚠️</span> <span>Contracts are being audited. Please use with caution.</span> <span>⚠️</span>
-            </div>
+            {networkFailed && (
+              <NetworkFailedCard>
+                <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon network failed</div>
+                <div style={{ display: 'flex' }}>
+                  <span>Reconnecting...</span>
+                  <Loader
+                    style={{ display: 'inline-block', marginLeft: 'auto', marginRight: 'auto' }}
+                    stroke={'white'}
+                  />
+                </div>
+              </NetworkFailedCard>
+            )}
             <BugReportLink
               target="_blank"
               rel="noopener noreferrer"
@@ -127,6 +241,7 @@ export default function App() {
             </BugReportLink>
             <Popups />
             <Polling />
+            <GasPrice />
             <Switch>
               <Route strict path="/farming" component={StakingPage} />
 
@@ -136,7 +251,7 @@ export default function App() {
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/swap" component={Swap} />
 
-              <Route exact strict path="/pool/v2/find" component={PoolFinder} />
+              <Route exact strict path="/pool/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={PoolPage} />
               <Route exact strict path="/pool/:tokenId" component={PositionPage} />
 
@@ -164,6 +279,6 @@ export default function App() {
           </BodyWrapper>
         </AppWrapper>
       </Web3ReactManager>
-    </ErrorBoundary>
+    </Sentry.ErrorBoundary>
   )
 }

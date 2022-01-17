@@ -58,7 +58,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
         })
         .catch((error: any) => {
           setAttempting(false)
-          console.error(error)
+          throw new Error('Withdrawing' + error)
         })
     }
   }

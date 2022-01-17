@@ -65,14 +65,14 @@ export default function SwapModalHeader({
       <LightCard padding="0.75rem 1rem">
         <AutoColumn gap={'8px'}>
           <RowBetween>
-            <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+            <TYPE.body fontWeight={500} fontSize={14}>
               <Trans>From</Trans>
             </TYPE.body>
             <FiatValue fiatValue={fiatValueInput} />
           </RowBetween>
           <RowBetween align="center">
             <RowFixed gap={'0px'}>
-              <CurrencyLogo currency={trade.inputAmount.currency} size={'20px'} style={{ marginRight: '12px' }} />
+              <CurrencyLogo currency={trade.inputAmount.currency} size={'24px'} style={{ marginRight: '12px' }} />
               <Text fontSize={20} fontWeight={500}>
                 {trade.inputAmount.currency.symbol}
               </Text>
@@ -105,7 +105,7 @@ export default function SwapModalHeader({
       <LightCard padding="0.75rem 1rem" style={{ marginBottom: '0.25rem' }}>
         <AutoColumn gap={'8px'}>
           <RowBetween>
-            <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+            <TYPE.body fontWeight={500} fontSize={14}>
               <Trans>To</Trans>
             </TYPE.body>
             <TYPE.body fontSize={14} color={theme.text3}>
@@ -117,7 +117,7 @@ export default function SwapModalHeader({
           </RowBetween>
           <RowBetween align="flex-end">
             <RowFixed gap={'0px'}>
-              <CurrencyLogo currency={trade.outputAmount.currency} size={'20px'} style={{ marginRight: '12px' }} />
+              <CurrencyLogo currency={trade.outputAmount.currency} size={'24px'} style={{ marginRight: '12px' }} />
               <Text fontSize={20} fontWeight={500}>
                 {trade.outputAmount.currency.symbol}
               </Text>
@@ -131,7 +131,7 @@ export default function SwapModalHeader({
         </AutoColumn>
       </LightCard>
       <RowBetween style={{ marginTop: '0.25rem', padding: '0 1rem' }}>
-        <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+        <TYPE.body color={'#2f567b'} fontWeight={500} fontSize={14}>
           <Trans>Price</Trans>
         </TYPE.body>
         <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
@@ -146,7 +146,7 @@ export default function SwapModalHeader({
           <RowBetween>
             <RowFixed>
               <AlertTriangle size={20} style={{ marginRight: '8px', minWidth: 24 }} />
-              <TYPE.main color={theme.primary1}>
+              <TYPE.main color={'#008FFF'}>
                 <Trans>Price Updated</Trans>
               </TYPE.main>
             </RowFixed>
@@ -162,7 +162,7 @@ export default function SwapModalHeader({
 
       <AutoColumn justify="flex-start" gap="sm" style={{ padding: '.75rem 1rem' }}>
         {trade.tradeType === TradeType.EXACT_INPUT ? (
-          <TYPE.italic fontWeight={400} textAlign="left" style={{ width: '100%' }}>
+          <TYPE.italic color={theme.winterDisabledButton} fontWeight={400} textAlign="left" style={{ width: '100%' }}>
             <Trans>
               Output is estimated. You will receive at least{' '}
               <b>
@@ -172,7 +172,7 @@ export default function SwapModalHeader({
             </Trans>
           </TYPE.italic>
         ) : (
-          <TYPE.italic fontWeight={400} textAlign="left" style={{ width: '100%' }}>
+          <TYPE.italic color={theme.winterDisabledButton} fontWeight={400} textAlign="left" style={{ width: '100%' }}>
             <Trans>
               Input is estimated. You will sell at most{' '}
               <b>

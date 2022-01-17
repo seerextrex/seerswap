@@ -7,6 +7,9 @@ const Wrapper = styled.div<{ margin: boolean; sizeraw: number }>`
   display: flex;
   flex-direction: row;
   margin-left: ${({ sizeraw, margin }) => margin && (sizeraw / 3 + 8).toString() + 'px'};
+  ${({theme}) => theme.mediaWidth.upToSmall`
+  margin: 0;
+  `}
 `
 
 interface DoubleCurrencyLogoProps {
@@ -17,7 +20,6 @@ interface DoubleCurrencyLogoProps {
 }
 
 const HigherLogo = styled(CurrencyLogo)`
-  z-index: 2;
 `
 const CoveredLogo = styled(CurrencyLogo)<{ sizeraw: number }>`
   position: absolute;

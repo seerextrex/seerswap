@@ -1,9 +1,21 @@
 import { useEffect } from 'react'
-import { PageWrapper } from '../../pages/AddLiquidity/styled'
 import InfoPoolsTable from '../InfoPoolsTable'
 
 import styled from 'styled-components/macro'
 import Loader from '../Loader'
+
+const PageWrapper = styled.div`
+  max-width: ${({ wide }) => (wide ? '880px' : '480px')};
+  width: 100%;
+  background-color: ${({ theme }) => theme.winterBackground};
+
+  padding: ${({ wide }) => (wide ? '30px 40px' : '0')};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    max-width: 720px!important;
+    overflow-x: scroll;
+    border-radius: 8px;
+  `};
+`
 
 const MockLoading = styled.div`
   display: flex;
@@ -29,9 +41,12 @@ export function InfoPools({
     }
   }, [blocksFetched])
 
-  if (!data) return <MockLoading>
-    <Loader stroke={'white'} size={'25px'}/>
-  </MockLoading>
+  if (!data)
+    return (
+      <MockLoading>
+        <Loader stroke={'white'} size={'25px'} />
+      </MockLoading>
+    )
 
   return (
     <PageWrapper style={{ maxWidth: '100%' }}>

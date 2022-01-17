@@ -8,6 +8,7 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import Loader from '../Loader'
 import gradient from 'random-gradient'
+import {darken} from "polished";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -44,6 +45,7 @@ const ModalWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   padding: 1rem;
+  color: #080064;
 `
 const ModalHeader = styled.div`
   display: flex;
@@ -74,10 +76,18 @@ const NFTPosition = styled.div`
   position: relative;
   width: calc(33% - 8px);
   border-radius: 1rem;
-  border: 1px solid ${({ selected }) => (selected ? '#3970FF' : '#242424')};
+  border: 1px solid ${({ selected }) => (selected ? '#3970FF' : 'rgba(60, 97, 126, 0.5)')};
   padding: 8px;
   margin-right: 9px;
   transition-duration: 0.2s;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: calc(50% - 5px);
+    margin-bottom: 5px;
+    &:nth-of-type(2n) {
+      margin-right: 0;
+    }
+  `}
 `
 
 const NFTPositionSelectCircle = styled.div`
@@ -91,7 +101,7 @@ const NFTPositionSelectCircle = styled.div`
     justify-content: center;
     border-radius: 50%;
     transition-duration: .2s;
-    border: 1px solid  ${({ selected }) => (selected ? '#3970FF' : '#242424')};
+    border: 1px solid  ${({ selected }) => (selected ? '#3970FF' : 'rgba(60, 97, 126, 0.5)')};
     background-color:  ${({ selected }) => (selected ? '#3970FF' : 'transparent')}
     `
 
@@ -103,7 +113,7 @@ const NFTPositionIcon = styled.div`
   ${({ skeleton }) =>
     skeleton &&
     css`
-      background: #3d4a6a;
+      background: rgba(60, 97, 126, 0.5);
       ${skeletonGradient}
     `};
 `
@@ -115,7 +125,7 @@ const NFTPositionDescription = styled.div`
     skeleton &&
     css`
       & > * {
-        background: #3d4a6a;
+        background: rgba(60, 97, 126, 0.5);
         border-radius: 6px;
         ${skeletonGradient}
       }
@@ -141,11 +151,18 @@ const NFTPositionLink = styled.a`
 `
 
 const StakeButton = styled.button`
-  background: #4829bb;
+  background: ${({ theme }) => theme.winterMainButton};
   border: none;
   padding: 1rem;
   color: white;
   border-radius: 8px;
+  &:hover {
+    background: ${({theme}) => darken(0.05, theme.winterMainButton)};
+  }
+  &:disabled {
+    background: ${({ theme }) => theme.winterDisabledButton};
+    cursor: default;
+  }
 `
 
 const StakeButtonLoader = styled.span`
@@ -166,8 +183,8 @@ const EmptyMock = styled.div`
 const LiquidityLockWarning = styled.div`
   margin-bottom: 1rem;
   padding: 8px 12px;
-  background: #373717;
-  color: #ffff65;
+  background: #e4e46b;
+  color: #333303;
   border-radius: 8px;
   line-height: 25px;
 `
@@ -176,11 +193,15 @@ const ProvideLiquidityLink = styled(Link)`
   display: flex;
   justify-content: center;
   text-decoration: none;
-  background: linear-gradient(90deg, rgba(72, 41, 187, 1) 0%, rgba(188, 49, 255, 1) 100%);
+  background: linear-gradient(90deg, rgba(72, 41, 187, 1) 0%, rgb(49, 149, 255) 100%);
   padding: 8px 10px;
   border-radius: 6px;
   color: white;
   font-weight: 500;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 15px;
+  `}
 `
 
 export function StakeModal({
@@ -384,7 +405,7 @@ export function StakeModal({
     })
   }, [selectedNFT, submitState])
 
-  const linkToProviding = `/add/${rewardAddress}/${bonusRewardAddress}`
+  const linkToProviding = `/add/${token0}/${token1}`
 
   return (
     <>
@@ -393,11 +414,11 @@ export function StakeModal({
           <ModalHeader>
             <div></div>
             <CloseModalButton onClick={closeHandler}>
-              <X size={18} stroke={'white'} />
+              <X size={18} stroke={'#080064'} />
             </CloseModalButton>
           </ModalHeader>
           <ModalBody style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <CheckCircle size={55} stroke={'#3ee43e'} />
+            <CheckCircle size={55} stroke={'#24ae2c'} />
             <p>{`NFT #${selectedNFT.tokenId} deposited succesfully!`}</p>
           </ModalBody>
         </ModalWrapper>
@@ -406,24 +427,21 @@ export function StakeModal({
           <ModalHeader>
             <div>Select NFT for farming</div>
             <CloseModalButton onClick={closeHandler}>
-              <X size={18} stroke={'white'} />
+              <X size={18} stroke={'#080064'} />
             </CloseModalButton>
           </ModalHeader>
-          <LiquidityLockWarning>
-            {
-              'Your position will be locked in the farming contract. If you deposit your NFT, you won’t be able to interact with the deposited position until the end of this farming event.'
-            }
-          </LiquidityLockWarning>
           <ModalBody>
             {chunkedPositions && chunkedPositions.length === 0 ? (
               <EmptyMock>
-                <Frown size={30} stroke={'white'} />
+                <Frown size={30} stroke={'#080064'} />
                 <p>No NFT-s for this pool</p>
-                <p>To take part in this farming event, you need to</p>
-                <ProvideLiquidityLink to={linkToProviding}>
+                <p
+                  style={{ textAlign: 'center' }}
+                >{`To take part in this farming event, you need to provide liquidity for ${token0} / ${token1}`}</p>
+                {/* <ProvideLiquidityLink to={linkToProviding}>
                   <span>{`Provide liquidity for ${token0} / ${token1}`}</span>
                   <ArrowRight style={{ marginLeft: '5px' }} size={16} />
-                </ProvideLiquidityLink>
+                </ProvideLiquidityLink> */}
               </EmptyMock>
             ) : chunkedPositions && chunkedPositions.length !== 0 ? (
               chunkedPositions.map((row, i) => (
@@ -503,15 +521,21 @@ export function StakeModal({
               </StakeButtonLoader>
             </StakeButton>
           ) : NFTsForApprove ? (
-            <StakeButton disabled={submitLoader} onClick={approveNFTs}>
+            <StakeButton disabled={submitLoader} onClick={approveNFTs} id={'farming-approve-nft'} className={'farming-approve-nft'}>
               {`Approve NFT #${NFTsForApprove.tokenId}`}
             </StakeButton>
           ) : NFTsForTransfer ? (
-            <StakeButton onClick={transferNFTs}>{`Transfer NFT #${NFTsForTransfer.tokenId}`}</StakeButton>
+            <StakeButton onClick={transferNFTs} id={'farming-transfer-nft'} className={'farming-transfer-nft'}>
+              {`Transfer NFT #${NFTsForTransfer.tokenId}`}
+            </StakeButton>
           ) : NFTsForStake ? (
-            <StakeButton onClick={stakeNFTs}>{`Deposit NFT #${NFTsForStake.tokenId}`}</StakeButton>
+            <StakeButton onClick={stakeNFTs} id={'farming-deposit-nft'} className={'farming-deposit-nft'}>
+              {`Deposit NFT #${NFTsForStake.tokenId}`}
+            </StakeButton>
           ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-            <StakeButton>{`Select NFTs`}</StakeButton>
+            <StakeButton disabled id={'farming-select-nft'} className={'farming-select-nft'}>
+              {`Select NFT`}
+            </StakeButton>
           ) : null}
         </ModalWrapper>
       )}

@@ -1,14 +1,25 @@
 import { useApolloClient } from "@apollo/client";
-import { useState } from "react";
+import { useCallback, useState } from 'react'
 import { Contract, providers } from "ethers";
 import { useActiveWeb3React } from "../web3";
 import { useClients } from "./useClients";
 import {
-    GET_STAKE, GET_STAKE_HISTORY,
+    FETCH_FEE_FROM_POOL,
+    CHART_FEE_LAST_ENTRY,
+    CHART_FEE_POOL_DATA,
+    CHART_POOL_DATA,
+    CHART_POOL_LAST_ENTRY,
     POOLS_FROM_ADDRESSES,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
-    TOP_TOKENS
+    TOP_TOKENS,
+    CHART_FEE_LAST_NOT_EMPTY,
+    CHART_POOL_LAST_NOT_EMPTY,
+    SWAPS_PER_DAY,
+    ALL_POSITIONS,
+    TOTAL_STATS,
+    GET_STAKE,
+    GET_STAKE_HISTORY,
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
@@ -43,13 +54,21 @@ export function useInfoSubgraph() {
     const [tokensResult, setTokens] = useState(null);
     const [tokensLoading, setTokensLoading] = useState(null);
 
+
+    const [feesResult, setFees] = useState(null);
+    const [feesLoading, setFeesLoading] = useState(null);
+
+    const [chartPoolData, setChartPoolData] = useState(null)
+    const [chartPoolDataLoading, setChartPoolDataLoading] = useState(null)
+
+    const [totalStats, setTotalStats] = useState(null)
+    const [totalStatsLoading, setTotalStatsLoading] = useState(null)
+    
     const [stakesResult, setStakes] = useState(null);
     const [stakesLoading, setStakesLoading] = useState(null);
-
+  
     const [stakeHistoriesResult, setHistories] = useState(null);
     const [historiesLoading, setHistoriesLoading] = useState(null);
-
-
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -85,6 +104,7 @@ export function useInfoSubgraph() {
             const parsedPools48 = parseTokensData(pools48)
             const parsedPoolsWeek = parseTokensData(poolsWeek)
 
+            console.log('block 24', _block24)
             const formatted = poolsAddresses.reduce((accum: { [address: string]: TokenData }, address) => {
                 const current: TokenFields | undefined = parsedPools[address]
                 const oneDay: TokenFields | undefined = parsedPools24[address]
@@ -94,9 +114,10 @@ export function useInfoSubgraph() {
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
                         ? get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD)
-                        : current
-                            ? [parseFloat(current.volumeUSD), 0]
-                            : [0, 0]
+                        : current && oneDay ?
+                            [parseFloat(current.volumeUSD) - parseFloat(oneDay.volumeUSD), 0] : current
+                                ? [parseFloat(current.volumeUSD), 0]
+                                : [0, 0]
 
                 const volumeUSDWeek =
                     current && week
@@ -104,13 +125,14 @@ export function useInfoSubgraph() {
                         : current
                             ? parseFloat(current.volumeUSD)
                             : 0
+
                 const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
                 const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
                 const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
 
-                const priceUSD = current ? parseFloat(current.derivedETH) * ethPrices.current : 0
-                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedETH) * ethPrices.oneDay : 0
-                const priceUSDWeek = week ? parseFloat(week.derivedETH) * ethPrices.week : 0
+                const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
+                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
+                const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
 
                 const priceUSDChange =
                     priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
@@ -128,6 +150,8 @@ export function useInfoSubgraph() {
                         : current
                             ? parseFloat(current.feesUSD)
                             : 0
+
+
 
                 accum[address] = {
                     token0: current.token0,
@@ -149,6 +173,7 @@ export function useInfoSubgraph() {
                     priceUSD,
                     priceUSDChange,
                     priceUSDChangeWeek,
+                    apr: isNaN(feesUSD * 365 / tvlUSD * 100) ? 0 : feesUSD * 365 / tvlUSD * 100
                 }
 
                 return accum
@@ -157,8 +182,8 @@ export function useInfoSubgraph() {
             setPools(Object.values(formatted))
 
         } catch (err) {
-            console.error('Info pools fetch', err)
             setPools('failed')
+            throw new Error('Info pools fetch ' + err)
         }
 
         setPoolsLoading(false)
@@ -220,9 +245,9 @@ export function useInfoSubgraph() {
                 const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
                 const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
                 const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
-                const priceUSD = current ? parseFloat(current.derivedETH) * ethPrices.current : 0
-                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedETH) * ethPrices.oneDay : 0
-                const priceUSDWeek = week ? parseFloat(week.derivedETH) * ethPrices.week : 0
+                const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
+                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
+                const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
                 const priceUSDChange =
                     priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
                 const priceUSDChangeWeek =
@@ -264,8 +289,8 @@ export function useInfoSubgraph() {
             setTokens(Object.values(formatted))
 
         } catch (err) {
-            console.error('Info tokens fetch', err)
             setTokens('failed')
+            throw new Error('Info tokens fetching ' + err)
         }
 
         setTokensLoading(false)
@@ -285,12 +310,10 @@ export function useInfoSubgraph() {
             return tokens
 
         } catch (err) {
-            console.error('Tokens by time fetch', err);
-            return undefined
+            throw new Error('Tokens fetching by time ' + err)
         }
 
     }
-
 
     async function fetchPoolsByTime(blockNumber: number, tokenAddresses) {
 
@@ -306,36 +329,180 @@ export function useInfoSubgraph() {
             return pools
 
         } catch (err) {
-            console.error('Pools by time fetch', err);
-            return undefined
+            throw new Error('Pools by time fetching ' + err)
         }
 
     }
 
-    async function fetchStaking(id: string) {
 
+    async function fetchLastEntry(pool) {
         try {
-            setStakesLoading(true)
-            const { data: { factories, stakes }, error: error } = await stakerClient.query({
-                query: GET_STAKE(id),
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_LAST_ENTRY(pool),
                 fetchPolicy: 'network-only'
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            setStakesLoading(false)
+            return feeHourDatas
+
+        } catch (err) {
+            console.error('Fees last failed: ', err);
+        }
+    }
+
+    async function fetchLastNotEmptyEntry(pool: string, timestamp: string) {
+        try {
+
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_LAST_NOT_EMPTY(pool, timestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (feeHourDatas.length === 0) return []
+
+            return feeHourDatas
+
+        } catch (err) {
+            console.error('Fees last not empty failed:', err)
+        }
+    }
+
+    async function fetchPoolLastNotEmptyEntry(pool: string, timestamp: string) {
+        try {
+
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_LAST_NOT_EMPTY(pool, timestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (poolHourDatas.length === 0) return []
+
+            return poolHourDatas
+
+        } catch (err) {
+            console.error('Pool last not empty failed:', err)
+        }
+    }
+
+    async function fetchPoolLastEntry(pool) {
+        try {
+
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_LAST_ENTRY(pool),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            return poolHourDatas
+
+        } catch (err) {
+            console.error('Fees last failed: ', err);
+        }
+    }
+  
+      const fetchStaking = useCallback(async (id: string) => {
+
+        setStakes(null)
+
+        try {
+            setStakesLoading(true)
+
+            const { data: { factories, stakes }, error: error } = await stakerClient.query({
+                query: GET_STAKE(id),
+                fetchPolicy: 'network-only'
+            })
+              
+              setStakesLoading(false)
             setStakes({factories: factories, stakes: stakes})
 
             return stakes
 
         } catch (err) {
             setStakesLoading(false)
-            setStakes('Getting stakes failed')
+            setStakes('failed')
             console.error('Getting stakes failed', err);
             return undefined
         }
 
+    }, [account])
+
+    async function fetchFeePool(pool: string, startTimestamp: number, endTimestamp: number) {
+        try {
+            setFeesLoading(true)
+
+            const { data: { feeHourDatas }, error: error } = await dataClient.query({
+                query: CHART_FEE_POOL_DATA(pool, startTimestamp, endTimestamp),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const _feeHourData = feeHourDatas.length === 0 ? await fetchLastEntry(pool) : feeHourDatas
+
+            const previousData = await fetchLastNotEmptyEntry(pool, _feeHourData[0].timestamp)
+
+            if (_feeHourData.length !== 0) {
+                setFees({
+                    data: _feeHourData,
+                    previousData: previousData || []
+                })
+            } else {
+                setFees({
+                    data: [],
+                    previousData: previousData || []
+                })
+            }
+
+        } catch (err) {
+            console.error('Fees failed: ', err);
+            setFees('Failed')
+        }
+
+        setFeesLoading(false)
     }
+
+    async function fetchChartPoolData(pool: string, startTimestamp: number, endTimestamp: number) {
+        try {
+
+            setChartPoolDataLoading(true)
+
+            const { data: { poolHourDatas }, error: error } = await dataClient.query({
+                query: CHART_POOL_DATA(pool, startTimestamp, endTimestamp),
+                fetchPolicy: 'network-only',
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const _poolHourDatas = poolHourDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolHourDatas
+
+            const previousData = await fetchPoolLastNotEmptyEntry(pool, poolHourDatas[0].periodStartUnix)
+
+            if (_poolHourDatas.length !== 0) {
+                setChartPoolData({
+                    data: _poolHourDatas,
+                    previousData: previousData || []
+                })
+            } else {
+                setChartPoolData({
+                    data: [],
+                    previousData: previousData || []
+                })
+            }
+
+        } catch (err) {
+            console.error('Chart pool data failed: ', err)
+            setChartPoolData(false)
+        }
+
+        setChartPoolDataLoading(false)
+    }
+
 
     async function fetchStakingHistory() {
         try {
@@ -343,11 +510,11 @@ export function useInfoSubgraph() {
 
             const { data: { histories }, error: error } = await stakerClient.query({
                 query: GET_STAKE_HISTORY(),
-                fetchPolicy: 'network-only'
+               fetchPolicy: 'network-only'
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
-
+          
             setHistoriesLoading(false)
             setHistories(histories)
 
@@ -359,11 +526,59 @@ export function useInfoSubgraph() {
         }
     }
 
+    async function fetchTotalStats() {
+
+        try {
+
+            setTotalStatsLoading(true)
+
+            const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => b.timestamp - a.timestamp)
+
+            const { data: data, error: error } = await dataClient.query({
+                query: TOTAL_STATS(),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            const { data: data24, error: error24 } = await dataClient.query({
+                query: TOTAL_STATS(_block24.number),
+                fetchPolicy: 'network-only'
+            })
+
+            if (error24) throw new Error(`${error24.name} ${error24.message}`)
+
+            const stats = data.factories[0]
+            const stats24 = data24.factories[0]
+            
+            const volumeUSD =
+            stats && stats24
+              ? parseFloat(stats.totalVolumeUSD) - parseFloat(stats24.totalVolumeUSD)
+              : parseFloat(stats.totalVolumeUSD)
+
+            setTotalStats({
+                tvlUSD: parseFloat(stats.totalValueLockedUSD),
+                volumeUSD: volumeUSD
+            })
+
+        } catch (err) {
+            console.error('total stats failed', err)
+            setTotalStats('Failed')
+        }
+
+        setTotalStatsLoading(false)
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking},
-        fetchStakedHistory: {historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory}
+        fetchStakedHistory: {historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory},
+      fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
+        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
+        getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking}
+    }
     }
 }

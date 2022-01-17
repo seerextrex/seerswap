@@ -1,12 +1,17 @@
 import RealStakerRangeButtons from './RealStakerRangeButtons'
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components/macro'
 import Modal from '../../components/Modal'
 import { SilderWrapper, StakeButton, StakerSlider } from './index'
 import RealStakerUnstakeInputRange from './RealStakerUnstakeInputRange'
+import { formatEther } from 'ethers/lib/utils'
 
 const UnStakeModalWrapper = styled(Modal)`
-  flex-direction: column;
+    
+`
+const ContentModal = styled.div`
+  width: 100%;
+  padding: 5px 30px 20px;
 `
 
 interface UnstakeModalProps {
@@ -20,6 +25,8 @@ interface UnstakeModalProps {
   onPercentSelect: number,
   unstakeHandler: any,
   stakedResult: any
+  fiatValue: any
+    allXALGBFreeze: any
 }
 
 export default function RealStakerUnstakeModal(
@@ -33,7 +40,9 @@ export default function RealStakerUnstakeModal(
     setUnstakePercent,
     onPercentSelect,
     unstakeHandler,
-    stakedResult
+    stakedResult,
+    fiatValue,
+      allXALGBFreeze
   } : UnstakeModalProps
 ) {
   return (
@@ -41,14 +50,17 @@ export default function RealStakerUnstakeModal(
       isOpen={openModal}
       onDismiss={() => {
         setOpenModal(false)
+          setUnstaked('')
+          setUnstakePercent(0)
       }}
       maxHeight={300}
     >
-      <div style={{width: '100%'}}>
+      <ContentModal>
         <RealStakerUnstakeInputRange
           amountValue={unstaked}
           setAmountValue={setUnstaked}
-          baseCurrency={baseCurrency}
+          baseCurrency={formatEther(baseCurrency)}
+          fiatValue={fiatValue}
           />
         <SilderWrapper>
           <StakerSlider
@@ -61,11 +73,15 @@ export default function RealStakerUnstakeModal(
           showCalculate={false}
         />
         <StakeButton onClick={() => {
-          unstakeHandler(unstaked, stakedResult)
-        }}>
-          Unstake
+          unstakeHandler(unstaked, stakedResult, baseCurrency, allXALGBFreeze)
+          setUnstaked('')
+            setUnstakePercent(0)
+          setOpenModal(false)
+        }}
+        disabled={+unstaked > +formatEther(baseCurrency) || unstaked === ''}>
+            {+unstaked > +formatEther(baseCurrency) ? 'Insufficient ALGB balance' : 'Unstake'}
         </StakeButton>
-      </div>
+      </ContentModal>
     </UnStakeModalWrapper>
   )
 }

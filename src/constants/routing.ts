@@ -1,7 +1,7 @@
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from './chains'
-import { ExtendedEther, WMATIC_EXTENDED, USDC_POLYGON, ALGEBRA_POLYGON, WETH_POLYGON, USDT_POLYGON } from './tokens'
+import { ExtendedEther, WMATIC_EXTENDED, USDC_POLYGON, ALGEBRA_POLYGON, WETH_POLYGON, USDT_POLYGON, RUBIC_POLYGON } from './tokens'
 
 type ChainTokenList = {
   readonly [chainId: number]: Token[]
@@ -19,8 +19,6 @@ const WETH_ONLY: ChainTokenList = Object.fromEntries(
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON, WETH_POLYGON]
-  // [SupportedChainId.MAINNET]: [...WETH_ONLY[SupportedChainId.MAINNET], DAI, USDC, USDT, WBTC],
-  // [SupportedChainId.OPTIMISM]: [...WETH_ONLY[SupportedChainId.OPTIMISM], DAI_OPTIMISM, USDT_OPTIMISM, WBTC_OPTIMISM],
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 /**
@@ -28,7 +26,6 @@ export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: To
  * tokens.
  */
 export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
-  // [AMPL.address]: [DAI, WMATIC_EXTENDED[SupportedChainId.MAINNET]],
 }
 
 /**
@@ -41,14 +38,18 @@ export const COMMON_BASES: ChainCurrencyList = {
     WMATIC_EXTENDED[SupportedChainId.POLYGON],
     ALGEBRA_POLYGON,
     WETH_POLYGON,
-    USDT_POLYGON
+    USDT_POLYGON,
+    RUBIC_POLYGON
   ]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON]
-  // [SupportedChainId.MAINNET]: [...WETH_ONLY[SupportedChainId.MAINNET], DAI, USDC, USDT, WBTC],
+  [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON, WETH_POLYGON]
 }
-export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {}
+export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
+  [SupportedChainId.POLYGON]: [
+    [USDC_POLYGON, USDT_POLYGON]
+  ]
+}

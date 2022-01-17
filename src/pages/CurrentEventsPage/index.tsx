@@ -31,6 +31,10 @@ const EventsCardsRow = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     flex-direction: column;
     margin-bottom: unset;
+    display: none;
+    &:first-of-type {
+      display: flex;
+    }
   }`}
 `
 

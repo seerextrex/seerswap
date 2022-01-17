@@ -32,6 +32,10 @@ const EventsCardsRow = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     flex-direction: column;
     margin-bottom: unset;
+    display: none;
+    &:first-of-type {
+      display: flex;
+    }
   }`}
 `
 
@@ -72,7 +76,7 @@ export function FutureEventsPage({
 
   return (
     <>
-      <Modal isOpen={modalForPool}>
+      <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)}>
         {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}></StakeModal>}
       </Modal>
       <PageWrapper>

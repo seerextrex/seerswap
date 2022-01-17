@@ -5,7 +5,7 @@ import { Token } from '@uniswap/sdk-core'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
-export const POOL_INIT_CODE_HASH = '0xec4c4e42c025244bd1402dc88776c877b18806a848c60a366c4148966d0c32a1'
+export const POOL_INIT_CODE_HASH = '0x6f8da21644d39435fbc8337b1031e14292c1d5a0042041eb303b6145c64c0a16'
 
 /**
  * The default factory enabled fee amounts, denominated in hundredths of bips.

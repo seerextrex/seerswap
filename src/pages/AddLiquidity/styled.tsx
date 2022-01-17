@@ -7,12 +7,16 @@ import { BodyWrapper } from 'pages/AppBody'
 export const PageWrapper = styled(BodyWrapper)<{ wide: boolean }>`
   max-width: ${({ wide }) => (wide ? '880px' : '480px')};
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: ${({ theme }) => theme.winterBackground};
 
   padding: ${({ wide }) => (wide ? '30px 40px' : '0')};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     max-width: 480px;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    max-width: 100%!important;
+    
   `};
 `
 
@@ -34,6 +38,7 @@ export const ScrollablePage = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  border-radius: 20px;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     max-width: 480px;
     margin: 0 auto;
@@ -47,6 +52,9 @@ export const DynamicSection = styled(AutoColumn)<{ disabled?: boolean }>`
 
 export const CurrencyDropdown = styled(CurrencyInputPanel)`
   width: ${({ centered }) => (centered ? '100%' : '50%')};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+  `}
 `
 
 export const StyledInput = styled(Input)`
@@ -67,7 +75,7 @@ export const ResponsiveTwoColumns = styled.div<{ wide: boolean }>`
 
   padding-top: 20px;
 
-  border-top: 1px solid ${({ theme }) => theme.bg2};
+  border-top: 1px solid ${({ theme }) => '#2a7ed2'};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;

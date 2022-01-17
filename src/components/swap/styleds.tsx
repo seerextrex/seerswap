@@ -20,15 +20,16 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
   height: 42px;
   width: 35px;
   position: relative;
-  margin-top: -14px;
+  margin-top: -32px;
   margin-bottom: -14px;
-  left: calc(50% - 16px);
-  /* transform: rotate(90deg); */
-  // background-color: ${({ theme }) => theme.bg1};
-  background-color: #131827;
-  // border: 4px solid ${({ theme }) => theme.bg0};
+  left: calc(50% - 11px);
+  background-color: #759fe3;
   border: none;
   z-index: 2;
+  
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+  margin-top: -15px;
+  `}
 
   ${({ clickable }) =>
     clickable

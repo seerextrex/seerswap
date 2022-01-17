@@ -1,5 +1,5 @@
 import { Position } from '@uniswap/v3-sdk'
-import { useMemo, useState } from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import { useToken } from '../../hooks/Tokens'
 import { usePool } from '../../hooks/usePools'
 import useIsTickAtLimit from '../../hooks/useIsTickAtLimit'
@@ -22,7 +22,7 @@ const PositionIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #5d32ed;
+  background-color: ${({ theme }) => theme.winterMainButton};
   cursor: pointer;
 `
 
@@ -31,6 +31,7 @@ const PositionInfoModal = styled.div`
   flex-direction: column;
   padding: 2rem;
   width: 100%;
+  color: #080064;
 `
 
 const PositionInfoRow = styled.div`
@@ -81,12 +82,12 @@ export default function FarmingPositionInfo({ el }: { el: any }) {
 
   return (
     <>
-      <Modal isOpen={positionModal}>
+      <Modal isOpen={positionModal} onHide={() => {setPositionModal(false)}}>
         <PositionInfoModal>
           <div style={{ marginBottom: '2rem', textAlign: 'center', justifyContent: 'center', display: 'flex' }}>
             <span>Position Info</span>
             <span onClick={() => setPositionModal(false)} style={{ marginLeft: 'auto', cursor: 'pointer' }}>
-              <X size={18} color={'white'} />
+              <X size={18} color={'#080064'} />
             </span>
           </div>
           <PositionInfoRow>
@@ -96,6 +97,18 @@ export default function FarmingPositionInfo({ el }: { el: any }) {
               <span style={{ marginLeft: '10px' }}>
                 {currencyQuote?.symbol}/{currencyBase?.symbol}
               </span>
+            </PositionInfoRowValue>
+          </PositionInfoRow>
+          <PositionInfoRow>
+            <PositionInfoRowTitle>{position?.amount0.currency.symbol}</PositionInfoRowTitle>
+            <PositionInfoRowValue>
+              {position?.amount0.toSignificant(4)}
+            </PositionInfoRowValue>
+          </PositionInfoRow>
+          <PositionInfoRow>
+            <PositionInfoRowTitle>{position?.amount1.currency.symbol}</PositionInfoRowTitle>
+            <PositionInfoRowValue>
+              {position?.amount1.toSignificant(4)}
             </PositionInfoRowValue>
           </PositionInfoRow>
           <PositionInfoRow>

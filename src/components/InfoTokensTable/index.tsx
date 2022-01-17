@@ -36,7 +36,10 @@ export const Arrow = styled.div<{ faded: boolean }>`
 
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
-  background-color: #202635;
+  background-color: background-color: rgba(60, 97, 126, 0.5);
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 600px;
+  `};
 `
 
 const ResponsiveGrid = styled.div`
@@ -44,31 +47,11 @@ const ResponsiveGrid = styled.div`
   grid-gap: 1em;
   align-items: center;
 
-  grid-template-columns: 20px 3fr repeat(4, 1fr);
+  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
 
-  @media screen and (max-width: 900px) {
-    grid-template-columns: 20px 1.5fr repeat(3, 1fr);
-    & :nth-child(4) {
-      display: none;
-    }
-  }
-
-  @media screen and (max-width: 800px) {
-    grid-template-columns: 20px 1.5fr repeat(2, 1fr);
-    & :nth-child(6) {
-      display: none;
-    }
-  }
-
-  @media screen and (max-width: 670px) {
-    grid-template-columns: repeat(2, 1fr);
-    > *:first-child {
-      display: none;
-    }
-    > *:nth-child(3) {
-      display: none;
-    }
-  }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     grid-template-columns: 20px 2fr repeat(4, 1fr);
+  `};
 `
 
 const LinkWrapper = styled.a`
@@ -86,6 +69,17 @@ const ResponsiveLogo = styled(CurrencyLogo)`
     height: 16px;
   }
 `
+const LabelTitle = styled(Label)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 93px !important;                                    
+  `};
+`
+const ClickableTextStyled = styled(ClickableText)`
+justify-content: flex-start;
+`
+const LabelTitleStyled = styled(LabelTitle)`
+justify-content: flex-start;
+`
 
 export const TOKEN_HIDE = []
 
@@ -93,41 +87,45 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
   const theme = useTheme()
 
   return (
-    <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
+    <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
       <Label>{index + 1}</Label>
       <Label>
-        <LinkWrapper href={`https://polygonscan.com/address/${tokenData.address}`} rel="noopener noreferrer" target="_blank">
-        <RowFixed>
-          <ResponsiveLogo address={tokenData.address} />
-        </RowFixed>
-        <ExtraSmallOnly style={{ marginLeft: '6px' }}>
-          <Label ml="8px">{tokenData.symbol}</Label>
-        </ExtraSmallOnly>
-        <HideExtraSmall style={{ marginLeft: '10px' }}>
+        <LinkWrapper
+          href={`https://polygonscan.com/address/${tokenData.address}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
           <RowFixed>
-            <HoverInlineText text={tokenData.name} />
-            <Label ml="8px" color={theme.text3}>
-              ({tokenData.symbol})
-            </Label>
+            <ResponsiveLogo address={tokenData.address} />
           </RowFixed>
-        </HideExtraSmall>
-        <div style={{marginLeft: '8px'}}>
-          <ExternalLink size={16} color={'white'}/>
-        </div>
+          <ExtraSmallOnly style={{ marginLeft: '6px' }}>
+            <Label ml="8px">{tokenData.symbol}</Label>
+          </ExtraSmallOnly>
+          <HideExtraSmall style={{ marginLeft: '10px' }}>
+            <RowFixed>
+              <HoverInlineText text={tokenData.name} />
+              <Label ml="8px" color={'#dedede'}>
+                ({tokenData.symbol})
+              </Label>
+            </RowFixed>
+          </HideExtraSmall>
+          <div style={{ marginLeft: '8px' }}>
+            <ExternalLink size={16} color={'white'} />
+          </div>
         </LinkWrapper>
       </Label>
-      <Label end={1} fontWeight={400}>
-        {formatDollarAmount(tokenData.priceUSD)}
-      </Label>
-      <Label end={1} fontWeight={400}>
+      <LabelTitleStyled end={1} fontWeight={400}>
+        {formatDollarAmount(tokenData.priceUSD, 3)}
+      </LabelTitleStyled>
+      <LabelTitleStyled end={1} fontWeight={400}>
         <Percent value={tokenData.priceUSDChange} fontWeight={400} />
-      </Label>
-      <Label end={1} fontWeight={400}>
+      </LabelTitleStyled>
+      <LabelTitleStyled end={1} fontWeight={400}>
         {formatDollarAmount(tokenData.volumeUSD)}
-      </Label>
-      <Label end={1} fontWeight={400}>
+      </LabelTitleStyled>
+      <LabelTitleStyled end={1} fontWeight={400}>
         {formatDollarAmount(tokenData.tvlUSD)}
-      </Label>
+      </LabelTitleStyled>
     </ResponsiveGrid>
   )
 }
@@ -171,6 +169,8 @@ export default function InfoTokensTable({
   }, [maxItems, tokenDatas])
 
   const sortedTokens = useMemo(() => {
+    if (!Array.isArray(tokenDatas)) return []
+
     return tokenDatas
       ? tokenDatas
           .filter((x) => !!x && !TOKEN_HIDE.includes(x.address))
@@ -210,26 +210,26 @@ export default function InfoTokensTable({
     <Wrapper style={{ borderRadius: '8px' }}>
       {sortedTokens.length > 0 ? (
         <AutoColumn gap="16px">
-          <ResponsiveGrid style={{ borderBottom: '1px solid #151b2c', paddingBottom: '1rem' }}>
-            <Label color={theme.text2}>#</Label>
-            <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.name)}>
+          <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
+            <Label color={'#dedede'}>#</Label>
+            <ClickableTextStyled color={'#dedede'} onClick={() => handleSort(SORT_FIELD.name)}>
               Name {arrow(SORT_FIELD.name)}
-            </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.priceUSD)}>
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.priceUSD)}>
               Price {arrow(SORT_FIELD.priceUSD)}
-            </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.priceUSDChange)}>
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.priceUSDChange)}>
               Price Change {arrow(SORT_FIELD.priceUSDChange)}
-            </ClickableText>
+            </ClickableTextStyled>
             {/* <ClickableText end={1} onClick={() => handleSort(SORT_FIELD.priceUSDChangeWeek)}>
             7d {arrow(SORT_FIELD.priceUSDChangeWeek)}
           </ClickableText> */}
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
               Volume 24H {arrow(SORT_FIELD.volumeUSD)}
-            </ClickableText>
-            <ClickableText color={theme.text2} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
               TVL {arrow(SORT_FIELD.tvlUSD)}
-            </ClickableText>
+            </ClickableTextStyled>
           </ResponsiveGrid>
 
           {sortedTokens.map((data, i) => {

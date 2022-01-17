@@ -2,6 +2,8 @@ import styled from 'styled-components/macro'
 import { Calendar, Zap, PlusCircle, Award, AlignJustify } from 'react-feather'
 import { Link, NavLink } from 'react-router-dom'
 import { deviceSizes } from '../../pages/styled'
+import {FarmingInfoLabel} from "../Header";
+import {useAppSelector} from "../../state/hooks";
 
 const MenuList = styled.ul`
   padding: 0;
@@ -19,18 +21,20 @@ const MenuListItem = styled.li`
   justify-content: center;
   width: 20%;
   padding: 10px 0;
-  background-color: #202635;
+  font-weight: 600;
+  position: relative;
+  // background-color: #202635;
   color: white;
   text-decoration: none;
   border-radius: 0;
   &:not(:first-of-type) {
-    border-left: 1px solid #2c313f;
+    // border-left: 1px solid #2c313f;
   }
   &:first-of-type {
-    border-radius: 8px 0 0 8px;
+    // border-radius: 8px 0 0 8px;
   }
   &:last-of-type {
-    border-radius: 0 8px 8px 0;
+    // border-radius: 0 8px 8px 0;
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
@@ -85,6 +89,7 @@ const stakingMenuList = [
 ]
 
 export function StakingMenu() {
+  const {startTime} = useAppSelector(state => state.farming)
   return (
     <MenuList>
       {stakingMenuList.map((el, i) => (
@@ -92,10 +97,13 @@ export function StakingMenu() {
           as={NavLink}
           to={`/farming/${el.link}`}
           activeStyle={{
-            background: '#2a87d9',
+            borderBottom: '3px solid #ffbf00',
+            color: '#ffd967',
+            fontWeight: 600,
           }}
           key={i}
         >
+          {el.title === 'Future events' ? <FarmingInfoLabel isEvents={startTime.trim()}/> : null}
           <MenuListItemIcon>{el.icon}</MenuListItemIcon>
           <MenuListItemTitle>{el.title}</MenuListItemTitle>
         </MenuListItem>

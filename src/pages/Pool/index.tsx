@@ -7,7 +7,7 @@ import { RowBetween, RowFixed } from 'components/Row'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { useV3Positions } from 'hooks/useV3Positions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { Inbox } from 'react-feather'
 import { Link } from 'react-router-dom'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -17,9 +17,13 @@ import { TYPE } from 'theme'
 import { PositionDetails } from 'types/position'
 import { LoadingRows } from './styleds'
 import { Helmet } from 'react-helmet'
+import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
+import { darken } from 'polished'
+import Loader from '../../components/Loader'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 870px;
+  margin: auto;
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -45,9 +49,14 @@ const ButtonRow = styled(RowFixed)`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
-    flex-direction: row-reverse;
+    flex-direction: column-reverse;
+
+    & > *:not(:last-child) {
+      margin-left: 0;
+      margin-top: 1rem;
+    }
   `};
 `
 const NoLiquidity = styled.div`
@@ -63,28 +72,29 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   border-radius: 12px;
   padding: 6px 8px;
   width: fit-content;
+ 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
     width: 100%;
+    margin: 0;
   `};
 `
 
 const MigrateButtonPrimary = styled(ResponsiveButtonPrimary)`
-  background-color: transparent;
-  border: 1px solid #36f;
   margin-right: 1rem;
-  &:hover {
-    background-color: #040f31;
-  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0;
+  `}
 `
 
 const MainContentWrapper = styled.main`
-  // background-color: ${({ theme }) => theme.bg0};
-  background-color: rgba(0, 0, 0, 0.6);
   padding: 30px 40px;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
+  color: white;
+  padding-top: 0;
 `
 
 const ShowInactiveToggle = styled.div`
@@ -124,6 +134,13 @@ export default function Pool() {
   ) ?? [[], []]
 
   const filteredPositions = [...openPositions, ...(userHideClosedPositions ? [] : closedPositions)]
+  const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
+  const _filteredPositions = useMemo(() => {
+    if (filteredPositions.length === 0 && prevFilteredPositions) {
+      return prevFilteredPositions
+    }
+    return filteredPositions
+  }, [filteredPositions])
 
   const showConnectAWallet = Boolean(!account)
 
@@ -140,19 +157,24 @@ export default function Pool() {
       </Helmet>
       <PageWrapper>
         <SwapPoolTabs active={'pool'} />
-        <AutoColumn gap="lg" justify="center">
+        <AutoColumn gap="lg" justify="center" style={{ backgroundColor: theme.winterBackground, borderRadius: '20px' }}>
           <AutoColumn gap="lg" style={{ width: '100%' }}>
-            <TitleRow style={{ marginTop: '1rem' }} padding={'0'}>
+            <TitleRow style={{ marginTop: '1rem', padding: '1rem 40px' }} padding={'0'}>
               <TYPE.body fontSize={'20px'}>
                 <Trans>Pools Overview</Trans>
               </TYPE.body>
               <ButtonRow>
-                <MigrateButtonPrimary id="join-pool-button" as={Link} style={{ color: '#36f' }} to={`/migrate`}>
+                <MigrateButtonPrimary
+                  id="join-pool-button"
+                  as={Link}
+                  style={{ color: theme.winterMainButton, color: 'white' }}
+                  to={`/migrate`}
+                >
                   <Trans>Migrate Pool</Trans>
                 </MigrateButtonPrimary>
                 <ResponsiveButtonPrimary
                   id="join-pool-button"
-                  style={{ background: '#0f2e40', color: '#4cc1d5' }}
+                  style={{ color: 'white' }}
                   as={Link}
                   to={`/add/${chainSymbol}`}
                 >
@@ -162,25 +184,26 @@ export default function Pool() {
             </TitleRow>
             <MainContentWrapper>
               {positionsLoading ? (
-                <LoadingRows>
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                </LoadingRows>
-              ) : filteredPositions && filteredPositions.length > 0 ? (
-                <PositionList positions={filteredPositions} />
+                // <LoadingRows>
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                //   <div />
+                // </LoadingRows>
+                <Loader style={{ margin: 'auto' }} stroke="white" size={'30px'} />
+              ) : _filteredPositions && _filteredPositions.length > 0 ? (
+                <PositionList positions={_filteredPositions} />
               ) : (
                 <NoLiquidity>
-                  <TYPE.body color={theme.text3} textAlign="center">
+                  <TYPE.body color={'white'} textAlign="center">
                     {/* <Inbox size={48} strokeWidth={1} style={{ marginBottom: '.5rem' }} /> */}
                     <div>
                       <Trans>You do not have any liquidity positions.</Trans>
@@ -188,7 +211,12 @@ export default function Pool() {
                   </TYPE.body>
                   {showConnectAWallet && (
                     <ButtonPrimary
-                      style={{ marginTop: '2em', padding: '8px 16px', background: '#5d32ed', color: 'white' }}
+                      style={{
+                        marginTop: '2em',
+                        padding: '8px 16px',
+                        background: theme.winterMainButton,
+                        color: 'white',
+                      }}
                       onClick={toggleWalletModal}
                     >
                       <Trans>Connect a wallet</Trans>
@@ -199,7 +227,7 @@ export default function Pool() {
             </MainContentWrapper>
 
             <ResponsiveRow>
-              {closedPositions.length > 0 ? (
+              {/* {closedPositions.length > 0 ? (
                 <ShowInactiveToggle>
                   <label>
                     <TYPE.body onClick={() => setUserHideClosedPositions(!userHideClosedPositions)}>
@@ -212,7 +240,7 @@ export default function Pool() {
                     checked={!userHideClosedPositions}
                   />
                 </ShowInactiveToggle>
-              ) : null}
+              ) : null} */}
             </ResponsiveRow>
           </AutoColumn>
         </AutoColumn>

@@ -1,5 +1,10 @@
 overrideExisting: true
-schema: ['https://api.thegraph.com/subgraphs/name/iliaazhel/karasb', 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb-farming', 'https://api.thegraph.com/subgraphs/name/iliaazhel/staker']
+schema:
+  [
+    'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
+    'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra-farming',
+    'https://api.thegraph.com/subgraphs/name/iliaazhel/staker'
+  ]
 documents: 'src/**/!(*.d).{ts,tsx}'
 generates:
   ./src/state/data/generated.ts:

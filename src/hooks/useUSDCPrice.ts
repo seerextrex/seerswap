@@ -11,7 +11,7 @@ import { useActiveWeb3React } from './web3'
 const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
   //TODO
   // [SupportedChainId.BINANCE]: CurrencyAmount.fromRawAmount(USDC_BINANCE, 100_000e6),
-  [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 0),
+  [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 100_000e3),
 }
 
 /**
@@ -24,12 +24,10 @@ export default function useUSDCPrice(currency?: Currency): Price<Currency, Token
   const amountOut = chainId ? STABLECOIN_AMOUNT_OUT[chainId] : undefined
   const stablecoin = amountOut?.currency
 
-  const v2USDCTrade = useV2TradeExactOut(currency, amountOut, {
-    maxHops: 2,
-  })
   const v3USDCTrade = useBestV3TradeExactOut(currency, amountOut)
 
   return useMemo(() => {
+
     if (!currency || !stablecoin) {
       return undefined
     }
@@ -39,17 +37,13 @@ export default function useUSDCPrice(currency?: Currency): Price<Currency, Token
       return new Price(stablecoin, stablecoin, '1', '1')
     }
 
-    // use v2 price if available, v3 as fallback
     if (v3USDCTrade.trade) {
       const { numerator, denominator } = v3USDCTrade.trade.route.midPrice
-      return new Price(currency, stablecoin, denominator, numerator)
-    } else if (v2USDCTrade) {
-      const { numerator, denominator } = v2USDCTrade.route.midPrice
       return new Price(currency, stablecoin, denominator, numerator)
     }
 
     return undefined
-  }, [currency, stablecoin, v2USDCTrade, v3USDCTrade.trade])
+  }, [currency, stablecoin, v3USDCTrade.trade])
 }
 
 export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null) {

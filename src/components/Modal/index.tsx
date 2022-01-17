@@ -34,17 +34,18 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
 
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
-    background-color: ${({ theme }) => theme.bg0};
-    border: 1px solid ${({ theme }) => theme.bg1};
+    background-color: ${({ theme }) => 'rgb(179, 230, 255)'};
+    border: 1px solid ${({ theme }) => 'rgb(179, 230, 255)'};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
-    padding: 0px;
-    width: 50vw;
+    padding: .1rem;
+    width: 60vw;
     overflow-y: auto;
     overflow-x: hidden;
+    color: #080064;
 
     align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
 
-    max-width: 600px;
+    max-width: 700px;
     ${({ maxHeight }) =>
       maxHeight &&
       css`
@@ -82,7 +83,8 @@ interface ModalProps {
   minHeight?: number | false
   maxHeight?: number
   initialFocusRef?: React.RefObject<any>
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  onHide?: () => void
 }
 
 export default function Modal({
@@ -92,6 +94,7 @@ export default function Modal({
   maxHeight = 90,
   initialFocusRef,
   children,
+  onHide
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -123,6 +126,7 @@ export default function Modal({
               onDismiss={onDismiss}
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
+              onClick={onHide}
             >
               <StyledDialogContent
                 {...(isMobile

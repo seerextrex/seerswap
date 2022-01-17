@@ -20,6 +20,7 @@ import { AutoColumn } from 'components/Column'
 import { FiatValue } from './FiatValue'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 import Loader from '../Loader'
+import useUSDCPrice from '../../hooks/useUSDCPrice'
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -28,7 +29,10 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   // background-color: ${({ theme, hideInput }) => (hideInput ? 'transparent' : theme.bg2)};
   background-color: transparent;
   z-index: 1;
-  width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+  width: 100% !important;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 100%!important;
+  `}
 `
 
 const FixedContainer = styled.div`
@@ -53,11 +57,11 @@ const Container = styled.div<{ hideInput: boolean }>`
   // }
 `
 
-const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean }>`
+const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean; page?: string}>`
   align-items: center;
   font-size: 24px;
   font-weight: 500;
-  background-color: ${({ selected, theme }) => (selected ? '#36405b' : '#5d32ed')};
+  background-color: ${({ selected, theme }) => (selected ? '#759FE3' : theme.winterMainButton)};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
   border-radius: 16px;
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
@@ -73,7 +77,8 @@ const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boole
   margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
   :focus,
   :hover {
-    background-color: ${({ selected, theme }) => (selected ? darken(0.05, '#36405b') : darken(0.05, '#5d32ed'))};
+    background-color: ${({ selected, theme, page }) =>
+      page === 'addLiq'? 'unset': selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
   }
 
   ${({ shallow }) =>
@@ -90,14 +95,30 @@ const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boole
   ${({ swap }) =>
     swap &&
     css`
-      width: 170px;
+      width: 218px;
     `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    width: 100%;
+    margin: 10px 0 0 0;
+  }`}
 `
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ hideCurrency }) => (hideCurrency ? '1rem 1rem 0.75rem 0' : '1rem 1rem 0.75rem 1rem')};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    flex-direction: column;
+    align-items: stretch;
+  }`}
+`
+const AutoColumnStyled = styled(AutoColumn)`
+  left: 1rem;
+  bottom: -13% !important;
+  ${({theme, page}) => theme.mediaWidth.upToExtraSmall`
+  left: ${page === 'addLiq' ? '0' : ''};
+  bottom: -25% !important;
+  `}
 `
 
 const LabelRow = styled.div`
@@ -115,7 +136,16 @@ const LabelRow = styled.div`
 
 const FiatRow = styled(LabelRow)`
   justify-content: flex-end;
-  padding: ${({ shallow }) => (shallow ? '0' : '0 1rem 1rem')};
+  padding: ${({ shallow, page }) => (page === 'addLiq' ? '0 1rem' :shallow ? '0' : '0 1rem 1rem')};
+  margin-top: ${({page})=> (page === 'pool' ? '.3rem' : '0')};
+  
+  span {
+    &:hover {
+      color: white;
+      cursor: default;
+    }
+  }
+  
 `
 
 const Aligner = styled.span`
@@ -125,7 +155,16 @@ const Aligner = styled.span`
   width: 100%;
   position: relative;
 `
-
+const NumericalInputStyled = styled(NumericalInput)`
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    font-size: 18px!important;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    text-align: left!important;
+    width: 100%;
+    margin: 15px 0 10px!important;
+  }`}
+`
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   margin: 0 0.25rem 0 0.35rem;
   height: 35%;
@@ -141,26 +180,27 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
   font-size:  ${({ active }) => (active ? '16px' : '16px')};
 `
 
-const StyledBalanceMax = styled.button<{ disabled?: boolean }>`
-  background-color: transparent;
+const MaxButton = styled.button`
+  background-color: ${({page, theme}) => page === 'addLiq' ? theme.winterMainButton : '#245376'};
+  border-radius: 6px;
+  color: white;
+  margin-right: 10px;
   border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  color: ${({ theme }) => theme.primaryText1};
-  opacity: ${({ disabled }) => (!disabled ? 1 : 0.4)};
-  pointer-events: ${({ disabled }) => (!disabled ? 'initial' : 'none')};
-  margin-left: 0.25rem;
+  padding: 4px 6px;
 
-  :focus {
-    outline: none;
+  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+    margin: 10px 0 0 0;
+  `}
+
+  &:hover {
+    background-color: ${({page, theme}) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0.5rem;
-  `};
+      width: 100%;
+      margin-top: 10px;
+      margin-right: 0;
+  `}
 `
 
 interface CurrencyInputPanelProps {
@@ -189,6 +229,7 @@ interface CurrencyInputPanelProps {
   disabled: boolean
   shallow: boolean
   swap: boolean
+  page: string
 }
 
 export default function CurrencyInputPanel({
@@ -216,6 +257,7 @@ export default function CurrencyInputPanel({
   disabled,
   shallow = false,
   swap = false,
+  page,
   ...rest
 }: CurrencyInputPanelProps) {
   const { chainId } = useActiveWeb3React()
@@ -226,9 +268,31 @@ export default function CurrencyInputPanel({
 
   const balance = useCurrencyBalance(account ?? undefined, currency)
 
+  const currentPrice = useUSDCPrice(currency)
+
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
+
+  const balanceString = useMemo(() => {
+      if (!balance) return 'Loading...'
+
+      const _balance = balance.toFixed()
+
+      if (_balance.split('.')[0].length > 10) {
+        return _balance.slice(0, 7) + '...'
+      }
+
+      if (+balance.toFixed() === 0) {
+        return '0'
+      }
+      if (+balance.toFixed() < 0.0001) {
+        return '< 0.0001'
+      }
+
+    return  +balance.toFixed(3)
+
+  }, [balance])
 
   if (currency && currency.symbol === 'MATIC') {
     if (chainId === 137) {
@@ -240,44 +304,62 @@ export default function CurrencyInputPanel({
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (
-        <FixedContainer style={{ height: '80px' }}>
-          <AutoColumn gap="sm" justify="center" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+        <FixedContainer style={{ height: `${page === 'pool' ? '40px' : '80px'}` }}>
+          <AutoColumnStyled
+            gap="sm"
+            justify="center"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              marginTop: '18px',
+              position: 'absolute',
+              bottom: '10%',
+            }}
+          >
             {/* <Lock /> */}
             <TYPE.label fontSize="14px">
               <Trans>Price is outside specified price range. Single-asset deposit only.</Trans>
             </TYPE.label>
-          </AutoColumn>
+          </AutoColumnStyled>
         </FixedContainer>
       )}
+
       <Container hideInput={hideInput}>
         <InputRow
           hideCurrency={hideCurrency}
-          style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}
+          style={
+            hideInput
+              ? { borderRadius: '8px', padding: `${page === 'pool' ? '0' : ''}` }
+              : { padding: `${page === 'pool' ? '0' : ''}` }
+          }
           selected={!onCurrencySelect}
         >
           {!hideCurrency && (
             <CurrencySelect
+              page={page}
               selected={!!currency}
               hideInput={hideInput}
               className="open-currency-select-button"
               // style={{ backgroundColor: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
               shallow={shallow}
               swap={swap}
-              disabled={shallow}
+              disabled={shallow && page !== 'addLiq'}
               onClick={() => {
                 if (onCurrencySelect) {
                   setModalOpen(true)
                 }
               }}
             >
-              <Aligner centered={centered}>
+              <Aligner centered={centered}
+                       title={ balance ? balance.toSignificant(4) : ''}>
                 <RowFixed>
                   {pair ? (
                     <span style={{ marginRight: '0.5rem' }}>
                       <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
                     </span>
                   ) : currency ? (
-                    <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'18px'} />
+                    <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'24px'} />
                   ) : null}
                   {pair ? (
                     <StyledTokenName className="pair-name-container">
@@ -297,9 +379,11 @@ export default function CurrencyInputPanel({
                           }}
                         >
                           <span>
-                            {shallow && showBalance && balance
-                              ? `${balance.toSignificant(4)} ${currency.symbol}`
-                              : currency.symbol}
+                            {
+                              shallow && showBalance && balance && page === 'addLiq' && balance.toSignificant(4) < 0.0001? `< 0.0001 ${currency.symbol}` :
+                                  shallow && showBalance && balance
+                              ? `${balanceString} ${currency.symbol}`
+                                      :currency.symbol}
                           </span>
                           {showBalance && balance && !shallow ? (
                             <span
@@ -310,7 +394,7 @@ export default function CurrencyInputPanel({
                               }}
                               title={balance.toExact()}
                             >
-                              {balance.toSignificant(4)}
+                              {balanceString}
                             </span>
                           ) : (
                             showBalance &&
@@ -334,10 +418,11 @@ export default function CurrencyInputPanel({
               </Aligner>
             </CurrencySelect>
           )}
+          {(swap || page === 'addLiq') && !locked && currency && showMaxButton && <MaxButton page={page} onClick={onMax}>Max</MaxButton>}
           {!hideInput && (
             <>
-              <NumericalInput
-                style={{ backgroundColor: 'transparent', textAlign: hideCurrency ? 'left' : 'right', fontSize: '20px' }}
+              <NumericalInputStyled
+                style={{ backgroundColor: 'transparent', textAlign: hideCurrency ? 'left' : 'right', fontSize: '20px', marginTop: page === 'pool' ? '1rem' : '0'}}
                 className="token-amount-input"
                 value={value}
                 disabled={disabled}
@@ -349,12 +434,23 @@ export default function CurrencyInputPanel({
             </>
           )}
         </InputRow>
-        {!hideInput && !hideBalance && !locked && value && (
-          <FiatRow shallow={shallow}>
+        {!hideInput && !hideBalance && !locked && value ? (
+          <FiatRow shallow={shallow} page={page}>
             <RowBetween>
               <FiatValue fiatValue={fiatValue} priceImpact={priceImpact} />
             </RowBetween>
           </FiatRow>
+        ) : currency && swap && currentPrice ? (
+          <FiatRow page={page}>
+            <RowBetween>{`1 ${currency.symbol} = $${currentPrice.toFixed()}`}</RowBetween>
+          </FiatRow>
+        ) : (
+          currency &&
+          swap && (
+            <FiatRow page={page}>
+              <RowBetween>Estimating...</RowBetween>
+            </FiatRow>
+          )
         )}
       </Container>
       {onCurrencySelect && (

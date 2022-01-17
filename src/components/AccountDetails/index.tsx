@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react'
+import {useCallback, useContext, useEffect} from 'react'
 import styled, { ThemeContext } from 'styled-components/macro'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import { useActiveWeb3React } from '../../hooks/web3'
@@ -30,6 +30,8 @@ const HeaderRow = styled.div`
 
 const UpperSection = styled.div`
   position: relative;
+
+  color: #080064;
 
   h5 {
     margin: 0;
@@ -93,7 +95,7 @@ const LowerSection = styled.div`
   padding: 1.5rem;
   flex-grow: 1;
   overflow: auto;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => 'rgb(179,230,255)'};
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 
@@ -123,6 +125,7 @@ const AccountControl = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: #080064;
   }
 `
 
@@ -133,7 +136,7 @@ const AddressLink = styled(ExternalLink)<{ hasENS: boolean; isENS: boolean }>`
   font-size: 0.825rem;
   display: flex;
   :hover {
-    color: ${({ theme }) => theme.text2};
+    color: #080064;
   }
 `
 
@@ -157,7 +160,7 @@ const WalletName = styled.div`
   width: initial;
   font-size: 0.825rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.text3};
+  color: ${({ theme }) => '#080064'};
 `
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -272,7 +275,7 @@ export default function AccountDetails({
                 <div>
                   {connector !== injected && connector !== walletlink && (
                     <WalletAction
-                      style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
+                      style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px', color: '#080064' }}
                       onClick={() => {
                         ;(connector as any).close()
                       }}
@@ -316,7 +319,7 @@ export default function AccountDetails({
                       <div>
                         {account && (
                           <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>
+                            <span style={{ marginLeft: '4px', color: '#080064' }}>
                               <Trans>Copy Address</Trans>
                             </span>
                           </Copy>
@@ -328,7 +331,7 @@ export default function AccountDetails({
                             href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}
                           >
                             <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>
+                            <span style={{ marginLeft: '4px', color: '#080064' }}>
                               <Trans>View on Explorer</Trans>
                             </span>
                           </AddressLink>
@@ -342,7 +345,7 @@ export default function AccountDetails({
                       <div>
                         {account && (
                           <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>
+                            <span style={{ marginLeft: '4px', color: '#080064' }}>
                               <Trans>Copy Address</Trans>
                             </span>
                           </Copy>
@@ -353,8 +356,8 @@ export default function AccountDetails({
                             isENS={false}
                             href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}
                           >
-                            <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>
+                            <LinkIcon size={16} color="#080064" />
+                            <span style={{ marginLeft: '4px', color: '#080064' }}>
                               <Trans>View on Explorer</Trans>
                             </span>
                           </AddressLink>
@@ -371,7 +374,7 @@ export default function AccountDetails({
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
           <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-            <TYPE.body>
+            <TYPE.body style={{ color: '#080064' }}>
               <Trans>Recent Transactions</Trans>
             </TYPE.body>
             <LinkStyledButton onClick={clearAllTransactionsCallback}>
@@ -383,7 +386,7 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <TYPE.body color={theme.text1}>
+          <TYPE.body color={'#080064'}>
             <Trans>Your transactions will appear here...</Trans>
           </TYPE.body>
         </LowerSection>

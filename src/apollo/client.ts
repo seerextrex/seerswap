@@ -21,7 +21,7 @@ export const blockClient = new ApolloClient({
 })
 
 export const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb',
+    uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -36,7 +36,6 @@ export const client = new ApolloClient({
 })
 
 export const stakerClient = new ApolloClient({
-    // 'https://api.thegraph.com/subgraphs/name/iliaazhel/staker'  current
     uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-staking',
     cache: new InMemoryCache(),
     queryDeduplication: true,
@@ -52,7 +51,7 @@ export const stakerClient = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb-farming',
+    uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra-farming',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

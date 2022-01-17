@@ -3,6 +3,15 @@ import { STAKER_ADDRESS } from "../constants/addresses";
 
 //Farming
 
+export const ONE_FARMING_EVENT = () => gql`
+query incentive {
+   incentives(orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: ${Math.round(Date.now() / 1000)}}) {
+    startTime,
+    endTime
+  }
+}
+`
+
 export const FETCH_REWARDS = account => gql`
 query fetchRewards {
     rewards(orderBy: amount, orderDirection: desc, where: {owner: "${account}"}) {
@@ -43,6 +52,7 @@ export const FETCH_POOL = poolId => gql`
 query fetchPool {
     pools(where: { id: "${poolId}" }) {
         id
+        fee
         token0 {
             id
             decimals
@@ -53,9 +63,115 @@ query fetchPool {
             decimals
             symbol
         }
-
+        sqrtPrice
+        liquidity
+        tick
+        feesUSD
     }
 }`
+
+export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => {
+  return gql`
+  query feeHourData {
+    feeHourDatas (first: 1000, where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+}
+
+export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
+  query lastFeeHourData {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}" }) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+export const CHART_FEE_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
+  query lastNotEmptyHourData {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}", timestamp_lt: ${timestamp} }) {
+      id
+      pool
+      fee
+      changesCount
+      timestamp
+      minFee
+      maxFee
+      startFee
+      endFee
+    }
+  }
+`
+
+export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
+  query lastNotEmptyPoolHourData {
+    poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: "${pool}", periodStartUnix_lt: ${timestamp} }) {
+      periodStartUnix
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
+export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
+query lastPoolHourData {
+ 
+  poolHourDatas(
+      first: 1
+      where: { pool: "${pool}" }
+      orderBy: periodStartUnix, 
+      orderDirection: desc,
+    ) {
+      periodStartUnix
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
+export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimestamp) => gql`
+  query poolHourData {
+    poolHourDatas (
+      first: 1000
+      where: { pool: "${pool}", periodStartUnix_gte: ${startTimestamp}, periodStartUnix_lte: ${endTimestamp} }
+      orderBy: periodStartUnix
+      orderDirection: asc
+      subgraphError: allow
+    ) {
+      periodStartUnix
+      volumeUSD
+      tvlUSD
+      feesUSD
+    }
+  }
+`
+
+export const TOTAL_STATS = (block?: number) => gql`
+  query totalStats {
+    factories ${block ? `(block: { number: ${block} })` : ''} {
+      totalVolumeUSD
+      totalValueLockedUSD
+    }
+  }
+`
 
 export const LAST_EVENT = () => gql`
 query lastEvent {
@@ -99,6 +215,16 @@ query currentEvents {
         ended
     }
 }`
+
+export const FROZEN_STAKED = (account: string) => gql`
+   query frozenStaked  {
+     stakeTxes (where: {owner: "${account.toLowerCase()}", timestamp_gte: ${Math.round(Date.now()  / 1000)}}, orderBy: timestamp, orderDirection: asc) {
+     timestamp
+     stakedALGBAmount
+     xALGBAmount
+   }
+}
+`
 
 export const TRANSFERED_POSITIONS = (account, chainId) => gql`
     query transferedPositions {
@@ -164,6 +290,43 @@ query positionsOwnedForPool {
 
 //Info
 
+export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
+  query swapsPerDay {
+    swaps (first: 1000, where: {timestamp_gt: ${startTimestamp}, timestamp_lt: ${Math.round(Date.now() / 1000)}} ) {
+      pool {
+        id
+      }
+      timestamp
+      tick
+      amountUSD
+    }
+  }
+`
+export const ALL_POSITIONS = gql`
+query allPositions {
+  positions (first: 1000) {
+    pool {
+      id
+    }
+    id
+    liquidity
+    tickLower {
+      tickIdx
+      liquidityGross
+    }
+    tickUpper {
+      tickIdx
+      liquidityGross
+    }
+    transaction {
+      mints {
+        amountUSD
+      }
+    }
+  }
+}
+`
+
 export const TOP_POOLS = gql`
 query topPools {
   pools(first: 50, orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
@@ -173,17 +336,17 @@ query topPools {
 `
 
 export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: string[]) => {
-    let poolString = `[`
-    pools.map((address) => {
-        return (poolString += `"${address}",`)
-    })
-    poolString += ']'
-    const queryString =
-        `
+  let poolString = `[`
+  pools.map((address) => {
+    return (poolString += `"${address}",`)
+  })
+  poolString += ']'
+  const queryString =
+    `
       query pools {
         pools(where: {id_in: ${poolString}},` +
-        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           fee
           liquidity
@@ -194,14 +357,14 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
               symbol 
               name
               decimals
-              derivedETH
+              derivedMatic
           }
           token1 {
               id
               symbol 
               name
               decimals
-              derivedETH
+              derivedMatic
           }
           token0Price
           token1Price
@@ -210,10 +373,11 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
           totalValueLockedToken0
           totalValueLockedToken1
           totalValueLockedUSD
+          feesUSD
         }
       }
       `
-    return gql(queryString)
+  return gql(queryString)
 }
 
 
@@ -226,21 +390,21 @@ export const TOP_TOKENS = gql`
 `
 
 export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: string[]) => {
-    let tokenString = `[`
-    tokens.map((address) => {
-        return (tokenString += `"${address}",`)
-    })
-    tokenString += ']'
-    const queryString =
-        `
+  let tokenString = `[`
+  tokens.map((address) => {
+    return (tokenString += `"${address}",`)
+  })
+  tokenString += ']'
+  const queryString =
+    `
       query tokens {
         tokens(where: {id_in: ${tokenString}},` +
-        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           symbol
           name
-          derivedETH
+          derivedMatic
           volumeUSD
           volume
           txCount
@@ -251,7 +415,7 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
       }
       `
 
-    return gql(queryString)
+  return gql(queryString)
 }
 
 export const GET_STAKE = (id: string) => gql`
@@ -260,7 +424,7 @@ query stakeHistory {
     currentStakedAmount
     earnedForAllTime
     ALGBbalance
-    xALGBminted
+    xALGBtotalSupply
   }
   stakes (where:{id: "${id}"}) {
     stakedALGBAmount
@@ -286,13 +450,38 @@ query stake {
 //Blocklytics
 
 export const GET_BLOCKS = (timestamps: string[]) => {
-    let queryString = 'query blocks {'
-    queryString += timestamps.map((timestamp) => {
-        return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
-            } }) {
+  let queryString = 'query blocks {'
+  queryString += timestamps.map((timestamp) => {
+    return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
+      } }) {
           number
         }`
-    })
-    queryString += '}'
-    return gql(queryString)
+  })
+  queryString += '}'
+  return gql(queryString)
 }
+
+
+//Ticks
+
+export const FETCH_TICKS = () => gql`
+query surroundingTicks(
+  $poolAddress: String!
+  $tickIdxLowerBound: BigInt!
+  $tickIdxUpperBound: BigInt!
+  $skip: Int!
+) {
+  ticks(
+    subgraphError: allow
+    first: 1000
+    skip: $skip
+    where: { poolAddress: $poolAddress, tickIdx_lte: $tickIdxUpperBound, tickIdx_gte: $tickIdxLowerBound }
+  ) {
+    tickIdx
+    liquidityGross
+    liquidityNet
+    price0
+    price1
+  }
+}
+`

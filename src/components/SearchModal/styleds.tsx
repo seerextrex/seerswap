@@ -28,7 +28,7 @@ export const MenuItem = styled(RowBetween)`
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
   :hover {
-    background-color: ${({ theme, disabled }) => !disabled && theme.bg2};
+    background-color: ${({ theme, disabled }) => !disabled && '#9ddcfb'};
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
 `
@@ -44,13 +44,14 @@ export const SearchInput = styled.input`
   align-items: center;
   width: 100%;
   white-space: nowrap;
-  background: none;
+  background: white;
   border: none;
   outline: none;
   border-radius: 8px;
-  color: ${({ theme }) => theme.text1};
-  border-style: solid;
-  border: 1px solid ${({ theme }) => theme.bg3};
+  // color: ${({ theme }) => theme.text1};
+  color: black;
+  // border-style: solid;
+  // border: 1px solid ${({ theme }) => theme.bg3};
   -webkit-appearance: none;
 
   font-size: 16px;
@@ -60,7 +61,7 @@ export const SearchInput = styled.input`
   }
   transition: border 100ms;
   :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
+    border: 1px solid ${({ theme }) => theme.winterMainButton};
     outline: none;
   }
 `

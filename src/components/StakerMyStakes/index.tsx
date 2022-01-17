@@ -14,6 +14,17 @@ import Modal from '../Modal'
 import { PageTitle } from '../PageTitle'
 
 import { useLocation, useParams } from 'react-router'
+import StakerMyStakesMobile from './StakerMyStakesMobile'
+
+import AlgebraLogo from '../../assets/images/algebra-logo.png'
+import USDCLogo from '../../assets/images/usdc-logo.png'
+import WMATICLogo from '../../assets/images/matic-logo.png'
+import StakerMyStakesMobileSkeleton from './StakerMyStakesMobileSkeleton'
+
+import { isMobile } from 'react-device-detect'
+import {log} from "util";
+import {darken} from "polished";
+import CurrencyLogo from "../CurrencyLogo";
 
 const skeletonAnimation = keyframes`
   100% {
@@ -24,6 +35,7 @@ const skeletonAnimation = keyframes`
 const skeletonGradient = css`
   position: relative;
   overflow: hidden;
+
   &::after {
     position: absolute;
     top: 0;
@@ -34,8 +46,8 @@ const skeletonGradient = css`
     background-image: linear-gradient(
       90deg,
       rgba(91, 105, 141, 0) 0,
-      rgba(91, 105, 141, 0.2) 25%,
-      rgba(91, 105, 141, 0.5) 60%,
+      rgba(94, 131, 225, 0.25) 25%,
+      rgba(94, 131, 225, 0.5) 60%,
       rgba(91, 105, 141, 0)
     );
     animation-name: ${skeletonAnimation};
@@ -52,19 +64,22 @@ const Stakes = styled.div`
   overflow-x: hidden;
 `
 
-const TokenIcon = styled.div`
+export const TokenIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 35px;
   height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#3d4a6a')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
+  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
+  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
+  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
   border-radius: 50%;
   user-select: none;
 
   ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
+  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
+  background-size: contain;
+  background-repeat: no-repeat;
 
   &:nth-of-type(2) {
     margin-left: -8px;
@@ -84,21 +99,56 @@ const Stake = styled.div`
     }
   }
 
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    // display: none;
+    flex-direction: column;
+    background: rgba(60, 97, 126, 0.5);
+    padding: 1rem;
+    border-radius: 8px;
+
+    & > * {
+      &:not(:last-of-type) {
+        max-width: 100%;
+        min-width: 100%;
+      }
+    }
+  `}
+
   ${({ navigatedTo }) =>
     navigatedTo &&
     css`
-      background-color: #1a1029;
+      background-color: ${({theme}) => darken(0.05, 'rgba(91,183,255,0.6)')};
+      border-radius: 5px;
+      padding: 8px 5px;
     `}
 `
 
-const StakeId = styled.div`
+export const StakeId = styled.div`
   display: flex;
   align-items: center;
   min-width: 96px !important;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-bottom: 1rem;
+
+    &::before {
+      content: "ID";
+      margin-right: 1rem;
+    }
+  `}
 `
 
-const StakePool = styled.div`
+export const StakePool = styled.div`
   display: flex;
+  align-items: center;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-bottom: 1rem;
+    &::before {
+      content: "Pool";
+      margin-right: 1rem;
+    }
+`}
 `
 const StakeSeparator = styled.div`
   display: flex;
@@ -109,20 +159,35 @@ const StakeSeparator = styled.div`
   margin: 0 1rem;
 `
 
-const StakeReward = styled.div`
+export const StakeReward = styled.div<{reward?: string}>`
   display: flex;
+  align-items: center;
 
   & > ${TokenIcon} {
     // margin-right: 16px;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-bottom: 1rem;
+  &::before {
+    content: "${p => p.reward || 'Reward'}";
+    margin-right: 1rem;
+  }
+`}
 `
 
-const StakeCountdown = styled.div`
+export const StakeCountdown = styled.div`
   font-size: 16px;
   margin: auto;
 
-  max-width: 94px !important;
-  min-width: 94px !important;
+  max-width: 105px !important;
+  min-width: 105px !important;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-bottom: 1rem;
+    max-width: unset !important;
+    min-width: unset !important;
+  `}
 
   & > * {
     ${({ skeleton }) =>
@@ -130,7 +195,7 @@ const StakeCountdown = styled.div`
         ? css`
             width: 80px;
             height: 16px;
-            background: #3d4a6a;
+            background: #5aa7df;
             border-radius: 4px;
 
             ${skeletonGradient}
@@ -145,13 +210,17 @@ const StakeActions = styled.div`
   justify-content: flex-end;
 `
 
-const StakeButton = styled.button`
+export const StakeButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
-  background-color: ${({ skeleton }) => (skeleton ? '#3d4a6a' : '#4829bb')};
+  background-color: ${({ skeleton, theme }) => (skeleton ? '#5aa7df' : theme.winterMainButton)};
   color: white;
   min-width: 126px;
+
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
 
   ${({ disabled }) =>
     disabled &&
@@ -167,6 +236,10 @@ const StakeButton = styled.button`
           width: 80px;
         `
       : null}
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `}
 `
 
 const StakeListHeader = styled.div`
@@ -174,23 +247,34 @@ const StakeListHeader = styled.div`
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #202635;
+
   & > * {
     max-width: calc(100% / 6);
     min-width: calc(100% / 6);
     font-weight: 500;
-    color: #ababab;
+    color: white;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding-bottom: 0;
+    display: none;
+    `};
 `
 
-const TokensNames = styled.div`
+export const TokensNames = styled.div`
   margin-left: 1rem;
+  ${({theme}) => theme.mediaWidth.upToMedium`
+    margin-left: .2rem;
+    font-size: 14px;
+  `}
+
   & > * {
     ${({ skeleton }) =>
       skeleton
         ? css`
             width: 40px;
             height: 16px;
-            background: #3d4a6a;
+            background: #5aa7df;
             margin-bottom: 3px;
             border-radius: 4px;
             ${skeletonGradient}
@@ -222,6 +306,7 @@ const ModalTitle = styled.div`
   margin-bottom: 1rem;
   font-size: 18px;
   font-weight: 600;
+  color: #080064;
 `
 
 const RecipientInput = styled.input`
@@ -235,7 +320,7 @@ const SendNFTButton = styled.button`
   padding: 10px 16px;
   width: 100%;
   color: white;
-  background-color: #4829bb;
+  background-color: ${({ theme }) => theme.winterMainButton};
   border-radius: 8px;
   border: none;
 
@@ -244,15 +329,15 @@ const SendNFTButton = styled.button`
   }
 `
 
-const MoreButton = styled.button`
+export const MoreButton = styled.button`
   border: none;
   background-color: transparent;
 `
 const SendNFTWarning = styled.div`
   margin-bottom: 1rem;
   padding: 8px 12px;
-  background: #373717;
-  color: #ffff65;
+  background: #e4e46b;
+  color: #333303;
   border-radius: 8px;
 }
 `
@@ -398,14 +483,15 @@ export function StakerMyStakes({
   function getTable(positions, staked: boolean) {
     return positions.map((el, i) => (
       <Stake key={i} navigatedTo={hash === `#${el.tokenId}`}>
+        {/*{console.log(el)}*/}
         <StakeId>
           <FarmingPositionInfo el={el} />
         </StakeId>
         <StakePool>
           {staked && (
             <>
-              <TokenIcon name={el.pool.token0.symbol}>{el.pool.token0.symbol.slice(0, 2)}</TokenIcon>
-              <TokenIcon name={el.pool.token1.symbol}>{el.pool.token1.symbol.slice(0, 2)}</TokenIcon>
+              <CurrencyLogo currency={{address: el.token0, symbol: el.pool.token0.symbol}} size={'35px'}/>
+              <CurrencyLogo currency={{address: el.token1, symbol: el.pool.token1.symbol}} size={'35px'}/>
               <TokensNames>
                 <div>{el.pool.token0.symbol}</div>
                 <div>{el.pool.token1.symbol}</div>
@@ -415,8 +501,8 @@ export function StakerMyStakes({
         </StakePool>
         {/* <StakeSeparator>for</StakeSeparator> */}
         {staked && (
-          <StakeReward>
-            <TokenIcon name={el.rewardToken.symbol}>{el.rewardToken.symbol.slice(0, 2)}</TokenIcon>
+          <StakeReward reward={'Reward'}>
+            <CurrencyLogo currency={{address: el.rewardToken.id, symbol: el.rewardToken.symbol}} size={'35px'}/>
             <TokensNames>
               <div>{formatReward(el.earned)}</div>
               <div>{el.rewardToken.symbol}</div>
@@ -424,8 +510,8 @@ export function StakerMyStakes({
           </StakeReward>
         )}
         {staked && (
-          <StakeReward>
-            <TokenIcon name={el.bonusRewardToken}>{el.bonusRewardToken.symbol.slice(0, 2)}</TokenIcon>
+          <StakeReward reward={'Bonus'}>
+            <CurrencyLogo currency={{address: el.bonusRewardToken.id, symbol: el.bonusRewardToken.symbol}} size={'35px'}/>
             <TokensNames>
               <div>{formatReward(el.bonusEarned)}</div>
               <div>{el.bonusRewardToken.symbol}</div>
@@ -441,10 +527,21 @@ export function StakerMyStakes({
         <StakeActions>
           {staked ? (
             el.endTime * 1000 > Date.now() ? (
-              // <StakeButton onClick={() => setSendModal(el.L2tokenId)}>Send NFT</StakeButton>
-              <MoreButton onClick={() => setSendModal(el.L2tokenId)}>
-                <Send color={'white'} size={18} />
-              </MoreButton>
+              <>
+                {el.startTime * 1000 > Date.now() && (
+                  <StakeButton
+                    onClick={() => {
+                      setGettingReward({ id: el.tokenId, state: 'pending' })
+                      getRewardsHandler(el.tokenId, { ...el })
+                    }}
+                  >
+                    Undeposit
+                  </StakeButton>
+                )}
+                <MoreButton onClick={() => setSendModal(el.L2tokenId)}>
+                  <Send color={'white'} size={18} />
+                </MoreButton>
+              </>
             ) : (
               staked && (
                 <>
@@ -588,13 +685,14 @@ export function StakerMyStakes({
         <>
           {stakedNFTs && (
             <>
+              {' '}
               <StakeListHeader>
-                <div style={{ minWidth: '96px' }}>ID</div>
+                <div style={{ minWidth: `${window.innerWidth < 500 ? '' : '96px'}` }}>ID</div>
                 <div>Pool</div>
                 <div>Earned</div>
                 <div>Bonus</div>
                 <div>End time</div>
-                <div></div>
+                <div />
               </StakeListHeader>
               <Stakes>{getTable(stakedNFTs, true)}</Stakes>
             </>

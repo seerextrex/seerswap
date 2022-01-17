@@ -52,6 +52,10 @@ import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { BodyWrapper } from '../AppBody'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Link } from 'react-router-dom'
+import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
+import usePrevious from '../../hooks/usePrevious'
+
+import ReactGA from 'react-ga'
 
 const ZERO = JSBI.BigInt(0)
 
@@ -128,8 +132,19 @@ function V2PairMigration({
   const theme = useTheme()
   const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
 
+  const networkFailed = useIsNetworkFailed()
+
   const pairFactory = useSingleCallResult(pair, 'factory')
-  const isNotUniswap = pairFactory.result?.[0] && pairFactory.result[0].toLowerCase() !== v2FactoryAddress.toLowerCase()
+  const isNotUniswap = !pairFactory.result
+    ? null
+    : pairFactory.result?.[0] && pairFactory.result[0].toLowerCase() !== v2FactoryAddress.toLowerCase()
+  const prevIsNotUniswap = usePrevious(isNotUniswap)
+  const _isNotUniswap = useMemo(() => {
+    if (isNotUniswap === null && prevIsNotUniswap) {
+      return prevIsNotUniswap
+    }
+    return isNotUniswap
+  }, [])
 
   const deadline = useTransactionDeadline() // custom from users settings
   const blockTimestamp = useCurrentBlockTimestamp()
@@ -266,7 +281,7 @@ function V2PairMigration({
     } else {
       await approveManually()
     }
-  }, [isNotUniswap, gatherPermitSignature, approveManually])
+  }, [gatherPermitSignature, approveManually])
 
   const addTransaction = useTransactionAdder()
   const isMigrationPending = useIsTransactionPending(pendingMigrationHash ?? undefined)
@@ -340,11 +355,17 @@ function V2PairMigration({
       .multicall(data)
       .then((gasEstimate) => {
         return migrator.multicall(data, { gasLimit: 10000000 }).then((response: TransactionResponse) => {
+          ReactGA.event({
+            category: 'Migrate',
+            action: `${isNotUniswap ? 'SushiSwap' : 'QuickSwap'}->Algebra`,
+            label: `${currency0.symbol}/${currency1.symbol}`,
+          })
+
           addTransaction(response, {
             type: TransactionType.MIGRATE_LIQUIDITY_V3,
             baseCurrencyId: currencyId(currency0),
             quoteCurrencyId: currencyId(currency1),
-            isFork: isNotUniswap,
+            isFork: _isNotUniswap,
           })
           setPendingMigrationHash(response.hash)
         })
@@ -354,7 +375,7 @@ function V2PairMigration({
       })
   }, [
     chainId,
-    isNotUniswap,
+    _isNotUniswap,
     migrator,
     noLiquidity,
     blockTimestamp,
@@ -386,17 +407,17 @@ function V2PairMigration({
             <RowFixed style={{ marginLeft: '8px' }}>
               <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={24} />
               <TYPE.mediumHeader style={{ marginLeft: '8px' }}>
-                {currency0.symbol}/{currency1.symbol} LP Tokens
+                {currency1.symbol}/{currency0.symbol} LP Tokens
               </TYPE.mediumHeader>
             </RowFixed>
             <Badge
               variant={BadgeVariant.WARNING}
               style={{
-                backgroundColor: isNotUniswap ? '#48062b' : '#0f2e40',
-                color: isNotUniswap ? '#f241a5' : '#48b9cd',
+                backgroundColor: 'white',
+                color: _isNotUniswap ? '#48b9cd' : '#f241a5',
               }}
             >
-              {isNotUniswap ? 'SushiSwap' : 'QuickSwap'}
+              {_isNotUniswap ? 'SushiSwap' : 'QuickSwap'}
             </Badge>
           </RowBetween>
           <LiquidityInfo token0Amount={token0Value} token1Amount={token1Value} />
@@ -413,18 +434,20 @@ function V2PairMigration({
             <RowFixed style={{ marginLeft: '8px' }}>
               <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin={false} size={24} />
               <TYPE.mediumHeader style={{ marginLeft: '8px' }}>
-                {currency0.symbol}/{currency1.symbol} LP NFT
+                {currency1.symbol}/{currency0.symbol} LP NFT
               </TYPE.mediumHeader>
             </RowFixed>
             <Badge variant={BadgeVariant.PRIMARY}>Algebra</Badge>
           </RowBetween>
 
           {noLiquidity && (
-            <BlueCard style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <BlueCard
+              style={{ display: 'flex', backgroundColor: '#0e3459', flexDirection: 'column', alignItems: 'center' }}
+            >
               <AlertCircle color={theme.text1} style={{ marginBottom: '12px', opacity: 0.8 }} />
               <TYPE.body fontSize={14} style={{ marginBottom: 8, fontWeight: 500, opacity: 0.8 }} textAlign="center">
                 You are the first liquidity provider for this Algebra pool. Your liquidity will migrate at the current{' '}
-                {isNotUniswap ? 'SushiSwap' : 'QuickSwap'} price.
+                {_isNotUniswap ? 'SushiSwap' : 'QuickSwap'} price.
               </TYPE.body>
 
               <TYPE.body fontWeight={500} textAlign="center" fontSize={14} style={{ marginTop: '8px', opacity: 0.8 }}>
@@ -435,7 +458,7 @@ function V2PairMigration({
                 <AutoColumn gap="8px" style={{ marginTop: '12px' }}>
                   <RowBetween>
                     <TYPE.body fontWeight={500} fontSize={14}>
-                      {isNotUniswap ? 'SushiSwap' : 'QuickSwap'} {invertPrice ? currency1.symbol : currency0.symbol}{' '}
+                      {_isNotUniswap ? 'SushiSwap' : 'QuickSwap'} {invertPrice ? currency1.symbol : currency0.symbol}{' '}
                       Price:{' '}
                       {invertPrice
                         ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${currency0.symbol}`
@@ -452,7 +475,7 @@ function V2PairMigration({
               <AutoColumn gap="8px">
                 <RowBetween>
                   <TYPE.body fontSize={14}>
-                    {isNotUniswap ? 'SushiSwap' : 'QuickSwap'} {invertPrice ? currency1.symbol : currency0.symbol}{' '}
+                    {_isNotUniswap ? 'SushiSwap' : 'QuickSwap'} {invertPrice ? currency1.symbol : currency0.symbol}{' '}
                     Price:
                   </TYPE.body>
                   <TYPE.black fontSize={14}>
@@ -615,6 +638,8 @@ function V2PairMigration({
                   'Success! View pools'
                 ) : isMigrationPending ? (
                   <Dots>Migrating</Dots>
+                ) : networkFailed ? (
+                  <span>Connecting to network...</span>
                 ) : (
                   <span>Migrate</span>
                 )}
@@ -643,9 +668,18 @@ export default function MigrateV2Pair({
 
   const { chainId, account } = useActiveWeb3React()
 
+  const networkFailed = useIsNetworkFailed()
+
   // get pair contract
   const validatedAddress = isAddress(address)
   const pair = usePairContract(validatedAddress ? validatedAddress : undefined)
+  const prevPair = usePrevious(pair)
+  const _pair = useMemo(() => {
+    if (!pair && prevPair) {
+      return prevPair
+    }
+    return pair
+  }, [pair])
 
   // get token addresses from pair contract
   const token0AddressCallState = useSingleCallResult(pair, 'token0', undefined, NEVER_RELOAD)
@@ -654,7 +688,22 @@ export default function MigrateV2Pair({
 
   // get tokens
   const token0 = useToken(token0Address)
+  const prevToken0 = usePrevious(token0)
+  const _token0 = useMemo(() => {
+    if (!token0 && prevToken0) {
+      return prevToken0
+    }
+    return token0
+  }, [token0])
+
   const token1 = useToken(token1Address)
+  const prevToken1 = usePrevious(token1)
+  const _token1 = useMemo(() => {
+    if (!token1 && prevToken1) {
+      return prevToken1
+    }
+    return token1
+  }, [token1])
 
   // get liquidity token balance
   const liquidityToken: Token | undefined = useMemo(
@@ -664,16 +713,50 @@ export default function MigrateV2Pair({
 
   // get data required for V2 pair migration
   const pairBalance = useTokenBalance(account ?? undefined, liquidityToken)
+  const prevPairBalance = usePrevious(pairBalance)
+  const _pairBalance = useMemo(() => {
+    if (!pairBalance && prevPairBalance) {
+      return prevPairBalance
+    }
+
+    return pairBalance
+  }, [pairBalance])
+
   const totalSupply = useTotalSupply(liquidityToken)
+  const prevTotalSupply = usePrevious(totalSupply)
+  const _totalSupply = useMemo(() => {
+    if (!totalSupply && prevTotalSupply) {
+      return prevTotalSupply
+    }
+    return totalSupply
+  }, [totalSupply])
+
   const [reserve0Raw, reserve1Raw] = useSingleCallResult(pair, 'getReserves')?.result ?? []
   const reserve0 = useMemo(
     () => (token0 && reserve0Raw ? CurrencyAmount.fromRawAmount(token0, reserve0Raw) : undefined),
     [token0, reserve0Raw]
   )
+  const prevReserve0 = usePrevious(reserve0)
+  const _reserve0 = useMemo(() => {
+    if (!reserve0 && prevReserve0) {
+      return prevReserve0
+    }
+
+    return reserve0
+  }, [reserve0])
+
   const reserve1 = useMemo(
     () => (token1 && reserve1Raw ? CurrencyAmount.fromRawAmount(token1, reserve1Raw) : undefined),
     [token1, reserve1Raw]
   )
+  const prevReserve1 = usePrevious(reserve1)
+  const _reserve1 = useMemo(() => {
+    if (!reserve1 && prevReserve1) {
+      return prevReserve1
+    }
+
+    return reserve1
+  }, [reserve1])
 
   // redirect for invalid url params
   if (
@@ -699,15 +782,15 @@ export default function MigrateV2Pair({
 
         {!account ? (
           <TYPE.largeHeader>You must connect an account.</TYPE.largeHeader>
-        ) : pairBalance && totalSupply && reserve0 && reserve1 && token0 && token1 ? (
+        ) : _pairBalance && _totalSupply && _reserve0 && _reserve1 && _token0 && _token1 ? (
           <V2PairMigration
-            pair={pair}
-            pairBalance={pairBalance}
-            totalSupply={totalSupply}
-            reserve0={reserve0}
-            reserve1={reserve1}
-            token0={token0}
-            token1={token1}
+            pair={_pair}
+            pairBalance={_pairBalance}
+            totalSupply={_totalSupply}
+            reserve0={_reserve0}
+            reserve1={_reserve1}
+            token0={_token0}
+            token1={_token1}
           />
         ) : (
           <EmptyState message={'Loading'} />

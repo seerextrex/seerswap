@@ -44,7 +44,8 @@ export const NEVER_RELOAD: ListenerOptions = {
 // the lowest level call for subscribing to contract data
 function useCallsData(
   calls: (Call | undefined)[],
-  { blocksPerFetch }: ListenerOptions = { blocksPerFetch: 1 }
+  { blocksPerFetch }: ListenerOptions = { blocksPerFetch: 1 },
+  methodName?: string
 ): CallResult[] {
   const { chainId } = useActiveWeb3React()
   const callResults = useAppSelector((state) => state.multicall.callResults)
@@ -66,6 +67,7 @@ function useCallsData(
     const callKeys: string[] = JSON.parse(serializedCallKeys)
     if (!chainId || callKeys.length === 0) return undefined
     const calls = callKeys.map((key) => parseCallKey(key))
+
     dispatch(
       addMulticallListeners({
         chainId,
@@ -92,6 +94,7 @@ function useCallsData(
 
         const result = callResults[chainId]?.[toCallKey(call)]
         let data
+
         if (result?.data && result?.data !== '0x') {
           data = result.data
         }
@@ -131,6 +134,7 @@ function toCallState(
   const success = data && data.length > 2
   const syncing = (blockNumber ?? 0) < latestBlockNumber
   let result: Result | undefined = undefined
+
   if (success && data) {
     try {
       result = contractInterface.decodeFunctionResult(fragment, data)
@@ -145,6 +149,7 @@ function toCallState(
       }
     }
   }
+
   return {
     valid: true,
     loading: false,
@@ -180,7 +185,7 @@ export function useSingleContractMultipleData(
     [contract, fragment, callInputs, gasRequired]
   )
 
-  const results = useCallsData(calls, blocksPerFetch ? { blocksPerFetch } : undefined)
+  const results = useCallsData(calls, blocksPerFetch ? { blocksPerFetch } : undefined, methodName)
 
   const latestBlockNumber = useBlockNumber()
 

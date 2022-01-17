@@ -9,6 +9,13 @@ import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { InfoPools } from '../../components/InfoPools'
 import { InfoTokens } from '../../components/InfoTokens'
 import { PageTitle } from '../../components/PageTitle'
+import FeeChartRangeInput from '../../components/FeeChartRangeInput'
+import PoolInfoPage from '../PoolInfoPage'
+
+import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+import WoodenRope from '../../assets/svg/wooden-rope.svg'
+import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
+import { InfoTotalStats } from '../../components/InfoTotalStats'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 995px;
@@ -31,20 +38,40 @@ const MainContentWrapper = styled.div`
   border-radius: 20px;
   display: flex;
   flex-direction: column;
-  ${({ theme }) => theme.mediaWidth.upToSmall`{
-    min-width: 100%;
-  }`}
+  min-width: 100%;
 `
 const MenuWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   margin-bottom: 2rem;
+  margin-top: 2rem;
+  font-weight: 600;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
-    min-width: calc(100% + 3rem);
     overflow: auto;
-    margin: 0 -2rem 1rem -2rem;
-    padding: 0 1rem;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }`}
+`
+
+const BodyWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.winterBackground};
+  padding: 2rem 40px;
+  border-radius: 20px;
+  margin-bottom: 5rem;
+
+  @media screen and (max-width: 1081px) {
+    padding: 2rem 40px 4rem;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 1rem 20px;
+  `}
 `
 
 const MockScreen = styled.div`
@@ -56,8 +83,8 @@ const MockScreen = styled.div`
 `
 
 const ConnectWalletButton = styled.button`
-  border: 1px solid #5d32ed;
-  background-color: #5d32ed;
+  border: 1px solid ${({ theme }) => theme.winterMainButton};
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   padding: 8px 12px;
   font-size: 16px;
@@ -69,7 +96,7 @@ export function InfoPage() {
 
   const { path } = useRouteMatch()
 
-  const { fetchInfoPools, fetchInfoTokens, blocksFetched } = useInfoSubgraph() || {}
+  const { fetchInfoPools, fetchInfoTokens, fetchTotalStats, blocksFetched } = useInfoSubgraph() || {}
 
   return (
     <>
@@ -83,43 +110,52 @@ export function InfoPage() {
               <MenuWrapper>
                 <InfoMenu></InfoMenu>
               </MenuWrapper>
-              <Switch>
-                <Route exact path={`${path}`}>
-                  <Redirect to={`${path}/pools`} />
-                </Route>
-                <Route exact path={`${path}/pools`}>
-                  <Helmet>
-                    <title>Algebra — Info • Pools</title>
-                  </Helmet>
-                  <PageTitle
-                    title={'Pools'}
-                    refreshHandler={() => (blocksFetched ? fetchInfoPools?.fetchInfoPoolsFn(true) : undefined)}
-                    isLoading={fetchInfoPools?.poolsLoading}
-                  ></PageTitle>
-                  <InfoPools
-                    data={fetchInfoPools?.poolsResult}
-                    refreshing={fetchInfoPools?.poolsLoading}
-                    fetchHandler={() => fetchInfoPools?.fetchInfoPoolsFn(true)}
-                    blocksFetched={blocksFetched}
-                  ></InfoPools>
-                </Route>
-                <Route exact path={`${path}/tokens`}>
-                  <Helmet>
-                    <title>Algebra — Info • Tokens</title>
-                  </Helmet>
-                  <PageTitle
-                    title={'Tokens'}
-                    refreshHandler={() => (blocksFetched ? fetchInfoTokens?.fetchInfoTokensFn(true) : undefined)}
-                    isLoading={fetchInfoTokens?.tokensLoading}
-                  ></PageTitle>
-                  <InfoTokens
-                    data={fetchInfoTokens?.tokensResult}
-                    refreshing={fetchInfoTokens?.tokensLoading}
-                    fetchHandler={() => fetchInfoTokens?.fetchInfoTokensFn(true)}
-                    blocksFetched={blocksFetched}
-                  ></InfoTokens>
-                </Route>
-              </Switch>
+              <InfoTotalStats
+                data={fetchTotalStats.totalStats}
+                refreshHandler={() => fetchTotalStats.fetchTotalStatsFn()}
+                isLoading={fetchTotalStats.totalStatsLoading}
+                blocksFetched={blocksFetched}
+              ></InfoTotalStats>
+              <BodyWrapper>
+                <Switch>
+                  <Route exact path={`${path}`}>
+                    <Redirect to={`${path}/pools`} />
+                  </Route>
+                  <Route exact path={`${path}/pools`}>
+                    <Helmet>
+                      <title>Algebra — Info • Pools</title>
+                    </Helmet>
+                    <PageTitle
+                      title={'Pools'}
+                      refreshHandler={() => (blocksFetched ? fetchInfoPools?.fetchInfoPoolsFn(true) : undefined)}
+                      isLoading={fetchInfoPools?.poolsLoading}
+                    ></PageTitle>
+                    <InfoPools
+                      data={fetchInfoPools?.poolsResult}
+                      refreshing={fetchInfoPools?.poolsLoading}
+                      fetchHandler={() => fetchInfoPools?.fetchInfoPoolsFn(true)}
+                      blocksFetched={blocksFetched}
+                    ></InfoPools>
+                  </Route>
+                  <Route exact path={`${path}/pools/:id`} component={PoolInfoPage} />
+                  <Route exact path={`${path}/tokens`}>
+                    <Helmet>
+                      <title>Algebra — Info • Tokens</title>
+                    </Helmet>
+                    <PageTitle
+                      title={'Tokens'}
+                      refreshHandler={() => (blocksFetched ? fetchInfoTokens?.fetchInfoTokensFn(true) : undefined)}
+                      isLoading={fetchInfoTokens?.tokensLoading}
+                    ></PageTitle>
+                    <InfoTokens
+                      data={fetchInfoTokens?.tokensResult}
+                      refreshing={fetchInfoTokens?.tokensLoading}
+                      fetchHandler={() => fetchInfoTokens?.fetchInfoTokensFn(true)}
+                      blocksFetched={blocksFetched}
+                    ></InfoTokens>
+                  </Route>
+                </Switch>
+              </BodyWrapper>
             </MainContentWrapper>
           </InnerWrapper>
         </InnerWrapper>

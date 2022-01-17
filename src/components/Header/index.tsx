@@ -1,15 +1,17 @@
 import { Trans } from '@lingui/macro'
 import useScrollPosition from '@react-hook/window-scroll'
 import { darken } from 'polished'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances } from 'state/wallet/hooks'
-import styled from 'styled-components/macro'
+import styled, { keyframes } from 'styled-components/macro'
 import Logo from '../../assets/svg/logo.svg'
+import WinterLogo from '../../assets/images/winter-logo.png'
 import LogoDark from '../../assets/svg/logo_white.svg'
+import Logo_logo from '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import Modal from '../Modal'
 import Row from '../Row'
@@ -17,6 +19,16 @@ import Web3Status from '../Web3Status'
 import NetworkCard from './NetworkCard'
 import UniBalanceContent from './UniBalanceContent'
 import { deviceSizes } from '../../pages/styled'
+import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
+import usePrevious from '../../hooks/usePrevious'
+
+import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+import WoodenRope from '../../assets/svg/wooden-rope.svg'
+import LogoIcicles from '../../assets/svg/logo-icicles.svg'
+
+import { isMobile } from 'react-device-detect'
+import { useFarmingActionsHandlers } from '../../state/farming/hooks'
+import { useAppSelector } from '../../state/hooks'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: flex;
@@ -38,6 +50,7 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
   box-shadow: 0px 0px 0px 1px ${({ theme, showBackground }) => (showBackground ? theme.bg2 : 'transparent;')};
   transition: background-position 0.1s, box-shadow 0.1s;
   background-blend-mode: hard-light;
+  padding-top: 50px;
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
     grid-template-columns: 48px 1fr 1fr;
@@ -52,13 +65,54 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
     padding:  1rem;
     grid-template-columns: 36px 1fr;
   `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    padding: 0.5rem 1rem;
+  }`}
+`
+
+const swingAnimation = keyframes`
+0% { transform: rotate(1deg); }
+100% { transform: rotate(-1deg); }
 `
 
 const HeaderControls = styled.div`
   display: flex;
+  position: relative;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   justify-self: flex-end;
+  background-repeat: repeat;
+  background-size: 27px 40px;
+  height: 64px;
+  padding: 1rem;
+  border-radius: 16px;
+
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+
+  &::before,
+  &::after {
+    content: '';
+    background-image: url(${WoodenRope});
+    width: 5px;
+    height: 51px;
+    position: absolute;
+    top: -55px;
+  }
+
+  &::before {
+    left: 15%;
+  }
+
+  &::after {
+    right: 15%;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 0 1rem;
+  `}
 `
 
 const HeaderElement = styled.div`
@@ -80,66 +134,82 @@ const HeaderLinks = styled(Row)`
   transform: translateX(-50%);
   left: 50%;
   justify-self: center;
-  // background-color: ${({ theme }) => theme.bg0};
+  background-color: #b38280;
+  border: 4px solid #713937;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
   width: fit-content;
-  padding: 4px;
+  padding: 0 16px;
   border-radius: 16px;
   display: grid;
   grid-auto-flow: column;
   grid-gap: 30px;
-  overflow: auto;
+  overflow: visible;
   align-items: center;
+
+  &::before,
+  &::after {
+    content: '';
+    background-image: url(${WoodenRope});
+    width: 5px;
+    height: 54px;
+    position: absolute;
+    top: -58px;
+  }
+
+  &::before {
+    left: 15%;
+  }
+
+  &::after {
+    right: 15%;
+  }
+
   ${({ theme }) => theme.mediaWidth.upToLarge`
-    // justify-self: center;  
-    `};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    justify-self: center;
-  `};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-direction: row;
-    justify-content: space-between;
-    justify-self: center;
-    z-index: 99;
-    position: fixed;
-    bottom: 1rem;
-    // transform: translate(-50%);
-    margin: 0 auto;
-    // background-color: ${({ theme }) => theme.bg0};
-    // border: 1px solid ${({ theme }) => theme.bg2};
-    // box-shadow: 0px 6px 10px rgb(0 0 0 / 2%);
-  `};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0;
-    background-color: black;
+  position: relative;
+  transform: unset;
+  left: unset;
   `}
 
-  @media (max-width: 1366px) {
-    grid-auto-flow: unset;
-    left: 65px;
-    top: 100px;
-  }
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  position: fixed;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  left: 50%;
+  flex-direction: row;
+  justify-content: space-between;
+  justify-self: center;
+  z-index: 99;
+  margin: 0 auto;
 
-  @media (max-width: 1144px) {
-    grid-auto-flow: column;
-    transform: translateX(-50%);
-    left: 50%;
-    background-color: black;
-    bottom: 1rem;
-    flex-direction: row;
-    justify-content: space-between;
-    justify-self: center;
-    z-index: 99;
-    position: fixed;
-    top: unset;
+  &::before,
+  &::after {
+    display: none;
   }
+`};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  position: fixed;
+  transform: translateX(-50%);
+  left: 50%;
+  bottom: 1rem;
+    overflow: auto;
+    width: calc(100% - 1rem);
+    margin-right: -1rem;
+    &::before, &::after {
+      display: none;
+    }
+
+  `}
 `
 
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg1)};
-  border-radius: 12px;
+  background-color: #713937;
+  border-radius: 8px;
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
@@ -147,67 +217,112 @@ const AccountElement = styled.div<{ active: boolean }>`
   :focus {
     border: 1px solid blue;
   }
-`
 
-const UNIAmount = styled(AccountElement)`
-  color: white;
-  padding: 4px 8px;
-  height: 36px;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
-`
-
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.8;
-  }
-
-  :active {
-    opacity: 0.9;
-  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: 14px;
+  `}
 `
 
 const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
   cursor: default;
+`
+
+const LogoWrapper = styled.div`
+  position: relative;
 `
 
 const Title = styled.a`
   display: flex;
+  z-index: 5;
+  position: relative;
+  width: 250px;
+  height: 64px;
   align-items: center;
+  border-radius: 16px;
   pointer-events: auto;
   justify-self: flex-start;
-  margin-right: 12px;
   text-decoration: none;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    // justify-self: center;
-  `};
+  background-color: #b38280;
+  border: 4px solid #9eb7cd;
+  background-image: url(${WoodenSlob});
+  background-repeat: repeat;
+  background-size: 27px 40px;
   :hover {
     cursor: pointer;
   }
+
+  &::before,
+  &::after {
+    content: '';
+    background-image: url(${WoodenRope});
+    width: 5px;
+    height: 51px;
+    position: absolute;
+    top: -55px;
+  }
+
+  &::before {
+    left: 15%;
+  }
+
+  &::after {
+    right: 15%;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    width: 200px;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 150px;
+    margin-right: 10px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 80px;
+  `}
+`
+
+const TitleIce = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: RGBA(51, 182, 255, 0.5);
+  border-radius: 11px;
+`
+const TitleIcicle = styled.div`
+  background-image: url(${LogoIcicles});
+  background-repeat: no-repeat;
+  background-size: 98%;
+  width: 100%;
+  height: 106px;
+  position: absolute;
+  display: block;
+  z-index: 4;
+  top: 18px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `}
 `
 
 const AlgIcon = styled.div`
-  transition: transform 0.3s ease;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   & > img {
-    width: 160px;
-  }
-
-  :hover {
-    transform: scale(1.2);
+    width: calc(100% - 30px);
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     & > img {
       width: 130px;
+    }
+  }`}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
+    & > img {
+      width: 30px;
     }
   }`}
 `
@@ -219,44 +334,70 @@ const StyledNavLink = styled(NavLink).attrs({
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
-  border-radius: 160px;
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: white;
   font-size: 1rem;
   width: fit-content;
-  font-weight: 500;
+  font-weight: 600;
   padding: 14px 20px;
   word-break: break-word;
   white-space: nowrap;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    border-radius: 16px;
+  border-bottom: 3px solid transparent;
+  position: relative;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 14px 15px;
   `}
 
   &.${activeClassName} {
-    // border-radius: 12px;
     font-weight: 600;
-    // color: ${({ theme }) => theme.text1};
-    // background-color: ${({ theme }) => theme.bg2};
-    background-color: #0f2e40;
-    color: #48b9cd;
+    color: #ffd967;
+    border-bottom: 3px solid #ffbf00;
   }
 
   &:not(.${activeClassName}) {
     & :hover,
     &:focus {
       color: ${({ theme }) => darken(0.1, theme.text1)};
-      background-color: rgba(15, 46, 64, 0.4);
+      // background-color: rgba(15, 46, 64, 0.4);
     }
   }
 `
+export const FarmingInfoLabel = styled.span`
+  padding: 5px;
+  background-color: #ffd967;
+  position: absolute;
+  border-radius: 50%;
+  top: 30%;
+  right: 5%;
+  display: ${(p) => (!p.isEvents ? 'none' : 'block')};
+  
+  ${({theme}) => theme.mediaWidth.upToMedium`
+  top: 20%;
+  right: 0%;
+  `}
+`
 
 export default function Header() {
+  const { startTime } = useAppSelector((state) => state.farming)
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+
+  const prevEthBalance = usePrevious(userEthBalance)
+
+  const _userEthBalance = useMemo(() => {
+    if (!userEthBalance) {
+      return prevEthBalance
+    }
+
+    return userEthBalance
+  }, [userEthBalance])
+
+  const networkFailed = useIsNetworkFailed()
+
+  const [isEvents, setEvents] = useState(false)
 
   const [darkMode] = useDarkModeManager()
 
@@ -271,13 +412,24 @@ export default function Header() {
     chainValue = 'MATIC'
   }
 
+  useEffect(() => {
+    if (startTime.trim()) {
+      setEvents(true)
+    }
+  }, [startTime])
+
   return (
-    <HeaderFrame showBackground={scrollY > 45}>
-      <Title href=".">
-        <AlgIcon>
-          <img width={'160px'} src={darkMode ? LogoDark : Logo} alt="logo" />
-        </AlgIcon>
-      </Title>
+    <HeaderFrame showBackground={false}>
+      <LogoWrapper>
+        <Title href=".">
+          <TitleIce>
+            <AlgIcon>
+              <img width={'calc(100% - 10px)'} src={window.innerWidth < 501 ? Logo_logo : WinterLogo} alt="logo" />
+            </AlgIcon>
+          </TitleIce>
+        </Title>
+        <TitleIcicle></TitleIcicle>
+      </LogoWrapper>
       <HeaderLinks>
         <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
           Swap
@@ -297,53 +449,34 @@ export default function Header() {
         </StyledNavLink>
         <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
           Farming
+          <FarmingInfoLabel isEvents={isEvents} />
         </StyledNavLink>
         <StyledNavLink id={`staking-nav-link`} to={'/staking'}>
           Staking
-        </StyledNavLink>
-        <StyledNavLink id={`migrate-nav-link`} to={'/migrate'}>
-          Migrate
         </StyledNavLink>
         <StyledNavLink id={`info-nav-link`} to={'/info'}>
           Info
         </StyledNavLink>
       </HeaderLinks>
 
-      <HeaderControls>
-        <NetworkCard />
+      <HeaderControls account={!!account}>
         <HeaderElement>
-          {/* {availableClaim && !showClaimPopup && (
-            <UNIWrapper onClick={toggleClaimModal}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                <TYPE.white padding="0 2px">
-                  {claimTxn && !claimTxn?.receipt ? (
-                    <Dots>
-                      <Trans>Claiming UNI</Trans>
-                    </Dots>
-                  ) : (
-                    <Trans>Claim UNI</Trans>
-                  )}
-                </TYPE.white>
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )} */}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {chainId === 137 && account && userEthBalance ? (
+            <NetworkCard />
+            {(chainId === 137 && account && userEthBalance) || networkFailed ? (
               <BalanceText
                 style={{ flexShrink: 0 }}
+                pl="0.75rem"
                 pt="0.75rem"
                 pb="0.75rem"
-                pl="0.75rem"
                 pr="0.5rem"
                 fontWeight={500}
               >
-                {userEthBalance?.toSignificant(3)} {chainValue}{' '}
+                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
               </BalanceText>
             ) : null}
             <Web3Status />
           </AccountElement>
-          {/* <Menu /> */}
         </HeaderElement>
       </HeaderControls>
     </HeaderFrame>

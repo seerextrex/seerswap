@@ -45,10 +45,19 @@ import { Bound } from 'state/mint/v3/actions'
 import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { formatTickPrice } from 'utils/formatTickPrice'
 import { SupportedChainId } from 'constants/chains'
+import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
+
+import ReactGA from 'react-ga'
+import { MouseoverTooltip } from '../../components/Tooltip'
+import { useAppSelector } from '../../state/hooks'
 
 const PageWrapper = styled.div`
   min-width: 800px;
   max-width: 960px;
+  background-color: ${({ theme }) => theme.winterBackground};
+  border-radius: 20px;
+  padding: 30px 40px;
+  margin-top: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 680px;
@@ -56,14 +65,11 @@ const PageWrapper = styled.div`
   `};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 600px;
-    max-width: 600px;
+    min-width: 100%;
+    max-width: 100%;
+    margin-top: 1rem;
+    padding: 30px 10px;
   `};
-
-  @media only screen and (max-width: 620px) {
-    min-width: 500px;
-    max-width: 500px;
-  }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     min-width: 340px;
@@ -96,7 +102,7 @@ const ExtentsText = styled.span`
 
 const HoverText = styled(TYPE.main)`
   text-decoration: none;
-  color: ${({ theme }) => theme.text3};
+  color: white;
   :hover {
     color: ${({ theme }) => theme.text1};
     text-decoration: none;
@@ -108,7 +114,7 @@ const DoubleArrow = styled.span`
   margin: 0 1rem;
 `
 const ResponsiveRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-direction: column;
     align-items: flex-start;
     row-gap: 16px;
@@ -120,9 +126,13 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   border-radius: 12px;
   padding: 6px 8px;
   width: fit-content;
+  margin-right: 8px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
-    width: 49%;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-right: 0;
+     width: 49%;
   `};
 `
 
@@ -141,6 +151,50 @@ const NFTImage = styled.img`
   height: 400px;
   /* Ensures SVG appears on top of canvas. */
   z-index: 1;
+`
+const RowFixedStyled = styled(RowFixed)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+   width: 100%;
+    flex-direction: column;
+
+    & > * {
+      margin-bottom: 1rem;
+    }
+  `}
+`
+const RowFixedStyledButtons = styled(RowFixedStyled)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: unset;
+    gap: .5rem;
+  `}
+`
+const FeeBadge = styled(Badge)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+      margin-right: 0!important;
+      margin-top: 1rem;
+    `}
+`
+
+const PriceRow = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      flex-direction: column;
+    `}
+`
+
+const LoadingMock = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.winterBackground};
+  height: 400px;
+  width: 500px;
+  border-radius: 20px;
+  margin-top: 5rem;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: 100%;
+  margin-top: 1rem;
+  `}
 `
 
 function CurrentPriceCard({
@@ -184,7 +238,7 @@ function LinkedCurrency({ chainId, currency }: { chainId?: number; currency?: Cu
     return (
       <ExternalLink href={getExplorerLink(chainId, address, ExplorerDataType.TOKEN)}>
         <RowFixed>
-          <CurrencyLogo currency={currency} size={'25px'} style={{ marginRight: '0.5rem' }} />
+          <CurrencyLogo currency={currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
           <TYPE.main>{currency?.symbol} ↗</TYPE.main>
         </RowFixed>
       </ExternalLink>
@@ -193,7 +247,7 @@ function LinkedCurrency({ chainId, currency }: { chainId?: number; currency?: Cu
 
   return (
     <RowFixed>
-      <CurrencyLogo currency={currency} size={'25px'} style={{ marginRight: '0.5rem' }} />
+      <CurrencyLogo currency={currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
       <TYPE.main>{currency?.symbol}</TYPE.main>
     </RowFixed>
   )
@@ -324,6 +378,8 @@ export function PositionPage({
   const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
   const { position: existingPosition } = useDerivedPositionInfo(positionDetails)
 
+  const gasPrice = useAppSelector((state) => state.application.gasPrice)
+
   const {
     token0: token0Address,
     token1: token1Address,
@@ -334,10 +390,26 @@ export function PositionPage({
     fee: feeAmount,
   } = positionDetails || {}
 
-  const removed = liquidity?.eq(0)
+  const prevPositionDetails = usePrevious({ ...positionDetails })
+  const {
+    token0: _token0Address,
+    token1: _token1Address,
+    fee: _feeAmount,
+    liquidity: _liquidity,
+    tickLower: _tickLower,
+    tickUpper: _tickUpper,
+    onFarming: _onFarming,
+  } = useMemo(() => {
+    if (!positionDetails && prevPositionDetails && prevPositionDetails.liquidity) {
+      return { ...prevPositionDetails }
+    }
+    return { ...positionDetails }
+  }, [positionDetails])
 
-  const token0 = useToken(token0Address)
-  const token1 = useToken(token1Address)
+  const removed = _liquidity?.eq(0)
+
+  const token0 = useToken(_token0Address)
+  const token1 = useToken(_token1Address)
 
   const metadata = usePositionTokenURI(parsedTokenId)
 
@@ -348,15 +420,28 @@ export function PositionPage({
   const [receiveWETH, setReceiveWETH] = useState(false)
 
   // construct Position from details returned
-  const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined, feeAmount || 500)
+  const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined, _feeAmount || 500)
+  const [prevPoolState, prevPool] = usePrevious([poolState, pool]) || []
+  const [_poolState, _pool] = useMemo(() => {
+    if (!pool && prevPool && prevPoolState) {
+      return [prevPoolState, prevPool]
+    }
+    return [poolState, pool]
+  }, [pool, poolState])
+
   const position = useMemo(() => {
-    if (pool && liquidity && typeof tickLower === 'number' && typeof tickUpper === 'number') {
-      return new Position({ pool, liquidity: liquidity.toString(), tickLower, tickUpper })
+    if (_pool && _liquidity && typeof _tickLower === 'number' && typeof _tickUpper === 'number') {
+      return new Position({
+        pool: _pool,
+        liquidity: _liquidity.toString(),
+        tickLower: _tickLower,
+        tickUpper: _tickUpper,
+      })
     }
     return undefined
-  }, [liquidity, pool, tickLower, tickUpper])
+  }, [_liquidity, _pool, _tickLower, _tickUpper])
 
-  const tickAtLimit = useIsTickAtLimit(tickLower, tickUpper)
+  const tickAtLimit = useIsTickAtLimit(_tickLower, _tickUpper)
 
   const pricesFromPosition = getPriceOrderingFromPositionForUI(position)
   const [manuallyInverted, setManuallyInverted] = useState(false)
@@ -375,17 +460,17 @@ export function PositionPage({
   const currencyBase = inverted ? currency1 : currency0
 
   const ratio = useMemo(() => {
-    return priceLower && pool && priceUpper
+    return priceLower && _pool && priceUpper
       ? getRatio(
           inverted ? priceUpper.invert() : priceLower,
-          pool.token0Price,
+          _pool.token0Price,
           inverted ? priceLower.invert() : priceUpper
         )
       : undefined
-  }, [inverted, pool, priceLower, priceUpper])
+  }, [inverted, _pool, priceLower, priceUpper])
 
   // fees
-  const [feeValue0, feeValue1] = useV3PositionFees(pool ?? undefined, positionDetails?.tokenId, receiveWETH)
+  const [feeValue0, feeValue1] = useV3PositionFees(_pool ?? undefined, positionDetails?.tokenId, receiveWETH)
 
   const [collecting, setCollecting] = useState<boolean>(false)
   const [collectMigrationHash, setCollectMigrationHash] = useState<string | null>(null)
@@ -410,12 +495,28 @@ export function PositionPage({
     return amount0.add(amount1)
   }, [price0, price1, feeValue0, feeValue1])
 
+  const prevFiatValueOfFees = usePrevious(fiatValueOfFees)
+  const _fiatValueOfFees = useMemo(() => {
+    if (!fiatValueOfFees && prevFiatValueOfFees) {
+      return prevFiatValueOfFees
+    }
+    return fiatValueOfFees
+  }, [fiatValueOfFees])
+
   const fiatValueOfLiquidity: CurrencyAmount<Token> | null = useMemo(() => {
     if (!price0 || !price1 || !position) return null
     const amount0 = price0.quote(position.amount0)
     const amount1 = price1.quote(position.amount1)
     return amount0.add(amount1)
   }, [price0, price1, position])
+
+  const prevFiatValueOfLiquidity = usePrevious(fiatValueOfLiquidity)
+  const _fiatValueOfLiquidity = useMemo(() => {
+    if (!fiatValueOfLiquidity && prevFiatValueOfLiquidity) {
+      return prevFiatValueOfLiquidity
+    }
+    return fiatValueOfLiquidity
+  }, [fiatValueOfLiquidity])
 
   const addTransaction = useTransactionAdder()
   const positionManager = useV3NFTPositionManagerContract()
@@ -444,7 +545,7 @@ export function PositionPage({
         const newTxn = {
           ...txn,
           gasLimit: calculateGasMargin(chainId, estimate),
-          gasPrice: 70000000000,
+          gasPrice: gasPrice * 1000000000,
         }
 
         return library
@@ -453,6 +554,12 @@ export function PositionPage({
           .then((response: TransactionResponse) => {
             setCollectMigrationHash(response.hash)
             setCollecting(false)
+
+            ReactGA.event({
+              category: 'Liquidity',
+              action: 'CollectV3',
+              label: [feeValue0.currency.symbol, feeValue1.currency.symbol].join('/'),
+            })
 
             addTransaction(response, {
               summary: `Collect ${feeValue0.currency.symbol}/${feeValue1.currency.symbol} fees`,
@@ -472,8 +579,8 @@ export function PositionPage({
   const feeValueLower = inverted ? feeValue1 : feeValue0
 
   // check if price is within range
-  const below = pool && typeof tickLower === 'number' ? pool.tickCurrent < tickLower : undefined
-  const above = pool && typeof tickUpper === 'number' ? pool.tickCurrent >= tickUpper : undefined
+  const below = _pool && typeof _tickLower === 'number' ? _pool.tickCurrent < _tickLower : undefined
+  const above = _pool && typeof _tickUpper === 'number' ? _pool.tickCurrent >= _tickUpper : undefined
   const inRange: boolean = typeof below === 'boolean' && typeof above === 'boolean' ? !below && !above : false
 
   function modalHeader() {
@@ -483,27 +590,24 @@ export function PositionPage({
           <AutoColumn gap="md">
             <RowBetween>
               <RowFixed>
-                <CurrencyLogo currency={feeValueUpper?.currency} size={'20px'} style={{ marginRight: '0.5rem' }} />
+                <CurrencyLogo currency={feeValueUpper?.currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
                 <TYPE.main>{feeValueUpper ? formatCurrencyAmount(feeValueUpper, 4) : '-'}</TYPE.main>
               </RowFixed>
               <TYPE.main>{feeValueUpper?.currency?.symbol}</TYPE.main>
             </RowBetween>
             <RowBetween>
               <RowFixed>
-                <CurrencyLogo currency={feeValueLower?.currency} size={'20px'} style={{ marginRight: '0.5rem' }} />
+                <CurrencyLogo currency={feeValueLower?.currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
                 <TYPE.main>{feeValueLower ? formatCurrencyAmount(feeValueLower, 4) : '-'}</TYPE.main>
               </RowFixed>
               <TYPE.main>{feeValueLower?.currency?.symbol}</TYPE.main>
             </RowBetween>
           </AutoColumn>
         </LightCard>
-        <TYPE.italic>
+        <TYPE.italic color={theme.winterDisabledButton}>
           <Trans>Collecting fees will withdraw currently available fees for you.</Trans>
         </TYPE.italic>
-        <ButtonPrimary
-          style={{ color: '#f51189', background: '#400f29', border: '1px solid #540c33' }}
-          onClick={collect}
-        >
+        <ButtonPrimary style={{ color: 'white' }} onClick={collect}>
           <Trans>Collect</Trans>
         </ButtonPrimary>
       </AutoColumn>
@@ -521,21 +625,10 @@ export function PositionPage({
       !onOptimisticChain
   )
 
-  return loading || poolState === PoolState.LOADING ? (
-    <LoadingRows>
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
-    </LoadingRows>
+  return loading || _poolState === PoolState.LOADING ? (
+    <LoadingMock>
+      <Loader stroke={'white'} size={'30px'} />
+    </LoadingMock>
   ) : (
     <>
       <PageWrapper>
@@ -561,31 +654,33 @@ export function PositionPage({
               </HoverText>
             </Link>
             <ResponsiveRow>
-              <RowFixed>
+              <RowFixedStyled>
                 <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={true} />
-                <TYPE.label fontSize={'24px'} mr="10px">
+                <TYPE.label fontSize={'25px'} mr="10px">
                   &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
                 </TYPE.label>
-                <Badge style={{ marginRight: '8px' }}>
-                  <BadgeText>
-                    <Trans>{new Percent(existingPosition?.pool?.fee || 500, 1_000_000).toSignificant()}%</Trans>
-                  </BadgeText>
-                </Badge>
+                <MouseoverTooltip text={<Trans>Current pool fee.</Trans>}>
+                  <FeeBadge style={{ marginRight: '8px' }}>
+                    <BadgeText>
+                      <Trans>{new Percent(existingPosition?.pool?.fee || 100, 1_000_000).toSignificant()}%</Trans>
+                    </BadgeText>
+                  </FeeBadge>
+                </MouseoverTooltip>
                 <RangeBadge removed={removed} inRange={inRange} />
-              </RowFixed>
+              </RowFixedStyled>
               {ownsNFT && (
-                <RowFixed>
+                <RowFixedStyledButtons>
                   {currency0 && currency1 && tokenId ? (
-                    <ButtonGray
+                    <ResponsiveButtonPrimary
                       as={Link}
                       to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"
-                      style={{ marginRight: '8px', background: '#0f2e40', color: '#4cc1d5' }}
+                      style={{ color: 'white' }}
                     >
                       <Trans>Increase Liquidity</Trans>
-                    </ButtonGray>
+                    </ResponsiveButtonPrimary>
                   ) : null}
                   {tokenId && !removed ? (
                     <ResponsiveButtonPrimary
@@ -593,51 +688,18 @@ export function PositionPage({
                       to={`/remove/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
-                      style={{ background: '#0f2e40', color: '#4cc1d5' }}
+                      style={{ color: 'white' }}
                       $borderRadius="12px"
                     >
                       <Trans>Remove Liquidity</Trans>
                     </ResponsiveButtonPrimary>
                   ) : null}
-                </RowFixed>
+                </RowFixedStyledButtons>
               )}
             </ResponsiveRow>
             <RowBetween></RowBetween>
           </AutoColumn>
           <ResponsiveRow align="flex-start">
-            {/* {'result' in metadata ? (
-              <DarkCard
-                width="100%"
-                height="100%"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
-                  marginRight: '12px',
-                }}
-              >
-                <div style={{ marginRight: 12 }}>
-                  <NFT image={metadata.result.image} height={400} />
-                </div>
-                {typeof chainId === 'number' && owner && !ownsNFT ? (
-                  <ExternalLink href={getExplorerLink(chainId, owner, ExplorerDataType.ADDRESS)}>
-                    <Trans>Owner</Trans>
-                  </ExternalLink>
-                ) : null}
-              </DarkCard>
-            ) : (
-              <DarkCard
-                width="100%"
-                height="100%"
-                style={{
-                  marginRight: '12px',
-                  minWidth: '340px',
-                }}
-              >
-                <Loader />
-              </DarkCard>
-            )} */}
             <AutoColumn gap="sm" style={{ width: '100%', height: '100%' }}>
               <DarkCard>
                 <AutoColumn gap="md" style={{ width: '100%' }}>
@@ -645,9 +707,9 @@ export function PositionPage({
                     <Label>
                       <Trans>Liquidity</Trans>
                     </Label>
-                    {fiatValueOfLiquidity?.greaterThan(new Fraction(1, 100)) ? (
-                      <TYPE.largeHeader fontSize="36px" fontWeight={500}>
-                        <Trans>${fiatValueOfLiquidity.toFixed(2, { groupSeparator: ',' })}</Trans>
+                    {_fiatValueOfLiquidity?.greaterThan(new Fraction(1, 100)) ? (
+                      <TYPE.largeHeader fontSize="30px" fontWeight={500}>
+                        <Trans>${_fiatValueOfLiquidity.toFixed(2, { groupSeparator: ',' })}</Trans>
                       </TYPE.largeHeader>
                     ) : (
                       <TYPE.largeHeader color={theme.text1} fontSize="36px" fontWeight={500}>
@@ -661,7 +723,9 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyQuote} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? position?.amount0.toSignificant(4) : position?.amount1.toSignificant(4)}
+                            {inverted
+                              ? formatCurrencyAmount(position?.amount0, 4)
+                              : formatCurrencyAmount(position?.amount1, 4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>
@@ -676,7 +740,9 @@ export function PositionPage({
                         <LinkedCurrency chainId={chainId} currency={currencyBase} />
                         <RowFixed>
                           <TYPE.main>
-                            {inverted ? position?.amount1.toSignificant(4) : position?.amount0.toSignificant(4)}
+                            {inverted
+                              ? formatCurrencyAmount(position?.amount1, 4)
+                              : formatCurrencyAmount(position?.amount0, 4)}
                           </TYPE.main>
                           {typeof ratio === 'number' && !removed ? (
                             <Badge style={{ marginLeft: '10px' }}>
@@ -699,9 +765,9 @@ export function PositionPage({
                         <Label>
                           <Trans>Unclaimed fees</Trans>
                         </Label>
-                        {fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
-                          <TYPE.largeHeader color={theme.green1} fontSize="36px" fontWeight={500}>
-                            <Trans>${fiatValueOfFees.toFixed(2, { groupSeparator: ',' })}</Trans>
+                        {_fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
+                          <TYPE.largeHeader color={'#33FF89'} fontSize="36px" fontWeight={500}>
+                            <Trans>${_fiatValueOfFees.toFixed(2, { groupSeparator: ',' })}</Trans>
                           </TYPE.largeHeader>
                         ) : (
                           <TYPE.largeHeader color={theme.text1} fontSize="36px" fontWeight={500}>
@@ -714,16 +780,16 @@ export function PositionPage({
                           disabled={collecting || !!collectMigrationHash}
                           confirmed={!!collectMigrationHash && !isCollectPending}
                           width="fit-content"
-                          style={{ borderRadius: '12px', color: '#4cc1d5', background: '#0f2e40' }}
+                          style={{ borderRadius: '12px', color: 'white' }}
                           padding="4px 8px"
                           onClick={() => setShowConfirm(true)}
                         >
                           {!!collectMigrationHash && !isCollectPending ? (
-                            <TYPE.main style={{ color: '#4cc1d5' }} color={theme.text1}>
+                            <TYPE.main style={{ color: 'white' }} color={theme.text1}>
                               <Trans> Collected</Trans>
                             </TYPE.main>
                           ) : isCollectPending || collecting ? (
-                            <TYPE.main style={{ color: '#4cc1d5' }} color={theme.text1}>
+                            <TYPE.main style={{ color: 'white' }} color={theme.text1}>
                               {' '}
                               <Dots>
                                 <Trans>Collecting</Trans>
@@ -731,7 +797,7 @@ export function PositionPage({
                             </TYPE.main>
                           ) : (
                             <>
-                              <TYPE.main style={{ color: '#4cc1d5' }} color={theme.white}>
+                              <TYPE.main style={{ color: 'white' }} color={theme.white}>
                                 <Trans>Collect fees</Trans>
                               </TYPE.main>
                             </>
@@ -746,7 +812,7 @@ export function PositionPage({
                         <RowFixed>
                           <CurrencyLogo
                             currency={feeValueUpper?.currency}
-                            size={'25px'}
+                            size={'24px'}
                             style={{ marginRight: '0.5rem' }}
                           />
                           <TYPE.main>{feeValueUpper?.currency?.symbol}</TYPE.main>
@@ -759,7 +825,7 @@ export function PositionPage({
                         <RowFixed>
                           <CurrencyLogo
                             currency={feeValueLower?.currency}
-                            size={'25px'}
+                            size={'24px'}
                             style={{ marginRight: '0.5rem' }}
                           />
                           <TYPE.main>{feeValueLower?.currency?.symbol}</TYPE.main>
@@ -813,7 +879,7 @@ export function PositionPage({
                 </RowFixed>
               </RowBetween>
 
-              <RowBetween>
+              <PriceRow>
                 <LightCard padding="12px" width="100%">
                   <AutoColumn gap="8px" justify="center">
                     <ExtentsText>
@@ -860,10 +926,10 @@ export function PositionPage({
                     )}
                   </AutoColumn>
                 </LightCard>
-              </RowBetween>
+              </PriceRow>
               <CurrentPriceCard
                 inverted={inverted}
-                pool={pool}
+                pool={_pool}
                 currencyQuote={currencyQuote}
                 currencyBase={currencyBase}
               />

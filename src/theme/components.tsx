@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components/macro'
 import { anonymizeLink } from '../utils/anonymizeLink'
 
+import ReactGA from 'react-ga'
+
 export const ButtonText = styled.button`
   outline: none;
   border: none;
@@ -47,7 +49,7 @@ export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
   background: none;
 
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
-  color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.primary1)};
+  color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.winterMainButton)};
   font-weight: 500;
 
   :hover {
@@ -68,7 +70,8 @@ export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
 export const StyledInternalLink = styled(Link)`
   text-decoration: none;
   cursor: pointer;
-  color: ${({ theme }) => theme.primary1};
+  // color: ${({ theme }) => theme.winterMainButton};
+  color: #f9ff47;
   font-weight: 500;
 
   :hover {
@@ -88,7 +91,7 @@ export const StyledInternalLink = styled(Link)`
 const StyledLink = styled.a`
   text-decoration: none;
   cursor: pointer;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.winterMainButton};
   font-weight: 500;
 
   :hover {
@@ -173,8 +176,14 @@ function handleClickExternalLink(event: React.MouseEvent<HTMLAnchorElement>) {
 
   // don't prevent default, don't redirect if it's a new tab
   if (target === '_blank' || event.ctrlKey || event.metaKey) {
+    // ReactGA.outboundLink({ label: anonymizedHref }, () => {
+    //   window.location.href = anonymizedHref
+    // })
   } else {
     event.preventDefault()
+    // ReactGA.outboundLink({ label: anonymizedHref }, () => {
+    //   window.location.href = anonymizedHref
+    // })
   }
 }
 

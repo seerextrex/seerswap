@@ -33,6 +33,8 @@ import { tryParseTick } from './utils'
 import { usePool } from 'hooks/usePools'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
+import ReactGA from 'react-ga'
+
 export function useV3MintState(): AppState['mintV3'] {
   return useAppSelector((state) => state.mintV3)
 }
@@ -199,7 +201,7 @@ export function useV3DerivedMintInfo(
   const [poolState, pool] = usePool(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B], 500)
   const noLiquidity = poolState === PoolState.NOT_EXISTS
 
-  const dynamicFee = pool ? pool.fee : 500
+  const dynamicFee = pool ? pool.fee : 100
 
   // note to parse inputs in reverse
   const invertPrice = Boolean(baseToken && token0 && !baseToken.equals(token0))

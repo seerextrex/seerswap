@@ -7,6 +7,11 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import { stringToColour } from '../../utils/stringToColour'
 import Loader from '../Loader'
 
+import AlgebraLogo from '../../assets/images/algebra-logo.png'
+import USDCLogo from '../../assets/images/usdc-logo.png'
+import WMATICLogo from '../../assets/images/matic-logo.png'
+import CurrencyLogo from "../CurrencyLogo";
+
 const skeletonAnimation = keyframes`
   100% {
     transform: translateX(100%);
@@ -26,8 +31,8 @@ const skeletonGradient = css`
     background-image: linear-gradient(
       90deg,
       rgba(91, 105, 141, 0) 0,
-      rgba(91, 105, 141, 0.2) 25%,
-      rgba(91, 105, 141, 0.5) 60%,
+      rgba(94, 131, 225, 0.25) 25%,
+      rgba(94, 131, 225, 0.5) 60%,
       rgba(91, 105, 141, 0)
     );
     animation-name: ${skeletonAnimation};
@@ -58,6 +63,9 @@ const Rewards = styled.div`
 const RewardsRow = styled.div`
   display: flex;
   margin-bottom: 8px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
 `
 
 const Reward = styled.div`
@@ -65,11 +73,11 @@ const Reward = styled.div`
   position: relative;
   padding: 8px 16px;
   border-radius: 16px;
-  border: 1px solid #202635;
+  border: 1px solid rgba(60, 97, 126, 0.5);
   font-family: Montserrat;
   width: calc(33% - 4px);
   height: 55px;
-  background: #202635;
+  background: rgba(60, 97, 126, 0.5);
 
   & > * {
     &:not(${LoadingShim}) {
@@ -80,6 +88,20 @@ const Reward = styled.div`
   &:not(:nth-of-type(3n)) {
     margin-right: 8px;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+     width: 100%;
+     margin-bottom: 20px;
+     &:not(:nth-of-type(3n)) {
+      margin-right: 0;
+    }
+  `}
+
+  ${({ skeleton }) =>
+    skeleton &&
+    css`
+      background-color: #89c4ef;
+      border: none;
+    `}
 `
 
 const RewardTokenIcon = styled.div`
@@ -90,9 +112,12 @@ const RewardTokenIcon = styled.div`
   margin-right: 1rem;
   width: 35px;
   height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#3d4a6a')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
+  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
+  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
+  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
+
+  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
+  background-size: contain;
 
   ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
 `
@@ -105,7 +130,7 @@ const RewardTokenInfo = styled.div`
         ? css`
             width: 40px;
             height: 16px;
-            background: #3d4a6a;
+            background: #5aa7df;
             margin-bottom: 3px;
             border-radius: 4px;
             ${skeletonGradient}
@@ -117,7 +142,7 @@ const RewardTokenInfo = styled.div`
 const RewardClaimButton = styled.button`
   border: none;
   border-radius: 8px;
-  background-color: #4829bb;
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   margin: 0 0 0 auto;
   padding: 8px 12px;
@@ -129,7 +154,7 @@ const RewardClaimButton = styled.button`
     skeleton
       ? css`
           width: 60px;
-          background-color: #3d4a6a;
+          background-color: #5aa7df;
           ${skeletonGradient};
         `
       : null}
@@ -271,7 +296,7 @@ export function StakerMyRewards({
                       <Loader style={{ margin: 'auto' }} size={'18px'} stroke={'white'} />
                     </LoadingShim>
                   )}
-                  <RewardTokenIcon name={rew.symbol}>{rew.symbol.slice(0, 2)}</RewardTokenIcon>
+                  <CurrencyLogo currency={{address: rew.rewardAddress, symbol: rew.symbol}} size={'35px'} style={{marginRight: '10px'}}/>
                   <RewardTokenInfo>
                     <div title={rew.amount}>{formatReward(rew.amount)}</div>
                     <div title={rew.symbol}>{rew.symbol}</div>

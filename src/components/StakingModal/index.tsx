@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import Modal from '../Modal'
-import styled from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 import { X } from 'react-feather'
 import { Trans } from '@lingui/macro'
 
@@ -51,6 +51,8 @@ export default function StakingModal({
     setStaked(true)
   }, [staked])
 
+  const theme = useContext(ThemeContext)
+
   return (
     <Modal isOpen={modal} onDismiss={() => console.log('here')} maxHeight={80}>
       <ModalContentWrapper>
@@ -77,8 +79,8 @@ export default function StakingModal({
                 width: '100%',
                 border: 'none',
                 borderRadius: '8px',
-                color: '#ed1185',
-                backgroundColor: '#400f29',
+                color: 'white',
+                backgroundColor: theme.winterMainButton,
                 fontSize: '18px',
               }}
               onClick={approve}
@@ -98,8 +100,8 @@ export default function StakingModal({
                 width: '100%',
                 border: 'none',
                 borderRadius: '8px',
-                color: '#ed1185',
-                backgroundColor: '#400f29',
+                color: 'white',
+                backgroundColor: theme.winterMainButton,
                 fontSize: '18px',
               }}
               onClick={send}
@@ -119,8 +121,8 @@ export default function StakingModal({
                 width: '100%',
                 border: 'none',
                 borderRadius: '8px',
-                color: '#ed1185',
-                backgroundColor: '#400f29',
+                color: 'white',
+                backgroundColor: theme.winterMainButton,
                 fontSize: '18px',
               }}
               onClick={stake}

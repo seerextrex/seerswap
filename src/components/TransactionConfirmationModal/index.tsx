@@ -3,7 +3,7 @@ import { ReactNode, useContext, useEffect } from 'react'
 import styled, { ThemeContext } from 'styled-components/macro'
 import { getExplorerLink, ExplorerDataType } from '../../utils/getExplorerLink'
 import Modal from '../Modal'
-import { ExternalLink } from '../../theme'
+import theme, { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
 import { CloseIcon, CustomLightSpinner } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
@@ -99,7 +99,7 @@ function TransactionSubmittedContent({
   const { addToken, success } = useAddTokenToMetamask(currencyToAdd)
 
   return (
-    <Wrapper>
+    <Wrapper style={{ color: 'black' }}>
       <Section inline={inline}>
         {!inline && (
           <RowBetween>
@@ -108,7 +108,7 @@ function TransactionSubmittedContent({
           </RowBetween>
         )}
         <ConfirmedIcon inline={inline}>
-          <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'} color={theme.primary1} />
+          <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'} color={theme.winterMainButton} />
         </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
           <Text fontWeight={500} fontSize={20} textAlign="center">
@@ -116,7 +116,7 @@ function TransactionSubmittedContent({
           </Text>
           {chainId && hash && (
             <ExternalLink href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
-              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
+              <Text fontWeight={500} fontSize={14} color={theme.winterMainButton}>
                 <Trans>View on Explorer</Trans>
               </Text>
             </ExternalLink>
@@ -137,7 +137,10 @@ function TransactionSubmittedContent({
               )}
             </ButtonLight>
           )}
-          <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0', color: '#4cc1d5', background: '#0f2e40' }}>
+          <ButtonPrimary
+            onClick={onDismiss}
+            style={{ margin: '20px 0 0 0', color: 'white'}}
+          >
             <Text fontWeight={500} fontSize={20}>
               {inline ? <Trans>Return</Trans> : <Trans>Close</Trans>}
             </Text>

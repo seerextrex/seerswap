@@ -7,10 +7,10 @@ const Banner = styled.div`
   // height: 100px;
   padding: 1.5rem;
   border-radius: 1rem;
-  background-color: #5d32ed;
+  background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
   box-shadow: 0px 0px 10px #4d2bcc;
-  border: 2px solid #5d32ed;
+  border: 2px solid ${({ theme }) => theme.winterMainButton};
   font-family: Montserrat;
 `
 

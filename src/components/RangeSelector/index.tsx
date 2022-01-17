@@ -4,6 +4,13 @@ import StepCounter from 'components/InputStepCounter/InputStepCounter'
 import { RowBetween } from 'components/Row'
 import { AutoColumn } from 'components/Column'
 import { Bound } from 'state/mint/v3/actions'
+import styled from "styled-components/macro";
+
+const RowBetweenSrtyled = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: column !important;
+  `}
+`
 
 // currencyA is the base token
 export default function RangeSelector({
@@ -46,7 +53,7 @@ export default function RangeSelector({
 
   return (
     <AutoColumn gap="md">
-      <RowBetween style={{ flexDirection: initial ? 'row' : 'column' }}>
+      <RowBetweenSrtyled style={{ flexDirection: initial ? 'row' : 'column' }}>
         <StepCounter
           value={ticksAtLimit[Bound.LOWER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
           onUserInput={onLeftRangeInput}
@@ -80,7 +87,7 @@ export default function RangeSelector({
           initial={initial}
           disabled={disabled}
         />
-      </RowBetween>
+      </RowBetweenSrtyled>
     </AutoColumn>
   )
 }

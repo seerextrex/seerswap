@@ -42,7 +42,7 @@ const FocusedOutlineCard = styled(Card)<{ pulsing: boolean }>`
   display: flex;
   background-color: ${({ theme }) => theme.bg0};
   border: 1px solid ${({ theme }) => theme.bg2};
-  animation: ${({ pulsing, theme }) => pulsing && pulse(theme.primary1)} 0.6s linear;
+  animation: ${({ pulsing, theme }) => pulsing && pulse(theme.winterMainButton)} 0.6s linear;
 `
 
 const FeeAmountLabel = {

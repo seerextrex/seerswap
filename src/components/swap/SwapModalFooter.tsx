@@ -3,8 +3,9 @@ import { Currency, TradeType } from '@uniswap/sdk-core'
 import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { Trade as V3Trade } from 'lib/src'
 
-import { ReactNode } from 'react'
+import { ReactNode, useContext } from 'react'
 import { Text } from 'rebass'
+import { ThemeContext } from 'styled-components/macro'
 import { ButtonError } from '../Button'
 import { AutoRow } from '../Row'
 import { SwapCallbackError } from './styleds'
@@ -19,13 +20,19 @@ export default function SwapModalFooter({
   swapErrorMessage: ReactNode | undefined
   disabledConfirm: boolean
 }) {
+  const theme = useContext(ThemeContext)
+
   return (
     <>
       <AutoRow>
         <ButtonError
           onClick={onConfirm}
           disabled={disabledConfirm}
-          style={{ margin: '10px 0 0 0', background: '#5d32ed', color: 'white', border: '1px solid #5d32ed' }}
+          style={{
+            margin: '10px 0 0 0',
+            color: 'white',
+            border: `1px solid ${theme.winterMainButton}`,
+          }}
           id="confirm-swap-or-send"
         >
           <Text fontSize={20} fontWeight={500}>

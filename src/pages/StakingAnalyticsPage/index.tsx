@@ -10,6 +10,7 @@ import {ArrowLeft} from "react-feather"
 const StakingAnalyticsPageWrapper = styled.div`
   width: 100%;
   max-width: 900px;
+  margin-bottom: 5rem;
 `
 const LoaderWrapper = styled.div`
   width: 100%;
@@ -22,6 +23,7 @@ const LoaderWrapper = styled.div`
   border-radius: 16px;
 `
 const BackButton = styled(NavLink)`
+  margin-top: 10px;
   text-decoration: none;
   color: white;
   font-size: 16px;

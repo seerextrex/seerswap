@@ -15,13 +15,14 @@ interface ChartProps {
     data: ChardDataInterface[]
     margin: { left: number, top: number, right: number, bottom: number }
     dimensions: { width: number, height: number }
+    type: string
 }
 
-export default function Chart({data, margin, dimensions}: ChartProps) {
+export default function Chart({data, margin, dimensions, type}: ChartProps) {
     const svgRef = useRef(null)
     // const data2 = data.map((item, i) => ({value: i % 2 === 0 ? +item.value + (+item.value * Math.random()): +item.value - (+item.value * Math.random()), date: item.date}))
     const X = useMemo(() => d3.map(data, d => new Date(d.date)), [data])
-    const Y = useMemo(() => d3.map(data, d => +d.value), [data])
+    const Y = useMemo(() => d3.map(data, d => +(d.value)), [data])
     // const Y2 = d3.map(data2, d => +d.value)
     const I = d3.range(X.length)
 
@@ -48,7 +49,7 @@ export default function Chart({data, margin, dimensions}: ChartProps) {
         const xScale = d3.scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
         const yScale = d3.scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
         const xAxis = d3.axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
-        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40)
+        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => `${type === 'apr' ? '%' : ''}${val}`)
 
         // Construct a focus line.
         const Line = d3
@@ -101,8 +102,7 @@ export default function Chart({data, margin, dimensions}: ChartProps) {
 
         const InfoRectColor = d3
             .create('svg:rect')
-            .attr('transform', 'translate(120, 15)')
-
+            .attr('transform', 'translate(130, 15)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')
@@ -147,7 +147,7 @@ export default function Chart({data, margin, dimensions}: ChartProps) {
         //     .style('opacity', 1)
         //     .style('display', 'none')
 
-        svg.append('g')
+      const yGroup = svg.append('g')
             .attr('transform', `translate(${margin.left},0)`)
             .attr('opacity', 0.5)
             .attr('color', 'white')
@@ -232,7 +232,7 @@ export default function Chart({data, margin, dimensions}: ChartProps) {
                         const val1 = parseFloat(data[i]?.value).toFixed(3)
                         // const val2 = parseFloat(data2[i]?.value.toString()).toFixed(3)
 
-                        InfoRectFeeText.property('innerHTML', `Value: ${val1}`)
+                        InfoRectFeeText.property('innerHTML', `Value: ${type === 'apr' ? Number(val1): val1}${type === 'apr' ? '%' : ''}`)
                         InfoRectColor.attr('fill', '#63c0f8')
                         // InfoRectFeeText2.property('innerHTML', `Value: ${+val1 < +val2 ? val1 : val2}`)
                         // InfoRectColor2.attr('fill', +val2 < +val1 ? '#123' : '#b41870')

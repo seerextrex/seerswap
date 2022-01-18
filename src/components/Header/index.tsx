@@ -293,7 +293,7 @@ const TitleIcicle = styled.div`
   background-repeat: no-repeat;
   background-size: 98%;
   width: 100%;
-  height: 106px;
+  height: 70px;
   position: absolute;
   display: block;
   z-index: 4;

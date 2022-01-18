@@ -89,18 +89,14 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
         setChartBorder([convertDate(new Date(startTimestamp * 1000)), convertDate(new Date())])
     }, [startTimestamp])
 
-
     useEffect(() => {
         if (stakeHistoriesResult) {
             if (type === 'apr') {
                 setChartData(stakeHistoriesResult.map(item => {
-                    // console.log(item.currentStakedAmount, BigNumber.from(item.currentStakedAmount))
-                    // console.log(BigNumber.from(item.ALGBfromVault).div(BigNumber.from(item.currentStakedAmount)))
-                    const s = BigNumber.from(item.ALGBfromVault).div(BigNumber.from(item.currentStakedAmount)).mul(parseUnits('365', 18)).mul(BigNumber.from(100))
-                    console.log(formatUnits(s, 18))
-                    console.log(BigNumber.from('365'))
+
+                    const aprBigNumber = BigNumber.from(item.ALGBfromVault).mul(BigNumber.from(parseUnits('365', 18))).mul(BigNumber.from(100)).div(BigNumber.from(item.currentStakedAmount))
                     return {
-                        value: formatUnits(BigNumber.from(item.ALGBfromVault).div(BigNumber.from(item.currentStakedAmount)).mul(BigNumber.from('365')).mul(BigNumber.from('100')), 18),
+                        value: Math.floor(formatEther(aprBigNumber)),
                         date: convertDate(new Date(item.date * 1000))
                     }
                 }))
@@ -133,7 +129,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
         if (item.date >= chartBorder[0] && item.date <= chartBorder[1]) {
             return true
         }
-    }), [chartBorder])
+    }), [chartBorder, fullDateData])
 
     const X = useMemo(() => d3.map(fullDateData, d => new Date(d.date)), [fullDateData])
 
@@ -144,6 +140,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
                 data={borderedData}
                 margin={margin}
                 dimensions={{width: isMobile ? wrapper?.current?.offsetWidth  - 80 : 900, height: isMobile ? 300 : 400}}
+                type={type}
             />
             {!isMobile && <Brush
                 data={fullDateData}

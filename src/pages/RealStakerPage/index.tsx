@@ -32,8 +32,17 @@ import {ArrowDown, ArrowUp, RefreshCw} from "react-feather"
 import Frozen from "./Frozen"
 import {darken} from "polished"
 
+const RealStakerPageWrapper = styled.div`
+  margin-bottom: 5rem;
+  width: 765px;
+  margin-top: 1rem;
+  
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `}
+`
 const PageWrapper = styled.div`
-  min-width: ${(props) => props.width};
+  min-width: 100%;
   background-color: ${({theme}) => theme.winterBackground};
   border-radius: 16px;
   padding: 26px 30px 27px;
@@ -77,7 +86,7 @@ export const StakerSlider = styled(Slider)`
     background: white;
     border-radius: 100%;
     border: ${({theme}) => `7px solid ${theme.winterMainButton}`};
-    transform: translateY(-50%);
+    transform: translateY(-40%);
     color: ${({theme}) => theme.bg1};
 
     &:hover,
@@ -113,7 +122,7 @@ export const StakeButton = styled(ButtonConfirmed)`
 `
 const EarnedStakedWrapper = styled.div`
   margin: 27px 0;
-  min-width: ${(props) => props.width};
+  min-width: 100%;
   background-color: ${({theme}) => theme.winterBackground};
   padding: 25px 33px 30px;
   border-radius: 16px;
@@ -126,10 +135,12 @@ const EarnedStakedWrapper = styled.div`
 `
 const StakerStatisticWrapper = styled(NavLink)`
   position: relative;
+  display: inline-block;
   min-width: 765px;
   height: 107px;
   text-decoration: none;
   background-color: ${({theme}) => theme.winterBackground};
+  background-image: url("${StakerStatistic}");
   border-radius: 16px;
   
   h2,
@@ -164,13 +175,13 @@ const StakerStatisticWrapper = styled(NavLink)`
     }
   `}
 `
-const StakerStatisticBackground = styled.img`
-  height: 107px;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-`
+// const StakerStatisticBackground = styled.img`
+//   height: 107px;
+//   width: 100%;
+//   position: absolute;
+//   left: 0;
+//   top: 0;
+// `
 const ResBlocksTitle = styled.div`
   margin-bottom: 25px;
   display: flex;
@@ -291,11 +302,11 @@ export default function RealStakerPage({}) {
     const [approval, approveCallback] = useApproveCallback(balance, chainId ? REAL_STAKER_ADDRESS[chainId] : undefined)
     const valueAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(amountValue.toString(), baseCurrency)
     const earnedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
-        earned !== 0 ? formatEther(earned._hex) : earned.toString(),
+        earned !== 0 ? formatEther(earned) : earned.toString(),
         baseCurrency
     )
     const stakedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
-        staked !== 0 ? formatEther(staked._hex) : staked.toString(),
+        staked !== 0 ? formatEther(staked) : staked.toString(),
         baseCurrency
     )
     const unstakedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(unstaked.toString(), baseCurrency)
@@ -435,22 +446,21 @@ export default function RealStakerPage({}) {
     const enterHandler = useCallback((e) => {
         if (e.charCode === 13) {
             if (!(+amountValue > +balance?.toSignificant(4))) {
-                console.log(amountValue)
-                // stakerHandler(amountValue)
+                stakerHandler(amountValue)
                 onPercentSelectForSlider(0)
                 if (percentForSlider === 0) {
                     setAmountValue('')
                 }
             }
         }
-    }, [])
+    }, [amountValue])
 
     return (
-        <>
+        <RealStakerPageWrapper>
             <Helmet>
                 <title>Algebra — Staking</title>
             </Helmet>
-            <PageWrapper width={'765px'}>
+            <PageWrapper>
                 <StakeTitle>Stake ALGB</StakeTitle>
                 <div onKeyPress={(e) => enterHandler(e)}>
                     <RealStakerInputRange
@@ -542,7 +552,7 @@ export default function RealStakerPage({}) {
                 </ResBlocksWrapper>
             </EarnedStakedWrapper>
             <StakerStatisticWrapper to={'staking/analytics'}>
-                <StakerStatisticBackground src={StakerStatistic}/>
+                {/*<StakerStatisticBackground src={StakerStatistic}/>*/}
                 <h2>Statistics</h2>
                 <p>APY / APR / Fees →</p>
             </StakerStatisticWrapper>
@@ -560,6 +570,6 @@ export default function RealStakerPage({}) {
                 fiatValue={fiatUnstakedAmount}
                 allXALGBFreeze={allXALGBFreeze}
             />
-        </>
+        </RealStakerPageWrapper>
     )
 }

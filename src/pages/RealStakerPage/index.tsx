@@ -344,6 +344,18 @@ export default function RealStakerPage({}) {
         }, BigNumber.from('0'))
     }, [frozenStaked, account, stakesResult])
 
+    const allFreezeArr = useMemo(() => {
+        if (!isArray(frozenStaked) || !stakesResult?.factories) return
+
+        return frozenStaked?.map((el, i) => {
+            if (!el.xALGBAmount) return
+
+            return BigNumber.from(el?.xALGBAmount)
+                .mul(BigNumber.from(stakesResult?.factories[0]?.ALGBbalance))
+                .div(BigNumber.from(stakesResult?.factories[0]?.xALGBtotalSupply))
+        })
+    }, [frozenStaked, account, stakesResult])
+
 
     const allXALGBFreeze = useMemo(() => {
         if (!isArray(frozenStaked) || !stakesResult?.factories) return
@@ -368,8 +380,24 @@ export default function RealStakerPage({}) {
         return formatedData.reduce((prev, cur) => prev.add(cur), BigNumber.from('0'))
     }, [frozenStaked, account])
 
-    const earnedFreeze = useMemo(() => {
+    const stakedFreezeArr = useMemo(() => {
+        if (!isArray(frozenStaked)) return
 
+        return frozenStaked?.map((el, i) => {
+            return BigNumber.from(el?.stakedALGBAmount)
+        })
+    }, [frozenStaked, account])
+
+    const earnedFreezeArr = useMemo(() => {
+        if (!allFreezeArr || !stakedFreezeArr) return
+        const res = [BigNumber.from('0')]
+        for (let i = 0; i < allFreezeArr.length; i++) {
+            res.push(allFreezeArr[i].sub(stakedFreezeArr[i]))
+        }
+        return res
+    }, [allFreezeArr, stakedFreezeArr])
+
+    const earnedFreeze = useMemo(() => {
         if (!allFreeze || !stakedFreeze) return
 
         return allFreeze.sub(stakedFreeze)
@@ -523,7 +551,7 @@ export default function RealStakerPage({}) {
                         }
                     </LeftBlock>
                     {showFrozen && frozenStaked?.length !== 0 && frozenStaked?.some(el => +Math.floor(el.timestamp * 1000) > now()) ?
-                        <Frozen data={frozenStaked} earnedFreeze={earnedFreeze} now={now}/> : null}
+                        <Frozen data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now}/> : null}
                     <ReloadButton disabled={loadingClaim} onClick={reloadClaim} refreshing={loadingClaim}>
                         <RefreshCw style={{display: 'block'}} size={18} stroke={'white'}/>
                     </ReloadButton>

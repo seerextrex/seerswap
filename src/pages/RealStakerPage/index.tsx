@@ -554,7 +554,7 @@ export default function RealStakerPage({}) {
             <StakerStatisticWrapper to={'staking/analytics'}>
                 {/*<StakerStatisticBackground src={StakerStatistic}/>*/}
                 <h2>Statistics</h2>
-                <p>APY / APR / Fees →</p>
+                <p>Minted / APR / Total Supply →</p>
             </StakerStatisticWrapper>
             <RealStakerUnstakeModal
                 openModal={openModal}

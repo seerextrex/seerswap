@@ -49,7 +49,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
     const focusHeight = 70
     const wrapper = useRef(null)
     // const dimensions =
-    const margin = isMobile ? {left: 30, top: 30, right: 10, bottom: 50} :{left: 50, top: 30, right: 30, bottom: 30}
+    const margin = isMobile ? {left: 45, top: 30, right: 10, bottom: 50} :{left: 50, top: 30, right: 30, bottom: 30}
     const [span, setSpan] = useState('Day')
 
 
@@ -139,7 +139,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
             <Chart
                 data={borderedData}
                 margin={margin}
-                dimensions={{width: isMobile ? wrapper?.current?.offsetWidth  - 80 : 900, height: isMobile ? 300 : 400}}
+                dimensions={{width: isMobile ? wrapper?.current?.offsetWidth  - 20 : 900, height: isMobile ? 300 : 400}}
                 type={type}
             />
             {!isMobile && <Brush

@@ -11,6 +11,9 @@ const UnStakeModalWrapper = styled(Modal)`
 const ContentModal = styled.div`
   width: 100%;
   padding: 5px 30px 20px;
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    padding: 5px 15px 20px;    
+  `}
 `
 
 interface UnstakeModalProps {

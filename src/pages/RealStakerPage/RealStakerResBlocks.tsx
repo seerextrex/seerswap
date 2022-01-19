@@ -7,11 +7,29 @@ import { PageTitle } from '../../components/PageTitle'
 import Frozen from "./Frozen"
 
 const PageWrapper = styled.div`
-  min-width: ${props => props.width};
+  width: 100%;
   background-color: rgba(60, 97, 126, 0.5);
   border-radius: 16px;
   position: relative;
   padding: 1.5rem 1rem 1rem;
+  
+  &:first-child {
+    margin-right: 1rem;
+  }
+  &:last-child {
+    margin-left: 1rem;
+  }
+  
+  ${({theme}) => theme.mediaWidth.upToSmall`
+      
+  &:first-child {
+    margin-right: unset;
+  }
+  &:last-child {
+    margin-left: unset;
+  }
+  `}
+
 
   h2 {
     color: white;

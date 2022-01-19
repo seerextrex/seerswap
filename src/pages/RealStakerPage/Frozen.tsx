@@ -10,11 +10,11 @@ const FrozenWrapper = styled.div`
   background-color: ${({theme}) => theme.winterDisabledButton};
   height: 190px;
   position: absolute;
-  top: 41px;
+  top: 40px;
   z-index: 100;
   border-radius: 16px;
   padding: 25px 30px;
-  overflow-y: scroll;
+  overflow-y: auto;
   ${({theme}) => theme.mediaWidth.upToSmall`
      padding: 1rem;
     `}
@@ -83,7 +83,7 @@ const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: Bi
                         staked</p>
                     {+formatUnits(earnedFreeze[index + 1]) < 0.01 ? null :
                         <p>{(+formatUnits(earnedFreeze[index + 1])).toFixed(2)} ALGB earned</p>}
-                    <TimeWrapper>Frozen for <Time>{(time <= '00:00:00') ? <LoaderStyled stroke={'white'} size={'16px'}/> : time}</Time> minutes</TimeWrapper>
+                    <TimeWrapper>Frozen for<Time>{(time <= '00:00:00') ? <LoaderStyled stroke={'white'} size={'16px'}/> : time}</Time></TimeWrapper>
                 </FrozenTransaction>
             }
         </>

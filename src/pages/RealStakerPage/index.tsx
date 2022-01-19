@@ -17,7 +17,6 @@ import {useRealStakerHandlers} from '../../hooks/useRealStaker'
 import {ApprovalState, useApproveCallback} from '../../hooks/useApproveCallback'
 import {REAL_STAKER_ADDRESS} from '../../constants/addresses'
 import Loader from '../../components/Loader'
-import {ALGEBRA_POLYGON} from '../../constants/tokens'
 import {useInfoSubgraph} from '../../hooks/subgraph/useInfoSubgraph'
 import {BigNumber} from 'ethers'
 import {formatEther, formatUnits, parseUnits} from 'ethers/lib/utils'
@@ -25,7 +24,6 @@ import RealStakerUnstakeModal from './RealStakerUnstakeModal'
 import {useUSDCValue} from '../../hooks/useUSDCPrice'
 import {Currency, CurrencyAmount} from '@uniswap/sdk-core'
 import {tryParseAmount} from '../../state/swap/hooks'
-import {useAllTransactions} from '../../state/transactions/hooks'
 import {useWalletModalToggle} from '../../state/application/hooks'
 import {isArray} from "util"
 import {ArrowDown, ArrowUp, RefreshCw} from "react-feather"
@@ -36,7 +34,7 @@ const RealStakerPageWrapper = styled.div`
   margin-bottom: 5rem;
   width: 765px;
   margin-top: 1rem;
-  
+
   ${({theme}) => theme.mediaWidth.upToSmall`
     width: 100%;
   `}
@@ -49,6 +47,7 @@ const PageWrapper = styled.div`
 
   ${({theme}) => theme.mediaWidth.upToSmall`
     min-width: 100%;
+    padding: 26px 15px 27px;
   `}
 `
 const StakeTitle = styled.h1`
@@ -121,16 +120,17 @@ export const StakeButton = styled(ButtonConfirmed)`
   `}
 `
 const EarnedStakedWrapper = styled.div`
-  margin: 27px 0;
+  margin: 2rem 0;
   min-width: 100%;
   background-color: ${({theme}) => theme.winterBackground};
-  padding: 25px 33px 30px;
+  padding: 25px 30px 30px;
   border-radius: 16px;
 
   ${({theme}) => theme.mediaWidth.upToSmall`
     min-width: 100%;
     display: flex;
     flex-direction: column;
+    padding: 25px 15px 30px;
   `}
 `
 const StakerStatisticWrapper = styled(NavLink)`
@@ -141,14 +141,16 @@ const StakerStatisticWrapper = styled(NavLink)`
   text-decoration: none;
   background-color: ${({theme}) => theme.winterBackground};
   background-image: url("${StakerStatistic}");
+  background-repeat: no-repeat;
+  background-position-y: 80%;
   border-radius: 16px;
-  
+
   h2,
   p {
     color: white;
     text-decoration: none;
-    margin: 0 0 0 27px;
-    font-size: 16px;
+    margin: 0 0 0 2rem;
+    font-size: 13px;
     position: relative;
   }
 
@@ -175,15 +177,8 @@ const StakerStatisticWrapper = styled(NavLink)`
     }
   `}
 `
-// const StakerStatisticBackground = styled.img`
-//   height: 107px;
-//   width: 100%;
-//   position: absolute;
-//   left: 0;
-//   top: 0;
-// `
 const ResBlocksTitle = styled.div`
-  margin-bottom: 25px;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -222,15 +217,17 @@ const ReloadButton = styled.button`
 const FrozenDropDown = styled.button`
   color: white !important;
   display: flex;
-  width: 170px;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   background-color: #08537E;
   border: none;
   font-size: 13px;
-  padding: 3px 7px 3px 14px;
+  padding: .2rem 1rem;
   border-radius: 5px;
+  margin-right: 1rem;
+  white-space: nowrap;
+  width: 100%;
 
   &:disabled {
     background-color: ${darken(.05, '#08537E')};
@@ -238,22 +235,53 @@ const FrozenDropDown = styled.button`
   }
 
   ${({theme}) => theme.mediaWidth.upToSmall`
-    padding-left: 7px;
-    width: 150px;
+    width: 100%;
+    padding: .2rem .4rem;
   `}
 `
 
 const LeftBlock = styled.div`
   display: flex;
   align-items: center;
-  width: 40%;
-  justify-content: space-between;
-
-  ${({theme}) => theme.mediaWidth.upToSmall`
-    width: 86%;
-  `}
+  width: calc(50% - 1rem);
+  justify-content: start;
 `
 
+const RightBlock = styled.div`
+  width: calc(50% - 1rem);
+  margin-left: auto;
+  display: flex;
+  justify-content: right;
+`
+const XALGBCousreWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin: 1rem 0 0 0;
+  background: linear-gradient(90deg,rgb(23, 81, 124) 56%,rgb(0, 143, 255));
+  border-radius: 8px;
+  
+`
+const XALGBBalance = styled.span`
+  padding: .5rem 1rem;
+  display: inline-block;
+  border-radius: 8px 0 0 8px;
+  min-width: 70%;
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    min-width: 50%;
+    padding: .5rem;
+  `}
+`
+const XALGBCourse = styled.span`
+  padding: .5rem 1rem;
+  border-radius: 0 8px 8px 0;
+  min-width: 30%;
+  text-align: right;
+  ${({theme}) => theme.mediaWidth.upToSmall`
+  padding: .5rem;
+    min-width: 50%;
+  `}
+`
 export default function RealStakerPage({}) {
     const currencyId = '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'
     const {chainId, account} = useActiveWeb3React()
@@ -276,8 +304,9 @@ export default function RealStakerPage({}) {
 
     //balances
     const balance = useCurrencyBalance(account ?? undefined, baseCurrency)
+
     const _balance = useMemo(() => {
-        return balance
+        return balance?.toSignificant(4)
     }, [balance])
 
     const numBalance = useMemo(() => {
@@ -294,6 +323,7 @@ export default function RealStakerPage({}) {
     const [unstaked, setUnstaked] = useState('')
     const [unstakeAmount, setUnstakeAmount] = useState(0)
     const [algbCourse, setAlbgCourse] = useState(BigNumber.from('0'))
+    const [xALGBBalance, setXALGB] = useState('')
     const [showFrozen, setFrozen] = useState(false)
     const [loadingClaim, setLoadingClaim] = useState(false)
 
@@ -356,7 +386,6 @@ export default function RealStakerPage({}) {
         })
     }, [frozenStaked, account, stakesResult])
 
-
     const allXALGBFreeze = useMemo(() => {
         if (!isArray(frozenStaked) || !stakesResult?.factories) return
 
@@ -409,13 +438,7 @@ export default function RealStakerPage({}) {
         fetchStakingFn(account.toLowerCase())
         frozenStakedHandler(account)
 
-    }, [account])
-
-    //get data for staked and earned
-    useEffect(() => {
-        if (stakesResult || !account) return
-        fetchStakingFn(account.toLowerCase())
-    }, [_balance])
+    }, [account, _balance])
 
     //calc amount when choose range in slider
     useEffect(() => {
@@ -459,14 +482,18 @@ export default function RealStakerPage({}) {
                     .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
             )
         }
+
         if (!stakesResult?.stakes[0]) {
             return setStaked(BigNumber.from('0'))
         }
+        const xALGBSplit = formatUnits(BigNumber.from(stakesResult?.stakes[0].xALGBAmount), 18).split('.')
+        setXALGB(`${xALGBSplit[0]}.${xALGBSplit[1].slice(0,3)}`)
         setStaked(BigNumber.from(stakesResult?.stakes[0]?.stakedALGBAmount).sub(stakedFreeze))
     }, [stakesResult, stakedFreeze, earnedFreeze])
 
     //calc unstake amount
     useEffect(() => {
+        console.log(earned)
         setUnstakeAmount(staked.add(earned))
     }, [staked, earned])
 
@@ -538,7 +565,9 @@ export default function RealStakerPage({}) {
             <EarnedStakedWrapper width={'765px'}>
                 <ResBlocksTitle>
                     <LeftBlock>
-                        <h3>Balance</h3>
+                            <h3>Balance</h3>
+                    </LeftBlock>
+                    <RightBlock>
                         {
                             frozenStaked?.length !== 0 &&
                             <FrozenDropDown onClick={() => {
@@ -549,12 +578,12 @@ export default function RealStakerPage({}) {
                                 Frozen {showFrozen ? <ArrowUp size={'16px'}/> : <ArrowDown size={'16px'}/>}
                             </FrozenDropDown>
                         }
-                    </LeftBlock>
+                        <ReloadButton disabled={loadingClaim} onClick={reloadClaim} refreshing={loadingClaim}>
+                            <RefreshCw style={{display: 'block'}} size={18} stroke={'white'}/>
+                        </ReloadButton>
+                    </RightBlock>
                     {showFrozen && frozenStaked?.length !== 0 && frozenStaked?.some(el => +Math.floor(el.timestamp * 1000) > now()) ?
                         <Frozen data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now}/> : null}
-                    <ReloadButton disabled={loadingClaim} onClick={reloadClaim} refreshing={loadingClaim}>
-                        <RefreshCw style={{display: 'block'}} size={18} stroke={'white'}/>
-                    </ReloadButton>
                 </ResBlocksTitle>
                 <ResBlocksWrapper>
                     <RealStakerResBlocks
@@ -578,9 +607,12 @@ export default function RealStakerPage({}) {
                         algbCourse={algbCourse}
                     />
                 </ResBlocksWrapper>
+                <XALGBCousreWrapper>
+                    <XALGBBalance>You have {xALGBBalance} xALGB</XALGBBalance>
+                    <XALGBCourse>1 xALGB = {formatUnits(algbCourse, 0)} ALGB</XALGBCourse>
+                </XALGBCousreWrapper>
             </EarnedStakedWrapper>
             <StakerStatisticWrapper to={'staking/analytics'}>
-                {/*<StakerStatisticBackground src={StakerStatistic}/>*/}
                 <h2>Statistics</h2>
                 <p>Minted / APR / Total Supply →</p>
             </StakerStatisticWrapper>

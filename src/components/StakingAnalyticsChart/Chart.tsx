@@ -49,7 +49,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
         const xScale = d3.scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
         const yScale = d3.scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
         const xAxis = d3.axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
-        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => `${type === 'apr' ? '%' : ''}${val}`)
+        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => `${val}${type === 'apr' ? '%' : ''}`)
 
         // Construct a focus line.
         const Line = d3

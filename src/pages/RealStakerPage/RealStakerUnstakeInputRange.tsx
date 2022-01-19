@@ -2,6 +2,7 @@ import { CurrencyDropdown } from '../AddLiquidity/styled'
 import styled from 'styled-components/macro'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import { useCurrency } from '../../hooks/Tokens'
+import {useMemo} from "react"
 
 const CurrencyInputPanelWrapper = styled.div`
   width: 100%;
@@ -51,12 +52,17 @@ export default function RealStakerUnstakeInputRange ({baseCurrency, amountValue,
 
     const ALGBCurrency = useCurrency('0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
 
+    const rightBalance = useMemo(() => {
+        const splited = baseCurrency.split('.')
+        return splited[0] + '.' + splited[1].slice(0,3)
+    }, [baseCurrency])
+
   return (
     <CurrencyInputPanelWrapper>
       <UnstakeTitle>
         <CurrencyLogo
         currency={ALGBCurrency}/>
-        {baseCurrency} ALGB
+        {rightBalance} ALGB
       </UnstakeTitle>
       <CurrencyDropdown
           style={{width: '100%'}}

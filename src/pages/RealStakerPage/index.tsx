@@ -165,7 +165,7 @@ const StakerStatisticWrapper = styled(NavLink)`
     display: flex;
     align-items: center;
     height: unset;
-    padding: 15px 20px;
+    padding: 15px 10px;
     
     img {
         height: unset;
@@ -175,6 +175,9 @@ const StakerStatisticWrapper = styled(NavLink)`
         margin: 0 10px;
         z-index: 10;
     }
+    h2 {
+        margin-left: 1rem;
+    
   `}
 `
 const ResBlocksTitle = styled.div`

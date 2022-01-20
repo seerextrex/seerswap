@@ -1,4 +1,3 @@
-import { Trans } from '@lingui/macro'
 import useScrollPosition from '@react-hook/window-scroll'
 import { darken } from 'polished'
 import { useEffect, useMemo, useState } from 'react'
@@ -8,17 +7,12 @@ import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/ho
 import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import styled, { keyframes } from 'styled-components/macro'
-import Logo from '../../assets/svg/logo.svg'
 import WinterLogo from '../../assets/images/winter-logo.png'
-import LogoDark from '../../assets/svg/logo_white.svg'
 import Logo_logo from '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
-import Modal from '../Modal'
 import Row from '../Row'
 import Web3Status from '../Web3Status'
 import NetworkCard from './NetworkCard'
-import UniBalanceContent from './UniBalanceContent'
-import { deviceSizes } from '../../pages/styled'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 import usePrevious from '../../hooks/usePrevious'
 
@@ -27,7 +21,6 @@ import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import LogoIcicles from '../../assets/svg/logo-icicles.svg'
 
 import { isMobile } from 'react-device-detect'
-import { useFarmingActionsHandlers } from '../../state/farming/hooks'
 import { useAppSelector } from '../../state/hooks'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
@@ -44,7 +37,7 @@ const HeaderFrame = styled.div<{ showBackground: boolean }>`
   z-index: 21;
   position: relative;
   /* Background slide effect on scroll. */
-  background-image: ${({ theme }) => `linear-gradient(to bottom, transparent 50%, rgba(0,0,0,.9) 50% )}}`};
+  //background-image: ${({ theme }) => `linear-gradient(to bottom, transparent 50%, rgba(0,0,0,.9) 50% )}}`};
   background-position: ${({ showBackground }) => (showBackground ? '0 -100%' : '0 0')};
   background-size: 100% 200%;
   box-shadow: 0px 0px 0px 1px ${({ theme, showBackground }) => (showBackground ? theme.bg2 : 'transparent;')};
@@ -170,6 +163,7 @@ const HeaderLinks = styled(Row)`
   position: relative;
   transform: unset;
   left: unset;
+  overflow: auto;
   `}
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -293,7 +287,7 @@ const TitleIcicle = styled.div`
   background-repeat: no-repeat;
   background-size: 98%;
   width: 100%;
-  height: 70px;
+  height: 75px;
   position: absolute;
   display: block;
   z-index: 4;
@@ -341,7 +335,7 @@ const StyledNavLink = styled(NavLink).attrs({
   font-size: 1rem;
   width: fit-content;
   font-weight: 600;
-  padding: 14px 20px;
+  padding: 14px 15px;
   word-break: break-word;
   white-space: nowrap;
   border-bottom: 3px solid transparent;

@@ -47,6 +47,15 @@ export default function RealStakerUnstakeModal(
     allXALGBFreeze
   } : UnstakeModalProps
 ) {
+
+    const enerHandler = (e) => {
+        if (e.charCode === 13 && +unstaked !== 0) {
+            unstakeHandler(unstaked, stakedResult, baseCurrency, allXALGBFreeze)
+            setUnstaked('')
+            setUnstakePercent(0)
+            setOpenModal(false)
+        }
+    }
     // console.log(fiatValue, baseCurrency)
   return (
     <UnStakeModalWrapper
@@ -58,7 +67,7 @@ export default function RealStakerUnstakeModal(
       }}
       maxHeight={300}
     >
-      <ContentModal>
+      <ContentModal onKeyPress={(e) => {enerHandler(e)}}>
         <RealStakerUnstakeInputRange
           amountValue={unstaked}
           setAmountValue={setUnstaked}

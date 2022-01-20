@@ -45,6 +45,14 @@ const PageWrapper = styled.div`
   border-radius: 16px;
   padding: 26px 30px 27px;
 
+  input[type=range]:disabled::-webkit-slider-thumb {
+    border: ${({theme}) => `7px solid ${theme.winterDisabledButton}`};
+  }
+
+  input[type=range]:disabled::-moz-range-thumb {
+    border: ${({theme}) => `7px solid ${theme.winterDisabledButton}`};
+  }
+
   ${({theme}) => theme.mediaWidth.upToSmall`
     min-width: 100%;
     padding: 26px 15px 27px;
@@ -59,7 +67,7 @@ export const SilderWrapper = styled.div`
   width: 100%;
   margin: 0;
 `
-export const StakerSlider = styled(Slider)`
+export const StakerSlider = styled(Slider)`  
   &::-webkit-slider-runnable-track {
     background: ${({theme}) => theme.winterDisabledButton};
     height: 5px;
@@ -107,6 +115,9 @@ export const StakerSlider = styled(Slider)`
     &:focus {
       box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.08), 0px 16px 24px rgba(0, 0, 0, 0.06),
       0px 24px 32px rgba(0, 0, 0, 0.04);
+    }
+    &:disabled {
+      border: ${({theme}) => `7px solid ${theme.winterDisabledButton}`};
     }
   }
 `
@@ -518,16 +529,14 @@ export default function RealStakerPage({}) {
             <Helmet>
                 <title>Algebra — Staking</title>
             </Helmet>
-            <PageWrapper>
+            <PageWrapper onKeyPress={(e) => enterHandler(e)}>
                 <StakeTitle>Stake ALGB</StakeTitle>
-                <div onKeyPress={(e) => enterHandler(e)}>
                     <RealStakerInputRange
                         amountValue={amountValue}
                         setAmountValue={setAmountValue}
                         baseCurrency={baseCurrency}
                         fiatValue={fiatValue}
                     />
-                </div>
                 {numBalance == 0 && balance ? (
                     <NavLink to={''} style={{textDecoration: 'none'}}>
                         <StakeButton>BUY ALGB</StakeButton>
@@ -535,9 +544,9 @@ export default function RealStakerPage({}) {
                 ) : (
                     <>
                         <SilderWrapper>
-                            <StakerSlider value={percentForSlider} onChange={onPercentSelectForSlider} size={22}/>
+                            <StakerSlider value={percentForSlider} onChange={onPercentSelectForSlider} size={22} disabled={+_balance === 0}/>
                         </SilderWrapper>
-                        <RealStakerRangeButtons onPercentSelect={onPercentSelect} showCalculate={false}/>
+                        <RealStakerRangeButtons onPercentSelect={onPercentSelect} showCalculate={false} balance={_balance}/>
                         {approval === ApprovalState.NOT_APPROVED ? (
                             <StakeButton onClick={approveCallback}>Approve token</StakeButton>
                         ) : approval === ApprovalState.UNKNOWN && account === null ? (

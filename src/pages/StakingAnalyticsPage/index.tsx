@@ -30,6 +30,8 @@ const BackButton = styled(NavLink)`
   display: flex;
   align-items: center;
   width: fit-content;
+  position: relative;
+  z-index: 100;
    p {
      margin:  0 0 0 5px;
    }

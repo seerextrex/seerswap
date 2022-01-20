@@ -7,6 +7,13 @@ const StakerSmallMaxButton = styled(SmallMaxButton)`
   background: ${({theme}) => theme.winterMainButton};
   border: 1px solid transparent;
   box-sizing: border-box;
+  &:disabled {
+    background: ${({theme}) => theme.winterDisabledButton};
+    
+    &:focus {
+      border: unset;
+    }
+  }
 `
 const ButtonsWrapper = styled.div`
   margin: 0;
@@ -28,20 +35,20 @@ const ButtonsWrapper = styled.div`
   }
 `
 
-export default function RealStakerRangeButtons ({onPercentSelect, showCalculate} : {onPercentSelect: any, showCalculate?: boolean}) {
+export default function RealStakerRangeButtons ({onPercentSelect, showCalculate, balance} : {onPercentSelect: any, showCalculate?: boolean, balance: string}) {
   return(
     <ButtonsWrapper>
       <div>
-        <StakerSmallMaxButton onClick={() => onPercentSelect(25)} style={{marginLeft: 0}}>
+        <StakerSmallMaxButton onClick={() => onPercentSelect(25)} style={{marginLeft: 0}} disabled={+balance === 0}>
           <Trans>25%</Trans>
         </StakerSmallMaxButton>
-        <StakerSmallMaxButton onClick={() => onPercentSelect(50)}>
+        <StakerSmallMaxButton onClick={() => onPercentSelect(50)} disabled={+balance === 0}>
           <Trans>50%</Trans>
         </StakerSmallMaxButton>
-        <StakerSmallMaxButton onClick={() => onPercentSelect(75)}>
+        <StakerSmallMaxButton onClick={() => onPercentSelect(75)} disabled={+balance === 0}>
           <Trans>75%</Trans>
         </StakerSmallMaxButton>
-        <StakerSmallMaxButton onClick={() => onPercentSelect(100)}>
+        <StakerSmallMaxButton onClick={() => onPercentSelect(100)} disabled={+balance === 0}>
           <Trans>MAX</Trans>
         </StakerSmallMaxButton>
       </div>

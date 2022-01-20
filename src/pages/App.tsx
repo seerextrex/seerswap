@@ -143,11 +143,19 @@ const NetworkFailedCard = styled.div`
 const InternetError = styled.div`
   width: 100%;
   height: 100vh;
-  background-color: #040b1e;
+  //background-color: #040b1e;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  h2 {
+    color: white;
+    font-size: 40px;
+    text-align: center;
+  }
 `
 
 const GlobalStyle = createGlobalStyle`
@@ -214,7 +222,9 @@ export default function App() {
             <Header />
           </HeaderWrapper>
           { !internet && <InternetError>
+            <h2>
             Network ERROR
+            </h2>
           </InternetError>}
           <BodyWrapper style={{ zIndex: 2 }}>
             {networkFailed && (

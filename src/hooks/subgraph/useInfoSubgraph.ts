@@ -1,5 +1,5 @@
 import { useApolloClient } from "@apollo/client";
-import { useState } from "react";
+import { useCallback, useState } from 'react'
 import { Contract, providers } from "ethers";
 import { useActiveWeb3React } from "../web3";
 import { useClients } from "./useClients";
@@ -17,12 +17,15 @@ import {
     CHART_POOL_LAST_NOT_EMPTY,
     SWAPS_PER_DAY,
     ALL_POSITIONS,
-    TOTAL_STATS
+    TOTAL_STATS,
+    GET_STAKE,
+    GET_STAKE_HISTORY,
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
 import { useDeltaTimestamps } from "../../utils/queries";
 import { formatTokenName, formatTokenSymbol, get2DayChange, getPercentChange } from "../../utils/info";
+import { stakerClient } from '../../apollo/client'
 
 function parseTokensData(tokenData) {
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenFields }, poolData) => {
@@ -51,6 +54,7 @@ export function useInfoSubgraph() {
     const [tokensResult, setTokens] = useState(null);
     const [tokensLoading, setTokensLoading] = useState(null);
 
+
     const [feesResult, setFees] = useState(null);
     const [feesLoading, setFeesLoading] = useState(null);
 
@@ -59,6 +63,12 @@ export function useInfoSubgraph() {
 
     const [totalStats, setTotalStats] = useState(null)
     const [totalStatsLoading, setTotalStatsLoading] = useState(null)
+    
+    const [stakesResult, setStakes] = useState(null);
+    const [stakesLoading, setStakesLoading] = useState(null);
+  
+    const [stakeHistoriesResult, setHistories] = useState(null);
+    const [historiesLoading, setHistoriesLoading] = useState(null);
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -324,6 +334,7 @@ export function useInfoSubgraph() {
 
     }
 
+
     async function fetchLastEntry(pool) {
         try {
             const { data: { feeHourDatas }, error: error } = await dataClient.query({
@@ -394,6 +405,32 @@ export function useInfoSubgraph() {
             console.error('Fees last failed: ', err);
         }
     }
+  
+      const fetchStaking = useCallback(async (id: string) => {
+
+        setStakes(null)
+
+        try {
+            setStakesLoading(true)
+
+            const { data: { factories, stakes }, error: error } = await stakerClient.query({
+                query: GET_STAKE(id),
+                fetchPolicy: 'network-only'
+            })
+              
+              setStakesLoading(false)
+            setStakes({factories: factories, stakes: stakes})
+
+            return stakes
+
+        } catch (err) {
+            setStakesLoading(false)
+            setStakes('failed')
+            console.error('Getting stakes failed', err);
+            return undefined
+        }
+
+    }, [account])
 
     async function fetchFeePool(pool: string, startTimestamp: number, endTimestamp: number) {
         try {
@@ -466,6 +503,29 @@ export function useInfoSubgraph() {
         setChartPoolDataLoading(false)
     }
 
+
+    async function fetchStakingHistory() {
+        try {
+            setHistoriesLoading(true)
+
+            const { data: { histories }, error: error } = await stakerClient.query({
+                query: GET_STAKE_HISTORY(),
+               fetchPolicy: 'network-only'
+            })
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+          
+            setHistoriesLoading(false)
+            setHistories(histories)
+
+        } catch (e) {
+            setHistories('Getting histories failed')
+            setHistoriesLoading(false)
+            console.log(e)
+            return undefined
+        }
+    }
+
     async function fetchTotalStats() {
 
         try {
@@ -513,9 +573,11 @@ export function useInfoSubgraph() {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
-        fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
+        getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking},
+        fetchStakedHistory: {historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory},
+      fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
-        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
+        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
+        getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking}
     }
-
 }

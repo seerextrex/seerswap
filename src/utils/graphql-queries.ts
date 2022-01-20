@@ -216,6 +216,16 @@ query currentEvents {
     }
 }`
 
+export const FROZEN_STAKED = (account: string) => gql`
+   query frozenStaked  {
+     stakeTxes (where: {owner: "${account.toLowerCase()}", timestamp_gte: ${Math.round(Date.now()  / 1000)}}, orderBy: timestamp, orderDirection: asc) {
+     timestamp
+     stakedALGBAmount
+     xALGBAmount
+   }
+}
+`
+
 export const TRANSFERED_POSITIONS = (account, chainId) => gql`
     query transferedPositions {
         deposits (orderBy: tokenId, orderDirection: desc, where: {oldOwner: "${account}", owner: "${STAKER_ADDRESS[chainId]}"}) {
@@ -407,6 +417,35 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
 
   return gql(queryString)
 }
+
+export const GET_STAKE = (id: string) => gql`
+query stakeHistory {
+  factories {
+    currentStakedAmount
+    earnedForAllTime
+    ALGBbalance
+    xALGBtotalSupply
+  }
+  stakes (where:{id: "${id}"}) {
+    stakedALGBAmount
+    xALGBAmount
+  }
+}
+`
+
+export const GET_STAKE_HISTORY = () => gql`
+query stake {
+  histories {
+  date
+  currentStakedAmount
+  earned
+  ALGBbalance
+  xALGBminted
+  xALGBtotalSupply
+  ALGBfromVault
+}
+}
+`
 
 //Blocklytics
 

@@ -14,6 +14,7 @@ import WETH_ABI from 'abis/weth.json'
 import EIP_2612 from 'abis/eip_2612.json'
 import STAKER_ABI from 'abis/staker.json'
 import MULTICALL_ABI from 'abis/multicall.json'
+import REAL_STAKER_ABI from 'abis/real-staker.json'
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
@@ -22,6 +23,7 @@ import {
   MULTICALL_ADDRESS,
   V2_ROUTER_ADDRESS,
   ENS_REGISTRAR_ADDRESSES,
+  REAL_STAKER_ADDRESS
 } from 'constants/addresses'
 import { abi as NFTPositionManagerABI } from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import { useMemo } from 'react'
@@ -60,6 +62,10 @@ export function useContract<T extends Contract = Contract>(
 
 export function useV2MigratorContract() {
   return useContract<V3Migrator>(V3_MIGRATOR_ADDRESSES, V2MigratorABI, true)
+}
+
+export function useRealStaker() {
+  return useContract(REAL_STAKER_ADDRESS, REAL_STAKER_ABI, true);
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean) {

@@ -341,6 +341,7 @@ export default function RealStakerPage({}) {
     const [unstaked, setUnstaked] = useState('')
     const [unstakeAmount, setUnstakeAmount] = useState(0)
     const [algbCourse, setAlbgCourse] = useState(BigNumber.from('0'))
+    const [algbCourseShow, setAlbgCourseShow] = useState('1')
     const [xALGBBalance, setXALGB] = useState('')
     const [showFrozen, setFrozen] = useState(false)
     const [loadingClaim, setLoadingClaim] = useState(false)
@@ -498,6 +499,7 @@ export default function RealStakerPage({}) {
         }
 
         if (+stakesResult?.factories[0].xALGBtotalSupply !== 0) {
+            setAlbgCourseShow(stakesResult.factories[0].ALGBbalance / stakesResult.factories[0].xALGBtotalSupply)
             setAlbgCourse(
                 BigNumber.from(stakesResult.factories[0].ALGBbalance)
                     .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
@@ -627,7 +629,7 @@ export default function RealStakerPage({}) {
                 </ResBlocksWrapper>
                 <XALGBCousreWrapper>
                     <XALGBBalance>You have {xALGBBalance} xALGB</XALGBBalance>
-                    <XALGBCourse>1 xALGB = {formatUnits(algbCourse, 0)} ALGB</XALGBCourse>
+                    <XALGBCourse>1 xALGB = {(+algbCourseShow).toFixed(2)} ALGB</XALGBCourse>
                 </XALGBCousreWrapper>
             </EarnedStakedWrapper>
             <StakerStatisticWrapper to={'staking'}>

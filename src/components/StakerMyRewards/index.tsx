@@ -11,6 +11,7 @@ import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import USDCLogo from '../../assets/images/usdc-logo.png'
 import WMATICLogo from '../../assets/images/matic-logo.png'
 import CurrencyLogo from "../CurrencyLogo";
+import {darken} from "polished"
 
 const skeletonAnimation = keyframes`
   100% {
@@ -158,6 +159,9 @@ const RewardClaimButton = styled.button`
           ${skeletonGradient};
         `
       : null}
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+  }
   &:disabled {
     opacity: 0.4;
     cursor: default;

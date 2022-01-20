@@ -47,10 +47,6 @@ export default function CurrencyLogo({
 
   const { chainId } = useActiveWeb3React()
 
-    useEffect(() => {
-        // console.log(currency)
-    }, [currency])
-
   let logo
 
   if (chainId === 137) {
@@ -58,19 +54,6 @@ export default function CurrencyLogo({
   }
 
   if (!currency) return <div/>
-
-  // const srcs: string[] = useMemo(() => {
-  //   if (!currency || currency.isNative) return []
-
-  //   if (currency.isToken) {
-  //     const defaultUrls = currency.chainId === 1 ? [getTokenLogoURL(currency.address)] : []
-  //     if (currency instanceof WrappedTokenInfo) {
-  //       return [...uriLocations, ...defaultUrls]
-  //     }
-  //     return defaultUrls
-  //   }
-  //   return []
-  // }, [currency, uriLocations])
 
     if(currency?.address?.toLowerCase() in specialTokens) {
         return <StyledImgLogo src={specialTokens[currency?.address.toLowerCase()].logo} size={size} style={style} {...rest}/>
@@ -83,7 +66,6 @@ export default function CurrencyLogo({
     if (currency?.isNative) {
         return <StyledImgLogo src={logo} size={size} style={style} {...rest} />
     }
-    // console.log(specialTokens[currency.address.toLowerCase()])
 
   return (
     <StyledLogo
@@ -98,7 +80,7 @@ export default function CurrencyLogo({
       }}
       {...rest}
     >
-        {currency?.symbol.slice(0, 2)}
+        {currency?.symbol?.slice(0, 2)}
     </StyledLogo>
   )
 }

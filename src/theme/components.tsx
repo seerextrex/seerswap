@@ -243,6 +243,13 @@ export const CustomLightSpinner = styled(Spinner)<{ size: string }>`
   width: ${({ size }) => size};
 `
 
+export const HideMedium = styled.span`
+  display: block;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: none;
+  `};
+`
+
 export const HideSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -252,6 +259,13 @@ export const HideSmall = styled.span`
 export const HideExtraSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
+  `};
+`
+
+export const MediumOnly = styled.span`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: block;
   `};
 `
 

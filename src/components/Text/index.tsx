@@ -9,11 +9,12 @@ export const Label = styled(TYPE.label)<{ end?: number }>`
   justify-content: ${({ end }) => (end ? 'flex-end' : 'flex-start')};
   align-items: center;
   font-variant-numeric: tabular-nums;
-  @media screen and (max-width: 640px) {
-    font-size: 14px;
-  }
+
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     justify-content: start;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+   font-size: 14px;
   `};
 `
 

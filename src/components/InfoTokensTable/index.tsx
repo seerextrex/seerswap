@@ -14,6 +14,7 @@ import { Label, ClickableText } from '../Text'
 import HoverInlineText from '../HoverInlineText'
 import useTheme from 'hooks/useTheme'
 import { ExternalLink } from 'react-feather'
+import {HideMedium, MediumOnly} from "../../theme"
 
 export const PageButtons = styled.div`
   width: 100%;
@@ -46,9 +47,13 @@ const ResponsiveGrid = styled.div`
   display: grid;
   grid-gap: 1em;
   align-items: center;
+  position: relative;
 
   grid-template-columns: 20px 2.3fr repeat(4, 1fr);
 
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+     grid-template-columns: 20px 1fr .6fr repeat(3, 1fr);
+  `};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
      grid-template-columns: 20px 2fr repeat(4, 1fr);
   `};
@@ -80,6 +85,16 @@ justify-content: flex-start;
 const LabelTitleStyled = styled(LabelTitle)`
 justify-content: flex-start;
 `
+const CurrencyRow = styled(RowFixed)`
+  margin-right: .3rem;
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    display: none;
+  `}
+`
+const CurrencyRowWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 export const TOKEN_HIDE = []
 
@@ -95,23 +110,25 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
           rel="noopener noreferrer"
           target="_blank"
         >
-          <RowFixed>
-            <ResponsiveLogo address={tokenData.address} />
-          </RowFixed>
-          <ExtraSmallOnly style={{ marginLeft: '6px' }}>
-            <Label ml="8px">{tokenData.symbol}</Label>
-          </ExtraSmallOnly>
-          <HideExtraSmall style={{ marginLeft: '10px' }}>
-            <RowFixed>
-              <HoverInlineText text={tokenData.name} />
-              <Label ml="8px" color={'#dedede'}>
-                ({tokenData.symbol})
-              </Label>
-            </RowFixed>
-          </HideExtraSmall>
-          <div style={{ marginLeft: '8px' }}>
-            <ExternalLink size={16} color={'white'} />
-          </div>
+          <CurrencyRowWrapper>
+            <CurrencyRow>
+              <ResponsiveLogo currency={{address: tokenData.address, symbol: tokenData.symbol}} />
+            </CurrencyRow>
+            <MediumOnly>
+              <Label>{tokenData.symbol}</Label>
+            </MediumOnly>
+            <HideMedium>
+              <RowFixed>
+                <HoverInlineText text={tokenData.name} />
+                <Label ml="8px" color={'#dedede'}>
+                  ({tokenData.symbol})
+                </Label>
+              </RowFixed>
+            </HideMedium>
+            <div style={{ marginLeft: '8px' }}>
+              <ExternalLink size={16} color={'white'} />
+            </div>
+          </CurrencyRowWrapper>
         </LinkWrapper>
       </Label>
       <LabelTitleStyled end={1} fontWeight={400}>

@@ -26,7 +26,7 @@ import {Currency, CurrencyAmount} from '@uniswap/sdk-core'
 import {tryParseAmount} from '../../state/swap/hooks'
 import {useWalletModalToggle} from '../../state/application/hooks'
 import {isArray} from "util"
-import {ArrowDown, ArrowUp, RefreshCw} from "react-feather"
+import {ArrowDown, ArrowUp, Lock, RefreshCw} from "react-feather"
 import Frozen from "./Frozen"
 import {darken} from "polished"
 
@@ -146,27 +146,31 @@ const EarnedStakedWrapper = styled.div`
 `
 const StakerStatisticWrapper = styled(NavLink)`
   position: relative;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-width: 765px;
   height: 107px;
   text-decoration: none;
-  background-color: ${({theme}) => theme.winterBackground};
-  background-image: url("${StakerStatistic}");
+  //  background-color: ${({theme}) => theme.winterBackground};
+  background-color: rgba(23,81,124,0.6);
+  //background-image: url("${StakerStatistic}");
   background-repeat: no-repeat;
   background-position-y: 80%;
   border-radius: 16px;
+  cursor: default;
 
   h2,
   p {
     color: white;
     text-decoration: none;
-    margin: 0 0 0 2rem;
+    margin: 0 0 0 .5rem;
     font-size: 13px;
     position: relative;
   }
 
   h2 {
-    margin: 17px 0 6px 27px;
+    //margin: 17px 0 6px 27px;
     font-size: 20px;
     font-weight: 600;
   }
@@ -480,15 +484,18 @@ export default function RealStakerPage({}) {
 
     //calc staked, earned, algbCourse
     useEffect(() => {
-        if (!stakesResult || stakesResult === 'failed' || !earnedFreeze || !stakedFreeze) return
+        if (!stakesResult || stakesResult === 'failed' || !earnedFreeze || !stakedFreeze ) return
 
-        setEarned(
-            BigNumber.from(stakesResult.stakes[0]?.xALGBAmount || '0')
-                .mul(BigNumber.from(stakesResult.factories[0].ALGBbalance))
-                .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
-                .sub(BigNumber.from(stakesResult.stakes[0]?.stakedALGBAmount || '0'))
-                .sub(earnedFreeze)
-        )
+        if (+(stakesResult.factories[0].xALGBtotalSupply) !== 0) {
+
+            setEarned(
+                BigNumber.from(stakesResult.stakes[0]?.xALGBAmount || '0')
+                    .mul(BigNumber.from(stakesResult.factories[0].ALGBbalance))
+                    .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
+                    .sub(BigNumber.from(stakesResult.stakes[0]?.stakedALGBAmount || '0'))
+                    .sub(earnedFreeze)
+            )
+        }
 
         if (+stakesResult?.factories[0].xALGBtotalSupply !== 0) {
             setAlbgCourse(
@@ -507,7 +514,6 @@ export default function RealStakerPage({}) {
 
     //calc unstake amount
     useEffect(() => {
-        console.log(earned)
         setUnstakeAmount(staked.add(earned))
     }, [staked, earned])
 
@@ -624,9 +630,11 @@ export default function RealStakerPage({}) {
                     <XALGBCourse>1 xALGB = {formatUnits(algbCourse, 0)} ALGB</XALGBCourse>
                 </XALGBCousreWrapper>
             </EarnedStakedWrapper>
-            <StakerStatisticWrapper to={'staking/analytics'}>
-                <h2>Statistics</h2>
-                <p>Minted / APR / Total Supply →</p>
+            <StakerStatisticWrapper to={'staking'}>
+                <Lock stroke={'white'} size={'20px'}/>
+                <h2>Statistic will be unlocked at 21.01</h2>
+                {/*<h2>Statistics</h2>*/}
+                {/*<p>Minted / APR / Total Supply →</p>*/}
             </StakerStatisticWrapper>
             <RealStakerUnstakeModal
                 openModal={openModal}

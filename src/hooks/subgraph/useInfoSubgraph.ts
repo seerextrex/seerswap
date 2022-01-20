@@ -575,9 +575,8 @@ export function useInfoSubgraph() {
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking},
         fetchStakedHistory: {historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory},
-      fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
+        fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
         fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
-        getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking}
     }
 }

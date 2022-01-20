@@ -632,7 +632,7 @@ export default function RealStakerPage({}) {
             </EarnedStakedWrapper>
             <StakerStatisticWrapper to={'staking'}>
                 <Lock stroke={'white'} size={'20px'}/>
-                <h2>Statistic will be unlocked at 21.01</h2>
+                <h2>Statistic will be unlocked at 01.21</h2>
                 {/*<h2>Statistics</h2>*/}
                 {/*<p>Minted / APR / Total Supply →</p>*/}
             </StakerStatisticWrapper>

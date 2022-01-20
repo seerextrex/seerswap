@@ -7,7 +7,7 @@ import Loader from "../../components/Loader"
 
 const FrozenWrapper = styled.div`
   width: 100%;
-  background-color: ${({theme}) => theme.winterDisabledButton};
+  background-color: ${({theme}) => '#02253e'};
   height: 190px;
   position: absolute;
   top: 40px;

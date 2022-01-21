@@ -151,8 +151,7 @@ const EarnedStakedWrapper = styled.div`
 `
 const StakerStatisticWrapper = styled(NavLink)`
   position: relative;
-  display: flex;
-  align-items: center;
+  display: inline-block;
   min-width: 765px;
   height: 107px;
   text-decoration: none;
@@ -161,12 +160,8 @@ const StakerStatisticWrapper = styled(NavLink)`
   background-repeat: no-repeat;
   background-position-y: 80%;
   border-radius: 16px;
-  padding: 0 1rem;
-
-  div {
-    display: flex;
-    align-items: center;
-  }
+  padding: 2rem 1rem 0 1rem;
+  
   h2, p {
     color: white;
     text-decoration: none;
@@ -178,7 +173,6 @@ const StakerStatisticWrapper = styled(NavLink)`
   h2 {
     font-size: 20px;
     font-weight: 600;
-    margin-left: 1rem;
   }
 
   ${({theme}) => theme.mediaWidth.upToSmall`
@@ -652,7 +646,7 @@ export default function RealStakerPage({}) {
                 {/*<h2>Statistic will be unlocked at 01.21</h2>*/}
                 <div>
                     <h2>Statistics</h2>
-                    <p>Minted / APR / Total Supply →</p>
+                    <p>Minted / Staked Amount / Total Supply →</p>
                 </div>
             </StakerStatisticWrapper>
             <RealStakerUnstakeModal

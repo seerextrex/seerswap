@@ -34,7 +34,7 @@ export function useRealStakerHandlers() {
       const result = await realStaker.enter(bigNumStakerCount._hex)
 
       addTransaction(result, {
-        summary: `Stake ${stakedCount} ALGB`
+        summary: `Staked ${stakedCount} ALGB`
       })
       setStaked({hash: result.hash})
 
@@ -59,7 +59,7 @@ export function useRealStakerHandlers() {
       const result = await realStaker.leave(claimSum._hex)
 
       addTransaction(result, {
-        summary: `Claim ${formatEther(claimCount)} ALGB`
+        summary: `Claimed ${formatEther(claimCount)} ALGB`
       })
       setStaked({hash: result.hash})
 
@@ -83,7 +83,7 @@ export function useRealStakerHandlers() {
       const result = await realStaker.leave(bigNumUnstakeAmount._hex)
 
       addTransaction(result, {
-        summary: `Unstake ${unstakeCount} ALGB`
+        summary: `Unstaked ${unstakeCount} ALGB`
       })
       setStaked({hash: result.hash})
 

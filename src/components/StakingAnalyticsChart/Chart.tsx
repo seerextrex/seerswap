@@ -81,7 +81,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             .create('svg:rect')
             .append('rect')
             .attr('id', 'info-label')
-            .attr('width', '150px')
+            .attr('width', '190px')
             .attr('height', '60px')
             .attr('rx', '6')
             .style('fill', '#12151d')
@@ -102,7 +102,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
 
         const InfoRectColor = d3
             .create('svg:rect')
-            .attr('transform', 'translate(130, 15)')
+            .attr('transform', 'translate(170, 15)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')

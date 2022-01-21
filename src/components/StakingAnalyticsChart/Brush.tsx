@@ -14,12 +14,6 @@ interface BrushProps {
 export default function Brush({data, focusHeight, width, margin, updateChartData, X}: BrushProps) {
     const focusRef = useRef(null)
 
-    const tiks = useMemo(() => {
-        const min = d3.min(data, d => new Date(d.date).getTime())
-        const current = new Date().getTime()
-        return Math.ceil((current - min) / (1000 * 60 * 60 * 24))
-    }, [])
-
     useEffect(() => {
         const focusEl = d3.select(focusRef.current)
         focusEl.selectAll('*').remove()
@@ -44,14 +38,6 @@ export default function Brush({data, focusHeight, width, margin, updateChartData
 
         const focusXAxis = (g, x, height) => g
             .attr('transform', `translate(0,${height - margin.bottom})`)
-            // .call(d3.axisBottom(x).ticks(tiks).tickSizeOuter(0))
-            // .selectAll('.tick')
-            // .nodes()
-            // .map((el, i) => {
-            //     if (i % 2 !== 0) {
-            //         d3.select(el).attr('display', 'none')
-            //     }
-            // })
 
         const focusYAxis = (g, y, title) => g
             .attr('transform', `translate(${margin.left},0)`)
@@ -79,8 +65,8 @@ export default function Brush({data, focusHeight, width, margin, updateChartData
             .extent([[margin.left, 0.5], [width - margin.right, focusHeight - margin.bottom + 0.5]])
             .on('brush', brushed)
             .on('end', brushended)
-
-        const defaultSelection = [focusX(X[X.length - (Math.round(((X.length / 100) * 25)) === 0 ? 2 : Math.round(((X.length / 100) * 25)))]), focusX.range()[1] - margin.right]
+        // focusX(X[X.length - (Math.round(((X.length / 100) * 25)) === 0 ? 2 : Math.round(((X.length / 100) * 25)))])
+        const defaultSelection = [focusX.range()[0], focusX.range()[1] - margin.right]
 
         const gb = focus.append('g')
             .call(brush)

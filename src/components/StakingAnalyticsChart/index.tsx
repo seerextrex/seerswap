@@ -48,7 +48,6 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
     const [chartBorder, setChartBorder] = useState([])
     const focusHeight = 70
     const wrapper = useRef(null)
-    // const dimensions =
     const margin = isMobile ? {left: 45, top: 30, right: 10, bottom: 50} :{left: 50, top: 30, right: 30, bottom: 30}
     const [span, setSpan] = useState('Day')
 

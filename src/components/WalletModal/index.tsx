@@ -206,7 +206,7 @@ export default function WalletModal({
       return (
         <div>
           <Frown stroke={'#080064'} />
-          <p>Mobile devices currently are not supported. Please use your desktop.</p>
+          <p>Mobile devices are not currently supported. Please use your desktop.</p>
         </div>
       )
     }

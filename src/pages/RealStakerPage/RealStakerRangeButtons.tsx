@@ -9,10 +9,8 @@ const StakerSmallMaxButton = styled(SmallMaxButton)`
   box-sizing: border-box;
   &:disabled {
     background: ${({theme}) => theme.winterDisabledButton};
-    
-    &:focus {
-      border: unset;
-    }
+    border: 1px solid transparent;
+    cursor: default;
   }
 `
 const ButtonsWrapper = styled.div`

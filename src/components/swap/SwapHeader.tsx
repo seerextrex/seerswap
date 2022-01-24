@@ -5,10 +5,7 @@ import { Percent } from '@uniswap/sdk-core'
 
 import { RowBetween, RowFixed } from '../Row'
 import { TYPE } from '../../theme'
-import { useSwapState } from '../../state/swap/hooks'
-import { useAppSelector } from 'state/hooks'
-import { AppState } from '../../state'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 const StyledSwapHeader = styled.div`
   padding: 30px 40px 16px 40px;
@@ -34,7 +31,7 @@ export default function SwapHeader({
   return (
     <StyledSwapHeader>
       <RowBetween>
-        <RowFixed style={{ justifyContent: 'space-between', width: '100%' }}>
+        <RowFixed style={{ justifyContent: 'space-between', width: '100%', minHeight: '30px'}}>
           <TYPE.black fontWeight={500} fontSize={16} style={{ marginRight: '8px' }}>
             <Trans>Swap</Trans>
           </TYPE.black>

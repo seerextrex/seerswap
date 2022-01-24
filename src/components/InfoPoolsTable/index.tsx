@@ -13,7 +13,7 @@ import { feeTierPercent } from 'utils'
 import { Label, ClickableText } from 'components/Text'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { BarChart2 } from 'react-feather'
+import {BarChart2, ExternalLink} from 'react-feather'
 
 export const PageButtons = styled.div`
   width: 100%;
@@ -108,6 +108,14 @@ const AprInfo = styled.span`
   z-index: 101;
 `
 
+const LinkWrapper = styled.a`
+  display: flex;
+  text-decoration: none;
+  svg {
+    margin-left: 8px;
+  }
+`
+
 const SORT_FIELD = {
   feeTier: 'feeTier',
   volumeUSD: 'volumeUSD',
@@ -133,15 +141,21 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
         <LabelStyled fontWeight={400}>
           <RowFixed>
             <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} />
-            <TYPE.label ml="8px">
-              {poolData.token0.symbol}/{poolData.token1.symbol}
-            </TYPE.label>
+            <LinkWrapper  href={`https://polygonscan.com/address/${poolData.address}`}
+                          rel="noopener noreferrer"
+                          target="_blank">
+              <TYPE.label ml="8px">
+                {poolData.token0.symbol}/{poolData.token1.symbol}
+              </TYPE.label>
+              <ExternalLink size={16} color={'white'}/>
+            </LinkWrapper>
             <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#02365e' }}>
               {feeTierPercent(poolData.fee)}
             </GreyBadge>
             <ChartBadge to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
               <BarChart2 size={18} stroke={'white'} />
             </ChartBadge>
+
           </RowFixed>
         </LabelStyled>
         <LabelStyled end={1} fontWeight={400}>

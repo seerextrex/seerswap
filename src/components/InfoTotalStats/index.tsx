@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import {useEffect, useMemo} from 'react'
 import styled from 'styled-components/macro'
 
 import { formatDollarAmount } from 'utils/numbers'
 import Loader from '../Loader'
+import {useLocation, useParams} from "react-router-dom"
 
 const TotalStatsWrapper = styled.div`
   display: flex;
@@ -62,24 +63,53 @@ export function InfoTotalStats({
   data,
   isLoading,
   refreshHandler,
-  blocksFetched
+  blocksFetched,
+  poolsStat
 }: {
   data: any
   isLoading: boolean
   refreshHandler: any
   blocksFetched: boolean
+  poolsStat: any
 }) {
-  
+  const {pathname} = useLocation()
+
   useEffect(() => {
     if (blocksFetched) {
       refreshHandler()
     }
   }, [blocksFetched])
 
+  const pool = useMemo(() => {
+    return pathname.split('pools/')[1]
+  }, [pathname])
+
+  const _data = useMemo(() => {
+    if (pool) {
+      let res = {
+        tvlUSD: undefined,
+        volumeUSD: undefined
+      }
+      poolsStat?.forEach(item => {
+        if (item.address.toLowerCase() === pool.toLowerCase()) {
+          res = {
+            tvlUSD: item.tvlUSD,
+            volumeUSD: item.volumeUSD
+          }
+        }
+      })
+      return res
+    }
+    return {
+      tvlUSD: data?.tvlUSD,
+      volumeUSD: data?.volumeUSD
+    }
+  }, [data, poolsStat, pool])
+
   return (
     <TotalStatsWrapper>
-      <StatCard isLoading={isLoading} data={data?.tvlUSD} title={'Total Value Locked'}></StatCard>
-      <StatCard isLoading={isLoading} data={data?.volumeUSD} title={'Volume 24H'}></StatCard>
+      <StatCard isLoading={isLoading} data={_data?.tvlUSD} title={'Total Value Locked'}/>
+      <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={'Volume 24H'}/>
     </TotalStatsWrapper>
   )
 }

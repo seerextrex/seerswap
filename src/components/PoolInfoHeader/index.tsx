@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom'
 import styled from 'styled-components/macro'
 import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { useToken } from '../../hooks/Tokens'
+import {useTokensSymbols} from "../../hooks/usePools"
 
 const Header = styled.div`
   display: flex;
@@ -65,6 +66,7 @@ export function PoolInfoHeader({
   fee: number
   collectedFees: string
 }) {
+  // const [_token0, _token1] = useTokensSymbols(token0, token1)
   const _token0 = useToken(token0)
   const _token1 = useToken(token1)
 
@@ -81,7 +83,7 @@ export function PoolInfoHeader({
         <PoolFee>{`${fee / 10000}%`}</PoolFee>
         <PoolCollectedFees>Total Collected Fees: ${Math.round(+collectedFees) || '...'}</PoolCollectedFees>
       </PoolInfoWrapper>
-      <span></span>
+      <span/>
     </Header>
   )
 }

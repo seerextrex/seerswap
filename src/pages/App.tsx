@@ -143,7 +143,6 @@ const NetworkFailedCard = styled.div`
 const InternetError = styled.div`
   width: 100%;
   height: 100vh;
-  //background-color: #040b1e;
   position: fixed;
   top: 0;
   left: 0;

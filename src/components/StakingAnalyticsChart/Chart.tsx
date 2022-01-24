@@ -49,7 +49,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
         const xScale = d3.scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
         const yScale = d3.scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
         const xAxis = d3.axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
-        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => `${val}${type === 'apr' ? '%' : ''}`)
+        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => `${val >= 1000 ? `${+val / 1000}k` : val}`)
 
         // Construct a focus line.
         const Line = d3
@@ -81,7 +81,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             .create('svg:rect')
             .append('rect')
             .attr('id', 'info-label')
-            .attr('width', '150px')
+            .attr('width', '190px')
             .attr('height', '60px')
             .attr('rx', '6')
             .style('fill', '#12151d')
@@ -102,7 +102,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
 
         const InfoRectColor = d3
             .create('svg:rect')
-            .attr('transform', 'translate(130, 15)')
+            .attr('transform', 'translate(170, 15)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')

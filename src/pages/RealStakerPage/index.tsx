@@ -29,6 +29,7 @@ import {isArray} from "util"
 import {ArrowDown, ArrowUp, Lock, RefreshCw} from "react-feather"
 import Frozen from "./Frozen"
 import {darken} from "polished"
+import {useAllTransactions, useIsTransactionPending} from "../../state/transactions/hooks"
 
 const RealStakerPageWrapper = styled.div`
   margin-bottom: 5rem;
@@ -45,6 +46,10 @@ const PageWrapper = styled.div`
   border-radius: 16px;
   padding: 26px 30px 27px;
 
+  input[type=range]:disabled {
+    cursor: default;
+  }
+  
   input[type=range]:disabled::-webkit-slider-thumb {
     border: ${({theme}) => `7px solid ${theme.winterDisabledButton}`};
   }
@@ -146,31 +151,26 @@ const EarnedStakedWrapper = styled.div`
 `
 const StakerStatisticWrapper = styled(NavLink)`
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: inline-block;
   min-width: 765px;
   height: 107px;
   text-decoration: none;
-  //  background-color: ${({theme}) => theme.winterBackground};
-  background-color: rgba(23,81,124,0.6);
-  //background-image: url("${StakerStatistic}");
+  background-color: ${({theme}) => theme.winterBackground};
+  background-image: url("${StakerStatistic}");
   background-repeat: no-repeat;
   background-position-y: 80%;
   border-radius: 16px;
-  cursor: default;
-
-  h2,
-  p {
+  padding: 2rem 1rem 0 1rem;
+  
+  h2, p {
     color: white;
     text-decoration: none;
     margin: 0 0 0 .5rem;
-    font-size: 13px;
+    font-size: 15px;
     position: relative;
   }
 
   h2 {
-    //margin: 17px 0 6px 27px;
     font-size: 20px;
     font-weight: 600;
   }
@@ -184,6 +184,9 @@ const StakerStatisticWrapper = styled(NavLink)`
     
     img {
         height: unset;
+    }
+    p {
+        font-size: 13px;
     }
     
     h2,p {
@@ -457,6 +460,10 @@ export default function RealStakerPage({}) {
         fetchStakingFn(account.toLowerCase())
         frozenStakedHandler(account)
 
+        if (+_balance === 0) {
+            onPercentSelectForSlider(0)
+        }
+
     }, [account, _balance])
 
     //calc amount when choose range in slider
@@ -466,7 +473,7 @@ export default function RealStakerPage({}) {
         if (percentForSlider === 0) {
             setAmountValue('')
         } else if (percentForSlider === 100) {
-            setAmountValue(numBalance?.toSignificant(4))
+            setAmountValue(numBalance?.toSignificant(30))
         } else {
             setAmountValue(formatEther(parseUnits(numBalance?.toSignificant(4), 18).div(BigNumber.from('100')).mul(percentForSlider)))
         }
@@ -567,14 +574,16 @@ export default function RealStakerPage({}) {
                             <StakeButton
                                 onClick={() => {
                                     stakerHandler(amountValue)
-                                    onPercentSelectForSlider(0)
-                                    if (percentForSlider === 0) {
-                                        setAmountValue('')
-                                    }
+                                        .then(() => {
+                                            onPercentSelectForSlider(0)
+                                            if (percentForSlider === 0) {
+                                                setAmountValue('')
+                                            }
+                                        })
                                 }}
-                                disabled={+amountValue > +balance?.toSignificant(4) || amountValue === ''}
+                                disabled={+amountValue > +balance?.toSignificant(30) || amountValue === ''}
                             >
-                                {+amountValue > +balance?.toSignificant(4) ? 'Insufficient ALGB balance' : 'Stake'}
+                                {+amountValue > +balance?.toSignificant(30) ? 'Insufficient ALGB balance' : 'Stake'}
                             </StakeButton>
                         ) : <StakeButton>
                             <Loader stroke={'white'} size={'19px'}/>
@@ -632,11 +641,13 @@ export default function RealStakerPage({}) {
                     <XALGBCourse>1 xALGB = {(+algbCourseShow).toFixed(2)} ALGB</XALGBCourse>
                 </XALGBCousreWrapper>
             </EarnedStakedWrapper>
-            <StakerStatisticWrapper to={'staking'}>
-                <Lock stroke={'white'} size={'20px'}/>
-                <h2>Statistic will be unlocked at 01.21</h2>
-                {/*<h2>Statistics</h2>*/}
-                {/*<p>Minted / APR / Total Supply →</p>*/}
+            <StakerStatisticWrapper to={'staking/analytics'}>
+                {/*<Lock stroke={'white'} size={'20px'}/>*/}
+                {/*<h2>Statistic will be unlocked at 01.21</h2>*/}
+                <div>
+                    <h2>Statistics</h2>
+                    <p>Minted / Staked Amount / Total Supply →</p>
+                </div>
             </StakerStatisticWrapper>
             <RealStakerUnstakeModal
                 openModal={openModal}

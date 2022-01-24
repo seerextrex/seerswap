@@ -43,9 +43,11 @@ const ChartTitle = styled.h2`
 
 const chartsInfo = [
     {title: 'xALGB Minted', type: 'xALGBminted'},
-    {title: 'ALGB From Vault', type: 'ALGBfromVault'},
+    // {title: 'ALGB From Vault', type: 'ALGBfromVault'},
     {title: 'xALGB Total Supply', type: 'xALGBtotalSupply'},
-    {title: 'APR', type: 'apr'},
+    // {title: 'APR', type: 'apr'},
+    {title: 'Staked ALGB', type: 'currentStakedAmount'},
+    {title: 'ALGBbalance', type: 'ALGBbalance'}
 ]
 
 export default function StakingAnalyticsPage() {

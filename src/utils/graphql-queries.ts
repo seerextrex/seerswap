@@ -435,7 +435,7 @@ query stakeHistory {
 
 export const GET_STAKE_HISTORY = () => gql`
 query stake {
-  histories(where: { date_gt: ${Math.round(new Date(Date.UTC(2022, 0, 20, 16, 0, 0)).getTime() / 1000)} }) {
+  histories(where: { date_gte: 1642626000 }) {
   date
   currentStakedAmount
   earned

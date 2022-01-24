@@ -25,7 +25,6 @@ jobs:
       - run: echo "${{ secrets.SHHKEYM }}" > "$HOME/.ssh/SHHKEYM"
       - run: chmod 600 "$HOME/.ssh/SHHKEYM"
       #build
-      - run: yarn install
       - run: yarn build
       #deploy
       - run: cd build && rsync -e "ssh -i $HOME/.ssh/SHHKEYM -o StrictHostKeyChecking=no" --compress sftp://frontend@3.143.136.254/var/www/dev-algebra-finance

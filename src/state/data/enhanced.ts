@@ -1,4 +1,4 @@
-import { api as generatedApi } from './generated'
+import { api as generatedApi } from './generated.ts'
 
 // tag that should be applied to queries that need to be invalidated when the chain changes
 export const CHAIN_TAG = 'Chain'

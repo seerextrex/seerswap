@@ -101,8 +101,9 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
                 }))
             } else {
                 setChartData(stakeHistoriesResult.map(item => {
+                    console.log(formatUnits(BigNumber.from(item?.ALGBbalance), 18))
                     return {
-                        value: formatEther(BigNumber.from(item[type])._hex),
+                        value: formatUnits(BigNumber.from(item[type]), 18),
                         date: convertDate(new Date(item.date * 1000))
                     }
                 }))

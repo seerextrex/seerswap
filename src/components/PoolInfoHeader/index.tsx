@@ -5,6 +5,7 @@ import styled from 'styled-components/macro'
 import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import { useToken } from '../../hooks/Tokens'
 import {useTokensSymbols} from "../../hooks/usePools"
+import {useInternet} from "../../hooks/useInternet"
 
 const Header = styled.div`
   display: flex;
@@ -61,14 +62,11 @@ export function PoolInfoHeader({
   fee,
   collectedFees,
 }: {
-  token0: string
-  token1: string
+  token0: any
+  token1: any
   fee: number
   collectedFees: string
 }) {
-  // const [_token0, _token1] = useTokensSymbols(token0, token1)
-  const _token0 = useToken(token0)
-  const _token1 = useToken(token1)
 
   return (
     <Header>
@@ -78,7 +76,7 @@ export function PoolInfoHeader({
       </Navigation>
       <PoolInfoWrapper>
         <PoolTitle>
-          {_token0?.symbol || '...'} / {_token1?.symbol || '...'}
+          {token0?.symbol || '...'} / {token1?.symbol || '...'}
         </PoolTitle>
         <PoolFee>{`${fee / 10000}%`}</PoolFee>
         <PoolCollectedFees>Total Collected Fees: ${Math.round(+collectedFees) || '...'}</PoolCollectedFees>

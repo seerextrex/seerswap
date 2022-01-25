@@ -1,10 +1,11 @@
-import styled, { keyframes } from 'styled-components/macro'
-import { ButtonConfirmed } from '../../components/Button'
-import { formatEther, parseUnits } from 'ethers/lib/utils'
-import { useState } from 'react'
-import {ArrowDown, ArrowUp, RefreshCw} from 'react-feather'
-import { PageTitle } from '../../components/PageTitle'
+import styled, {keyframes, useTheme} from 'styled-components/macro'
+import {ButtonConfirmed} from '../../components/Button'
+import {formatEther, parseUnits} from 'ethers/lib/utils'
+import {useCallback, useEffect, useState} from 'react'
+import {ArrowDown, ArrowUp, Info, RefreshCw} from 'react-feather'
+import {PageTitle} from '../../components/PageTitle'
 import Frozen from "./Frozen"
+import Badge from "../../components/Badge"
 
 const PageWrapper = styled.div`
   width: 100%;
@@ -12,14 +13,15 @@ const PageWrapper = styled.div`
   border-radius: 16px;
   position: relative;
   padding: 1.5rem 1rem 1rem;
-  
+
   &:first-child {
     margin-right: 1rem;
   }
+
   &:last-child {
     margin-left: 1rem;
   }
-  
+
   ${({theme}) => theme.mediaWidth.upToSmall`
       
   &:first-child {
@@ -29,8 +31,6 @@ const PageWrapper = styled.div`
     margin-left: unset;
   }
   `}
-
-
   h2 {
     color: white;
     font-size: 16px;
@@ -52,7 +52,7 @@ const PageWrapper = styled.div`
     cursor: default;
     margin-bottom: 10px;
   }
-  
+
   ${({theme}) => theme.mediaWidth.upToSmall`
     min-width: 80%;
     &:first-child {
@@ -82,38 +82,64 @@ const TitleWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
 `
+const InfoStyled = styled(Info)`
+  cursor: pointer;
+`
+
+const EarnedBadge = styled(Badge)`
+  position: absolute;
+  font-size: 13px;
+  top: -4rem;
+  right: 0;
+  max-width: 210px;
+  text-align: left;
+  padding: .5rem 1rem;
+`
 
 interface ResBloksProps {
-  title: string
-  amount: number
-  currency: any
-  action: string
-  handler?: any
-  algbCourse: any
+    title: string
+    amount: number
+    currency: any
+    action: string
+    handler?: any
+    algbCourse: any
 }
 
 export default function RealStakerResBlocks(
-  {
-    title, amount, currency, action, handler, algbCourse = 0}: ResBloksProps) {
-  const [isFull, setIsFull] = useState(false)
+    {
+        title, amount, currency, action, handler, algbCourse = 0
+    }: ResBloksProps) {
+    const [isFull, setIsFull] = useState(false)
+    const [show, setShow] = useState(false)
+    const open = useCallback(() => setShow(true), [setShow])
+    const close = useCallback(() => setShow(false), [setShow])
+    const theme = useTheme()
 
-  return (
-    <PageWrapper width={'337px'}>
-      <TitleWrapper>
-        <h2>{title}</h2>
-      </TitleWrapper>
-      {isFull && !(formatEther(amount) < formatEther(algbCourse)) ?
-        <AmountTitle title={`${formatEther(amount)}`}>{formatEther(amount)}</AmountTitle> : null}
-      <h3 onMouseEnter={() => {
-        setIsFull(true)
-      }}
-          onMouseLeave={() => {
-            setIsFull(false)
-          }}
-      >{(formatEther(amount) < formatEther(algbCourse)) ? '0.00' : parseFloat(formatEther(amount)).toFixed(2)} ALGB</h3>
-      <p>$ {currency === null || formatEther(amount) < formatEther(algbCourse) ? '0' : currency?.toSignificant(6, { groupSeparator: ',' })}</p>
-      <StakeButton disabled={amount == 0 || (formatEther(amount) < formatEther(algbCourse))}
-                   onClick={handler}>{action}</StakeButton>
-    </PageWrapper>
-  )
+    return (
+        <PageWrapper>
+            <TitleWrapper>
+                <h2>{title}</h2>
+                { action === 'Claim' &&
+                    <div onMouseEnter={open} onMouseLeave={close} style={{position: 'relative', zIndex: 5}}>
+                        <InfoStyled size={'16px'} stroke={theme.winterDisabledButton}/>
+                    </div> }
+                {(action === 'Claim' && show) &&
+                    <EarnedBadge>
+                        Any rewards you earned will be automagically restaked (compounded) for you.
+                </EarnedBadge> }
+            </TitleWrapper>
+            {isFull && !(formatEther(amount) < formatEther(algbCourse)) ?
+                <AmountTitle title={`${formatEther(amount)}`}>{formatEther(amount)}</AmountTitle> : null}
+            <h3 onMouseEnter={() => {
+                setIsFull(true)
+            }}
+                onMouseLeave={() => {
+                    setIsFull(false)
+                }}
+            >{(formatEther(amount) < formatEther(algbCourse)) ? '0.00' : parseFloat(formatEther(amount)).toFixed(2)} ALGB</h3>
+            <p>$ {currency === null || formatEther(amount) < formatEther(algbCourse) ? '0' : currency?.toSignificant(6, {groupSeparator: ','})}</p>
+            <StakeButton disabled={amount == 0 || (formatEther(amount) < formatEther(algbCourse))}
+                         onClick={handler}>{action}</StakeButton>
+        </PageWrapper>
+    )
 }

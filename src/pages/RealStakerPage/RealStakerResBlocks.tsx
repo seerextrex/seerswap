@@ -121,11 +121,11 @@ export default function RealStakerResBlocks(
                 <h2>{title}</h2>
                 { action === 'Claim' &&
                     <div onMouseEnter={open} onMouseLeave={close} style={{position: 'relative', zIndex: 5}}>
-                        <InfoStyled size={'16px'} stroke={theme.winterDisabledButton}/>
+                        <InfoStyled size={'16px'} stroke={'white'}/>
                     </div> }
                 {(action === 'Claim' && show) &&
                     <EarnedBadge>
-                        Any rewards you earned will be automagically restaked (compounded) for you.
+                        Any rewards you earned will be automatically restaked (compounded) for you.
                 </EarnedBadge> }
             </TitleWrapper>
             {isFull && !(formatEther(amount) < formatEther(algbCourse)) ?

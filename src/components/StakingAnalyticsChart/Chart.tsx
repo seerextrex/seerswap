@@ -49,7 +49,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
         const xScale = d3.scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
         const yScale = d3.scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
         const xAxis = d3.axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
-        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => `${val >= 1000 ? `${+val / 1000}k` : val}`)
+        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val =>  val >= 1000_000 ? `${+val / 1000000}m` : `${val >= 1000 ? `${+val / 1000}k` : val}`)
 
         // Construct a focus line.
         const Line = d3
@@ -258,9 +258,9 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             // Focus2.style('display', 'none')
         })
 
-        svg.append(() => InfoRectGroup.node())
         svg.append(() => Line.node())
         svg.append(() => Focus.node())
+        svg.append(() => InfoRectGroup.node())
         // svg.append(() => Focus2.node())
     }, [data, xDomain])
 

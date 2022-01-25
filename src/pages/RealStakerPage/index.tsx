@@ -455,9 +455,9 @@ export default function RealStakerPage({}) {
     }, [allFreeze, stakedFreeze])
 
     useEffect(() => {
-        if (!account) return
+        fetchStakingFn(account?.toLowerCase())
 
-        fetchStakingFn(account.toLowerCase())
+        if (!account) return
         frozenStakedHandler(account)
 
         if (+_balance === 0) {
@@ -637,13 +637,11 @@ export default function RealStakerPage({}) {
                     />
                 </ResBlocksWrapper>
                 <XALGBCousreWrapper>
-                    <XALGBBalance>You have {xALGBBalance} xALGB</XALGBBalance>
+                    <XALGBBalance>{!account ? '' : `You have ${xALGBBalance} xALGB`}</XALGBBalance>
                     <XALGBCourse>1 xALGB = {(+algbCourseShow).toFixed(2)} ALGB</XALGBCourse>
                 </XALGBCousreWrapper>
             </EarnedStakedWrapper>
             <StakerStatisticWrapper to={'staking/analytics'}>
-                {/*<Lock stroke={'white'} size={'20px'}/>*/}
-                {/*<h2>Statistic will be unlocked at 01.21</h2>*/}
                 <div>
                     <h2>Statistics</h2>
                     <p>Minted / Staked Amount / Total Supply →</p>

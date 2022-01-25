@@ -9,6 +9,8 @@ import { Interface } from '@ethersproject/abi'
 import abi from '../abis/pool.json'
 import { computePoolAddress } from './computePoolAddress'
 import { usePoolDynamicFee } from "./usePoolDynamicFee"
+import {useInternet} from "./useInternet"
+import {useToken} from "./Tokens"
 
 const POOL_STATE_INTERFACE = new Interface(abi)
 
@@ -89,3 +91,10 @@ export function usePool(
   return usePools(poolKeys)[0]
 }
 
+export function useTokensSymbols (token0: string, token1: string) {
+  const internet = useInternet()
+  const _token0 = useToken(token0)
+  const _token1 = useToken(token1)
+
+  return  useMemo(() => [_token0, _token1], [_token0, _token1, internet])
+}

@@ -16,6 +16,7 @@ import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 import { InfoTotalStats } from '../../components/InfoTotalStats'
+import {useEffect} from "react"
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 995px;
@@ -112,10 +113,13 @@ export function InfoPage() {
               </MenuWrapper>
               <InfoTotalStats
                 data={fetchTotalStats.totalStats}
-                refreshHandler={() => fetchTotalStats.fetchTotalStatsFn()}
+                refreshHandler={() => {
+                  fetchTotalStats.fetchTotalStatsFn()
+                  fetchInfoPools.fetchInfoPoolsFn()}}
                 isLoading={fetchTotalStats.totalStatsLoading}
                 blocksFetched={blocksFetched}
-              ></InfoTotalStats>
+                poolsStat={fetchInfoPools?.poolsResult}
+              />
               <BodyWrapper>
                 <Switch>
                   <Route exact path={`${path}`}>
@@ -129,13 +133,13 @@ export function InfoPage() {
                       title={'Pools'}
                       refreshHandler={() => (blocksFetched ? fetchInfoPools?.fetchInfoPoolsFn(true) : undefined)}
                       isLoading={fetchInfoPools?.poolsLoading}
-                    ></PageTitle>
+                    />
                     <InfoPools
                       data={fetchInfoPools?.poolsResult}
                       refreshing={fetchInfoPools?.poolsLoading}
                       fetchHandler={() => fetchInfoPools?.fetchInfoPoolsFn(true)}
                       blocksFetched={blocksFetched}
-                    ></InfoPools>
+                    />
                   </Route>
                   <Route exact path={`${path}/pools/:id`} component={PoolInfoPage} />
                   <Route exact path={`${path}/tokens`}>
@@ -146,13 +150,13 @@ export function InfoPage() {
                       title={'Tokens'}
                       refreshHandler={() => (blocksFetched ? fetchInfoTokens?.fetchInfoTokensFn(true) : undefined)}
                       isLoading={fetchInfoTokens?.tokensLoading}
-                    ></PageTitle>
+                    />
                     <InfoTokens
                       data={fetchInfoTokens?.tokensResult}
                       refreshing={fetchInfoTokens?.tokensLoading}
                       fetchHandler={() => fetchInfoTokens?.fetchInfoTokensFn(true)}
                       blocksFetched={blocksFetched}
-                    ></InfoTokens>
+                    />
                   </Route>
                 </Switch>
               </BodyWrapper>

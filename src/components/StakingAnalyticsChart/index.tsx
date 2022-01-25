@@ -99,10 +99,18 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
                         date: convertDate(new Date(item.date * 1000))
                     }
                 }))
+                //TODO
+            } else if (type === 'ALGBbalance') {
+                setChartData(stakeHistoriesResult.map(item => {
+                    return {
+                        value: formatUnits(BigNumber.from(item[type]), 19),
+                        date: convertDate(new Date(item.date * 1000))
+                    }
+                }))
             } else {
                 setChartData(stakeHistoriesResult.map(item => {
                     return {
-                        value: formatEther(BigNumber.from(item[type])._hex),
+                        value: formatUnits(BigNumber.from(item[type]), 18),
                         date: convertDate(new Date(item.date * 1000))
                     }
                 }))

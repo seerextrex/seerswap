@@ -465,46 +465,46 @@ export default function Swap({ history }: RouteComponentProps) {
                     swap
                 />
               </div>
+              <div style={{minHeight: '26px'}}>
+                {recipient !== null && !showWrap ? (
+                    <>
+                      <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
+                        <ArrowWrapper clickable={false}>
+                          <ArrowDown size="16" color={theme.text2} />
+                        </ArrowWrapper>
+                        <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
+                          <Trans>- Remove send</Trans>
+                        </LinkStyledButton>
+                      </AutoRow>
+                      <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
+                    </>
+                ) : null}
 
-              {recipient !== null && !showWrap ? (
-                  <>
-                    <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                      <ArrowWrapper clickable={false}>
-                        <ArrowDown size="16" color={theme.text2} />
-                      </ArrowWrapper>
-                      <LinkStyledButton id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
-                        <Trans>- Remove send</Trans>
-                      </LinkStyledButton>
-                    </AutoRow>
-                    <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
-                  </>
-              ) : null}
-
-              {showWrap ? null : (
-                  <Row style={{ justifyContent: !trade ? 'center' : 'space-between' }}>
-                    {trade ? (
-                        <RowFixed>
-                          <TradePrice
-                              price={trade.executionPrice}
-                              showInverted={showInverted}
-                              setShowInverted={setShowInverted}
-                          />
-                          <MouseoverTooltipContent
-                              onOpen={() => {
-                                ReactGA.event({
-                                  category: 'Swap',
-                                  action: 'Transaction Details Tooltip Open',
-                                })
-                              }}
-                              content={<AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />}
-                          >
-                            <StyledInfo />
-                          </MouseoverTooltipContent>
-                        </RowFixed>
-                    ) : null}
-                  </Row>
-              )}
-
+                {showWrap ? null : (
+                    <Row style={{ justifyContent: !trade ? 'center' : 'space-between' }}>
+                      {trade ? (
+                          <RowFixed>
+                            <TradePrice
+                                price={trade.executionPrice}
+                                showInverted={showInverted}
+                                setShowInverted={setShowInverted}
+                            />
+                            <MouseoverTooltipContent
+                                onOpen={() => {
+                                  ReactGA.event({
+                                    category: 'Swap',
+                                    action: 'Transaction Details Tooltip Open',
+                                  })
+                                }}
+                                content={<AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />}
+                            >
+                              <StyledInfo />
+                            </MouseoverTooltipContent>
+                          </RowFixed>
+                      ) : null}
+                    </Row>
+                )}
+              </div>
               <div>
                 {swapIsUnsupported ? (
                     <ButtonPrimary disabled={true} style={{ backgroundColor: '#0e0a19' }}>

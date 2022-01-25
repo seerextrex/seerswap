@@ -16,6 +16,8 @@ import dayjs from 'dayjs'
 import Loader from '../../components/Loader'
 import { useInfoTickData } from '../../hooks/subgraph/useInfoTickData'
 import LiquidityBarChart from '../../components/LiquidityBarChart'
+import {useInternet} from "../../hooks/useInternet"
+import {useToken} from "../../hooks/Tokens"
 
 const Wrapper = styled.div`
   min-width: 915px;
@@ -160,13 +162,16 @@ export default function PoolInfoPage({
     return feesLoading || chartPoolDataLoading || ticksLoading
   }, [feesLoading, chartPoolDataLoading, ticksLoading])
 
+  const _token0 = useToken(poolResult?.token0.id)
+  const _token1 = useToken(poolResult?.token1.id)
+
   return (
     <Wrapper>
       {poolResult ? (
         <>
           <PoolInfoHeader
-            token0={poolResult.token0.id}
-            token1={poolResult.token1.id}
+            token0={_token0}
+            token1={_token1}
             fee={poolResult.fee}
             collectedFees={poolResult.feesUSD}
           />

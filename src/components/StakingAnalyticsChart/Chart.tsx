@@ -258,9 +258,9 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             // Focus2.style('display', 'none')
         })
 
-        svg.append(() => InfoRectGroup.node())
         svg.append(() => Line.node())
         svg.append(() => Focus.node())
+        svg.append(() => InfoRectGroup.node())
         // svg.append(() => Focus2.node())
     }, [data, xDomain])
 

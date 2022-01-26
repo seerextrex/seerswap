@@ -216,11 +216,11 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
                     .attr('fill', 'transparent')
                     .on('mouseover', (e) => {
 
-                        const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
+                        const isOverflowing = Number(xTranslate) + 190 + 16 > dimensions.width
                         Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
                         InfoRectGroup.attr(
                             'transform',
-                            `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 10},10)`
+                            `translate(${isOverflowing ? Number(xTranslate) - 150 - 50 : Number(xTranslate) + 10},10)`
                         )
                         const val1 = parseFloat(data[i]?.value).toFixed(3)
                         // const val2 = parseFloat(data2[i]?.value.toString()).toFixed(3)

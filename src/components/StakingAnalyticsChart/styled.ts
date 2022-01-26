@@ -11,7 +11,7 @@ export const StakingAnalyticsChartWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin: 2rem 0;
+  margin: 1rem 0;
 `
 
 //Chart

@@ -1,65 +1,10 @@
-import React, {useEffect, useMemo, useState} from 'react'
-import styled from "styled-components/macro"
+import React, {useEffect, useState} from 'react'
 import {formatUnits} from "ethers/lib/utils"
 import {BigNumber} from "@ethersproject/bignumber"
 import {getCountdownTime} from "../../utils/time"
-import Loader from "../../components/Loader"
+import {FrozenTransaction, FrozenWrapper, TimeWrapper, Time, LoaderStyled} from './styled'
 
-const FrozenWrapper = styled.div`
-  width: 100%;
-  background-color: ${({theme}) => '#02253e'};
-  height: 190px;
-  position: absolute;
-  top: 40px;
-  z-index: 100;
-  border-radius: 16px;
-  padding: 25px 30px;
-  overflow-y: auto;
-  ${({theme}) => theme.mediaWidth.upToSmall`
-     padding: 1rem;
-    `}
-`
-
-const FrozenTransaction = styled.div`
-  display: flex;
-  color: white;
-  justify-content: space-between;
-
-  p {
-    color: white !important;
-    font-size: 16px !important;
-    margin: 5px 0 !important;
-    font-weight: 600;
-  }
-
-  ${({theme}) => theme.mediaWidth.upToSmall`
-    flex-direction: column;
-    background-color: #202635;
-    padding: 5px 7px;
-    border-radius: 10px;
-  `}
-`
-const Time = styled.p`
-  min-width: 90px;
-  text-align: center;
-`
-const TimeWrapper = styled.div`
-  display: flex;
-  color: white !important;
-  font-size: 16px !important;
-  margin: 7px 0 !important;
-  font-weight: 600;
-  align-items: center;
-  p {
-    margin: 0!important;
-  }
-`
-const LoaderStyled = styled(Loader)`
-  margin: auto;
-`
-
-
-const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: BigNumber[]; now: Date, index: number}) => {
+const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: BigNumber[]; now: any, index: number}) => {
     const [time, setTime] = useState('00:00:00')
 
     const tick = () => {
@@ -79,7 +24,7 @@ const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: Bi
         <>
             {!(time < '00:00:00') &&
                 <FrozenTransaction>
-                    <p>{(+formatUnits(el?.stakedALGBAmount)).toFixed(2) < 0.01 ? '<' : ''}{(+formatUnits(el?.stakedALGBAmount)).toFixed(2)} ALGB
+                    <p>{(+(+formatUnits(el?.stakedALGBAmount)).toFixed(2)) < 0.01 ? '<' : ''}{(+formatUnits(el?.stakedALGBAmount)).toFixed(2)} ALGB
                         staked</p>
                     {+formatUnits(earnedFreeze[index + 1]) < 0.01 ? null :
                         <p>{(+formatUnits(earnedFreeze[index + 1])).toFixed(2)} ALGB earned</p>}
@@ -99,5 +44,4 @@ const Frozen = ({data, earnedFreeze, now}: { data: any[]; earnedFreeze: BigNumbe
         </FrozenWrapper>
     )
 }
-
 export default Frozen

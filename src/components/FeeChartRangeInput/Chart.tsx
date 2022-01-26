@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import * as d3 from 'd3'
-import { daysCount } from './index'
-
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../pages/PoolInfoPage'
 

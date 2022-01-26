@@ -1,4 +1,3 @@
-import styled from 'styled-components/macro'
 import Chart from './Chart'
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import * as d3 from 'd3'
@@ -8,19 +7,7 @@ import {formatEther, formatUnits, parseUnits} from 'ethers/lib/utils'
 import {isMobile} from 'react-device-detect'
 import RangeButtons from "./RangeButtons"
 import dayjs from "dayjs"
-import {it} from "make-plural/plurals"
-
-const StakingAnalyticsChartWrapper = styled.div`
-  max-width: 1000px;
-  width: 100%;
-  background-color: #052445;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin: 2rem 0;
-`
+import {StakingAnalyticsChartWrapper} from './styled'
 
 export function convertDate(date: Date) {
     const yyyy = date.getFullYear().toString()

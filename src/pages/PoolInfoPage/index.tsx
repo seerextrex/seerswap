@@ -158,6 +158,7 @@ export default function PoolInfoPage({
     }
   }, [feesResult, chartPoolData, ticksResult])
 
+
   const refreshing = useMemo(() => {
     return feesLoading || chartPoolDataLoading || ticksLoading
   }, [feesLoading, chartPoolDataLoading, ticksLoading])
@@ -192,7 +193,7 @@ export default function PoolInfoPage({
                   token0={poolResult.token0.symbol}
                   token1={poolResult.token1.symbol}
                   refreshing={refreshing}
-                ></LiquidityBarChart>
+                />
               ) : (
                 <FeeChartRangeInput
                   fetchedData={data || undefined}

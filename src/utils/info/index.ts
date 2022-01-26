@@ -10,13 +10,9 @@ const WETH_ADDRESSES = ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']
  */
 export const get2DayChange = (valueNow: string, value24HoursAgo: string, value48HoursAgo: string): [number, number] => {
     // get volume info for both 24 hour periods
-    console.log(valueNow, value24HoursAgo, value48HoursAgo)
     const currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo)
-    console.log('currentChange', currentChange)
     const previousChange = parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo)
-    console.log('previous change', previousChange)
     const adjustedPercentChange = ((currentChange - previousChange) / previousChange) * 100
-    console.log('adjusted change', adjustedPercentChange)
     if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
         return [currentChange, 0]
     }

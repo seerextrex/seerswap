@@ -104,7 +104,6 @@ export function useInfoSubgraph() {
             const parsedPools48 = parseTokensData(pools48)
             const parsedPoolsWeek = parseTokensData(poolsWeek)
 
-            console.log('block 24', _block24)
             const formatted = poolsAddresses.reduce((accum: { [address: string]: TokenData }, address) => {
                 const current: TokenFields | undefined = parsedPools[address]
                 const oneDay: TokenFields | undefined = parsedPools24[address]
@@ -360,6 +359,7 @@ export function useInfoSubgraph() {
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
+
 
             if (feeHourDatas.length === 0) return []
 

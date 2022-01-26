@@ -205,7 +205,6 @@ export default function App() {
       user_id: account,
     })
 
-    console.log('datalayer', window.dataLayer)
   }, [account])
 
   return (

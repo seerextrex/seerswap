@@ -1,6 +1,5 @@
 import * as d3 from 'd3'
-import {useEffect, useMemo, useRef} from 'react'
-import dayjs from "dayjs";
+import {useEffect, useRef} from 'react'
 
 interface BrushProps {
     width: number

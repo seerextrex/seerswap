@@ -1,12 +1,7 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 import Chart from './Chart'
-import { useParams } from 'react-router-dom'
 import styled from 'styled-components/macro'
-import { DarkGreyCard } from '../Card'
-import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
-import { useEffect } from 'react'
 import Loader from '../Loader'
-import { PageTitle } from '../PageTitle'
 import { ChartType } from '../../pages/PoolInfoPage'
 
 import { isMobile, isTablet } from 'react-device-detect'
@@ -74,9 +69,9 @@ export function daysCount(month: number, year: number) {
 export default function FeeChartRangeInput({ fetchedData, refreshing, span, type }: FeeChartRangeInputProps) {
   const ref = useRef(null)
 
+
   const formattedData = useMemo(() => {
     if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return []
-    // if (fetchedData.data.length === 0) return []
 
     const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? 'volumeUSD' : 'feesUSD'
 
@@ -88,7 +83,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
         })),
         previousData: fetchedData.previousData.map((el) => ({
           timestamp: new Date(el.timestamp * 1000),
-          value: el.fee / 10000,
+          value: el.fee / el.changesCount / 10000,
         })),
       }
     } else {

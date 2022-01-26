@@ -1,15 +1,8 @@
 import * as d3 from 'd3'
-import {useEffect, useMemo, useRef, useState} from 'react'
-import styled from 'styled-components/macro'
-import Brush from './Brush'
-import {ChardDataInterface, convertDate} from './index'
-import {sv} from "make-plural/plurals";
+import {useEffect, useMemo, useRef} from 'react'
+import {ChardDataInterface} from './index'
 import {isMobile} from "react-device-detect"
-
-const ChartWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`
+import {ChartWrapper} from './styled'
 
 interface ChartProps {
     data: ChardDataInterface[]
@@ -223,11 +216,11 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
                     .attr('fill', 'transparent')
                     .on('mouseover', (e) => {
 
-                        const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
+                        const isOverflowing = Number(xTranslate) + 190 + 16 > dimensions.width
                         Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
                         InfoRectGroup.attr(
                             'transform',
-                            `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
+                            `translate(${isOverflowing ? Number(xTranslate) - 150 - 50 : Number(xTranslate) + 10},10)`
                         )
                         const val1 = parseFloat(data[i]?.value).toFixed(3)
                         // const val2 = parseFloat(data2[i]?.value.toString()).toFixed(3)

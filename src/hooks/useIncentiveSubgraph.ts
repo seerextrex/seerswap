@@ -294,7 +294,7 @@ export function useIncentiveSubgraph() {
 
                 if (position.incentive) {
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, refundee, id } = await fetchIncentive(position.incentive)
+                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, id } = await fetchIncentive(position.incentive)
 
                     const rewardContract = new Contract(
                         rewardToken,
@@ -336,7 +336,6 @@ export function useIncentiveSubgraph() {
                         },
                         startTime,
                         endTime,
-                        refundee,
                         ended: endTime * 1000 < Date.now()
                     }
 
@@ -350,7 +349,7 @@ export function useIncentiveSubgraph() {
                         )
 
                         const rewardInfo = await stakingContract.getRewardInfo(
-                            [rewardToken, bonusRewardToken, pool, +startTime, +endTime, refundee],
+                            [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
                             +position.tokenId
                         )
 
@@ -491,17 +490,44 @@ export function useIncentiveSubgraph() {
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            if (eternalFarms.length === 0) {
+            if (eternalFarmings.length === 0) {
                 setEternalFarms([])
                 setEternalFarmsLoading(false)
                 return
             }
 
-            setEternalFarms(eternalFarmings)
+            let _eternalFarmings = []
+
+            for (const farming of eternalFarmings) {
+
+                const pool = await fetchPool(farming.pool)
+                const rewardToken = await fetchToken(farming.rewardToken)
+                const bonusRewardToken = await fetchToken(farming.bonusRewardToken)
+
+                console.log(farming.pool, pool)
+
+                _eternalFarmings = [
+                    ..._eternalFarmings,
+                    {
+                        ...farming,
+                        rewardToken,
+                        bonusRewardToken,
+                        token0: {
+                            ...pool.token0
+                        },
+                        token1: {
+                            ...pool.token1
+                        }
+                    }
+                ]
+
+            }
+
+            setEternalFarms(_eternalFarmings)
 
         } catch (err) {
             setEternalFarms(null)
-            throw new Error('Error while fetching current incentives ' + err)
+            throw new Error('Error while fetching eternal farms ' + err.message)
         }
 
         setEternalFarmsLoading(false)

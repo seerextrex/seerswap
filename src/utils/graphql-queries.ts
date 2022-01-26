@@ -44,7 +44,6 @@ query fetchIncentive {
         bonusReward
         ended
         pool
-        refundee
     }
 }`
 
@@ -196,8 +195,6 @@ query futureEvents {
         startTime
         endTime
         reward
-        ended
-        refundee
     }
 }`
 
@@ -212,7 +209,6 @@ query currentEvents {
         startTime
         endTime
         reward
-        ended
     }
 }`
 
@@ -291,7 +287,7 @@ query positionsOwnedForPool {
 //Info
 
 export const INFINITE_EVENTS = gql`
-    query infinitePools {
+    query infiniteFarms {
         eternalFarmings {
             id
             rewardToken

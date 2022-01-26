@@ -205,7 +205,7 @@ const ProvideLiquidityLink = styled(Link)`
 `
 
 export function StakeModal({
-  event: { pool, startTime, endTime, id, rewardAddress, bonusRewardAddress, refundee, token0, token1 },
+  event: { pool, startTime, endTime, id, rewardAddress, bonusRewardAddress, token0, token1 },
   closeHandler,
 }: {
   event: {
@@ -215,7 +215,6 @@ export function StakeModal({
     id: string
     rewardAddress: string
     bonusRewardAddress: string
-    refundee: string
     token0: string
     token1: string
   }
@@ -401,7 +400,6 @@ export function StakeModal({
       bonusRewardAddress,
       startTime,
       endTime,
-      refundee,
     })
   }, [selectedNFT, submitState])
 

@@ -63,7 +63,7 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const getRewardsHandler = useCallback(async (token, { staked, rewardToken, bonusRewardToken, pool, startTime, endTime, refundee }) => {
+    const getRewardsHandler = useCallback(async (token, { staked, rewardToken, bonusRewardToken, pool, startTime, endTime }) => {
 
         if (!account || !provider) return
 
@@ -80,7 +80,7 @@ export function useStakerHandlers() {
             if (staked) {
 
                 const result = await stakerContract.exitFarming(
-                    [rewardToken.id, bonusRewardToken.id, pool.id, +startTime, +endTime, refundee],
+                    [rewardToken.id, bonusRewardToken.id, pool.id, +startTime, +endTime],
                     +token
                 )
 
@@ -98,7 +98,7 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const withdrawHandler = useCallback(async (token, { transfered, rewardToken, pool, startTime, endTime, refundee }) => {
+    const withdrawHandler = useCallback(async (token, { transfered, rewardToken, pool, startTime, endTime, }) => {
 
         if (!account || !provider) return
 
@@ -137,7 +137,7 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const stakeHandler = useCallback(async (selectedNFT, { rewardAddress, bonusRewardAddress, pool, startTime, endTime, refundee }) => {
+    const stakeHandler = useCallback(async (selectedNFT, { rewardAddress, bonusRewardAddress, pool, startTime, endTime }) => {
 
         if (!account || !provider) return
 
@@ -157,7 +157,7 @@ export function useStakerHandlers() {
                 current = selectedNFT.tokenId
 
                 const result = await stakerContract.enterFarming(
-                    [rewardAddress, bonusRewardAddress, pool, startTime, endTime, refundee],
+                    [rewardAddress, bonusRewardAddress, pool, startTime, endTime],
                     selectedNFT.tokenId
                 )
 

@@ -290,6 +290,23 @@ query positionsOwnedForPool {
 
 //Info
 
+export const INFINITE_EVENTS = gql`
+    query infinitePools {
+        eternalFarmings {
+            id
+            rewardToken
+            bonusRewardToken
+            pool
+            startTime
+            endTime
+            reward
+            bonusReward
+            rewardRates
+            bonusRewardRates
+        }
+    }
+`
+
 export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
   query swapsPerDay {
     swaps (first: 1000, where: {timestamp_gt: ${startTimestamp}, timestamp_lt: ${Math.round(Date.now() / 1000)}} ) {

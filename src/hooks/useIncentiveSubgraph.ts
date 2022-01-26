@@ -12,7 +12,7 @@ import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from "../const
 import { BigNumber } from "@ethersproject/bignumber";
 import { position } from "styled-system";
 import { useApolloClient, useLazyQuery, useQuery, gql } from "@apollo/client";
-import { CURRENT_EVENTS, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN, FUTURE_EVENTS, LAST_EVENT, POSITIONS_OWNED_FOR_POOL, SHARED_POSITIONS, TRANSFERED_POSITIONS, TRANSFERED_POSITIONS_FOR_POOL } from "../utils/graphql-queries";
+import { CURRENT_EVENTS, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN, FUTURE_EVENTS, INFINITE_EVENTS, LAST_EVENT, POSITIONS_OWNED_FOR_POOL, SHARED_POSITIONS, TRANSFERED_POSITIONS, TRANSFERED_POSITIONS_FOR_POOL } from "../utils/graphql-queries";
 import { useClients } from "./subgraph/useClients";
 import { formatUnits } from "@ethersproject/units";
 
@@ -40,6 +40,9 @@ export function useIncentiveSubgraph() {
 
     const [positionsOnFarmer, setPositionsOnFarmer] = useState(null)
     const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState(false)
+
+    const [eternalFarms, setEternalFarms] = useState(null)
+    const [eternalFarmsLoading, setEternalFarmsLoading] = useState(false)
 
     const provider = window.ethereum ? new providers.Web3Provider(window.ethereum) : undefined
 
@@ -446,7 +449,6 @@ export function useIncentiveSubgraph() {
 
     async function fetchPositionsOnFarmer(account) {
 
-
         try {
 
             setPositionsOnFarmerLoading(true)
@@ -476,6 +478,36 @@ export function useIncentiveSubgraph() {
 
     }
 
+    async function fetchEternalFarms(reload: boolean) {
+
+        setEternalFarmsLoading(true)
+
+        try {
+
+            const { data: { eternalFarmings }, error } = (await farmingClient.query({
+                query: INFINITE_EVENTS,
+                fetchPolicy: reload ? 'network-only' : 'cache-first'
+            }))
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            if (eternalFarms.length === 0) {
+                setEternalFarms([])
+                setEternalFarmsLoading(false)
+                return
+            }
+
+            setEternalFarms(eternalFarmings)
+
+        } catch (err) {
+            setEternalFarms(null)
+            throw new Error('Error while fetching current incentives ' + err)
+        }
+
+        setEternalFarmsLoading(false)
+
+    }
+
     return {
         fetchRewards: { rewardsResult, rewardsLoading, fetchRewardsFn: fetchRewards },
         fetchFutureEvents: { futureEvents, futureEventsLoading, fetchFutureEventsFn: fetchFutureEvents },
@@ -483,6 +515,7 @@ export function useIncentiveSubgraph() {
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn: fetchPositionsForPool },
         fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions },
         fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn: fetchPositionsOnFarmer },
+        fetchEternalFarms: { eternalFarms, eternalFarmsLoading, fetchEternalFarmsFn: fetchEternalFarms },
         fetchPool
     }
 

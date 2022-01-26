@@ -70,16 +70,12 @@ export default function Chart({
     let sameDays = []
     let res = []
 
-    console.log('INITAL DATA', data)
-
     if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0].timestamp))) {
       res.push({
         value: data[0].value,
         timestamp: data[0].timestamp,
       })
     }
-
-    console.log('RES', res)
 
     for (let i = 1; i < data.length; i++) {
       if (
@@ -90,7 +86,7 @@ export default function Chart({
         sameDays.push(data[i])
       } else {
         if (sameDays.length !== 0) {
-          console.log('same days', sameDays)
+
           res.push(
             sameDays.reduce(
               (prev, cur) => {
@@ -237,11 +233,6 @@ export default function Chart({
     } else {
       _data = [...res]
     }
-
-    console.log(
-      'PROCESSED DATA',
-      _data.reduce((acc, el) => acc + el.value, 0)
-    )
 
     return [..._data]
   }, [data, previousData])

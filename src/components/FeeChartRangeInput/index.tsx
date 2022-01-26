@@ -69,6 +69,7 @@ export function daysCount(month: number, year: number) {
 export default function FeeChartRangeInput({ fetchedData, refreshing, span, type }: FeeChartRangeInputProps) {
   const ref = useRef(null)
 
+
   const formattedData = useMemo(() => {
     if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return []
 
@@ -82,7 +83,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
         })),
         previousData: fetchedData.previousData.map((el) => ({
           timestamp: new Date(el.timestamp * 1000),
-          value: el.fee / 10000,
+          value: el.fee / el.changesCount / 10000,
         })),
       }
     } else {

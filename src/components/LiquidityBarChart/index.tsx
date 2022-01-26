@@ -9,7 +9,7 @@ import styled from 'styled-components/macro'
 import { isMobile } from 'react-device-detect'
 import Loader from '../Loader'
 import { TickMath } from '@uniswap/v3-sdk'
-import { FeeAmount } from '../../hooks/computePoolAddress'
+import {computePoolAddress, FeeAmount} from '../../hooks/computePoolAddress'
 
 import JSBI from 'jsbi'
 import { isAddress } from '../../utils'
@@ -19,6 +19,7 @@ import { Pool } from '../../lib/src'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { darken } from 'polished'
+import {POOL_DEPLOYER_ADDRESS} from "../../constants/addresses"
 
 const Wrapper = styled.div`
   position: relative;
@@ -118,10 +119,11 @@ export default function LiquidityBarChart({
   }, [formattedAddress0, formattedAddress1, data])
 
   const _token1 = useMemo(() => {
-    return data && formattedAddress1 && formattedAddress1
+    return data && formattedAddress0 && formattedAddress1
       ? new Token(1, formattedAddress1, data.token1.decimals)
       : undefined
   }, [formattedAddress1, data])
+
 
   useEffect(() => {
     if (!data || !data.ticksProcessed) return
@@ -150,7 +152,10 @@ export default function LiquidityBarChart({
           const nextSqrtX96 = data.ticksProcessed[i - 1]
             ? TickMath.getSqrtRatioAtTick(data.ticksProcessed[i - 1].tickIdx)
             : undefined
-          const maxAmountToken0 = token0 ? CurrencyAmount.fromRawAmount(_token0, MAX_UINT128.toString()) : undefined
+
+          const isBad = _token0 && _token1 && ["0x49c1c3ac4f301ad71f788398c0de919c35eaf565","0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed"].includes(computePoolAddress({poolDeployer: POOL_DEPLOYER_ADDRESS[137], tokenA: _token0, tokenB: _token1 }).toLowerCase())
+
+          const maxAmountToken0 = token0 ? CurrencyAmount.fromRawAmount(isBad ? _token1 : _token0, MAX_UINT128.toString()) : undefined
           const outputRes0 =
             pool && maxAmountToken0 ? await pool.getOutputAmount(maxAmountToken0, nextSqrtX96) : undefined
 

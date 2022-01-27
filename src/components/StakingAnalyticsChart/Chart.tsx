@@ -6,21 +6,21 @@ import {ChartWrapper} from './styled'
 
 interface ChartProps {
     data: ChardDataInterface[]
+    data2?: ChardDataInterface[]
     margin: { left: number, top: number, right: number, bottom: number }
     dimensions: { width: number, height: number }
     type: string
+    colors: string[]
 }
 
-export default function Chart({data, margin, dimensions, type}: ChartProps) {
+export default function Chart({data, data2,  margin, dimensions, type, colors}: ChartProps) {
     const svgRef = useRef(null)
-    // const data2 = data.map((item, i) => ({value: i % 2 === 0 ? +item.value + (+item.value * Math.random()): +item.value - (+item.value * Math.random()), date: item.date}))
     const X = useMemo(() => d3.map(data, d => new Date(d.date)), [data])
     const Y = useMemo(() => d3.map(data, d => +(d.value)), [data])
-    // const Y2 = d3.map(data2, d => +d.value)
+    const Y2 = useMemo(() => d3.map(data2 || [], d => +d.value), [data2])
     const I = d3.range(X.length)
-
     // Compute default domains.
-    const yDomain = useMemo(() => [0, d3.max([...Y])], [Y])
+    const yDomain = useMemo(() => [0, d3.max([...Y, ...Y2])], [Y, Y2])
     const xDomain = useMemo(() => [d3.min(X), d3.max(X)], [X])
 
     //Todo auto length
@@ -62,10 +62,10 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             .x(i => xScale(X[i]))
             .y(i => yScale(Y[i]))
 
-        // const line2 = d3.line()
-        //     .curve(d3.curveBumpX)
-        //     .x(i => xScale(X[i]))
-        //     .y(i => yScale(Y2[i]))
+        const line2 = d3.line()
+            .curve(d3.curveBumpX)
+            .x(i => xScale(X[i]))
+            .y(i => yScale(Y2[i]))
 
         //Construct infoLabel
         const InfoRectGroup = d3.create('svg:g').style('pointer-events', 'none').style('display', 'none')
@@ -75,7 +75,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             .append('rect')
             .attr('id', 'info-label')
             .attr('width', '190px')
-            .attr('height', '60px')
+            .attr('height', `${data2?.length === 0 ? '60px' : '90px'}`)
             .attr('rx', '6')
             .style('fill', '#12151d')
 
@@ -102,14 +102,14 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
 
         const InfoRectColor2 = d3
             .create('svg:rect')
-            .attr('transform', 'translate(120, 40)')
+            .attr('transform', 'translate(170, 40)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')
 
         const InfoRectDateText = d3
             .create('svg:text')
-            .attr('transform', 'translate(16, 45)')
+            .attr('transform', `translate(16, ${data2?.length === 0 ? '45' : '75'})`)
             .attr('fill', 'white')
             .attr('font-weight', '500')
             .attr('font-size', '12px')
@@ -117,28 +117,31 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
 
         InfoRectGroup.node().append(InfoRect.node())
         InfoRectGroup.node().append(InfoRectFeeText.node())
-        // InfoRectGroup.node().append(InfoRectFeeText2.node())
         InfoRectGroup.node().append(InfoRectDateText.node())
         InfoRectGroup.node().append(InfoRectColor.node())
-        // InfoRectGroup.node().append(InfoRectColor2.node())
+        if (data2?.length !== 0) {
+            InfoRectGroup.node().append(InfoRectFeeText2.node())
+            InfoRectGroup.node().append(InfoRectColor2.node())
+        }
+
 
         const Focus = d3
             .create('svg:circle')
             .style('fill', 'white')
-            .attr('stroke', '#63c0f8')
+            .attr('stroke', colors[0])
             .attr('stroke-width', '2')
             .attr('r', 5.5)
             .style('opacity', 1)
             .style('display', 'none')
 
-        // const Focus2 = d3
-        //     .create('svg:circle')
-        //     .style('fill', 'white')
-        //     .attr('stroke', '#123')
-        //     .attr('stroke-width', '2')
-        //     .attr('r', 5.5)
-        //     .style('opacity', 1)
-        //     .style('display', 'none')
+        const Focus2 = d3
+            .create('svg:circle')
+            .style('fill', 'white')
+            .attr('stroke', colors[1])
+            .attr('stroke-width', '2')
+            .attr('r', 5.5)
+            .style('opacity', 1)
+            .style('display', 'none')
 
       const yGroup = svg.append('g')
             .attr('transform', `translate(${margin.left},0)`)
@@ -162,7 +165,7 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             .attr('fill', 'none')
             .attr('d', line(I))
             .attr('stroke-width', 2)
-            .attr('stroke', '#63c0f8')
+            .attr('stroke', colors[0])
             .transition()
             .duration(1000)
             .ease(d3.easeCircle)
@@ -171,18 +174,18 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
                 return d3.interpolate(`0,${length}`, `${length},${length}`)
             })
 
-        // svg.append('path')
-        //     .attr('fill', 'none')
-        //     .attr('d', line2(I))
-        //     .attr('stroke-width', 2)
-        //     .attr('stroke', '#123')
-        //     .transition()
-        //     .duration(1000)
-        //     .ease(d3.easeCircle)
-        //     .attrTween('stroke-dasharray', function () {
-        //         const length = this.getTotalLength()
-        //         return d3.interpolate(`0,${length}`, `${length},${length}`)
-        //     })
+        svg.append('path')
+            .attr('fill', 'none')
+            .attr('d', line2(I))
+            .attr('stroke-width', 2)
+            .attr('stroke', colors[1])
+            .transition()
+            .duration(1000)
+            .ease(d3.easeCircle)
+            .attrTween('stroke-dasharray', function () {
+                const length = this.getTotalLength()
+                return d3.interpolate(`0,${length}`, `${length},${length}`)
+            })
 
         xGroup
             .selectAll('.tick')
@@ -223,16 +226,16 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
                             `translate(${isOverflowing ? Number(xTranslate) - 150 - 50 : Number(xTranslate) + 10},10)`
                         )
                         const val1 = parseFloat(data[i]?.value).toFixed(3)
-                        // const val2 = parseFloat(data2[i]?.value.toString()).toFixed(3)
+                        const val2 = parseFloat(data2[i]?.value.toString()).toFixed(3)
 
                         InfoRectFeeText.property('innerHTML', `Value: ${type === 'apr' ? Number(val1): val1}${type === 'apr' ? '%' : ''}`)
-                        InfoRectColor.attr('fill', '#63c0f8')
-                        // InfoRectFeeText2.property('innerHTML', `Value: ${+val1 < +val2 ? val1 : val2}`)
-                        // InfoRectColor2.attr('fill', +val2 < +val1 ? '#123' : '#b41870')
+                        InfoRectColor.attr('fill', colors[0])
+                        InfoRectFeeText2.property('innerHTML', `Value: ${+val1 < +val2 ? val1 : val2}`)
+                        InfoRectColor2.attr('fill', +val2 === +val1 ? colors[1] : +val2 < +val1 ? colors[1] : colors[0])
                         InfoRectDateText.property('innerHTML', `${data[i]?.date}`)
 
                         Focus.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(+data[i]?.value)})`)
-                        // Focus2.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(data2[i]?.value)})`)
+                        Focus2.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(data2[i]?.value)})`)
                     })
                 svg.node().append(rect.node())
             })
@@ -241,20 +244,20 @@ export default function Chart({data, margin, dimensions, type}: ChartProps) {
             Line.style('display', 'block')
             InfoRectGroup.style('display', 'block')
             Focus.style('display', 'block')
-            // Focus2.style('display', 'block')
+            Focus2.style('display', `${data2?.length !== 0 ? 'block': 'none'}`)
         })
 
         svgEl.on('mouseleave', () => {
             Line.style('display', 'none')
             InfoRectGroup.style('display', 'none')
             Focus.style('display', 'none')
-            // Focus2.style('display', 'none')
+            Focus2.style('display', 'none')
         })
 
         svg.append(() => Line.node())
         svg.append(() => Focus.node())
         svg.append(() => InfoRectGroup.node())
-        // svg.append(() => Focus2.node())
+        svg.append(() => Focus2.node())
     }, [data, xDomain])
 
     return (

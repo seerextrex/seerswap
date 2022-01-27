@@ -23,6 +23,7 @@ export function convertDate(date: Date) {
 interface StakingAnalyticsChartProps {
     stakeHistoriesResult: any[] | null
     type: string
+    colors: string[]
 }
 
 export interface ChardDataInterface {
@@ -30,8 +31,9 @@ export interface ChardDataInterface {
     date: string
 }
 
-export default function StakingAnalyticsChart({stakeHistoriesResult, type}: StakingAnalyticsChartProps) {
+export default function StakingAnalyticsChart({stakeHistoriesResult, type, colors}: StakingAnalyticsChartProps) {
     const [chartData, setChartData] = useState([])
+    const [chart2Data, setChart2Data] = useState([])
     const [chartBorder, setChartBorder] = useState([])
     const focusHeight = 70
     const wrapper = useRef(null)
@@ -86,11 +88,17 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
                         date: convertDate(new Date(item.date * 1000))
                     }
                 }))
-                //TODO
-            } else if (type === 'ALGBbalance') {
+
+            } else if (type === 'xALGBminted') {
                 setChartData(stakeHistoriesResult.map(item => {
                     return {
-                        value: formatUnits(BigNumber.from(item[type]), 19),
+                        value: formatUnits(BigNumber.from(item[type]), 18),
+                        date: convertDate(new Date(item.date * 1000))
+                    }
+                }))
+                setChart2Data(stakeHistoriesResult.map(item => {
+                    return {
+                        value: formatUnits(BigNumber.from(item['xALGBburned']), 18),
                         date: convertDate(new Date(item.date * 1000))
                     }
                 }))
@@ -105,6 +113,8 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
         }
     }, [stakeHistoriesResult])
 
+
+
     let prevData = ''
     const fullDateData = useMemo(() => getDaysArray(d3.min(chartData)?.date, new Date()).map(item => {
         for (let i = 0; i < chartData.length; i++) {
@@ -113,17 +123,29 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
                 return chartData[i]
             }
         }
-        if (type === 'xALGBtotalSupply') {
+        if (type === 'xALGBtotalSupply' || type === 'ALGBbalance') {
             return {value: prevData, date: item}
         }
         return {value: '0', date: item}
     }), [chartData])
 
-    const borderedData = useMemo(() => fullDateData.filter(item => {
-        if (item.date >= chartBorder[0] && item.date <= chartBorder[1]) {
-            return true
+
+    const fullDateData2 = useMemo(() => getDaysArray(d3.min(chart2Data)?.date, new Date()).map(item => {
+        for (let i = 0; i < chart2Data.length; i++) {
+            if (chart2Data[i].date === item) {
+                return chart2Data[i]
+            }
         }
+        return {value: '0', date: item}
+    }), [chartData])
+
+    const borderedData = useMemo(() => fullDateData.filter(item => {
+        return item.date >= chartBorder[0] && item.date <= chartBorder[1];
     }), [chartBorder, fullDateData])
+
+    const borderedData2 = useMemo(() => fullDateData2.filter(item => {
+        return item.date >= chartBorder[0] && item.date <= chartBorder[1];
+    }), [chartBorder, fullDateData2])
 
     const X = useMemo(() => d3.map(fullDateData, d => new Date(d.date)), [fullDateData])
 
@@ -132,9 +154,11 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type}: Stak
             {isMobile && <RangeButtons setSpan={setSpan} span={span}/>}
             <Chart
                 data={borderedData}
+                data2={borderedData2}
                 margin={margin}
                 dimensions={{width: isMobile ? wrapper?.current?.offsetWidth  - 20 : 900, height: isMobile ? 300 : 400}}
                 type={type}
+                colors={colors}
             />
             {!isMobile && <Brush
                 data={fullDateData}

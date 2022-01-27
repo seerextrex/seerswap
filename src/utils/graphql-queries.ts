@@ -438,9 +438,9 @@ query stake {
   histories(where: { date_gte: 1642626000 }) {
   date
   currentStakedAmount
-  earned
   ALGBbalance
   xALGBminted
+  xALGBburned
   xALGBtotalSupply
   ALGBfromVault
 }

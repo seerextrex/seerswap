@@ -1,9 +1,12 @@
+import { Contract } from 'ethers'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
+import { FARMING_CENTER } from '../../constants/addresses'
+import { useStakerHandlers } from '../../hooks/useStakerHandlers'
 
 const PageWrapper = styled.div`
   width: 100%;
@@ -68,15 +71,24 @@ export default function EternalFarmsPage({
   fetchHandler: () => any
 }) {
   const [modalForPool, setModalForPool] = useState(null)
+  const [tokenId, setTokenId] = useState('')
 
   useEffect(() => {
     fetchHandler()
   }, [])
 
+  const { showRewards } = useStakerHandlers()
+
   return (
     <>
       <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
-        {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}></StakeModal>}
+        {modalForPool && (
+          <>
+            <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}></StakeModal>
+            <input value={tokenId} onChange={(v) => setTokenId(v.target.value)}></input>
+            <button onClick={() => showRewards(modalForPool, tokenId)}>Rewards</button>
+          </>
+        )}
       </Modal>
       <PageWrapper>
         {refreshing ? (

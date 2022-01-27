@@ -20,22 +20,6 @@ export function useStakerHandlers() {
     const nonFunPosManInterface = new Interface(NON_FUN_POS_MAN)
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
 
-    const farmingCenterC = new Contract(
-        FARMING_CENTER[137],
-        FARMING_CENTER_ABI,
-        provider.getSigner()
-    )
-
-    const aadsad = farmingCenterC.callStatic.collectRewards(
-        ['0x4259abc22981480d81075b0e8c4bb0b142be8ef8', '0x4259abc22981480d81075b0e8c4bb0b142be8ef8', '0x3ba47c7e2e0132740d40d8ab4cf3cdc4320f301b', 1643313038, 4104559500],
-        1,
-        {
-            from: '0xc22e115c9f0cf6851b1ab943ab7b7e0ddad083c9'
-        }
-    )
-
-    aadsad.then(v => console.log('asdsada', v))
-
     const addTransaction = useTransactionAdder()
 
     const [approvedHash, setApproved] = useState(null)
@@ -45,6 +29,28 @@ export function useStakerHandlers() {
     const [withdrawnHash, setWithdrawn] = useState(null)
     const [claimRewardHash, setClaimReward] = useState(null)
     const [sendNFTL2Hash, setSendNFTL2] = useState(null)
+
+    const showRewards = useCallback(async ({ rewardToken, bonusRewardToken, pool, startTime, endTime, owner }, id) => {
+
+        if (!account || !provider) return
+
+        const farmingCenterC = new Contract(
+            FARMING_CENTER[137],
+            FARMING_CENTER_ABI,
+            provider.getSigner()
+        )
+
+        const aadsad = farmingCenterC.callStatic.collectRewards(
+            [rewardToken.id, bonusRewardToken.id, pool, startTime, endTime],
+            +id,
+            {
+                from: owner
+            }
+        )
+
+        aadsad.then(v => console.log(`[REWARDS FOR ${id}]`, [rewardToken.id, bonusRewardToken.id, pool, startTime, endTime], v))
+
+    }, [account, provider])
 
     const claimRewardsHandler = useCallback(async (tokenAddress, amount) => {
 
@@ -345,6 +351,7 @@ export function useStakerHandlers() {
         claimRewardsHandler,
         claimRewardHash,
         sendNFTL2Handler,
-        sendNFTL2Hash
+        sendNFTL2Hash,
+        showRewards
     }
 }

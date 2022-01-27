@@ -38,12 +38,11 @@ query fetchIncentive {
         id
         rewardToken
         bonusRewardToken
+        pool
         startTime
         endTime
         reward
         bonusReward
-        ended
-        pool
     }
 }`
 
@@ -214,7 +213,7 @@ query currentEvents {
 
 export const FROZEN_STAKED = (account: string) => gql`
    query frozenStaked  {
-     stakeTxes (where: {owner: "${account.toLowerCase()}", timestamp_gte: ${Math.round(Date.now()  / 1000)}}, orderBy: timestamp, orderDirection: asc) {
+     stakeTxes (where: {owner: "${account.toLowerCase()}", timestamp_gte: ${Math.round(Date.now() / 1000)}}, orderBy: timestamp, orderDirection: asc) {
      timestamp
      stakedALGBAmount
      xALGBAmount
@@ -224,63 +223,53 @@ export const FROZEN_STAKED = (account: string) => gql`
 
 export const TRANSFERED_POSITIONS = (account, chainId) => gql`
     query transferedPositions {
-        deposits (orderBy: tokenId, orderDirection: desc, where: {oldOwner: "${account}", owner: "${STAKER_ADDRESS[chainId]}"}) {
+        deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", onFarmingCenter: true}) {
             id
             owner
-            staked
-            liquidity
-            approved
             pool
-            tokenId
             L2tokenId
             incentive
+            eternalFarming
+            onFarmingCenter
     }
 }
 `
 
 export const SHARED_POSITIONS = account => gql`
     query sharedPositions {
-        deposits (orderBy: tokenId, orderDirection: desc, where: {owner: "${account}", incentive_not: null}) {
+        deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", incentive_not: null}) {
             id
             owner
-            staked
-            liquidity
-            approved
             pool
-            tokenId
             L2tokenId
             incentive
+            eternalFarming
     }
 }
 `
 
 export const TRANSFERED_POSITIONS_FOR_POOL = (account, pool) => gql`
 query transferedPositionsForPool {
-    deposits (orderBy: tokenId, orderDirection: desc, where: {oldOwner: "${account}", pool: "${pool}"}) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}"}) {
         id
         owner
-        staked
-        liquidity
-        approved
         pool
-        tokenId
         L2tokenId
         incentive
+        eternalFarming
+        onFarmingCenter
     }
 }`
 
 export const POSITIONS_OWNED_FOR_POOL = (account, pool) => gql`
 query positionsOwnedForPool {
-    deposits (orderBy: tokenId, orderDirection: desc, where: {owner: "${account}",  pool: "${pool}"}) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}",  pool: "${pool}"}) {
         id
         owner
-        staked
-        liquidity
-        approved
         pool
-        tokenId
         L2tokenId
         incentive
+        eternalFarming
     }
 }`
 
@@ -297,8 +286,8 @@ export const INFINITE_EVENTS = gql`
             endTime
             reward
             bonusReward
-            rewardRates
-            bonusRewardRates
+            rewardRate
+            bonusRewardRate
         }
     }
 `

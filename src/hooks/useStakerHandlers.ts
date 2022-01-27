@@ -1,9 +1,10 @@
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
 import STAKER_ABI from 'abis/staker'
+import FARMING_CENTER_ABI from 'abis/farming-center.json'
 import { Contract, providers } from "ethers"
 import { Interface } from "ethers/lib/utils"
 import { useCallback, useState } from "react"
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from "../constants/addresses"
+import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from "../constants/addresses"
 import { useTransactionAdder } from "../state/transactions/hooks"
 import { useActiveWeb3React } from "./web3"
 import { calculateGasMargin } from "../utils/calculateGasMargin"
@@ -17,6 +18,23 @@ export function useStakerHandlers() {
 
     const stakerInterface = new Interface(STAKER_ABI)
     const nonFunPosManInterface = new Interface(NON_FUN_POS_MAN)
+    const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
+
+    const farmingCenterC = new Contract(
+        FARMING_CENTER[137],
+        FARMING_CENTER_ABI,
+        provider.getSigner()
+    )
+
+    const aadsad = farmingCenterC.callStatic.collectRewards(
+        ['0x4259abc22981480d81075b0e8c4bb0b142be8ef8', '0x4259abc22981480d81075b0e8c4bb0b142be8ef8', '0x3ba47c7e2e0132740d40d8ab4cf3cdc4320f301b', 1643313038, 4104559500],
+        1,
+        {
+            from: '0xc22e115c9f0cf6851b1ab943ab7b7e0ddad083c9'
+        }
+    )
+
+    aadsad.then(v => console.log('asdsada', v))
 
     const addTransaction = useTransactionAdder()
 
@@ -137,7 +155,7 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const stakeHandler = useCallback(async (selectedNFT, { rewardAddress, bonusRewardAddress, pool, startTime, endTime }) => {
+    const stakeHandler = useCallback(async (selectedNFT, { rewardToken, bonusRewardToken, pool, startTime, endTime }, eventType) => {
 
         if (!account || !provider) return
 
@@ -147,25 +165,34 @@ export function useStakerHandlers() {
 
         try {
 
-            const stakerContract = new Contract(
-                STAKER_ADDRESS[chainId],
-                STAKER_ABI,
+            const farmingCenterContract = new Contract(
+                FARMING_CENTER[chainId],
+                FARMING_CENTER_ABI,
                 provider.getSigner()
             )
 
-            if (selectedNFT.transfered && !selectedNFT.staked) {
-                current = selectedNFT.tokenId
+            if (selectedNFT.onFarmingCenter) {
+                current = selectedNFT.id
 
-                const result = await stakerContract.enterFarming(
-                    [rewardAddress, bonusRewardAddress, pool, startTime, endTime],
-                    selectedNFT.tokenId
-                )
+                let result
+
+                if (eventType === 'eternal') {
+                    result = await farmingCenterContract.enterEternalFarming(
+                        [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                        +selectedNFT.id
+                    )
+                } else {
+                    result = await farmingCenterContract.enterFarming(
+                        [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                        +selectedNFT.id
+                    )
+                }
 
                 addTransaction(result, {
-                    summary: `NFT #${selectedNFT.tokenId} was deposited!`
+                    summary: `NFT #${selectedNFT.id} was deposited!`
                 })
 
-                setStaked({ hash: result.hash, id: selectedNFT.tokenId })
+                setStaked({ hash: result.hash, id: selectedNFT.id })
             }
         } catch (err) {
             setStaked('failed')
@@ -193,19 +220,19 @@ export function useStakerHandlers() {
             )
 
             if (selectedNFT.approved) {
-                current = selectedNFT.tokenId
+                current = selectedNFT.id
 
                 const result = await nonFunPosManContract['safeTransferFrom(address,address,uint256)'](
                     account,
-                    STAKER_ADDRESS[chainId],
-                    selectedNFT.tokenId
+                    FARMING_CENTER[chainId],
+                    selectedNFT.id
                 )
 
                 addTransaction(result, {
-                    summary: `NFT #${selectedNFT.tokenId} was transferred!`
+                    summary: `NFT #${selectedNFT.id} was transferred!`
                 })
 
-                setTransfered({ hash: result.hash, id: selectedNFT.tokenId })
+                setTransfered({ hash: result.hash, id: selectedNFT.id })
 
             }
 
@@ -235,18 +262,18 @@ export function useStakerHandlers() {
             )
 
             if (!selectedNFT.approved) {
-                current = selectedNFT.tokenId
+                current = selectedNFT.id
 
                 const result = await nonFunPosManContract.approve(
-                    STAKER_ADDRESS[chainId],
-                    selectedNFT.tokenId
+                    FARMING_CENTER[chainId],
+                    selectedNFT.id
                 )
 
                 addTransaction(result, {
-                    summary: `NFT #${selectedNFT.tokenId} was approved!`
+                    summary: `NFT #${selectedNFT.id} was approved!`
                 })
 
-                setApproved({ hash: result.hash, id: selectedNFT.tokenId })
+                setApproved({ hash: result.hash, id: selectedNFT.id })
 
             }
 

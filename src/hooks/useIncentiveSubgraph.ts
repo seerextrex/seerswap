@@ -409,14 +409,15 @@ export function useIncentiveSubgraph() {
 
             if (errorTransferred) throw new Error(`${errorTransferred.name} ${errorTransferred.message}`)
 
-            const { data: { deposits: positionsOwned }, error: errorOwned } = (await farmingClient.query({
-                query: POSITIONS_OWNED_FOR_POOL(account, pool),
-                fetchPolicy: 'network-only'
-            }))
+            // const { data: { deposits: positionsOwned }, error: errorOwned } = (await farmingClient.query({
+            //     query: POSITIONS_OWNED_FOR_POOL(account, pool),
+            //     fetchPolicy: 'network-only'
+            // }))
 
-            if (errorOwned) throw new Error(`${errorOwned.name} ${errorOwned.message}`)
+            // if (errorOwned) throw new Error(`${errorOwned.name} ${errorOwned.message}`)
 
-            const positions = [...positionsTransferred, ...positionsOwned]
+            // const positions = [...positionsTransferred, ...positionsOwned]
+            const positions = [...positionsTransferred]
 
             const _positions = []
 
@@ -426,14 +427,11 @@ export function useIncentiveSubgraph() {
 
                 _position = { ...position }
 
-                if (position.owner === STAKER_ADDRESS[chainId].toLowerCase()) {
-                    _position.approved = true
-                    _position.transfered = true
-                }
-
                 _positions.push(_position)
 
             }
+
+            console.log('_POSITOSNSS', _positions)
 
             setPositionsForPool(_positions)
 
@@ -464,7 +462,6 @@ export function useIncentiveSubgraph() {
                 setPositionsOnFarmerLoading(false)
                 return
             }
-
 
             const transferredPositionsIds = positionsTransferred.map(position => position.tokenId);
 

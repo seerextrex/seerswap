@@ -10,9 +10,9 @@ import dayjs from "dayjs"
 import {StakingAnalyticsChartWrapper} from './styled'
 
 export function convertDate(date: Date) {
-    const yyyy = date.getFullYear().toString()
-    const mm = (date.getMonth() + 1).toString()
-    const dd = date.getDate().toString()
+    const yyyy = date.getUTCFullYear().toString()
+    const mm = (date.getUTCMonth() + 1).toString()
+    const dd = date.getUTCDate().toString()
 
     const mmChars = mm.split('')
     const ddChars = dd.split('')
@@ -57,7 +57,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type, color
 
         switch (span) {
             case 'Day':
-                return day.subtract(1, 'day').unix()
+                return day.subtract(type === 'apr' ? 2 : 1, 'day').unix()
             case 'Week':
                 return day.subtract(7, 'day').unix()
             case 'Month':
@@ -81,8 +81,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type, color
         if (stakeHistoriesResult) {
             if (type === 'apr') {
                 setChartData(stakeHistoriesResult.map(item => {
-
-                    const aprBigNumber = BigNumber.from(item.ALGBfromVault).mul(BigNumber.from(parseUnits('365', 18))).mul(BigNumber.from(100)).div(BigNumber.from(item.currentStakedAmount))
+                    const aprBigNumber = BigNumber.from(item.ALGBfromVault).mul(BigNumber.from(parseUnits('365', 18))).mul(BigNumber.from(100)).div(BigNumber.from(item.ALGBbalance))
                     return {
                         value: Math.floor(formatEther(aprBigNumber)),
                         date: convertDate(new Date(item.date * 1000))
@@ -153,7 +152,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type, color
         <StakingAnalyticsChartWrapper ref={wrapper}>
             {isMobile && <RangeButtons setSpan={setSpan} span={span}/>}
             <Chart
-                data={borderedData}
+                fData={borderedData}
                 data2={borderedData2}
                 margin={margin}
                 dimensions={{width: isMobile ? wrapper?.current?.offsetWidth  - 20 : 900, height: isMobile ? 300 : 400}}
@@ -162,6 +161,8 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type, color
             />
             {!isMobile && <Brush
                 data={fullDateData}
+                data2={fullDateData2}
+                colors={colors}
                 width={isMobile ? wrapper?.current?.offsetWidth  - 80 : 900}
                 margin={margin}
                 focusHeight={focusHeight}

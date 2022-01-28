@@ -5,15 +5,16 @@ import {isMobile} from "react-device-detect"
 import {ChartWrapper} from './styled'
 
 interface ChartProps {
-    data: ChardDataInterface[]
-    data2?: ChardDataInterface[]
+    fData: ChardDataInterface[]
+    data2?: ChardDataInterface[] | undefined
     margin: { left: number, top: number, right: number, bottom: number }
     dimensions: { width: number, height: number }
     type: string
     colors: string[]
 }
 
-export default function Chart({data, data2,  margin, dimensions, type, colors}: ChartProps) {
+export default function Chart({fData, data2,  margin, dimensions, type, colors}: ChartProps) {
+    const data = useMemo(() => type === 'apr' ? fData.slice(0, fData.length - 1): fData,[fData])
     const svgRef = useRef(null)
     const X = useMemo(() => d3.map(data, d => new Date(d.date)), [data])
     const Y = useMemo(() => d3.map(data, d => +(d.value)), [data])
@@ -23,7 +24,6 @@ export default function Chart({data, data2,  margin, dimensions, type, colors}: 
     const yDomain = useMemo(() => [0, d3.max([...Y, ...Y2])], [Y, Y2])
     const xDomain = useMemo(() => [d3.min(X), d3.max(X)], [X])
 
-    //Todo auto length
     const tickWidth = useMemo(() => {
         return dimensions.width / data.length
     }, [dimensions, data])
@@ -74,7 +74,7 @@ export default function Chart({data, data2,  margin, dimensions, type, colors}: 
             .create('svg:rect')
             .append('rect')
             .attr('id', 'info-label')
-            .attr('width', '190px')
+            .attr('width', '150px')
             .attr('height', `${data2?.length === 0 ? '60px' : '90px'}`)
             .attr('rx', '6')
             .style('fill', '#12151d')
@@ -95,14 +95,14 @@ export default function Chart({data, data2,  margin, dimensions, type, colors}: 
 
         const InfoRectColor = d3
             .create('svg:rect')
-            .attr('transform', 'translate(170, 15)')
+            .attr('transform', 'translate(130, 15)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')
 
         const InfoRectColor2 = d3
             .create('svg:rect')
-            .attr('transform', 'translate(170, 40)')
+            .attr('transform', 'translate(130, 40)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')
@@ -174,18 +174,20 @@ export default function Chart({data, data2,  margin, dimensions, type, colors}: 
                 return d3.interpolate(`0,${length}`, `${length},${length}`)
             })
 
-        svg.append('path')
-            .attr('fill', 'none')
-            .attr('d', line2(I))
-            .attr('stroke-width', 2)
-            .attr('stroke', colors[1])
-            .transition()
-            .duration(1000)
-            .ease(d3.easeCircle)
-            .attrTween('stroke-dasharray', function () {
-                const length = this.getTotalLength()
-                return d3.interpolate(`0,${length}`, `${length},${length}`)
-            })
+        if (data2?.length !== 0) {
+            svg.append('path')
+                .attr('fill', 'none')
+                .attr('d', line2(I))
+                .attr('stroke-width', 2)
+                .attr('stroke', colors[1])
+                .transition()
+                .duration(1000)
+                .ease(d3.easeCircle)
+                .attrTween('stroke-dasharray', function () {
+                    const length = this.getTotalLength()
+                    return d3.interpolate(`0,${length}`, `${length},${length}`)
+                })
+        }
 
         xGroup
             .selectAll('.tick')
@@ -219,23 +221,28 @@ export default function Chart({data, data2,  margin, dimensions, type, colors}: 
                     .attr('fill', 'transparent')
                     .on('mouseover', (e) => {
 
-                        const isOverflowing = Number(xTranslate) + 190 + 16 > dimensions.width
+                        const isOverflowing = (Number(xTranslate) + 150 + 16) > dimensions.width
+
                         Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
                         InfoRectGroup.attr(
                             'transform',
-                            `translate(${isOverflowing ? Number(xTranslate) - 150 - 50 : Number(xTranslate) + 10},10)`
+                            `translate(${isOverflowing ? Number(xTranslate) - (isMobile ? 145 : 160) : Number(xTranslate) + (isMobile ? -5 : 10)},10)`
                         )
-                        const val1 = parseFloat(data[i]?.value).toFixed(3)
-                        const val2 = parseFloat(data2[i]?.value.toString()).toFixed(3)
+                        const val1 = +parseFloat(data[i]?.value).toFixed(3)
+                        const val2 = +parseFloat(data2[i]?.value.toString()).toFixed(3)
+                        const textVal = data2?.length !== 0 ? (val2 < val1 ? val1 : val2) : val1
+                        const textVal2 = val1 < val2 ? val1 : val2
 
-                        InfoRectFeeText.property('innerHTML', `Value: ${type === 'apr' ? Number(val1): val1}${type === 'apr' ? '%' : ''}`)
-                        InfoRectColor.attr('fill', colors[0])
-                        InfoRectFeeText2.property('innerHTML', `Value: ${+val1 < +val2 ? val1 : val2}`)
-                        InfoRectColor2.attr('fill', +val2 === +val1 ? colors[1] : +val2 < +val1 ? colors[1] : colors[0])
+                        InfoRectFeeText.property('innerHTML', `Value: ${type === 'apr' ? Number(val1) : (textVal >= 1000_000 ? `${(textVal / 1000_000).toFixed(2)}m` : textVal >= 1000 ? `${(textVal / 1000).toFixed(2)}k` : textVal.toFixed(2))} ${type === 'apr' ? '%' : ''}`)
+                        InfoRectColor.attr('fill', data2?.length !== 0 ? (val1 < val2 ? colors[1] : colors[0]) : colors[0])
+                        InfoRectFeeText2.property('innerHTML', `Value: ${type === 'apr' ? Number(val2) : (textVal2 >= 1000_000 ? `${(textVal2 / 1000_000).toFixed(2)}m` : textVal2 >= 1000 ? `${(textVal2 / 1000).toFixed(2)}k` : textVal2.toFixed(2))} ${type === 'apr' ? '%' : ''}`)
+                        InfoRectColor2.attr('fill', val2 === val1 ? colors[1] : val2 < val1 ? colors[1] : colors[0])
                         InfoRectDateText.property('innerHTML', `${data[i]?.date}`)
 
                         Focus.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(+data[i]?.value)})`)
-                        Focus2.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(data2[i]?.value)})`)
+                        if (data2?.length !== 0) {
+                            Focus2.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(data2[i]?.value)})`)
+                        }
                     })
                 svg.node().append(rect.node())
             })

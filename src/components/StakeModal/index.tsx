@@ -236,7 +236,9 @@ export function StakeModal({
   const positionsForStake = useMemo(() => {
     if (!positionsForPool) return
 
-    return positionsForPool.filter((position) => position.pool === pool && position.onFarmingCenter)
+    return positionsForPool.filter(
+      (position) => position.pool === pool && !position.incentive && !position.eternalFarming
+    )
   }, [positionsForPool])
 
   const [chunkedPositions, setChunkedPositions] = useState(null)

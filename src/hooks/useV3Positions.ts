@@ -80,7 +80,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
   useEffect(() => {
     if (account) {
-      fetchPositionsOnFarmerFn(account)
+      // fetchPositionsOnFarmerFn(account)
     }
   }, [])
 

@@ -277,7 +277,7 @@ query positionsOwnedForPool {
 
 export const INFINITE_EVENTS = gql`
     query infiniteFarms {
-        eternalFarmings {
+        eternalFarmings (where: {isDetached: false}) {
             id
             rewardToken
             bonusRewardToken

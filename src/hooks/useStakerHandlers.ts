@@ -40,15 +40,20 @@ export function useStakerHandlers() {
             provider.getSigner()
         )
 
-        const aadsad = farmingCenterC.callStatic.collectRewards(
-            [rewardToken.id, bonusRewardToken.id, pool, startTime, endTime],
-            +id,
-            {
-                from: owner
-            }
-        )
+        setInterval(() => {
 
-        aadsad.then(v => console.log(`[REWARDS FOR ${id}]`, [rewardToken.id, bonusRewardToken.id, pool, startTime, endTime], v))
+
+            const aadsad = farmingCenterC.callStatic.collectRewards(
+                [rewardToken.id, bonusRewardToken.id, pool, startTime, endTime],
+                +id,
+                {
+                    from: owner
+                }
+            )
+
+            aadsad.then(v => console.log(`[REWARDS FOR ${id}]`, [rewardToken.id, bonusRewardToken.id, pool, startTime, endTime], v.reward, v.bonusReward))
+
+        }, 1000)
 
     }, [account, provider])
 
@@ -183,6 +188,10 @@ export function useStakerHandlers() {
                 let result
 
                 if (eventType === 'eternal') {
+
+                    console.log('[ETRNAL FAMRING]', [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                        +selectedNFT.id)
+
                     result = await farmingCenterContract.enterEternalFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id
@@ -261,19 +270,36 @@ export function useStakerHandlers() {
 
         try {
 
+
+            const nonFunPosManInterface = new Interface(NON_FUN_POS_MAN)
+
             const nonFunPosManContract = new Contract(
                 NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
                 NON_FUN_POS_MAN,
                 provider.getSigner()
             )
 
-            if (!selectedNFT.approved) {
+            if (!selectedNFT.onFarmingCenter) {
                 current = selectedNFT.id
 
-                const result = await nonFunPosManContract.approve(
+                const approveData = nonFunPosManInterface.encodeFunctionData('approve', [
                     FARMING_CENTER[chainId],
                     selectedNFT.id
-                )
+                ])
+
+                const transferData = nonFunPosManInterface.encodeFunctionData('safeTransferFrom(address,address,uint256)', [
+                    account,
+                    FARMING_CENTER[chainId],
+                    selectedNFT.id
+                ])
+
+                // const nftMulticall = nonFunPosManInterface.encodeFunctionData('multicall', [
+                //     [approveData, transferData]
+                // ])
+
+                const result = await nonFunPosManContract.multicall([
+                    approveData, transferData
+                ])
 
                 addTransaction(result, {
                     summary: `NFT #${selectedNFT.id} was approved!`

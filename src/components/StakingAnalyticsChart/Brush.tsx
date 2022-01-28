@@ -5,12 +5,14 @@ interface BrushProps {
     width: number
     focusHeight: number
     data: any[]
+    data2?: any[]
+    colors: string[]
     margin: any
     X: any
     updateChartData: any
 }
 
-export default function Brush({data, focusHeight, width, margin, updateChartData, X}: BrushProps) {
+export default function Brush({data, data2, colors, focusHeight, width, margin, updateChartData, X}: BrushProps) {
     const focusRef = useRef(null)
 
     useEffect(() => {
@@ -35,6 +37,20 @@ export default function Brush({data, focusHeight, width, margin, updateChartData
             .domain([0, d3.max(data, d => +d.value)])
             .range([focusHeight - margin.bottom, margin.top])
 
+        const focusLine2 = (x, y) => d3.line()
+            .defined(d => !isNaN(d.value))
+            .curve(d3.curveBumpX)
+            .x(d => x(new Date(d.date)))
+            .y(d => y(d.value))
+
+        const focusX2 = d3.scaleUtc()
+            .domain([d3.min(data, d => new Date(d.date)), Date.now()])
+            .range([margin.left, width])
+
+        const focusY2 = d3.scaleLinear()
+            .domain([0, d3.max(data, d => +d.value)])
+            .range([focusHeight - margin.bottom, margin.top])
+
         const focusXAxis = (g, x, height) => g
             .attr('transform', `translate(0,${height - margin.bottom})`)
 
@@ -56,15 +72,24 @@ export default function Brush({data, focusHeight, width, margin, updateChartData
         focus.append('path')
             .datum(data)
             .attr('fill', 'none')
-            .attr('stroke', '#63c0f8')
+            .attr('stroke', colors[0])
             .attr('stroke-width', 1)
             .attr('d', focusLine(focusX, focusY.copy().range([focusHeight - margin.bottom, 4])))
+
+        if (data2) {
+            focus.append('path')
+                .datum(data2)
+                .attr('fill', 'none')
+                .attr('stroke', colors[1])
+                .attr('stroke-width', 1)
+                .attr('d', focusLine2(focusX2, focusY2.copy().range([focusHeight - margin.bottom, 4])))
+        }
 
         const brush = d3.brushX()
             .extent([[margin.left, 0.5], [width - margin.right, focusHeight - margin.bottom + 0.5]])
             .on('brush', brushed)
             .on('end', brushended)
-        // focusX(X[X.length - (Math.round(((X.length / 100) * 25)) === 0 ? 2 : Math.round(((X.length / 100) * 25)))])
+
         const defaultSelection = [focusX.range()[0], focusX.range()[1] - margin.right]
 
         const gb = focus.append('g')
@@ -82,12 +107,6 @@ export default function Brush({data, focusHeight, width, margin, updateChartData
 
         function brushed({selection}) {
             if (selection) {
-                const div = Math.round(900 / X.length)
-                const minX = Math.floor(selection[0] / div)
-                const maxX = Math.floor(selection[1] / div)
-
-                updateChartData([data[minX - 1]?.date === undefined ? data[minX]?.date : data[minX - 1]?.date, data[maxX]?.date === undefined ? data[maxX -1]?.date : data[maxX]?.date])
-
                 focus.property('value', selection.map(focusX.invert, focusX).map(d3.utcDay.round))
                 focus.dispatch('input')
             }
@@ -98,8 +117,13 @@ export default function Brush({data, focusHeight, width, margin, updateChartData
                 gb.call(brush.move, defaultSelection)
                 return
             }
+            const div = Math.round(900 / X.length)
+            const minX = Math.floor(selection[0] / div)
+            const maxX = Math.floor(selection[1] / div)
+
+            updateChartData([data[minX - 1]?.date === undefined ? data[minX]?.date : data[minX - 1]?.date, data[maxX]?.date === undefined ? data[maxX -1]?.date : data[maxX]?.date])
         }
-    }, [data])
+    }, [data, data2])
 
 
     return (

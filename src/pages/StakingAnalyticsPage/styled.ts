@@ -29,9 +29,42 @@ export const BackButton = styled(NavLink)`
   width: fit-content;
   position: relative;
   z-index: 100;
-   p {
-     margin:  0 0 0 5px;
-   }
+
+  p {
+    margin: 0 0 0 5px;
+  }
+`
+export const ChartTitleWrapper = styled.div`
+  display: flex;
+  justify-content: start;
+  
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
+`
+export const ChartTitleLeft = styled.div`
+  text-align: left;
+
+`
+export const ChartTitleRight = styled.div`
+  text-align: right;
+  margin-left: 2rem;
+  ${({theme}) => theme.mediaWidth.upToSmall`
+     margin-left: 0;
+     margin-top: .5rem;
+     text-align: left;
+  `}
+
+`
+export const ColorRect = styled.div`
+  width: 20px;
+  height: 20px;
+  background-color: ${({stroke}) => stroke};
+  border-radius: 5px;
+`
+export const ColorTextWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `
 export const ChartTitle = styled.h2`
   color: white;
@@ -49,4 +82,7 @@ export const ChartCard = styled.div`
   border-radius: 16px;
   padding: 1rem 2rem;
   margin: 1rem 0;
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    padding: .7rem 1.2rem;
+  `}
 `

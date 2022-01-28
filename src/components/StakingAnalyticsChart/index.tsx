@@ -57,7 +57,7 @@ export default function StakingAnalyticsChart({stakeHistoriesResult, type, color
 
         switch (span) {
             case 'Day':
-                return day.subtract(type === 'apr' ? 2 : 1, 'day').unix()
+                return day.subtract(type === 'apr' || type === 'ALGBfromVault' ? 2 : 1, 'day').unix()
             case 'Week':
                 return day.subtract(7, 'day').unix()
             case 'Month':

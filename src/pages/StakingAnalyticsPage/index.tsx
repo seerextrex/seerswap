@@ -19,12 +19,12 @@ import {
 } from './styled'
 
 const chartsInfo = [
-    {title: ['xALGB Minted', 'xALGB Burned'], type: 'xALGBminted', hint: ['Amount of newly-minted xALGB per day', 'Amount of newly-burned xALGB per day ']},
-    {title: 'ALGB from the Vault', type: 'ALGBfromVault', hint: 'Amount of ALGB fees sent as rewards'},
+    {title: 'APR', type: 'apr', hint: 'Yearly percentage of profits at the current rate of rewards'},
+    {title: 'ALGB Balance', type: 'ALGBbalance', hint: 'Total amount of staked ALGB'},
     {title: 'Staked ALGB', type: 'currentStakedAmount', hint: 'Amount of newly-staked ALGB per day'},
     {title: 'xALGB Total Supply', type: 'xALGBtotalSupply', hint: 'Total amount of minted xALGB'},
-    {title: 'APR', type: 'apr', hint: 'Yearly percentage of profits at the current rate of rewards'},
-    {title: 'ALGB Balance', type: 'ALGBbalance', hint: 'Total amount of staked ALGB'}
+    {title: 'ALGB from the Vault', type: 'ALGBfromVault', hint: 'Amount of ALGB fees sent as rewards'},
+    {title: ['xALGB Minted', 'xALGB Burned'], type: 'xALGBminted', hint: ['Amount of newly-minted xALGB per day', 'Amount of newly-burned xALGB per day ']},
 ]
 const chart1Color = '#1f8bcd'
 const chart2Color = '#d90ebb'
@@ -63,7 +63,8 @@ export default function StakingAnalyticsPage() {
                         <>
                             <ChartTitle>{item.title}</ChartTitle>
                             <ChartHint>{item.hint}</ChartHint>
-                        </>}
+                        </>
+                        }
                         {historiesLoading ?
                             <LoaderWrapper>
                                 <Loader size={'35px'} stroke={'white'}/>
@@ -73,8 +74,8 @@ export default function StakingAnalyticsPage() {
                                 type={item.type}
                                 colors={[chart1Color, chart2Color]}/>
                         }
-                    </ChartCard>
-            )}
+                    </ChartCard>)
+            }
         </StakingAnalyticsPageWrapper>
     )
 }

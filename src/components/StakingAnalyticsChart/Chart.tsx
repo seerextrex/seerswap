@@ -14,7 +14,7 @@ interface ChartProps {
 }
 
 export default function Chart({fData, data2,  margin, dimensions, type, colors}: ChartProps) {
-    const data = useMemo(() => type === 'apr' ? fData.slice(0, fData.length - 1): fData,[fData])
+    const data = useMemo(() => type === 'apr' || type === 'ALGBfromVault' ? fData.slice(0, fData.length - 1): fData,[fData])
     const svgRef = useRef(null)
     const X = useMemo(() => d3.map(data, d => new Date(d.date)), [data])
     const Y = useMemo(() => d3.map(data, d => +(d.value)), [data])

@@ -137,8 +137,14 @@ const ConnectWalletButton = styled.button`
 export default function StakingPage() {
   const { account } = useActiveWeb3React()
 
-  const { fetchRewards, fetchCurrentEvents, fetchFutureEvents, fetchTransferredPositions, fetchEternalFarms } =
-    useIncentiveSubgraph() || {}
+  const {
+    fetchRewards,
+    fetchCurrentEvents,
+    fetchFutureEvents,
+    fetchTransferredPositions,
+    fetchEternalFarms,
+    fetchPositionsOnEternalFarmings,
+  } = useIncentiveSubgraph() || {}
 
   const [now, setNow] = useState(Date.now())
 
@@ -208,7 +214,10 @@ export default function StakingPage() {
                       <StakerMyStakes
                         data={fetchTransferredPositions?.transferredPositions}
                         refreshing={fetchTransferredPositions?.transferredPositionsLoading}
-                        fetchHandler={() => fetchTransferredPositions?.fetchTransferredPositionsFn(true)}
+                        fetchHandler={() => {
+                          fetchTransferredPositions?.fetchTransferredPositionsFn(true)
+                          // fetchPositionsOnEternalFarmings?.fetchPositionsOnEternalFarmingFn(true)
+                        }}
                         now={now}
                       ></StakerMyStakes>
                     ) : (
@@ -266,7 +275,6 @@ export default function StakingPage() {
                       fetchHandler={() => fetchEternalFarms.fetchEternalFarmsFn(true)}
                     ></EternalFarmsPage>
                   </Route>
-
                 </Switch>
               </BodyWrapper>
             </MainContentWrapper>

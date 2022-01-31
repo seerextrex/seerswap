@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { STAKER_ADDRESS } from "../constants/addresses";
+import { FINITE_FARMING } from "../constants/addresses";
 
 //Farming
 
@@ -45,6 +45,24 @@ query fetchIncentive {
         bonusReward
     }
 }`
+
+export const FETCH_ETERNAL_FARM = farmId => gql`
+  query fetchEternalFarm {
+    eternalFarmings (where: { id: "${farmId}" }) {
+      id
+      rewardToken
+      bonusRewardToken
+      pool
+      startTime
+      endTime
+      reward
+      bonusReward
+      rewardRate
+      bonusRewardRate
+      isDetached
+    }
+  }
+`
 
 export const FETCH_POOL = poolId => gql`
 query fetchPool {
@@ -235,17 +253,17 @@ export const TRANSFERED_POSITIONS = (account, chainId) => gql`
 }
 `
 
-export const SHARED_POSITIONS = account => gql`
-    query sharedPositions {
-        deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", incentive_not: null}) {
-            id
-            owner
-            pool
-            L2tokenId
-            incentive
-            eternalFarming
+export const POSITIONS_ON_ETERNAL_FARMING = (account) => gql`
+  query positionsOnEternalFarming {
+    deposits (orderBy: id, orderDirection: desc, where: { owner: "${account}", onFarmingCenter: true, eternalFarming_not: null }) {
+      id
+      owner
+      pool
+      L2tokenId
+      eternalFarming
+      onFarmingCenter
     }
-}
+  }
 `
 
 export const TRANSFERED_POSITIONS_FOR_POOL = (account, pool) => gql`

@@ -3,7 +3,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { AlertTriangle } from 'react-feather'
 import { ZERO_PERCENT } from '../../constants/misc'
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from '../../constants/addresses'
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FINITE_FARMING } from '../../constants/addresses'
 import { WMATIC_EXTENDED } from '../../constants/tokens'
 import { useV3NFTPositionManagerContract } from '../../hooks/useContract'
 import { RouteComponentProps } from 'react-router-dom'
@@ -484,10 +484,7 @@ export default function AddLiquidity({
                 />
               )}
               bottomContent={() => (
-                <ButtonPrimary
-                  style={{ marginTop: '1rem', color: 'white'}}
-                  onClick={onAdd}
-                >
+                <ButtonPrimary style={{ marginTop: '1rem', color: 'white' }} onClick={onAdd}>
                   <Text fontWeight={500} fontSize={20}>
                     <Trans>Add</Trans>
                   </Text>

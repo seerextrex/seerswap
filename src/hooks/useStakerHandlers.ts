@@ -1,13 +1,18 @@
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
-import STAKER_ABI from 'abis/staker'
+import FINITE_FARMING_ABI from 'abis/finite-farming'
 import FARMING_CENTER_ABI from 'abis/farming-center.json'
 import { Contract, providers } from "ethers"
 import { Interface } from "ethers/lib/utils"
 import { useCallback, useState } from "react"
-import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from "../constants/addresses"
+import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FINITE_FARMING } from "../constants/addresses"
 import { useTransactionAdder } from "../state/transactions/hooks"
 import { useActiveWeb3React } from "./web3"
 import { calculateGasMargin } from "../utils/calculateGasMargin"
+
+export enum FarmingType {
+    ETERNAL,
+    FINITE
+}
 
 export function useStakerHandlers() {
 
@@ -16,7 +21,6 @@ export function useStakerHandlers() {
     const _w: any = window
     const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
 
-    const stakerInterface = new Interface(STAKER_ABI)
     const nonFunPosManInterface = new Interface(NON_FUN_POS_MAN)
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
 
@@ -26,6 +30,7 @@ export function useStakerHandlers() {
     const [transferedHash, setTransfered] = useState(null)
     const [stakedHash, setStaked] = useState(null)
     const [getRewardsHash, setGetRewards] = useState(null)
+    const [eternalCollectRewardHash, setEternalCollectReward] = useState(null)
     const [withdrawnHash, setWithdrawn] = useState(null)
     const [claimRewardHash, setClaimReward] = useState(null)
     const [sendNFTL2Hash, setSendNFTL2] = useState(null)
@@ -34,8 +39,8 @@ export function useStakerHandlers() {
 
         if (!account || !provider) return
 
-        const farmingCenterC = new Contract(
-            FARMING_CENTER[137],
+        const farmingCenterContract = new Contract(
+            FARMING_CENTER[chainId],
             FARMING_CENTER_ABI,
             provider.getSigner()
         )
@@ -43,7 +48,7 @@ export function useStakerHandlers() {
         setInterval(() => {
 
 
-            const aadsad = farmingCenterC.callStatic.collectRewards(
+            const aadsad = farmingCenterContract.callStatic.collectRewards(
                 [rewardToken.id, bonusRewardToken.id, pool, startTime, endTime],
                 +id,
                 {
@@ -61,9 +66,9 @@ export function useStakerHandlers() {
 
         if (!account || !provider) return
 
-        const stakerContract = new Contract(
-            STAKER_ADDRESS[chainId],
-            STAKER_ABI,
+        const farmingCenterContract = new Contract(
+            FARMING_CENTER[chainId],
+            FARMING_CENTER_ABI,
             provider.getSigner()
         )
 
@@ -71,7 +76,7 @@ export function useStakerHandlers() {
 
         try {
 
-            const result = await stakerContract.claimReward(
+            const result = await farmingCenterContract.claimReward(
                 tokenAddress,
                 account,
                 amount
@@ -92,32 +97,77 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const getRewardsHandler = useCallback(async (token, { staked, rewardToken, bonusRewardToken, pool, startTime, endTime }) => {
+    const eternalCollectRewardHandler = useCallback(async (token, { pool, eternalRewardToken, eternalBonusRewardToken, eternalStartTime, eternalEndTime }) => {
+        if (!account || !provider) return
+
+        const farmingCenterContract = new Contract(
+            FARMING_CENTER[chainId],
+            FARMING_CENTER_ABI,
+            provider.getSigner()
+        )
+
+        setEternalCollectReward({ hash: null, id: null })
+
+        try {
+
+            const result = await farmingCenterContract.collectRewards(
+                [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime],
+                +token
+            )
+
+            addTransaction(result, {
+                summary: 'Claiming reward for ...'
+            })
+
+            setClaimReward({ hash: result.hash, id: token })
+
+        } catch (err) {
+            setClaimReward({ error: err })
+            if (err.code !== 4001) {
+                throw new Error('Claiming rewards ' + err.message)
+            }
+        }
+
+    }, [account, chainId])
+
+    const getRewardsHandler = useCallback(async (token, { incentiveRewardToken, incentiveBonusRewardToken, pool, incentiveStartTime, incentiveEndTime, eternalRewardToken, eternalBonusRewardToken, eternalStartTime, eternalEndTime }, eventType) => {
 
         if (!account || !provider) return
 
         setGetRewards({ hash: null, id: null })
 
+        console.log(incentiveRewardToken, incentiveBonusRewardToken, pool, incentiveStartTime, incentiveEndTime)
+
         try {
 
-            const stakerContract = new Contract(
-                STAKER_ADDRESS[chainId],
-                STAKER_ABI,
+            const farmingCenterContract = new Contract(
+                FARMING_CENTER[chainId],
+                FARMING_CENTER_ABI,
                 provider.getSigner()
             )
 
-            if (staked) {
+            let result
 
-                const result = await stakerContract.exitFarming(
-                    [rewardToken.id, bonusRewardToken.id, pool.id, +startTime, +endTime],
+            if (eventType === FarmingType.ETERNAL) {
+
+                result = await farmingCenterContract.exitFarming(
+                    [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime],
                     +token
                 )
 
-                addTransaction(result, {
-                    summary: `Rewards were claimed!`
-                })
-                setGetRewards({ hash: result.hash, id: token })
+            } else {
+                result = await farmingCenterContract.exitEternalFarming(
+                    [incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime],
+                    +token
+                )
             }
+
+            addTransaction(result, {
+                summary: `Rewards were claimed!`
+            })
+
+            setGetRewards({ hash: result.hash, id: token })
+
         } catch (err) {
             setGetRewards('failed')
             if (err.code !== 4001) {
@@ -136,27 +186,23 @@ export function useStakerHandlers() {
 
         try {
 
-            const stakerContract = new Contract(
-                STAKER_ADDRESS[chainId],
-                STAKER_ABI,
+            const farmingCenterContract = new Contract(
+                FARMING_CENTER[chainId],
+                FARMING_CENTER_ABI,
                 provider.getSigner()
             )
 
-            if (transfered) {
-                const result = await stakerContract.withdrawToken(
-                    token,
-                    account,
-                    0x0
-                )
+            const result = await farmingCenterContract.withdrawToken(
+                token,
+                account,
+                0x0
+            )
 
-                addTransaction(result, {
-                    summary: `NFT #${token} was withdrawn!`
-                })
+            addTransaction(result, {
+                summary: `NFT #${token} was withdrawn!`
+            })
 
-                // token.staked = false
-                // token.transfered = false
-                setWithdrawn({ hash: result.hash, id: token })
-            }
+            setWithdrawn({ hash: result.hash, id: token })
         } catch (err) {
             setWithdrawn('failed')
             if (err.code !== 4001) {
@@ -187,9 +233,9 @@ export function useStakerHandlers() {
 
                 let result
 
-                if (eventType === 'eternal') {
+                if (eventType === FarmingType.ETERNAL) {
 
-                    console.log('[ETRNAL FAMRING]', [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                    console.log('[INFINITE]', [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id)
 
                     result = await farmingCenterContract.enterEternalFarming(
@@ -197,6 +243,9 @@ export function useStakerHandlers() {
                         +selectedNFT.id
                     )
                 } else {
+
+                    console.log('[FINITE]', [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                        +selectedNFT.id)
                     result = await farmingCenterContract.enterFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id
@@ -326,33 +375,33 @@ export function useStakerHandlers() {
 
         try {
 
-            const stakerContract = new Contract(
-                STAKER_ADDRESS[chainId],
-                STAKER_ABI,
-                provider.getSigner()
-            )
+            // const stakerContract = new Contract(
+            //     FINITE_FARMING[chainId],
+            //     STAKER_ABI,
+            //     provider.getSigner()
+            // )
 
-            const approveData = stakerInterface.encodeFunctionData('approve', [
-                recipient,
-                l2TokenId
-            ])
+            // const approveData = stakerInterface.encodeFunctionData('approve', [
+            //     recipient,
+            //     l2TokenId
+            // ])
 
-            const sendData = stakerInterface.encodeFunctionData('safeTransferFrom(address,address,uint256)', [
-                account,
-                recipient,
-                l2TokenId
-            ])
+            // const sendData = stakerInterface.encodeFunctionData('safeTransferFrom(address,address,uint256)', [
+            //     account,
+            //     recipient,
+            //     l2TokenId
+            // ])
 
-            const result = await stakerContract.multicall([
-                approveData,
-                sendData
-            ])
+            // const result = await stakerContract.multicall([
+            //     approveData,
+            //     sendData
+            // ])
 
-            addTransaction(result, {
-                summary: `NFT #${l2TokenId} was sent!`
-            })
+            // addTransaction(result, {
+            //     summary: `NFT #${l2TokenId} was sent!`
+            // })
 
-            setSendNFTL2({ hash: result.hash, id: l2TokenId })
+            // setSendNFTL2({ hash: result.hash, id: l2TokenId })
 
         } catch (err) {
             setSendNFTL2('failed')
@@ -378,6 +427,8 @@ export function useStakerHandlers() {
         claimRewardHash,
         sendNFTL2Handler,
         sendNFTL2Hash,
-        showRewards
+        showRewards,
+        eternalCollectRewardHandler,
+        eternalCollectRewardHash,
     }
 }

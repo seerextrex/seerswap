@@ -1,16 +1,12 @@
 import { Plus } from 'react-feather'
 import styled, { keyframes, css } from 'styled-components/macro'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { deviceSizes } from '../../pages/styled'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { useAllTransactions } from '../../state/transactions/hooks'
 import { stringToColour } from '../../utils/stringToColour'
-import { getCountdownTime, getStatic, getStaticTime } from '../../utils/time'
+import { getCountdownTime } from '../../utils/time'
 import Loader from '../Loader'
-import AlgebraLogo from '../../assets/images/algebra-logo.png'
-import USDCLogo from '../../assets/images/usdc-logo.png'
-import {darken} from "polished";
-import CurrencyLogo from "../CurrencyLogo";
+import { darken } from 'polished'
+import CurrencyLogo from '../CurrencyLogo'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -52,7 +48,7 @@ const LoadingShim = styled.div`
   z-index: 5;
 `
 
-const Card = styled.div`
+const Card = styled.div<{ refreshing: boolean; skeleton: boolean }>`
   display: flex;
   position: relative;
   flex-direction: column;
@@ -88,7 +84,7 @@ const CardHeader = styled.div`
   margin-bottom: 1rem;
 `
 
-const TokenIcon = styled.div`
+const TokenIcon = styled.div<{ logo: string; name: string; skeleton: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,7 +111,7 @@ const TokensIcons = styled.div`
   margin-right: 1rem;
 `
 
-const Subtitle = styled.div`
+const Subtitle = styled.div<{ skeleton: boolean }>`
   color: white;
   text-transform: uppercase;
   font-size: 12px;
@@ -135,7 +131,7 @@ const Subtitle = styled.div`
       : null}
 `
 
-const PoolsSymbols = styled.div`
+const PoolsSymbols = styled.div<{ skeleton: boolean }>`
   ${({ skeleton }) =>
     skeleton
       ? css`
@@ -148,7 +144,7 @@ const PoolsSymbols = styled.div`
       : null}
 `
 
-const RewardWrapper = styled.div`
+const RewardWrapper = styled.div<{ skeleton: boolean }>`
   display: flex;
   padding: 8px;
   background-color: #2b5e91;
@@ -433,8 +429,8 @@ export function StakerEventCard({
       )}
       <CardHeader>
         <TokensIcons>
-            <CurrencyLogo currency={{address: token0Address, symbol: token0}} size={'35px'}/>
-            <CurrencyLogo currency={{address: token1Address, symbol: token1}} size={'35px'}/>
+          <CurrencyLogo currency={{ address: token0Address, symbol: token0 }} size={'35px'} />
+          <CurrencyLogo currency={{ address: token1Address, symbol: token1 }} size={'35px'} />
         </TokensIcons>
         <div>
           <Subtitle>POOL</Subtitle>
@@ -442,10 +438,10 @@ export function StakerEventCard({
         </div>
       </CardHeader>
       <RewardWrapper style={{ marginBottom: '6px' }}>
-          <CurrencyLogo currency={{address: rewardAddress, symbol: rewardToken}} size={'35px'}/>
+        <CurrencyLogo currency={{ address: rewardAddress, symbol: rewardToken.symbol }} size={'35px'} />
         <div style={{ marginLeft: '1rem' }}>
           <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Reward</Subtitle>
-          <RewardSymbol>{rewardToken}</RewardSymbol>
+          <RewardSymbol>{rewardToken.symbol}</RewardSymbol>
         </div>
         {reward && (
           <RewardAmount title={reward}>
@@ -467,19 +463,20 @@ export function StakerEventCard({
           <Plus style={{ display: 'block' }} size={18}></Plus>
         </div>
       </div>
-        {bonusReward > 0 &&
-            <RewardWrapper>
-            <CurrencyLogo currency={{address: bonusRewardAddress, symbol: bonusRewardAddress}} size={'35px'}/>
-            <div style={{ marginLeft: '1rem' }}>
-                <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Bonus</Subtitle>
-                <RewardSymbol>{bonusRewardToken}</RewardSymbol>
-            </div>
-            {bonusReward && (
-                <RewardAmount title={bonusReward}>
-                    {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
-                </RewardAmount>
-            )}
-        </RewardWrapper>}
+      {bonusReward > 0 && (
+        <RewardWrapper>
+          <CurrencyLogo currency={{ address: bonusRewardAddress, symbol: bonusRewardAddress }} size={'35px'} />
+          <div style={{ marginLeft: '1rem' }}>
+            <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Bonus</Subtitle>
+            <RewardSymbol>{bonusRewardToken.symbol}</RewardSymbol>
+          </div>
+          {bonusReward && (
+            <RewardAmount title={bonusReward}>
+              {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
+            </RewardAmount>
+          )}
+        </RewardWrapper>
+      )}
       <StakeInfo active>
         <div>
           <>

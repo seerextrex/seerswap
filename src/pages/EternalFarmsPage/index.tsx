@@ -6,7 +6,7 @@ import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
 import { FARMING_CENTER } from '../../constants/addresses'
-import { useStakerHandlers } from '../../hooks/useStakerHandlers'
+import { FarmingType, useStakerHandlers } from '../../hooks/useStakerHandlers'
 
 const PageWrapper = styled.div`
   width: 100%;
@@ -84,9 +84,13 @@ export default function EternalFarmsPage({
       <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
         {modalForPool && (
           <>
-            <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}></StakeModal>
-            <input value={tokenId} onChange={(v) => setTokenId(v.target.value)}></input>
-            <button onClick={() => showRewards(modalForPool, tokenId)}>Rewards</button>
+            <StakeModal
+              event={modalForPool}
+              closeHandler={() => setModalForPool(null)}
+              farmingType={FarmingType.ETERNAL}
+            ></StakeModal>
+            {/* <input value={tokenId} onChange={(v) => setTokenId(v.target.value)}></input> */}
+            {/* <button onClick={() => showRewards(modalForPool, tokenId)}>Rewards</button> */}
           </>
         )}
       </Modal>

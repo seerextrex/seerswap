@@ -1,34 +1,27 @@
 import { Trans } from '@lingui/macro'
 import { Currency, Price, Token } from '@uniswap/sdk-core'
 import StepCounter from 'components/InputStepCounter/InputStepCounter'
-import { RowBetween } from 'components/Row'
 import { AutoColumn } from 'components/Column'
 import { Bound } from 'state/mint/v3/actions'
-import styled from "styled-components/macro";
-
-const RowBetweenSrtyled = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    flex-direction: column !important;
-  `}
-`
+import { RowBetweenSrtyled } from './styled'
 
 // currencyA is the base token
 export default function RangeSelector({
-  priceLower,
-  priceUpper,
-  onLeftRangeInput,
-  onRightRangeInput,
-  getDecrementLower,
-  getIncrementLower,
-  getDecrementUpper,
-  getIncrementUpper,
-  currencyA,
-  currencyB,
-  feeAmount,
-  ticksAtLimit,
-  initial,
-  disabled,
-}: {
+                                        priceLower,
+                                        priceUpper,
+                                        onLeftRangeInput,
+                                        onRightRangeInput,
+                                        getDecrementLower,
+                                        getIncrementLower,
+                                        getDecrementUpper,
+                                        getIncrementUpper,
+                                        currencyA,
+                                        currencyB,
+                                        feeAmount,
+                                        ticksAtLimit,
+                                        initial,
+                                        disabled
+                                      }: {
   priceLower?: Price<Token, Token>
   priceUpper?: Price<Token, Token>
   getDecrementLower: () => string
@@ -52,12 +45,12 @@ export default function RangeSelector({
   const rightPrice = isSorted ? priceUpper : priceLower?.invert()
 
   return (
-    <AutoColumn gap="md">
+    <AutoColumn gap='md'>
       <RowBetweenSrtyled style={{ flexDirection: initial ? 'row' : 'column' }}>
         <StepCounter
           value={ticksAtLimit[Bound.LOWER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
           onUserInput={onLeftRangeInput}
-          width="100%"
+          width='100%'
           style={{ marginTop: '1rem' }}
           decrement={isSorted ? getDecrementLower : getIncrementUpper}
           increment={isSorted ? getIncrementLower : getDecrementUpper}
@@ -74,7 +67,7 @@ export default function RangeSelector({
         <StepCounter
           value={ticksAtLimit[Bound.UPPER] ? '∞' : rightPrice?.toSignificant(5) ?? ''}
           onUserInput={onRightRangeInput}
-          width="100%"
+          width='100%'
           decrement={isSorted ? getDecrementUpper : getIncrementLower}
           increment={isSorted ? getIncrementUpper : getDecrementLower}
           incrementDisabled={ticksAtLimit[Bound.UPPER]}

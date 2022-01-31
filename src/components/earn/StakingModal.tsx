@@ -3,8 +3,6 @@ import { Trans } from '@lingui/macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
 import { useCallback, useState } from 'react'
-import styled from 'styled-components/macro'
-
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import { usePairContract, useStakingContract, useV2RouterContract } from '../../hooks/useContract'
 import { useV2LiquidityTokenPermit } from '../../hooks/useERC20Permit'
@@ -23,20 +21,7 @@ import Modal from '../Modal'
 import { LoadingView, SubmittedView } from '../ModalViews'
 import ProgressCircles from '../ProgressSteps'
 import { RowBetween } from '../Row'
-
-const HypotheticalRewardRate = styled.div<{ dim: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  padding-right: 20px;
-  padding-left: 20px;
-
-  opacity: ${({ dim }) => (dim ? 0.5 : 1)};
-`
-
-const ContentWrapper = styled(AutoColumn)`
-  width: 100%;
-  padding: 1rem;
-`
+import {ContentWrapper, HypotheticalRewardRate} from './styled'
 
 interface StakingModalProps {
   isOpen: boolean

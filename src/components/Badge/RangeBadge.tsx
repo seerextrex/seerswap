@@ -1,7 +1,6 @@
 import Badge, { BadgeVariant } from 'components/Badge'
 import styled from 'styled-components/macro'
-
-import { MouseoverTooltip } from '../../components/Tooltip'
+import { MouseoverTooltip } from '../Tooltip'
 import { Trans } from '@lingui/macro'
 import { AlertCircle } from 'react-feather'
 

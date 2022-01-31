@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import * as d3 from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../pages/PoolInfoPage'
 
 interface ChartInterface {
-  feeData
+  feeData: any
   dimensions: {
     width: number
     height: number

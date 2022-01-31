@@ -1,39 +1,6 @@
-import { darken } from 'polished'
-import { useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components/macro'
+import { useCallback, useState } from 'react'
 import Modal from '../Modal'
-
-const CautionModalInner = styled.div`
-  padding: 2rem;
-  line-height: 26px;
-  color: #080064;
-`
-
-const CautionList = styled.ul`
-  list-style: decimal;
-  // padding-left: 1rem;
-`
-
-const CautionListItem = styled.li`
-  margin-bottom: 1rem;
-`
-
-const AgreeButton = styled.button`
-  background-color: #36f;
-  color: white;
-  padding: 12px 16px;
-  width: 100%;
-  margin-top: 1rem;
-  border-radius: 10px;
-  text-transform: uppercase;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-
-  &:hover {
-    background-color: ${darken(0.1, '#36f')};
-  }
-`
+import { CautionList, CautionListItem, CautionModalInner, AgreeButton } from './styled'
 
 const agreementItems = [
   'Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool.',

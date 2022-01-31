@@ -1,4 +1,4 @@
-import {useState, useCallback, useContext, ReactNode, useEffect} from 'react'
+import { useState, useCallback, useContext, ReactNode } from 'react'
 import { Position } from 'lib/src'
 import { LightCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
@@ -11,33 +11,19 @@ import { Currency } from '@uniswap/sdk-core'
 import RateToggle from 'components/RateToggle'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import RangeBadge from 'components/Badge/RangeBadge'
-import styled, { ThemeContext } from 'styled-components/macro'
+import { ThemeContext } from 'styled-components/macro'
 import JSBI from 'jsbi'
 import { Bound } from 'state/mint/v3/actions'
 import { formatTickPrice } from 'utils/formatTickPrice'
-
-const RowBetweenHeader = styled(RowBetween)`
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
-    flex-direction: column;
-    align-items: start;
-  `}
-`
-const RowFixedStyled = styled(RowFixed)`
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
-     margin-bottom: 10px;
-  `}
-  ${({theme}) => theme.mediaWidth.upToSmall`
-     margin-left: 12px;
-  `}
-`
+import { RowFixedStyled, RowBetweenHeader } from './styled'
 
 export const PositionPreview = ({
-  position,
-  title,
-  inRange,
-  baseCurrencyDefault,
-  ticksAtLimit,
-}: {
+                                  position,
+                                  title,
+                                  inRange,
+                                  baseCurrencyDefault,
+                                  ticksAtLimit
+                                }: {
   position: Position
   title?: ReactNode
   inRange: boolean
@@ -55,8 +41,8 @@ export const PositionPreview = ({
       ? baseCurrencyDefault === currency0
         ? currency0
         : baseCurrencyDefault === currency1
-        ? currency1
-        : currency0
+          ? currency1
+          : currency0
       : currency0
   )
 
@@ -75,7 +61,7 @@ export const PositionPreview = ({
   const removed = position?.liquidity && JSBI.equal(position?.liquidity, JSBI.BigInt(0))
 
   return (
-    <AutoColumn gap="md" style={{ marginTop: '0.5rem' }}>
+    <AutoColumn gap='md' style={{ marginTop: '0.5rem' }}>
       <RowBetweenHeader style={{ marginBottom: '0.5rem' }}>
         <RowFixedStyled>
           <DoubleCurrencyLogo
@@ -84,31 +70,32 @@ export const PositionPreview = ({
             size={24}
             margin={true}
           />
-          <TYPE.label ml="10px" fontSize="24px" color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>
+          <TYPE.label ml='10px' fontSize='24px'
+                      color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>
             {currency0?.symbol} / {currency1?.symbol}
           </TYPE.label>
         </RowFixedStyled>
-        <RangeBadge removed={removed} inRange={inRange}/>
+        <RangeBadge removed={removed} inRange={inRange} />
       </RowBetweenHeader>
 
       <LightCard>
-        <AutoColumn gap="md">
+        <AutoColumn gap='md'>
           <RowBetween>
             <RowFixed>
               <CurrencyLogo currency={currency0} />
-              <TYPE.label ml="8px">{currency0?.symbol}</TYPE.label>
+              <TYPE.label ml='8px'>{currency0?.symbol}</TYPE.label>
             </RowFixed>
             <RowFixed>
-              <TYPE.label mr="8px">{position.amount0.toSignificant(4)}</TYPE.label>
+              <TYPE.label mr='8px'>{position.amount0.toSignificant(4)}</TYPE.label>
             </RowFixed>
           </RowBetween>
           <RowBetween>
             <RowFixed>
               <CurrencyLogo currency={currency1} />
-              <TYPE.label ml="8px">{currency1?.symbol}</TYPE.label>
+              <TYPE.label ml='8px'>{currency1?.symbol}</TYPE.label>
             </RowFixed>
             <RowFixed>
-              <TYPE.label mr="8px">{position.amount1.toSignificant(4)}</TYPE.label>
+              <TYPE.label mr='8px'>{position.amount1.toSignificant(4)}</TYPE.label>
             </RowFixed>
           </RowBetween>
           <RowBetween>
@@ -122,9 +109,11 @@ export const PositionPreview = ({
         </AutoColumn>
       </LightCard>
 
-      <AutoColumn gap="md">
+      <AutoColumn gap='md'>
         <RowBetween>
-          {title ? <TYPE.main color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>{title}</TYPE.main> : <div />}
+          {title ?
+            <TYPE.main color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>{title}</TYPE.main> :
+            <div />}
           <RateToggle
             currencyA={sorted ? currency0 : currency1}
             currencyB={sorted ? currency1 : currency0}
@@ -133,55 +122,55 @@ export const PositionPreview = ({
         </RowBetween>
 
         <RowBetween>
-          <LightCard width="48%" padding="8px">
-            <AutoColumn gap="4px" justify="center">
-              <TYPE.main fontSize="12px">
+          <LightCard width='48%' padding='8px'>
+            <AutoColumn gap='4px' justify='center'>
+              <TYPE.main fontSize='12px'>
                 <Trans>Min Price</Trans>
               </TYPE.main>
-              <TYPE.mediumHeader textAlign="center">{`${formatTickPrice(
+              <TYPE.mediumHeader textAlign='center'>{`${formatTickPrice(
                 priceLower,
                 ticksAtLimit,
                 Bound.LOWER
               )}`}</TYPE.mediumHeader>
-              <TYPE.main textAlign="center" fontSize="12px">
+              <TYPE.main textAlign='center' fontSize='12px'>
                 <Trans>
                   {quoteCurrency.symbol} per {baseCurrency.symbol}
                 </Trans>
               </TYPE.main>
-              <TYPE.small textAlign="center" color={theme.text3} style={{ marginTop: '4px' }}>
+              <TYPE.small textAlign='center' color={theme.text3} style={{ marginTop: '4px' }}>
                 <Trans>Your position will be 100% composed of {baseCurrency?.symbol} at this price</Trans>
               </TYPE.small>
             </AutoColumn>
           </LightCard>
 
-          <LightCard width="48%" padding="8px">
-            <AutoColumn gap="4px" justify="center">
-              <TYPE.main fontSize="12px">
+          <LightCard width='48%' padding='8px'>
+            <AutoColumn gap='4px' justify='center'>
+              <TYPE.main fontSize='12px'>
                 <Trans>Max Price</Trans>
               </TYPE.main>
-              <TYPE.mediumHeader textAlign="center">{`${formatTickPrice(
+              <TYPE.mediumHeader textAlign='center'>{`${formatTickPrice(
                 priceUpper,
                 ticksAtLimit,
                 Bound.UPPER
               )}`}</TYPE.mediumHeader>
-              <TYPE.main textAlign="center" fontSize="12px">
+              <TYPE.main textAlign='center' fontSize='12px'>
                 <Trans>
                   {quoteCurrency.symbol} per {baseCurrency.symbol}
                 </Trans>
               </TYPE.main>
-              <TYPE.small textAlign="center" color={theme.text3} style={{ marginTop: '4px' }}>
+              <TYPE.small textAlign='center' color={theme.text3} style={{ marginTop: '4px' }}>
                 <Trans>Your position will be 100% composed of {quoteCurrency?.symbol} at this price</Trans>
               </TYPE.small>
             </AutoColumn>
           </LightCard>
         </RowBetween>
-        <LightCard padding="12px ">
-          <AutoColumn gap="4px" justify="center">
-            <TYPE.main fontSize="12px">
+        <LightCard padding='12px '>
+          <AutoColumn gap='4px' justify='center'>
+            <TYPE.main fontSize='12px'>
               <Trans>Current price</Trans>
             </TYPE.main>
             <TYPE.mediumHeader>{`${price.toSignificant(5)} `}</TYPE.mediumHeader>
-            <TYPE.main textAlign="center" fontSize="12px">
+            <TYPE.main textAlign='center' fontSize='12px'>
               <Trans>
                 {quoteCurrency.symbol} per {baseCurrency.symbol}
               </Trans>

@@ -1,39 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react'
-import { ButtonGray } from 'components/Button'
-import styled from 'styled-components/macro'
+import {Wrapper, Button} from './styled'
 import { ScaleLinear, select, ZoomBehavior, zoom, ZoomTransform } from 'd3'
 import { RefreshCcw, ZoomIn, ZoomOut } from 'react-feather'
 import { ZoomLevels } from './types'
-
-const Wrapper = styled.div<{ count: number }>`
-  display: grid;
-  grid-template-columns: repeat(${({ count }) => count.toString()}, 1fr);
-  grid-gap: 6px;
-  position: absolute;
-  background-color: #2026356b;
-  border-radius: 4px;
-  top: 0;
-  right: 0;
-`
-
-const Button = styled(ButtonGray)`
-  &:hover {
-    background-color: transparent;
-  }
-  width: 32px;
-  height: 32px;
-  padding: 4px;
-  background-color: transparent;
-`
-
-export const ZoomOverlay = styled.rect`
-  fill: transparent;
-  cursor: grab;
-
-  &:active {
-    cursor: grabbing;
-  }
-`
 
 export default function Zoom({
   svg,

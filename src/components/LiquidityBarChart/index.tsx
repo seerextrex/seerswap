@@ -1,99 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useInfoTickData } from '../../hooks/subgraph/useInfoTickData'
 import BarChart from './BarChart'
-
-// import { isAddress } from 'ethers'
-
-import styled from 'styled-components/macro'
-
 import { isMobile } from 'react-device-detect'
 import Loader from '../Loader'
 import { TickMath } from '@uniswap/v3-sdk'
-import {computePoolAddress, FeeAmount} from '../../hooks/computePoolAddress'
-
+import { computePoolAddress } from '../../hooks/computePoolAddress'
 import JSBI from 'jsbi'
 import { isAddress } from '../../utils'
-
 import { Token, CurrencyAmount } from '@uniswap/sdk-core'
 import { Pool } from '../../lib/src'
-
 import { BigNumber } from '@ethersproject/bignumber'
-import { darken } from 'polished'
-import {POOL_DEPLOYER_ADDRESS} from "../../constants/addresses"
+import { POOL_DEPLOYER_ADDRESS } from '../../constants/addresses'
+import {Wrapper, ZoomButtonsWrapper, ZoomButton, MockLoading} from './styled'
 
-const Wrapper = styled.div`
-  position: relative;
-  width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
-  border-radius: 10px;
-  background-color: #052445;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-left: -1.3rem;
-    margin-right: -1.3rem;
-    width: unset;
-    display: flex;
-    flex-direction: column;
-    border-radius: 20px;
-  `}
-`
-const MockLoading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 360px;
-  padding: 0 16px;
-  max-width: 1000px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 100%;
-  `}
-`
-
-const ZoomButtonsWrapper = styled.div`
-  display: flex;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    position: static;
-  `}
-`
-
-const ZoomButton = styled.button`
-  border-radius: 50%;
-  border: none;
-  width: 32px;
-  height: 32px;
-  background-color: #a9c6e6;
-  color: #052445;
-  font-weight: 700;
-  &:last-of-type {
-    margin-left: 10px;
-  }
-
-  &:not(:disabled) {
-    &:hover {
-      background-color: ${darken(0.1, '#a9c6e6')};
-    }
-  }
-
-  &:disabled {
-    opacity: 0.3;
-  }
-`
 
 export default function LiquidityBarChart({
-  data,
-  token0,
-  token1,
-  refreshing,
-}: {
+                                            data,
+                                            token0,
+                                            token1,
+                                            refreshing
+                                          }: {
   data: any
   token0: string
   token1: string
@@ -137,13 +62,13 @@ export default function LiquidityBarChart({
             {
               index: t.tickIdx - 60,
               liquidityGross: t.liquidityGross,
-              liquidityNet: JSBI.multiply(t.liquidityNet, JSBI.BigInt('-1')),
+              liquidityNet: JSBI.multiply(t.liquidityNet, JSBI.BigInt('-1'))
             },
             {
               index: t.tickIdx,
               liquidityGross: t.liquidityGross,
-              liquidityNet: t.liquidityNet,
-            },
+              liquidityNet: t.liquidityNet
+            }
           ]
           const pool =
             token0 && token1
@@ -153,7 +78,11 @@ export default function LiquidityBarChart({
             ? TickMath.getSqrtRatioAtTick(data.ticksProcessed[i - 1].tickIdx)
             : undefined
 
-          const isBad = _token0 && _token1 && ["0x49c1c3ac4f301ad71f788398c0de919c35eaf565","0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed"].includes(computePoolAddress({poolDeployer: POOL_DEPLOYER_ADDRESS[137], tokenA: _token0, tokenB: _token1 }).toLowerCase())
+          const isBad = _token0 && _token1 && ['0x49c1c3ac4f301ad71f788398c0de919c35eaf565', '0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed'].includes(computePoolAddress({
+            poolDeployer: POOL_DEPLOYER_ADDRESS[137],
+            tokenA: _token0,
+            tokenB: _token1
+          }).toLowerCase())
 
           const maxAmountToken0 = token0 ? CurrencyAmount.fromRawAmount(isBad ? _token1 : _token0, MAX_UINT128.toString()) : undefined
           const outputRes0 =
@@ -173,7 +102,7 @@ export default function LiquidityBarChart({
             tvlToken0: amount0,
             tvlToken1: amount1,
             token0: token0,
-            token1: token1,
+            token1: token1
           }
         })
       )
@@ -242,7 +171,7 @@ export default function LiquidityBarChart({
             dimensions={{
               width: isMobile ? ref?.current?.offsetWidth - 10 || 0 : 850,
               height: 300,
-              margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 0 },
+              margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 0 }
             }}
             isMobile={isMobile}
           />

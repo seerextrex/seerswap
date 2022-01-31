@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as d3 from 'd3'
-
-import { scaleBand, scaleLinear } from 'd3'
-import styled from 'styled-components/macro'
+import {ChartSvg} from './styled'
 
 interface BarChartInterface {
   data
@@ -15,10 +13,6 @@ interface BarChartInterface {
   isMobile: boolean
 }
 
-const ChartSvg = styled.svg`
-  overflow: visible;
-  border-radius: 10px;
-`
 export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions

@@ -1,8 +1,6 @@
 import { TransactionResponse } from '@ethersproject/providers'
 import { Trans } from '@lingui/macro'
 import { ReactNode, useState } from 'react'
-import styled from 'styled-components/macro'
-
 import { useStakingContract } from '../../hooks/useContract'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { StakingInfo } from '../../state/stake/hooks'
@@ -14,11 +12,7 @@ import { AutoColumn } from '../Column'
 import Modal from '../Modal'
 import { LoadingView, SubmittedView } from '../ModalViews'
 import { RowBetween } from '../Row'
-
-const ContentWrapper = styled(AutoColumn)`
-  width: 100%;
-  padding: 1rem;
-`
+import {ContentWrapper} from './styled'
 
 interface StakingModalProps {
   isOpen: boolean

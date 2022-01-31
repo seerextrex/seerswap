@@ -1,14 +1,10 @@
 import { Plus } from 'react-feather'
 import styled, { keyframes, css } from 'styled-components/macro'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { deviceSizes } from '../../pages/styled'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { useAllTransactions } from '../../state/transactions/hooks'
 import { stringToColour } from '../../utils/stringToColour'
-import { getCountdownTime, getStatic, getStaticTime } from '../../utils/time'
+import { getCountdownTime } from '../../utils/time'
 import Loader from '../Loader'
-import AlgebraLogo from '../../assets/images/algebra-logo.png'
-import USDCLogo from '../../assets/images/usdc-logo.png'
 import {darken} from "polished";
 import CurrencyLogo from "../CurrencyLogo";
 
@@ -52,7 +48,7 @@ const LoadingShim = styled.div`
   z-index: 5;
 `
 
-const Card = styled.div`
+const Card = styled.div<{refreshing: boolean; skeleton: boolean}>`
   display: flex;
   position: relative;
   flex-direction: column;
@@ -88,7 +84,7 @@ const CardHeader = styled.div`
   margin-bottom: 1rem;
 `
 
-const TokenIcon = styled.div`
+const TokenIcon = styled.div<{name: string; logo: string; skeleton: boolean}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,7 +111,7 @@ const TokensIcons = styled.div`
   margin-right: 1rem;
 `
 
-const Subtitle = styled.div`
+const Subtitle = styled.div<{skeleton: boolean}>`
   color: white;
   text-transform: uppercase;
   font-size: 12px;
@@ -135,7 +131,7 @@ const Subtitle = styled.div`
       : null}
 `
 
-const PoolsSymbols = styled.div`
+const PoolsSymbols = styled.div<{skeleton: boolean}>`
   ${({ skeleton }) =>
     skeleton
       ? css`
@@ -148,7 +144,7 @@ const PoolsSymbols = styled.div`
       : null}
 `
 
-const RewardWrapper = styled.div`
+const RewardWrapper = styled.div<{skeleton: boolean}>`
   display: flex;
   padding: 8px;
   background-color: #2b5e91;
@@ -170,7 +166,7 @@ const RewardWrapper = styled.div`
       : null}
 `
 
-const RewardAmount = styled.div`
+const RewardAmount = styled.div<{skeleton: boolean}>`
   margin: auto 0 auto auto;
   font-size: 18px;
 
@@ -187,7 +183,7 @@ const RewardAmount = styled.div`
       : null}
 `
 
-const RewardSymbol = styled.div`
+const RewardSymbol = styled.div<{skeleton: boolean}>`
   ${({ skeleton }) =>
     skeleton
       ? css`
@@ -200,13 +196,13 @@ const RewardSymbol = styled.div`
       : null}
 `
 
-const StakeInfo = styled.div`
+const StakeInfo = styled.div<{active: boolean}>`
   display: flex;
   margin-bottom: ${({ active }) => (active ? '10px' : '1rem')};
   justify-content: space-between;
 `
 
-const StakeDate = styled.div`
+const StakeDate = styled.div<{skeleton: boolean}>`
   ${({ skeleton }) =>
     skeleton
       ? css`
@@ -223,7 +219,7 @@ const StakeDate = styled.div`
       : null}
 `
 
-const EventProgress = styled.div`
+const EventProgress = styled.div<{skeleton: boolean}>`
   width: 100%;
   height: 16px;
   margin-top: 6px;
@@ -241,7 +237,7 @@ const EventProgress = styled.div`
         `
       : null}
 `
-const EventEndTime = styled.div`
+const EventEndTime = styled.div<{skeleton: boolean}>`
   line-height: 16px;
   font-size: 13px;
   position: relative;
@@ -276,10 +272,9 @@ const EventProgressInner = styled.div.attrs(({ progress }) => ({
   ${skeletonGradient}
 `
 
-const StakeButton = styled.button`
+const StakeButton = styled.button<{skeleton: boolean}>`
   width: 100%;
   border: none;
-  // background-color: #4829bb;
   background: ${({ theme }) => theme.winterMainButton};
   color: white;
   border-radius: 8px;
@@ -300,7 +295,7 @@ const StakeButton = styled.button`
       : null}
 `
 
-function getProgress(startTime: number, endTime: number, now: number) {
+function getProgress(startTime: number, endTime: number, now: number): number {
   const length = endTime - startTime
   const elapsed = endTime - now / 1000
 

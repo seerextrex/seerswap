@@ -1,100 +1,27 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import styled from 'styled-components/macro'
-import { ExtraSmallOnly, HideExtraSmall, TYPE } from 'theme'
-import { DarkGreyCard } from 'components/Card'
+import { TYPE } from 'theme'
 import { TokenData } from '../../state/tokens/reducer'
 import Loader, { LoadingRows } from 'components/Loader'
-import { Link } from 'react-router-dom'
 import { AutoColumn } from 'components/Column'
-import CurrencyLogo from 'components/CurrencyLogo'
 import { RowFixed } from 'components/Row'
 import { formatDollarAmount } from 'utils/numbers'
 import Percent from 'components/Percent'
-import { Label, ClickableText } from '../Text'
+import { Label } from '../Text'
 import HoverInlineText from '../HoverInlineText'
 import useTheme from 'hooks/useTheme'
 import { ExternalLink } from 'react-feather'
-import {HideMedium, MediumOnly} from "../../theme"
-
-export const PageButtons = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.2em;
-  margin-bottom: 0.5em;
-`
-
-export const Arrow = styled.div<{ faded: boolean }>`
-  color: white;
-  opacity: ${(props) => (props.faded ? 0.3 : 1)};
-  padding: 0 20px;
-  user-select: none;
-  :hover {
-    cursor: pointer;
-  }
-`
-
-const Wrapper = styled(DarkGreyCard)`
-  width: 100%;
-  background-color: background-color: rgba(60, 97, 126, 0.5);
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    min-width: 600px;
-  `};
-`
-
-const ResponsiveGrid = styled.div`
-  display: grid;
-  grid-gap: 1em;
-  align-items: center;
-  position: relative;
-
-  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-     grid-template-columns: 20px 1fr .6fr repeat(3, 1fr);
-  `};
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-     grid-template-columns: 20px 2fr repeat(4, 1fr);
-  `};
-`
-
-const LinkWrapper = styled.a`
-  display: flex;
-  text-decoration: none;
-  :hover {
-    cursor: pointer;
-    opacity: 0.7;
-  }
-`
-
-const ResponsiveLogo = styled(CurrencyLogo)`
-  @media screen and (max-width: 670px) {
-    width: 16px;
-    height: 16px;
-  }
-`
-const LabelTitle = styled(Label)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    min-width: 93px !important;                                    
-  `};
-`
-const ClickableTextStyled = styled(ClickableText)`
-justify-content: flex-start;
-`
-const LabelTitleStyled = styled(LabelTitle)`
-justify-content: flex-start;
-`
-const CurrencyRow = styled(RowFixed)`
-  margin-right: .3rem;
-  ${({theme}) => theme.mediaWidth.upToSmall`
-    display: none;
-  `}
-`
-const CurrencyRowWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`
+import { HideMedium, MediumOnly } from '../../theme'
+import {
+  ResponsiveGrid,
+  ClickableTextStyled,
+  LinkWrapper,
+  Wrapper,
+  CurrencyRow,
+  CurrencyRowWrapper,
+  ResponsiveLogo,
+  LabelTitleStyled
+} from './styled'
+import { Arrow, PageButtons } from '../InfoPoolsTable/styled'
 
 export const TOKEN_HIDE = []
 
@@ -107,12 +34,12 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
       <Label>
         <LinkWrapper
           href={`https://polygonscan.com/address/${tokenData.address}`}
-          rel="noopener noreferrer"
-          target="_blank"
+          rel='noopener noreferrer'
+          target='_blank'
         >
           <CurrencyRowWrapper>
             <CurrencyRow>
-              <ResponsiveLogo currency={{address: tokenData.address, symbol: tokenData.symbol}} />
+              <ResponsiveLogo currency={{ address: tokenData.address, symbol: tokenData.symbol }} />
             </CurrencyRow>
             <MediumOnly>
               <Label>{tokenData.symbol}</Label>
@@ -120,7 +47,7 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
             <HideMedium>
               <RowFixed>
                 <HoverInlineText text={tokenData.name} />
-                <Label ml="8px" color={'#dedede'}>
+                <Label ml='8px' color={'#dedede'}>
                   ({tokenData.symbol})
                 </Label>
               </RowFixed>
@@ -153,15 +80,15 @@ const SORT_FIELD = {
   tvlUSD: 'tvlUSD',
   priceUSD: 'priceUSD',
   priceUSDChange: 'priceUSDChange',
-  priceUSDChangeWeek: 'priceUSDChangeWeek',
+  priceUSDChangeWeek: 'priceUSDChangeWeek'
 }
 
 const MAX_ITEMS = 10
 
 export default function InfoTokensTable({
-  tokenDatas,
-  maxItems = MAX_ITEMS,
-}: {
+                                          tokenDatas,
+                                          maxItems = MAX_ITEMS
+                                        }: {
   tokenDatas: TokenData[] | undefined
   maxItems?: number
 }) {
@@ -190,17 +117,17 @@ export default function InfoTokensTable({
 
     return tokenDatas
       ? tokenDatas
-          .filter((x) => !!x && !TOKEN_HIDE.includes(x.address))
-          .sort((a, b) => {
-            if (a && b) {
-              return a[sortField as keyof TokenData] > b[sortField as keyof TokenData]
-                ? (sortDirection ? -1 : 1) * 1
-                : (sortDirection ? -1 : 1) * -1
-            } else {
-              return -1
-            }
-          })
-          .slice(maxItems * (page - 1), page * maxItems)
+        .filter((x) => !!x && !TOKEN_HIDE.includes(x.address))
+        .sort((a, b) => {
+          if (a && b) {
+            return a[sortField as keyof TokenData] > b[sortField as keyof TokenData]
+              ? (sortDirection ? -1 : 1) * 1
+              : (sortDirection ? -1 : 1) * -1
+          } else {
+            return -1
+          }
+        })
+        .slice(maxItems * (page - 1), page * maxItems)
       : []
   }, [tokenDatas, maxItems, page, sortDirection, sortField])
 
@@ -226,7 +153,7 @@ export default function InfoTokensTable({
   return (
     <Wrapper style={{ borderRadius: '8px' }}>
       {sortedTokens.length > 0 ? (
-        <AutoColumn gap="16px">
+        <AutoColumn gap='16px'>
           <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
             <Label color={'#dedede'}>#</Label>
             <ClickableTextStyled color={'#dedede'} onClick={() => handleSort(SORT_FIELD.name)}>

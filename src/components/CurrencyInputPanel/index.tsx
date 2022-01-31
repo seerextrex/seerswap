@@ -1,207 +1,31 @@
 import { Pair } from '@uniswap/v2-sdk'
 import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 import { useState, useCallback, ReactNode, useMemo } from 'react'
-import styled, { css } from 'styled-components/macro'
-import { darken } from 'polished'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
-import { ButtonGray } from '../Button'
 import { RowBetween, RowFixed } from '../Row'
 import { TYPE } from '../../theme'
-import { Input as NumericalInput } from '../NumericalInput'
-import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { Trans } from '@lingui/macro'
 import useTheme from '../../hooks/useTheme'
-import { Lock } from 'react-feather'
-import { AutoColumn } from 'components/Column'
 import { FiatValue } from './FiatValue'
-import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 import Loader from '../Loader'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
-
-const InputPanel = styled.div<{ hideInput?: boolean }>`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  position: relative;
-  border-radius: ${({ hideInput }) => (hideInput ? '16px' : '20px')};
-  // background-color: ${({ theme, hideInput }) => (hideInput ? 'transparent' : theme.bg2)};
-  background-color: transparent;
-  z-index: 1;
-  width: 100% !important;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    width: 100%!important;
-  `}
-`
-
-const FixedContainer = styled.div`
-  width: 100%;
-  height: 60px;
-  align-items: center;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  z-index: 2;
-`
-
-const Container = styled.div<{ hideInput: boolean }>`
-  border-radius: ${({ hideInput }) => (hideInput ? '16px' : '20px')};
-  // border: 1px solid ${({ theme, hideInput }) => (hideInput ? ' transparent' : theme.bg2)};
-  // background-color: ${({ theme }) => theme.bg1};
-  background-color: transparent;
-  width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
-  :focus, ;
-  // :hover {
-  // border: 1px solid ${({ theme, hideInput }) => (hideInput ? ' transparent' : theme.bg3)};
-  // }
-`
-
-const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean; page?: string}>`
-  align-items: center;
-  font-size: 24px;
-  font-weight: 500;
-  background-color: ${({ selected, theme }) => (selected ? '#759FE3' : theme.winterMainButton)};
-  color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
-  border-radius: 16px;
-  box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
-  outline: none;
-  cursor: pointer;
-  user-select: none;
-  border: none;
-  height: ${({ hideInput }) => (hideInput ? '38px' : '35px')};
-  width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
-  padding: 0 15px;
-  justify-content: space-between;
-  margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
-  :focus,
-  :hover {
-    background-color: ${({ selected, theme, page }) =>
-      page === 'addLiq'? 'unset': selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
-  }
-
-  ${({ shallow }) =>
-    shallow &&
-    css`
-      padding: 0;
-      background-color: transparent;
-      box-shadow: none;
-      &:hover {
-        background-color: transparent;
-      }
-    `}
-
-  ${({ swap }) =>
-    swap &&
-    css`
-      width: 218px;
-    `}
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
-    width: 100%;
-    margin: 10px 0 0 0;
-  }`}
-`
-
-const InputRow = styled.div<{ selected: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  padding: ${({ hideCurrency }) => (hideCurrency ? '1rem 1rem 0.75rem 0' : '1rem 1rem 0.75rem 1rem')};
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
-    flex-direction: column;
-    align-items: stretch;
-  }`}
-`
-const AutoColumnStyled = styled(AutoColumn)`
-  left: 1rem;
-  bottom: -13% !important;
-  ${({theme, page}) => theme.mediaWidth.upToExtraSmall`
-  left: ${page === 'addLiq' ? '0' : ''};
-  bottom: -25% !important;
-  `}
-`
-
-const LabelRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
-  font-size: 0.75rem;
-  line-height: 1rem;
-  padding: 0 1rem 1rem;
-  span:hover {
-    cursor: pointer;
-    color: ${({ theme }) => darken(0.2, theme.text2)};
-  }
-`
-
-const FiatRow = styled(LabelRow)`
-  justify-content: flex-end;
-  padding: ${({ shallow, page }) => (page === 'addLiq' ? '0 1rem' :shallow ? '0' : '0 1rem 1rem')};
-  margin-top: ${({page})=> (page === 'pool' ? '.3rem' : '0')};
-  
-  span {
-    &:hover {
-      color: white;
-      cursor: default;
-    }
-  }
-  
-`
-
-const Aligner = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};
-  width: 100%;
-  position: relative;
-`
-const NumericalInputStyled = styled(NumericalInput)`
-  ${({theme}) => theme.mediaWidth.upToSmall`
-    font-size: 18px!important;
-  `}
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
-    text-align: left!important;
-    width: 100%;
-    margin: 15px 0 10px!important;
-  }`}
-`
-const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
-  margin: 0 0.25rem 0 0.35rem;
-  height: 35%;
-
-  path {
-    stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
-    stroke-width: 1.5px;
-  }
-`
-
-const StyledTokenName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.25rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
-  font-size:  ${({ active }) => (active ? '16px' : '16px')};
-`
-
-const MaxButton = styled.button`
-  background-color: ${({page, theme}) => page === 'addLiq' ? theme.winterMainButton : '#245376'};
-  border-radius: 6px;
-  color: white;
-  margin-right: 10px;
-  border: none;
-  padding: 4px 6px;
-
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
-    margin: 10px 0 0 0;
-  `}
-
-  &:hover {
-    background-color: ${({page, theme}) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      width: 100%;
-      margin-top: 10px;
-      margin-right: 0;
-  `}
-`
+import {
+  InputPanel,
+  InputRow,
+  MaxButton,
+  FiatRow,
+  AutoColumnStyled,
+  Container,
+  FixedContainer,
+  NumericalInputStyled,
+  StyledTokenName,
+  CurrencySelect,
+  Aligner
+} from './styled'
 
 interface CurrencyInputPanelProps {
   value: string
@@ -233,33 +57,33 @@ interface CurrencyInputPanelProps {
 }
 
 export default function CurrencyInputPanel({
-  value,
-  onUserInput,
-  onMax,
-  showMaxButton,
-  onCurrencySelect,
-  currency,
-  otherCurrency,
-  id,
-  showCommonBases,
-  showCurrencyAmount,
-  disableNonToken,
-  renderBalance,
-  fiatValue,
-  priceImpact,
-  hideBalance = false,
-  pair = null, // used for double token logo
-  hideInput = false,
-  locked = false,
-  showBalance,
-  hideCurrency = false,
-  centered = false,
-  disabled,
-  shallow = false,
-  swap = false,
-  page,
-  ...rest
-}: CurrencyInputPanelProps) {
+                                             value,
+                                             onUserInput,
+                                             onMax,
+                                             showMaxButton,
+                                             onCurrencySelect,
+                                             currency,
+                                             otherCurrency,
+                                             id,
+                                             showCommonBases,
+                                             showCurrencyAmount,
+                                             disableNonToken,
+                                             renderBalance,
+                                             fiatValue,
+                                             priceImpact,
+                                             hideBalance = false,
+                                             pair = null, // used for double token logo
+                                             hideInput = false,
+                                             locked = false,
+                                             showBalance,
+                                             hideCurrency = false,
+                                             centered = false,
+                                             disabled,
+                                             shallow = false,
+                                             swap = false,
+                                             page,
+                                             ...rest
+                                           }: CurrencyInputPanelProps) {
   const { chainId } = useActiveWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const { account } = useActiveWeb3React()
@@ -268,7 +92,6 @@ export default function CurrencyInputPanel({
 
   const balance = useCurrencyBalance(account ?? undefined, currency)
 
-  // console.log(currency, 'cur panel')
   const currentPrice = useUSDCPrice(currency)
 
   const handleDismissSearch = useCallback(() => {
@@ -276,22 +99,22 @@ export default function CurrencyInputPanel({
   }, [setModalOpen])
 
   const balanceString = useMemo(() => {
-      if (!balance) return 'Loading...'
+    if (!balance) return 'Loading...'
 
-      const _balance = balance.toFixed()
+    const _balance = balance.toFixed()
 
-      if (_balance.split('.')[0].length > 10) {
-        return _balance.slice(0, 7) + '...'
-      }
+    if (_balance.split('.')[0].length > 10) {
+      return _balance.slice(0, 7) + '...'
+    }
 
-      if (+balance.toFixed() === 0) {
-        return '0'
-      }
-      if (+balance.toFixed() < 0.0001) {
-        return '< 0.0001'
-      }
+    if (+balance.toFixed() === 0) {
+      return '0'
+    }
+    if (+balance.toFixed() < 0.0001) {
+      return '< 0.0001'
+    }
 
-    return  +balance.toFixed(3)
+    return +balance.toFixed(3)
 
   }, [balance])
 
@@ -307,19 +130,19 @@ export default function CurrencyInputPanel({
       {locked && (
         <FixedContainer style={{ height: `${page === 'pool' ? '40px' : '80px'}` }}>
           <AutoColumnStyled
-            gap="sm"
-            justify="center"
+            gap='sm'
+            justify='center'
             style={{
               display: 'flex',
               alignItems: 'center',
               width: '100%',
               marginTop: '18px',
               position: 'absolute',
-              bottom: '10%',
+              bottom: '10%'
             }}
           >
             {/* <Lock /> */}
-            <TYPE.label fontSize="14px">
+            <TYPE.label fontSize='14px'>
               <Trans>Price is outside specified price range. Single-asset deposit only.</Trans>
             </TYPE.label>
           </AutoColumnStyled>
@@ -341,7 +164,7 @@ export default function CurrencyInputPanel({
               page={page}
               selected={!!currency}
               hideInput={hideInput}
-              className="open-currency-select-button"
+              className='open-currency-select-button'
               // style={{ backgroundColor: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
               shallow={shallow}
               swap={swap}
@@ -353,7 +176,7 @@ export default function CurrencyInputPanel({
               }}
             >
               <Aligner centered={centered}
-                       title={ balance ? balance.toSignificant(4) : ''}>
+                       title={balance ? balance.toSignificant(4) : ''}>
                 <RowFixed>
                   {pair ? (
                     <span style={{ marginRight: '0.5rem' }}>
@@ -363,11 +186,11 @@ export default function CurrencyInputPanel({
                     <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'24px'} />
                   ) : null}
                   {pair ? (
-                    <StyledTokenName className="pair-name-container">
+                    <StyledTokenName className='pair-name-container'>
                       {pair?.token0.symbol}:{pair?.token1.symbol}
                     </StyledTokenName>
                   ) : (
-                    <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                    <StyledTokenName className='token-symbol-container' active={Boolean(currency && currency.symbol)}>
                       {(currency && currency.symbol && currency.symbol.length > 20 ? (
                         currency.symbol.slice(0, 4) +
                         '...' +
@@ -376,22 +199,22 @@ export default function CurrencyInputPanel({
                         <div
                           style={{
                             display: 'flex',
-                            alignItems: 'center',
+                            alignItems: 'center'
                           }}
                         >
                           <span>
                             {
-                              shallow && showBalance && balance && page === 'addLiq' && balance.toSignificant(4) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
-                                  shallow && showBalance && balance
-                              ? `Balance: ${balanceString} ${currency.symbol}`
-                                      :currency.symbol}
+                              shallow && showBalance && balance && page === 'addLiq' && +(balance.toSignificant(4)) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
+                                shallow && showBalance && balance
+                                  ? `Balance: ${balanceString} ${currency.symbol}`
+                                  : currency.symbol}
                           </span>
                           {showBalance && balance && !shallow ? (
                             <span
                               style={{
                                 position: 'absolute',
                                 right: 0,
-                                fontSize: '13px',
+                                fontSize: '13px'
                               }}
                               title={balance.toExact()}
                             >
@@ -403,7 +226,7 @@ export default function CurrencyInputPanel({
                               <span
                                 style={{
                                   position: 'absolute',
-                                  right: 0,
+                                  right: 0
                                 }}
                               >
                                 <Loader />
@@ -415,16 +238,21 @@ export default function CurrencyInputPanel({
                     </StyledTokenName>
                   )}
                 </RowFixed>
-                {/* {onCurrencySelect && <StyledDropDown selected={!!currency} />} */}
               </Aligner>
             </CurrencySelect>
           )}
-          {(swap || page === 'addLiq') && !locked && currency && showMaxButton && <MaxButton page={page} onClick={onMax}>Max</MaxButton>}
+          {(swap || page === 'addLiq') && !locked && currency && showMaxButton &&
+            <MaxButton page={page} onClick={onMax}>Max</MaxButton>}
           {!hideInput && (
             <>
               <NumericalInputStyled
-                style={{ backgroundColor: 'transparent', textAlign: hideCurrency ? 'left' : 'right', fontSize: '20px', marginTop: page === 'pool' ? '1rem' : '0'}}
-                className="token-amount-input"
+                style={{
+                  backgroundColor: 'transparent',
+                  textAlign: hideCurrency ? 'left' : 'right',
+                  fontSize: '20px',
+                  marginTop: page === 'pool' ? '1rem' : '0'
+                }}
+                className='token-amount-input'
                 value={value}
                 disabled={disabled}
                 onUserInput={(val) => {

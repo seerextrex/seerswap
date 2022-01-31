@@ -1,8 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import JSBI from 'jsbi'
-import styled from 'styled-components/macro'
-
 import { BIG_INT_SECONDS_IN_WEEK } from '../../constants/misc'
 import { useColor } from '../../hooks/useColor'
 import { useTotalSupply } from '../../hooks/useTotalSupply'
@@ -13,60 +11,9 @@ import { StyledInternalLink, TYPE } from '../../theme'
 import { currencyId } from '../../utils/currencyId'
 import { unwrappedToken } from '../../utils/unwrappedToken'
 import { ButtonPrimary } from '../Button'
-import { AutoColumn } from '../Column'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
-import { Break, CardBGImage, CardNoise } from './styled'
-
-const StatContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 1rem;
-  margin-right: 1rem;
-  margin-left: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  display: none;
-`};
-`
-
-const Wrapper = styled(AutoColumn)<{ showBackground: boolean; bgColor: any }>`
-  border-radius: 12px;
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  opacity: ${({ showBackground }) => (showBackground ? '1' : '1')};
-  color: ${({ theme, showBackground }) => (showBackground ? theme.white : theme.text1)} !important;
-
-  ${({ showBackground }) =>
-    showBackground &&
-    `  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);`}
-`
-
-const TopSection = styled.div`
-  display: grid;
-  grid-template-columns: 48px 1fr 120px;
-  grid-gap: 0px;
-  align-items: center;
-  padding: 1rem;
-  z-index: 1;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 48px 1fr 96px;
-  `};
-`
-
-const BottomSection = styled.div<{ showBackground: boolean }>`
-  padding: 12px 16px;
-  opacity: ${({ showBackground }) => (showBackground ? '1' : '0.4')};
-  border-radius: 0 0 12px 12px;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: space-between;
-  z-index: 1;
-`
+import { Break, CardBGImage, CardNoise, Wrapper, TopSection, StatContainer, BottomSection } from './styled'
 
 export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) {
   const token0 = stakingInfo.tokens[0]
@@ -74,7 +21,6 @@ export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) 
 
   const currency0 = unwrappedToken(token0)
   const currency1 = unwrappedToken(token1)
-
   const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
 
   // get the color of the token
@@ -117,8 +63,8 @@ export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) 
           {currency0.symbol}-{currency1.symbol}
         </TYPE.white>
 
-        <StyledInternalLink to={`/uni/${currencyId(currency0)}/${currencyId(currency1)}`} style={{ width: '100%' }}>
-          <ButtonPrimary padding="8px" $borderRadius="8px">
+        <StyledInternalLink to={`/uni/${currencyId(currency0, 137)}/${currencyId(currency1, 137)}`} style={{ width: '100%' }}>
+          <ButtonPrimary padding='8px' $borderRadius='8px'>
             {isStaking ? <Trans>Manage</Trans> : <Trans>Deposit</Trans>}
           </ButtonPrimary>
         </StyledInternalLink>
@@ -169,7 +115,7 @@ export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) 
             </TYPE.black>
 
             <TYPE.black style={{ textAlign: 'right' }} color={'white'} fontWeight={500}>
-              <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
+              <span role='img' aria-label='wizard-icon' style={{ marginRight: '0.5rem' }}>
                 ⚡
               </span>
               {stakingInfo ? (

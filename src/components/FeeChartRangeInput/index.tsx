@@ -1,37 +1,10 @@
 import React, { useMemo, useRef } from 'react'
 import Chart from './Chart'
-import styled from 'styled-components/macro'
 import Loader from '../Loader'
 import { ChartType } from '../../pages/PoolInfoPage'
 
 import { isMobile, isTablet } from 'react-device-detect'
-
-const Wrapper = styled.div`
-  width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
-  border-radius: 10px;
-  background-color: #052445;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-left: -1.3rem;
-    margin-right: -1.3rem;
-    width: unset;
-    border-radius: 20px;
-    // height: 440px;
-  `}
-`
-const MockLoading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 360px;
-  padding: 0 16px;
-  max-width: 1000px;
-`
+import {Wrapper, MockLoading} from './styled'
 
 interface FeeChartRangeInputProps {
   fetchedData: {

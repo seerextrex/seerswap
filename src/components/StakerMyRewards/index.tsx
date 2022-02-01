@@ -10,8 +10,8 @@ import Loader from '../Loader'
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import USDCLogo from '../../assets/images/usdc-logo.png'
 import WMATICLogo from '../../assets/images/matic-logo.png'
-import CurrencyLogo from "../CurrencyLogo";
-import {darken} from "polished"
+import CurrencyLogo from '../CurrencyLogo'
+import { darken } from 'polished'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -300,7 +300,11 @@ export function StakerMyRewards({
                       <Loader style={{ margin: 'auto' }} size={'18px'} stroke={'white'} />
                     </LoadingShim>
                   )}
-                  <CurrencyLogo currency={{address: rew.rewardAddress, symbol: rew.symbol}} size={'35px'} style={{marginRight: '10px'}}/>
+                  <CurrencyLogo
+                    currency={{ address: rew.rewardAddress, symbol: rew.symbol }}
+                    size={'35px'}
+                    style={{ marginRight: '10px' }}
+                  />
                   <RewardTokenInfo>
                     <div title={rew.amount}>{formatReward(rew.amount)}</div>
                     <div title={rew.symbol}>{rew.symbol}</div>

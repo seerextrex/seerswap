@@ -209,7 +209,7 @@ const ProvideLiquidityLink = styled(Link)`
 `
 
 export function StakeModal({
-  event: { pool, startTime, endTime, id, rewardToken, bonusRewardToken, token0, token1 },
+  event: { pool, startTime, endTime, id, rewardToken, bonusRewardToken },
   closeHandler,
   farmingType,
 }: {
@@ -220,8 +220,6 @@ export function StakeModal({
     id: string
     rewardToken: any
     bonusRewardToken: any
-    token0: string
-    token1: string
   }
   closeHandler: () => void
   farmingType: FarmingType
@@ -242,7 +240,7 @@ export function StakeModal({
     if (!positionsForPool) return
 
     return positionsForPool.filter((position) => {
-      if (position.pool !== pool) return
+      if (position.pool !== pool.id) return
 
       if (farmingType === FarmingType.ETERNAL && position.eternalFarming) return
 
@@ -387,7 +385,7 @@ export function StakeModal({
     [selectedNFT, submitState]
   )
 
-  const linkToProviding = `/add/${token0}/${token1}`
+  const linkToProviding = `/add/${pool.token0.id}/${pool.token1.id}`
 
   return (
     <>
@@ -419,7 +417,7 @@ export function StakeModal({
                 <p>No NFT-s for this pool</p>
                 <p
                   style={{ textAlign: 'center' }}
-                >{`To take part in this farming event, you need to provide liquidity for ${token0} / ${token1}`}</p>
+                >{`To take part in this farming event, you need to provide liquidity for ${pool.token0.id} / ${pool.token1.id}`}</p>
                 {/* <ProvideLiquidityLink to={linkToProviding}>
                   <span>{`Provide liquidity for ${token0} / ${token1}`}</span>
                   <ArrowRight style={{ marginLeft: '5px' }} size={16} />
@@ -525,43 +523,6 @@ export function StakeModal({
               {`Select NFT`}
             </StakeButton>
           ) : null}
-          {/* {submitLoader && selectedNFT ? (
-            <StakeButton>
-              <StakeButtonLoader>
-                <Loader stroke={'white'} />
-                <span style={{ marginLeft: '5px' }}>
-                  {submitState === 0
-                    ? `Approving NFT #${selectedNFT.id}`
-                    : submitState === 1
-                    ? `Transferring NFT #${selectedNFT.id}`
-                    : submitState === 2
-                    ? `Depositing NFT #${selectedNFT.id}`
-                    : null}
-                </span>
-              </StakeButtonLoader>
-            </StakeButton>
-          ) : NFTsForApprove ? (
-            <StakeButton
-              disabled={submitLoader}
-              onClick={approveNFTs}
-              id={'farming-approve-nft'}
-              className={'farming-approve-nft'}
-            >
-              {`Approve NFT #${NFTsForApprove.id}`}
-            </StakeButton>
-          ) : NFTsForStake ? (
-            <StakeButton
-              onClick={() => stakeNFTs(FarmingType.ETERNAL)}
-              id={'farming-deposit-nft'}
-              className={'farming-deposit-nft'}
-            >
-              {`Deposit NFT #${NFTsForStake.id}`}
-            </StakeButton>
-          ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-            <StakeButton disabled id={'farming-select-nft'} className={'farming-select-nft'}>
-              {`Select NFT`}
-            </StakeButton>
-          ) : null} */}
         </ModalWrapper>
       )}
     </>

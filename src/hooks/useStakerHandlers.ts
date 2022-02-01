@@ -134,11 +134,17 @@ export function useStakerHandlers() {
                 )
             }
 
-            addTransaction(result, {
-                summary: `Rewards were claimed!`
-            })
+            if (eventType === FarmingType.ETERNAL) {
+                addTransaction(result, {
+                    summary: `Withdrawn!`
+                })
+            } else {
+                addTransaction(result, {
+                    summary: `Rewards were claimed!`
+                })
+            }
 
-            setGetRewards({ hash: result.hash, id: token + eventType, farmingType: eventType })
+            setGetRewards({ hash: result.hash, id: token, farmingType: eventType })
 
         } catch (err) {
             setGetRewards('failed')

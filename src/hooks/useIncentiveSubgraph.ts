@@ -347,6 +347,7 @@ export function useIncentiveSubgraph() {
                         incentiveBonusRewardToken: _bonusRewardToken,
                         incentiveStartTime: startTime,
                         incentiveEndTime: endTime,
+                        started: startTime * 1000 < Date.now(),
                         ended: endTime * 1000 < Date.now(),
                         incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
                         incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
@@ -478,7 +479,7 @@ export function useIncentiveSubgraph() {
 
     }
 
-    async function fetchPositionsForPool(pool: string) {
+    async function fetchPositionsForPool(pool: any) {
 
         if (!chainId || !account) return
 
@@ -487,37 +488,22 @@ export function useIncentiveSubgraph() {
             setPositionsForPoolLoading(true)
 
             const { data: { deposits: positionsTransferred }, error: errorTransferred } = (await farmingClient.query({
-                query: TRANSFERED_POSITIONS_FOR_POOL(account, pool),
+                query: TRANSFERED_POSITIONS_FOR_POOL(account, pool.id),
                 fetchPolicy: 'network-only'
             }))
 
             if (errorTransferred) throw new Error(`${errorTransferred.name} ${errorTransferred.message}`)
 
-            // const { data: { deposits: positionsOwned }, error: errorOwned } = (await farmingClient.query({
-            //     query: POSITIONS_OWNED_FOR_POOL(account, pool),
-            //     fetchPolicy: 'network-only'
-            // }))
+            //Hack
+            for (let position of positionsTransferred) {
 
-            // if (errorOwned) throw new Error(`${errorOwned.name} ${errorOwned.message}`)
-
-            // const positions = [...positionsTransferred, ...positionsOwned]
-            const positions = [...positionsTransferred]
-
-            const _positions = []
-
-            let _position
-
-            for (const position of positions) {
-
-                _position = { ...position }
-
-                _positions.push(_position)
+                position = { ...position }
 
             }
 
-            console.log('_POSITOSNSS', _positions)
+            console.log('_POSITOSNSS', positionsTransferred)
 
-            setPositionsForPool(_positions)
+            setPositionsForPool(positionsTransferred)
 
         } catch (err) {
             setPositionsForPoolLoading(null)
@@ -593,12 +579,7 @@ export function useIncentiveSubgraph() {
                         ...farming,
                         rewardToken,
                         bonusRewardToken,
-                        token0: {
-                            ...pool.token0
-                        },
-                        token1: {
-                            ...pool.token1
-                        }
+                        pool
                     }
                 ]
 

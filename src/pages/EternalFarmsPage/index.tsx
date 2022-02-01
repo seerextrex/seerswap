@@ -1,10 +1,12 @@
 import { Contract } from 'ethers'
 import { useEffect, useState } from 'react'
+import { Frown } from 'react-feather'
 import styled from 'styled-components/macro'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
+import { StakerEventCard } from '../../components/StakerEventCard'
 import { FARMING_CENTER } from '../../constants/addresses'
 import { FarmingType, useStakerHandlers } from '../../hooks/useStakerHandlers'
 
@@ -43,6 +45,19 @@ const EternalFarmsBody = styled.div`
     width: calc(100% / 4);
   }
 `
+
+const EmptyMock = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+
+  & > * {
+    margin-bottom: 1rem;
+  }
+`
+
 const PoolWrapper = styled.span`
   display: flex;
 `
@@ -77,8 +92,6 @@ export default function EternalFarmsPage({
     fetchHandler()
   }, [])
 
-  const { showRewards } = useStakerHandlers()
-
   return (
     <>
       <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
@@ -89,8 +102,6 @@ export default function EternalFarmsPage({
               closeHandler={() => setModalForPool(null)}
               farmingType={FarmingType.ETERNAL}
             ></StakeModal>
-            {/* <input value={tokenId} onChange={(v) => setTokenId(v.target.value)}></input> */}
-            {/* <button onClick={() => showRewards(modalForPool, tokenId)}>Rewards</button> */}
           </>
         )}
       </Modal>
@@ -98,41 +109,21 @@ export default function EternalFarmsPage({
         {refreshing ? (
           <div>Loading</div>
         ) : !data || data.length === 0 ? (
-          <div>No farms</div>
+          <EmptyMock>
+            <div>No eternal farms</div>
+            <Frown size={35} stroke={'white'} />
+          </EmptyMock>
         ) : !refreshing && data.length != 0 ? (
           <EternalFarmsList>
-            {data.map((farm, i) => (
-              <EternalFarmsItem key={i}>
-                <EternalFarmsHeader>
-                  <span>Pool</span>
-                  <span>Reward APR</span>
-                  <span>Bonus Reward APR</span>
-                  <span></span>
-                </EternalFarmsHeader>
-                <EternalFarmsBody>
-                  <PoolWrapper>
-                    <PoolWrapperLogos>
-                      <CurrencyLogo
-                        currency={{ address: farm.token0.id, symbol: farm.token0.symbol }}
-                        size="35px"
-                      ></CurrencyLogo>
-                      <CurrencyLogo
-                        currency={{ address: farm.token1.id, symbol: farm.token1.symbol }}
-                        size={'35px'}
-                      ></CurrencyLogo>
-                    </PoolWrapperLogos>
-                    <div>
-                      <div>{farm.token0.symbol}</div>
-                      <div>{farm.token1.symbol}</div>
-                    </div>
-                  </PoolWrapper>
-                  <span>XXXX</span>
-                  <span>XXXX</span>
-                  <span>
-                    <FarmButton onClick={() => setModalForPool(farm)}>Farm</FarmButton>
-                  </span>
-                </EternalFarmsBody>
-              </EternalFarmsItem>
+            {data.map((event, i) => (
+              <StakerEventCard
+                key={i}
+                stakeHandler={() => setModalForPool(event)}
+                refreshing={refreshing}
+                now={0}
+                eternal
+                event={event}
+              ></StakerEventCard>
             ))}
           </EternalFarmsList>
         ) : null}

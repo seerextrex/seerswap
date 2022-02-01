@@ -127,8 +127,8 @@ const PositionCardHeader = styled.div`
 `
 
 const NFTPositionIcon = styled.div<{ name: string; skeleton: boolean }>`
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: ${({ name }) => (name ? gradient('token' + name) : '')};
   ${({ skeleton }) =>
@@ -140,7 +140,7 @@ const NFTPositionIcon = styled.div<{ name: string; skeleton: boolean }>`
 `
 const NFTPositionDescription = styled.div<{ skeleton: boolean }>`
   margin-left: 10px;
-  line-height: 22px;
+  line-height: 20px;
 
   ${({ skeleton }) =>
     skeleton &&
@@ -465,6 +465,36 @@ const SendNFTWarning = styled.div`
 }
 `
 
+const EventProgress = styled.div`
+  width: 100%;
+  height: 16px;
+  margin-top: 6px;
+  border-radius: 6px;
+  background-color: white;
+  position: relative;
+  padding: 4px;
+`
+const EventEndTime = styled.div`
+  line-height: 16px;
+  font-size: 13px;
+  position: relative;
+  text-align: center;
+  margin-bottom: 3px;
+`
+
+const EventProgressInner = styled.div.attrs(({ progress }: { progress: number }) => ({
+  style: {
+    width: `${progress}%`,
+  },
+}))<{ progress: number }>`
+  height: 100%;
+  background-color: #5bb7ff;
+  border-radius: 6px;
+  transition-duration: 0.5s;
+
+  ${skeletonGradient}
+`
+
 export function StakerMyStakes({
   data,
   refreshing,
@@ -505,7 +535,7 @@ export function StakerMyStakes({
     [recipient]
   )
 
-  const [gettingReward, setGettingReward] = useState({ id: null, state: null })
+  const [gettingReward, setGettingReward] = useState({ id: null, state: null, farmingType: null })
   const [eternalCollectReward, setEternalCollectReward] = useState({ id: null, state: null })
 
   const [unstaking, setUnstaking] = useState({ id: null, state: null })
@@ -555,6 +585,15 @@ export function StakerMyStakes({
       setEternalCollectReward({ id: null, state: null })
     } else if (eternalCollectRewardHash && confirmed.includes(eternalCollectRewardHash.hash)) {
       setEternalCollectReward({ id: eternalCollectRewardHash.id, state: 'done' })
+      setShallowPositions(
+        shallowPositions.map((el) => {
+          if (el.id === eternalCollectRewardHash.id) {
+            el.eternalEarned = 0
+            el.eternalBonusEarned = 0
+          }
+          return el
+        })
+      )
     }
   }, [eternalCollectRewardHash, confirmed])
 
@@ -562,16 +601,16 @@ export function StakerMyStakes({
     if (!gettingReward.state) return
 
     if (getRewardsHash === 'failed') {
-      setGettingReward({ id: null, state: null })
+      setGettingReward({ id: null, state: null, farmingType: null })
     } else if (getRewardsHash && confirmed.includes(getRewardsHash.hash)) {
-      setGettingReward({ id: getRewardsHash.id, state: 'done' })
+      setGettingReward({ id: getRewardsHash.id, state: 'done', farmingType: getRewardsHash.farmingType })
       setShallowPositions(
         shallowPositions.map((el) => {
           if (el.id === getRewardsHash.id) {
             if (getRewardsHash.farmingType === FarmingType.FINITE) {
-              el.incentive = false
+              el.incentive = null
             } else {
-              el.eternalFarming = false
+              el.eternalFarming = null
             }
           }
           return el
@@ -617,11 +656,23 @@ export function StakerMyStakes({
   }
 
   function formatReward(earned) {
-    const _earned = String(earned)
-    return _earned.length > 8 ? `${_earned.slice(0, 8)}..` : _earned
+    if (earned === 0) {
+      return '0'
+    }
+    const _earned = String(earned).split('.')
+    return `${_earned[0].length > 8 ? `${_earned[0].slice(0, 8)}..` : _earned[0]}${
+      !_earned[1].split('').every((el) => el === '0') ? `.${_earned[1].slice(0, 2)}` : ``
+    }`
   }
 
-  function getTable(positions, staked) {
+  function getProgress(startTime: number, endTime: number, now: number) {
+    const length = endTime - startTime
+    const elapsed = endTime - now / 1000
+
+    return 100 - (elapsed * 100) / length
+  }
+
+  function getTable(positions) {
     return positions.map((el, i) => (
       <PositionCard key={i} navigatedTo={hash == `#${el.id}`}>
         <PositionCardHeader>
@@ -629,7 +680,7 @@ export function StakerMyStakes({
           <NFTPositionDescription>
             <NFTPositionIndex>{`#${+el.id}`}</NFTPositionIndex>
             <NFTPositionLink
-              href={`https://app.algebra.finance/#/pool/${+el.id}`}
+              href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -638,15 +689,15 @@ export function StakerMyStakes({
           </NFTPositionDescription>
           <StakePool>
             <>
-              <CurrencyLogo currency={{ address: el.token0, symbol: el.pool.token0.symbol }} size={'45px'} />
+              <CurrencyLogo currency={{ address: el.token0, symbol: el.pool.token0.symbol }} size={'40px'} />
               <CurrencyLogo
                 currency={{ address: el.token1, symbol: el.pool.token1.symbol }}
-                size={'45px'}
+                size={'40px'}
                 style={{ marginLeft: '-1rem' }}
               />
               <TokensNames>
-                <div>{'RBC'}</div>
-                <div>{'FRUIT'}</div>
+                <div>{el.pool.token0.symbol}</div>
+                <div>{el.pool.token1.symbol}</div>
               </TokensNames>
             </>
           </StakePool>
@@ -688,7 +739,9 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${el.incentiveEarned} ${el.incentiveRewardToken.symbol}`}</PositionCardStatsItemValue>
+                      <PositionCardStatsItemValue>{`${formatReward(el.incentiveEarned)} ${
+                        el.incentiveRewardToken.symbol
+                      }`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
                   </PositionCardStatsItemWrapper>
                   <PositionCardStatsItemWrapper>
@@ -701,27 +754,50 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Bonus reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${el.incentiveBonusEarned} ${el.incentiveBonusRewardToken.symbol}`}</PositionCardStatsItemValue>
+                      <PositionCardStatsItemValue>{`${formatReward(el.incentiveBonusEarned)} ${
+                        el.incentiveBonusRewardToken.symbol
+                      }`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
                   </PositionCardStatsItemWrapper>
                 </PositionCardStats>
-                <StakeButton
-                  disabled={gettingReward.id === el.id + FarmingType.FINITE && gettingReward.state !== 'done'}
-                  onClick={() => {
-                    setGettingReward({ id: el.id + FarmingType.FINITE, state: 'pending' })
-                    getRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
-                  }}
-                >
-                  {gettingReward &&
-                  gettingReward.id === el.id + FarmingType.FINITE &&
-                  gettingReward.state !== 'done' ? (
-                    <span>
-                      <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
-                    </span>
-                  ) : (
-                    <span>{`Collect rewards & Undeposit`}</span>
-                  )}
-                </StakeButton>
+                {!el.started && <EventEndTime>Starts in 12:13:12</EventEndTime>}
+                {el.started && !el.ended && <EventEndTime>Ends in 123123</EventEndTime>}
+                {el.ended ? (
+                  <StakeButton
+                    disabled={
+                      gettingReward.id === el.id &&
+                      gettingReward.farmingType === FarmingType.FINITE &&
+                      gettingReward.state !== 'done'
+                    }
+                    onClick={() => {
+                      setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
+                      getRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
+                    }}
+                  >
+                    {gettingReward &&
+                    gettingReward.farmingType === FarmingType.FINITE &&
+                    gettingReward.id === el.id &&
+                    gettingReward.state !== 'done' ? (
+                      <span>
+                        <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
+                      </span>
+                    ) : (
+                      <span>{`Collect rewards & Undeposit`}</span>
+                    )}
+                  </StakeButton>
+                ) : (
+                  <EventProgress>
+                    {el.started ? (
+                      <EventProgressInner
+                        progress={getProgress(el.incentiveStartTime, el.incentiveEndTime, now)}
+                      ></EventProgressInner>
+                    ) : (
+                      <EventProgressInner
+                        progress={getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}
+                      ></EventProgressInner>
+                    )}
+                  </EventProgress>
+                )}
               </>
             ) : (
               <PositionCardMock>No current events</PositionCardMock>
@@ -739,7 +815,7 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${(+el.eternalEarned).toFixed(3)} ${
+                      <PositionCardStatsItemValue>{`${formatReward(el.eternalEarned)} ${
                         el.eternalRewardToken.symbol
                       }`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
@@ -751,7 +827,7 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Bonus Reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${(+el.eternalBonusEarned).toFixed(3)} ${
+                      <PositionCardStatsItemValue>{`${formatReward(el.eternalBonusEarned)} ${
                         el.eternalBonusRewardToken.symbol
                       }`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
@@ -776,14 +852,19 @@ export function StakerMyStakes({
                     )}
                   </StakeButton>
                   <StakeButton
-                    disabled={gettingReward.id === el.id + FarmingType.ETERNAL && gettingReward.state !== 'done'}
+                    disabled={
+                      gettingReward.id === el.id &&
+                      gettingReward.farmingType === FarmingType.ETERNAL &&
+                      gettingReward.state !== 'done'
+                    }
                     onClick={() => {
-                      setGettingReward({ id: el.id + FarmingType.ETERNAL, state: 'pending' })
+                      setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.ETERNAL })
                       getRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL)
                     }}
                   >
                     {gettingReward &&
-                    gettingReward.id === el.id + FarmingType.ETERNAL &&
+                    gettingReward.id === el.id &&
+                    gettingReward.farmingType === FarmingType.ETERNAL &&
                     gettingReward.state !== 'done' ? (
                       <span>
                         <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />

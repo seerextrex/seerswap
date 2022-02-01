@@ -51,6 +51,12 @@ import ReactGA from 'react-ga'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import { useAppSelector } from '../../state/hooks'
 import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants/addresses'
+import { Interface } from 'ethers/lib/utils'
+
+import FARMING_CENTER_ABI from 'abis/farming-center'
+import { toHex } from '../../lib/src'
+import { Contract } from 'ethers'
+import JSBI from 'jsbi'
 
 const PageWrapper = styled.div`
   min-width: 800px;
@@ -539,17 +545,36 @@ export function PositionPage({
 
     const collectAddress = isOnFarming ? FARMING_CENTER[chainId] : NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId]
 
-    const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
-      tokenId: tokenId.toString(),
-      expectedCurrencyOwed0: feeValue0,
-      expectedCurrencyOwed1: feeValue1,
-      recipient: account,
-    })
+    const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
+
+    let calldata
+
+    const MaxUint128 = toHex(JSBI.subtract(JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)), JSBI.BigInt(1)))
+
+    if (isOnFarming) {
+      calldata = farmingCenterInterface.encodeFunctionData('collectFees', [
+        {
+          tokenId: tokenId.toString(),
+          recipient: account,
+          amount0Max: MaxUint128,
+          amount1Max: MaxUint128,
+        },
+      ])
+    } else {
+      const { calldata: _calldata } = NonfungiblePositionManager.collectCallParameters({
+        tokenId: tokenId.toString(),
+        expectedCurrencyOwed0: feeValue0,
+        expectedCurrencyOwed1: feeValue1,
+        recipient: account,
+      })
+
+      calldata = _calldata
+    }
 
     const txn = {
       to: collectAddress,
       data: calldata,
-      value,
+      value: toHex(0),
     }
 
     library

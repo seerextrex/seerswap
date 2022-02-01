@@ -37,20 +37,21 @@ export const REAL_STAKER_ADDRESS: AddressMap = {
 }
 
 export const FINITE_FARMING: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xafce08d12F1F753877094EE664bF02D2f3782E38'
+  [SupportedChainId.POLYGON]: '0x9FAfeF0ea45647A406a0dD569787a428fB922160'
 }
 
 export const INFINITE_FARMING_ADDRESS: AddressMap = {
-  [SupportedChainId.POLYGON]: '0x1ea12CF71b1689b5d090e6E9c2198cb4fA98c373'
+  [SupportedChainId.POLYGON]: '0x4432c15cB27f92f42a2A95c4A0C76d7d3a8DCD37'
 }
 
 export const FARMING_CENTER: AddressMap = {
-  [SupportedChainId.POLYGON]: '0xcd39E5763Cdb1Ff22bd2155fb3c3e8853249D7C8'
+  [SupportedChainId.POLYGON]: '0x10F9695E9916E36d58f7d8712083cD4093E7C7a4'
 }
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {
   [SupportedChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32'
 }
+
 export const V2_ROUTER_ADDRESS: AddressMap = {
   [SupportedChainId.POLYGON]: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506'
 }
@@ -58,6 +59,7 @@ export const V2_ROUTER_ADDRESS: AddressMap = {
 export const ENS_REGISTRAR_ADDRESSES: AddressMap = {
   [SupportedChainId.POLYGON]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
 }
+
 export const SOCKS_CONTROLLER_ADDRESSES: AddressMap = {
   [SupportedChainId.POLYGON]: '0x65770b5283117639760beA3F867b69b3697a91dd',
 }

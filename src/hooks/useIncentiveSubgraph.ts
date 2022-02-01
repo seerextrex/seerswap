@@ -380,9 +380,11 @@ export function useIncentiveSubgraph() {
                         ..._position,
                         eternalRewardToken: _rewardToken,
                         eternalBonusRewardToken: _bonusRewardToken,
+                        eternalStartTime: startTime,
+                        eternalEndTime: endTime,
                         pool: _pool,
-                        eternalEarned: +reward,
-                        eternalBonusEarned: +bonusReward
+                        eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
+                        eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
                     }
 
                 }
@@ -545,7 +547,7 @@ export function useIncentiveSubgraph() {
                 return
             }
 
-            const transferredPositionsIds = positionsTransferred.map(position => position.tokenId);
+            const transferredPositionsIds = positionsTransferred.map(position => position.id);
 
             setPositionsOnFarmer(transferredPositionsIds);
 

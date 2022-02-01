@@ -74,7 +74,7 @@ const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   border-radius: 12px;
   padding: 6px 8px;
   width: fit-content;
- 
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
     width: 100%;
@@ -186,20 +186,6 @@ export default function Pool() {
             </TitleRow>
             <MainContentWrapper>
               {positionsLoading ? (
-                // <LoadingRows>
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                //   <div />
-                // </LoadingRows>
                 <Loader style={{ margin: 'auto' }} stroke="white" size={'30px'} />
               ) : _filteredPositions && _filteredPositions.length > 0 ? (
                 <PositionList positions={_filteredPositions} />

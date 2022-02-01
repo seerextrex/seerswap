@@ -60,6 +60,7 @@ interface UseV3PositionResults {
 
 export function useV3PositionFromTokenId(tokenId: BigNumber | undefined): UseV3PositionResults {
   const position = useV3PositionsFromTokenIds(tokenId ? [tokenId] : undefined)
+  console.log('USEV3', position)
   return {
     loading: position.loading,
     position: position.positions?.[0],
@@ -80,7 +81,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
   useEffect(() => {
     if (account) {
-      // fetchPositionsOnFarmerFn(account)
+      fetchPositionsOnFarmerFn(account)
     }
   }, [])
 

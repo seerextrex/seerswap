@@ -2,7 +2,6 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
 import { WMATIC_EXTENDED } from '../../constants/tokens'
 import AddLiquidityPage from '../AddLiquidityPage'
-import AddLiquidity from './index'
 
 export function RedirectDuplicateTokenIds(
   props: RouteComponentProps<{ currencyIdA: string; currencyIdB: string; feeAmount?: string }>
@@ -34,6 +33,5 @@ export function RedirectDuplicateTokenIds(
   ) {
     return <Redirect to={`/add/${currencyIdA}`} />
   }
-  // return <AddLiquidity {...props} />
   return <AddLiquidityPage {...props} />
 }

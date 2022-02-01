@@ -1,53 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
-import styled from 'styled-components/macro'
 import FeeChartRangeInput from '../../components/FeeChartRangeInput'
 import PoolInfoChartToolbar from '../../components/PoolInfoChartToolbar'
 import { PoolInfoHeader } from '../../components/PoolInfoHeader'
 import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
-import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useInfoPoolChart } from '../../hooks/useInfoPoolChart'
-import { usePoolDynamicFee } from '../../hooks/usePoolDynamicFee'
-import { usePool } from '../../hooks/usePools'
-import { useActiveWeb3React } from '../../hooks/web3'
-import DensityChart from '../../components/DensityChart'
-
 import dayjs from 'dayjs'
 import Loader from '../../components/Loader'
 import { useInfoTickData } from '../../hooks/subgraph/useInfoTickData'
 import LiquidityBarChart from '../../components/LiquidityBarChart'
-import {useInternet} from "../../hooks/useInternet"
-import {useToken} from "../../hooks/Tokens"
-
-const Wrapper = styled.div`
-  min-width: 915px;
-  max-width: 995px;
-  display: flex;
-  flex-direction: column;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  // padding-bottom: 10rem;
-  `}
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    min-width: unset;
-    width: 100%;
-  `}
-`
-const BodyWrapper = styled.div`
-  display: flex;
-  // height: 550px;
-  width: 100%;
-`
-const ChartWrapper = styled.div`
-  width: 100%;
-`
-const LoaderMock = styled.div`
-  height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
+import { useToken } from '../../hooks/Tokens'
+import { Wrapper, ChartWrapper, BodyWrapper, LoaderMock } from './styled'
 
 export enum ChartType {
   VOLUME,
@@ -63,24 +26,22 @@ export enum ChartSpan {
 }
 
 export default function PoolInfoPage({
-  match: {
-    params: { id },
-  },
-  history,
-}: RouteComponentProps<{ id?: string }>) {
-  const { chainId } = useActiveWeb3React()
+                                       match: {
+                                         params: { id }
+                                       }
+                                     }: RouteComponentProps<{ id?: string }>) {
 
   const {
-    fetchPool: { fetchPoolFn, poolLoading, poolResult },
+    fetchPool: { fetchPoolFn, poolResult }
   } = useInfoPoolChart()
 
   const {
     fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn },
-    fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn },
+    fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn }
   } = useInfoSubgraph()
 
   const {
-    fetchTicksSurroundingPrice: { ticksResult, ticksLoading, fetchTicksSurroundingPriceFn },
+    fetchTicksSurroundingPrice: { ticksResult, ticksLoading, fetchTicksSurroundingPriceFn }
   } = useInfoTickData()
 
   const [span, setSpan] = useState(ChartSpan.DAY)
@@ -102,35 +63,35 @@ export default function PoolInfoPage({
   const chartTypes = [
     {
       type: ChartType.VOLUME,
-      title: 'Volume',
+      title: 'Volume'
     },
     {
       type: ChartType.TVL,
-      title: 'TVL',
+      title: 'TVL'
     },
     {
       type: ChartType.FEES,
-      title: 'Pool fee',
+      title: 'Pool fee'
     },
     {
       type: ChartType.LIQUIDITY,
-      title: 'Liquidity',
-    },
+      title: 'Liquidity'
+    }
   ]
 
   const chartSpans = [
     {
       type: ChartSpan.DAY,
-      title: 'Day',
+      title: 'Day'
     },
     {
       type: ChartSpan.WEEK,
-      title: 'Week',
+      title: 'Week'
     },
     {
       type: ChartSpan.MONTH,
-      title: 'Month',
-    },
+      title: 'Month'
+    }
   ]
 
   useEffect(() => {

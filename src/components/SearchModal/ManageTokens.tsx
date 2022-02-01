@@ -1,11 +1,10 @@
 import { useRef, RefObject, useCallback, useState, useMemo } from 'react'
 import Column from 'components/Column'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
-import { PaddedColumn, Separator, SearchInput } from './styleds'
+import { PaddedColumn, Separator, SearchInput, ManageTokensWrapper, Footer } from './styled'
 import Row, { RowBetween, RowFixed } from 'components/Row'
 import { TYPE, ExternalLinkIcon, TrashIcon, ButtonText, ExternalLink } from 'theme'
 import { useToken } from 'hooks/Tokens'
-import styled from 'styled-components/macro'
 import { useUserAddedTokens, useRemoveUserAddedToken } from 'state/user/hooks'
 import { Token } from '@uniswap/sdk-core'
 import CurrencyLogo from 'components/CurrencyLogo'
@@ -15,32 +14,12 @@ import Card from 'components/Card'
 import ImportRow from './ImportRow'
 import useTheme from '../../hooks/useTheme'
 import { Trans } from '@lingui/macro'
-
 import { CurrencyModalView } from './CurrencySearchModal'
 
-const Wrapper = styled.div`
-  width: 100%;
-  height: calc(100% - 60px);
-  position: relative;
-  padding-bottom: 80px;
-`
-
-const Footer = styled.div`
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  border-radius: 20px;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-  border-top: 1px solid ${({ theme }) => theme.bg3};
-  padding: 20px;
-  text-align: center;
-`
-
 export default function ManageTokens({
-  setModalView,
-  setImportToken,
-}: {
+                                       setModalView,
+                                       setImportToken
+                                     }: {
   setModalView: (view: CurrencyModalView) => void
   setImportToken: (token: Token) => void
 }) {
@@ -77,7 +56,7 @@ export default function ManageTokens({
     return (
       chainId &&
       userAddedTokens.map((token) => (
-        <RowBetween key={token.address} width="100%">
+        <RowBetween key={token.address} width='100%'>
           <RowFixed>
             <CurrencyLogo currency={token} size={'20px'} />
             <ExternalLink href={getExplorerLink(chainId, token.address, ExplorerDataType.ADDRESS)}>
@@ -96,16 +75,16 @@ export default function ManageTokens({
   }, [userAddedTokens, chainId, removeToken])
 
   return (
-    <Wrapper>
+    <ManageTokensWrapper>
       <Column style={{ width: '100%', height: '100%', flex: '1 1' }}>
-        <PaddedColumn gap="14px">
+        <PaddedColumn gap='14px'>
           <Row>
             <SearchInput
-              type="text"
-              id="token-search-input"
+              type='text'
+              id='token-search-input'
               placeholder={'0x0000'}
               value={searchQuery}
-              autoComplete="off"
+              autoComplete='off'
               ref={inputRef as RefObject<HTMLInputElement>}
               onChange={handleInput}
             />
@@ -116,7 +95,7 @@ export default function ManageTokens({
             </TYPE.error>
           )}
           {searchToken && (
-            <Card backgroundColor={theme.bg2} padding="10px 0">
+            <Card backgroundColor={theme.bg2} padding='10px 0'>
               <ImportRow
                 token={searchToken}
                 showImportView={() => setModalView(CurrencyModalView.importToken)}
@@ -127,7 +106,7 @@ export default function ManageTokens({
           )}
         </PaddedColumn>
         <Separator />
-        <PaddedColumn gap="lg" style={{ overflow: 'auto', marginBottom: '10px' }}>
+        <PaddedColumn gap='lg' style={{ overflow: 'auto', marginBottom: '10px' }}>
           <RowBetween>
             <TYPE.main fontWeight={600}>
               <Trans>{userAddedTokens?.length} Custom Tokens</Trans>
@@ -148,6 +127,6 @@ export default function ManageTokens({
           <Trans>Tip: Custom tokens are stored locally in your browser</Trans>
         </TYPE.darkGray>
       </Footer>
-    </Wrapper>
+    </ManageTokensWrapper>
   )
 }

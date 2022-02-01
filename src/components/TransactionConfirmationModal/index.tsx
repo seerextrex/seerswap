@@ -1,57 +1,34 @@
 import { Currency } from '@uniswap/sdk-core'
 import { ReactNode, useContext, useEffect } from 'react'
-import styled, { ThemeContext } from 'styled-components/macro'
+import { ThemeContext } from 'styled-components/macro'
 import { getExplorerLink, ExplorerDataType } from '../../utils/getExplorerLink'
 import Modal from '../Modal'
-import theme, { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
-import { CloseIcon, CustomLightSpinner } from '../../theme/components'
+import { CloseIcon, CustomLightSpinner, ExternalLink } from '../../theme'
 import { RowBetween, RowFixed } from '../Row'
 import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
 import { ButtonPrimary, ButtonLight } from '../Button'
-import { AutoColumn, ColumnCenter } from '../Column'
+import { AutoColumn } from '../Column'
 import Circle from '../../assets/images/blue-loader.svg'
 import MetaMaskLogo from '../../assets/images/metamask.png'
 import { useActiveWeb3React } from '../../hooks/web3'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { Trans } from '@lingui/macro'
 import { L2_CHAIN_IDS } from 'constants/chains'
-
-const Wrapper = styled.div`
-  width: 100%;
-  padding: 1rem;
-`
-const Section = styled(AutoColumn)<{ inline?: boolean }>`
-  padding: ${({ inline }) => (inline ? '0' : '0')};
-`
-
-const BottomSection = styled(Section)`
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-`
-
-const ConfirmedIcon = styled(ColumnCenter)<{ inline?: boolean }>`
-  padding: ${({ inline }) => (inline ? '20px 0' : '60px 0;')};
-`
-
-const StyledLogo = styled.img`
-  height: 16px;
-  width: 16px;
-  margin-left: 6px;
-`
+import { Wrapper, ConfirmedIcon, Section, BottomSection, StyledLogo } from './styled'
 
 function ConfirmationPendingContent({
-  onDismiss,
-  pendingText,
-  inline,
-}: {
+                                      onDismiss,
+                                      pendingText,
+                                      inline
+                                    }: {
   onDismiss: () => void
   pendingText: ReactNode
   inline?: boolean // not in modal
 }) {
   return (
     <Wrapper>
-      <AutoColumn gap="md">
+      <AutoColumn gap='md'>
         {!inline && (
           <RowBetween>
             <div />
@@ -59,18 +36,18 @@ function ConfirmationPendingContent({
           </RowBetween>
         )}
         <ConfirmedIcon inline={inline}>
-          <CustomLightSpinner src={Circle} alt="loader" size={inline ? '40px' : '90px'} />
+          <CustomLightSpinner src={Circle} alt='loader' size={inline ? '40px' : '90px'} />
         </ConfirmedIcon>
-        <AutoColumn gap="12px" justify={'center'}>
-          <Text fontWeight={500} fontSize={20} textAlign="center">
+        <AutoColumn gap='12px' justify={'center'}>
+          <Text fontWeight={500} fontSize={20} textAlign='center'>
             <Trans>Waiting For Confirmation</Trans>
           </Text>
-          <AutoColumn gap="12px" justify={'center'}>
-            <Text fontWeight={600} fontSize={14} color="" textAlign="center">
+          <AutoColumn gap='12px' justify={'center'}>
+            <Text fontWeight={600} fontSize={14} color='' textAlign='center'>
               {pendingText}
             </Text>
           </AutoColumn>
-          <Text fontSize={12} color="#565A69" textAlign="center" marginBottom={12}>
+          <Text fontSize={12} color='#565A69' textAlign='center' marginBottom={12}>
             <Trans>Confirm this transaction in your wallet</Trans>
           </Text>
         </AutoColumn>
@@ -80,12 +57,12 @@ function ConfirmationPendingContent({
 }
 
 function TransactionSubmittedContent({
-  onDismiss,
-  chainId,
-  hash,
-  currencyToAdd,
-  inline,
-}: {
+                                       onDismiss,
+                                       chainId,
+                                       hash,
+                                       currencyToAdd,
+                                       inline
+                                     }: {
   onDismiss: () => void
   hash: string | undefined
   chainId: number
@@ -110,8 +87,8 @@ function TransactionSubmittedContent({
         <ConfirmedIcon inline={inline}>
           <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'} color={theme.winterMainButton} />
         </ConfirmedIcon>
-        <AutoColumn gap="12px" justify={'center'}>
-          <Text fontWeight={500} fontSize={20} textAlign="center">
+        <AutoColumn gap='12px' justify={'center'}>
+          <Text fontWeight={500} fontSize={20} textAlign='center'>
             <Trans>Transaction Submitted</Trans>
           </Text>
           {chainId && hash && (
@@ -122,7 +99,7 @@ function TransactionSubmittedContent({
             </ExternalLink>
           )}
           {currencyToAdd && library?.provider?.isMetaMask && (
-            <ButtonLight mt="12px" padding="6px 12px" width="fit-content" onClick={addToken}>
+            <ButtonLight mt='12px' padding='6px 12px' width='fit-content' onClick={addToken}>
               {!success ? (
                 <RowFixed>
                   <Trans>
@@ -139,7 +116,7 @@ function TransactionSubmittedContent({
           )}
           <ButtonPrimary
             onClick={onDismiss}
-            style={{ margin: '20px 0 0 0', color: 'white'}}
+            style={{ margin: '20px 0 0 0', color: 'white' }}
           >
             <Text fontWeight={500} fontSize={20}>
               {inline ? <Trans>Return</Trans> : <Trans>Close</Trans>}
@@ -152,11 +129,11 @@ function TransactionSubmittedContent({
 }
 
 export function ConfirmationModalContent({
-  title,
-  bottomContent,
-  onDismiss,
-  topContent,
-}: {
+                                           title,
+                                           bottomContent,
+                                           onDismiss,
+                                           topContent
+                                         }: {
   title: ReactNode
   onDismiss: () => void
   topContent: () => ReactNode
@@ -173,7 +150,7 @@ export function ConfirmationModalContent({
         </RowBetween>
         {topContent()}
       </Section>
-      {bottomContent && <BottomSection gap="12px">{bottomContent()}</BottomSection>}
+      {bottomContent && <BottomSection gap='12px'>{bottomContent()}</BottomSection>}
     </Wrapper>
   )
 }
@@ -189,7 +166,7 @@ export function TransactionErrorContent({ message, onDismiss }: { message: React
           </Text>
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
-        <AutoColumn style={{ marginTop: 20, padding: '2rem 0' }} gap="24px" justify="center">
+        <AutoColumn style={{ marginTop: 20, padding: '2rem 0' }} gap='24px' justify='center'>
           <AlertTriangle color={theme.red1} style={{ strokeWidth: 1.5 }} size={64} />
           <Text
             fontWeight={500}
@@ -201,7 +178,7 @@ export function TransactionErrorContent({ message, onDismiss }: { message: React
           </Text>
         </AutoColumn>
       </Section>
-      <BottomSection gap="12px">
+      <BottomSection gap='12px'>
         <ButtonPrimary onClick={onDismiss}>
           <Trans>Dismiss</Trans>
         </ButtonPrimary>
@@ -221,14 +198,14 @@ interface ConfirmationModalProps {
 }
 
 export default function TransactionConfirmationModal({
-  isOpen,
-  onDismiss,
-  attemptingTxn,
-  hash,
-  pendingText,
-  content,
-  currencyToAdd,
-}: ConfirmationModalProps) {
+                                                       isOpen,
+                                                       onDismiss,
+                                                       attemptingTxn,
+                                                       hash,
+                                                       pendingText,
+                                                       content,
+                                                       currencyToAdd
+                                                     }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 
   // if on L2 and txn is submitted, close automatically (if open)

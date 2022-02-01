@@ -1,30 +1,8 @@
 import { useCallback, useContext, useState } from 'react'
 import Modal from '../Modal'
-import styled, { ThemeContext } from 'styled-components/macro'
-import { X } from 'react-feather'
+import { ThemeContext } from 'styled-components/macro'
 import { Trans } from '@lingui/macro'
-
-const ModalContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 1rem;
-  width: 100%;
-  background-color: ${({ theme }) => theme.bg2};
-  border-radius: 20px;
-`
-
-const StyledCloseIcon = styled(X)`
-  height: 20px;
-  width: 20px;
-  :hover {
-    cursor: pointer;
-  }
-
-  > * {
-    stroke: ${({ theme }) => theme.text1};
-  }
-`
+import { ModalContentWrapper, StyledCloseIcon } from './styled'
 
 export default function StakingModal({
   modal,

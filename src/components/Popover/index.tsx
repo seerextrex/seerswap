@@ -8,7 +8,7 @@ import { ReferenceElement, PopoverContainer, Arrow } from './styled'
 export interface PopoverProps {
   content: React.ReactNode
   show: boolean
-  children: React.ReactNode
+  children?: React.ReactNode
   placement?: Placement
 }
 

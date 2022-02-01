@@ -1,13 +1,6 @@
 import { ReactNode, useCallback, useState } from 'react'
-import styled from 'styled-components/macro'
 import Popover, { PopoverProps } from '../Popover'
-
-const TooltipContainer = styled.div`
-  width: 256px;
-  padding: 0.6rem 1rem;
-  font-weight: 400;
-  word-break: break-word;
-`
+import { TooltipContainer } from './styled'
 
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: ReactNode

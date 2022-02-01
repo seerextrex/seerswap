@@ -5,6 +5,8 @@ import { AlertTriangle } from 'react-feather'
 import styled, { css } from 'styled-components/macro'
 import { Text } from 'rebass'
 import { AutoColumn } from '../Column'
+import { ButtonPrimary } from '../Button'
+import { TYPE } from '../../theme'
 
 export const Wrapper = styled.div`
   position: relative;
@@ -134,4 +136,82 @@ export const SwapShowAcceptChanges = styled(AutoColumn)`
   padding: 0.5rem;
   border-radius: 12px;
   margin-top: 8px;
+`
+
+//BetterTradeLink
+export const ResponsiveButton = styled(ButtonPrimary)`
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  word-break: keep-all;
+  height: 24px;
+  margin-left: 0.75rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 4px;
+    border-radius: 8px;
+  `};
+`
+
+//SwapHeader
+export const StyledSwapHeader = styled.div`
+  padding: 30px 40px 16px 40px;
+  width: 100%;
+  color: ${({ theme }) => theme.text2};
+`
+
+//SwapModalHeader
+export const SwapModalHeaderArrowWrapper = styled.div`
+  padding: 4px;
+  border-radius: 12px;
+  height: 32px;
+  width: 32px;
+  position: relative;
+  margin-top: -18px;
+  margin-bottom: -18px;
+  left: calc(50% - 16px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.bg1};
+  border: 4px solid;
+  border-color: ${({ theme }) => theme.bg0};
+  z-index: 2;
+`
+
+//TradePrice
+export const StyledPriceContainer = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  background-color: transparent;
+  border: none;
+  height: 24px;
+  cursor: pointer;
+`
+
+//UnsuportedCurrencyFoter
+export const DetailsFooter = styled.div<{ show: boolean }>`
+  padding-top: calc(16px + 2rem);
+  padding-bottom: 20px;
+  margin-top: -2rem;
+  width: 100%;
+  max-width: 400px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  color: ${({ theme }) => theme.text2};
+  background-color: ${({ theme }) => theme.advancedBG};
+  z-index: -1;
+
+  transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%)')};
+  transition: transform 300ms ease-in-out;
+  text-align: center;
+`
+export const AddressText = styled(TYPE.blue)`
+  font-size: 12px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: 10px;
+`}
 `

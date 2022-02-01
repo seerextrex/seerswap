@@ -1,66 +1,21 @@
-import { Trans } from '@lingui/react'
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight, Frown } from 'react-feather'
-import { Link } from 'react-router-dom'
-import styled from 'styled-components/macro'
+import { Frown } from 'react-feather'
 import { StakerEventCard } from '../../components/StakerEventCard'
-import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
-
-const PageWrapper = styled.div`
-  width: 100%;
-`
-const EventsCards = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`
-
-const EventsCardsRow = styled.div`
-  display: flex;
-  width: 100%;
-  margin-bottom: 1rem;
-
-  & > * {
-    &:not(:last-of-type) {
-      margin-right: 1rem;
-    }
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`{
-    flex-direction: column;
-    margin-bottom: unset;
-    display: none;
-    &:first-of-type {
-      display: flex;
-    }
-  }`}
-`
-
-const EmptyMock = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-
-  & > * {
-    margin-bottom: 1rem;
-  }
-`
+import { PageWrapper, EventsCardsRow, EventsCards, EmptyMock } from './styled'
 
 function isFuture(startTime: number, now: number) {
   return startTime * 1000 > now
 }
 
 export function FutureEventsPage({
-  data,
-  now,
-  refreshing,
-  fetchHandler,
-}: {
+                                   data,
+                                   now,
+                                   refreshing,
+                                   fetchHandler
+                                 }: {
   data: any
   now: number
   refreshing: boolean
@@ -77,7 +32,7 @@ export function FutureEventsPage({
   return (
     <>
       <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)}>
-        {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}></StakeModal>}
+        {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}/>}
       </Modal>
       <PageWrapper>
         <EventsCards>
@@ -85,12 +40,12 @@ export function FutureEventsPage({
             <EventsCards>
               <EventsCardsRow>
                 {[0, 1, 2].map((el, i) => (
-                  <StakerEventCard skeleton key={i}></StakerEventCard>
+                  <StakerEventCard skeleton key={i}/>
                 ))}
               </EventsCardsRow>
               <EventsCardsRow>
                 {[0, 1].map((el, i) => (
-                  <StakerEventCard skeleton key={i}></StakerEventCard>
+                  <StakerEventCard skeleton key={i}/>
                 ))}
               </EventsCardsRow>
             </EventsCards>
@@ -106,7 +61,7 @@ export function FutureEventsPage({
                         refreshing={refreshing}
                         now={now}
                         event={event}
-                      ></StakerEventCard>
+                      />
                     )
                 )}
               </EventsCardsRow>

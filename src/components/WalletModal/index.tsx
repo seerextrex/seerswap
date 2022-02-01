@@ -1,127 +1,45 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import { AutoRow } from 'components/Row'
 import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import styled from 'styled-components/macro'
 import MetamaskIcon from '../../assets/images/metamask.png'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { injected } from '../../connectors'
-import { OVERLAY_READY } from '../../connectors/Fortmatic'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import usePrevious from '../../hooks/usePrevious'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useWalletModalToggle } from '../../state/application/hooks'
-import { ExternalLink, TYPE } from '../../theme'
 import AccountDetails from '../AccountDetails'
 import { Trans } from '@lingui/macro'
-
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
-import { LightCard } from '../Card'
 import { Frown } from 'react-feather'
-
 import ReactGA from 'react-ga'
+import {
+  Wrapper,
+  ContentWrapper,
+  CloseColor,
+  CloseIcon,
+  UpperSection,
+  HoverText,
+  OptionGrid,
+  HeaderRow
+} from './styled'
 
-const CloseIcon = styled.div`
-  position: absolute;
-  right: 1rem;
-  top: 14px;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-`
-
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => '#080064'};
-  }
-`
-
-const Wrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  margin: 0;
-  padding: 0;
-  width: 100%;
-`
-
-const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1rem 1rem;
-  font-weight: 500;
-  // color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  color: #080064;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-`
-
-const ContentWrapper = styled.div`
-  background-color: ${({ theme }) => 'rgb(179,230,255)'};
-  padding: 0 1rem 1rem 1rem;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0 1rem 1rem 1rem`};
-`
-
-const UpperSection = styled.div`
-  position: relative;
-
-  color: #080064;
-
-  h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  h5:last-child {
-    margin-bottom: 0px;
-  }
-
-  h4 {
-    margin-top: 0;
-    font-weight: 500;
-  }
-`
-
-const OptionGrid = styled.div`
-  display: grid;
-  grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
-`
-
-const HoverText = styled.div`
-  text-decoration: none;
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  align-items: center;
-
-  :hover {
-    cursor: pointer;
-  }
-`
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
   OPTIONS_SECONDARY: 'options_secondary',
   ACCOUNT: 'account',
-  PENDING: 'pending',
+  PENDING: 'pending'
 }
 
 export default function WalletModal({
-  pendingTransactions,
-  confirmedTransactions,
-  ENSName,
-}: {
+                                      pendingTransactions,
+                                      confirmedTransactions,
+                                      ENSName
+                                    }: {
   pendingTransactions: string[] // hashes of pending
   confirmedTransactions: string[] // hashes of confirmed
   ENSName?: string
@@ -177,7 +95,7 @@ export default function WalletModal({
     ReactGA.event({
       category: 'Wallet',
       action: 'Change Wallet',
-      label: name,
+      label: name
     })
 
     setPendingWallet(connector) // set wallet for pending view
@@ -189,13 +107,13 @@ export default function WalletModal({
     }
 
     connector &&
-      activate(connector, undefined, true).catch((error) => {
-        if (error instanceof UnsupportedChainIdError) {
-          activate(connector) // a little janky...can't use setError because the connector isn't set
-        } else {
-          setPendingError(true)
-        }
-      })
+    activate(connector, undefined, true).catch((error) => {
+      if (error instanceof UnsupportedChainIdError) {
+        activate(connector) // a little janky...can't use setError because the connector isn't set
+      } else {
+        setPendingError(true)
+      }
+    })
   }
 
   // get wallets user can switch too, depending on device/browser
@@ -329,7 +247,7 @@ export default function WalletModal({
           <CloseColor />
         </CloseIcon>
         {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow color="#080064">
+          <HeaderRow color='#080064'>
             <HoverText
               style={{ color: '#080064' }}
               onClick={() => {
@@ -341,7 +259,7 @@ export default function WalletModal({
             </HoverText>
           </HeaderRow>
         ) : (
-          <HeaderRow color="#080064">
+          <HeaderRow color='#080064'>
             <HoverText style={{ color: '#080064' }}>
               <Trans>Connect to a wallet</Trans>
             </HoverText>

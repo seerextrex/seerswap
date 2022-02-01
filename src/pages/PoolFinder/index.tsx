@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Plus } from 'react-feather'
 import { useLocation } from 'react-router'
 import { Text } from 'rebass'
-
 import { ButtonDropdownLight } from '../../components/Button'
 import { LightCard } from '../../components/Card'
 import { BlueCard } from '../../components/Card'
@@ -22,9 +21,7 @@ import { PairState, useV2Pair } from '../../hooks/useV2Pairs'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { usePairAdder } from '../../state/user/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
-import { StyledInternalLink } from '../../theme'
 import { TYPE } from '../../theme'
-import { currencyId } from '../../utils/currencyId'
 import AppBody from '../AppBody'
 import { Dots } from '../Pool/styleds'
 import { Helmet } from 'react-helmet'
@@ -77,24 +74,6 @@ export default function PoolFinder() {
       addPair(sushiPair)
     }
   }, [pair, sushiPair, addPair])
-
-  const validPairNoLiquidity: boolean =
-    _pairState === PairState.NOT_EXISTS ||
-    Boolean(
-      _pairState === PairState.EXISTS &&
-        pair &&
-        JSBI.equal(pair.reserve0.quotient, JSBI.BigInt(0)) &&
-        JSBI.equal(pair.reserve1.quotient, JSBI.BigInt(0))
-    )
-
-  const validSushiPairNoLiquidity: boolean =
-    sushiPairState === PairState.NOT_EXISTS ||
-    Boolean(
-      sushiPairState === PairState.EXISTS &&
-        sushiPair &&
-        JSBI.equal(sushiPair.reserve0.quotient, JSBI.BigInt(0)) &&
-        JSBI.equal(sushiPair.reserve1.quotient, JSBI.BigInt(0))
-    )
 
   const position: CurrencyAmount<Token> | undefined = useTokenBalance(account ?? undefined, pair?.liquidityToken)
   const prevPosition = usePrevious(position)
@@ -149,12 +128,6 @@ export default function PoolFinder() {
   const handleSearchDismiss = useCallback(() => {
     setShowSearch(false)
   }, [setShowSearch])
-
-  const prerequisiteMessage = (
-    <LightCard>
-      <Text textAlign="center">{!account && <Trans>Connect to a wallet to find pools</Trans>}</Text>
-    </LightCard>
-  )
 
   return (
     <>
@@ -259,13 +232,6 @@ export default function PoolFinder() {
               </LightCard>
             ) : null
           ) : null}
-          {/* {currency0 &&
-            currency1 &&
-            pairState !== PairState.LOADING &&
-            sushiPairState !== PairState.LOADING &&
-            (pairState !== PairState.EXISTS || sushiPairState !== PairState.NOT) && (
-              <div style={{ padding: '1rem', textAlign: 'center' }}>No pools</div>
-            )} */}
         </AutoColumn>
 
         <CurrencySearchModal

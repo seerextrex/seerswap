@@ -2,13 +2,12 @@ import { Trans } from '@lingui/macro'
 import { Currency, TradeType } from '@uniswap/sdk-core'
 import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { Trade as V3Trade } from 'lib/src'
-
 import { ReactNode, useContext } from 'react'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'
 import { ButtonError } from '../Button'
 import { AutoRow } from '../Row'
-import { SwapCallbackError } from './styleds'
+import { SwapCallbackError } from './styled'
 
 export default function SwapModalFooter({
   onConfirm,
@@ -39,7 +38,6 @@ export default function SwapModalFooter({
             <Trans>Confirm Swap</Trans>
           </Text>
         </ButtonError>
-
         {swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
       </AutoRow>
     </>

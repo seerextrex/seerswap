@@ -146,7 +146,6 @@ export const ButtonSecondary = styled(Base)`
 `
 
 export const ButtonOutlined = styled(Base)`
-  // border: 1px solid ${({ theme }) => theme.winterDisabledButton};
   background-color: ${({ theme }) => 'rgba(60,97,126,0.5)'};
   color: ${({ theme }) => theme.text1};
   &:focus {

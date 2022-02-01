@@ -12,7 +12,7 @@ import { useColor } from '../../hooks/useColor'
 import { AutoColumn } from '../Column'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { AutoRow } from '../Row'
-import { Dots } from '../swap/styleds'
+import { Dots } from '../swap/styled'
 import Badge, { BadgeVariant } from 'components/Badge'
 import { StyledSushiPositionCard, ArrowBack, TextStyled, RowFixedStyled, FixedHeightRow } from './styled'
 

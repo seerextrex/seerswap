@@ -20,7 +20,7 @@ import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
-import { Dots } from '../swap/styleds'
+import { Dots } from '../swap/styled'
 import { BIG_INT_ZERO } from '../../constants/misc'
 import { FixedHeightRow, StyledV2PositionCard, AutoColumnInfo, RowFixedMigrate } from './styled'
 

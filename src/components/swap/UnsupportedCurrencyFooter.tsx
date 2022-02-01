@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import styled from 'styled-components/macro'
 import { TYPE, CloseIcon, ExternalLink } from 'theme'
 import { ButtonEmpty } from 'components/Button'
 import Modal from 'components/Modal'
@@ -12,31 +11,7 @@ import { Currency, Token } from '@uniswap/sdk-core'
 import { useUnsupportedTokens } from '../../hooks/Tokens'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { Trans } from '@lingui/macro'
-
-const DetailsFooter = styled.div<{ show: boolean }>`
-  padding-top: calc(16px + 2rem);
-  padding-bottom: 20px;
-  margin-top: -2rem;
-  width: 100%;
-  max-width: 400px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  color: ${({ theme }) => theme.text2};
-  background-color: ${({ theme }) => theme.advancedBG};
-  z-index: -1;
-
-  transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%)')};
-  transition: transform 300ms ease-in-out;
-  text-align: center;
-`
-
-const AddressText = styled(TYPE.blue)`
-  font-size: 12px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    font-size: 10px;
-`}
-`
+import { DetailsFooter, AddressText } from './styled'
 
 export default function UnsupportedCurrencyFooter({
   show,

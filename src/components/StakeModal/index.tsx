@@ -214,7 +214,7 @@ export function StakeModal({
   farmingType,
 }: {
   event: {
-    pool: string
+    pool: any
     startTime: string
     endTime: string
     id: string
@@ -296,7 +296,7 @@ export function StakeModal({
 
   const NFTsForApprove = useMemo(() => filterNFTs((v) => !v.onFarmingCenter), [selectedNFT, submitState])
 
-  const NFTsForStake = useMemo(() => filterNFTs((v) => v.onFarmingCenter && !isOnFarming), [selectedNFT, submitState])
+  const NFTsForStake = useMemo(() => filterNFTs((v) => v.onFarmingCenter), [selectedNFT, submitState])
 
   useEffect(() => {
     if (!approvedHash || (approvedHash && submitState !== 0)) return
@@ -373,7 +373,7 @@ export function StakeModal({
       stakeHandler(
         selectedNFT,
         {
-          pool,
+          pool: pool.id,
           rewardToken: rewardToken.id,
           bonusRewardToken: bonusRewardToken.id,
           startTime,

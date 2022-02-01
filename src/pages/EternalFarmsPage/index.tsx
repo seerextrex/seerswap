@@ -4,6 +4,7 @@ import { Frown } from 'react-feather'
 import styled from 'styled-components/macro'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
+import Loader from '../../components/Loader'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
 import { StakerEventCard } from '../../components/StakerEventCard'
@@ -76,6 +77,14 @@ const FarmButton = styled.button`
   border-radius: 6px;
 `
 
+const LoadingMock = styled.div`
+  width: 100%;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
 export default function EternalFarmsPage({
   data,
   refreshing,
@@ -107,7 +116,9 @@ export default function EternalFarmsPage({
       </Modal>
       <PageWrapper>
         {refreshing ? (
-          <div>Loading</div>
+          <EmptyMock>
+            <Loader stroke='white' size='20px' />
+          </EmptyMock>
         ) : !data || data.length === 0 ? (
           <EmptyMock>
             <div>No eternal farms</div>

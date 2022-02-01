@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { useCallback, useMemo, useState } from 'react'
 import { useEffect } from 'react'
-import { CheckCircle, Frown, Send } from 'react-feather'
+import { ArrowRight, CheckCircle, ChevronsUp, Frown, Send } from 'react-feather'
 import styled, { keyframes, css } from 'styled-components/macro'
 import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { FarmingType, useStakerHandlers } from '../../hooks/useStakerHandlers'
@@ -27,6 +27,7 @@ import { darken } from 'polished'
 import CurrencyLogo from '../CurrencyLogo'
 
 import gradient from 'random-gradient'
+import { NavLink } from 'react-router-dom'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -124,6 +125,9 @@ const PositionCard = styled.div`
 const PositionCardHeader = styled.div`
   display: flex;
   margin-bottom: 1rem;
+  background-color: #11446c;
+  padding: 1rem;
+  border-radius: 8px;
 `
 
 const NFTPositionIcon = styled.div<{ name: string; skeleton: boolean }>`
@@ -170,6 +174,10 @@ const NFTPositionIndex = styled.div``
 const NFTPositionLink = styled.a`
   font-size: 13px;
   color: white;
+
+  &:hover {
+    color: #01ffff;
+  }
 `
 
 const PositionCardBody = styled.div`
@@ -453,8 +461,18 @@ const SendNFTButton = styled.button`
 `
 
 export const MoreButton = styled.button`
+  display: flex;
+  align-items: center;
   border: none;
-  background-color: transparent;
+  background-color: white;
+  color: #36f;
+  border-radius: 4px;
+  padding: 8px;
+  height: 30px;
+
+  &:hover {
+    background-color: ${darken(0.1, '#fff')}
+  }
 `
 const SendNFTWarning = styled.div`
   margin-bottom: 1rem;
@@ -493,6 +511,18 @@ const EventProgressInner = styled.div.attrs(({ progress }: { progress: number })
   transition-duration: 0.5s;
 
   ${skeletonGradient}
+`
+
+const CheckOutLink = styled(NavLink)`
+  background-color: white;
+  border-radius: 4px;
+  padding: 6px 8px;
+  color: #36f;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 export function StakerMyStakes({
@@ -564,7 +594,7 @@ export function StakerMyStakes({
   const stakedNFTs = useMemo(() => {
     if (!shallowPositions) return
     const _positions = shallowPositions.filter((v) => v.onFarmingCenter)
-    return _positions.length > 0 ? _positions : undefined
+    return _positions.length > 0 ? _positions : []
   }, [shallowPositions])
 
   useEffect(() => {
@@ -672,13 +702,19 @@ export function StakerMyStakes({
     return 100 - (elapsed * 100) / length
   }
 
+  function CheckOut(link) {
+    return <CheckOutLink to={`/farming/${link}`}>
+    <span>Check out available farms →</span>
+    </CheckOutLink>
+  }
+
   function getTable(positions) {
     return positions.map((el, i) => (
       <PositionCard key={i} navigatedTo={hash == `#${el.id}`}>
         <PositionCardHeader>
           <NFTPositionIcon name={el.id}></NFTPositionIcon>
           <NFTPositionDescription>
-            <NFTPositionIndex>{`#${+el.id}`}</NFTPositionIndex>
+            <NFTPositionIndex>{`Position #${+el.id}`}</NFTPositionIndex>
             <NFTPositionLink
               href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`}
               rel="noopener noreferrer"
@@ -696,14 +732,14 @@ export function StakerMyStakes({
                 style={{ marginLeft: '-1rem' }}
               />
               <TokensNames>
-                <div>{el.pool.token0.symbol}</div>
-                <div>{el.pool.token1.symbol}</div>
+                <PositionCardStatsItemTitle style={{lineHeight: '20px'}}>Pool</PositionCardStatsItemTitle>
+                <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
               </TokensNames>
             </>
           </StakePool>
           {!el.incentive && !el.eternalFarming && (
-            <StakeButton
-              style={{ marginLeft: 'auto', width: 'unset' }}
+            <MoreButton
+              style={{ margin: 'auto 0 auto auto', width: 'unset' }}
               disabled={unstaking.id && unstaking.state !== 'done'}
               onClick={() => {
                 setUnstaking({ id: el.id, state: 'pending' })
@@ -711,19 +747,24 @@ export function StakerMyStakes({
               }}
             >
               {unstaking && unstaking.id === el.id && unstaking.state !== 'done' ? (
-                <span>
-                  <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto' }} />
-                </span>
+                <>
+                  <Loader size={'15px'} stroke={'#36f'} style={{ margin: 'auto' }} />
+                  <span style={{marginLeft: '5px'}}>Withdrawing</span>
+                </>
               ) : (
-                <span>{`Withdraw NFT`}</span>
+                <>
+                <ChevronsUp color={'#36f'} size={18}/>
+                <span style={{marginLeft: '5px'}}>{`Withdraw`}</span>
+                </>
               )}
-            </StakeButton>
+            </MoreButton>
           )}
           <MoreButton
-            style={{ marginLeft: el.incentive || el.eternalFarming ? 'auto' : '1rem' }}
+            style={{ margin: el.incentive || el.eternalFarming ? 'auto 0 auto auto' : 'auto 0 auto 1rem' }}
             onClick={() => setSendModal(el.L2tokenId)}
           >
-            <Send color={'white'} size={18} />
+            <Send color={'#36f'} size={15} />
+            <span style={{marginLeft: '6px'}}>Send</span>
           </MoreButton>
         </PositionCardHeader>
         <PositionCardBody>
@@ -760,9 +801,8 @@ export function StakerMyStakes({
                     </PositionCardStatsItem>
                   </PositionCardStatsItemWrapper>
                 </PositionCardStats>
-                {!el.started && <EventEndTime>Starts in 12:13:12</EventEndTime>}
-                {el.started && !el.ended && <EventEndTime>Ends in 123123</EventEndTime>}
-                {el.ended ? (
+                {!el.started && el.incentiveEndTime * 1000 > Date.now() && <EventEndTime>{`Ends in ${getCountdownTime(el.incentiveEndTime)}`}</EventEndTime>}
+                {el.ended || el.incentiveEndTime * 1000 < Date.now() ? (
                   <StakeButton
                     disabled={
                       gettingReward.id === el.id &&
@@ -800,7 +840,9 @@ export function StakerMyStakes({
                 )}
               </>
             ) : (
-              <PositionCardMock>No current events</PositionCardMock>
+              <PositionCardMock>
+                <CheckOut link={'future-events'}/>
+              </PositionCardMock>
             )}
           </PositionCardEvent>
           <PositionCardEvent>
@@ -876,7 +918,9 @@ export function StakerMyStakes({
                 </StakeActions>
               </>
             ) : (
-              <PositionCardMock>No eternal farm</PositionCardMock>
+              <PositionCardMock>
+                <CheckOut link={'eternal-farms'}/>
+                  </PositionCardMock>
             )}
           </PositionCardEvent>
         </PositionCardBody>
@@ -942,36 +986,9 @@ export function StakerMyStakes({
         </SendModal>
       </Modal>
       {refreshing || !shallowPositions ? (
-        <Stakes>
-          {[0, 1, 2].map((el, i) => (
-            <PositionCard key={i}>
-              <StakePool>
-                {/* {JSON.parse(el.pool)} */}
-                <TokenIcon skeleton></TokenIcon>
-                <TokenIcon skeleton></TokenIcon>
-                <TokensNames skeleton>
-                  <div>{}</div>
-                  <div>{}</div>
-                </TokensNames>
-              </StakePool>
-              {/* <StakeSeparator>for</StakeSeparator> */}
-              <StakeReward>
-                <TokenIcon skeleton>{}</TokenIcon>
-                <TokensNames skeleton>
-                  <div>{}</div>
-                  <div>{}</div>
-                </TokensNames>
-              </StakeReward>
-              {/* <StakeSeparator>by</StakeSeparator> */}
-              <StakeCountdown skeleton>
-                <div></div>
-              </StakeCountdown>
-              <StakeActions>
-                <StakeButton skeleton></StakeButton>
-              </StakeActions>
-            </PositionCard>
-          ))}
-        </Stakes>
+         <EmptyMock>
+           <Loader stroke={'white'} size={'20px'} />
+       </EmptyMock>
       ) : shallowPositions && shallowPositions.length === 0 ? (
         <EmptyMock>
           <div>No farms</div>
@@ -981,15 +998,9 @@ export function StakerMyStakes({
         <>
           {stakedNFTs && (
             <>
-              <Stakes>{getTable(stakedNFTs, true)}</Stakes>
+              <Stakes>{getTable(stakedNFTs)}</Stakes>
             </>
           )}
-          {/* {inactiveNFTs && (
-            <>
-              <PageTitle title={'Inactive NFT-s'}></PageTitle>
-              <Stakes>{getTable(inactiveNFTs, false)}</Stakes>
-            </>
-          )} */}
         </>
       ) : null}
     </>

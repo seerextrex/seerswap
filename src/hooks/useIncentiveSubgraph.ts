@@ -64,15 +64,10 @@ export function useIncentiveSubgraph() {
 
             const _event: any = {
                 ...events[i],
-                token0: pool.token0.symbol,
-                token0Address: pool.token0.id,
-                token1Address: pool.token1.id,
-                token1: pool.token1.symbol,
-                rewardAddress: events[i].rewardToken,
-                bonusRewardAddress: events[i].bonusRewardToken,
+                pool,
                 rewardToken,
-                reward: formatUnits(BigNumber.from(events[i].reward), rewardToken.decimals),
                 bonusRewardToken,
+                reward: formatUnits(BigNumber.from(events[i].reward), rewardToken.decimals),
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }
 
@@ -299,7 +294,11 @@ export function useIncentiveSubgraph() {
                     provider.getSigner()
                 )
 
+                console.log('HERE')
+
                 const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
+
+                console.log('HERE 2')
 
                 let _position = {
                     ...position,
@@ -331,7 +330,7 @@ export function useIncentiveSubgraph() {
 
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime, id } = await fetchIncentive(position.incentive)
 
-                    const rewardInfo = await finiteFarmingContract.getRewardInfo(
+                    const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
                         [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
                         +position.id
                     )
@@ -494,16 +493,22 @@ export function useIncentiveSubgraph() {
 
             if (errorTransferred) throw new Error(`${errorTransferred.name} ${errorTransferred.message}`)
 
-            //Hack
-            for (let position of positionsTransferred) {
+            const _positions = []
 
-                position = { ...position }
+            let _position
+
+            //Hack
+            for (const position of positionsTransferred) {
+
+                _position = { ...position, onFarmingCenter: position.onFarmingCenter }
+
+                _positions.push(_position)
 
             }
 
-            console.log('_POSITOSNSS', positionsTransferred)
+            console.log('_POSITOSNSS', _positions)
 
-            setPositionsForPool(positionsTransferred)
+            setPositionsForPool(_positions)
 
         } catch (err) {
             setPositionsForPoolLoading(null)

@@ -966,7 +966,7 @@ export function StakerMyStakes({
                         (gettingReward.id === el.id &&
                           gettingReward.farmingType === FarmingType.FINITE &&
                           gettingReward.state !== 'done') ||
-                        Math.round(el.incentiveReward) == 0
+                        el.incentiveReward === 0
                       }
                       onClick={() => {
                         setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
@@ -1029,7 +1029,7 @@ export function StakerMyStakes({
                   <StakeButton
                     disabled={
                       (eternalCollectReward.id === el.id && eternalCollectReward.state !== 'done') ||
-                      (Math.round(el.eternalEarned) == 0 && Math.round(el.eternalBonusEarned) == 0)
+                      (el.eternalEarned === 0 && el.eternalBonusEarned === 0)
                     }
                     onClick={() => {
                       setEternalCollectReward({ id: el.id, state: 'pending' })

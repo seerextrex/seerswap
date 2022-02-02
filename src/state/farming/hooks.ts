@@ -1,7 +1,7 @@
 import {useCallback} from "react";
 import {useAppDispatch, useAppSelector} from "../hooks";
 import {useClients} from "../../hooks/subgraph/useClients";
-import {ONE_FARMING_EVENT} from "../../utils/graphql-queries";
+import {ONE_ETERNAL_FARMING, ONE_FARMING_EVENT} from "../../utils/graphql-queries";
 import {isFarming} from "./actions";
 
 
@@ -16,11 +16,25 @@ export function useFarmingActionsHandlers(): {
 
     const isFarmingAdd = useCallback(async () => {
         try {
-            const {data: {incentives}, error: error} = await farmingClient.query({
+            const {data: {incentives}, error} = await farmingClient.query({
                 query: ONE_FARMING_EVENT(),
-                fetchPolicy: 'cache-first'
+                fetchPolicy: 'network-only'
             })
-           dispatch(isFarming({startTime: incentives[0]?.startTime, endTime: incentives[0]?.endTime}))
+
+            if (error) {
+                return
+            }
+
+            const {data: {eternalFarmings}, error: eternalError} = await farmingClient.query({
+                query: ONE_ETERNAL_FARMING(),
+                fetchPolicy: 'network-only'
+            })
+
+            if (eternalError) {
+                return
+            }
+
+           dispatch(isFarming({startTime: incentives[0]?.startTime, endTime: incentives[0]?.endTime, eternalFarmings: !!eternalFarmings[0]}))
         } catch (e) {
             console.log(e)
         }

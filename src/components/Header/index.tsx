@@ -374,7 +374,7 @@ export const FarmingInfoLabel = styled.span`
 `
 
 export default function Header() {
-  const { startTime } = useAppSelector((state) => state.farming)
+  const { startTime, eternalFarmings } = useAppSelector((state) => state.farming)
   const { account, chainId } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -407,7 +407,7 @@ export default function Header() {
   }
 
   useEffect(() => {
-    if (startTime.trim()) {
+    if (startTime.trim() || eternalFarmings) {
       setEvents(true)
     }
   }, [startTime])

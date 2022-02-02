@@ -12,6 +12,15 @@ query incentive {
 }
 `
 
+export const ONE_ETERNAL_FARMING = () => gql`
+  query eternalFarm {
+    eternalFarmings (where: { isDetached: false }, first: 1) {
+      startTime
+      endTime
+    }
+  }
+`
+
 export const FETCH_REWARDS = account => gql`
 query fetchRewards {
     rewards(orderBy: amount, orderDirection: desc, where: {owner: "${account}"}) {

@@ -159,7 +159,7 @@ export default function EternalFarmsPage({
               <EventsCardsRow key={i}>
                 {el.map((event, j) => (
                   <StakerEventCard
-                    key={i}
+                    key={j}
                     stakeHandler={() => setModalForPool(event)}
                     refreshing={refreshing}
                     now={0}

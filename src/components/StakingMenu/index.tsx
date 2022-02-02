@@ -89,7 +89,7 @@ const stakingMenuList = [
 ]
 
 export function StakingMenu() {
-  const {startTime} = useAppSelector(state => state.farming)
+  const {startTime, eternalFarmings} = useAppSelector(state => state.farming)
   return (
     <MenuList>
       {stakingMenuList.map((el, i) => (
@@ -103,7 +103,8 @@ export function StakingMenu() {
           }}
           key={i}
         >
-          {el.title === 'Future events' ? <FarmingInfoLabel isEvents={startTime.trim()}/> : null}
+          {el.title === 'Future events' && <FarmingInfoLabel isEvents={startTime.trim()}/> }
+          {el.title === 'Eternal farms' && <FarmingInfoLabel isEvents={eternalFarmings}/>}
           <MenuListItemIcon>{el.icon}</MenuListItemIcon>
           <MenuListItemTitle>{el.title}</MenuListItemTitle>
         </MenuListItem>

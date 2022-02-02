@@ -174,7 +174,7 @@ export default function StakingPage() {
               <BodyWrapper>
                 <Switch>
                   <Route exact path={`${path}`}>
-                    <Redirect to={`${path}/${account ? 'farms' : 'future-events'}`} />
+                    <Redirect to={`${path}/${account ? 'farms' : 'eternal-farms'}`} />
                   </Route>
                   <Route exact path={`${path}/rewards`}>
                     <Helmet>

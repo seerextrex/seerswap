@@ -415,13 +415,11 @@ export function StakeModal({
               <EmptyMock>
                 <Frown size={30} stroke={'#080064'} />
                 <p>No NFT-s for this pool</p>
-                <p
-                  style={{ textAlign: 'center' }}
-                >{`To take part in this farming event, you need to provide liquidity for ${pool.token0.id} / ${pool.token1.id}`}</p>
-                {/* <ProvideLiquidityLink to={linkToProviding}>
-                  <span>{`Provide liquidity for ${token0} / ${token1}`}</span>
+                <p style={{ textAlign: 'center' }}>{`To take part in this farming event, you need to`}</p>
+                <ProvideLiquidityLink to={linkToProviding}>
+                  <span>{`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
                   <ArrowRight style={{ marginLeft: '5px' }} size={16} />
-                </ProvideLiquidityLink> */}
+                </ProvideLiquidityLink>
               </EmptyMock>
             ) : chunkedPositions && chunkedPositions.length !== 0 ? (
               chunkedPositions.map((row, i) => (

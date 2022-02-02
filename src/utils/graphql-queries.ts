@@ -43,6 +43,7 @@ query fetchIncentive {
         endTime
         reward
         bonusReward
+        createdAtTimestamp
     }
 }`
 

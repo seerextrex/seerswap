@@ -8,6 +8,8 @@ import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FINITE_FARMING 
 import { useTransactionAdder } from "../state/transactions/hooks"
 import { useActiveWeb3React } from "./web3"
 import { calculateGasMargin } from "../utils/calculateGasMargin"
+import JSBI from 'jsbi'
+import { toHex } from "../lib/src/utils"
 
 export enum FarmingType {
     ETERNAL = 0,
@@ -39,6 +41,8 @@ export function useStakerHandlers() {
 
         if (!account || !provider) return
 
+        const MaxUint128 = toHex(JSBI.subtract(JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)), JSBI.BigInt(1)))
+
         const farmingCenterContract = new Contract(
             FARMING_CENTER[chainId],
             FARMING_CENTER_ABI,
@@ -52,7 +56,8 @@ export function useStakerHandlers() {
             const result = await farmingCenterContract.claimReward(
                 tokenAddress,
                 account,
-                amount
+                MaxUint128,
+                MaxUint128
             )
 
             addTransaction(result, {
@@ -213,17 +218,12 @@ export function useStakerHandlers() {
 
                 if (eventType === FarmingType.ETERNAL) {
 
-                    console.log('[INFINITE]', [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +selectedNFT.id)
-
                     result = await farmingCenterContract.enterEternalFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id
                     )
                 } else {
 
-                    console.log('[FINITE]', [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +selectedNFT.id)
                     result = await farmingCenterContract.enterFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id
@@ -352,8 +352,6 @@ export function useStakerHandlers() {
         setSendNFTL2(null)
 
         try {
-
-            console.log('L2 TOKEN ID', l2TokenId)
 
             const farmingCenterContract = new Contract(
                 FARMING_CENTER[chainId],

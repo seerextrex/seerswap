@@ -336,8 +336,6 @@ export function StakerEventCard({
 }) {
   const { account } = useActiveWeb3React()
 
-  console.log('POOLSS', pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime)
-
   const toggleWalletModal = useWalletModalToggle()
 
   return skeleton ? (
@@ -425,7 +423,7 @@ export function StakerEventCard({
       <RewardWrapper style={{ marginBottom: '6px' }}>
         <CurrencyLogo currency={{ address: rewardToken.id, symbol: rewardToken.symbol }} size={'35px'} />
         <div style={{ marginLeft: '1rem' }}>
-          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{ eternal ? 'Reward APR' : 'Reward'}</Subtitle>
+          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{eternal ? 'Reward APR' : 'Reward'}</Subtitle>
           <RewardSymbol>{rewardToken.symbol}</RewardSymbol>
         </div>
         {reward && (
@@ -452,7 +450,7 @@ export function StakerEventCard({
         <RewardWrapper>
           <CurrencyLogo currency={{ address: bonusRewardToken.id, symbol: bonusRewardToken.symbol }} size={'35px'} />
           <div style={{ marginLeft: '1rem' }}>
-            <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{ eternal ? 'Bonus APR' : 'Bonus'}</Subtitle>
+            <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{eternal ? 'Bonus APR' : 'Bonus'}</Subtitle>
             <RewardSymbol>{bonusRewardToken.symbol}</RewardSymbol>
           </div>
           {bonusReward && (

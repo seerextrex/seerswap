@@ -10,6 +10,7 @@ import { StakeModal } from '../../components/StakeModal'
 import { StakerEventCard } from '../../components/StakerEventCard'
 import { FARMING_CENTER } from '../../constants/addresses'
 import { FarmingType, useStakerHandlers } from '../../hooks/useStakerHandlers'
+import { useChunkedRows } from '../../utils/chunkForRows'
 
 const PageWrapper = styled.div`
   width: 100%;
@@ -84,6 +85,32 @@ const LoadingMock = styled.div`
   align-items: center;
   justify-content: center;
 `
+const EventsCards = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
+const EventsCardsRow = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 1rem;
+
+  & > * {
+    &:not(:last-of-type) {
+      margin-right: 1rem;
+    }
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`{
+    flex-direction: column;
+    margin-bottom: unset;
+    display: none;
+    &:first-of-type {
+      display: flex;
+    }
+  }`}
+`
 
 export default function EternalFarmsPage({
   data,
@@ -101,6 +128,8 @@ export default function EternalFarmsPage({
     fetchHandler()
   }, [])
 
+  const chunked = useChunkedRows(data, 3)
+
   return (
     <>
       <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
@@ -117,7 +146,7 @@ export default function EternalFarmsPage({
       <PageWrapper>
         {refreshing ? (
           <EmptyMock>
-            <Loader stroke='white' size='20px' />
+            <Loader stroke="white" size="20px" />
           </EmptyMock>
         ) : !data || data.length === 0 ? (
           <EmptyMock>
@@ -125,20 +154,65 @@ export default function EternalFarmsPage({
             <Frown size={35} stroke={'white'} />
           </EmptyMock>
         ) : !refreshing && data.length != 0 ? (
-          <EternalFarmsList>
-            {data.map((event, i) => (
-              <StakerEventCard
-                key={i}
-                stakeHandler={() => setModalForPool(event)}
-                refreshing={refreshing}
-                now={0}
-                eternal
-                event={event}
-              ></StakerEventCard>
+          <EventsCards>
+            {chunked.map((el, i) => (
+              <EventsCardsRow key={i}>
+                {el.map((event, j) => (
+                  <StakerEventCard
+                    key={i}
+                    stakeHandler={() => setModalForPool(event)}
+                    refreshing={refreshing}
+                    now={0}
+                    eternal
+                    event={event}
+                  ></StakerEventCard>
+                ))}
+              </EventsCardsRow>
             ))}
-          </EternalFarmsList>
+          </EventsCards>
         ) : null}
       </PageWrapper>
     </>
   )
 }
+
+// <PageWrapper>
+//         <EventsCards>
+//           {!data && refreshing ? (
+//             <EventsCards>
+//               <EventsCardsRow>
+//                 {[0, 1, 2].map((el, i) => (
+//                   <StakerEventCard skeleton key={i}></StakerEventCard>
+//                 ))}
+//               </EventsCardsRow>
+//               <EventsCardsRow>
+//                 {[0, 1].map((el, i) => (
+//                   <StakerEventCard skeleton key={i}></StakerEventCard>
+//                 ))}
+//               </EventsCardsRow>
+//             </EventsCards>
+//           ) : data && data.length !== 0 && !data.every((el) => el.startTime < Math.round(Date.now() / 1000)) ? (
+//             chunked.map((el, i) => (
+//               <EventsCardsRow key={i}>
+//                 {el.map(
+//                   (event, j) =>
+//                     isFuture(event.startTime, now) && (
+//                       <StakerEventCard
+//                         key={j}
+//                         stakeHandler={() => setModalForPool(event)}
+//                         refreshing={refreshing}
+//                         now={now}
+//                         event={event}
+//                       ></StakerEventCard>
+//                     )
+//                 )}
+//               </EventsCardsRow>
+//             ))
+//           ) : data && (data.length === 0 || data.every((el) => el.startTime < Math.round(Date.now() / 1000))) ? (
+//             <EmptyMock>
+//               <div>No future events</div>
+//               <Frown size={35} stroke={'white'} />
+//             </EmptyMock>
+//           ) : null}
+//         </EventsCards>
+//       </PageWrapper>

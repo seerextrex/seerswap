@@ -546,11 +546,11 @@ export function PositionPage({
     const collectAddress = isOnFarming ? FARMING_CENTER[chainId] : NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId]
 
     const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
-        tokenId: tokenId.toString(),
-        expectedCurrencyOwed0: feeValue0,
-        expectedCurrencyOwed1: feeValue1,
-        recipient: account,
-      })
+      tokenId: tokenId.toString(),
+      expectedCurrencyOwed0: feeValue0,
+      expectedCurrencyOwed1: feeValue1,
+      recipient: account,
+    })
 
     const txn = {
       to: collectAddress,

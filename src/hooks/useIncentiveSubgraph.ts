@@ -328,7 +328,7 @@ export function useIncentiveSubgraph() {
                         provider.getSigner()
                     )
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, id } = await fetchIncentive(position.incentive)
+                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, id } = await fetchIncentive(position.incentive)
 
                     const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
                         [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
@@ -348,6 +348,7 @@ export function useIncentiveSubgraph() {
                         incentiveEndTime: endTime,
                         started: startTime * 1000 < Date.now(),
                         ended: endTime * 1000 < Date.now(),
+                        createdAtTimestamp,
                         incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
                         incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
                     }
@@ -392,8 +393,6 @@ export function useIncentiveSubgraph() {
                 _positions.push(_position)
 
             }
-
-            console.log('[POSITIONSasda]', _positions)
 
             setTransferredPositions(_positions)
 
@@ -506,8 +505,6 @@ export function useIncentiveSubgraph() {
 
             }
 
-            console.log('_POSITOSNSS', _positions)
-
             setPositionsForPool(_positions)
 
         } catch (err) {
@@ -576,8 +573,6 @@ export function useIncentiveSubgraph() {
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)
 
-                console.log(farming.pool, pool)
-
                 _eternalFarmings = [
                     ..._eternalFarmings,
                     {
@@ -589,8 +584,6 @@ export function useIncentiveSubgraph() {
                 ]
 
             }
-
-            console.log('[ETERNAL FARMINGs]', _eternalFarmings)
 
             setEternalFarms(_eternalFarmings)
 

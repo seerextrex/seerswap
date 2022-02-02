@@ -23,7 +23,7 @@ import StakerMyStakesMobileSkeleton from './StakerMyStakesMobileSkeleton'
 
 import { isMobile } from 'react-device-detect'
 import { log } from 'util'
-import { darken } from 'polished'
+import { darken, position } from 'polished'
 import CurrencyLogo from '../CurrencyLogo'
 
 import gradient from 'random-gradient'
@@ -131,9 +131,10 @@ const PositionCardHeader = styled.div`
 `
 
 const NFTPositionIcon = styled.div<{ name: string; skeleton: boolean }>`
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
+  margin-top: 2px;
   background: ${({ name }) => (name ? gradient('token' + name) : '')};
   ${({ skeleton }) =>
     skeleton &&
@@ -144,7 +145,7 @@ const NFTPositionIcon = styled.div<{ name: string; skeleton: boolean }>`
 `
 const NFTPositionDescription = styled.div<{ skeleton: boolean }>`
   margin-left: 10px;
-  line-height: 20px;
+  line-height: 18px;
 
   ${({ skeleton }) =>
     skeleton &&
@@ -236,10 +237,12 @@ const PositionCardStatsItemValue = styled.div`
 
 const PositionCardMock = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  align-items: flex-end;
+  position: relative;
+  justify-content: flex-start;
+  width: calc(100% + 2rem);
   height: 100%;
+  margin: 0 -1rem -1rem;
   min-height: 92px;
 `
 
@@ -329,6 +332,20 @@ export const StakeCountdown = styled.div`
           `
         : null}
   }
+`
+
+const StakeBottomWrapper = styled.div`
+  display: flex;
+`
+
+const StakeCountdownWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`
+
+const StakeCountdownProgress = styled.div<{ started: boolean }>`
+  width: 100%;
+  margin-right: ${({ started }) => (started ? '0' : '1rem')};
 `
 
 const StakeActions = styled.div`
@@ -471,7 +488,7 @@ export const MoreButton = styled.button`
   height: 30px;
 
   &:hover {
-    background-color: ${darken(0.1, '#fff')}
+    background-color: ${darken(0.1, '#fff')};
   }
 `
 const SendNFTWarning = styled.div`
@@ -496,7 +513,6 @@ const EventEndTime = styled.div`
   line-height: 16px;
   font-size: 13px;
   position: relative;
-  text-align: center;
   margin-bottom: 3px;
 `
 
@@ -514,15 +530,24 @@ const EventProgressInner = styled.div.attrs(({ progress }: { progress: number })
 `
 
 const CheckOutLink = styled(NavLink)`
-  background-color: white;
-  border-radius: 4px;
-  padding: 6px 8px;
-  color: #36f;
+  background-color: #218add;
+  border-radius: 0 0 8px 8px;
+  padding: 6px 1rem;
+  width: 100%;
+  color: white;
+  font-size: 14px;
   text-decoration: none;
 
   &:hover {
     text-decoration: underline;
   }
+`
+
+const PositionNotDepositedText = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translateX(-50%);
 `
 
 export function StakerMyStakes({
@@ -702,10 +727,12 @@ export function StakerMyStakes({
     return 100 - (elapsed * 100) / length
   }
 
-  function CheckOut(link) {
-    return <CheckOutLink to={`/farming/${link}`}>
-    <span>Check out available farms →</span>
-    </CheckOutLink>
+  function CheckOut({ link }: { link: string }) {
+    return (
+      <CheckOutLink to={`/farming/${link}`}>
+        <span>Check out available farms →</span>
+      </CheckOutLink>
+    )
   }
 
   function getTable(positions) {
@@ -725,14 +752,14 @@ export function StakerMyStakes({
           </NFTPositionDescription>
           <StakePool>
             <>
-              <CurrencyLogo currency={{ address: el.token0, symbol: el.pool.token0.symbol }} size={'40px'} />
+              <CurrencyLogo currency={{ address: el.token0, symbol: el.pool.token0.symbol }} size={'35px'} />
               <CurrencyLogo
                 currency={{ address: el.token1, symbol: el.pool.token1.symbol }}
-                size={'40px'}
+                size={'35px'}
                 style={{ marginLeft: '-1rem' }}
               />
               <TokensNames>
-                <PositionCardStatsItemTitle style={{lineHeight: '20px'}}>Pool</PositionCardStatsItemTitle>
+                <PositionCardStatsItemTitle style={{ lineHeight: '20px' }}>Pool</PositionCardStatsItemTitle>
                 <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
               </TokensNames>
             </>
@@ -749,12 +776,12 @@ export function StakerMyStakes({
               {unstaking && unstaking.id === el.id && unstaking.state !== 'done' ? (
                 <>
                   <Loader size={'15px'} stroke={'#36f'} style={{ margin: 'auto' }} />
-                  <span style={{marginLeft: '5px'}}>Withdrawing</span>
+                  <span style={{ marginLeft: '5px' }}>Withdrawing</span>
                 </>
               ) : (
                 <>
-                <ChevronsUp color={'#36f'} size={18}/>
-                <span style={{marginLeft: '5px'}}>{`Withdraw`}</span>
+                  <ChevronsUp color={'#36f'} size={18} />
+                  <span style={{ marginLeft: '5px' }}>{`Withdraw`}</span>
                 </>
               )}
             </MoreButton>
@@ -764,7 +791,7 @@ export function StakerMyStakes({
             onClick={() => setSendModal(el.L2tokenId)}
           >
             <Send color={'#36f'} size={15} />
-            <span style={{marginLeft: '6px'}}>Send</span>
+            <span style={{ marginLeft: '6px' }}>Send</span>
           </MoreButton>
         </PositionCardHeader>
         <PositionCardBody>
@@ -775,7 +802,7 @@ export function StakerMyStakes({
                 <PositionCardStats>
                   <PositionCardStatsItemWrapper>
                     <CurrencyLogo
-                      size={'40px'}
+                      size={'35px'}
                       currency={{ address: el.incentiveRewardToken?.id, symbol: el.incentiveRewardToken?.symbol }}
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
@@ -787,7 +814,7 @@ export function StakerMyStakes({
                   </PositionCardStatsItemWrapper>
                   <PositionCardStatsItemWrapper>
                     <CurrencyLogo
-                      size={'40px'}
+                      size={'35px'}
                       currency={{
                         address: el.incentiveBonusRewardToken?.id,
                         symbol: el.incentiveBonusRewardToken?.symbol,
@@ -801,47 +828,85 @@ export function StakerMyStakes({
                     </PositionCardStatsItem>
                   </PositionCardStatsItemWrapper>
                 </PositionCardStats>
-                {!el.started && el.incentiveEndTime * 1000 > Date.now() && <EventEndTime>{`Ends in ${getCountdownTime(el.incentiveEndTime)}`}</EventEndTime>}
-                {el.ended || el.incentiveEndTime * 1000 < Date.now() ? (
-                  <StakeButton
-                    disabled={
-                      gettingReward.id === el.id &&
+                <StakeBottomWrapper>
+                  {!el.ended && el.incentiveEndTime * 1000 > Date.now() && (
+                    <StakeCountdownWrapper>
+                      <StakeCountdownProgress started={!el.started && el.incentiveStartTime * 1000 > Date.now()}>
+                        {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
+                          <EventEndTime>{`Starts in ${getCountdownTime(el.incentiveStartTime)}`}</EventEndTime>
+                        )}
+                        {(el.started || el.incentiveStartTime * 1000 < Date.now()) && (
+                          <EventEndTime>{`Ends in ${getCountdownTime(el.incentiveEndTime)}`}</EventEndTime>
+                        )}
+                        <EventProgress>
+                          {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
+                            <EventProgressInner
+                              progress={getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}
+                            ></EventProgressInner>
+                          ) : (
+                            <EventProgressInner
+                              progress={getProgress(el.incentiveStartTime, el.incentiveEndTime, now)}
+                            ></EventProgressInner>
+                          )}
+                        </EventProgress>
+                      </StakeCountdownProgress>
+                      {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
+                        <StakeButton
+                          disabled={
+                            gettingReward.id === el.id &&
+                            gettingReward.farmingType === FarmingType.FINITE &&
+                            gettingReward.state !== 'done'
+                          }
+                          onClick={() => {
+                            setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
+                            getRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
+                          }}
+                        >
+                          {gettingReward &&
+                          gettingReward.farmingType === FarmingType.FINITE &&
+                          gettingReward.id === el.id &&
+                          gettingReward.state !== 'done' ? (
+                            <span>
+                              <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
+                            </span>
+                          ) : (
+                            <span>{`Undeposit`}</span>
+                          )}
+                        </StakeButton>
+                      )}
+                    </StakeCountdownWrapper>
+                  )}
+                  {(el.ended || el.incentiveEndTime * 1000 < Date.now()) && (
+                    <StakeButton
+                      disabled={
+                        (gettingReward.id === el.id &&
+                          gettingReward.farmingType === FarmingType.FINITE &&
+                          gettingReward.state !== 'done') ||
+                        el.incentiveReward === 0
+                      }
+                      onClick={() => {
+                        setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
+                        getRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
+                      }}
+                    >
+                      {gettingReward &&
                       gettingReward.farmingType === FarmingType.FINITE &&
-                      gettingReward.state !== 'done'
-                    }
-                    onClick={() => {
-                      setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
-                      getRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
-                    }}
-                  >
-                    {gettingReward &&
-                    gettingReward.farmingType === FarmingType.FINITE &&
-                    gettingReward.id === el.id &&
-                    gettingReward.state !== 'done' ? (
-                      <span>
-                        <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
-                      </span>
-                    ) : (
-                      <span>{`Collect rewards & Undeposit`}</span>
-                    )}
-                  </StakeButton>
-                ) : (
-                  <EventProgress>
-                    {el.started ? (
-                      <EventProgressInner
-                        progress={getProgress(el.incentiveStartTime, el.incentiveEndTime, now)}
-                      ></EventProgressInner>
-                    ) : (
-                      <EventProgressInner
-                        progress={getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}
-                      ></EventProgressInner>
-                    )}
-                  </EventProgress>
-                )}
+                      gettingReward.id === el.id &&
+                      gettingReward.state !== 'done' ? (
+                        <span>
+                          <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
+                        </span>
+                      ) : (
+                        <span>{`Collect rewards & Undeposit`}</span>
+                      )}
+                    </StakeButton>
+                  )}
+                </StakeBottomWrapper>
               </>
             ) : (
               <PositionCardMock>
-                <CheckOut link={'future-events'}/>
+                <PositionNotDepositedText>Position is not deposited</PositionNotDepositedText>
+                <CheckOut link={'future-events'} />
               </PositionCardMock>
             )}
           </PositionCardEvent>
@@ -852,7 +917,7 @@ export function StakerMyStakes({
                 <PositionCardStats>
                   <PositionCardStatsItemWrapper>
                     <CurrencyLogo
-                      size={'40px'}
+                      size={'35px'}
                       currency={{ address: el.eternalRewardToken.id, symbol: el.eternalRewardToken.symbol }}
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
@@ -864,7 +929,7 @@ export function StakerMyStakes({
                   </PositionCardStatsItemWrapper>
                   <PositionCardStatsItemWrapper>
                     <CurrencyLogo
-                      size={'40px'}
+                      size={'35px'}
                       currency={{ address: el.eternalBonusRewardToken.id, symbol: el.eternalBonusRewardToken.symbol }}
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
@@ -919,8 +984,9 @@ export function StakerMyStakes({
               </>
             ) : (
               <PositionCardMock>
-                <CheckOut link={'eternal-farms'}/>
-                  </PositionCardMock>
+                <PositionNotDepositedText>Position is not deposited</PositionNotDepositedText>
+                <CheckOut link={'eternal-farms'} />
+              </PositionCardMock>
             )}
           </PositionCardEvent>
         </PositionCardBody>
@@ -986,9 +1052,9 @@ export function StakerMyStakes({
         </SendModal>
       </Modal>
       {refreshing || !shallowPositions ? (
-         <EmptyMock>
-           <Loader stroke={'white'} size={'20px'} />
-       </EmptyMock>
+        <EmptyMock>
+          <Loader stroke={'white'} size={'20px'} />
+        </EmptyMock>
       ) : shallowPositions && shallowPositions.length === 0 ? (
         <EmptyMock>
           <div>No farms</div>

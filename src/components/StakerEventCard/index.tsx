@@ -1,16 +1,13 @@
 import { Plus } from 'react-feather'
 import styled, { keyframes, css } from 'styled-components/macro'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { deviceSizes } from '../../pages/styled'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { useAllTransactions } from '../../state/transactions/hooks'
 import { stringToColour } from '../../utils/stringToColour'
-import { getCountdownTime, getStatic, getStaticTime } from '../../utils/time'
+import { getCountdownTime } from '../../utils/time'
 import Loader from '../Loader'
-import AlgebraLogo from '../../assets/images/algebra-logo.png'
-import USDCLogo from '../../assets/images/usdc-logo.png'
-import {darken} from "polished";
-import CurrencyLogo from "../CurrencyLogo";
+import { darken } from 'polished'
+import CurrencyLogo from '../CurrencyLogo'
+import { FarmingType } from '../../hooks/useStakerHandlers'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -52,7 +49,7 @@ const LoadingShim = styled.div`
   z-index: 5;
 `
 
-const Card = styled.div`
+const Card = styled.div<{ refreshing: boolean; skeleton: boolean }>`
   display: flex;
   position: relative;
   flex-direction: column;
@@ -88,7 +85,7 @@ const CardHeader = styled.div`
   margin-bottom: 1rem;
 `
 
-const TokenIcon = styled.div`
+const TokenIcon = styled.div<{ logo: string; name: string; skeleton: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,7 +112,7 @@ const TokensIcons = styled.div`
   margin-right: 1rem;
 `
 
-const Subtitle = styled.div`
+const Subtitle = styled.div<{ skeleton: boolean }>`
   color: white;
   text-transform: uppercase;
   font-size: 12px;
@@ -135,7 +132,7 @@ const Subtitle = styled.div`
       : null}
 `
 
-const PoolsSymbols = styled.div`
+const PoolsSymbols = styled.div<{ skeleton: boolean }>`
   ${({ skeleton }) =>
     skeleton
       ? css`
@@ -148,7 +145,7 @@ const PoolsSymbols = styled.div`
       : null}
 `
 
-const RewardWrapper = styled.div`
+const RewardWrapper = styled.div<{ skeleton: boolean }>`
   display: flex;
   padding: 8px;
   background-color: #2b5e91;
@@ -317,22 +314,8 @@ export function StakerEventCard({
   refreshing,
   stakeHandler,
   now,
-  event: {
-    token0,
-    token1,
-    rewardToken,
-    bonusRewardToken,
-    token0Address,
-    token1Address,
-    rewardAddress,
-    bonusRewardAddress,
-    bonusReward,
-    createdAtTimestamp,
-    reward,
-    startTime,
-    endTime,
-    participants,
-  } = {},
+  event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime } = {},
+  eternal,
 }: {
   active?: boolean
   skeleton?: any
@@ -340,20 +323,16 @@ export function StakerEventCard({
   refreshing: boolean
   stakeHandler: () => void
   event?: {
-    token0?: string
-    token1?: string
+    pool?: any
     createdAtTimestamp?: string
-    rewardToken?: string
-    rewardAddress?: string
-    token0Address?: string
-    token1Address?: string
-    bonusRewardAddress?: string
+    rewardToken?: any
+    bonusRewardToken?: any
     reward?: number
+    bonusReward?: number
     startTime?: number
     endTime?: number
-    bonusReward?: number
-    participants?: number
   }
+  eternal?: boolean
 }) {
   const { account } = useActiveWeb3React()
 
@@ -433,23 +412,27 @@ export function StakerEventCard({
       )}
       <CardHeader>
         <TokensIcons>
-            <CurrencyLogo currency={{address: token0Address, symbol: token0}} size={'35px'}/>
-            <CurrencyLogo currency={{address: token1Address, symbol: token1}} size={'35px'}/>
+          <CurrencyLogo currency={{ address: pool.token0.id, symbol: pool.token0.symbol }} size={'35px'} />
+          <CurrencyLogo currency={{ address: pool.token1.id, symbol: pool.token1.symbol }} size={'35px'} />
         </TokensIcons>
         <div>
           <Subtitle>POOL</Subtitle>
-          <PoolsSymbols>{`${token0}/${token1}`}</PoolsSymbols>
+          <PoolsSymbols>{`${pool.token0.symbol}/${pool.token1.symbol}`}</PoolsSymbols>
         </div>
       </CardHeader>
       <RewardWrapper style={{ marginBottom: '6px' }}>
-          <CurrencyLogo currency={{address: rewardAddress, symbol: rewardToken}} size={'35px'}/>
+        <CurrencyLogo currency={{ address: rewardToken.id, symbol: rewardToken.symbol }} size={'35px'} />
         <div style={{ marginLeft: '1rem' }}>
-          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Reward</Subtitle>
-          <RewardSymbol>{rewardToken}</RewardSymbol>
+          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{eternal ? 'Reward APR' : 'Reward'}</Subtitle>
+          <RewardSymbol>{rewardToken.symbol}</RewardSymbol>
         </div>
         {reward && (
           <RewardAmount title={reward}>
-            {('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}
+            {eternal ? (
+              <span>200%</span>
+            ) : (
+              <span>{`${('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}`}</span>
+            )}
           </RewardAmount>
         )}
       </RewardWrapper>
@@ -467,58 +450,74 @@ export function StakerEventCard({
           <Plus style={{ display: 'block' }} size={18}></Plus>
         </div>
       </div>
-        {bonusReward > 0 &&
-            <RewardWrapper>
-            <CurrencyLogo currency={{address: bonusRewardAddress, symbol: bonusRewardAddress}} size={'35px'}/>
-            <div style={{ marginLeft: '1rem' }}>
-                <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>Bonus</Subtitle>
-                <RewardSymbol>{bonusRewardToken}</RewardSymbol>
-            </div>
-            {bonusReward && (
-                <RewardAmount title={bonusReward}>
-                    {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
-                </RewardAmount>
-            )}
-        </RewardWrapper>}
-      <StakeInfo active>
-        <div>
-          <>
-            <Subtitle>Start</Subtitle>
-            <div>
-              <span>{startTime && new Date(startTime * 1000).toLocaleString().split(',')[0]}</span>
-            </div>
-            <div>
-              <span>{startTime && `${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
-            </div>
-          </>
-        </div>
+      {bonusReward > 0 && (
+        <RewardWrapper>
+          <CurrencyLogo currency={{ address: bonusRewardToken.id, symbol: bonusRewardToken.symbol }} size={'35px'} />
+          <div style={{ marginLeft: '1rem' }}>
+            <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{eternal ? 'Bonus APR' : 'Bonus'}</Subtitle>
+            <RewardSymbol>{bonusRewardToken.symbol}</RewardSymbol>
+          </div>
+          {bonusReward && (
+            <RewardAmount title={bonusReward}>
+              {eternal ? (
+                <span>200%</span>
+              ) : (
+                <span>{`${('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}`}</span>
+              )}
+            </RewardAmount>
+          )}
+        </RewardWrapper>
+      )}
+      {!eternal && (
+        <StakeInfo active>
+          <div>
+            <>
+              <Subtitle>Start</Subtitle>
+              <div>
+                <span>{startTime && new Date(startTime * 1000).toLocaleString().split(',')[0]}</span>
+              </div>
+              <div>
+                <span>{startTime && `${new Date(startTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>
+              </div>
+            </>
+          </div>
 
-        <div>
-          <Subtitle>End</Subtitle>
           <div>
-            <span>{endTime && new Date(endTime * 1000).toLocaleString().split(',')[0]}</span>
+            <Subtitle>End</Subtitle>
+            <div>
+              <span>{endTime && new Date(endTime * 1000).toLocaleString().split(',')[0]}</span>
+            </div>
+            <div>
+              {endTime && <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>}
+            </div>
           </div>
-          <div>
-            {endTime && <span>{`${new Date(endTime * 1000).toLocaleString().split(',')[1].slice(0, -3)}`}</span>}
-          </div>
-        </div>
-      </StakeInfo>
-      <EventEndTime>
-        {active ? (
-          <span>{`ends in ${getCountdownTime(endTime, now)}`}</span>
-        ) : (
-          <span>{`starts in ${getCountdownTime(startTime, now)}`}</span>
-        )}
-      </EventEndTime>
-      <EventProgress>
-        {active ? (
-          <EventProgressInner progress={getProgress(startTime, endTime, now)}></EventProgressInner>
-        ) : (
-          <EventProgressInner progress={getProgress(createdAtTimestamp, startTime, now)}></EventProgressInner>
-        )}
-      </EventProgress>
+        </StakeInfo>
+      )}
+      {!eternal && (
+        <EventEndTime>
+          {active ? (
+            <span>{`ends in ${getCountdownTime(endTime, now)}`}</span>
+          ) : (
+            <span>{`starts in ${getCountdownTime(startTime, now)}`}</span>
+          )}
+        </EventEndTime>
+      )}
+      {!eternal && (
+        <EventProgress>
+          {active ? (
+            <EventProgressInner progress={getProgress(startTime, endTime, now)}></EventProgressInner>
+          ) : (
+            <EventProgressInner progress={getProgress(createdAtTimestamp, startTime, now)}></EventProgressInner>
+          )}
+        </EventProgress>
+      )}
       {account && !active ? (
-        <StakeButton onClick={stakeHandler} skeleton={skeleton} refreshing={refreshing}>
+        <StakeButton
+          style={{ marginTop: eternal ? '0' : '10px' }}
+          onClick={stakeHandler}
+          skeleton={skeleton}
+          refreshing={refreshing}
+        >
           Farm
         </StakeButton>
       ) : (

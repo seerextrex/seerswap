@@ -26,6 +26,7 @@ import StakerCreateEventRequest from '../../components/StakerCreateEventRequest'
 
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
+import EternalFarmsPage from '../EternalFarmsPage'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1000px;
@@ -136,8 +137,14 @@ const ConnectWalletButton = styled.button`
 export default function StakingPage() {
   const { account } = useActiveWeb3React()
 
-  const { fetchRewards, fetchCurrentEvents, fetchFutureEvents, fetchTransferredPositions } =
-    useIncentiveSubgraph() || {}
+  const {
+    fetchRewards,
+    fetchCurrentEvents,
+    fetchFutureEvents,
+    fetchTransferredPositions,
+    fetchEternalFarms,
+    fetchPositionsOnEternalFarmings,
+  } = useIncentiveSubgraph() || {}
 
   const [now, setNow] = useState(Date.now())
 
@@ -207,7 +214,10 @@ export default function StakingPage() {
                       <StakerMyStakes
                         data={fetchTransferredPositions?.transferredPositions}
                         refreshing={fetchTransferredPositions?.transferredPositionsLoading}
-                        fetchHandler={() => fetchTransferredPositions?.fetchTransferredPositionsFn(true)}
+                        fetchHandler={() => {
+                          fetchTransferredPositions?.fetchTransferredPositionsFn(true)
+                          // fetchPositionsOnEternalFarmings?.fetchPositionsOnEternalFarmingFn(true)
+                        }}
                         now={now}
                       ></StakerMyStakes>
                     ) : (
@@ -250,20 +260,21 @@ export default function StakingPage() {
                       now={now}
                     ></CurrentEventsPage>
                   </Route>
-                  <Route
-                    exact
-                    strict
-                    render={(props) => (
-                      <>
-                        <Helmet>
-                          <title>Algebra — Farming • Create event</title>
-                        </Helmet>
-                        <PageTitle title={'Create event'}></PageTitle>
-                        <StakerCreateEventRequest />
-                      </>
-                    )}
-                    path={`${path}/create-event`}
-                  ></Route>
+                  <Route exact path={`${path}/eternal-farms`}>
+                    <Helmet>
+                      <title>Algebra — Farming • Eternal farms</title>
+                    </Helmet>
+                    <PageTitle
+                      title={'Eternal farms'}
+                      refreshHandler={() => fetchCurrentEvents?.fetchCurrentEventsFn(true)}
+                      isLoading={fetchCurrentEvents?.currentEventsLoading}
+                    ></PageTitle>
+                    <EternalFarmsPage
+                      data={fetchEternalFarms?.eternalFarms}
+                      refreshing={fetchEternalFarms?.eternalFarmsLoading}
+                      fetchHandler={() => fetchEternalFarms.fetchEternalFarmsFn(true)}
+                    ></EternalFarmsPage>
+                  </Route>
                 </Switch>
               </BodyWrapper>
             </MainContentWrapper>

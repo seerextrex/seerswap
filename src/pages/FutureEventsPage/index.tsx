@@ -8,6 +8,7 @@ import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
+import { FarmingType } from '../../hooks/useStakerHandlers'
 
 const PageWrapper = styled.div`
   width: 100%;
@@ -77,7 +78,13 @@ export function FutureEventsPage({
   return (
     <>
       <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)}>
-        {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}></StakeModal>}
+        {modalForPool && (
+          <StakeModal
+            event={modalForPool}
+            closeHandler={() => setModalForPool(null)}
+            farmingType={FarmingType.FINITE}
+          ></StakeModal>
+        )}
       </Modal>
       <PageWrapper>
         <EventsCards>

@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Calendar, Zap, PlusCircle, Award, AlignJustify } from 'react-feather'
+import { Calendar, Zap, PlusCircle, Award, AlignJustify, Codesandbox } from 'react-feather'
 import { Link, NavLink } from 'react-router-dom'
 import { deviceSizes } from '../../pages/styled'
 import {FarmingInfoLabel} from "../Header";
@@ -82,9 +82,9 @@ const stakingMenuList = [
     link: 'future-events',
   },
   {
-    title: 'Create event',
-    icon: <PlusCircle size={18}></PlusCircle>,
-    link: 'create-event',
+    title: 'Eternal farms',
+    icon: <Codesandbox size={18}></Codesandbox>,
+    link: 'eternal-farms',
   },
 ]
 

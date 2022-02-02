@@ -75,7 +75,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
   const theme = useTheme()
   const { account, chainId, library } = useActiveWeb3React()
 
-  const gasPrice = useAppSelector((state) => state.application.gasPrice)
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
 
   // flag for receiving WETH
   const [receiveWETH, setReceiveWETH] = useState(false)

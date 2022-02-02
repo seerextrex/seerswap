@@ -137,8 +137,7 @@
     "graphql:generate": "graphql-codegen --config codegen.yml",
     "postinstall": "yarn compile-contract-types",
     "start": "yarn compile-contract-types && react-scripts start --host 0.0.0.0",
-    "test": "react-scripts test --env=./custom-test-env.js",
-    "prestart": "touch src/locales/en-US.po"
+    "test": "react-scripts test --env=./custom-test-env.js"
   },
   "eslintConfig": {
     "extends": "react-app",

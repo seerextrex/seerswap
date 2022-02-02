@@ -35,7 +35,7 @@ import { WMATIC_EXTENDED } from '../constants/tokens'
 import { useActiveWeb3React } from './web3'
 
 import NewQuoterABI from '../abis/quoter.json'
-import { STAKER_ADDRESS } from "../constants/addresses"
+import { FINITE_FARMING } from "../constants/addresses"
 
 // returns null on errors
 export function useContract<T extends Contract = Contract>(
@@ -116,7 +116,7 @@ export function useV3NFTPositionManagerContract(withSignerIfPossible?: boolean):
 
 export function useStaker() {
   const { chainId } = useActiveWeb3React()
-  return useContract(STAKER_ADDRESS, STAKER_ABI)
+  return useContract(FINITE_FARMING, STAKER_ABI)
 }
 
 export function useV3Quoter() {

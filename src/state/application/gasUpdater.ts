@@ -21,7 +21,7 @@ export default function GasUpdater(): null {
     }, [dispatch, block])
 
     useEffect(() => {
-        if (!gasPrice) return
+        if (!gasPrice.fetched) return
         dispatch(updateGasPrice(gasPrice))
     }, [gasPrice, gasPriceLoading])
 

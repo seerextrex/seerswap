@@ -16,7 +16,7 @@ export interface ApplicationState {
   // used by RTK-Query to build dynamic subgraph urls
   readonly chainId: number | null
   readonly blockNumber: { readonly [chainId: number]: number }
-  readonly gasPrice: number
+  readonly gasPrice: { fetched: number, override: boolean }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
 }
@@ -24,7 +24,7 @@ export interface ApplicationState {
 const initialState: ApplicationState = {
   chainId: null,
   blockNumber: {},
-  gasPrice: 70,
+  gasPrice: {fetched: 70, override: true},
   popupList: [],
   openModal: null,
 }

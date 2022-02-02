@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react'
+import { useEffect, useMemo } from 'react'
 import { Position } from 'lib/src'
 import Badge from 'components/Badge'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -22,7 +22,7 @@ import { Bound } from 'state/mint/v3/actions'
 
 import { ArrowRight } from 'react-feather'
 import usePrevious from '../../hooks/usePrevious'
-import {darken} from "polished";
+import { darken } from 'polished'
 
 const LinkRow = styled(Link)`
   align-items: center;
@@ -84,13 +84,13 @@ const OnFarmingBadge = styled(Link)`
   border-radius: 6px;
   text-decoration: none;
   margin-right: auto;
-  
-  ${({theme}) => theme.mediaWidth.upToSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   margin-right: 1rem;
   `}
-  
+
   &:hover {
-    background-color: ${({theme}) => darken(0.05,'#30b2e6')};
+    background-color: ${({ theme }) => darken(0.05, '#30b2e6')};
   }
 `
 
@@ -175,7 +175,7 @@ const StatusRow = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-end;
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   width: fit-content;
   `}
 `
@@ -242,7 +242,6 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 }
 
 export default function PositionListItem({ positionDetails }: PositionListItemProps) {
-
   const {
     token0: token0Address,
     token1: token1Address,
@@ -252,7 +251,6 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     tickUpper,
     onFarming,
   } = positionDetails || {}
-
 
   const prevPositionDetails = usePrevious({ ...positionDetails })
   const {
@@ -269,8 +267,6 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     }
     return { ...positionDetails }
   }, [positionDetails])
-
-
 
   const token0 = useToken(_token0Address)
   const token1 = useToken(_token1Address)
@@ -315,14 +311,14 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
   // check if price is within range
   const outOfRange: boolean = _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false
 
-  const positionSummaryLink = '/pool/' + positionDetails.tokenId
+  const positionSummaryLink = `/pool/${positionDetails.tokenId}${_onFarming ? '?onFarming=true' : ''}`
 
   const farmingLink = `/farming/farms#${positionDetails.tokenId}`
 
   const removed = _liquidity?.eq(0)
 
   return (
-    <LinkRow to={positionSummaryLink} onFarming={_onFarming}>
+    <LinkRow to={positionSummaryLink}>
       <PositionHeader>
         <PrimaryPositionIdData>
           <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin />
@@ -336,10 +332,10 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
         </PrimaryPositionIdData>
         <StatusRow>
           {_onFarming && (
-              <OnFarmingBadge to={farmingLink}>
-                <span>Farming</span>
-                <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
-              </OnFarmingBadge>
+            <OnFarmingBadge to={farmingLink}>
+              <span>Farming</span>
+              <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
+            </OnFarmingBadge>
           )}
           <StatusBadge removed={removed} inRange={!outOfRange} />
         </StatusRow>

@@ -5,7 +5,7 @@ import { PoolState, usePool } from 'hooks/usePools'
 import { useToken } from 'hooks/Tokens'
 import { useDerivedPositionInfo } from 'hooks/useDerivedPositionInfo'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps, useLocation } from 'react-router-dom'
 import { unwrappedToken } from 'utils/unwrappedToken'
 import { usePositionTokenURI } from '../../hooks/usePositionTokenURI'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
@@ -50,6 +50,13 @@ import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 import ReactGA from 'react-ga'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import { useAppSelector } from '../../state/hooks'
+import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants/addresses'
+import { Interface } from 'ethers/lib/utils'
+
+import FARMING_CENTER_ABI from 'abis/farming-center'
+import { toHex } from '../../lib/src'
+import { Contract } from 'ethers'
+import JSBI from 'jsbi'
 
 const PageWrapper = styled.div`
   min-width: 800px;
@@ -366,19 +373,30 @@ const useInverter = ({
   }
 }
 
+function useQuery() {
+  const { search } = useLocation()
+
+  return useMemo(() => new URLSearchParams(search), [search])
+}
+
 export function PositionPage({
   match: {
     params: { tokenId: tokenIdFromUrl },
   },
 }: RouteComponentProps<{ tokenId?: string }>) {
   const { chainId, account, library } = useActiveWeb3React()
+
+  const query = useQuery()
+
+  const isOnFarming = useMemo(() => query.get('onFarming'), [tokenIdFromUrl, query])
+
   const theme = useTheme()
 
   const parsedTokenId = tokenIdFromUrl ? BigNumber.from(tokenIdFromUrl) : undefined
   const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
   const { position: existingPosition } = useDerivedPositionInfo(positionDetails)
 
-  const gasPrice = useAppSelector((state) => state.application.gasPrice)
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
 
   const {
     token0: token0Address,
@@ -525,6 +543,8 @@ export function PositionPage({
 
     setCollecting(true)
 
+    const collectAddress = isOnFarming ? FARMING_CENTER[chainId] : NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId]
+
     const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
       tokenId: tokenId.toString(),
       expectedCurrencyOwed0: feeValue0,
@@ -533,9 +553,9 @@ export function PositionPage({
     })
 
     const txn = {
-      to: positionManager.address,
+      to: collectAddress,
       data: calldata,
-      value,
+      value: value,
     }
 
     library
@@ -616,7 +636,7 @@ export function PositionPage({
 
   const onOptimisticChain = chainId && [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
   const showCollectAsWeth = Boolean(
-    ownsNFT &&
+    (ownsNFT || isOnFarming) &&
       (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) &&
       currency0 &&
       currency1 &&
@@ -775,7 +795,8 @@ export function PositionPage({
                           </TYPE.largeHeader>
                         )}
                       </AutoColumn>
-                      {ownsNFT && (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0) || !!collectMigrationHash) ? (
+                      {(ownsNFT || isOnFarming) &&
+                      (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0) || !!collectMigrationHash) ? (
                         <ButtonConfirmed
                           disabled={collecting || !!collectMigrationHash}
                           confirmed={!!collectMigrationHash && !isCollectPending}

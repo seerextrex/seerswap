@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { STAKER_ADDRESS } from "../constants/addresses";
+import { FINITE_FARMING } from "../constants/addresses";
 
 //Farming
 
@@ -38,15 +38,32 @@ query fetchIncentive {
         id
         rewardToken
         bonusRewardToken
+        pool
         startTime
         endTime
         reward
         bonusReward
-        ended
-        pool
-        refundee
+        createdAtTimestamp
     }
 }`
+
+export const FETCH_ETERNAL_FARM = farmId => gql`
+  query fetchEternalFarm {
+    eternalFarmings (where: { id: "${farmId}" }) {
+      id
+      rewardToken
+      bonusRewardToken
+      pool
+      startTime
+      endTime
+      reward
+      bonusReward
+      rewardRate
+      bonusRewardRate
+      isDetached
+    }
+  }
+`
 
 export const FETCH_POOL = poolId => gql`
 query fetchPool {
@@ -196,8 +213,6 @@ query futureEvents {
         startTime
         endTime
         reward
-        ended
-        refundee
     }
 }`
 
@@ -212,13 +227,12 @@ query currentEvents {
         startTime
         endTime
         reward
-        ended
     }
 }`
 
 export const FROZEN_STAKED = (account: string) => gql`
    query frozenStaked  {
-     stakeTxes (where: {owner: "${account.toLowerCase()}", timestamp_gte: ${Math.round(Date.now()  / 1000)}}, orderBy: timestamp, orderDirection: asc) {
+     stakeTxes (where: {owner: "${account.toLowerCase()}", timestamp_gte: ${Math.round(Date.now() / 1000)}}, orderBy: timestamp, orderDirection: asc) {
      timestamp
      stakedALGBAmount
      xALGBAmount
@@ -228,67 +242,74 @@ export const FROZEN_STAKED = (account: string) => gql`
 
 export const TRANSFERED_POSITIONS = (account, chainId) => gql`
     query transferedPositions {
-        deposits (orderBy: tokenId, orderDirection: desc, where: {oldOwner: "${account}", owner: "${STAKER_ADDRESS[chainId]}"}) {
+        deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", onFarmingCenter: true}) {
             id
             owner
-            staked
-            liquidity
-            approved
             pool
-            tokenId
             L2tokenId
             incentive
+            eternalFarming
+            onFarmingCenter
     }
 }
 `
 
-export const SHARED_POSITIONS = account => gql`
-    query sharedPositions {
-        deposits (orderBy: tokenId, orderDirection: desc, where: {owner: "${account}", incentive_not: null}) {
-            id
-            owner
-            staked
-            liquidity
-            approved
-            pool
-            tokenId
-            L2tokenId
-            incentive
+export const POSITIONS_ON_ETERNAL_FARMING = (account) => gql`
+  query positionsOnEternalFarming {
+    deposits (orderBy: id, orderDirection: desc, where: { owner: "${account}", onFarmingCenter: true, eternalFarming_not: null }) {
+      id
+      owner
+      pool
+      L2tokenId
+      eternalFarming
+      onFarmingCenter
     }
-}
+  }
 `
 
 export const TRANSFERED_POSITIONS_FOR_POOL = (account, pool) => gql`
 query transferedPositionsForPool {
-    deposits (orderBy: tokenId, orderDirection: desc, where: {oldOwner: "${account}", pool: "${pool}"}) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}"}) {
         id
         owner
-        staked
-        liquidity
-        approved
         pool
-        tokenId
         L2tokenId
         incentive
+        eternalFarming
+        onFarmingCenter
     }
 }`
 
 export const POSITIONS_OWNED_FOR_POOL = (account, pool) => gql`
 query positionsOwnedForPool {
-    deposits (orderBy: tokenId, orderDirection: desc, where: {owner: "${account}",  pool: "${pool}"}) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}",  pool: "${pool}"}) {
         id
         owner
-        staked
-        liquidity
-        approved
         pool
-        tokenId
         L2tokenId
         incentive
+        eternalFarming
     }
 }`
 
 //Info
+
+export const INFINITE_EVENTS = gql`
+    query infiniteFarms {
+        eternalFarmings (where: {isDetached: false}) {
+            id
+            rewardToken
+            bonusRewardToken
+            pool
+            startTime
+            endTime
+            reward
+            bonusReward
+            rewardRate
+            bonusRewardRate
+        }
+    }
+`
 
 export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
   query swapsPerDay {

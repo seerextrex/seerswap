@@ -4,7 +4,9 @@ import { ReactNode, useState } from 'react'
 import styled from 'styled-components/macro'
 
 import { useStakingContract } from '../../hooks/useContract'
+import { GAS_PRICE_MULTIPLIER } from '../../hooks/useGasPrice'
 import { useActiveWeb3React } from '../../hooks/web3'
+import { useAppSelector } from '../../state/hooks'
 import { StakingInfo } from '../../state/stake/hooks'
 import { TransactionType } from '../../state/transactions/actions'
 import { useTransactionAdder } from '../../state/transactions/hooks'
@@ -35,6 +37,8 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
   const [hash, setHash] = useState<string | undefined>()
   const [attempting, setAttempting] = useState(false)
 
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+
   function wrappedOndismiss() {
     setHash(undefined)
     setAttempting(false)
@@ -47,7 +51,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
     if (stakingContract && stakingInfo?.stakedAmount) {
       setAttempting(true)
       await stakingContract
-        .exit({ gasLimit: 300000 })
+        .exit({ gasLimit: 300000, gasPrice: gasPrice * GAS_PRICE_MULTIPLIER  })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
             type: TransactionType.WITHDRAW_LIQUIDITY_STAKING,

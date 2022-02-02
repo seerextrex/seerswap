@@ -24,7 +24,7 @@ import { RedirectDuplicateTokenStakingIds } from './Staking/redirects'
 import { CurrentEventsPage } from './CurrentEventsPage'
 import { FutureEventsPage } from './FutureEventsPage'
 import { StakerMyRewards } from '../components/StakerMyRewards'
-import { STAKER_ADDRESS } from '../constants/addresses'
+import { FINITE_FARMING } from '../constants/addresses'
 import { createGlobalStyle } from 'styled-components/macro'
 import MigrateV2Pair from './MigrateV2/MigrateV2Pair'
 import MigrateV2 from './MigrateV2'
@@ -36,7 +36,7 @@ import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
 
 import StakingAnalyticsPage from './StakingAnalyticsPage'
-import {useInternet} from "../hooks/useInternet"
+import { useInternet } from '../hooks/useInternet'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
@@ -58,7 +58,7 @@ import BG from '../assets/images/bg.png'
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
 import { useActiveWeb3React } from '../hooks/web3'
-import RealStakerPage from "./RealStakerPage"
+import RealStakerPage from './RealStakerPage'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -204,7 +204,6 @@ export default function App() {
       event: 'userId',
       user_id: account,
     })
-
   }, [account])
 
   return (
@@ -219,11 +218,11 @@ export default function App() {
           <HeaderWrapper style={{ zIndex: 3 }}>
             <Header />
           </HeaderWrapper>
-          { !internet && <InternetError>
-            <h2>
-            Network ERROR
-            </h2>
-          </InternetError>}
+          {!internet && (
+            <InternetError>
+              <h2>Network ERROR</h2>
+            </InternetError>
+          )}
           <BodyWrapper style={{ zIndex: 2 }}>
             {networkFailed && (
               <NetworkFailedCard>
@@ -280,7 +279,6 @@ export default function App() {
 
               <Route exact strict path="/staking" component={RealStakerPage} />
               <Route exact strict path="/staking/analytics" component={StakingAnalyticsPage} />
-
 
               <Route component={RedirectPathToSwapOnly} />
             </Switch>

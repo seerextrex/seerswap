@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { ArrowLeft } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components/macro'
@@ -68,6 +68,14 @@ export function PoolInfoHeader({
   collectedFees: string
 }) {
 
+  const poolTitle = useMemo(() => {
+    if (!token1 || !token0) return []
+    if (token0.symbol === 'USDC'){
+      return [token1.symbol, token0.symbol]
+    }
+    return [token0.symbol, token1.symbol]
+  }, [token0, token1])
+
   return (
     <Header>
       <Navigation to={'/info/pools'}>
@@ -76,7 +84,7 @@ export function PoolInfoHeader({
       </Navigation>
       <PoolInfoWrapper>
         <PoolTitle>
-          {token0?.symbol || '...'} / {token1?.symbol || '...'}
+          {poolTitle[0] || '...'} / {poolTitle[1] || '...'}
         </PoolTitle>
         <PoolFee>{`${fee / 10000}%`}</PoolFee>
         <PoolCollectedFees>Total Collected Fees: ${Math.round(+collectedFees) || '...'}</PoolCollectedFees>

@@ -48,7 +48,7 @@ query fetchIncentive {
     }
 }`
 
-export const FETCH_POOL = poolId => gql`
+export const FETCH_POOL = (poolId: string) => gql`
 query fetchPool {
     pools(where: { id: "${poolId}" }) {
         id

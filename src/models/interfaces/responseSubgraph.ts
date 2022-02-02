@@ -20,10 +20,15 @@ export interface PoolAddressSubgraph {
   id: string
 }
 
-//TODO type key
 export interface SubgraphResponse<T> {
   [key: string] : T
 }
+
+export interface SubgraphResponseStaking<A, B> {
+  'factories': A
+  'stakes' : B
+}
+
 export interface TokenInSubgraph {
   derivedMatic: string
   feesUSD: string
@@ -47,4 +52,61 @@ export interface TokenSubgraph {
   id: string
   name: string
   symbol: string
+}
+
+export interface FeeSubgraph {
+  id: string
+  pool: string
+  fee: string
+  changesCount: string
+  timestamp: string
+  minFee: string
+  maxFee: string
+  startFee: string
+  endFee: string
+}
+
+export interface LastPoolSubgraph {
+  feesUSD: string
+  periodStartUnix: number
+  tvlUSD: string
+  volumeUSD: string
+}
+
+export interface FactorySubgraph {
+  ALGBbalance: string
+  currentStakedAmount: string
+  earnedForAllTime: string
+  xALGBtotalSupply: string
+}
+
+export interface StakeSubgraph {
+  stakedALGBAmount: string
+  xALGBAmount: string
+}
+
+export interface HistoryStakingSubgraph {
+  ALGBbalance: string
+  ALGBfromVault: string
+  currentStakedAmount: string
+  date: string
+  xALGBburned: string
+  xALGBminted: string
+  xALGBtotalSupply: string
+}
+
+export interface TotalStatSubgraph {
+  totalVolumeUSD: string
+  totalValueLockedUSD: string
+}
+
+export interface SmallPoolSubgraph {
+  fee: string
+  feesUSD: string
+  id: string
+  liquidity: string
+  sqrtPrice: string
+  tick: string
+  token0: TokenSubgraph
+  token1: TokenSubgraph
 }

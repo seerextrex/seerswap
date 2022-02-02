@@ -14,7 +14,6 @@ import { AutoColumn } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import Row, { RowBetween, RowFixed, AutoRow } from '../../components/Row'
-import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
 import { Review } from './Review'
@@ -29,7 +28,6 @@ import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '../../stat
 import { TYPE, ExternalLink } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { Dots } from '../Pool/styleds'
-import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import {
   DynamicSection,
   StyledInput,
@@ -295,8 +293,6 @@ export default function AddLiquidity({
     setTxHash('')
   }, [history, mustCreateSeparately, onFieldAInput, txHash])
 
-  const addIsUnsupported = useIsSwapUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
-
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
@@ -319,13 +315,7 @@ export default function AddLiquidity({
     useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)
 
   const Buttons = () =>
-    addIsUnsupported ? (
-      <ButtonPrimary disabled={true} $borderRadius="12px" padding={'12px'}>
-        <TYPE.main mb="4px">
-          <Trans>Unsupported Asset</Trans>
-        </TYPE.main>
-      </ButtonPrimary>
-    ) : !account ? (
+     !account ? (
       <ButtonLight onClick={toggleWalletModal} $borderRadius="12px" padding={'12px'}>
         <Trans>Connect wallet</Trans>
       </ButtonLight>
@@ -731,12 +721,6 @@ export default function AddLiquidity({
             </ResponsiveTwoColumns>
           </Wrapper>
         </PageWrapper>
-        {addIsUnsupported && (
-          <UnsupportedCurrencyFooter
-            show={addIsUnsupported}
-            currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]}
-          />
-        )}
       </ScrollablePage>
       <SwitchLocaleLink />
     </>

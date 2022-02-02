@@ -117,6 +117,7 @@
     "ua-parser-js": "^0.7.28",
     "use-count-up": "^2.2.5",
     "wcag-contrast": "^3.0.0",
+    "webpack-bundle-analyzer": "^4.5.0",
     "workbox-core": "^6.1.0",
     "workbox-expiration": "^6.1.0",
     "workbox-precaching": "^6.1.0",
@@ -130,7 +131,7 @@
     "compile-contract-types": "yarn compile-external-abi-types && yarn compile-v3-contract-types",
     "compile-external-abi-types": "typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*.json'",
     "compile-v3-contract-types": "typechain --target ethers-v5 --out-dir src/types/v3 './node_modules/@uniswap/v3-core/artifacts/contracts/**/*.json'",
-    "build": "yarn compile-contract-types && yarn i18n:extract && yarn i18n:compile && react-scripts build",
+    "build": "yarn compile-contract-types && yarn i18n:extract && yarn i18n:compile && react-scripts build --stats",
     "i18n:extract": "lingui extract --locale en-US",
     "i18n:compile": "lingui compile",
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run --record'",
@@ -138,7 +139,8 @@
     "postinstall": "yarn compile-contract-types",
     "start": "yarn compile-contract-types && react-scripts start --host 0.0.0.0",
     "test": "react-scripts test --env=./custom-test-env.js",
-    "prestart": "touch src/locales/en-US.po"
+    "prestart": "touch src/locales/en-US.po",
+    "analyze": "webpack-bundle-analyzer build/bundle-stats.json"
   },
   "eslintConfig": {
     "extends": "react-app",

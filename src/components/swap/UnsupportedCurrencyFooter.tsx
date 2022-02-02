@@ -8,7 +8,6 @@ import { AutoColumn } from 'components/Column'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useActiveWeb3React } from 'hooks/web3'
 import { Currency, Token } from '@uniswap/sdk-core'
-import { useUnsupportedTokens } from '../../hooks/Tokens'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { Trans } from '@lingui/macro'
 import { DetailsFooter, AddressText } from './styled'
@@ -30,8 +29,6 @@ export default function UnsupportedCurrencyFooter({
         })
       : []
 
-  const unsupportedTokens: { [address: string]: Token } = useUnsupportedTokens()
-
   return (
     <DetailsFooter show={show}>
       <Modal isOpen={showDetails} onDismiss={() => setShowDetails(false)}>
@@ -43,27 +40,6 @@ export default function UnsupportedCurrencyFooter({
               </TYPE.mediumHeader>
               <CloseIcon onClick={() => setShowDetails(false)} />
             </RowBetween>
-            {tokens.map((token) => {
-              return (
-                token &&
-                unsupportedTokens &&
-                Object.keys(unsupportedTokens).includes(token.address) && (
-                  <OutlineCard key={token.address?.concat('not-supported')}>
-                    <AutoColumn gap="10px">
-                      <AutoRow gap="5px" align="center">
-                        <CurrencyLogo currency={token} size={'24px'} />
-                        <TYPE.body fontWeight={500}>{token.symbol}</TYPE.body>
-                      </AutoRow>
-                      {chainId && (
-                        <ExternalLink href={getExplorerLink(chainId, token.address, ExplorerDataType.ADDRESS)}>
-                          <AddressText>{token.address}</AddressText>
-                        </ExternalLink>
-                      )}
-                    </AutoColumn>
-                  </OutlineCard>
-                )
-              )
-            })}
             <AutoColumn gap="lg">
               <TYPE.body fontWeight={500}>
                 <Trans>

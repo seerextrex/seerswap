@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react'
-import * as d3 from 'd3'
+import { scaleTime, min, max, line, create, select, axisBottom, axisLeft, scaleLinear, curveBumpX, easeCircleOut, interpolate, area } from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../pages/PoolInfoPage'
 
@@ -238,14 +238,12 @@ export default function Chart({
   }, [data, previousData])
 
   const xScale = useMemo(() => {
-    return d3
-      .scaleTime()
-      .domain([d3.min(_chartData, (d) => new Date(d.timestamp)), d3.max(_chartData, (d) => new Date(d.timestamp))])
+    return scaleTime()
+      .domain([min(_chartData, (d) => new Date(d.timestamp)), max(_chartData, (d) => new Date(d.timestamp))])
       .range([0, width])
   }, [span, _chartData])
 
-  const Line = d3
-    .create('svg:line')
+  const Line = create('svg:line')
     .attr('id', 'pointer2')
     .attr('x1', '0px')
     .attr('y1', 0)
@@ -255,10 +253,9 @@ export default function Chart({
     .style('stroke', '#595f6e')
     .style('display', 'none')
 
-  const InfoRectGroup = d3.create('svg:g').style('pointer-events', 'none').style('display', 'none')
+  const InfoRectGroup = create('svg:g').style('pointer-events', 'none').style('display', 'none')
 
-  const InfoRect = d3
-    .create('svg:rect')
+  const InfoRect = create('svg:rect')
     .append('rect')
     .attr('id', 'info-label')
     .attr('width', '150px')
@@ -266,15 +263,13 @@ export default function Chart({
     .attr('rx', '6')
     .style('fill', '#12151d')
 
-  const InfoRectFeeText = d3
-    .create('svg:text')
+  const InfoRectFeeText = create('svg:text')
     .attr('transform', 'translate(16, 25)')
     .attr('fill', 'white')
     .attr('font-weight', '600')
     .attr('font-size', '14px')
 
-  const InfoRectDateText = d3
-    .create('svg:text')
+  const InfoRectDateText = create('svg:text')
     .attr('transform', 'translate(16, 45)')
     .attr('fill', 'white')
     .attr('font-weight', '500')
@@ -285,8 +280,7 @@ export default function Chart({
   InfoRectGroup.node().append(InfoRectFeeText.node())
   InfoRectGroup.node().append(InfoRectDateText.node())
 
-  const Focus = d3
-    .create('svg:circle')
+  const Focus = create('svg:circle')
     .style('fill', 'white')
     .attr('stroke', '#63c0f8')
     .attr('stroke-width', '2')
@@ -297,7 +291,7 @@ export default function Chart({
   useEffect(() => {
     if (!data || data.length === 0) return
 
-    const svgEl = d3.select(svgRef.current)
+    const svgEl =   select(svgRef.current)
     svgEl.selectAll('*').remove()
 
     const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
@@ -323,21 +317,19 @@ export default function Chart({
     const xAxisGroup = svg
       .append('g')
       .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0))
+      .call(  axisBottom(xScale).ticks(xTicks).tickSizeOuter(0))
     xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
     xAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
 
-    const y = d3
-      .scaleLinear()
+    const y = scaleLinear()
       .domain([
-        d3.min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
-        d3.max(_chartData, (d) => +d.value + d.value * 0.2),
+          min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
+          max(_chartData, (d) => +d.value + d.value * 0.2),
       ])
       .range([height, 0])
 
     const yAxisGroup = svg.append('g').call(
-      d3
-        .axisLeft(y)
+      axisLeft(y)
         .ticks(10)
         .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : `$${val >= 1000 ? `${+val / 1000}k` : val}`}`)
         .tickSize(-width)
@@ -380,9 +372,8 @@ export default function Chart({
       .attr('stroke-width', 2)
       .attr(
         'd',
-        d3
-          .line()
-          .curve(d3.curveBumpX)
+        line()
+          .curve(curveBumpX)
           .x(function (d) {
             return xScale(d.timestamp)
           })
@@ -392,10 +383,10 @@ export default function Chart({
       )
       .transition()
       .duration(1000)
-      .ease(d3.easeCircleOut)
+      .ease(  easeCircleOut)
       .attrTween('stroke-dasharray', function () {
         const length = this.getTotalLength()
-        return d3.interpolate(`0,${length}`, `${length},${length}`)
+        return   interpolate(`0,${length}`, `${length},${length}`)
       })
 
     svg
@@ -404,32 +395,30 @@ export default function Chart({
       .attr('fill', 'url(#gradient)')
       .attr(
         'd',
-        d3
-          .area()
-          .curve(d3.curveBumpX)
+        area()
+          .curve(curveBumpX)
           .x((d) => xScale(d.timestamp))
-          .y0((d) => y(d3.min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
+          .y0((d) => y(  min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
           .y1((d) => y(d.value))
       )
       .style('opacity', 0)
       .transition()
       .delay(900)
       .duration(500)
-      .ease(d3.easeCircleOut)
+      .ease(  easeCircleOut)
       .style('opacity', 1)
 
     xAxisGroup
       .selectAll('.tick')
       .nodes()
       .map((el, i) => {
-        const xTranslate = d3
-          .select(el)
+        const xTranslate = select(el)
           .attr('transform')
           .match(/\((.*?)\)/)[1]
           .split(',')[0]
 
         if (isMobile && span !== ChartSpan.WEEK) {
-          d3.select(el)
+            select(el)
             .selectAll('text')
             .style('text-anchor', 'end')
             .attr('dx', '-.8em')
@@ -438,12 +427,12 @@ export default function Chart({
         }
 
         if (isMobile && i % 2 === 0) {
-          d3.select(el).attr('display', 'none')
+            select(el).attr('display', 'none')
         } else if (i % 2 === 0 && span !== ChartSpan.WEEK) {
-          d3.select(el).attr('display', 'none')
+            select(el).attr('display', 'none')
         }
 
-        // d3.select(el).attr('transform', `translate(${+xTranslate + +tickWidth}, 0)`)
+        //   select(el).attr('transform', `translate(${+xTranslate + +tickWidth}, 0)`)
 
         const hoverHandle = function (e) {
           const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
@@ -472,8 +461,7 @@ export default function Chart({
           Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
         }
 
-        const rect = d3
-          .create('svg:rect')
+        const rect = create('svg:rect')
           .attr('x', `${xTranslate - tickWidth / 2}px`)
           .attr('y', `-${0}px`)
           .attr('width', `${tickWidth}px`)

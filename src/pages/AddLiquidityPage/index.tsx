@@ -29,7 +29,6 @@ import { calculateGasMargin } from '../../utils/calculateGasMargin'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { t } from '@lingui/macro'
 import { SupportedChainId } from '../../constants/chains'
-import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
 import { ArrowLeft, Download } from 'react-feather'
 import PDFAlgebra from '../../assets/pdf/Algebra_Tech_Paper.pdf'
 import SettingsTab from '../../components/Settings'
@@ -208,14 +207,6 @@ export default function AddLiquidityPage({
 
   const isValid = !errorMessage && !invalidRange
 
-  // modal and loading
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirm
-
-  // capital efficiency warning
-  const [showCapitalEfficiencyWarning, setShowCapitalEfficiencyWarning] = useState(false)
-
-  useEffect(() => setShowCapitalEfficiencyWarning(false), [baseCurrency, quoteCurrency, dynamicFee])
 
   // txn values
   const deadline = useTransactionDeadline() // custom from users settings
@@ -300,8 +291,6 @@ export default function AddLiquidityPage({
         value
       }
 
-      setAttemptingTxn(true)
-
       library
         .getSigner()
         .estimateGas(txn)
@@ -316,7 +305,6 @@ export default function AddLiquidityPage({
             .getSigner()
             .sendTransaction(newTxn)
             .then((response: TransactionResponse) => {
-              setAttemptingTxn(false)
               addTransaction(response, {
                 summary: noLiquidity
                   ? t`Create pool and add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
@@ -327,7 +315,6 @@ export default function AddLiquidityPage({
         })
         .catch((error) => {
           console.error('Failed to send transaction', error)
-          setAttemptingTxn(false)
           // we only care if the error is something _other_ than the user rejected the tx
           if (error?.code !== 4001) {
             console.error(error)
@@ -397,29 +384,6 @@ export default function AddLiquidityPage({
 
   const mustCreateSeparately = noLiquidity && chainId !== SupportedChainId.POLYGON
 
-  const handleDismissConfirmation = useCallback(() => {
-    setShowConfirm(false)
-    // if there was a tx hash, we want to clear the input
-    if (txHash) {
-      onFieldAInput('')
-      // dont jump to pool page if creating
-      if (!mustCreateSeparately) {
-        history.push('/pool')
-      }
-    }
-    setTxHash('')
-  }, [history, mustCreateSeparately, onFieldAInput, txHash])
-
-  const addIsUnsupported = useIsSwapUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
-
-  const clearAll = useCallback(() => {
-    onFieldAInput('')
-    onFieldBInput('')
-    onLeftRangeInput('')
-    onRightRangeInput('')
-    history.push(`/add`)
-  }, [history, onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput])
-
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
@@ -440,16 +404,6 @@ export default function AddLiquidityPage({
   // we need an existence check on parsed amounts for single-asset deposits
   const showApprovalA = approvalA !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_A]
   const showApprovalB = approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B]
-
-  const pendingText = mustCreateSeparately
-    ? `Creating ${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} ${
-      dynamicFee ? dynamicFee / 10000 : ''
-    }% Pool`
-    : `Supplying ${!depositADisabled ? parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) : ''} ${
-      !depositADisabled ? currencies[Field.CURRENCY_A]?.symbol : ''
-    } ${!outOfRange ? 'and' : ''} ${!depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ''} ${
-      !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
-    }`
 
   return (
     <>
@@ -649,23 +603,6 @@ export default function AddLiquidityPage({
                           </FullRangeButton>
                         )}
                       </PriceRangeInputs>
-
-                      {/* <Row>
-                                  <ButtonYellow
-                                    padding="8px"
-                                    marginRight="8px"
-                                    $borderRadius="8px"
-                                    width="auto"
-                                    onClick={() => {
-                                      setShowCapitalEfficiencyWarning(false)
-                                      getSetFullRange()
-                                    }}
-                                  >
-                                    <TYPE.black fontSize={13} color="black">
-                                      <Trans>I Understand</Trans>
-                                    </TYPE.black>
-                                  </ButtonYellow>
-                                </Row> */}
                     </PriceRangeWrapper>
                   </div>
 

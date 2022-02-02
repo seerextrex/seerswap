@@ -22,6 +22,8 @@ import { SwapRouter } from '../lib/src/swapRouter'
 
 // import abi from '../abis/swap-router.json'
 import { Interface } from "ethers/lib/utils"
+import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
+import { useAppSelector } from '../state/hooks'
 
 enum SwapCallbackState {
   INVALID,
@@ -206,6 +208,8 @@ export function useSwapCallback(
 
   const addTransaction = useTransactionAdder()
 
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
 
@@ -291,6 +295,7 @@ export function useSwapCallback(
             from: account,
             to: address,
             data: calldata,
+            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
             // let the wallet try if we can't estimate the gas
             ...('gasEstimate' in bestCallOption
               ? { gasLimit: calculateGasMargin(chainId, bestCallOption.gasEstimate, true) }

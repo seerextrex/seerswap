@@ -472,8 +472,7 @@ export default function AddLiquidityPage({
   const _w: any = window
   const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
 
-  const gasPrice = useAppSelector((state) => state.application.gasPrice)
-
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
   const allTransactions = useAllTransactions()
 
   const sortedRecentTransactions = useMemo(() => {

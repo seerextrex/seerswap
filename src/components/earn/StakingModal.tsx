@@ -8,8 +8,10 @@ import styled from 'styled-components/macro'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import { usePairContract, useStakingContract, useV2RouterContract } from '../../hooks/useContract'
 import { useV2LiquidityTokenPermit } from '../../hooks/useERC20Permit'
+import { GAS_PRICE_MULTIPLIER } from '../../hooks/useGasPrice'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useActiveWeb3React } from '../../hooks/web3'
+import { useAppSelector } from '../../state/hooks'
 import { StakingInfo, useDerivedStakeInfo } from '../../state/stake/hooks'
 import { TransactionType } from '../../state/transactions/actions'
 import { useTransactionAdder } from '../../state/transactions/hooks'
@@ -66,6 +68,8 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
     )
   }
 
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
   const [attempting, setAttempting] = useState<boolean>(false)
@@ -94,7 +98,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
     setAttempting(true)
     if (stakingContract && parsedAmount && deadline) {
       if (approval === ApprovalState.APPROVED) {
-        await stakingContract.stake(`0x${parsedAmount.quotient.toString(16)}`, { gasLimit: 350000 })
+        await stakingContract.stake(`0x${parsedAmount.quotient.toString(16)}`, { gasLimit: 350000, gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
       } else if (signatureData) {
         stakingContract
           .stakeWithPermit(
@@ -103,7 +107,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             signatureData.v,
             signatureData.r,
             signatureData.s,
-            { gasLimit: 350000 }
+            { gasLimit: 350000, gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
           )
           .then((response: TransactionResponse) => {
             addTransaction(response, {

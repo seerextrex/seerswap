@@ -396,7 +396,7 @@ export function PositionPage({
   const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
   const { position: existingPosition } = useDerivedPositionInfo(positionDetails)
 
-  const gasPrice = useAppSelector((state) => state.application.gasPrice)
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
 
   const {
     token0: token0Address,

@@ -7,6 +7,8 @@ import { useActiveWeb3React } from "./web3"
 import { useTransactionAdder } from '../state/transactions/hooks'
 import {stakerClient} from "../apollo/client"
 import {FROZEN_STAKED} from "../utils/graphql-queries"
+import { useAppSelector } from '../state/hooks'
+import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
 
 export function useRealStakerHandlers() {
 
@@ -17,6 +19,8 @@ export function useRealStakerHandlers() {
 
   const [stakerHash, setStaked] = useState(null)
   const [frozenStaked, setFrozen] = useState<string | any[]>([])
+
+  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
 
   const stakerHandler = useCallback(async (stakedCount) => {
 
@@ -31,7 +35,9 @@ export function useRealStakerHandlers() {
         provider.getSigner()
       )
       const bigNumStakerCount = parseUnits(stakedCount.toString(), 18)
-      const result = await realStaker.enter(bigNumStakerCount._hex)
+      const result = await realStaker.enter(bigNumStakerCount._hex, {
+        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+      })
 
       addTransaction(result, {
         summary: `Staked ${stakedCount} ALGB`
@@ -56,7 +62,9 @@ export function useRealStakerHandlers() {
 
       const claimSum = (claimCount.mul(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))).div(BigNumber.from(stakesResult.factories[0].ALGBbalance))
 
-      const result = await realStaker.leave(claimSum._hex)
+      const result = await realStaker.leave(claimSum._hex, {
+        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+      })
 
       addTransaction(result, {
         summary: `Claimed ${formatEther(claimCount)} ALGB`
@@ -80,7 +88,9 @@ export function useRealStakerHandlers() {
 
       const bigNumUnstakeAmount = (parseUnits(unstakeCount.toString(), 18).mul(BigNumber.from(stakesResult.stakes[0].xALGBAmount).sub(allXALGBFreeze))).div(maxALGBAccount)
 
-      const result = await realStaker.leave(bigNumUnstakeAmount._hex)
+      const result = await realStaker.leave(bigNumUnstakeAmount._hex, {
+        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+      })
 
       addTransaction(result, {
         summary: `Unstaked ${unstakeCount} ALGB`

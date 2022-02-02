@@ -23,7 +23,7 @@ export enum ApplicationModal {
 
 export const updateChainId = createAction<{ chainId: number | null }>('application/updateChainId')
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
-export const updateGasPrice = createAction<number>('application/updateGasPrice')
+export const updateGasPrice = createAction<{fetched: number, override: boolean}>('application/updateGasPrice')
 export const setOpenModal = createAction<ApplicationModal | null>('application/setOpenModal')
 export const addPopup =
   createAction<{ key?: string; removeAfterMs?: number | null; content: PopupContent }>('application/addPopup')

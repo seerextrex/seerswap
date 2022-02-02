@@ -10,6 +10,8 @@ import { useActiveWeb3React } from "./web3"
 import { calculateGasMargin } from "../utils/calculateGasMargin"
 import JSBI from 'jsbi'
 import { toHex } from "../lib/src/utils"
+import { useAppSelector } from '../state/hooks'
+import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
 
 export enum FarmingType {
     ETERNAL = 0,
@@ -25,6 +27,8 @@ export function useStakerHandlers() {
 
     const nonFunPosManInterface = new Interface(NON_FUN_POS_MAN)
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
+
+    const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
 
     const addTransaction = useTransactionAdder()
 
@@ -57,7 +61,10 @@ export function useStakerHandlers() {
                 tokenAddress,
                 account,
                 MaxUint128,
-                MaxUint128
+                MaxUint128,
+                {
+                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                }
             )
 
             addTransaction(result, {
@@ -90,7 +97,10 @@ export function useStakerHandlers() {
 
             const result = await farmingCenterContract.collectRewards(
                 [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime],
-                +token
+                +token,
+                {
+                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                }
             )
 
             addTransaction(result, {
@@ -128,14 +138,20 @@ export function useStakerHandlers() {
 
                 result = await farmingCenterContract.exitEternalFarming(
                     [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime],
-                    +token
+                    +token,
+                    {
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                    }
                 )
 
             } else {
 
                 result = await farmingCenterContract.exitFarming(
                     [incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime],
-                    +token
+                    +token,
+                    {
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                    }
                 )
             }
 
@@ -178,7 +194,10 @@ export function useStakerHandlers() {
             const result = await farmingCenterContract.withdrawToken(
                 token,
                 account,
-                0x0
+                0x0,
+                {
+                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                }
             )
 
             addTransaction(result, {
@@ -220,13 +239,19 @@ export function useStakerHandlers() {
 
                     result = await farmingCenterContract.enterEternalFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +selectedNFT.id
+                        +selectedNFT.id,
+                        {
+                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                        }
                     )
                 } else {
 
                     result = await farmingCenterContract.enterFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +selectedNFT.id
+                        +selectedNFT.id,
+                        {
+                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                        }
                     )
                 }
 
@@ -267,7 +292,10 @@ export function useStakerHandlers() {
                 const result = await nonFunPosManContract['safeTransferFrom(address,address,uint256)'](
                     account,
                     FARMING_CENTER[chainId],
-                    selectedNFT.id
+                    selectedNFT.id,
+                    {
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                    }
                 )
 
                 addTransaction(result, {
@@ -326,7 +354,10 @@ export function useStakerHandlers() {
 
                 const result = await nonFunPosManContract.multicall([
                     approveData, transferData
-                ])
+                ],
+                {
+                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                })
 
                 addTransaction(result, {
                     summary: `NFT #${selectedNFT.id} was approved!`
@@ -373,7 +404,10 @@ export function useStakerHandlers() {
             const result = await farmingCenterContract.multicall([
                 approveData,
                 sendData
-            ])
+            ],
+            {
+                gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+            })
 
             addTransaction(result, {
                 summary: `NFT #${l2TokenId} was sent!`

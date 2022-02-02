@@ -1,9 +1,11 @@
 import RealStakerRangeButtons from './RealStakerRangeButtons'
-import React from 'react'
+import React, { Dispatch } from 'react'
 import {ContentModal, SilderWrapper, StakeButton, StakerSlider} from './styled'
 import Modal from '../../components/Modal'
 import RealStakerUnstakeInputRange from './RealStakerUnstakeInputRange'
 import { formatEther } from 'ethers/lib/utils'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { BigNumber } from '@ethersproject/bignumber'
 
 interface UnstakeModalProps {
   openModal: boolean
@@ -13,11 +15,11 @@ interface UnstakeModalProps {
   baseCurrency: any
   unstakePercent: number
   setUnstakePercent: any
-  onPercentSelect: number,
+  onPercentSelect: Dispatch<number>,
   unstakeHandler: any,
   stakedResult: any
-  fiatValue: any
-    allXALGBFreeze: any
+  fiatValue: CurrencyAmount<Token> | null
+  allXALGBFreeze: BigNumber | undefined
 }
 
 export default function RealStakerUnstakeModal(

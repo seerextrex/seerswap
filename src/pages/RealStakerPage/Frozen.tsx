@@ -3,6 +3,7 @@ import {formatUnits} from "ethers/lib/utils"
 import {BigNumber} from "@ethersproject/bignumber"
 import {getCountdownTime} from "../../utils/time"
 import {FrozenTransaction, FrozenWrapper, TimeWrapper, Time, LoaderStyled} from './styled'
+import { type } from 'os'
 
 const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: BigNumber[]; now: any, index: number}) => {
     const [time, setTime] = useState('00:00:00')
@@ -35,7 +36,8 @@ const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: Bi
     )
 }
 
-const Frozen = ({data, earnedFreeze, now}: { data: any[]; earnedFreeze: BigNumber[], now: Date }) => {
+const Frozen = ({data, earnedFreeze, now}: { data: any[] | string; earnedFreeze: BigNumber[] | undefined, now: any }) => {
+    if (typeof  data === 'string') return null
     return (
         <FrozenWrapper>
             {data && earnedFreeze ? data.map((el, i) => {

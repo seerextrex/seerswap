@@ -1,28 +1,26 @@
 import REAL_STAKER_ABI from 'abis/real-staker.json'
 import { BigNumber, Contract, providers } from 'ethers'
-import {formatEther, formatUnits, parseEther, parseUnits} from 'ethers/lib/utils'
+import {formatEther, parseUnits} from 'ethers/lib/utils'
 import { useCallback, useState } from "react"
 import { REAL_STAKER_ADDRESS } from "../constants/addresses"
 import { useActiveWeb3React } from "./web3"
 import { useTransactionAdder } from '../state/transactions/hooks'
 import {stakerClient} from "../apollo/client"
 import {FROZEN_STAKED} from "../utils/graphql-queries"
+import { TransactionResponse } from '@ethersproject/providers'
+import { FactorySubgraph, StakeHash, StakeSubgraph, SubgraphResponseStaking } from '../models/interfaces'
 
 export function useRealStakerHandlers() {
-
   const addTransaction = useTransactionAdder()
   const { chainId, account } = useActiveWeb3React()
   const _w: any = window
   const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
 
-  const [stakerHash, setStaked] = useState(null)
+  const [stakerHash, setStaked] = useState<null | StakeHash>(null)
   const [frozenStaked, setFrozen] = useState<string | any[]>([])
 
-  const stakerHandler = useCallback(async (stakedCount) => {
-
-    if (!account || !provider) return
-
-    setStaked(null)
+  const stakerHandler = useCallback(async (stakedCount: string) => {
+    if (!account || !provider || !chainId) return
 
     try {
       const realStaker = new Contract(
@@ -30,8 +28,8 @@ export function useRealStakerHandlers() {
         REAL_STAKER_ABI,
         provider.getSigner()
       )
-      const bigNumStakerCount = parseUnits(stakedCount.toString(), 18)
-      const result = await realStaker.enter(bigNumStakerCount._hex)
+      const bigNumStakerCount = parseUnits(stakedCount, 18)
+      const result: TransactionResponse = await realStaker.enter(bigNumStakerCount._hex)
 
       addTransaction(result, {
         summary: `Staked ${stakedCount} ALGB`
@@ -39,14 +37,13 @@ export function useRealStakerHandlers() {
       setStaked({hash: result.hash})
 
     } catch (e) {
-      setStaked('failed')
-      console.error(e)
-      return
+      console.log(e)
     }
 
   }, [account, chainId])
 
-  const stakerClaimHandler = useCallback(async (claimCount, stakesResult) => {
+  const stakerClaimHandler = useCallback(async (claimCount: BigNumber, stakesResult: SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>) => {
+    if (!account || !provider || !chainId) return
     try {
       const realStaker = new Contract(
         REAL_STAKER_ADDRESS[chainId],
@@ -54,9 +51,9 @@ export function useRealStakerHandlers() {
         provider.getSigner()
       )
 
-      const claimSum = (claimCount.mul(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))).div(BigNumber.from(stakesResult.factories[0].ALGBbalance))
+      const claimSum: BigNumber = claimCount.mul(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply)).div(BigNumber.from(stakesResult.factories[0].ALGBbalance))
 
-      const result = await realStaker.leave(claimSum._hex)
+      const result: TransactionResponse = await realStaker.leave(claimSum._hex)
 
       addTransaction(result, {
         summary: `Claimed ${formatEther(claimCount)} ALGB`
@@ -65,11 +62,11 @@ export function useRealStakerHandlers() {
 
     } catch (e) {
       console.log(e)
-      return
     }
-  }, [account])
+  }, [account, chainId])
 
   const stakerUnstakeHandler = useCallback(async (unstakeCount, stakesResult, maxALGBAccount, allXALGBFreeze) => {
+    if (!account || !provider || !chainId) return
     try {
 
       const realStaker = new Contract(
@@ -91,7 +88,7 @@ export function useRealStakerHandlers() {
       console.log(e)
       return
     }
-  }, [account])
+  }, [account, chainId])
 
   const frozenStakedHandler = useCallback(async (account) => {
     try {
@@ -104,7 +101,6 @@ export function useRealStakerHandlers() {
      setFrozen(stakeTxes)
 
     } catch (e) {
-      console.log(e)
       setFrozen(`Error: ${e.message}`)
       return
     }

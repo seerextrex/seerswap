@@ -1,10 +1,11 @@
 import {formatEther} from 'ethers/lib/utils'
 import {useCallback, useState} from 'react'
 import {ResPageWrapper, TitleWrapper, ResButton, AmountTitle, InfoStyled, EarnedBadge} from './styled'
+import { BigNumber } from '@ethersproject/bignumber'
 
 interface ResBloksProps {
     title: string
-    amount: number
+    amount: BigNumber
     currency: any
     action: string
     handler?: any

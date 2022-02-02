@@ -63,7 +63,7 @@ export const SilderWrapper = styled.div`
   width: 100%;
   margin: 0;
 `
-export const StakerSlider = styled(Slider)`  
+export const StakerSlider = styled(Slider)<{disabled: boolean}>`  
   &::-webkit-slider-runnable-track {
     background: ${({theme}) => theme.winterDisabledButton};
     height: 5px;
@@ -202,10 +202,10 @@ export const spinAnimation = keyframes`
     transform: rotate(360deg);
   }
 `
-export const ReloadButton = styled.button`
+export const ReloadButton = styled.button<{refreshing: boolean}>`
   background-color: transparent;
   border: none;
-  animation: ${(props) => (props.refreshing ? spinAnimation : '')} infinite 3s;
+  animation: ${({refreshing}) => refreshing ? spinAnimation : ''} infinite 3s;
   cursor: pointer;
 
   &:disabled {

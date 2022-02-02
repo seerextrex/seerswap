@@ -15,4 +15,4 @@ export type {
   SmallPoolSubgraph
 } from './responseSubgraph'
 export type { FormattedPool, FormattedToken, FormattedFee, FormattedChartPool, FormattedTotalStats, Liquidity, ActiveTick, FormattedTick} from './info'
-export type { StakingData } from './staking'
+export type { StakingData, StakeHash } from './staking'

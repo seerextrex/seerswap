@@ -28,6 +28,7 @@ import CurrencyLogo from '../CurrencyLogo'
 
 import gradient from 'random-gradient'
 import { NavLink } from 'react-router-dom'
+import { IsActive } from './IsActive'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -128,9 +129,17 @@ const PositionCardHeader = styled.div`
   background-color: #11446c;
   padding: 1rem;
   border-radius: 8px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
 `
 
 const NFTPositionIcon = styled.div<{ name: string; skeleton: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -183,6 +192,10 @@ const NFTPositionLink = styled.a`
 
 const PositionCardBody = styled.div`
   display: flex;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
 `
 
 const PositionCardEvent = styled.div`
@@ -196,6 +209,12 @@ const PositionCardEvent = styled.div`
   &:first-of-type {
     margin-right: 1rem;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    &:first-of-type {
+      margin-bottom: 1rem;
+    }
+  `}
 `
 
 const PositionCardEventTitle = styled.div`
@@ -207,6 +226,10 @@ const PositionCardEventTitle = styled.div`
 const PositionCardStats = styled.div`
   display: flex;
   margin-bottom: 1rem;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
 `
 
 const PositionCardStatsItemWrapper = styled.div`
@@ -216,6 +239,18 @@ const PositionCardStatsItemWrapper = styled.div`
   &:nth-of-type(2n) {
     margin-left: 1rem;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-right: 0;
+    
+    &:first-of-type {
+      margin-bottom: 1rem;
+    }
+
+    &:last-of-type {
+      margin-left: 0;
+    }
+  `}
 `
 
 const PositionCardStatsItem = styled.div`
@@ -237,12 +272,12 @@ const PositionCardStatsItemValue = styled.div`
 
 const PositionCardMock = styled.div`
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
   position: relative;
-  justify-content: flex-start;
-  width: calc(100% + 2rem);
+  justify-content: center;
+  width: 100%;
   height: 100%;
-  margin: 0 -1rem -1rem;
   min-height: 92px;
 `
 
@@ -268,10 +303,8 @@ export const StakePool = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-bottom: 1rem;
-    &::before {
-      content: "Pool";
-      margin-right: 1rem;
-    }
+    margin-left: 0;
+    margin-top: 1rem;
 `}
 `
 const StakeSeparator = styled.div`
@@ -341,16 +374,39 @@ const StakeBottomWrapper = styled.div`
 const StakeCountdownWrapper = styled.div`
   display: flex;
   width: 100%;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
 `
 
 const StakeCountdownProgress = styled.div<{ started: boolean }>`
   width: 100%;
   margin-right: ${({ started }) => (started ? '0' : '1rem')};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-bottom: ${({ started }) => (started ? '0' : '1rem')};
+  `}
 `
 
 const StakeActions = styled.div`
   width: 100%;
   display: flex;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+
+    & > ${StakeButton} {
+      
+      &:first-of-type {
+        margin-bottom: 1rem;
+      }
+
+      &:last-of-type {
+        margin-left: 0;
+      }
+    }
+  `}
 `
 
 export const StakeButton = styled.button`
@@ -375,6 +431,10 @@ export const StakeButton = styled.button`
     css`
       opacity: 0.4;
       cursor: default;
+
+      &:hover {
+        background-color: #36f;
+      }
     `}
 
   ${({ skeleton }) =>
@@ -477,19 +537,42 @@ const SendNFTButton = styled.button`
   }
 `
 
-export const MoreButton = styled.button`
+export const MoreButton = styled.button<{ single: boolean }>`
   display: flex;
   align-items: center;
+  justify-content: center;
   border: none;
   background-color: white;
   color: #36f;
   border-radius: 4px;
   padding: 8px;
   height: 30px;
+  font-weight: 600;
+
+  &:first-of-type {
+    margin: auto 0 auto auto;
+  }
+
+  &:last-of-type {
+    margin: ${({ single }) => (single ? 'auto 0 auto auto' : 'auto 0 auto 1rem')};
+  }
 
   &:hover {
     background-color: ${darken(0.1, '#fff')};
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0 0 1rem 0;
+
+    &:first-of-type {
+      margin: 0 0 1rem;
+    }
+
+    &:last-of-type {
+      margin: 0;
+    }
+
+  `}
 `
 const SendNFTWarning = styled.div`
   margin-bottom: 1rem;
@@ -530,11 +613,7 @@ const EventProgressInner = styled.div.attrs(({ progress }: { progress: number })
 `
 
 const CheckOutLink = styled(NavLink)`
-  background-color: #218add;
-  border-radius: 0 0 8px 8px;
-  padding: 6px 1rem;
-  width: 100%;
-  color: white;
+  color: #01ffff;
   font-size: 14px;
   text-decoration: none;
 
@@ -544,10 +623,8 @@ const CheckOutLink = styled(NavLink)`
 `
 
 const PositionNotDepositedText = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 20%;
-  transform: translateX(-50%);
+  font-size: 14px;
+  margin-bottom: 8px;
 `
 
 export function StakerMyStakes({
@@ -714,6 +791,11 @@ export function StakerMyStakes({
     if (earned === 0) {
       return '0'
     }
+
+    if (earned < 0.001 && earned > 0) {
+      return '< 0.001'
+    }
+
     const _earned = String(earned).split('.')
     return `${_earned[0].length > 8 ? `${_earned[0].slice(0, 8)}..` : _earned[0]}${
       !_earned[1].split('').every((el) => el === '0') ? `.${_earned[1].slice(0, 2)}` : ``
@@ -739,17 +821,23 @@ export function StakerMyStakes({
     return positions.map((el, i) => (
       <PositionCard key={i} navigatedTo={hash == `#${el.id}`}>
         <PositionCardHeader>
-          <NFTPositionIcon name={el.id}></NFTPositionIcon>
-          <NFTPositionDescription>
-            <NFTPositionIndex>{`Position #${+el.id}`}</NFTPositionIndex>
-            <NFTPositionLink
-              href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              View position
-            </NFTPositionLink>
-          </NFTPositionDescription>
+          <div style={{ display: 'flex' }}>
+            <NFTPositionIcon name={el.id}>
+              <span>{el.id}</span>
+            </NFTPositionIcon>
+            <NFTPositionDescription>
+              <NFTPositionIndex>
+                <IsActive el={el}></IsActive>
+              </NFTPositionIndex>
+              <NFTPositionLink
+                href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                View position
+              </NFTPositionLink>
+            </NFTPositionDescription>
+          </div>
           <StakePool>
             <>
               <CurrencyLogo currency={{ address: el.token0, symbol: el.pool.token0.symbol }} size={'35px'} />
@@ -766,8 +854,7 @@ export function StakerMyStakes({
           </StakePool>
           {!el.incentive && !el.eternalFarming && (
             <MoreButton
-              style={{ margin: 'auto 0 auto auto', width: 'unset' }}
-              disabled={unstaking.id && unstaking.state !== 'done'}
+              disabled={unstaking.id === el.id && unstaking.state !== 'done'}
               onClick={() => {
                 setUnstaking({ id: el.id, state: 'pending' })
                 withdrawHandler(el.id, { ...el })
@@ -786,10 +873,7 @@ export function StakerMyStakes({
               )}
             </MoreButton>
           )}
-          <MoreButton
-            style={{ margin: el.incentive || el.eternalFarming ? 'auto 0 auto auto' : 'auto 0 auto 1rem' }}
-            onClick={() => setSendModal(el.L2tokenId)}
-          >
+          <MoreButton single={el.incentive || el.eternalFarming} onClick={() => setSendModal(el.L2tokenId)}>
             <Send color={'#36f'} size={15} />
             <span style={{ marginLeft: '6px' }}>Send</span>
           </MoreButton>
@@ -807,7 +891,7 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${formatReward(el.incentiveEarned)} ${
+                      <PositionCardStatsItemValue title={el.incentiveEarned}>{`${formatReward(el.incentiveEarned)} ${
                         el.incentiveRewardToken.symbol
                       }`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
@@ -822,16 +906,16 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Bonus reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${formatReward(el.incentiveBonusEarned)} ${
-                        el.incentiveBonusRewardToken.symbol
-                      }`}</PositionCardStatsItemValue>
+                      <PositionCardStatsItemValue title={el.incentiveBonusEarned}>{`${formatReward(
+                        el.incentiveBonusEarned
+                      )} ${el.incentiveBonusRewardToken.symbol}`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
                   </PositionCardStatsItemWrapper>
                 </PositionCardStats>
                 <StakeBottomWrapper>
                   {!el.ended && el.incentiveEndTime * 1000 > Date.now() && (
                     <StakeCountdownWrapper>
-                      <StakeCountdownProgress started={!el.started && el.incentiveStartTime * 1000 > Date.now()}>
+                      <StakeCountdownProgress started={el.started || el.incentiveStartTime * 1000 < Date.now()}>
                         {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
                           <EventEndTime>{`Starts in ${getCountdownTime(el.incentiveStartTime)}`}</EventEndTime>
                         )}
@@ -882,7 +966,7 @@ export function StakerMyStakes({
                         (gettingReward.id === el.id &&
                           gettingReward.farmingType === FarmingType.FINITE &&
                           gettingReward.state !== 'done') ||
-                        el.incentiveReward === 0
+                        Math.round(el.incentiveReward) == 0
                       }
                       onClick={() => {
                         setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
@@ -922,7 +1006,7 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${formatReward(el.eternalEarned)} ${
+                      <PositionCardStatsItemValue title={el.eternalEarned}>{`${formatReward(el.eternalEarned)} ${
                         el.eternalRewardToken.symbol
                       }`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
@@ -934,15 +1018,19 @@ export function StakerMyStakes({
                     ></CurrencyLogo>
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Bonus Reward</PositionCardStatsItemTitle>
-                      <PositionCardStatsItemValue>{`${formatReward(el.eternalBonusEarned)} ${
-                        el.eternalBonusRewardToken.symbol
-                      }`}</PositionCardStatsItemValue>
+                      <PositionCardStatsItemValue title={el.eternalBonusEarned}>{`${formatReward(
+                        el.eternalBonusEarned
+                      )} ${el.eternalBonusRewardToken.symbol}`}</PositionCardStatsItemValue>
                     </PositionCardStatsItem>
                   </PositionCardStatsItemWrapper>
                 </PositionCardStats>
                 <StakeActions>
+                  {console.log(el.eternalEarned, el.eternalBonusEarned)}
                   <StakeButton
-                    disabled={eternalCollectReward.id && eternalCollectReward.state !== 'done'}
+                    disabled={
+                      (eternalCollectReward.id === el.id && eternalCollectReward.state !== 'done') ||
+                      (Math.round(el.eternalEarned) == 0 && Math.round(el.eternalBonusEarned) == 0)
+                    }
                     onClick={() => {
                       setEternalCollectReward({ id: el.id, state: 'pending' })
                       eternalCollectRewardHandler(el.id, { ...el })

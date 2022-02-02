@@ -428,7 +428,11 @@ export function StakerEventCard({
         </div>
         {reward && (
           <RewardAmount title={reward}>
-            {('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}
+            {eternal ? (
+              <span>200%</span>
+            ) : (
+              <span>{`${('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}`}</span>
+            )}
           </RewardAmount>
         )}
       </RewardWrapper>
@@ -455,7 +459,11 @@ export function StakerEventCard({
           </div>
           {bonusReward && (
             <RewardAmount title={bonusReward}>
-              {('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}
+              {eternal ? (
+                <span>200%</span>
+              ) : (
+                <span>{`${('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}`}</span>
+              )}
             </RewardAmount>
           )}
         </RewardWrapper>

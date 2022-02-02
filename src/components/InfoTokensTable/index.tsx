@@ -119,7 +119,7 @@ const DataRow = ({ tokenData, index }: { tokenData: TokenData; index: number }) 
             </MediumOnly>
             <HideMedium>
               <RowFixed>
-                <HoverInlineText text={tokenData.name} />
+                <HoverInlineText text={tokenData.name} maxCharacters={18}/>
                 <Label ml="8px" color={'#dedede'}>
                   ({tokenData.symbol})
                 </Label>

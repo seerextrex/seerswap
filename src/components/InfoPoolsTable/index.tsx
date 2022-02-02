@@ -14,6 +14,7 @@ import { Label, ClickableText } from 'components/Text'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks/web3'
 import {BarChart2, ExternalLink} from 'react-feather'
+import { log } from 'util'
 
 export const PageButtons = styled.div`
   width: 100%;
@@ -134,6 +135,12 @@ export const POOL_HIDE = [
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
   const { chainId } = useActiveWeb3React()
 
+  const poolTitle = useMemo(() => {
+    if (poolData.token0.symbol === 'USDC'){
+     return  poolData.token1.symbol + '/' + poolData.token0.symbol
+    }
+    return poolData.token0.symbol + '/' + poolData.token1.symbol
+  }, [poolData])
   return (
     <div>
       <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
@@ -145,7 +152,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
                           rel="noopener noreferrer"
                           target="_blank">
               <TYPE.label ml="8px">
-                {poolData.token0.symbol}/{poolData.token1.symbol}
+                {poolTitle}
               </TYPE.label>
               <ExternalLink size={16} color={'white'}/>
             </LinkWrapper>
@@ -191,7 +198,7 @@ export default function InfoPoolsTable({
   const theme = useTheme()
 
   // for sorting
-  const [sortField, setSortField] = useState(SORT_FIELD.tvlUSD)
+  const [sortField, setSortField] = useState(SORT_FIELD.volumeUSD)
   const [sortDirection, setSortDirection] = useState<boolean>(true)
 
   // pagination

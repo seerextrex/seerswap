@@ -1,42 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BrushBehavior, brushX, D3BrushEvent, ScaleLinear, select } from 'd3'
-import styled from 'styled-components/macro'
-import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from 'components/LiquidityChartRangeInput/svg'
 import usePrevious from 'hooks/usePrevious'
-
-const Handle = styled.path<{ color: string }>`
-  cursor: ew-resize;
-  pointer-events: none;
-
-  stroke-width: 3;
-  stroke: ${({ color }) => color};
-  fill: ${({ color }) => color};
-`
-
-const HandleAccent = styled.path`
-  cursor: ew-resize;
-  pointer-events: none;
-
-  stroke-width: 1.5;
-  stroke: ${({ theme }) => theme.white};
-  opacity: 0.6;
-`
-
-const LabelGroup = styled.g<{ visible: boolean }>`
-  opacity: ${({ visible }) => (visible ? '1' : '0')};
-  transition: opacity 300ms;
-`
-
-const TooltipBackground = styled.rect`
-  fill: ${({ theme }) => '#3f3f40'};
-`
-
-const Tooltip = styled.text`
-  text-anchor: middle;
-  font-size: 9px;
-  font-family: Montserrat;
-  fill: ${({ theme }) => theme.text1};
-`
+import { LabelGroup, Tooltip, TooltipBackground } from './styled'
 
 // flips the handles draggers when close to the container edges
 const FLIP_HANDLE_THRESHOLD_PX = 20
@@ -47,17 +12,17 @@ const BRUSH_EXTENT_MARGIN_PX = 2
 const compare = (a1: [number, number], a2: [number, number]): boolean => a1[0] !== a2[0] || a1[1] !== a2[1]
 
 export const Brush = ({
-  id,
-  xScale,
-  interactive,
-  brushLabelValue,
-  brushExtent,
-  setBrushExtent,
-  innerWidth,
-  innerHeight,
-  westHandleColor,
-  eastHandleColor,
-}: {
+                        id,
+                        xScale,
+                        interactive,
+                        brushLabelValue,
+                        brushExtent,
+                        setBrushExtent,
+                        innerWidth,
+                        innerHeight,
+                        westHandleColor,
+                        eastHandleColor
+                      }: {
   id: string
   xScale: ScaleLinear<number, number>
   interactive: boolean
@@ -111,7 +76,7 @@ export const Brush = ({
     brushBehavior.current = brushX<SVGGElement>()
       .extent([
         [Math.max(0 + BRUSH_EXTENT_MARGIN_PX, xScale(0)), 0],
-        [innerWidth - BRUSH_EXTENT_MARGIN_PX, innerHeight],
+        [innerWidth - BRUSH_EXTENT_MARGIN_PX, innerHeight]
       ])
       .handleSize(30)
       .filter(() => interactive)
@@ -161,14 +126,14 @@ export const Brush = ({
     () => (
       <>
         <defs>
-          <linearGradient id={`${id}-gradient-selection`} x1="0%" y1="100%" x2="100%" y2="100%">
+          <linearGradient id={`${id}-gradient-selection`} x1='0%' y1='100%' x2='100%' y2='100%'>
             <stop stopColor={westHandleColor} />
-            <stop stopColor={eastHandleColor} offset="1" />
+            <stop stopColor={eastHandleColor} offset='1' />
           </linearGradient>
 
           {/* clips at exactly the svg area */}
           <clipPath id={`${id}-brush-clip`}>
-            <rect x="0" y="0" width={innerWidth} height={innerHeight} />
+            <rect x='0' y='0' width={innerWidth} height={innerHeight} />
           </clipPath>
         </defs>
 
@@ -187,9 +152,9 @@ export const Brush = ({
             <g transform={`translate(${Math.max(0, xScale(localBrushExtent[0]))}, 0)`}>
               <svg width={xScale(localBrushExtent[1]) - xScale(localBrushExtent[0])}>
                 <line
-                  stroke="#267cc1"
-                  strokeWidth="3"
-                  x1="0"
+                  stroke='#267cc1'
+                  strokeWidth='3'
+                  x1='0'
                   x2={xScale(localBrushExtent[1])}
                   y1={innerHeight - 2}
                   y2={innerHeight - 2}
@@ -207,20 +172,20 @@ export const Brush = ({
                   {/* <Handle color={westHandleColor} d={brushHandlePath(innerHeight)} />
                   <HandleAccent d={brushHandleAccentPath()} /> */}
                   <path
-                    d="M12.5 7C12.5 10.0376 10.0376 12.5 7 12.5C3.96243 12.5 1.5 10.0376 1.5 7C1.5 3.96243 3.96243 1.5 7 1.5C10.0376 1.5 12.5 3.96243 12.5 7Z"
-                    fill="white"
-                    stroke="#267cc1"
-                    strokeWidth="3"
+                    d='M12.5 7C12.5 10.0376 10.0376 12.5 7 12.5C3.96243 12.5 1.5 10.0376 1.5 7C1.5 3.96243 3.96243 1.5 7 1.5C10.0376 1.5 12.5 3.96243 12.5 7Z'
+                    fill='white'
+                    stroke='#267cc1'
+                    strokeWidth='3'
                   />
-                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke="#267cc1" strokeWidth="2"></line>
+                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke='#267cc1' strokeWidth='2'></line>
                 </g>
 
                 <LabelGroup
                   visible={true}
                   transform={`translate(0,${-innerHeight + 30}), scale(${flipWestHandle ? '1' : '-1'}, 1)`}
                 >
-                  <TooltipBackground y="0" x="12" height="15" width="30" rx="4" />
-                  <Tooltip y="8" x="-27" transform={`scale(-1, 1)`} dominantBaseline="middle">
+                  <TooltipBackground y='0' x='12' height='15' width='30' rx='4' />
+                  <Tooltip y='8' x='-27' transform={`scale(-1, 1)`} dominantBaseline='middle'>
                     {brushLabelValue('e', localBrushExtent[0])}
                   </Tooltip>
                 </LabelGroup>
@@ -238,20 +203,20 @@ export const Brush = ({
                   {/* <Handle color={eastHandleColor} d={brushHandlePath(innerHeight)} />
                   <HandleAccent d={brushHandleAccentPath()} /> */}
                   <path
-                    d="M12.5 7C12.5 10.0376 10.0376 12.5 7 12.5C3.96243 12.5 1.5 10.0376 1.5 7C1.5 3.96243 3.96243 1.5 7 1.5C10.0376 1.5 12.5 3.96243 12.5 7Z"
-                    fill="white"
-                    stroke="#267cc1"
-                    strokeWidth="3"
+                    d='M12.5 7C12.5 10.0376 10.0376 12.5 7 12.5C3.96243 12.5 1.5 10.0376 1.5 7C1.5 3.96243 3.96243 1.5 7 1.5C10.0376 1.5 12.5 3.96243 12.5 7Z'
+                    fill='white'
+                    stroke='#267cc1'
+                    strokeWidth='3'
                   />
-                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke="#267cc1" strokeWidth="2"></line>
+                  <line x1={7} x2={7} y1={0} y2={-innerHeight} stroke='#267cc1' strokeWidth='2'></line>
                 </g>
 
                 <LabelGroup
                   transform={`translate(0,${-innerHeight + 30}), scale(${flipEastHandle ? '-1' : '1'}, 1)`}
                   visible={true}
                 >
-                  <TooltipBackground y="0" x="12" height="15" width="30" rx="4" />
-                  <Tooltip y="8" x="27" dominantBaseline="middle">
+                  <TooltipBackground y='0' x='12' height='15' width='30' rx='4' />
+                  <Tooltip y='8' x='27' dominantBaseline='middle'>
                     {brushLabelValue('e', localBrushExtent[1])}
                   </Tooltip>
                 </LabelGroup>
@@ -285,7 +250,7 @@ export const Brush = ({
       showWestArrow,
       westHandleColor,
       westHandleInView,
-      xScale,
+      xScale
     ]
   )
 }

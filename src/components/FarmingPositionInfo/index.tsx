@@ -1,12 +1,11 @@
 import { Position } from '@uniswap/v3-sdk'
-import {useEffect, useMemo, useState} from 'react'
+import { useMemo, useState } from 'react'
 import { useToken } from '../../hooks/Tokens'
 import { usePool } from '../../hooks/usePools'
 import useIsTickAtLimit from '../../hooks/useIsTickAtLimit'
 import { unwrappedToken } from '../../utils/unwrappedToken'
 import { getPriceOrderingFromPositionForUI } from '../PositionListItem'
 
-import styled from 'styled-components/macro'
 import Modal from '../Modal'
 import DoubleCurrencyLogo from '../DoubleLogo'
 
@@ -14,39 +13,7 @@ import { formatTickPrice } from 'utils/formatTickPrice'
 import { Bound } from 'state/mint/v3/actions'
 import { X } from 'react-feather'
 import { Percent } from '@uniswap/sdk-core'
-
-const PositionIcon = styled.div`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.winterMainButton};
-  cursor: pointer;
-`
-
-const PositionInfoModal = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  width: 100%;
-  color: #080064;
-`
-
-const PositionInfoRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-`
-
-const PositionInfoRowValue = styled.div`
-  display: flex;
-`
-
-const PositionInfoRowTitle = styled.div`
-  font-weight: 600;
-`
+import { PositionIcon, PositionInfoModal, PositionInfoRowTitle, PositionInfoRowValue, PositionInfoRow } from './styled'
 
 export default function FarmingPositionInfo({ el }: { el: any }) {
   const [positionModal, setPositionModal] = useState(false)
@@ -82,7 +49,9 @@ export default function FarmingPositionInfo({ el }: { el: any }) {
 
   return (
     <>
-      <Modal isOpen={positionModal} onHide={() => {setPositionModal(false)}}>
+      <Modal isOpen={positionModal} onHide={() => {
+        setPositionModal(false)
+      }}>
         <PositionInfoModal>
           <div style={{ marginBottom: '2rem', textAlign: 'center', justifyContent: 'center', display: 'flex' }}>
             <span>Position Info</span>

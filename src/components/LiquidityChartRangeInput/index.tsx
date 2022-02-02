@@ -8,7 +8,6 @@ import useTheme from 'hooks/useTheme'
 import { saturate } from 'polished'
 import { BarChart2, Inbox, CloudOff } from 'react-feather'
 import { batch } from 'react-redux'
-import styled from 'styled-components/macro'
 import { TYPE } from '../../theme'
 import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
@@ -16,6 +15,7 @@ import { format } from 'd3'
 import { Bound } from 'state/mint/v3/actions'
 import { FeeAmount } from 'lib/src'
 import { ZoomLevels } from './types'
+import {ChartWrapper} from './styled'
 
 import ReactGA from 'react-ga'
 
@@ -40,12 +40,7 @@ const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   },
 }
 
-const ChartWrapper = styled.div`
-  position: relative;
 
-  justify-content: center;
-  align-content: center;
-`
 
 function InfoBox({ message, icon }: { message?: ReactNode; icon: ReactNode }) {
   return (

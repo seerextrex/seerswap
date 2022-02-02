@@ -1,17 +1,13 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { NonfungiblePositionManager, Pool, Position } from 'lib/src'
-
 import { PoolState, usePool } from 'hooks/usePools'
 import { useToken } from 'hooks/Tokens'
 import { useDerivedPositionInfo } from 'hooks/useDerivedPositionInfo'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { unwrappedToken } from 'utils/unwrappedToken'
-import { usePositionTokenURI } from '../../hooks/usePositionTokenURI'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
 import { getExplorerLink, ExplorerDataType } from '../../utils/getExplorerLink'
-import { LoadingRows } from './styleds'
-import styled from 'styled-components/macro'
 import { AutoColumn } from 'components/Column'
 import { RowBetween, RowFixed } from 'components/Row'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -31,7 +27,7 @@ import { useV3NFTPositionManagerContract } from 'hooks/useContract'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
 import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Dots } from 'components/swap/styleds'
+import { Dots } from '../../components/swap/styled'
 import { getPriceOrderingFromPositionForUI } from '../../components/PositionListItem'
 import useTheme from '../../hooks/useTheme'
 import RateToggle from '../../components/RateToggle'
@@ -45,157 +41,28 @@ import { Bound } from 'state/mint/v3/actions'
 import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { formatTickPrice } from 'utils/formatTickPrice'
 import { SupportedChainId } from 'constants/chains'
-import usePrevious, { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
-
+import usePrevious from '../../hooks/usePrevious'
 import ReactGA from 'react-ga'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import { useAppSelector } from '../../state/hooks'
-
-const PageWrapper = styled.div`
-  min-width: 800px;
-  max-width: 960px;
-  background-color: ${({ theme }) => theme.winterBackground};
-  border-radius: 20px;
-  padding: 30px 40px;
-  margin-top: 5rem;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    min-width: 680px;
-    max-width: 680px;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 100%;
-    max-width: 100%;
-    margin-top: 1rem;
-    padding: 30px 10px;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    min-width: 340px;
-    max-width: 340px;
-  `};
-`
-
-const BadgeText = styled.div`
-  font-weight: 500;
-  font-size: 14px;
-`
-
-// responsive text
-// disable the warning because we don't use the end prop, we just want to filter it out
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Label = styled(({ end, ...props }) => <TYPE.label {...props} />)<{ end?: boolean }>`
-  display: flex;
-  font-size: 16px;
-  justify-content: ${({ end }) => (end ? 'flex-end' : 'flex-start')};
-  align-items: center;
-`
-
-const ExtentsText = styled.span`
-  color: ${({ theme }) => theme.text2};
-  font-size: 14px;
-  text-align: center;
-  margin-right: 4px;
-  font-weight: 500;
-`
-
-const HoverText = styled(TYPE.main)`
-  text-decoration: none;
-  color: white;
-  :hover {
-    color: ${({ theme }) => theme.text1};
-    text-decoration: none;
-  }
-`
-
-const DoubleArrow = styled.span`
-  color: ${({ theme }) => theme.text3};
-  margin: 0 1rem;
-`
-const ResponsiveRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-direction: column;
-    align-items: flex-start;
-    row-gap: 16px;
-    width: 100%:
-  `};
-`
-
-const ResponsiveButtonPrimary = styled(ButtonPrimary)`
-  border-radius: 12px;
-  padding: 6px 8px;
-  width: fit-content;
-  margin-right: 8px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex: 1 1 auto;
-  `};
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0;
-     width: 49%;
-  `};
-`
-
-const NFTGrid = styled.div`
-  display: grid;
-  grid-template: 'overlap';
-  min-height: 400px;
-`
-
-const NFTCanvas = styled.canvas`
-  grid-area: overlap;
-`
-
-const NFTImage = styled.img`
-  grid-area: overlap;
-  height: 400px;
-  /* Ensures SVG appears on top of canvas. */
-  z-index: 1;
-`
-const RowFixedStyled = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-   width: 100%;
-    flex-direction: column;
-
-    & > * {
-      margin-bottom: 1rem;
-    }
-  `}
-`
-const RowFixedStyledButtons = styled(RowFixedStyled)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    flex-direction: unset;
-    gap: .5rem;
-  `}
-`
-const FeeBadge = styled(Badge)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      margin-right: 0!important;
-      margin-top: 1rem;
-    `}
-`
-
-const PriceRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-      flex-direction: column;
-    `}
-`
-
-const LoadingMock = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.winterBackground};
-  height: 400px;
-  width: 500px;
-  border-radius: 20px;
-  margin-top: 5rem;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  width: 100%;
-  margin-top: 1rem;
-  `}
-`
+import {
+  PositionPagePageWrapper,
+  BadgeText,
+  Label,
+  ExtentsText,
+  HoverText,
+  DoubleArrow,
+  ResponsiveRow,
+  PositionPageButtonPrimary,
+  NFTGrid,
+  NFTCanvas,
+  NFTImage,
+  RowFixedStyled,
+  RowFixedStyledButtons,
+  FeeBadge,
+  PriceRow,
+  LoadingMock
+} from './styleds'
 
 function CurrentPriceCard({
   inverted,
@@ -410,8 +277,6 @@ export function PositionPage({
 
   const token0 = useToken(_token0Address)
   const token1 = useToken(_token1Address)
-
-  const metadata = usePositionTokenURI(parsedTokenId)
 
   const currency0 = token0 ? unwrappedToken(token0) : undefined
   const currency1 = token1 ? unwrappedToken(token1) : undefined
@@ -631,7 +496,7 @@ export function PositionPage({
     </LoadingMock>
   ) : (
     <>
-      <PageWrapper>
+      <PositionPagePageWrapper>
         <TransactionConfirmationModal
           isOpen={showConfirm}
           onDismiss={() => setShowConfirm(false)}
@@ -671,7 +536,7 @@ export function PositionPage({
               {ownsNFT && (
                 <RowFixedStyledButtons>
                   {currency0 && currency1 && tokenId ? (
-                    <ResponsiveButtonPrimary
+                    <PositionPageButtonPrimary
                       as={Link}
                       to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/${tokenId}`}
                       width="fit-content"
@@ -680,10 +545,10 @@ export function PositionPage({
                       style={{ color: 'white' }}
                     >
                       <Trans>Increase Liquidity</Trans>
-                    </ResponsiveButtonPrimary>
+                    </PositionPageButtonPrimary>
                   ) : null}
                   {tokenId && !removed ? (
-                    <ResponsiveButtonPrimary
+                    <PositionPageButtonPrimary
                       as={Link}
                       to={`/remove/${tokenId}`}
                       width="fit-content"
@@ -692,12 +557,12 @@ export function PositionPage({
                       $borderRadius="12px"
                     >
                       <Trans>Remove Liquidity</Trans>
-                    </ResponsiveButtonPrimary>
+                    </PositionPageButtonPrimary>
                   ) : null}
                 </RowFixedStyledButtons>
               )}
             </ResponsiveRow>
-            <RowBetween></RowBetween>
+            <RowBetween/>
           </AutoColumn>
           <ResponsiveRow align="flex-start">
             <AutoColumn gap="sm" style={{ width: '100%', height: '100%' }}>
@@ -936,7 +801,7 @@ export function PositionPage({
             </AutoColumn>
           </DarkCard>
         </AutoColumn>
-      </PageWrapper>
+      </PositionPagePageWrapper>
       <SwitchLocaleLink />
     </>
   )

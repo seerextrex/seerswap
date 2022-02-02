@@ -1,213 +1,40 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Check, CheckCircle, Frown, X } from 'react-feather'
-import { Link } from 'react-router-dom'
-import styled, { css, keyframes } from 'styled-components/macro'
+import { Check, CheckCircle, Frown, X } from 'react-feather'
 import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useStakerHandlers } from '../../hooks/useStakerHandlers'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import Loader from '../Loader'
-import gradient from 'random-gradient'
-import {darken} from "polished";
-
-const skeletonAnimation = keyframes`
-  100% {
-    transform: translateX(100%);
-  }
-`
-
-const skeletonGradient = css`
-  position: relative;
-  overflow: hidden;
-  &::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      rgba(91, 105, 141, 0) 0,
-      rgba(91, 105, 141, 0.2) 25%,
-      rgba(91, 105, 141, 0.5) 60%,
-      rgba(91, 105, 141, 0)
-    );
-    animation-name: ${skeletonAnimation};
-    animation-duration: 1.5s;
-    animation-iteration-count: infinite;
-    content: '';
-  }
-`
-
-const ModalWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 1rem;
-  color: #080064;
-`
-const ModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 1rem;
-`
-const CloseModalButton = styled.button`
-  background: transparent;
-  border: none;
-`
-
-const ModalBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 400px;
-  max-height: 400px;
-  overflow: auto;
-`
-const NFTPositionsRow = styled.div`
-  width: 100%;
-  margin-bottom: 8px;
-`
-
-const NFTPosition = styled.div`
-  display: inline-flex;
-  cursor: pointer;
-  position: relative;
-  width: calc(33% - 8px);
-  border-radius: 1rem;
-  border: 1px solid ${({ selected }) => (selected ? '#3970FF' : 'rgba(60, 97, 126, 0.5)')};
-  padding: 8px;
-  margin-right: 9px;
-  transition-duration: 0.2s;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: calc(50% - 5px);
-    margin-bottom: 5px;
-    &:nth-of-type(2n) {
-      margin-right: 0;
-    }
-  `}
-`
-
-const NFTPositionSelectCircle = styled.div`
-    position: absolute;
-    width: 20px;
-    height 20px;
-    top: 8px;
-    right: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition-duration: .2s;
-    border: 1px solid  ${({ selected }) => (selected ? '#3970FF' : 'rgba(60, 97, 126, 0.5)')};
-    background-color:  ${({ selected }) => (selected ? '#3970FF' : 'transparent')}
-    `
-
-const NFTPositionIcon = styled.div`
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: ${({ name }) => (name ? gradient('token' + name) : '')};
-  ${({ skeleton }) =>
-    skeleton &&
-    css`
-      background: rgba(60, 97, 126, 0.5);
-      ${skeletonGradient}
-    `};
-`
-const NFTPositionDescription = styled.div`
-  margin-left: 10px;
-  line-height: 22px;
-
-  ${({ skeleton }) =>
-    skeleton &&
-    css`
-      & > * {
-        background: rgba(60, 97, 126, 0.5);
-        border-radius: 6px;
-        ${skeletonGradient}
-      }
-
-      & > ${NFTPositionIndex} {
-        height: 18px;
-        width: 40px;
-        margin-bottom: 3px;
-        margin-top: 2px;
-      }
-
-      & > ${NFTPositionLink} {
-        height: 13px;
-        width: 60px;
-        display: inline-block;
-      }
-    `}
-`
-const NFTPositionIndex = styled.div``
-
-const NFTPositionLink = styled.a`
-  font-size: 13px;
-`
-
-const StakeButton = styled.button`
-  background: ${({ theme }) => theme.winterMainButton};
-  border: none;
-  padding: 1rem;
-  color: white;
-  border-radius: 8px;
-  &:hover {
-    background: ${({theme}) => darken(0.05, theme.winterMainButton)};
-  }
-  &:disabled {
-    background: ${({ theme }) => theme.winterDisabledButton};
-    cursor: default;
-  }
-`
-
-const StakeButtonLoader = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
-const EmptyMock = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 350px;
-  align-items: center;
-  justify-content: center;
-`
-
-const LiquidityLockWarning = styled.div`
-  margin-bottom: 1rem;
-  padding: 8px 12px;
-  background: #e4e46b;
-  color: #333303;
-  border-radius: 8px;
-  line-height: 25px;
-`
-
-const ProvideLiquidityLink = styled(Link)`
-  display: flex;
-  justify-content: center;
-  text-decoration: none;
-  background: linear-gradient(90deg, rgba(72, 41, 187, 1) 0%, rgb(49, 149, 255) 100%);
-  padding: 8px 10px;
-  border-radius: 6px;
-  color: white;
-  font-weight: 500;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-      font-size: 15px;
-  `}
-`
+import {
+  CloseModalButton,
+  ModalBody,
+  ModalHeader,
+  ModalWrapper,
+  StakeButton,
+  StakeButtonLoader,
+  NFTPosition,
+  NFTPositionDescription,
+  NFTPositionIcon,
+  NFTPositionIndex,
+  NFTPositionLink,
+  NFTPositionsRow,
+  NFTPositionSelectCircle,
+  EmptyMock
+} from './styled'
 
 export function StakeModal({
-  event: { pool, startTime, endTime, id, rewardAddress, bonusRewardAddress, refundee, token0, token1 },
-  closeHandler,
-}: {
+                             event: {
+                               pool,
+                               startTime,
+                               endTime,
+                               rewardAddress,
+                               bonusRewardAddress,
+                               refundee,
+                               token0,
+                               token1
+                             },
+                             closeHandler
+                           }: {
   event: {
     pool: string
     startTime: string
@@ -223,12 +50,9 @@ export function StakeModal({
 }) {
   const [selectedNFT, setSelectedNFT] = useState(null)
 
-  const {
-    fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn },
-  } = useIncentiveSubgraph() || {}
+  const { fetchPositionsForPool: { positionsForPool, fetchPositionsForPoolFn } } = useIncentiveSubgraph() || {}
 
-  const { approveHandler, approvedHash, transferHandler, transferedHash, stakeHandler, stakedHash } =
-    useStakerHandlers() || {}
+  const { approveHandler, approvedHash, transferHandler, transferedHash, stakeHandler, stakedHash } = useStakerHandlers() || {}
 
   useEffect(() => {
     fetchPositionsForPoolFn(pool)
@@ -237,7 +61,7 @@ export function StakeModal({
   const positionsForStake = useMemo(() => {
     if (!positionsForPool) return
 
-    return positionsForPool.filter((position) => position.pool === pool && !position.staked)
+    return positionsForPool.filter((position: any) => position.pool === pool && !position.staked)
   }, [positionsForPool])
 
   const [chunkedPositions, setChunkedPositions] = useState(null)
@@ -299,7 +123,7 @@ export function StakeModal({
             position.approved = true
             setSelectedNFT((old) => ({
               ...old,
-              approved: true,
+              approved: true
             }))
           }
 
@@ -330,7 +154,7 @@ export function StakeModal({
             position.transfered = true
             setSelectedNFT((old) => ({
               ...old,
-              transfered: true,
+              transfered: true
             }))
           }
 
@@ -365,7 +189,7 @@ export function StakeModal({
               ...old,
               staked: true,
               transfered: true,
-              approved: true,
+              approved: true
             }))
           }
 
@@ -401,7 +225,7 @@ export function StakeModal({
       bonusRewardAddress,
       startTime,
       endTime,
-      refundee,
+      refundee
     })
   }, [selectedNFT, submitState])
 
@@ -456,11 +280,11 @@ export function StakeModal({
                             old && old.tokenId === el.tokenId
                               ? null
                               : {
-                                  staked: el.staked,
-                                  tokenId: el.tokenId,
-                                  approved: el.approved,
-                                  transfered: el.transfered,
-                                }
+                                staked: el.staked,
+                                tokenId: el.tokenId,
+                                approved: el.approved,
+                                transfered: el.transfered
+                              }
                           )
                         }
                       }}
@@ -470,8 +294,8 @@ export function StakeModal({
                         <NFTPositionIndex>{`#${el.tokenId}`}</NFTPositionIndex>
                         <NFTPositionLink
                           href={`https://app.algebra.finance/#/pool/${el.tokenId}`}
-                          rel="noopener noreferrer"
-                          target="_blank"
+                          rel='noopener noreferrer'
+                          target='_blank'
                         >
                           View position
                         </NFTPositionLink>
@@ -480,7 +304,7 @@ export function StakeModal({
                         <Check
                           style={{
                             transitionDuration: '.2s',
-                            opacity: selectedNFT && selectedNFT.tokenId === el.tokenId ? '1' : '0',
+                            opacity: selectedNFT && selectedNFT.tokenId === el.tokenId ? '1' : '0'
                           }}
                           size={16}
                           stroke={'white'}
@@ -494,12 +318,12 @@ export function StakeModal({
               <NFTPositionsRow>
                 {[0, 1, 2].map((el, i) => (
                   <NFTPosition key={i} skeleton>
-                    <NFTPositionIcon skeleton></NFTPositionIcon>
+                    <NFTPositionIcon skeleton />
                     <NFTPositionDescription skeleton>
-                      <NFTPositionIndex skeleton></NFTPositionIndex>
-                      <NFTPositionLink skeleton></NFTPositionLink>
+                      <NFTPositionIndex skeleton />
+                      <NFTPositionLink skeleton />
                     </NFTPositionDescription>
-                    <NFTPositionSelectCircle></NFTPositionSelectCircle>
+                    <NFTPositionSelectCircle />
                   </NFTPosition>
                 ))}
               </NFTPositionsRow>
@@ -513,15 +337,16 @@ export function StakeModal({
                   {submitState === 0
                     ? `Approving NFT #${selectedNFT.tokenId}`
                     : submitState === 1
-                    ? `Transferring NFT #${selectedNFT.tokenId}`
-                    : submitState === 2
-                    ? `Depositing NFT #${selectedNFT.tokenId}`
-                    : null}
+                      ? `Transferring NFT #${selectedNFT.tokenId}`
+                      : submitState === 2
+                        ? `Depositing NFT #${selectedNFT.tokenId}`
+                        : null}
                 </span>
               </StakeButtonLoader>
             </StakeButton>
           ) : NFTsForApprove ? (
-            <StakeButton disabled={submitLoader} onClick={approveNFTs} id={'farming-approve-nft'} className={'farming-approve-nft'}>
+            <StakeButton disabled={submitLoader} onClick={approveNFTs} id={'farming-approve-nft'}
+                         className={'farming-approve-nft'}>
               {`Approve NFT #${NFTsForApprove.tokenId}`}
             </StakeButton>
           ) : NFTsForTransfer ? (

@@ -4,10 +4,7 @@ import { IS_ON_APP_URL } from 'constants/misc'
 import { useMemo } from 'react'
 import { useAppSelector } from 'state/hooks'
 import sortByListPriority from 'utils/listSort'
-import UNSUPPORTED_TOKEN_LIST from '../../constants/tokenLists/unsupported.tokenlist.json'
-import BROKEN_LIST from '../../constants/tokenLists/broken.tokenlist.json'
 import { AppState } from '../index'
-import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import { WrappedTokenInfo } from './wrappedTokenInfo'
 
 export type TokenAddressMap = Readonly<{
@@ -99,40 +96,23 @@ function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMa
 
 // filter out unsupported lists
 export function useActiveListUrls(): string[] | undefined {
-  return useAppSelector((state) => state.lists.activeListUrls)?.filter((url) => !UNSUPPORTED_LIST_URLS.includes(url))
+  return useAppSelector((state) => state.lists.activeListUrls)
 }
 
 export function useInactiveListUrls(): string[] {
   const lists = useAllLists()
   const allActiveListUrls = useActiveListUrls()
-  return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url))
+  return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url))
 }
 
 // get all the tokens from active lists, combine with local default tokens
 export function useCombinedActiveList(): TokenAddressMap {
   const activeListUrls = useActiveListUrls()
-  const activeTokens = useCombinedTokenMapFromUrls(activeListUrls)
-  return activeTokens
+  return useCombinedTokenMapFromUrls(activeListUrls)
   // combineMaps(activeTokens, TRANSFORMED_DEFAULT_TOKEN_LIST)
 }
 
-// list of tokens not supported on interface, used to show warnings and prevent swaps and adds
-export function useUnsupportedTokenList(): TokenAddressMap {
-  // get hard coded unsupported tokens, only block on app url
-  const localUnsupportedListMap = useMemo(() => (IS_ON_APP_URL ? listToTokenMap(UNSUPPORTED_TOKEN_LIST) : {}), [])
-
-  // broken tokens, blocked on all URLS
-  const brokenListMap = useMemo(() => listToTokenMap(BROKEN_LIST), [])
-
-  // get any loaded unsupported tokens, this will be empty if not on app URL
-  const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(UNSUPPORTED_LIST_URLS)
-
-  // format into one token address map
-  return useMemo(
-    () => combineMaps(brokenListMap, combineMaps(localUnsupportedListMap, loadedUnsupportedListMap)),
-    [localUnsupportedListMap, loadedUnsupportedListMap, brokenListMap]
-  )
-}
+// list of tokens not supported on interface, used to show warnings and prevent swaps and add
 
 export function useIsListActive(url: string): boolean {
   const activeListUrls = useActiveListUrls()

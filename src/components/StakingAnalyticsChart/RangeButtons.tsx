@@ -1,6 +1,5 @@
 import React from 'react'
-import styled, {css} from "styled-components/macro"
-import {lighten} from "polished"
+import {RangeButtonsWrapper, ToolbarOptionsItem} from './styled'
 
 const buttonsData = [
     {title: 'Day'},
@@ -8,35 +7,6 @@ const buttonsData = [
     {title: 'Month'},
     {title: 'All'}
 ]
-
-const RangeButtonsWrapper = styled.ul`
-  padding: 0;
-`
-
-const ToolbarOptionsItem = styled.li`
-  display: inline-flex;
-  padding: 6px 10px;
-  border-radius: 6px;
-  background-color: #202635;
-  user-select: none;
-  cursor: pointer;
-  margin-right: 8px;
-
-  &:last-of-type {
-    margin-right: 0;
-  }
-
-  ${({selected}) =>
-          selected &&
-          css`
-            background-color: #2a87d9;
-            cursor: default;
-          `}
-  ${({theme}) => theme.mediaWidth.upToSmall`
-    margin-bottom: 10px;
-  `}
-`
-
 
 const RangeButtons = ({setSpan, span} : {setSpan : any, span: string}) => {
     return (
@@ -50,5 +20,4 @@ const RangeButtons = ({setSpan, span} : {setSpan : any, span: string}) => {
         </RangeButtonsWrapper>
     )
 }
-
 export default RangeButtons

@@ -5,7 +5,8 @@ import { AxisBottom } from './AxisBottom'
 import { Brush } from './Brush'
 import { Line } from './Line'
 import { ChartEntry, LiquidityChartRangeInputProps } from './types'
-import Zoom, { ZoomOverlay } from './Zoom'
+import Zoom  from './Zoom'
+import {ZoomOverlay} from './styled'
 
 export const xAccessor = (d: ChartEntry) => d.price0
 export const yAccessor = (d: ChartEntry) => d.activeLiquidity

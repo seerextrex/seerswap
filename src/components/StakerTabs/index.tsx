@@ -1,55 +1,25 @@
 import { useState } from 'react'
-import styled from 'styled-components/macro'
 import { Database, LifeBuoy } from 'react-feather'
-
-const Tabs = styled.div`
-  display: flex;
-`
-
-const Tab = styled.div`
-  display: inline-flex;
-  align-items: center;
-  padding: 0 8px 12px;
-  border-bottom: 1px solid ${({ active }) => (active ? '#4588ED' : '#202635')};
-  white-space: nowrap;
-  cursor: pointer;
-`
-
-const TabSpacer = styled.div`
-  display: inline-block;
-  width: 40px;
-  height: 37px;
-  border-bottom: 1px solid #202635;
-  &:last-of-type {
-    width: 100%;
-  }
-`
-const TabIcon = styled.span`
-  margin-right: 10px;
-  & > svg {
-    display: block;
-  }
-`
+import { Tabs, Tab, TabSpacer, TabIcon } from './styled'
 
 const tabs = [
   {
     title: 'My rewards',
-    icon: <LifeBuoy></LifeBuoy>,
+    icon: <LifeBuoy />
   },
   {
     title: 'My farms',
-    icon: <Database></Database>,
-  },
+    icon: <Database />
+  }
 ]
 
 export function StakerTabs({ changeTabHandler }: { changeTabHandler: (i: number) => void }) {
   const [activeTab, setActiveTab] = useState(0)
 
-  const selectTab = function (i) {
+  const selectTab = function(i: number) {
     setActiveTab(i)
     changeTabHandler(i)
   }
-
   return (
     <Tabs>
       {tabs.map((el, i) => (
@@ -58,7 +28,7 @@ export function StakerTabs({ changeTabHandler }: { changeTabHandler: (i: number)
             <TabIcon>{el.icon}</TabIcon>
             <span>{el.title}</span>
           </Tab>
-          <TabSpacer></TabSpacer>
+          <TabSpacer />
         </>
       ))}
     </Tabs>

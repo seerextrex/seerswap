@@ -1,18 +1,13 @@
-import { useEffect, useCallback, useState, useRef } from "react";
+import { useState } from "react";
 import { useActiveWeb3React } from "./web3";
-import * as request from 'utils/request';
 import { CHAIN_SUBGRAPH_URL } from "../state/data/slice";
 import { Contract, providers } from "ethers";
-import POOL_ABI from 'abis/pool';
 import ERC20_ABI from 'abis/erc20'
 import STAKER_ABI from 'abis/staker'
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from "../constants/addresses";
-// import BigNumber from 'bignumber.js'
 import { BigNumber } from "@ethersproject/bignumber";
-import { position } from "styled-system";
-import { useApolloClient, useLazyQuery, useQuery, gql } from "@apollo/client";
-import { CURRENT_EVENTS, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN, FUTURE_EVENTS, LAST_EVENT, POSITIONS_OWNED_FOR_POOL, SHARED_POSITIONS, TRANSFERED_POSITIONS, TRANSFERED_POSITIONS_FOR_POOL } from "../utils/graphql-queries";
+import { CURRENT_EVENTS, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN, FUTURE_EVENTS, POSITIONS_OWNED_FOR_POOL, SHARED_POSITIONS, TRANSFERED_POSITIONS, TRANSFERED_POSITIONS_FOR_POOL } from "../utils/graphql-queries";
 import { useClients } from "./subgraph/useClients";
 import { formatUnits } from "@ethersproject/units";
 

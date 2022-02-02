@@ -6,44 +6,22 @@ import { Text } from 'rebass'
 import { ExtendedEther } from '../../constants/tokens'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAllTokens, useToken, useIsUserAddedToken, useSearchInactiveTokenLists } from '../../hooks/Tokens'
-import { CloseIcon, TYPE, ButtonText, IconWrapper } from '../../theme'
+import { CloseIcon, TYPE } from '../../theme'
 import { isAddress } from '../../utils'
 import Column from '../Column'
-import Row, { RowBetween, RowFixed } from '../Row'
+import Row, { RowBetween } from '../Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens, useSortedTokensByQuery } from './filtering'
 import { useTokenComparator } from './sorting'
-import { PaddedColumn, SearchInput, Separator } from './styleds'
+import { PaddedColumn, SearchInput, Separator, ContentWrapper } from './styled'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import styled from 'styled-components/macro'
 import useToggle from 'hooks/useToggle'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useTheme from 'hooks/useTheme'
 import ImportRow from './ImportRow'
-import { Edit } from 'react-feather'
 import useDebounce from 'hooks/useDebounce'
-
 import ReactGA from 'react-ga'
-// import getTokenList from "../../utils/getTokenList";
-// import {useFetchListCallback} from "../../hooks/useFetchListCallback";
-
-const ContentWrapper = styled(Column)`
-  width: 100%;
-  flex: 1 1;
-  position: relative;
-  color: #080064;
-`
-
-const Footer = styled.div`
-  width: 100%;
-  border-radius: 20px;
-  padding: 20px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  background-color: ${({ theme }) => theme.bg1};
-  border-top: 1px solid ${({ theme }) => theme.bg2};
-`
 
 interface CurrencySearchProps {
   isOpen: boolean
@@ -68,7 +46,6 @@ export function CurrencySearch({
   disableNonToken,
   onDismiss,
   isOpen,
-  showManageView,
   showImportView,
   setImportToken,
 }: CurrencySearchProps) {
@@ -206,7 +183,7 @@ export function CurrencySearch({
           />
         </Row>
         {showCommonBases && (
-          <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
+          <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
         )}
       </PaddedColumn>
       <Separator style={{ backgroundColor: '#3881a5' }} />
@@ -240,20 +217,6 @@ export function CurrencySearch({
           </TYPE.main>
         </Column>
       )}
-      {/* <Footer>
-        <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.primary1} className="list-token-manage-button">
-            <RowFixed>
-              <IconWrapper size="16px" marginRight="6px" stroke={theme.primaryText1}>
-                <Edit />
-              </IconWrapper>
-              <TYPE.main color={theme.primaryText1}>
-                <Trans>Manage Token Lists</Trans>
-              </TYPE.main>
-            </RowFixed>
-          </ButtonText>
-        </Row>
-      </Footer> */}
     </ContentWrapper>
   )
 }

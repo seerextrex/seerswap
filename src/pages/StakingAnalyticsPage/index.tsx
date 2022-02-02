@@ -1,81 +1,81 @@
 import StakingAnalyticsChart from '../../components/StakingAnalyticsChart'
-import styled from "styled-components/macro";
 import {useEffect} from "react";
 import {useInfoSubgraph} from "../../hooks/subgraph/useInfoSubgraph";
 import Loader from "../../components/Loader";
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 import {ArrowLeft} from "react-feather"
-
-const StakingAnalyticsPageWrapper = styled.div`
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: 5rem;
-`
-const LoaderWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 470px;
-  margin: 2rem 0;
-  background-color: #052445;
-  border-radius: 16px;
-`
-const BackButton = styled(NavLink)`
-  margin-top: 10px;
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  position: relative;
-  z-index: 100;
-   p {
-     margin:  0 0 0 5px;
-   }
-`
-
-const ChartTitle = styled.h2`
-  color: ${({theme}) => theme.winterDisabledButton};
-`
+import {
+    ChartCard,
+    ChartHint,
+    ChartTitle,
+    LoaderWrapper,
+    StakingAnalyticsPageWrapper,
+    BackButton,
+    ChartTitleWrapper,
+    ChartTitleLeft,
+    ChartTitleRight,
+    ColorRect,
+    ColorTextWrapper
+} from './styled'
 
 const chartsInfo = [
-    {title: 'xALGB Minted', type: 'xALGBminted'},
-    {title: 'ALGB From Vault', type: 'ALGBfromVault'},
-    {title: 'xALGB Total Supply', type: 'xALGBtotalSupply'},
-    {title: 'APR', type: 'apr'},
+    {title: 'APR', type: 'apr', hint: 'Yearly percentage of profits at the current rate of rewards'},
+    {title: 'ALGB Balance', type: 'ALGBbalance', hint: 'Total amount of staked ALGB'},
+    {title: 'Staked ALGB', type: 'currentStakedAmount', hint: 'Amount of newly-staked ALGB per day'},
+    {title: 'xALGB Total Supply', type: 'xALGBtotalSupply', hint: 'Total amount of minted xALGB'},
+    {title: 'ALGB from the Vault', type: 'ALGBfromVault', hint: 'Amount of ALGB fees sent as rewards'},
+    {title: ['xALGB Minted', 'xALGB Burned'], type: 'xALGBminted', hint: ['Amount of newly-minted xALGB per day', 'Amount of newly-burned xALGB per day ']},
 ]
+const chart1Color = '#1f8bcd'
+const chart2Color = '#d90ebb'
 
 export default function StakingAnalyticsPage() {
-
     const {fetchStakedHistory: {fetchStakingHistoryFn, historiesLoading, stakeHistoriesResult}} = useInfoSubgraph()
 
     useEffect(() => {
         fetchStakingHistoryFn()
     }, [])
 
-
-
     return (
         <StakingAnalyticsPageWrapper>
             <BackButton to={'/staking'}><ArrowLeft size={'16px'}/> <p>Staking</p>
             </BackButton>
             {chartsInfo.map((item, i) =>
-                    <React.Fragment key={i}>
-                        <ChartTitle>{item.title}</ChartTitle>
+                    <ChartCard key={i}>
+                        {item.type === 'xALGBminted'  ?
+                            <ChartTitleWrapper>
+                                <ChartTitleLeft>
+                                    <ColorTextWrapper>
+                                        <ColorRect stroke={chart1Color}/>
+                                        <ChartTitle style={{marginLeft: '.5rem'}}>{item.title[0]}</ChartTitle>
+                                    </ColorTextWrapper>
+                                    <ChartHint>{item.hint[0]}</ChartHint>
+                                </ChartTitleLeft>
+                                <ChartTitleRight>
+                                    <ColorTextWrapper>
+                                        <ColorRect stroke={chart2Color}/>
+                                        <ChartTitle style={{marginLeft: '.5rem'}}>{item.title[1]}</ChartTitle>
+                                    </ColorTextWrapper>
+                                    <ChartHint>{item.hint[1]}</ChartHint>
+                                </ChartTitleRight>
+                            </ChartTitleWrapper>
+                            :
+                        <>
+                            <ChartTitle>{item.title}</ChartTitle>
+                            <ChartHint>{item.hint}</ChartHint>
+                        </>
+                        }
                         {historiesLoading ?
                             <LoaderWrapper>
                                 <Loader size={'35px'} stroke={'white'}/>
                             </LoaderWrapper> :
                             <StakingAnalyticsChart
                                 stakeHistoriesResult={stakeHistoriesResult}
-                                type={item.type}/>
+                                type={item.type}
+                                colors={[chart1Color, chart2Color]}/>
                         }
-                    </React.Fragment>
-            )}
+                    </ChartCard>)
+            }
         </StakingAnalyticsPageWrapper>
-
     )
 }

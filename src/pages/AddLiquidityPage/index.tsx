@@ -6,16 +6,10 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { useAllTransactions, useTransactionAdder } from '../../state/transactions/hooks'
 import { useV3PositionFromTokenId } from '../../hooks/useV3Positions'
 import { useDerivedPositionInfo } from '../../hooks/useDerivedPositionInfo'
-import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
-import { CurrencyDropdown, ScrollablePage, StyledInput } from '../AddLiquidity/styled'
-import styled, { css, keyframes } from 'styled-components/macro'
+import { useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
+import { CurrencyDropdown, StyledInput } from '../AddLiquidity/styled'
 import { useCurrency } from '../../hooks/Tokens'
-import {
-  useV3MintState,
-  useV3MintActionHandlers,
-  useRangeHopCallbacks,
-  useV3DerivedMintInfo,
-} from '../../state/mint/v3/hooks'
+import { useV3MintState, useV3MintActionHandlers, useRangeHopCallbacks, useV3DerivedMintInfo } from '../../state/mint/v3/hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
@@ -31,441 +25,63 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import RangeSelector from '../../components/RangeSelector'
 import LiquidityChartRangeInput from '../../components/LiquidityChartRangeInput'
 import { NonfungiblePositionManager as NonFunPosMan } from './nft-manager'
-import _abi from '../../abis/non-fun-pos-man.json'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { t } from '@lingui/macro'
-import { FeeAmount } from '../../lib/src/constants'
 import { SupportedChainId } from '../../constants/chains'
-import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
-import { AlertCircle, ArrowLeft, Download } from 'react-feather'
+import { ArrowLeft, Download } from 'react-feather'
 import PDFAlgebra from '../../assets/pdf/Algebra_Tech_Paper.pdf'
-import { darken } from 'polished'
 import SettingsTab from '../../components/Settings'
 import { RowFixed } from '../../components/Row'
 import usePrevious from '../../hooks/usePrevious'
-
 import ReactGA from 'react-ga'
 import { useAppSelector } from '../../state/hooks'
-import { formatUnits } from 'ethers/lib/utils'
-import { NavLink } from 'react-router-dom'
 import { Contract, providers } from 'ethers'
+import {
+  Warning,
+  Title,
+  AddLiquidityButton,
+  MaxButton,
+  ApproveButton,
+  ApproveButtonContainer,
+  LiquidityWrapper,
+  ButtonsWrapper,
+  PageWrapper,
+  FullRangeButton,
+  PriceRangeWrapper,
+  PriceRangeInputs,
+  PriceRangeChart,
+  Error,
+  PoolInfo,
+  PoolInfoItem,
+  PoolInfoItemTitle,
+  PoolInfoItemValue,
+  PoolInfoItemValueMetric,
+  TokenItem,
+  TokenPair,
+  TokenItemBottomInputWrapper,
+  Navigation,
+  PairNotSelectedMock,
+  TechPaperDownloadButton,
+  TechPaperHint,
+  TechPaperHintTitle,
+  HelperCirlce
+} from './styled'
+
+//TODO test merge without failed polygon
 
 import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
 
-const pulsating = (color: string) => keyframes`
-  0% {
-    border-color: rgba(32, 38, 53, 1);
-  }
-  50% {
-    border-color: rgba(167, 10, 255, 1);
-  }
-  100% {
-    border-color: rgba(32, 38, 53, 1);
-  }
-`
-
-const PageWrapper = styled.div`
-  max-width: 900px;
-  width: 100%;
-  background-color: ${({ theme }) => theme.winterBackground};
-  border-radius: 20px;
-  margin-top: 5rem;
-  margin-bottom: 5rem;
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-top: 1rem;
-    margin-bottom: 4rem;
-  `}
-`
-
-const Navigation = styled(NavLink)`
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-`
-
-const LiquidityWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  background: #020018;
-  padding: 2rem;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.winterBackground};
-`
-const TokenPair = styled.div`
-  display: flex;
-  width: 100%;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-direction: column; 
-  `}
-`
-
-const TokenItem = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  background-color: rgba(60, 97, 126, 0.5);
-  // height: 120px;
-  ${({ noPadding }) =>
-    !noPadding &&
-    css`
-      padding: 1rem;
-      // border: 1px solid #202635;
-    `}
-  border-radius: 1rem;
-
-  &:first-of-type {
-    margin-right: 0.5rem;
-  }
-
-  &:last-of-type {
-    margin-left: 0.5rem;
-  }
-
-  ${({ highPrice }) =>
-    highPrice &&
-    css`
-      // border-color: #d33636;
-      border-radius: 1rem 1rem 0 0;
-    `}
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0 0 1rem 0!important;
-    padding: 1rem 1rem 2rem 1rem;
-  `}
-`
-
-const TokenItemBottomInputWrapper = styled.div`
-  display: flex;
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    height: 60px;
-  `}
-`
-
-const MaxButton = styled.button`
-  position: absolute;
-  right: 1rem;
-  top: 19px;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  background: ${({ theme }) => theme.winterMainButton};
-  color: white;
-  font-family: Montserrat;
-  font-weight: 600;
-  z-index: 10;
-
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
-  }
-`
-
-const PoolInfo = styled.div`
-  display: flex;
-  margin-top: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-direction: column; 
-  `}
-`
-
-const PoolInfoItem = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: rgba(60, 97, 126, 0.5);
-
-  animation: ${({ pulse }) => pulse && pulsating('red')} 3s linear infinite;
-
-  &:first-of-type {
-    margin-right: 0.5rem;
-  }
-
-  &:last-of-type {
-    margin-left: 0.5rem;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 5px 0!important;
-    flex-direction: column;
-  `}
-`
-const PoolInfoItemTitle = styled.span`
-  font-family: Montserrat;
-  font-weight: 600;
-  white-space: nowrap;
-  margin-right: 10px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  margin: 2px 5px 0 0;
-  `}
-`
-
-const PoolInfoItemValue = styled.span`
-  font-family: Montserrat;
-  margin-right: 10px;
-  white-space: nowrap;
-`
-
-const PoolInfoItemValueMetric = styled.span`
-  color: white;
-  font-size: 12px;
-  line-height: 21px;
-  white-space: nowrap;
-`
-
-const TechPaperHint = styled.div`
-  z-index: 10;
-  position: absolute;
-  display: flex;
-  visibility: hidden;
-  flex-direction: column;
-  background-color: ${({ theme }) => theme.winterBackground};
-  padding: 1rem;
-  border-radius: 8px;
-  color: white;
-  right: 1rem;
-  top: 100%;
-  margin-top: -8px;
-  box-shadow: 0 0 10px rgba(156, 126, 220, 0.18);
-  opacity: 0;
-  transition-duration: 0.2s;
-  cursor: default;
-
-  &:before {
-    content: '';
-    width: 100%;
-    height: 30px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-top: -20px;
-  }
-`
-
-const TechPaperHintTitle = styled.div``
-
-const TechPaperDownloadButton = styled.a`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  background-color: ${({ theme }) => theme.winterMainButton};
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px;
-  text-decoration: none;
-
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)}
-  }
-}
-`
-
-const HelperCirlce = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  background-color: ${({ theme }) => theme.winterMainButton};
-  color: white;
-  font-size: 12px;
-  cursor: pointer;
-
-  &:hover {
-    & > ${TechPaperHint} {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
-`
-
-const Title = styled.div`
-  position: relative;
-  font-size: 18px;
-  font-family: Montserrat;
-  font-weight: 600;
-  padding: 1rem 0;
-  margin-top: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-   margin-top: 1rem;
-  `}
-`
-
-const Warning = styled.div`
-  position: absolute;
-  right: 0px;
-  padding: 8px 16px;
-  top: 10px;
-  font-size: 13px;
-  background: #69270d;
-  color: #e55d47;
-  border-radius: 6px;
-  font-weight: 500;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    top: -1rem;
-  `}
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    position: relative;
-    width: 100%;
-    text-align: center;
-    margin-bottom: .4rem;
-  `}
-`
-const Error = styled(Warning)`
-  color: white;
-  background-color: #be4d4d;
-  width: 100%;
-  text-align: center;
-`
-
-const PriceRangeWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  // height: 250px;
-  // margin-bottom: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-direction: column;
-  `}
-`
-const PriceRangeChart = styled.div`
-  height: 100%;
-  flex: 2;
-  border-radius: 6px;
-  background: rgba(60, 97, 126, 0.5);
-`
-const PriceRangeInputs = styled.div`
-  height: 100%;
-  flex: 1;
-  margin-left: ${({ initial }) => (initial ? '0' : '1rem')};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-   margin: 1rem 0 0 0;
-  `}
-`
-
-const AddLiquidityMessage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  background-color: #35260a;
-  color: #ffb300;
-  border-radius: 8px;
-  padding: 14px 16px;
-  font-size: 13px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-bottom: 15px;
-  `}
-`
-const ButtonsWrapper = styled.div`
-  display: flex;
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    flex-direction: column;
-  `}
-`
-const AddLiquidityButton = styled.button`
-  // width: 100%;
-  padding: 8px 16px;
-  height: 2.8rem;
-  background: ${({ theme }) => theme.winterMainButton};
-  cursor: pointer;
-  color: white;
-  border: medium none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-family: Montserrat;
-  margin-left: auto;
-  white-space: nowrap;
-
-  &:disabled {
-    background-color: ${({ theme }) => darken(0.2, theme.winterMainButton)};
-    color: ${darken(0.35, 'white')};
-    font-weight: 600;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    width: 100%;
-    margin-left: unset;
-  `}
-`
-
-const FullRangeButton = styled.button`
-  width: 100%;
-  background: ${({ theme }) => theme.winterMainButton};
-  color: white;
-  border: none;
-  font-family: Montserrat;
-  font-weight: 600;
-  border-radius: 6px;
-  padding: 7px;
-
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
-  }
-`
-
-const ApproveButton = styled.button`
-  background: ${({ theme }) => theme.winterMainButton};
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  margin: 25px auto auto;
-  width: 100%;
-  color: white;
-
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
-  }
-`
-
-const PairNotSelectedMock = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 451px;
-`
-const HigherPrice = styled.div`
-  position: absolute;
-  border: 1px solid #d33636;
-  background-color: #3b1515;
-  color: white;
-  padding: 8px 10px;
-  border-radius: 0 0 1rem 1rem;
-  z-index: 5;
-  bottom: -2rem;
-  right: -1px;
-  left: -1px;
-  text-align: center;
-`
-const ApproveButtonContainer = styled.div`
-  margin-top: 1rem;
-`
-const CurrencyInputPanelStyled = styled(CurrencyInputPanel)`
-  height: 40px !important;
-`
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidityPage({
-  match: {
-    params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId },
-  },
-  history,
-}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
+                                           match: {
+                                             params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId }
+                                           },
+                                           history
+                                         }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
-  const expertMode = useIsExpertMode()
   const addTransaction = useTransactionAdder()
   const positionManager = useV3NFTPositionManagerContract()
 
@@ -526,11 +142,11 @@ export default function AddLiquidityPage({
   const _existingPosition = useMemo(() => {
     if (!existingPosition && prevExistingPosition) {
       return {
-        ...prevExistingPosition,
+        ...prevExistingPosition
       }
     }
     return {
-      ...existingPosition,
+      ...existingPosition
     }
   }, [existingPosition, baseCurrency, quoteCurrency])
 
@@ -574,15 +190,15 @@ export default function AddLiquidityPage({
     depositBDisabled,
     invertPrice,
     ticksAtLimit,
-    dynamicFee,
+    dynamicFee
   } = useMemo(() => {
     if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
       return {
-        ...prevDerivedMintInfo,
+        ...prevDerivedMintInfo
       }
     }
     return {
-      ...derivedMintInfo,
+      ...derivedMintInfo
     }
   }, [derivedMintInfo, baseCurrency, quoteCurrency])
 
@@ -591,14 +207,6 @@ export default function AddLiquidityPage({
 
   const isValid = !errorMessage && !invalidRange
 
-  // modal and loading
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirm
-
-  // capital efficiency warning
-  const [showCapitalEfficiencyWarning, setShowCapitalEfficiencyWarning] = useState(false)
-
-  useEffect(() => setShowCapitalEfficiencyWarning(false), [baseCurrency, quoteCurrency, dynamicFee])
 
   // txn values
   const deadline = useTransactionDeadline() // custom from users settings
@@ -608,12 +216,12 @@ export default function AddLiquidityPage({
   // get formatted amounts
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? ''
   }
 
   const usdcValues = {
     [Field.CURRENCY_A]: useUSDCValue(parsedAmounts[Field.CURRENCY_A]),
-    [Field.CURRENCY_B]: useUSDCValue(parsedAmounts[Field.CURRENCY_B]),
+    [Field.CURRENCY_B]: useUSDCValue(parsedAmounts[Field.CURRENCY_B])
   }
 
   // get the max amounts user can add
@@ -621,7 +229,7 @@ export default function AddLiquidityPage({
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field]),
+        [field]: maxAmountSpend(currencyBalances[field])
       }
     },
     {}
@@ -631,7 +239,7 @@ export default function AddLiquidityPage({
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
+        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
       }
     },
     {}
@@ -664,26 +272,24 @@ export default function AddLiquidityPage({
       const { calldata, value } =
         hasExistingPosition && tokenId
           ? NonFunPosMan.addCallParameters(position, {
-              tokenId,
-              slippageTolerance: allowedSlippage,
-              deadline: deadline.toString(),
-              useNative,
-            })
+            tokenId,
+            slippageTolerance: allowedSlippage,
+            deadline: deadline.toString(),
+            useNative
+          })
           : NonFunPosMan.addCallParameters(position, {
-              slippageTolerance: allowedSlippage,
-              recipient: account,
-              deadline: deadline.toString(),
-              useNative,
-              createPool: noLiquidity,
-            })
+            slippageTolerance: allowedSlippage,
+            recipient: account,
+            deadline: deadline.toString(),
+            useNative,
+            createPool: noLiquidity
+          })
 
       const txn: { to: string; data: string; value: string } = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
         data: calldata,
-        value,
+        value
       }
-
-      setAttemptingTxn(true)
 
       library
         .getSigner()
@@ -692,25 +298,23 @@ export default function AddLiquidityPage({
           const newTxn = {
             ...txn,
             gasLimit: calculateGasMargin(chainId, estimate),
-            gasPrice: gasPrice * 1000000000,
+            gasPrice: gasPrice * 1000000000
           }
 
           return library
             .getSigner()
             .sendTransaction(newTxn)
             .then((response: TransactionResponse) => {
-              setAttemptingTxn(false)
               addTransaction(response, {
                 summary: noLiquidity
                   ? t`Create pool and add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
-                  : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`,
+                  : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
               })
               setTxHash(response.hash)
             })
         })
         .catch((error) => {
           console.error('Failed to send transaction', error)
-          setAttemptingTxn(false)
           // we only care if the error is something _other_ than the user rejected the tx
           if (error?.code !== 4001) {
             console.error(error)
@@ -780,29 +384,6 @@ export default function AddLiquidityPage({
 
   const mustCreateSeparately = noLiquidity && chainId !== SupportedChainId.POLYGON
 
-  const handleDismissConfirmation = useCallback(() => {
-    setShowConfirm(false)
-    // if there was a tx hash, we want to clear the input
-    if (txHash) {
-      onFieldAInput('')
-      // dont jump to pool page if creating
-      if (!mustCreateSeparately) {
-        history.push('/pool')
-      }
-    }
-    setTxHash('')
-  }, [history, mustCreateSeparately, onFieldAInput, txHash])
-
-  const addIsUnsupported = useIsSwapUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
-
-  const clearAll = useCallback(() => {
-    onFieldAInput('')
-    onFieldBInput('')
-    onLeftRangeInput('')
-    onRightRangeInput('')
-    history.push(`/add`)
-  }, [history, onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput])
-
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
@@ -824,16 +405,6 @@ export default function AddLiquidityPage({
   const showApprovalA = approvalA !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_A]
   const showApprovalB = approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B]
 
-  const pendingText = mustCreateSeparately
-    ? `Creating ${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} ${
-        dynamicFee ? dynamicFee / 10000 : ''
-      }% Pool`
-    : `Supplying ${!depositADisabled ? parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) : ''} ${
-        !depositADisabled ? currencies[Field.CURRENCY_A]?.symbol : ''
-      } ${!outOfRange ? 'and' : ''} ${!depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ''} ${
-        !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
-      }`
-
   return (
     <>
       <PageWrapper>
@@ -845,7 +416,7 @@ export default function AddLiquidityPage({
               fontSize: '21px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'space-between'
             }}
           >
             <div style={{ flex: 1 }}>
@@ -876,7 +447,7 @@ export default function AddLiquidityPage({
                 onCurrencySelect={handleCurrencyASelect}
                 showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                 currency={currencies[Field.CURRENCY_A]}
-                id="add-liquidity-input-tokena"
+                id='add-liquidity-input-tokena'
                 showCommonBases
                 showBalance={false}
                 pool={'page'}
@@ -894,7 +465,7 @@ export default function AddLiquidityPage({
                 }}
                 showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                 currency={currencies[Field.CURRENCY_B]}
-                id="add-liquidity-input-tokenb"
+                id='add-liquidity-input-tokenb'
                 showCommonBases
                 showBalance={false}
                 page={'page'}
@@ -918,7 +489,7 @@ export default function AddLiquidityPage({
                           Check out how dynamic fee is calculated
                         </div>
                         <div style={{ marginTop: '10px', width: '100%' }}>
-                          <TechPaperDownloadButton download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
+                          <TechPaperDownloadButton download='Algebra-Tech-Paper.pdf' href={PDFAlgebra}>
                             <span>
                               <Download size={16} color={'white'} />
                             </span>
@@ -949,10 +520,10 @@ export default function AddLiquidityPage({
                         <StyledInput
                           style={{
                             textAlign: `${window.innerWidth < 501 ? 'left' : 'right'}`,
-                            backgroundColor: 'transparent',
+                            backgroundColor: 'transparent'
                           }}
                           // placeholder={}
-                          className="start-price-input"
+                          className='start-price-input'
                           value={startPriceTypedValue}
                           onUserInput={onStartPriceInput}
                         />
@@ -1024,7 +595,7 @@ export default function AddLiquidityPage({
 
                               ReactGA.event({
                                 category: 'Liquidity',
-                                action: 'Full Range Clicked',
+                                action: 'Full Range Clicked'
                               })
                             }}
                           >
@@ -1032,23 +603,6 @@ export default function AddLiquidityPage({
                           </FullRangeButton>
                         )}
                       </PriceRangeInputs>
-
-                      {/* <Row>
-                                  <ButtonYellow
-                                    padding="8px"
-                                    marginRight="8px"
-                                    $borderRadius="8px"
-                                    width="auto"
-                                    onClick={() => {
-                                      setShowCapitalEfficiencyWarning(false)
-                                      getSetFullRange()
-                                    }}
-                                  >
-                                    <TYPE.black fontSize={13} color="black">
-                                      <Trans>I Understand</Trans>
-                                    </TYPE.black>
-                                  </ButtonYellow>
-                                </Row> */}
                     </PriceRangeWrapper>
                   </div>
 
@@ -1056,10 +610,10 @@ export default function AddLiquidityPage({
                     style={
                       (!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange
                         ? {
-                            opacity: 0.2,
-                            userSelect: 'none',
-                            pointerEvents: 'none',
-                          }
+                          opacity: 0.2,
+                          userSelect: 'none',
+                          pointerEvents: 'none'
+                        }
                         : {}
                     }
                   >
@@ -1070,7 +624,7 @@ export default function AddLiquidityPage({
                     <TokenPair
                       style={{
                         height: `${window.innerWidth < 500 ? '' : '145px'}`,
-                        marginBottom: '1rem',
+                        marginBottom: '1rem'
                       }}
                     >
                       <TokenItem highPrice={false}>
@@ -1092,7 +646,7 @@ export default function AddLiquidityPage({
                           onCurrencySelect={handleCurrencyASelect}
                           showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                           currency={currencies[Field.CURRENCY_A]}
-                          id="add-liquidity-input-tokena"
+                          id='add-liquidity-input-tokena'
                           showCommonBases
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper}
@@ -1109,7 +663,7 @@ export default function AddLiquidityPage({
                               }}
                               showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                               currency={currencies[Field.CURRENCY_A]}
-                              id="add-liquidity-input-tokena"
+                              id='add-liquidity-input-tokena'
                               fiatValue={usdcValues[Field.CURRENCY_A]}
                               showCommonBases
                               locked={depositADisabled}
@@ -1146,7 +700,7 @@ export default function AddLiquidityPage({
                           onUserInput={onFieldBInput}
                           onCurrencySelect={handleCurrencyBSelect}
                           currency={currencies[Field.CURRENCY_B]}
-                          id="add-liquidity-input-tokenb"
+                          id='add-liquidity-input-tokenb'
                           showCommonBases
                           showBalance={true}
                           disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
@@ -1164,7 +718,7 @@ export default function AddLiquidityPage({
                               showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                               fiatValue={usdcValues[Field.CURRENCY_B]}
                               currency={currencies[Field.CURRENCY_B]}
-                              id="add-liquidity-input-tokenb"
+                              id='add-liquidity-input-tokenb'
                               showCommonBases
                               locked={depositBDisabled}
                               hideCurrency={true}

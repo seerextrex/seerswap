@@ -1,14 +1,8 @@
 import React, { useMemo } from 'react'
 import { area, curveStepAfter, ScaleLinear } from 'd3'
-import styled from 'styled-components/macro'
+import {Path} from './styled'
 import { ChartEntry } from './types'
 import inRange from 'lodash/inRange'
-
-const Path = styled.path<{ fill: string | undefined }>`
-  opacity: 0.5;
-  stroke: ${({ fill, theme }) => fill ?? '#4B4B4B'};
-  fill: ${({ fill, theme }) => fill ?? '#4B4B4B'};
-`
 
 export const Area = ({
   series,

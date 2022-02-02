@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
-import * as d3 from 'd3'
-
-import { scaleBand, scaleLinear } from 'd3'
-import styled from 'styled-components/macro'
+import { scaleBand, max, create, select, axisBottom, scaleLinear } from 'd3'
+import {ChartSvg} from './styled'
 
 interface BarChartInterface {
   data
@@ -15,10 +13,6 @@ interface BarChartInterface {
   isMobile: boolean
 }
 
-const ChartSvg = styled.svg`
-  overflow: visible;
-  border-radius: 10px;
-`
 export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: BarChartInterface) {
   const svgRef = useRef(null)
   const { width, height, margin } = dimensions
@@ -45,19 +39,18 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
     if (!data || data.length === 0 || !Array.isArray(data) || !activeTickIdxInRange) return
 
     const xDomain = new Set(data.map((v) => v.price0))
-    const yDomain = [0, d3.max(data, (v) => v.activeLiquidity)]
+    const yDomain = [0,   max(data, (v) => v.activeLiquidity)]
 
-    const xScale = d3.scaleBand(xDomain, [0, width])
-    const yScale = d3.scaleLinear(yDomain, [height, 0])
+    const xScale =   scaleBand(xDomain, [0, width])
+    const yScale =   scaleLinear(yDomain, [height, 0])
 
-    const svgEl = d3.select(svgRef.current)
+    const svgEl =   select(svgRef.current)
 
     svgEl.selectAll('*').remove()
 
-    const InfoRectGroup = d3.create('svg:g').style('pointer-events', 'none').style('display', 'none')
+    const InfoRectGroup =   create('svg:g').style('pointer-events', 'none').style('display', 'none')
 
-    const InfoRect = d3
-      .create('svg:rect')
+    const InfoRect = create('svg:rect')
       .append('rect')
       .attr('id', 'info-label')
       .attr('width', '220px')
@@ -65,29 +58,25 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
       .attr('rx', '6')
       .style('fill', '#12151d')
 
-    const InfoRectPrice0 = d3
-      .create('svg:text')
+    const InfoRectPrice0 = create('svg:text')
       .attr('transform', 'translate(16, 25)')
       .attr('fill', 'white')
       .attr('font-weight', '600')
       .attr('font-size', '12px')
 
-    const InfoRectPrice1 = d3
-      .create('svg:text')
+    const InfoRectPrice1 = create('svg:text')
       .attr('transform', 'translate(16, 50)')
       .attr('fill', 'white')
       .attr('font-weight', '600')
       .attr('font-size', '12px')
 
-    const InfoRectPriceLocked = d3
-      .create('svg:text')
+    const InfoRectPriceLocked = create('svg:text')
       .attr('transform', 'translate(16, 75)')
       .attr('fill', 'white')
       .attr('font-weight', '600')
       .attr('font-size', '12px')
 
-    const InfoCurrentCircle = d3
-      .create('svg:circle')
+    const InfoCurrentCircle = create('svg:circle')
       .attr('fill', '#fffb0f')
       .attr('r', '5px')
       .attr('cx', '200px')
@@ -118,8 +107,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
       .append('g')
       .attr('transform', `translate(0, ${height})`)
       .call(
-        d3
-          .axisBottom(xScale)
+        axisBottom(xScale)
           .ticks(601)
           .tickFormat((v) => (v < 0.01 ? v.toFixed(4) : v.toFixed(2)))
           .tickSizeOuter(0)
@@ -133,7 +121,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
       .nodes()
       .map((el, i) => {
         if (i % 75 !== 0) {
-          d3.select(el).attr('display', 'none')
+            select(el).attr('display', 'none')
         }
       })
 
@@ -175,7 +163,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
       .attr('width', xScale.bandwidth())
       .attr('fill', (v) => (v.isCurrent ? '#fffb0f' : 'transparent'))
       .on('mouseover', (d, v) => {
-        const highlight = d3.select(d.target)
+        const highlight =   select(d.target)
         highlight.attr('fill', 'rgba(255,255,255,0.5)')
         const xTranslate = xScale(v.price0)
         const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
@@ -211,7 +199,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
         )
       })
       .on('mouseleave', (d, v) => {
-        const rect = d3.select(d.target)
+        const rect =   select(d.target)
         rect.attr('fill', v.isCurrent ? '#fffb0f' : 'transparent')
       })
 

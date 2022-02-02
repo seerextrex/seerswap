@@ -3,21 +3,18 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { AlertTriangle } from 'react-feather'
 import { ZERO_PERCENT } from '../../constants/misc'
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from '../../constants/addresses'
-import { WMATIC_EXTENDED } from '../../constants/tokens'
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants/addresses'
 import { useV3NFTPositionManagerContract } from '../../hooks/useContract'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'
-import { ButtonError, ButtonLight, ButtonPrimary, ButtonText, ButtonYellow } from '../../components/Button'
+import { ButtonError, ButtonLight, ButtonPrimary, ButtonYellow } from '../../components/Button'
 import { YellowCard, OutlineCard, BlueCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import Row, { RowBetween, RowFixed, AutoRow } from '../../components/Row'
-import { useIsSwapUnsupported } from '../../hooks/useIsSwapUnsupported'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
-import approveAmountCalldata from '../../utils/approveAmountCalldata'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
 import { Review } from './Review'
 import { useActiveWeb3React } from '../../hooks/web3'
@@ -26,17 +23,13 @@ import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallbac
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field, Bound } from '../../state/mint/v3/actions'
-import { AddLiquidityNetworkAlert } from 'components/NetworkAlert/AddLiquidityNetworkAlert'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
 import { TYPE, ExternalLink } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { Dots } from '../Pool/styleds'
-import { currencyId } from '../../utils/currencyId'
-import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import {
   DynamicSection,
-  CurrencyDropdown,
   StyledInput,
   Wrapper,
   ScrollablePage,
@@ -55,24 +48,17 @@ import {
   useRangeHopCallbacks,
   useV3DerivedMintInfo,
 } from 'state/mint/v3/hooks'
-import { FeeAmount, NonfungiblePositionManager } from 'lib/src'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
 import { useDerivedPositionInfo } from 'hooks/useDerivedPositionInfo'
 import { PositionPreview } from 'components/PositionPreview'
-import FeeSelector from 'components/FeeSelector'
 import RangeSelector from 'components/RangeSelector'
-import RateToggle from 'components/RateToggle'
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddRemoveTabs } from 'components/NavigationTabs'
 import HoverInlineText from 'components/HoverInlineText'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
-import LiquidityChartRangeInput from 'components/LiquidityChartRangeInput'
 import { SupportedChainId } from 'constants/chains'
-import OptimismDowntimeWarning from 'components/OptimismDowntimeWarning'
 import { CHAIN_INFO } from '../../constants/chains'
-import { Interface } from '@ethersproject/abi'
 import { NonfungiblePositionManager as NonFunPosMan } from './nft-manager'
-import _abi from '../../abis/non-fun-pos-man.json'
 
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 
@@ -102,11 +88,6 @@ export default function AddLiquidity({
 
   const hasExistingPosition = !!existingPositionDetails && !positionLoading
   const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails)
-  // fee selection from url
-  // const feeAmount: FeeAmount | undefined =
-  //   feeAmountFromUrl && Object.values(FeeAmount).includes(parseFloat(feeAmountFromUrl))
-  //     ? parseFloat(feeAmountFromUrl)
-  //     : undefined
 
   const feeAmount = 100
 
@@ -295,39 +276,6 @@ export default function AddLiquidity({
     }
   }
 
-  const handleCurrencySelect = useCallback(
-    (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-      const currencyIdNew = currencyId(currencyNew, chainId)
-
-      let chainSymbol
-
-      if (chainId === 137) {
-        chainSymbol = 'MATIC'
-      }
-
-      if (currencyIdNew === currencyIdOther) {
-        // not ideal, but for now clobber the other if the currency ids are equal
-        return [currencyIdNew, undefined]
-      } else {
-        // prevent weth + eth
-        const isETHOrWETHNew =
-          currencyIdNew === chainSymbol ||
-          (chainId !== undefined && currencyIdNew === WMATIC_EXTENDED[chainId]?.address)
-        const isETHOrWETHOther =
-          currencyIdOther !== undefined &&
-          (currencyIdOther === chainSymbol ||
-            (chainId !== undefined && currencyIdOther === WMATIC_EXTENDED[chainId]?.address))
-
-        if (isETHOrWETHNew && isETHOrWETHOther) {
-          return [currencyIdNew, undefined]
-        } else {
-          return [currencyIdNew, currencyIdOther]
-        }
-      }
-    },
-    [chainId]
-  )
-
   // flag for whether pool creation must be a separate tx
   const mustCreateSeparately =
     noLiquidity && (chainId === SupportedChainId.OPTIMISM || chainId === SupportedChainId.OPTIMISTIC_KOVAN)
@@ -344,16 +292,6 @@ export default function AddLiquidity({
     }
     setTxHash('')
   }, [history, mustCreateSeparately, onFieldAInput, txHash])
-
-  const addIsUnsupported = useIsSwapUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
-
-  const clearAll = useCallback(() => {
-    onFieldAInput('')
-    onFieldBInput('')
-    onLeftRangeInput('')
-    onRightRangeInput('')
-    history.push(`/add`)
-  }, [history, onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput])
 
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
@@ -377,13 +315,7 @@ export default function AddLiquidity({
     useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)
 
   const Buttons = () =>
-    addIsUnsupported ? (
-      <ButtonPrimary disabled={true} $borderRadius="12px" padding={'12px'}>
-        <TYPE.main mb="4px">
-          <Trans>Unsupported Asset</Trans>
-        </TYPE.main>
-      </ButtonPrimary>
-    ) : !account ? (
+     !account ? (
       <ButtonLight onClick={toggleWalletModal} $borderRadius="12px" padding={'12px'}>
         <Trans>Connect wallet</Trans>
       </ButtonLight>
@@ -504,7 +436,7 @@ export default function AddLiquidity({
             positionID={tokenId}
             defaultSlippage={DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE}
             showBackLink={!hasExistingPosition}
-          ></AddRemoveTabs>
+          />
           <Wrapper>
             <ResponsiveTwoColumns wide={!hasExistingPosition && !networkFailed}>
               <AutoColumn gap="lg">
@@ -600,21 +532,6 @@ export default function AddLiquidity({
                               </Trans>
                             </AutoRow>
                           )}
-
-                          {/* <LiquidityChartRangeInput
-                            currencyA={baseCurrency ?? undefined}
-                            currencyB={quoteCurrency ?? undefined}
-                            feeAmount={dynamicFee}
-                            ticksAtLimit={ticksAtLimit}
-                            price={
-                              price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined
-                            }
-                            priceLower={priceLower}
-                            priceUpper={priceUpper}
-                            onLeftRangeInput={onLeftRangeInput}
-                            onRightRangeInput={onRightRangeInput}
-                            interactive={!hasExistingPosition}
-                          /> */}
                         </>
                       ) : (
                         <AutoColumn gap="md">
@@ -804,12 +721,6 @@ export default function AddLiquidity({
             </ResponsiveTwoColumns>
           </Wrapper>
         </PageWrapper>
-        {addIsUnsupported && (
-          <UnsupportedCurrencyFooter
-            show={addIsUnsupported}
-            currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]}
-          />
-        )}
       </ScrollablePage>
       <SwitchLocaleLink />
     </>

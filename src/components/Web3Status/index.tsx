@@ -1,10 +1,8 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { darken } from 'polished'
 import { useContext, useMemo } from 'react'
-import { Activity } from 'react-feather'
 import { t, Trans } from '@lingui/macro'
-import styled, { css, ThemeContext } from 'styled-components/macro'
+import { ThemeContext } from 'styled-components/macro'
 import { injected } from '../../connectors'
 import { NetworkContextName } from '../../constants/misc'
 import useENSName from '../../hooks/useENSName'
@@ -13,111 +11,11 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
-import { ButtonSecondary } from '../Button'
-
 import Identicon from '../Identicon'
 import Loader from '../Loader'
-
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
-
-const IconWrapper = styled.div<{ size?: number }>`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  & > * {
-    height: ${({ size }) => (size ? size + 'px' : '32px')};
-    width: ${({ size }) => (size ? size + 'px' : '32px')};
-  }
-`
-
-const Web3StatusGeneric = styled(ButtonSecondary)`
-  ${({ theme }) => theme.flexRowNoWrap}
-  width: 100%;
-  align-items: center;
-  border-radius: 8px;
-  cursor: pointer;
-  user-select: none;
-  :focus {
-    box-shadow: none;
-    outline: none;
-  }
-`
-const Web3StatusError = styled(Web3StatusGeneric)`
-  background-color: ${({ theme }) => theme.red1};
-  border: 1px solid ${({ theme }) => theme.red1};
-  color: ${({ theme }) => theme.white};
-  font-weight: 500;
-  :hover,
-  :focus {
-    background-color: ${({ theme }) => darken(0.1, theme.red1)};
-  }
-`
-
-const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
-  background-color: ${({ theme }) => theme.primary4};
-  border: none;
-  padding: 10px 36px;
-
-  color: ${({ theme }) => theme.primaryText1};
-  font-weight: 500;
-
-  :hover,
-  :focus {
-    // border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-    color: ${({ theme }) => theme.primaryText1};
-  }
-
-  ${({ faded }) =>
-    faded &&
-    css`
-      background-color: ${({ theme }) => theme.primary5};
-      // border: 1px solid ${({ theme }) => theme.primary5};
-      color: ${({ theme }) => theme.primaryText1};
-
-      :hover,
-      :focus {
-        // border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-        color: ${({ theme }) => darken(0.05, theme.primaryText1)};
-      }
-    `}
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-      padding: 10px 16px;
-    `}
-`
-
-const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
-  background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg0)};
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
-  font-weight: 500;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    font-size: 15px;
-  `}
-`
-
-const Text = styled.p`
-  flex: 1 1 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin: 0 0.5rem 0 0.25rem;
-  font-size: 1rem;
-  width: fit-content;
-  font-weight: 500;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-      font-size: 11px;
-  `}
-`
-
-const NetworkIcon = styled(Activity)`
-  margin-left: 0.25rem;
-  margin-right: 0.5rem;
-  width: 16px;
-  height: 16px;
-`
+import { Web3StatusConnect, Web3StatusConnected, Web3StatusError, Text, NetworkIcon } from './styled'
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
@@ -126,7 +24,7 @@ function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
 
 function Sock() {
   return (
-    <span role="img" aria-label={t`has socks emoji`} style={{ marginTop: -4, marginBottom: -4 }}>
+    <span role='img' aria-label={t`has socks emoji`} style={{ marginTop: -4, marginBottom: -4 }}>
       🧦
     </span>
   )
@@ -163,7 +61,7 @@ function Web3StatusInner() {
   if (account) {
     return (
       <Web3StatusConnected
-        id="web3-status-connected"
+        id='web3-status-connected'
         style={{ background: 'transparent', color: 'white', border: 'none' }}
         onClick={toggleWalletModal}
         pending={hasPendingTransactions}
@@ -173,7 +71,7 @@ function Web3StatusInner() {
             <Text>
               <Trans>{pending?.length} Pending</Trans>
             </Text>{' '}
-            <Loader stroke="white" />
+            <Loader stroke='white' />
           </RowBetween>
         ) : (
           <>
@@ -194,11 +92,11 @@ function Web3StatusInner() {
   } else {
     return (
       <Web3StatusConnect
-        id="connect-wallet"
+        id='connect-wallet'
         style={{
           border: `1px solid ${theme.winterBackground}`,
           backgroundColor: '#5bb7ff',
-          color: 'white',
+          color: 'white'
         }}
         onClick={toggleWalletModal}
         faded={!account}

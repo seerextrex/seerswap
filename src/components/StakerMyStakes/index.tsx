@@ -2,359 +2,42 @@ import { isAddress } from '@ethersproject/address'
 import { useCallback, useMemo, useState } from 'react'
 import { useEffect } from 'react'
 import { CheckCircle, Frown, Send } from 'react-feather'
-import styled, { keyframes, css } from 'styled-components/macro'
-import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useStakerHandlers } from '../../hooks/useStakerHandlers'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAllTransactions } from '../../state/transactions/hooks'
-import { stringToColour } from '../../utils/stringToColour'
 import FarmingPositionInfo from '../FarmingPositionInfo'
 import Loader from '../Loader'
 import Modal from '../Modal'
 import { PageTitle } from '../PageTitle'
-
-import { useLocation, useParams } from 'react-router'
-import StakerMyStakesMobile from './StakerMyStakesMobile'
-
-import AlgebraLogo from '../../assets/images/algebra-logo.png'
-import USDCLogo from '../../assets/images/usdc-logo.png'
-import WMATICLogo from '../../assets/images/matic-logo.png'
-import StakerMyStakesMobileSkeleton from './StakerMyStakesMobileSkeleton'
-
-import { isMobile } from 'react-device-detect'
-import {log} from "util";
-import {darken} from "polished";
-import CurrencyLogo from "../CurrencyLogo";
-
-const skeletonAnimation = keyframes`
-  100% {
-    transform: translateX(100%);
-  }
-`
-
-const skeletonGradient = css`
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      rgba(91, 105, 141, 0) 0,
-      rgba(94, 131, 225, 0.25) 25%,
-      rgba(94, 131, 225, 0.5) 60%,
-      rgba(91, 105, 141, 0)
-    );
-    animation-name: ${skeletonAnimation};
-    animation-duration: 1.5s;
-    animation-iteration-count: infinite;
-    content: '';
-  }
-`
-
-const Stakes = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-`
-
-export const TokenIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 35px;
-  height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
-  border-radius: 50%;
-  user-select: none;
-
-  ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
-  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
-  background-size: contain;
-  background-repeat: no-repeat;
-
-  &:nth-of-type(2) {
-    margin-left: -8px;
-  }
-`
-const Stake = styled.div`
-  display: flex;
-  padding: 8px 0;
-  margin-bottom: 16px;
-  font-family: Montserrat;
-  width: 100%;
-
-  & > * {
-    &:not(:last-of-type) {
-      max-width: calc(100% / 6);
-      min-width: calc(100% / 6);
-    }
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    // display: none;
-    flex-direction: column;
-    background: rgba(60, 97, 126, 0.5);
-    padding: 1rem;
-    border-radius: 8px;
-
-    & > * {
-      &:not(:last-of-type) {
-        max-width: 100%;
-        min-width: 100%;
-      }
-    }
-  `}
-
-  ${({ navigatedTo }) =>
-    navigatedTo &&
-    css`
-      background-color: ${({theme}) => darken(0.05, 'rgba(91,183,255,0.6)')};
-      border-radius: 5px;
-      padding: 8px 5px;
-    `}
-`
-
-export const StakeId = styled.div`
-  display: flex;
-  align-items: center;
-  min-width: 96px !important;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-bottom: 1rem;
-
-    &::before {
-      content: "ID";
-      margin-right: 1rem;
-    }
-  `}
-`
-
-export const StakePool = styled.div`
-  display: flex;
-  align-items: center;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-bottom: 1rem;
-    &::before {
-      content: "Pool";
-      margin-right: 1rem;
-    }
-`}
-`
-const StakeSeparator = styled.div`
-  display: flex;
-  align-items: center;
-  color: #878d9d;
-  font-size: 14px;
-  font-style: italic;
-  margin: 0 1rem;
-`
-
-export const StakeReward = styled.div<{reward?: string}>`
-  display: flex;
-  align-items: center;
-
-  & > ${TokenIcon} {
-    // margin-right: 16px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  margin-bottom: 1rem;
-  &::before {
-    content: "${p => p.reward || 'Reward'}";
-    margin-right: 1rem;
-  }
-`}
-`
-
-export const StakeCountdown = styled.div`
-  font-size: 16px;
-  margin: auto;
-  display: flex;
-  
-
-  max-width: 105px !important;
-  min-width: 105px !important;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0 0 1rem 0;
-    max-width: unset !important;
-    min-width: unset !important;
-    
-     &::before {
-    content: "End Time";
-    margin-right: 1rem;
-  }
-  `}
-
-  & > * {
-    ${({ skeleton }) =>
-      skeleton
-        ? css`
-            width: 80px;
-            height: 16px;
-            background: #5aa7df;
-            border-radius: 4px;
-
-            ${skeletonGradient}
-          `
-        : null}
-  }
-`
-
-const StakeActions = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-`
-
-export const StakeButton = styled.button`
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  background-color: ${({ skeleton, theme }) => (skeleton ? '#5aa7df' : theme.winterMainButton)};
-  color: white;
-  min-width: 126px;
-
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
-  }
-
-  ${({ disabled }) =>
-    disabled &&
-    css`
-      opacity: 0.4;
-      cursor: default;
-    `}
-
-  ${({ skeleton }) =>
-    skeleton
-      ? css`
-          ${skeletonGradient}
-          width: 80px;
-        `
-      : null}
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 100%;
-  `}
-`
-
-const StakeListHeader = styled.div`
-  display: flex;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #202635;
-
-  & > * {
-    max-width: calc(100% / 6);
-    min-width: calc(100% / 6);
-    font-weight: 500;
-    color: white;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding-bottom: 0;
-    display: none;
-    `};
-`
-
-export const TokensNames = styled.div`
-  margin-left: .5rem;
-  ${({theme}) => theme.mediaWidth.upToMedium`
-    margin-left: .2rem;
-    font-size: 14px;
-  `}
-
-  & > * {
-    ${({ skeleton }) =>
-      skeleton
-        ? css`
-            width: 40px;
-            height: 16px;
-            background: #5aa7df;
-            margin-bottom: 3px;
-            border-radius: 4px;
-            ${skeletonGradient}
-          `
-        : null}
-  }
-`
-
-const EmptyMock = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-
-  & > * {
-    margin-bottom: 1rem;
-  }
-`
-
-const SendModal = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  width: 100%;
-`
-
-const ModalTitle = styled.div`
-  margin-bottom: 1rem;
-  font-size: 18px;
-  font-weight: 600;
-  color: #080064;
-`
-
-const RecipientInput = styled.input`
-  padding: 8px;
-  border: none;
-  border-radius: 8px;
-  width: 100%;
-`
-
-const SendNFTButton = styled.button`
-  padding: 10px 16px;
-  width: 100%;
-  color: white;
-  background-color: ${({ theme }) => theme.winterMainButton};
-  border-radius: 8px;
-  border: none;
-
-  &:disabled {
-    opacity: 0.4;
-  }
-`
-
-export const MoreButton = styled.button`
-  border: none;
-  background-color: transparent;
-`
-const SendNFTWarning = styled.div`
-  margin-bottom: 1rem;
-  padding: 8px 12px;
-  background: #e4e46b;
-  color: #333303;
-  border-radius: 8px;
-}
-`
+import { useLocation } from 'react-router'
+import CurrencyLogo from '../CurrencyLogo'
+import {
+  ModalTitle,
+  SendModal,
+  TokenIcon,
+  StakeButton,
+  MoreButton,
+  Stake,
+  SendNFTButton,
+  SendNFTWarning,
+  StakeId,
+  StakeActions,
+  StakePool,
+  StakeCountdown,
+  StakeReward,
+  Stakes,
+  StakeListHeader,
+  TokensNames,
+  RecipientInput,
+  EmptyMock
+} from './styled'
 
 export function StakerMyStakes({
-  data,
-  refreshing,
-  now,
-  fetchHandler,
-}: {
+                                 data,
+                                 refreshing,
+                                 now,
+                                 fetchHandler
+                               }: {
   data: any
   refreshing: boolean
   now: number
@@ -363,7 +46,7 @@ export function StakerMyStakes({
   const { account } = useActiveWeb3React()
 
   const { getRewardsHandler, getRewardsHash, withdrawHandler, withdrawnHash, sendNFTL2Handler, sendNFTL2Hash } =
-    useStakerHandlers() || {}
+  useStakerHandlers() || {}
 
   const { hash } = useLocation()
 
@@ -490,15 +173,14 @@ export function StakerMyStakes({
   function getTable(positions, staked: boolean) {
     return positions.map((el, i) => (
       <Stake key={i} navigatedTo={hash === `#${el.tokenId}`}>
-        {/*{console.log(el)}*/}
         <StakeId>
           <FarmingPositionInfo el={el} />
         </StakeId>
         <StakePool>
           {staked && (
             <>
-              <CurrencyLogo currency={{address: el.token0, symbol: el.pool.token0.symbol}} size={'35px'}/>
-              <CurrencyLogo currency={{address: el.token1, symbol: el.pool.token1.symbol}} size={'35px'}/>
+              <CurrencyLogo currency={{ address: el.token0, symbol: el.pool.token0.symbol }} size={'35px'} />
+              <CurrencyLogo currency={{ address: el.token1, symbol: el.pool.token1.symbol }} size={'35px'} />
               <TokensNames>
                 <div>{el.pool.token0.symbol}</div>
                 <div>{el.pool.token1.symbol}</div>
@@ -509,7 +191,7 @@ export function StakerMyStakes({
         {/* <StakeSeparator>for</StakeSeparator> */}
         {staked && (
           <StakeReward reward={'Reward'}>
-            <CurrencyLogo currency={{address: el.rewardToken.id, symbol: el.rewardToken.symbol}} size={'35px'}/>
+            <CurrencyLogo currency={{ address: el.rewardToken.id, symbol: el.rewardToken.symbol }} size={'35px'} />
             <TokensNames>
               <div>{formatReward(el.earned)}</div>
               <div>{el.rewardToken.symbol}</div>
@@ -518,7 +200,8 @@ export function StakerMyStakes({
         )}
         {staked && (
           <StakeReward reward={'Bonus'}>
-            <CurrencyLogo currency={{address: el.bonusRewardToken.id, symbol: el.bonusRewardToken.symbol}} size={'35px'}/>
+            <CurrencyLogo currency={{ address: el.bonusRewardToken.id, symbol: el.bonusRewardToken.symbol }}
+                          size={'35px'} />
             <TokensNames>
               <div>{formatReward(el.bonusEarned)}</div>
               <div>{el.bonusRewardToken.symbol}</div>
@@ -623,7 +306,7 @@ export function StakerMyStakes({
               </SendNFTWarning>
               <div style={{ marginBottom: '1rem' }}>
                 <RecipientInput
-                  placeholder="Enter a recipient"
+                  placeholder='Enter a recipient'
                   value={recipient}
                   onChange={(v) => {
                     setRecipient(v.target.value)
@@ -657,15 +340,13 @@ export function StakerMyStakes({
           {[0, 1, 2].map((el, i) => (
             <Stake key={i}>
               <StakePool>
-                {/* {JSON.parse(el.pool)} */}
-                <TokenIcon skeleton></TokenIcon>
-                <TokenIcon skeleton></TokenIcon>
+                <TokenIcon skeleton/>
+                <TokenIcon skeleton/>
                 <TokensNames skeleton>
                   <div>{}</div>
                   <div>{}</div>
                 </TokensNames>
               </StakePool>
-              {/* <StakeSeparator>for</StakeSeparator> */}
               <StakeReward>
                 <TokenIcon skeleton>{}</TokenIcon>
                 <TokensNames skeleton>
@@ -673,12 +354,11 @@ export function StakerMyStakes({
                   <div>{}</div>
                 </TokensNames>
               </StakeReward>
-              {/* <StakeSeparator>by</StakeSeparator> */}
               <StakeCountdown skeleton>
-                <div></div>
+                <div/>
               </StakeCountdown>
               <StakeActions>
-                <StakeButton skeleton></StakeButton>
+                <StakeButton skeleton/>
               </StakeActions>
             </Stake>
           ))}
@@ -706,13 +386,13 @@ export function StakerMyStakes({
           )}
           {inactiveNFTs && (
             <>
-              <PageTitle title={'Inactive NFT-s'}></PageTitle>
+              <PageTitle title={'Inactive NFT-s'}/>
               <StakeListHeader>
                 <div style={{ minWidth: '96px' }}>ID</div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+                <div/>
+                <div/>
+                <div/>
+                <div/>
               </StakeListHeader>
               <Stakes>{getTable(inactiveNFTs, false)}</Stakes>
             </>

@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react'
-import styled from 'styled-components/macro'
 import { TYPE, CloseIcon } from 'theme'
 import Card from 'components/Card'
 import { AutoColumn } from 'components/Column'
@@ -8,24 +7,17 @@ import { ArrowLeft, AlertTriangle } from 'react-feather'
 import useTheme from 'hooks/useTheme'
 import { transparentize } from 'polished'
 import { ButtonPrimary } from 'components/Button'
-import { SectionBreak } from 'components/swap/styleds'
-import { ExternalLink } from '../../theme/components'
+import { SectionBreak } from '../swap/styled'
+import { ExternalLink } from '../../theme'
 import ListLogo from 'components/ListLogo'
-import { PaddedColumn, Checkbox, TextDot } from './styleds'
+import { PaddedColumn, Checkbox, TextDot, Wrapper } from './styled'
 import { TokenList } from '@uniswap/token-lists'
-
 import { useAppDispatch } from 'state/hooks'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import { removeList, enableList } from 'state/lists/actions'
 import { CurrencyModalView } from './CurrencySearchModal'
 import { useAllLists } from 'state/lists/hooks'
 import { Trans } from '@lingui/macro'
-
-const Wrapper = styled.div`
-  position: relative;
-  width: 100%;
-  overflow: auto;
-`
 
 interface ImportProps {
   listURL: string
@@ -66,7 +58,7 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
 
   return (
     <Wrapper>
-      <PaddedColumn gap="14px" style={{ width: '100%', flex: '1 1' }}>
+      <PaddedColumn gap='14px' style={{ width: '100%', flex: '1 1' }}>
         <RowBetween>
           <ArrowLeft style={{ cursor: 'pointer' }} onClick={() => setModalView(CurrencyModalView.manage)} />
           <TYPE.mediumHeader>
@@ -76,19 +68,19 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
         </RowBetween>
       </PaddedColumn>
       <SectionBreak />
-      <PaddedColumn gap="md">
-        <AutoColumn gap="md">
-          <Card backgroundColor={theme.bg2} padding="12px 20px">
+      <PaddedColumn gap='md'>
+        <AutoColumn gap='md'>
+          <Card backgroundColor={theme.bg2} padding='12px 20px'>
             <RowBetween>
               <RowFixed>
-                {list.logoURI && <ListLogo logoURI={list.logoURI} size="40px" />}
-                <AutoColumn gap="sm" style={{ marginLeft: '20px' }}>
+                {list.logoURI && <ListLogo logoURI={list.logoURI} size='40px' />}
+                <AutoColumn gap='sm' style={{ marginLeft: '20px' }}>
                   <RowFixed>
-                    <TYPE.body fontWeight={600} mr="6px">
+                    <TYPE.body fontWeight={600} mr='6px'>
                       {list.name}
                     </TYPE.body>
                     <TextDot />
-                    <TYPE.main fontSize={'16px'} ml="6px">
+                    <TYPE.main fontSize={'16px'} ml='6px'>
                       <Trans>{list.tokens.length} tokens</Trans>
                     </TYPE.main>
                   </RowFixed>
@@ -102,7 +94,7 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
             </RowBetween>
           </Card>
           <Card style={{ backgroundColor: transparentize(0.8, theme.red1) }}>
-            <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
+            <AutoColumn justify='center' style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
               <AlertTriangle stroke={theme.red1} size={32} />
               <TYPE.body fontWeight={500} fontSize={20} color={theme.red1}>
                 <Trans>Import at your own risk</Trans>
@@ -121,24 +113,23 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
                 <Trans>If you purchase a token from this list, you may not be able to sell it back.</Trans>
               </TYPE.body>
             </AutoColumn>
-            <AutoRow justify="center" style={{ cursor: 'pointer' }} onClick={() => setConfirmed(!confirmed)}>
+            <AutoRow justify='center' style={{ cursor: 'pointer' }} onClick={() => setConfirmed(!confirmed)}>
               <Checkbox
-                name="confirmed"
-                type="checkbox"
+                name='confirmed'
+                type='checkbox'
                 checked={confirmed}
                 onChange={() => setConfirmed(!confirmed)}
               />
-              <TYPE.body ml="10px" fontSize="16px" color={theme.red1} fontWeight={500}>
+              <TYPE.body ml='10px' fontSize='16px' color={theme.red1} fontWeight={500}>
                 <Trans>I understand</Trans>
               </TYPE.body>
             </AutoRow>
           </Card>
-
           <ButtonPrimary
             disabled={!confirmed}
             altDisabledStyle={true}
-            $borderRadius="20px"
-            padding="10px 1rem"
+            $borderRadius='20px'
+            padding='10px 1rem'
             onClick={handleAddList}
           >
             <Trans>Import</Trans>
@@ -149,7 +140,6 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
             </TYPE.error>
           ) : null}
         </AutoColumn>
-        {/* </Card> */}
       </PaddedColumn>
     </Wrapper>
   )

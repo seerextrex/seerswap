@@ -1,45 +1,11 @@
 import { Trans } from '@lingui/macro'
 import React, { ErrorInfo } from 'react'
 import store, { AppState } from '../../state'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
-import styled from 'styled-components/macro'
 import { getUserAgent } from '../../utils/getUserAgent'
-import { AutoRow } from '../Row'
 import ReactGA from 'react-ga'
-
-const FallbackWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
-  z-index: 1;
-`
-
-const BodyWrapper = styled.div<{ margin?: string }>`
-  padding: 1rem;
-  width: 100%;
-`
-
-const CodeBlockWrapper = styled.div`
-  background: ${({ theme }) => theme.bg0};
-  overflow: auto;
-  white-space: pre;
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 24px;
-  padding: 18px 24px;
-  color: ${({ theme }) => theme.text1};
-`
-
-const LinkWrapper = styled.div`
-  color: ${({ theme }) => theme.blue1};
-  padding: 6px 24px;
-`
-
-const SomethingWentWrongWrapper = styled.div`
-  padding: 6px 24px;
-`
+import {FallbackWrapper, CodeBlockWrapper, SomethingWentWrongWrapper, BodyWrapper} from './styled'
 
 type ErrorBoundaryState = {
   error: Error | null

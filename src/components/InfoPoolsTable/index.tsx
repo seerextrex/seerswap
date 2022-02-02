@@ -1,8 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react'
-import styled from 'styled-components/macro'
-import { Link, NavLink } from 'react-router-dom'
 import { TYPE } from 'theme'
-import { DarkGreyCard, GreyBadge } from 'components/Card'
+import { GreyBadge } from 'components/Card'
 import Loader, { LoadingRows } from 'components/Loader'
 import { AutoColumn } from 'components/Column'
 import { RowFixed } from 'components/Row'
@@ -10,103 +8,20 @@ import { formatDollarAmount, formatPercent } from 'utils/numbers'
 import { PoolData } from 'state/pools/reducer'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { feeTierPercent } from 'utils'
-import { Label, ClickableText } from 'components/Text'
+import { Label } from 'components/Text'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { BarChart2 } from 'react-feather'
-
-export const PageButtons = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.2em;
-  margin-bottom: 0.5em;
-`
-
-export const Arrow = styled.div<{ faded: boolean }>`
-  color: white;
-  opacity: ${(props) => (props.faded ? 0.3 : 1)};
-  padding: 0 20px;
-  user-select: none;
-  :hover {
-    cursor: pointer;
-  }
-`
-
-const LabelStyled = styled(Label)`
-  font-size: 14px;
-  justify-content: flex-start;
-`
-
-const ClickableTextStyled = styled(ClickableText)`
-  font-size: 14px;
-  justify-content: flex-start;
-  text-align: start;
-`
-
-const Wrapper = styled(DarkGreyCard)`
-  width: 100%;
-  background-color: rgba(60, 97, 126, 0.5);
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    min-width: 900px;
-  `};
-`
-
-const ResponsiveGrid = styled.div`
-  display: grid;
-  position: relative;
-  grid-gap: 1em;
-  align-items: center;
-
-  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
-
-  @media screen and (max-width: 1000px) {
-    grid-template-columns: 20px 2.1fr repeat(4, 1fr);
-    & :nth-child(3) {
-      display: none;
-    }
-  }
-
-  //@media screen and (max-width: 500px) {
-  //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);
-  //  & :nth-child(5) {
-  //    display: none;
-  //  }
-  //}
-  //
-  //@media screen and (max-width: 480px) {
-  //  grid-template-columns: 2.5fr repeat(1, 1fr);
-  //  > *:nth-child(1) {
-  //    display: none;
-  //  }
-  //}
-`
-
-const ChartBadge = styled(NavLink)`
-  background: #36f;
-  margin-left: 10px;
-  border-radius: 6px;
-  padding: 2px 3px;
-  & > * {
-    display: block;
-  }
-`
-
-const AprInfo = styled.span`
-  background-color: #02365e;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 10px;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  right: 0;
-  z-index: 101;
-`
+import { BarChart2, ExternalLink } from 'react-feather'
+import {
+  ResponsiveGrid,
+  Arrow,
+  ChartBadge,
+  ClickableTextStyled,
+  LabelStyled,
+  LinkWrapper,
+  Wrapper,
+  PageButtons
+} from './styled'
 
 const SORT_FIELD = {
   feeTier: 'feeTier',
@@ -114,13 +29,13 @@ const SORT_FIELD = {
   tvlUSD: 'tvlUSD',
   volumeUSDWeek: 'volumeUSDWeek',
   feesUSD: 'feesUSD',
-  apr: 'apr',
+  apr: 'apr'
 }
 
 export const POOL_HIDE = [
   '0x86d257cdb7bc9c0df10e84c8709697f92770b335',
   '0xf8dbd52488978a79dfe6ffbd81a01fc5948bf9ee',
-  '0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248',
+  '0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'
 ]
 
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
@@ -133,15 +48,21 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
         <LabelStyled fontWeight={400}>
           <RowFixed>
             <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} />
-            <TYPE.label ml="8px">
-              {poolData.token0.symbol}/{poolData.token1.symbol}
-            </TYPE.label>
-            <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#02365e' }}>
+            <LinkWrapper href={`https://polygonscan.com/address/${poolData.address}`}
+                         rel='noopener noreferrer'
+                         target='_blank'>
+              <TYPE.label ml='8px'>
+                {poolData.token0.symbol}/{poolData.token1.symbol}
+              </TYPE.label>
+              <ExternalLink size={16} color={'white'} />
+            </LinkWrapper>
+            <GreyBadge ml='10px' fontSize='14px' style={{ backgroundColor: '#02365e' }}>
               {feeTierPercent(poolData.fee)}
             </GreyBadge>
             <ChartBadge to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
               <BarChart2 size={18} stroke={'white'} />
             </ChartBadge>
+
           </RowFixed>
         </LabelStyled>
         <LabelStyled end={1} fontWeight={400}>
@@ -167,9 +88,9 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
 const MAX_ITEMS = 10
 
 export default function InfoPoolsTable({
-  poolDatas,
-  maxItems = MAX_ITEMS,
-}: {
+                                         poolDatas,
+                                         maxItems = MAX_ITEMS
+                                       }: {
   poolDatas: PoolData[]
   maxItems?: number
 }) {
@@ -197,17 +118,17 @@ export default function InfoPoolsTable({
 
     return poolDatas
       ? poolDatas
-          .filter((x) => !!x && !POOL_HIDE.includes(x.address))
-          .sort((a, b) => {
-            if (a && b) {
-              return a[sortField as keyof PoolData] > b[sortField as keyof PoolData]
-                ? (sortDirection ? -1 : 1) * 1
-                : (sortDirection ? -1 : 1) * -1
-            } else {
-              return -1
-            }
-          })
-          .slice(maxItems * (page - 1), page * maxItems)
+        .filter((x) => !!x && !POOL_HIDE.includes(x.address))
+        .sort((a, b) => {
+          if (a && b) {
+            return a[sortField as keyof PoolData] > b[sortField as keyof PoolData]
+              ? (sortDirection ? -1 : 1) * 1
+              : (sortDirection ? -1 : 1) * -1
+          } else {
+            return -1
+          }
+        })
+        .slice(maxItems * (page - 1), page * maxItems)
       : []
   }, [maxItems, page, poolDatas, sortDirection, sortField])
 
@@ -233,7 +154,7 @@ export default function InfoPoolsTable({
   return (
     <Wrapper style={{ borderRadius: '8px' }}>
       {sortedPools.length > 0 ? (
-        <AutoColumn gap="16px">
+        <AutoColumn gap='16px'>
           <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
             <Label color={'#dedede'}>#</Label>
             <ClickableTextStyled color={'#dedede'} onClick={() => handleSort(SORT_FIELD.feeTier)}>

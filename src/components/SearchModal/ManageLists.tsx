@@ -8,14 +8,13 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CheckCircle, Settings } from 'react-feather'
 import { usePopper } from 'react-popper'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components/macro'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import useTheme from '../../hooks/useTheme'
 import useToggle from '../../hooks/useToggle'
 import { acceptListUpdate, disableList, enableList, removeList } from '../../state/lists/actions'
 import { useActiveListUrls, useAllLists, useIsListActive } from '../../state/lists/hooks'
-import { ExternalLink, IconWrapper, LinkStyledButton, TYPE } from '../../theme'
+import { ExternalLink, IconWrapper, TYPE } from '../../theme'
 import listVersionLabel from '../../utils/listVersionLabel'
 import { parseENSAddress } from '../../utils/parseENSAddress'
 import uriToHttp from '../../utils/uriToHttp'
@@ -25,66 +24,20 @@ import ListLogo from '../ListLogo'
 import Row, { RowBetween, RowFixed } from '../Row'
 import ListToggle from '../Toggle/ListToggle'
 import { CurrencyModalView } from './CurrencySearchModal'
-import { PaddedColumn, SearchInput, Separator, SeparatorDark } from './styleds'
-
-const Wrapper = styled(Column)`
-  height: 100%;
-`
-
-const UnpaddedLinkStyledButton = styled(LinkStyledButton)`
-  padding: 0;
-  font-size: 1rem;
-  opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
-`
-
-const PopoverContainer = styled.div<{ show: boolean }>`
-  z-index: 100;
-  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
-  opacity: ${(props) => (props.show ? 1 : 0)};
-  transition: visibility 150ms linear, opacity 150ms linear;
-  background: ${({ theme }) => theme.bg2};
-  border: 1px solid ${({ theme }) => theme.bg3};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
-  color: ${({ theme }) => theme.text2};
-  border-radius: 0.5rem;
-  padding: 1rem;
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-gap: 8px;
-  font-size: 1rem;
-  text-align: left;
-`
-
-const StyledMenu = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  border: none;
-`
-
-const StyledTitleText = styled.div<{ active: boolean }>`
-  font-size: 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 600;
-  color: ${({ theme, active }) => (active ? theme.white : theme.text2)};
-`
-
-const StyledListUrlText = styled(TYPE.main)<{ active: boolean }>`
-  font-size: 12px;
-  color: ${({ theme, active }) => (active ? theme.white : theme.text2)};
-`
-
-const RowWrapper = styled(Row)<{ bgColor: string; active: boolean; hasActiveTokens: boolean }>`
-  background-color: ${({ bgColor, active, theme }) => (active ? bgColor ?? 'transparent' : theme.bg2)};
-  opacity: ${({ hasActiveTokens }) => (hasActiveTokens ? 1 : 0.4)};
-  transition: 200ms;
-  align-items: center;
-  padding: 1rem;
-  border-radius: 20px;
-`
+import {
+  PaddedColumn,
+  SearchInput,
+  Separator,
+  SeparatorDark,
+  ManageWrapper,
+  UnpaddedLinkStyledButton,
+  PopoverContainer,
+  StyledMenu,
+  StyledTitleText,
+  StyledListUrlText,
+  RowWrapper,
+  ListContainer
+} from './styled'
 
 function listUrlRowHTMLId(listUrl: string) {
   return `list-row-${listUrl.replace(/\./g, '-')}`
@@ -115,7 +68,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: 'auto',
     strategy: 'fixed',
-    modifiers: [{ name: 'offset', options: { offset: [8, 8] } }],
+    modifiers: [{ name: 'offset', options: { offset: [8, 8] } }]
   })
 
   useOnClickOutside(node, open ? toggle : undefined)
@@ -150,7 +103,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       id={listUrlRowHTMLId(listUrl)}
     >
       {list.logoURI ? (
-        <ListLogo size="40px" style={{ marginRight: '1rem' }} logoURI={list.logoURI} alt={`${list.name} list logo`} />
+        <ListLogo size='40px' style={{ marginRight: '1rem' }} logoURI={list.logoURI} alt={`${list.name} list logo`} />
       ) : (
         <div style={{ width: '24px', height: '24px', marginRight: '1rem' }} />
       )}
@@ -158,12 +111,12 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
         <Row>
           <StyledTitleText active={isActive}>{list.name}</StyledTitleText>
         </Row>
-        <RowFixed mt="4px">
-          <StyledListUrlText active={isActive} mr="6px">
+        <RowFixed mt='4px'>
+          <StyledListUrlText active={isActive} mr='6px'>
             <Trans>{activeTokensOnThisChain} tokens</Trans>
           </StyledListUrlText>
           <StyledMenu ref={node as any}>
-            <ButtonEmpty onClick={toggle} ref={setReferenceElement} padding="0">
+            <ButtonEmpty onClick={toggle} ref={setReferenceElement} padding='0'>
               <Settings stroke={isActive ? theme.bg1 : theme.text1} size={12} />
             </ButtonEmpty>
             {open && (
@@ -197,18 +150,12 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   )
 })
 
-const ListContainer = styled.div`
-  padding: 1rem;
-  height: 100%;
-  overflow: auto;
-  padding-bottom: 80px;
-`
 
 export function ManageLists({
-  setModalView,
-  setImportList,
-  setListUrl,
-}: {
+                              setModalView,
+                              setImportList,
+                              setListUrl
+                            }: {
   setModalView: (view: CurrencyModalView) => void
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
@@ -228,7 +175,7 @@ export function ManageLists({
         }
         return {
           ...acc,
-          [list.name]: list.tokens.reduce((count: number, token) => (token.chainId === chainId ? count + 1 : count), 0),
+          [list.name]: list.tokens.reduce((count: number, token) => (token.chainId === chainId ? count + 1 : count), 0)
         }
       }, {}),
     [chainId, lists]
@@ -276,8 +223,8 @@ export function ManageLists({
           return listA.name.toLowerCase() < listB.name.toLowerCase()
             ? -1
             : listA.name.toLowerCase() === listB.name.toLowerCase()
-            ? 0
-            : 1
+              ? 0
+              : 1
         }
         if (listA) return -1
         if (listB) return 1
@@ -295,6 +242,7 @@ export function ManageLists({
         .then((list) => setTempList(list))
         .catch(() => setAddError(t`Error importing list`))
     }
+
     // if valid url, fetch details for card
     if (validUrl) {
       fetchTempList()
@@ -321,12 +269,12 @@ export function ManageLists({
   }, [listUrlInput, setImportList, setListUrl, setModalView, tempList])
 
   return (
-    <Wrapper>
-      <PaddedColumn gap="14px">
+    <ManageWrapper>
+      <PaddedColumn gap='14px'>
         <Row>
           <SearchInput
-            type="text"
-            id="list-add-input"
+            type='text'
+            id='list-add-input'
             placeholder={t`https:// or ipfs:// or ENS name`}
             value={listUrlInput}
             onChange={handleInput}
@@ -340,11 +288,11 @@ export function ManageLists({
       </PaddedColumn>
       {tempList && (
         <PaddedColumn style={{ paddingTop: 0 }}>
-          <Card backgroundColor={theme.bg2} padding="12px 20px">
+          <Card backgroundColor={theme.bg2} padding='12px 20px'>
             <RowBetween>
               <RowFixed>
-                {tempList.logoURI && <ListLogo logoURI={tempList.logoURI} size="40px" />}
-                <AutoColumn gap="4px" style={{ marginLeft: '20px' }}>
+                {tempList.logoURI && <ListLogo logoURI={tempList.logoURI} size='40px' />}
+                <AutoColumn gap='4px' style={{ marginLeft: '20px' }}>
                   <TYPE.body fontWeight={600}>{tempList.name}</TYPE.body>
                   <TYPE.main fontSize={'12px'}>
                     <Trans>{tempList.tokens.length} tokens</Trans>
@@ -353,7 +301,7 @@ export function ManageLists({
               </RowFixed>
               {isImported ? (
                 <RowFixed>
-                  <IconWrapper stroke={theme.text2} size="16px" marginRight={'10px'}>
+                  <IconWrapper stroke={theme.text2} size='16px' marginRight={'10px'}>
                     <CheckCircle />
                   </IconWrapper>
                   <TYPE.body color={theme.text2}>
@@ -363,8 +311,8 @@ export function ManageLists({
               ) : (
                 <ButtonPrimary
                   style={{ fontSize: '14px' }}
-                  padding="6px 8px"
-                  width="fit-content"
+                  padding='6px 8px'
+                  width='fit-content'
                   onClick={handleImport}
                 >
                   <Trans>Import</Trans>
@@ -376,12 +324,12 @@ export function ManageLists({
       )}
       <Separator />
       <ListContainer>
-        <AutoColumn gap="md">
+        <AutoColumn gap='md'>
           {sortedLists.map((listUrl) => (
             <ListRow key={listUrl} listUrl={listUrl} />
           ))}
         </AutoColumn>
       </ListContainer>
-    </Wrapper>
+    </ManageWrapper>
   )
 }

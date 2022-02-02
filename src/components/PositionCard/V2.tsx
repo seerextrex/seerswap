@@ -5,50 +5,26 @@ import { Pair } from '@uniswap/v2-sdk'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
-import styled from 'styled-components/macro'
 import { useTotalSupply } from '../../hooks/useTotalSupply'
 import { Trans } from '@lingui/macro'
 
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useTokenBalance } from '../../state/wallet/hooks'
-import { currencyId } from '../../utils/currencyId'
 import { unwrappedToken } from '../../utils/unwrappedToken'
-import { ButtonPrimary, ButtonSecondary, ButtonEmpty } from '../Button'
-import { transparentize } from 'polished'
+import { ButtonPrimary, ButtonEmpty } from '../Button'
 import { CardNoise } from '../earn/styled'
 
 import { useColor } from '../../hooks/useColor'
 
-import { LightCard } from '../Card'
 import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
-import { Dots } from '../swap/styleds'
+import { Dots } from '../swap/styled'
 import { BIG_INT_ZERO } from '../../constants/misc'
-import { FixedHeightRow } from '.'
+import { FixedHeightRow, StyledV2PositionCard, AutoColumnInfo, RowFixedMigrate } from './styled'
 
 import Badge, { BadgeVariant } from '../Badge'
-
-const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
-  border: none;
-  background: rgba(60, 97, 126, 0.5);
-  position: relative;
-  overflow: hidden;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 40px 20px;
-  `}
-`
-const RowFixedMigrate = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin: -20px;
-  `}
-`
-const AutoColumnInfo = styled(AutoColumn)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-top: 30px;
-  `}
-`
 
 interface PositionCardProps {
   pair: Pair
@@ -59,7 +35,7 @@ interface PositionCardProps {
 }
 
 export default function V2PositionCard({ pair, border, stakedBalance, sushi }: PositionCardProps) {
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
   const currency0 = unwrappedToken(pair.token0)
   const currency1 = unwrappedToken(pair.token1)
@@ -87,19 +63,19 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
     // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
     JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
       ? [
-          pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false),
-          pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false),
-        ]
+        pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false),
+        pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false)
+      ]
       : [undefined, undefined]
 
   const backgroundColor = useColor(pair?.token0)
 
   return (
-    <StyledPositionCard border={border} bgColor={backgroundColor}>
+    <StyledV2PositionCard border={border} bgColor={backgroundColor}>
       <CardNoise />
-      <AutoColumn gap="12px">
+      <AutoColumn gap='12px'>
         <FixedHeightRow>
-          <AutoRow gap="8px">
+          <AutoRow gap='8px'>
             <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
             <Text fontWeight={500} fontSize={20}>
               {!currency0 || !currency1 ? (
@@ -115,7 +91,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
               style={{
                 backgroundColor: 'white',
                 color: sushi ? '#48b9cd' : '#f241a5',
-                minWidth: '100px',
+                minWidth: '100px'
               }}
               ref={(element) => {
                 if (element) {
@@ -127,22 +103,22 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
               {sushi ? 'SushiSwap' : 'QuickSwap'}
             </Badge>
           </AutoRow>
-          <RowFixedMigrate gap="8px" style={{ minWidth: '110px' }}>
+          <RowFixedMigrate gap='8px' style={{ minWidth: '110px' }}>
             <ButtonEmpty
-              padding="6px 8px"
-              $borderRadius="12px"
-              width="fit-content"
+              padding='6px 8px'
+              $borderRadius='12px'
+              width='fit-content'
               onClick={() => setShowMore(!showMore)}
             >
               {showMore ? (
                 <>
                   <Trans>Expand</Trans>
-                  <ChevronUp size="20" style={{ marginLeft: '10px' }} />
+                  <ChevronUp size='20' style={{ marginLeft: '10px' }} />
                 </>
               ) : (
                 <>
                   <Trans>Expand</Trans>
-                  <ChevronDown size="20" style={{ marginLeft: '10px' }} />
+                  <ChevronDown size='20' style={{ marginLeft: '10px' }} />
                 </>
               )}
             </ButtonEmpty>
@@ -150,7 +126,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
         </FixedHeightRow>
 
         {showMore && (
-          <AutoColumnInfo gap="8px">
+          <AutoColumnInfo gap='8px'>
             <FixedHeightRow>
               <Text fontSize={16} fontWeight={500}>
                 <Trans>Your total pool tokens:</Trans>
@@ -180,7 +156,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                   <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                     {token0Deposited?.toSignificant(6)}
                   </Text>
-                  <CurrencyLogo size="24px" style={{ marginLeft: '8px' }} currency={currency0} />
+                  <CurrencyLogo size='24px' style={{ marginLeft: '8px' }} currency={currency0} />
                 </RowFixed>
               ) : (
                 '-'
@@ -198,7 +174,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                   <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                     {token1Deposited?.toSignificant(6)}
                   </Text>
-                  <CurrencyLogo size="24px" style={{ marginLeft: '8px' }} currency={currency1} />
+                  <CurrencyLogo size='24px' style={{ marginLeft: '8px' }} currency={currency1} />
                 </RowFixed>
               ) : (
                 '-'
@@ -217,13 +193,13 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
             </FixedHeightRow>
 
             {userDefaultPoolBalance && JSBI.greaterThan(userDefaultPoolBalance.quotient, BIG_INT_ZERO) && (
-              <RowBetween marginTop="10px">
+              <RowBetween marginTop='10px'>
                 <ButtonPrimary
-                  padding="8px"
-                  $borderRadius="8px"
+                  padding='8px'
+                  $borderRadius='8px'
                   as={Link}
                   to={`/migrate/${pair.liquidityToken.address}`}
-                  width="100%"
+                  width='100%'
                 >
                   <Trans>Migrate</Trans>
                 </ButtonPrimary>
@@ -232,6 +208,6 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
           </AutoColumnInfo>
         )}
       </AutoColumn>
-    </StyledPositionCard>
+    </StyledV2PositionCard>
   )
 }

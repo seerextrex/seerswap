@@ -1,19 +1,15 @@
 import { Bound, Field } from '../../state/mint/v3/actions'
 import { AutoColumn } from 'components/Column'
-import styled from 'styled-components/macro'
 import { Currency, CurrencyAmount, Price } from '@uniswap/sdk-core'
 import { Position } from 'lib/src'
 import { PositionPreview } from 'components/PositionPreview'
-
-const Wrapper = styled.div`
-  padding-top: 12px;
-`
+import { ReviewWrapper } from './styled'
 
 export function Review({
-  position,
-  outOfRange,
-  ticksAtLimit,
-}: {
+                         position,
+                         outOfRange,
+                         ticksAtLimit
+                       }: {
   position?: Position
   existingPosition?: Position
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> }
@@ -23,8 +19,8 @@ export function Review({
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
 }) {
   return (
-    <Wrapper>
-      <AutoColumn gap="lg">
+    <ReviewWrapper>
+      <AutoColumn gap='lg'>
         {position ? (
           <PositionPreview
             position={position}
@@ -34,6 +30,6 @@ export function Review({
           />
         ) : null}
       </AutoColumn>
-    </Wrapper>
+    </ReviewWrapper>
   )
 }

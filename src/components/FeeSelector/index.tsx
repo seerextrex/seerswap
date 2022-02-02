@@ -6,14 +6,11 @@ import { AutoColumn } from 'components/Column'
 import { DynamicSection } from 'pages/AddLiquidity/styled'
 import { TYPE } from 'theme'
 import { RowBetween } from 'components/Row'
-import { ButtonGray, ButtonRadioChecked } from 'components/Button'
 import styled, { keyframes } from 'styled-components/macro'
 import Badge from 'components/Badge'
 import Card from 'components/Card'
 import usePrevious from 'hooks/usePrevious'
 import { useFeeTierDistribution } from 'hooks/useFeeTierDistribution'
-import { Box } from 'rebass'
-import { useDynamicFeeValue } from '../../hooks/usePoolDynamicFee'
 
 const pulse = (color: string) => keyframes`
   0% {
@@ -27,15 +24,6 @@ const pulse = (color: string) => keyframes`
   100% {
     box-shadow: 0 0 0 0 ${color};
   }
-`
-
-const ResponsiveText = styled(TYPE.label)`
-  line-height: 16px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    font-size: 12px;
-    line-height: 12px;
-  `};
 `
 
 const FocusedOutlineCard = styled(Card)<{ pulsing: boolean }>`
@@ -104,14 +92,6 @@ export default function FeeSelector({
     },
     [handleFeePoolSelect]
   )
-
-  // useEffect(() => {
-  //   if (!dynamicFee) {
-  //     return
-  //   } else {
-  //     handleFeePoolSelectWithEvent(FeeAmount.LOW)
-  //   }
-  // }, [dynamicFee])
 
   useEffect(() => {
     if (dynamicFee || isLoading || isError) {

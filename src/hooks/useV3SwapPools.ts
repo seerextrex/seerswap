@@ -19,20 +19,14 @@ export function useV3SwapPools(
 
   const allCurrencyCombinations = useAllCurrencyCombinations(currencyIn, currencyOut)
 
-  const allCurrencyCombinationsWithAllFees: [Token, Token, FeeAmount][] = useMemo(
-    () =>
-      allCurrencyCombinations.reduce<[Token, Token, FeeAmount][]>((list, [tokenA, tokenB]) => {
-        return list.concat([
-          [tokenA, tokenB, FeeAmount.LOW],
-          [tokenA, tokenB, FeeAmount.MEDIUM],
-          [tokenA, tokenB, FeeAmount.HIGH],
-        ])
-      }, []),
-    [allCurrencyCombinations]
-  )
+  // const allCurrencyCombinationsWithAllFees: [Token, Token, FeeAmount][] = useMemo(
+  //   () =>
+  //     allCurrencyCombinations
+  //   [allCurrencyCombinations]
+  // )
 
 
-  const pools = usePools(allCurrencyCombinationsWithAllFees)
+  const pools = usePools(allCurrencyCombinations)
 
   return useMemo(() => {
     return {

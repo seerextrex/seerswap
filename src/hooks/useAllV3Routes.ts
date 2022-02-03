@@ -77,6 +77,7 @@ export function useAllV3Routes(
     const singleIfWrapped = false
 
     const routes = computeAllRoutes(currencyIn, currencyOut, pools, chainId, [], [], currencyIn, (singleHopOnly || singleIfWrapped) ? 1 : 3)
+
     return { loading: false, routes }
   }, [chainId, currencyIn, currencyOut, pools, poolsLoading, singleHopOnly])
 }

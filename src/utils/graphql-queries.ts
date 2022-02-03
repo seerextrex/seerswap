@@ -259,6 +259,7 @@ export const TRANSFERED_POSITIONS = (account, chainId) => gql`
             incentive
             eternalFarming
             onFarmingCenter
+            enteredInEternalFarming
     }
 }
 `
@@ -272,6 +273,7 @@ export const POSITIONS_ON_ETERNAL_FARMING = (account) => gql`
       L2tokenId
       eternalFarming
       onFarmingCenter
+      enteredInEternalFarming
     }
   }
 `
@@ -286,6 +288,7 @@ query transferedPositionsForPool {
         incentive
         eternalFarming
         onFarmingCenter
+        enteredInEternalFarming
     }
 }`
 
@@ -298,6 +301,7 @@ query positionsOwnedForPool {
         L2tokenId
         incentive
         eternalFarming
+        enteredInEternalFarming
     }
 }`
 

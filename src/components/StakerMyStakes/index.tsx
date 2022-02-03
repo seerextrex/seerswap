@@ -221,6 +221,8 @@ const PositionCardEventTitle = styled.div`
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
 `
 
 const PositionCardStats = styled.div`
@@ -995,7 +997,17 @@ export function StakerMyStakes({
             )}
           </PositionCardEvent>
           <PositionCardEvent>
-            <PositionCardEventTitle>Infinite farming</PositionCardEventTitle>
+            <PositionCardEventTitle>
+              <span>Infinite farming</span>
+              <span style={{ fontSize: '14px', fontWeight: 400, lineHeight: '21px' }}>
+                <span>Entered at: </span>
+                <span>{new Date(el.enteredInEternalFarming * 1000).toLocaleString().split(',')[0]}</span>
+                <span>{`${new Date(el.enteredInEternalFarming * 1000)
+                  .toLocaleString()
+                  .split(',')[1]
+                  .slice(0, -3)}`}</span>
+              </span>
+            </PositionCardEventTitle>
             {el.eternalFarming ? (
               <>
                 <PositionCardStats>

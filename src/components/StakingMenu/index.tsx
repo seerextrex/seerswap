@@ -97,6 +97,11 @@ const stakingMenuList = [
     link: 'rewards',
   },
   {
+    title: 'Infinite farms',
+    icon: <InfinityIcon size={18}></InfinityIcon>,
+    link: 'infinite-farms',
+  },
+  {
     title: 'Current events',
     icon: <Zap size={18}></Zap>,
     link: 'current-events',
@@ -105,11 +110,6 @@ const stakingMenuList = [
     title: 'Future events',
     icon: <Calendar size={18}></Calendar>,
     link: 'future-events',
-  },
-  {
-    title: 'Infinite farms',
-    icon: <InfinityIcon size={18}></InfinityIcon>,
-    link: 'infinite-farms',
   },
 ]
 

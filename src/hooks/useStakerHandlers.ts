@@ -157,7 +157,7 @@ export function useStakerHandlers() {
 
             if (eventType === FarmingType.ETERNAL) {
                 addTransaction(result, {
-                    summary: `Withdrawn!`
+                    summary: `NFT #${+token} was undeposited!`
                 })
             } else {
                 addTransaction(result, {
@@ -194,7 +194,11 @@ export function useStakerHandlers() {
             const result = await farmingCenterContract.withdrawToken(
                 token,
                 account,
-                0x0
+                0x0,
+                {
+                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
+                    gasLimit: 300000
+                }
             )
 
             addTransaction(result, {
@@ -347,7 +351,10 @@ export function useStakerHandlers() {
 
                 const result = await nonFunPosManContract.multicall([
                     approveData, transferData
-                ])
+                ],
+                    {
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
+                    })
 
                 addTransaction(result, {
                     summary: `NFT #${selectedNFT.id} was approved!`

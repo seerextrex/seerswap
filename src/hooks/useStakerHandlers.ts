@@ -68,7 +68,7 @@ export function useStakerHandlers() {
             )
 
             addTransaction(result, {
-                summary: 'Claiming reward for ...'
+                summary: `Claiming reward`
             })
 
             setClaimReward({ hash: result.hash, id: tokenAddress, error: null })
@@ -104,7 +104,7 @@ export function useStakerHandlers() {
             )
 
             addTransaction(result, {
-                summary: 'Claiming reward for ...'
+                summary: 'Claiming reward'
             })
 
             setEternalCollectReward({ hash: result.hash, id: token })

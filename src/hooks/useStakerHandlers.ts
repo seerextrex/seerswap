@@ -194,10 +194,7 @@ export function useStakerHandlers() {
             const result = await farmingCenterContract.withdrawToken(
                 token,
                 account,
-                0x0,
-                {
-                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                }
+                0x0
             )
 
             addTransaction(result, {
@@ -348,16 +345,9 @@ export function useStakerHandlers() {
                     selectedNFT.id
                 ])
 
-                // const nftMulticall = nonFunPosManInterface.encodeFunctionData('multicall', [
-                //     [approveData, transferData]
-                // ])
-
                 const result = await nonFunPosManContract.multicall([
                     approveData, transferData
-                ],
-                {
-                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                })
+                ])
 
                 addTransaction(result, {
                     summary: `NFT #${selectedNFT.id} was approved!`
@@ -405,9 +395,9 @@ export function useStakerHandlers() {
                 approveData,
                 sendData
             ],
-            {
-                gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-            })
+                {
+                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                })
 
             addTransaction(result, {
                 summary: `NFT #${l2TokenId} was sent!`

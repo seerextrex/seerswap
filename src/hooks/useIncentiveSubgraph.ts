@@ -11,30 +11,28 @@ import { CURRENT_EVENTS, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN
 import { useClients } from "./subgraph/useClients";
 import { formatUnits } from "@ethersproject/units";
 
-
+//TODO ТИПИЗИРОВАТЬ !!!!!!!!!!!!!
 export function useIncentiveSubgraph() {
-
     const { chainId, account } = useActiveWeb3React()
-
     const { dataClient, farmingClient } = useClients()
 
     const [positionsForPool, setPositionsForPool] = useState(null);
-    const [positionsForPoolLoading, setPositionsForPoolLoading] = useState(false)
+    const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
 
     const [transferredPositions, setTransferredPositions] = useState(null);
-    const [transferredPositionsLoading, setTransferredPositionsLoading] = useState(false)
+    const [transferredPositionsLoading, setTransferredPositionsLoading] = useState<boolean>(false)
 
     const [rewardsResult, setRewardsResult] = useState(null)
-    const [rewardsLoading, setRewardsLoading] = useState(null)
+    const [rewardsLoading, setRewardsLoading] = useState<boolean>(false)
 
     const [futureEvents, setFutureEvents] = useState(null)
-    const [futureEventsLoading, setFutureEventsLoading] = useState(false)
+    const [futureEventsLoading, setFutureEventsLoading] = useState<boolean>(false)
 
     const [currentEvents, setCurrentEvents] = useState(null)
-    const [currentEventsLoading, setCurrentEventsLoading] = useState(false)
+    const [currentEventsLoading, setCurrentEventsLoading] = useState<boolean>(false)
 
     const [positionsOnFarmer, setPositionsOnFarmer] = useState(null)
-    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState(false)
+    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState<boolean>(false)
 
     const provider = window.ethereum ? new providers.Web3Provider(window.ethereum) : undefined
 

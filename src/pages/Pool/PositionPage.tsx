@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { NonfungiblePositionManager, Pool, Position } from 'lib/src'
 import { PoolState, usePool } from 'hooks/usePools'
 import { useToken } from 'hooks/Tokens'
@@ -13,7 +13,7 @@ import { RowBetween, RowFixed } from 'components/Row'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { ExternalLink, HideExtraSmall, TYPE } from 'theme'
 import Badge from 'components/Badge'
-import { ButtonConfirmed, ButtonPrimary, ButtonGray } from 'components/Button'
+import { ButtonConfirmed, ButtonPrimary } from 'components/Button'
 import { DarkCard, LightCard } from 'components/Card'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Trans } from '@lingui/macro'
@@ -54,9 +54,6 @@ import {
   DoubleArrow,
   ResponsiveRow,
   PositionPageButtonPrimary,
-  NFTGrid,
-  NFTCanvas,
-  NFTImage,
   RowFixedStyled,
   RowFixedStyledButtons,
   FeeBadge,
@@ -148,65 +145,6 @@ function getRatio(
   }
 }
 
-// snapshots a src img into a canvas
-function getSnapshot(src: HTMLImageElement, canvas: HTMLCanvasElement, targetHeight: number) {
-  const context = canvas.getContext('2d')
-
-  if (context) {
-    let { width, height } = src
-
-    // src may be hidden and not have the target dimensions
-    const ratio = width / height
-    height = targetHeight
-    width = Math.round(ratio * targetHeight)
-
-    // Ensure crispness at high DPIs
-    canvas.width = width * devicePixelRatio
-    canvas.height = height * devicePixelRatio
-    canvas.style.width = width + 'px'
-    canvas.style.height = height + 'px'
-    context.scale(devicePixelRatio, devicePixelRatio)
-
-    context.clearRect(0, 0, width, height)
-    context.drawImage(src, 0, 0, width, height)
-  }
-}
-
-function NFT({ image, height: targetHeight }: { image: string; height: number }) {
-  const [animate, setAnimate] = useState(false)
-
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const imageRef = useRef<HTMLImageElement>(null)
-
-  return (
-    <NFTGrid
-      onMouseEnter={() => {
-        setAnimate(true)
-      }}
-      onMouseLeave={() => {
-        // snapshot the current frame so the transition to the canvas is smooth
-        if (imageRef.current && canvasRef.current) {
-          getSnapshot(imageRef.current, canvasRef.current, targetHeight)
-        }
-        setAnimate(false)
-      }}
-    >
-      <NFTCanvas ref={canvasRef} />
-      <NFTImage
-        ref={imageRef}
-        src={image}
-        hidden={!animate}
-        onLoad={() => {
-          // snapshot for the canvas
-          if (imageRef.current && canvasRef.current) {
-            getSnapshot(imageRef.current, canvasRef.current, targetHeight)
-          }
-        }}
-      />
-    </NFTGrid>
-  )
-}
-
 const useInverter = ({
   priceLower,
   priceUpper,
@@ -233,7 +171,7 @@ const useInverter = ({
   }
 }
 
-export function PositionPage({
+export default function PositionPage({
   match: {
     params: { tokenId: tokenIdFromUrl },
   },
@@ -247,15 +185,7 @@ export function PositionPage({
 
   const gasPrice = useAppSelector((state) => state.application.gasPrice)
 
-  const {
-    token0: token0Address,
-    token1: token1Address,
-    liquidity,
-    tickLower,
-    tickUpper,
-    tokenId,
-    fee: feeAmount,
-  } = positionDetails || {}
+  const { tokenId } = positionDetails || {}
 
   const prevPositionDetails = usePrevious({ ...positionDetails })
   const {
@@ -285,7 +215,7 @@ export function PositionPage({
   const [receiveWETH, setReceiveWETH] = useState(false)
 
   // construct Position from details returned
-  const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined, _feeAmount || 500)
+  const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined)
   const [prevPoolState, prevPool] = usePrevious([poolState, pool]) || []
   const [_poolState, _pool] = useMemo(() => {
     if (!pool && prevPool && prevPoolState) {
@@ -535,10 +465,10 @@ export function PositionPage({
               </RowFixedStyled>
               {ownsNFT && (
                 <RowFixedStyledButtons>
-                  {currency0 && currency1 && tokenId ? (
+                  {currency0 && currency1 && tokenId && chainId ? (
                     <PositionPageButtonPrimary
                       as={Link}
-                      to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/${tokenId}`}
+                      to={`/increase/${currencyId(currency0, chainId)}/${currencyId(currency1, chainId)}/${tokenId}`}
                       width="fit-content"
                       padding="6px 8px"
                       $borderRadius="12px"

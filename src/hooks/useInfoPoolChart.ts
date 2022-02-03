@@ -1,27 +1,21 @@
-import { providers } from "ethers";
 import { useState } from "react";
 import { FETCH_POOL } from "../utils/graphql-queries";
 import { useClients } from "./subgraph/useClients";
-import { useActiveWeb3React } from "./web3"
-
+import { PoolChartSubgraph, SubgraphResponse } from '../models/interfaces'
 
 export function useInfoPoolChart() {
 
-    const { chainId, account } = useActiveWeb3React()
+    const { dataClient } = useClients()
 
-    const { dataClient, farmingClient } = useClients()
-
-    const [poolLoading, setPoolLoading] = useState(null)
-    const [poolResult, setPoolResult] = useState(null)
-
-    const provider = window.ethereum ? new providers.Web3Provider(window.ethereum) : undefined
+    const [poolLoading, setPoolLoading] = useState<boolean | null>(null)
+    const [poolResult, setPoolResult] = useState<null | PoolChartSubgraph>(null)
 
     async function fetchPool(poolId: string) {
         try {
 
             setPoolLoading(true)
 
-            const { data: { pools }, error } = (await dataClient.query({
+            const { data: { pools }, error } = (await dataClient.query<SubgraphResponse<PoolChartSubgraph[]>>({
                 query: FETCH_POOL(poolId)
             }))
 
@@ -36,7 +30,6 @@ export function useInfoPoolChart() {
 
         setPoolLoading(false)
     }
-
 
     return {
         fetchPool: { fetchPoolFn: fetchPool, poolLoading, poolResult }

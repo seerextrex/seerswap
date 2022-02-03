@@ -25,11 +25,10 @@ import {
 
 export default function StakingPage() {
   const { account } = useActiveWeb3React()
-
-  const { fetchRewards, fetchCurrentEvents, fetchFutureEvents, fetchTransferredPositions } =
-  useIncentiveSubgraph() || {}
-
-  const [now, setNow] = useState(Date.now())
+  const { fetchRewards, fetchCurrentEvents, fetchFutureEvents, fetchTransferredPositions } = useIncentiveSubgraph() || {}
+  const [now, setNow] = useState<number>(Date.now())
+  const { path } = useRouteMatch()
+  const toggleWalletModal = useWalletModalToggle()
 
   useEffect(() => {
     const timeNow = setInterval(() => setNow(Date.now()), 1000)
@@ -37,10 +36,6 @@ export default function StakingPage() {
       clearInterval(timeNow)
     }
   }, [])
-
-  const { path } = useRouteMatch()
-
-  const toggleWalletModal = useWalletModalToggle()
 
   return (
     <>

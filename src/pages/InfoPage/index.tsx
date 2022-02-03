@@ -9,7 +9,7 @@ import PoolInfoPage from '../PoolInfoPage'
 import { InfoTotalStats } from '../../components/InfoTotalStats'
 import { PageWrapper, BodyWrapper, MainContentWrapper, InnerWrapper, MenuWrapper } from './styled'
 
-export function InfoPage() {
+function InfoPage() {
   const { path } = useRouteMatch()
   const { fetchInfoPools, fetchInfoTokens, fetchTotalStats, blocksFetched } = useInfoSubgraph() || {}
 
@@ -35,44 +35,44 @@ export function InfoPage() {
                 poolsStat={fetchInfoPools?.poolsResult}
               />
               <BodyWrapper>
-                <Switch>
-                  <Route exact path={`${path}`}>
-                    <Redirect to={`${path}/pools`} />
-                  </Route>
-                  <Route exact path={`${path}/pools`}>
-                    <Helmet>
-                      <title>Algebra — Info • Pools</title>
-                    </Helmet>
-                    <PageTitle
-                      title={'Pools'}
-                      refreshHandler={() => (blocksFetched ? fetchInfoPools?.fetchInfoPoolsFn(true) : undefined)}
-                      isLoading={Boolean(fetchInfoPools?.poolsLoading)}
-                    />
-                    <InfoPools
-                      data={fetchInfoPools?.poolsResult}
-                      refreshing={Boolean(fetchInfoPools?.poolsLoading)}
-                      fetchHandler={() => fetchInfoPools?.fetchInfoPoolsFn(true)}
-                      blocksFetched={blocksFetched}
-                    />
-                  </Route>
-                  <Route exact path={`${path}/pools/:id`} component={PoolInfoPage} />
-                  <Route exact path={`${path}/tokens`}>
-                    <Helmet>
-                      <title>Algebra — Info • Tokens</title>
-                    </Helmet>
-                    <PageTitle
-                      title={'Tokens'}
-                      refreshHandler={() => (blocksFetched ? fetchInfoTokens?.fetchInfoTokensFn(true) : undefined)}
-                      isLoading={Boolean(fetchInfoTokens?.tokensLoading)}
-                    />
-                    <InfoTokens
-                      data={fetchInfoTokens?.tokensResult}
-                      refreshing={Boolean(fetchInfoTokens?.tokensLoading)}
-                      fetchHandler={() => fetchInfoTokens?.fetchInfoTokensFn(true)}
-                      blocksFetched={blocksFetched}
-                    />
-                  </Route>
-                </Switch>
+                  <Switch>
+                    <Route exact path={`${path}`}>
+                      <Redirect to={`${path}/pools`} />
+                    </Route>
+                    <Route exact path={`${path}/pools`}>
+                      <Helmet>
+                        <title>Algebra — Info • Pools</title>
+                      </Helmet>
+                      <PageTitle
+                        title={'Pools'}
+                        refreshHandler={() => (blocksFetched ? fetchInfoPools?.fetchInfoPoolsFn() : undefined)}
+                        isLoading={Boolean(fetchInfoPools?.poolsLoading)}
+                      />
+                      <InfoPools
+                        data={fetchInfoPools?.poolsResult}
+                        refreshing={Boolean(fetchInfoPools?.poolsLoading)}
+                        fetchHandler={() => fetchInfoPools?.fetchInfoPoolsFn()}
+                        blocksFetched={blocksFetched}
+                      />
+                    </Route>
+                    <Route exact path={`${path}/pools/:id`} component={PoolInfoPage} />
+                    <Route exact path={`${path}/tokens`}>
+                      <Helmet>
+                        <title>Algebra — Info • Tokens</title>
+                      </Helmet>
+                      <PageTitle
+                        title={'Tokens'}
+                        refreshHandler={() => (blocksFetched ? fetchInfoTokens?.fetchInfoTokensFn() : undefined)}
+                        isLoading={Boolean(fetchInfoTokens?.tokensLoading)}
+                      />
+                      <InfoTokens
+                        data={fetchInfoTokens?.tokensResult}
+                        refreshing={Boolean(fetchInfoTokens?.tokensLoading)}
+                        fetchHandler={() => fetchInfoTokens?.fetchInfoTokensFn()}
+                        blocksFetched={blocksFetched}
+                      />
+                    </Route>
+                  </Switch>
               </BodyWrapper>
             </MainContentWrapper>
           </InnerWrapper>
@@ -81,3 +81,5 @@ export function InfoPage() {
     </>
   )
 }
+
+export default InfoPage

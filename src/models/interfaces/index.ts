@@ -12,7 +12,8 @@ export type {
   HistoryStakingSubgraph,
   TotalStatSubgraph,
   SubgraphResponseStaking,
-  SmallPoolSubgraph
+  SmallPoolSubgraph,
+  PoolChartSubgraph
 } from './responseSubgraph'
-export type { FormattedPool, FormattedToken, FormattedFee, FormattedChartPool, FormattedTotalStats, Liquidity, ActiveTick, FormattedTick} from './info'
+export type { FormattedPool, FormattedToken, FormattedFee, FormattedChartPool, FormattedTotalStats, Liquidity, ActiveTick, FormattedTick, FormattedFeeChart} from './info'
 export type { StakingData, StakeHash, Frozen } from './staking'

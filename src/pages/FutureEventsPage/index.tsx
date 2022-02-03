@@ -27,12 +27,12 @@ export function FutureEventsPage({
 
   const chunked = useChunkedRows(data, 3)
 
-  const [modalForPool, setModalForPool] = useState(null)
+  const [modalForPool, setModalForPool] = useState(false)
 
   return (
     <>
-      <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)}>
-        {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)}/>}
+      <Modal isOpen={modalForPool} onHide={() => setModalForPool(false)}>
+        {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(false)}/>}
       </Modal>
       <PageWrapper>
         <EventsCards>

@@ -9,7 +9,7 @@ export function PoolInfoHeader({
                                }: {
   token0: any
   token1: any
-  fee: number
+  fee: string
   collectedFees: string
 }) {
 
@@ -23,7 +23,7 @@ export function PoolInfoHeader({
         <PoolTitle>
           {token0?.symbol || '...'} / {token1?.symbol || '...'}
         </PoolTitle>
-        <PoolFee>{`${fee / 10000}%`}</PoolFee>
+        <PoolFee>{`${+fee / 10000}%`}</PoolFee>
         <PoolCollectedFees>Total Collected Fees: ${Math.round(+collectedFees) || '...'}</PoolCollectedFees>
       </PoolInfoWrapper>
       <span />

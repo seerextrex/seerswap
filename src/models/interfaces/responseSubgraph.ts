@@ -20,6 +20,17 @@ export interface PoolAddressSubgraph {
   id: string
 }
 
+export interface PoolChartSubgraph {
+  id: string
+  fee: string
+  token0: TokenSubgraph
+  token1: TokenSubgraph
+  sqrtPrice: string
+  liquidity: string
+  tick: string
+  feesUSD: string
+}
+
 export interface SubgraphResponse<T> {
   [key: string] : T
 }

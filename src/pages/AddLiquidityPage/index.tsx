@@ -9,7 +9,12 @@ import { useDerivedPositionInfo } from '../../hooks/useDerivedPositionInfo'
 import { useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
 import { CurrencyDropdown, StyledInput } from '../AddLiquidity/styled'
 import { useCurrency } from '../../hooks/Tokens'
-import { useV3MintState, useV3MintActionHandlers, useRangeHopCallbacks, useV3DerivedMintInfo } from '../../state/mint/v3/hooks'
+import {
+  useV3MintState,
+  useV3MintActionHandlers,
+  useRangeHopCallbacks,
+  useV3DerivedMintInfo
+} from '../../state/mint/v3/hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
@@ -107,7 +112,7 @@ export default function AddLiquidityPage({
   useEffect(async () => {
     if (confirmed.some((hash) => hash === txHash)) {
       const nonFunPosManContract = new Contract(
-        NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
+        NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId || 137],
         NON_FUN_POS_MAN,
         provider.getSigner()
       )
@@ -327,7 +332,7 @@ export default function AddLiquidityPage({
 
   const handleCurrencySelect = useCallback(
     (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-      const currencyIdNew = currencyId(currencyNew, chainId)
+      const currencyIdNew = currencyId(currencyNew, chainId || 137)
 
       let chainSymbol
 
@@ -475,7 +480,7 @@ export default function AddLiquidityPage({
           {baseCurrency && quoteCurrency && account ? (
             <>
               <PoolInfo>
-                <PoolInfoItem>
+                <PoolInfoItem pulse={false}>
                   <PoolInfoItemTitle>{`${noLiquidity ? 'Initial' : 'Current'} Fee:`}</PoolInfoItemTitle>
                   <span style={{ display: 'flex' }}>
                     <PoolInfoItemValue>{noLiquidity ? '0.05' : dynamicFee / 10000}%</PoolInfoItemValue>
@@ -501,7 +506,7 @@ export default function AddLiquidityPage({
                   </span>
                 </PoolInfoItem>
                 {price && baseCurrency && quoteCurrency && !noLiquidity ? (
-                  <PoolInfoItem>
+                  <PoolInfoItem pulse={false}>
                     <PoolInfoItemTitle>Current Price:</PoolInfoItemTitle>
                     <span style={{ display: 'flex' }}>
                       <PoolInfoItemValue>
@@ -519,10 +524,9 @@ export default function AddLiquidityPage({
                       <PoolInfoItemValue style={{ marginTop: '-1px' }}>
                         <StyledInput
                           style={{
-                            textAlign: `${window.innerWidth < 501 ? 'left' : 'right'}`,
+                            textAlign: window.innerWidth < 501 ? 'left' : 'right',
                             backgroundColor: 'transparent'
                           }}
-                          // placeholder={}
                           className='start-price-input'
                           value={startPriceTypedValue}
                           onUserInput={onStartPriceInput}
@@ -613,13 +617,11 @@ export default function AddLiquidityPage({
                           opacity: 0.2,
                           userSelect: 'none',
                           pointerEvents: 'none'
-                        }
-                        : {}
+                        } : {}
                     }
                   >
                     <Title>
                       Deposit Amounts
-                      {/* <PriceRangeWarning>Warning: Price is out of range</PriceRangeWarning> */}
                     </Title>
                     <TokenPair
                       style={{
@@ -752,7 +754,6 @@ export default function AddLiquidityPage({
                 )}
                 <AddLiquidityButton
                   onClick={() => {
-                    // expertMode ? onAdd() : setShowConfirm(true)
                     onAdd()
                   }}
                   disabled={
@@ -760,8 +761,7 @@ export default function AddLiquidityPage({
                     mustCreateSeparately ||
                     !isValid ||
                     (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled) ||
-                    txHash
+                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
                   }
                 >
                   Add Liquidity

@@ -362,7 +362,7 @@ export default function AddLiquidity({
             </RowBetween>
           )}
         {mustCreateSeparately && (
-          <ButtonError onClick={onCreate} disabled={!isValid || attemptingTxn || !position}>
+          <ButtonError disabled={!isValid || attemptingTxn || !position}>
             {attemptingTxn ? (
               <Dots>
                 <Trans>Confirm Create</Trans>

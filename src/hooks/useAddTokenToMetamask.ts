@@ -1,4 +1,4 @@
-import { getTokenLogoURL } from './../components/CurrencyLogo/index'
+import { getTokenLogoURL } from '../components/CurrencyLogo'
 import { Currency, Token } from '@uniswap/sdk-core'
 import { useCallback, useState } from 'react'
 import { useActiveWeb3React } from 'hooks/web3'

@@ -1,8 +1,7 @@
 import React, { useMemo, useRef } from 'react'
 import Chart from './Chart'
 import Loader from '../Loader'
-import { ChartType } from '../../pages/PoolInfoPage'
-
+import { ChartType } from '../../models/enums'
 import { isMobile, isTablet } from 'react-device-detect'
 import {Wrapper, MockLoading} from './styled'
 
@@ -10,7 +9,7 @@ interface FeeChartRangeInputProps {
   fetchedData: {
     data: Array<any>
     previousData: Array<any>
-  }
+  } | undefined | string
   refreshing: boolean
   id: string
   span: number
@@ -42,8 +41,8 @@ export function daysCount(month: number, year: number) {
 export default function FeeChartRangeInput({ fetchedData, refreshing, span, type }: FeeChartRangeInputProps) {
   const ref = useRef(null)
 
-
   const formattedData = useMemo(() => {
+    if (typeof fetchedData === 'string') return []
     if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return []
 
     const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? 'volumeUSD' : 'feesUSD'
@@ -75,12 +74,10 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
 
   return (
     <Wrapper ref={ref}>
-      {refreshing ? (
+      {refreshing ?
         <MockLoading>
           <Loader stroke={'white'} size={'25px'} />
-        </MockLoading>
-      ) : (
-        <>
+        </MockLoading> :
           <Chart
             feeData={formattedData || undefined}
             dimensions={{
@@ -92,8 +89,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
             span={span}
             type={type}
           />
-        </>
-      )}
+      }
     </Wrapper>
   )
 }

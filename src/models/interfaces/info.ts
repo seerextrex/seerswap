@@ -84,3 +84,8 @@ export interface FormattedTick {
   token1: Token
   ticksProcessed: ActiveTick[]
 }
+
+export interface FormattedFeeChart {
+  timestamp: Date
+  value: number
+}

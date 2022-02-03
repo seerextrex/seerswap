@@ -44,7 +44,7 @@ async function getColorFromUriPath(uri: string): Promise<string | null> {
 }
 
 export function useColor(token?: Token) {
-  const [color, setColor] = useState('#2172E5')
+  const [color, setColor] = useState<string>('#2172E5')
 
   useLayoutEffect(() => {
     let stale = false

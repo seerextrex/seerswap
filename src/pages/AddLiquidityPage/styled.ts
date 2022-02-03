@@ -49,7 +49,7 @@ export const  TokenPair = styled.div`
     flex-direction: column; 
   `}
 `
-export const  TokenItem = styled.div<{noPadding: boolean; highPrice: boolean}>`
+export const  TokenItem = styled.div<{noPadding?: boolean; highPrice?: boolean}>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -287,7 +287,7 @@ export const  ButtonsWrapper = styled.div`
     flex-direction: column;
   `}
 `
-export const  AddLiquidityButton = styled.button`
+export const  AddLiquidityButton = styled.button<{disabled?: boolean}>`
   padding: 8px 16px;
   height: 2.8rem;
   background: ${({ theme }) => theme.winterMainButton};

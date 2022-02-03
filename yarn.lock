@@ -3859,6 +3859,11 @@
   resolved "https://registry.npmjs.org/@types/qs/-/qs-6.9.6.tgz"
   integrity sha512-0/HnwIfW4ki2D8L8c9GVcG5I72s9jP5GSLVF0VIXDW00kmIpA6O33G7a8n59Tmh7Nz0WUC3rSb7PTY/sdW2JzA==
 
+"@types/random-gradient@^0.0.0":
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/@types/random-gradient/-/random-gradient-0.0.0.tgz#e3acb931c0e8f96176d54e6e9a2dc790cbfc8315"
+  integrity sha512-SiovB5TWVdt7dX6xw1X4rBBky0dCwjU0e55PbQht1s85svuXdS35gutcCDkFMRdeDPyASnXzVhvBqksAp8d/Vg==
+
 "@types/react-dom@^17.0.1":
   version "17.0.5"
   resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-17.0.5.tgz"

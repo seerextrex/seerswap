@@ -1,11 +1,8 @@
 import { Contract } from '@ethersproject/contracts'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
-import { abi as QuoterABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
 import V2MigratorABI from 'abis/migrator.json'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
-import { abi as MulticallABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import NFTPosMan from '../pages/AddLiquidity/abi2.json'
-
 import ENS_PUBLIC_RESOLVER_ABI from 'abis/ens-public-resolver.json'
 import ENS_ABI from 'abis/ens-registrar.json'
 import ERC20_ABI from 'abis/erc20.json'
@@ -15,7 +12,6 @@ import EIP_2612 from 'abis/eip_2612.json'
 import STAKER_ABI from 'abis/staker.json'
 import MULTICALL_ABI from 'abis/multicall.json'
 import REAL_STAKER_ABI from 'abis/real-staker.json'
-
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
   QUOTER_ADDRESSES,
@@ -25,7 +21,6 @@ import {
   ENS_REGISTRAR_ADDRESSES,
   REAL_STAKER_ADDRESS
 } from 'constants/addresses'
-import { abi as NFTPositionManagerABI } from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import { useMemo } from 'react'
 import { Quoter, NonfungiblePositionManager, UniswapInterfaceMulticall } from 'types/v3'
 import { V3Migrator } from 'types/v3/V3Migrator'
@@ -115,7 +110,6 @@ export function useV3NFTPositionManagerContract(withSignerIfPossible?: boolean):
 }
 
 export function useStaker() {
-  const { chainId } = useActiveWeb3React()
   return useContract(STAKER_ADDRESS, STAKER_ABI)
 }
 

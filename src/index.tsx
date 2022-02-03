@@ -1,7 +1,6 @@
 import 'inter-ui'
 import '@reach/dialog/styles.css'
 import './components/analytics'
-
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
 import { StrictMode } from 'react'
@@ -21,15 +20,17 @@ import LogsUpdater from './state/logs/updater'
 import TransactionUpdater from './state/transactions/updater'
 import UserUpdater from './state/user/updater'
 import ThemeProvider, { ThemedGlobalStyle } from './theme'
-import RadialGradientByChainUpdater from './theme/RadialGradientByChainUpdater'
 import getLibrary from './utils/getLibrary'
 import '@fontsource/montserrat'
 import GasUpdater from './state/application/gasUpdater'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+type __window = Window & { ethereum: any }
 
-if (!!window.ethereum) {
-  window.ethereum.autoRefreshOnNetworkChange = false
+const _window = window as unknown as __window
+
+if (_window.ethereum) {
+  _window.ethereum.autoRefreshOnNetworkChange = false
 }
 
 const client = new ApolloClient({
@@ -40,7 +41,6 @@ const client = new ApolloClient({
 function Updaters() {
   return (
     <>
-      <RadialGradientByChainUpdater />
       <ListsUpdater />
       <UserUpdater />
       <ApplicationUpdater />
@@ -76,5 +76,4 @@ ReactDOM.render(
   </StrictMode>,
   document.getElementById('root')
 )
-
 serviceWorkerRegistration.unregister()

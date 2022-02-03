@@ -1,4 +1,4 @@
-import { ChartType } from '../../pages/PoolInfoPage'
+import { ChartType } from '../../models/enums'
 import {
   ToolbarChartTypeWrapper,
   ToolbarWrapper,

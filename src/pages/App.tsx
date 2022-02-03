@@ -7,21 +7,16 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import AddLiquidity from './AddLiquidity'
 import { RedirectDuplicateTokenIds } from './AddLiquidity/redirects'
-import PoolPage from './Pool'
-import { PositionPage } from './Pool/PositionPage'
 import RemoveLiquidityV3 from './RemoveLiquidity/V3'
 import Swap from './Swap'
-import StakingPage from './Staking/StakingPage'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import { Pool } from 'lib/src'
 import MigrateV2Pair from './MigrateV2/MigrateV2Pair'
 import MigrateV2 from './MigrateV2'
-import { InfoPage } from './InfoPage'
 import { ExternalLink } from 'react-feather'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import CautionModal from '../components/CautionModal'
 import PoolFinder from './PoolFinder'
-import StakingAnalyticsPage from './StakingAnalyticsPage'
 import { useInternet } from '../hooks/useInternet'
 import { useIsNetworkFailed } from '../hooks/useIsNetworkFailed'
 import Loader from '../components/Loader'
@@ -32,7 +27,7 @@ import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegrat
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
 import { useActiveWeb3React } from '../hooks/web3'
-import RealStakerPage from './RealStakerPage'
+
 import {
   AppWrapper,
   AppBodyWrapper,
@@ -43,6 +38,13 @@ import {
   InternetError,
   GlobalStyle
 } from './styled'
+
+const StakingPage = React.lazy(() => import('./Staking/StakingPage'))
+const PoolPage = React.lazy(() => import('./Pool'))
+const RealStakerPage = React.lazy(() => import('./RealStakerPage'))
+const InfoPage = React.lazy(() => import('./InfoPage'))
+const PositionPage = React.lazy(() => import('./Pool/PositionPage'))
+const StakingAnalyticsPage = React.lazy(() => import('./StakingAnalyticsPage'))
 
 Sentry.init({
   dsn: 'https://fbf2161b766648b58456a3501f72e21a@o1085550.ingest.sentry.io/6096418',
@@ -66,12 +68,12 @@ export default function App() {
     }
   })
   const internet = useInternet()
-
   const { account } = useActiveWeb3React()
-
   const { onIsFarming } = useFarmingActionsHandlers()
-
   const networkFailed = useIsNetworkFailed()
+  type __window = Window & { dataLayer: any }
+
+  const _window = window as unknown as __window
 
   useEffect(() => {
     onIsFarming()
@@ -80,8 +82,8 @@ export default function App() {
   useEffect(() => {
     if (!account) return
 
-    window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({
+    _window.dataLayer = _window.dataLayer || []
+    _window.dataLayer.push({
       event: 'userId',
       user_id: account
     })
@@ -132,39 +134,41 @@ export default function App() {
             <Popups />
             <Polling />
             <GasPrice />
-            <Switch>
-              <Route strict path='/farming' component={StakingPage} />
+            <React.Suspense fallback={<p>Loading</p>}>
+              <Switch>
+                <Route strict path='/farming' component={StakingPage} />
 
-              <Route strict path='/info' component={InfoPage} />
+                <Route strict path='/info' component={InfoPage} />
 
-              <Route exact strict path='/send' component={RedirectPathToSwapOnly} />
-              <Route exact strict path='/swap/:outputCurrency' component={RedirectToSwap} />
-              <Route exact strict path='/swap' component={Swap} />
+                <Route exact strict path='/send' component={RedirectPathToSwapOnly} />
+                <Route exact strict path='/swap/:outputCurrency' component={RedirectToSwap} />
+                <Route exact strict path='/swap' component={Swap} />
 
-              <Route exact strict path='/pool/find' component={PoolFinder} />
-              <Route exact strict path='/pool' component={PoolPage} />
-              <Route exact strict path='/pool/:tokenId' component={PositionPage} />
+                <Route exact strict path='/pool/find' component={PoolFinder} />
+                <Route exact strict path='/pool' component={PoolPage} />
+                <Route exact strict path='/pool/:tokenId' component={PositionPage} />
 
-              <Route
-                exact
-                strict
-                path='/add/:currencyIdA?/:currencyIdB?/:feeAmount?'
-                component={RedirectDuplicateTokenIds}
-              />
+                <Route
+                  exact
+                  strict
+                  path='/add/:currencyIdA?/:currencyIdB?/:feeAmount?'
+                  component={RedirectDuplicateTokenIds}
+                />
 
-              <Route exact strict path='/increase/:currencyIdA?/:currencyIdB?/:tokenId?' component={AddLiquidity} />
+                <Route exact strict path='/increase/:currencyIdA?/:currencyIdB?/:tokenId?' component={AddLiquidity} />
 
-              <Route exact strict path='/remove/:tokenId' component={RemoveLiquidityV3} />
+                <Route exact strict path='/remove/:tokenId' component={RemoveLiquidityV3} />
 
-              <Route exact strict path='/migrate' component={MigrateV2} />
-              <Route exact strict path='/migrate/:address' component={MigrateV2Pair} />
+                <Route exact strict path='/migrate' component={MigrateV2} />
+                <Route exact strict path='/migrate/:address' component={MigrateV2Pair} />
 
-              <Route exact strict path='/staking' component={RealStakerPage} />
-              <Route exact strict path='/staking/analytics' component={StakingAnalyticsPage} />
+                <Route exact strict path='/staking' component={RealStakerPage} />
+                <Route exact strict path='/staking/analytics' component={StakingAnalyticsPage} />
 
 
-              <Route component={RedirectPathToSwapOnly} />
-            </Switch>
+                <Route component={RedirectPathToSwapOnly} />
+              </Switch>
+            </React.Suspense>
             <Marginer />
           </AppBodyWrapper>
         </AppWrapper>

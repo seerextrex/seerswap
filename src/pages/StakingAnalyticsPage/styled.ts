@@ -56,7 +56,7 @@ export const ChartTitleRight = styled.div`
   `}
 
 `
-export const ColorRect = styled.div`
+export const ColorRect = styled.div<{stroke: string}>`
   width: 20px;
   height: 20px;
   background-color: ${({stroke}) => stroke};

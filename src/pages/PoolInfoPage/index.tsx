@@ -11,19 +11,7 @@ import { useInfoTickData } from '../../hooks/subgraph/useInfoTickData'
 import LiquidityBarChart from '../../components/LiquidityBarChart'
 import { useToken } from '../../hooks/Tokens'
 import { Wrapper, ChartWrapper, BodyWrapper, LoaderMock } from './styled'
-
-export enum ChartType {
-  VOLUME,
-  TVL,
-  FEES,
-  LIQUIDITY,
-}
-
-export enum ChartSpan {
-  DAY,
-  WEEK,
-  MONTH,
-}
+import { ChartType, ChartSpan } from '../../models/enums'
 
 export default function PoolInfoPage({
                                        match: {
@@ -31,9 +19,7 @@ export default function PoolInfoPage({
                                        }
                                      }: RouteComponentProps<{ id?: string }>) {
 
-  const {
-    fetchPool: { fetchPoolFn, poolResult }
-  } = useInfoPoolChart()
+  const { fetchPool: { fetchPoolFn, poolResult } } = useInfoPoolChart()
 
   const {
     fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn },
@@ -95,6 +81,8 @@ export default function PoolInfoPage({
   ]
 
   useEffect(() => {
+    if (!id) return
+
     if (type === ChartType.FEES) {
       fetchFeePoolFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
     } else if (type === ChartType.LIQUIDITY) {
@@ -106,6 +94,7 @@ export default function PoolInfoPage({
 
   useEffect(() => {
     if (!id) return
+
     fetchPoolFn(id)
   }, [id])
 
@@ -121,6 +110,7 @@ export default function PoolInfoPage({
 
 
   const refreshing = useMemo(() => {
+    if (!feesLoading || !chartPoolDataLoading || !ticksLoading) return false
     return feesLoading || chartPoolDataLoading || ticksLoading
   }, [feesLoading, chartPoolDataLoading, ticksLoading])
 
@@ -148,18 +138,17 @@ export default function PoolInfoPage({
                 setSpan={setSpan}
               />
               {type === ChartType.LIQUIDITY ? (
-                // <DensityChart address={id} />
                 <LiquidityBarChart
-                  data={data || undefined}
+                  data={data}
                   token0={poolResult.token0.symbol}
                   token1={poolResult.token1.symbol}
                   refreshing={refreshing}
                 />
               ) : (
                 <FeeChartRangeInput
-                  fetchedData={data || undefined}
+                  fetchedData={data ?? undefined}
                   refreshing={refreshing}
-                  id={id}
+                  id={id || ''}
                   span={span}
                   type={type}
                 />

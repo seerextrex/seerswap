@@ -11,7 +11,7 @@ import { useActiveWeb3React } from './web3'
 const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
   //TODO
   // [SupportedChainId.BINANCE]: CurrencyAmount.fromRawAmount(USDC_BINANCE, 100_000e6),
-  [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 100_000e3),
+  [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 1),
 }
 
 /**

@@ -18,7 +18,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface FarmingCenterInterface extends ethers.utils.Interface {
   functions: {
@@ -28,15 +28,15 @@ interface FarmingCenterInterface extends ethers.utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
     "claimReward(address,address,uint256,uint256)": FunctionFragment;
-    "collectFees(tuple)": FunctionFragment;
-    "collectRewards(tuple,uint256)": FunctionFragment;
+    "collectFees((uint256,address,uint128,uint128))": FunctionFragment;
+    "collectRewards((address,address,address,uint256,uint256),uint256)": FunctionFragment;
     "cross(int24,bool)": FunctionFragment;
     "deposits(uint256)": FunctionFragment;
-    "enterEternalFarming(tuple,uint256)": FunctionFragment;
-    "enterFarming(tuple,uint256)": FunctionFragment;
+    "enterEternalFarming((address,address,address,uint256,uint256),uint256)": FunctionFragment;
+    "enterFarming((address,address,address,uint256,uint256),uint256)": FunctionFragment;
     "eternalFarming()": FunctionFragment;
-    "exitEternalFarming(tuple,uint256)": FunctionFragment;
-    "exitFarming(tuple,uint256)": FunctionFragment;
+    "exitEternalFarming((address,address,address,uint256,uint256),uint256)": FunctionFragment;
+    "exitFarming((address,address,address,uint256,uint256),uint256)": FunctionFragment;
     "farming()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "increaseCumulative(uint32)": FunctionFragment;
@@ -394,6 +394,34 @@ interface FarmingCenterInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "DepositTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
+
+export type ApprovalEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    owner: string;
+    approved: string;
+    tokenId: BigNumber;
+  }
+>;
+
+export type ApprovalForAllEvent = TypedEvent<
+  [string, string, boolean] & {
+    owner: string;
+    operator: string;
+    approved: boolean;
+  }
+>;
+
+export type DepositTransferredEvent = TypedEvent<
+  [BigNumber, string, string] & {
+    tokenId: BigNumber;
+    oldOwner: string;
+    newOwner: string;
+  }
+>;
+
+export type TransferEvent = TypedEvent<
+  [string, string, BigNumber] & { from: string; to: string; tokenId: BigNumber }
+>;
 
 export class FarmingCenter extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -1183,6 +1211,15 @@ export class FarmingCenter extends BaseContract {
   };
 
   filters: {
+    "Approval(address,address,uint256)"(
+      owner?: string | null,
+      approved?: string | null,
+      tokenId?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { owner: string; approved: string; tokenId: BigNumber }
+    >;
+
     Approval(
       owner?: string | null,
       approved?: string | null,
@@ -1190,6 +1227,15 @@ export class FarmingCenter extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { owner: string; approved: string; tokenId: BigNumber }
+    >;
+
+    "ApprovalForAll(address,address,bool)"(
+      owner?: string | null,
+      operator?: string | null,
+      approved?: null
+    ): TypedEventFilter<
+      [string, string, boolean],
+      { owner: string; operator: string; approved: boolean }
     >;
 
     ApprovalForAll(
@@ -1201,6 +1247,15 @@ export class FarmingCenter extends BaseContract {
       { owner: string; operator: string; approved: boolean }
     >;
 
+    "DepositTransferred(uint256,address,address)"(
+      tokenId?: BigNumberish | null,
+      oldOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [BigNumber, string, string],
+      { tokenId: BigNumber; oldOwner: string; newOwner: string }
+    >;
+
     DepositTransferred(
       tokenId?: BigNumberish | null,
       oldOwner?: string | null,
@@ -1208,6 +1263,15 @@ export class FarmingCenter extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, string, string],
       { tokenId: BigNumber; oldOwner: string; newOwner: string }
+    >;
+
+    "Transfer(address,address,uint256)"(
+      from?: string | null,
+      to?: string | null,
+      tokenId?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { from: string; to: string; tokenId: BigNumber }
     >;
 
     Transfer(

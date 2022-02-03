@@ -18,14 +18,14 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MigratorInterface extends ethers.utils.Interface {
   functions: {
     "WNativeToken()": FunctionFragment;
     "createAndInitializePoolIfNecessary(address,address,uint160)": FunctionFragment;
     "factory()": FunctionFragment;
-    "migrate(tuple)": FunctionFragment;
+    "migrate((address,uint256,uint8,address,address,int24,int24,uint256,uint256,address,uint256,bool))": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
     "nonfungiblePositionManager()": FunctionFragment;
     "poolDeployer()": FunctionFragment;

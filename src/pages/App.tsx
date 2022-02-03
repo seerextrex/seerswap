@@ -48,11 +48,6 @@ import FeeChartRangeInput from '../components/FeeChartRangeInput'
 import PoolInfoPage from './PoolInfoPage'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
 
-import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/tracing'
-
-import { Offline as OfflineIntegration, CaptureConsole as CaptureConsoleIntegration } from '@sentry/integrations'
-
 import BG from '../assets/images/bg.png'
 
 import { GasPrice } from '../components/Header/GasPrice'
@@ -163,21 +158,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-Sentry.init({
-  dsn: 'https://fbf2161b766648b58456a3501f72e21a@o1085550.ingest.sentry.io/6096418',
-  integrations: [
-    new Integrations.BrowserTracing(),
-    new OfflineIntegration({
-      maxStoredEvents: 30,
-    }),
-    new CaptureConsoleIntegration({
-      levels: ['error'],
-    }),
-  ],
-  tracesSampleRate: 1.0,
-  attachStacktrace: true,
-})
-
 export default function App() {
   Object.defineProperty(Pool.prototype, 'tickSpacing', {
     get() {
@@ -207,7 +187,7 @@ export default function App() {
   }, [account])
 
   return (
-    <Sentry.ErrorBoundary>
+    <ErrorBoundary>
       <GlobalStyle />
       <Route component={DarkModeQueryParamReader} />
       <Route component={ApeModeQueryParamReader} />
@@ -286,6 +266,6 @@ export default function App() {
           </BodyWrapper>
         </AppWrapper>
       </Web3ReactManager>
-    </Sentry.ErrorBoundary>
+    </ErrorBoundary>
   )
 }

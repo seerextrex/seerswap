@@ -66,18 +66,18 @@ export default function RealStakerPage({}) {
   const numBalance = useMemo(() => !balance ? 0 : balance, [balance])
 
   const [percentForSlider, onPercentSelectForSlider] = useDebouncedChangeHandler(percent, onPercentSelect)
-  const [unstakePercent, setUnstakePercent] = useState(0)
-  const [openModal, setOpenModal] = useState(false)
-  const [amountValue, setAmountValue] = useState('')
-  const [earned, setEarned] = useState(BigNumber.from('0'))
-  const [staked, setStaked] = useState(BigNumber.from('0'))
-  const [unstaked, setUnstaked] = useState('')
-  const [unstakeAmount, setUnstakeAmount] = useState(BigNumber.from('0'))
-  const [algbCourse, setAlbgCourse] = useState(BigNumber.from('0'))
-  const [algbCourseShow, setAlbgCourseShow] = useState('1')
-  const [xALGBBalance, setXALGB] = useState('')
-  const [showFrozen, setFrozen] = useState(false)
-  const [loadingClaim, setLoadingClaim] = useState(false)
+  const [unstakePercent, setUnstakePercent] = useState<number>(0)
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [amountValue, setAmountValue] = useState<string>('')
+  const [earned, setEarned] = useState<BigNumber>(BigNumber.from('0'))
+  const [staked, setStaked] = useState<BigNumber>(BigNumber.from('0'))
+  const [unstaked, setUnstaked] = useState<string>('')
+  const [unstakeAmount, setUnstakeAmount] = useState<BigNumber>(BigNumber.from('0'))
+  const [algbCourse, setAlbgCourse] = useState<BigNumber>(BigNumber.from('0'))
+  const [algbCourseShow, setAlbgCourseShow] = useState<number>(1)
+  const [xALGBBalance, setXALGB] = useState<string>('')
+  const [showFrozen, setFrozen] = useState<boolean>(false)
+  const [loadingClaim, setLoadingClaim] = useState<boolean>(false)
 
   const now = Date.now
 
@@ -213,7 +213,7 @@ export default function RealStakerPage({}) {
 
   //calc staked, earned, algbCourse
   useEffect(() => {
-    if (!stakesResult || stakesResult === 'failed' || !earnedFreeze || !stakedFreeze) return
+    if (!stakesResult || typeof stakesResult === 'string' || !earnedFreeze || !stakedFreeze) return
 
     if (+(stakesResult.factories[0].xALGBtotalSupply) !== 0) {
 
@@ -227,7 +227,7 @@ export default function RealStakerPage({}) {
     }
 
     if (+stakesResult?.factories[0].xALGBtotalSupply !== 0) {
-      setAlbgCourseShow(stakesResult.factories[0].ALGBbalance / stakesResult.factories[0].xALGBtotalSupply)
+      setAlbgCourseShow(+stakesResult.factories[0].ALGBbalance / +stakesResult.factories[0].xALGBtotalSupply)
       setAlbgCourse(
         BigNumber.from(stakesResult.factories[0].ALGBbalance)
           .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
@@ -364,7 +364,7 @@ export default function RealStakerPage({}) {
         </ResBlocksWrapper>
         <XALGBCousreWrapper>
           <XALGBBalance>{!account ? '' : `You have ${xALGBBalance} xALGB`}</XALGBBalance>
-          <XALGBCourse>1 xALGB = {(+algbCourseShow).toFixed(2)} ALGB</XALGBCourse>
+          <XALGBCourse>1 xALGB = {algbCourseShow.toFixed(2)} ALGB</XALGBCourse>
         </XALGBCousreWrapper>
       </EarnedStakedWrapper>
       <StakerStatisticWrapper to={'staking/analytics'}>

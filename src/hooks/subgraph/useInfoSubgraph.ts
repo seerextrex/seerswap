@@ -85,7 +85,7 @@ export function useInfoSubgraph() {
   const [totalStats, setTotalStats] = useState<null | string | FormattedTotalStats>(null)
   const [totalStatsLoading, setTotalStatsLoading] = useState<null | boolean>(null)
 
-  const [stakesResult, setStakes] = useState<null | string | SubgraphResponseStaking<FactorySubgraph, StakeSubgraph>>(null)
+  const [stakesResult, setStakes] = useState<null | string | SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>(null)
   const [stakesLoading, setStakesLoading] = useState<null | boolean>(null)
 
   const [stakeHistoriesResult, setHistories] = useState<string | null | HistoryStakingSubgraph[]>(null)
@@ -400,7 +400,7 @@ export function useInfoSubgraph() {
       const {
         data: { factories, stakes },
         error
-      } = await stakerClient.query<SubgraphResponseStaking<FactorySubgraph, StakeSubgraph>>({
+      } = await stakerClient.query<SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>({
         query: GET_STAKE(id),
         fetchPolicy: 'network-only'
       })

@@ -8,3 +8,9 @@ export interface StakingData extends FactorySubgraph, StakeSubgraph{
 export interface StakeHash {
   hash: string
 }
+
+export interface Frozen {
+  timestamp: string
+  stakedALGBAmount: string
+  xALGBAmount: string
+}

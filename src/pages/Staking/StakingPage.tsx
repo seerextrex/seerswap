@@ -174,7 +174,7 @@ export default function StakingPage() {
               <BodyWrapper>
                 <Switch>
                   <Route exact path={`${path}`}>
-                    <Redirect to={`${path}/${account ? 'farms' : 'eternal-farms'}`} />
+                    <Redirect to={`${path}/${account ? 'farms' : 'infinite-farms'}`} />
                   </Route>
                   <Route exact path={`${path}/rewards`}>
                     <Helmet>
@@ -260,12 +260,12 @@ export default function StakingPage() {
                       now={now}
                     ></CurrentEventsPage>
                   </Route>
-                  <Route exact path={`${path}/eternal-farms`}>
+                  <Route exact path={`${path}/infinite-farms`}>
                     <Helmet>
-                      <title>Algebra — Farming • Eternal farms</title>
+                      <title>Algebra — Farming • Infinite farms</title>
                     </Helmet>
                     <PageTitle
-                      title={'Eternal farms'}
+                      title={'Infinite farms'}
                       refreshHandler={() => fetchCurrentEvents?.fetchCurrentEventsFn(true)}
                       isLoading={fetchCurrentEvents?.currentEventsLoading}
                     ></PageTitle>

@@ -995,7 +995,7 @@ export function StakerMyStakes({
             )}
           </PositionCardEvent>
           <PositionCardEvent>
-            <PositionCardEventTitle>Eternal farming</PositionCardEventTitle>
+            <PositionCardEventTitle>Infinite farming</PositionCardEventTitle>
             {el.eternalFarming ? (
               <>
                 <PositionCardStats>
@@ -1073,7 +1073,7 @@ export function StakerMyStakes({
             ) : (
               <PositionCardMock>
                 <PositionNotDepositedText>Position is not deposited</PositionNotDepositedText>
-                <CheckOut link={'eternal-farms'} />
+                <CheckOut link={'infinite-farms'} />
               </PositionCardMock>
             )}
           </PositionCardEvent>

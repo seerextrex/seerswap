@@ -144,7 +144,7 @@ export function useIncentiveSubgraph() {
 
 
         } catch (err) {
-            throw new Error('Fetch eternal farming ' + err.code + err.message)
+            throw new Error('Fetch infinite farming ' + err.code + err.message)
         }
     }
 
@@ -472,7 +472,7 @@ export function useIncentiveSubgraph() {
 
         } catch (error) {
             setPositionsEternalLoading(null)
-            throw new Error('Eternal farms loading' + error.code + error.message)
+            throw new Error('Infinite farms loading' + error.code + error.message)
         }
 
     }
@@ -589,7 +589,7 @@ export function useIncentiveSubgraph() {
 
         } catch (err) {
             setEternalFarms(null)
-            throw new Error('Error while fetching eternal farms ' + err.message)
+            throw new Error('Error while fetching infinite farms ' + err.message)
         }
 
         setEternalFarmsLoading(false)

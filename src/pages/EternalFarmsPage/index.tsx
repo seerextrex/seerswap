@@ -150,7 +150,7 @@ export default function EternalFarmsPage({
           </EmptyMock>
         ) : !data || data.length === 0 ? (
           <EmptyMock>
-            <div>No eternal farms</div>
+            <div>No infinite farms</div>
             <Frown size={35} stroke={'white'} />
           </EmptyMock>
         ) : !refreshing && data.length != 0 ? (

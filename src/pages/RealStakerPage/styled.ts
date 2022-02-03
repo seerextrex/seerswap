@@ -63,7 +63,7 @@ export const SilderWrapper = styled.div`
   width: 100%;
   margin: 0;
 `
-export const StakerSlider = styled(Slider)<{disabled: boolean}>`  
+export const StakerSlider = styled(Slider)<{disabled?: boolean}>`  
   &::-webkit-slider-runnable-track {
     background: ${({theme}) => theme.winterDisabledButton};
     height: 5px;
@@ -433,7 +433,7 @@ export const CurrencyInputPanelWrapper = styled.div`
     height: 36px;
   }
 `
-export const CurrencyTop = styled(CurrencyDropdown)`
+export const CurrencyTop = styled(CurrencyDropdown)<{style: any}>`
   span {
     font-size: 21px;
   }
@@ -441,7 +441,7 @@ export const CurrencyTop = styled(CurrencyDropdown)`
     padding: 0;
   }
 `
-export const CurrencyBottom = styled(CurrencyDropdown)`
+export const CurrencyBottom = styled(CurrencyDropdown)<{style: any}>`
   span {
     cursor: default;
     &:hover {

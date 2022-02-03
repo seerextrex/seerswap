@@ -2,17 +2,18 @@ import {formatEther} from 'ethers/lib/utils'
 import {useCallback, useState} from 'react'
 import {ResPageWrapper, TitleWrapper, ResButton, AmountTitle, InfoStyled, EarnedBadge} from './styled'
 import { BigNumber } from '@ethersproject/bignumber'
+import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 interface ResBloksProps {
     title: string
     amount: BigNumber
-    currency: any
+    currency: CurrencyAmount<Token> | null
     action: string
     handler?: any
-    algbCourse: any
+    algbCourse: BigNumber
 }
 
-export default function RealStakerResBlocks({title, amount, currency, action, handler, algbCourse = 0}: ResBloksProps) {
+export default function RealStakerResBlocks({title, amount, currency, action, handler, algbCourse}: ResBloksProps) {
 
     const [isFull, setIsFull] = useState(false)
     const [show, setShow] = useState(false)
@@ -41,7 +42,7 @@ export default function RealStakerResBlocks({title, amount, currency, action, ha
             <p>
                 $ {currency === null || formatEther(amount) < formatEther(algbCourse) ? '0' : currency?.toSignificant(6, {groupSeparator: ','})}
             </p>
-            <ResButton disabled={amount == 0 || (formatEther(amount) < formatEther(algbCourse))} onClick={handler}>
+            <ResButton disabled={+formatEther(amount) === 0 || (formatEther(amount) < formatEther(algbCourse))} onClick={handler}>
                 {action}
             </ResButton>
         </ResPageWrapper>

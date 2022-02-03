@@ -1,10 +1,11 @@
 import {CurrencyInputPanelWrapper, CurrencyTop, CurrencyBottom} from './styled'
+import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 
 interface StakerInputRangeProps {
-  baseCurrency? : any
+  baseCurrency? : Currency | null
   amountValue: string
   setAmountValue: any
-  fiatValue: any
+  fiatValue: CurrencyAmount<Token> | null
 }
 
 export default function RealStakerInputRange ({baseCurrency, amountValue, setAmountValue, fiatValue}: StakerInputRangeProps) {

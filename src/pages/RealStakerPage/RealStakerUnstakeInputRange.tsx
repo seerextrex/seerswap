@@ -23,11 +23,11 @@ export default function RealStakerUnstakeInputRange ({baseCurrency, amountValue,
     <UnstakeCurrencyInputPanelWrapper>
       <UnstakeTitle>
         <CurrencyLogo
-        currency={ALGBCurrency}/>
+        currency={ALGBCurrency ?? undefined}/>
         {rightBalance} ALGB
       </UnstakeTitle>
       <CurrencyDropdown
-          style={{width: '100%'}}
+        style={{width: '100%'}}
         onUserInput={(e) => {setAmountValue(e)}}
         currency={ALGBCurrency}
         value={amountValue}

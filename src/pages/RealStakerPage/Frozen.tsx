@@ -3,10 +3,10 @@ import {formatUnits} from "ethers/lib/utils"
 import {BigNumber} from "@ethersproject/bignumber"
 import {getCountdownTime} from "../../utils/time"
 import {FrozenTransaction, FrozenWrapper, TimeWrapper, Time, LoaderStyled} from './styled'
-import { type } from 'os'
+import { Frozen } from '../../models/interfaces'
 
-const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: BigNumber[]; now: any, index: number}) => {
-    const [time, setTime] = useState('00:00:00')
+const FrozenTrans = ({el, earnedFreeze, now, index}: { el: Frozen; earnedFreeze: BigNumber[]; now: any, index: number}) => {
+    const [time, setTime] = useState<string>('00:00:00')
 
     const tick = () => {
         setTime(getCountdownTime(el.timestamp, now()))
@@ -36,7 +36,7 @@ const FrozenTrans = ({el, earnedFreeze, now, index}: { el: any; earnedFreeze: Bi
     )
 }
 
-const Frozen = ({data, earnedFreeze, now}: { data: any[] | string; earnedFreeze: BigNumber[] | undefined, now: any }) => {
+const FrozenModal = ({data, earnedFreeze, now}: { data: Frozen[] | string; earnedFreeze: BigNumber[] | undefined, now: any }) => {
     if (typeof  data === 'string') return null
     return (
         <FrozenWrapper>
@@ -46,4 +46,4 @@ const Frozen = ({data, earnedFreeze, now}: { data: any[] | string; earnedFreeze:
         </FrozenWrapper>
     )
 }
-export default Frozen
+export default FrozenModal

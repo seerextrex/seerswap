@@ -6,18 +6,19 @@ import RealStakerUnstakeInputRange from './RealStakerUnstakeInputRange'
 import { formatEther } from 'ethers/lib/utils'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { BigNumber } from '@ethersproject/bignumber'
+import { FactorySubgraph, StakeSubgraph, SubgraphResponseStaking } from '../../models/interfaces'
 
 interface UnstakeModalProps {
   openModal: boolean
   setOpenModal: any
   unstaked: string
   setUnstaked: any
-  baseCurrency: any
+  baseCurrency: BigNumber
   unstakePercent: number
   setUnstakePercent: any
   onPercentSelect: Dispatch<number>,
   unstakeHandler: any,
-  stakedResult: any
+  stakedResult: string | null | SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>
   fiatValue: CurrencyAmount<Token> | null
   allXALGBFreeze: BigNumber | undefined
 }
@@ -39,7 +40,7 @@ export default function RealStakerUnstakeModal(
   } : UnstakeModalProps
 ) {
 
-    const enerHandler = (e) => {
+    const enerHandler = (e: any) => {
         if (e.charCode === 13 && +unstaked !== 0) {
             unstakeHandler(unstaked, stakedResult, baseCurrency, allXALGBFreeze)
             setUnstaked('')
@@ -73,6 +74,7 @@ export default function RealStakerUnstakeModal(
         <RealStakerRangeButtons
           onPercentSelect={onPercentSelect}
           showCalculate={false}
+          balance={''}
         />
         <StakeButton onClick={() => {
           unstakeHandler(unstaked, stakedResult, baseCurrency, allXALGBFreeze)

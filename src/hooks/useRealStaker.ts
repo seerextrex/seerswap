@@ -47,8 +47,8 @@ export function useRealStakerHandlers() {
     }
   }, [account, chainId])
 
-  const stakerClaimHandler = useCallback(async (claimCount: BigNumber, stakesResult: SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>) => {
-    if (!account || !provider || !chainId) return
+  const stakerClaimHandler = useCallback(async (claimCount: BigNumber, stakesResult: SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]> | null | string) => {
+    if (!account || !provider || !chainId || !stakesResult || typeof stakesResult === 'string') return
     try {
       const realStaker = new Contract(
         REAL_STAKER_ADDRESS[chainId],

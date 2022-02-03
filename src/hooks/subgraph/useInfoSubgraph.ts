@@ -37,9 +37,9 @@ import {
   FormattedChartPool,
   HistoryStakingSubgraph,
   TotalStatSubgraph,
-  SubgraphResponseStaking
+  SubgraphResponseStaking,
+  FormattedTotalStats
 } from '../../models/interfaces'
-import { FormattedTotalStats } from '../../models/interfaces/info'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
   if (typeof tokenData === 'string') return {}

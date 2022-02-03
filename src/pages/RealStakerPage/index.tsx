@@ -23,7 +23,7 @@ import { tryParseAmount } from '../../state/swap/hooks'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { isArray } from 'util'
 import { ArrowDown, ArrowUp, RefreshCw } from 'react-feather'
-import Frozen from './Frozen'
+import FrozenModal from './Frozen'
 import {
   RealStakerPageWrapper,
   PageWrapper,
@@ -92,30 +92,14 @@ export default function RealStakerPage({}) {
   const fiatValueStaked = useUSDCValue(stakedAmount)
   const fiatUnstakedAmount = useUSDCValue(unstakedAmount)
 
-  const reloadClaim = useCallback(() => {
-    if (!account) return
-    setLoadingClaim(true)
-    fetchStakingFn(account.toLowerCase())
-      .then(() => {
-        frozenStakedHandler(account)
-      })
-      .then(() => {
-        setLoadingClaim(false)
-      })
-  }, [account])
-
   const allFreeze = useMemo(() => {
     if (typeof stakesResult === 'string') return
 
     if (!isArray(frozenStaked) || !stakesResult?.factories) return
 
-    const formatedData = frozenStaked.map((el) => {
-      if (!el.xALGBAmount) return
-
-      return BigNumber.from(el?.xALGBAmount)
-        .mul(BigNumber.from(stakesResult.factories[0]?.ALGBbalance))
-        .div(BigNumber.from(stakesResult.factories[0]?.xALGBtotalSupply))
-    })
+    const formatedData = frozenStaked.map((el) => BigNumber.from(el?.xALGBAmount)
+      .mul(BigNumber.from(stakesResult.factories[0]?.ALGBbalance))
+      .div(BigNumber.from(stakesResult.factories[0]?.xALGBtotalSupply)))
 
     return formatedData.reduce((prev, cur) => prev?.add(cur), BigNumber.from('0'))
   }, [frozenStaked, account, stakesResult])
@@ -125,13 +109,9 @@ export default function RealStakerPage({}) {
 
     if (!isArray(frozenStaked) || !stakesResult?.factories) return
 
-    return frozenStaked?.map(el => {
-      if (!el.xALGBAmount) return
-
-      return BigNumber.from(el?.xALGBAmount)
-        .mul(BigNumber.from(stakesResult?.factories[0]?.ALGBbalance))
-        .div(BigNumber.from(stakesResult?.factories[0]?.xALGBtotalSupply))
-    })
+    return frozenStaked?.map(el => BigNumber.from(el?.xALGBAmount)
+      .mul(BigNumber.from(stakesResult?.factories[0]?.ALGBbalance))
+      .div(BigNumber.from(stakesResult?.factories[0]?.xALGBtotalSupply)))
   }, [frozenStaked, account, stakesResult])
 
   const allXALGBFreeze = useMemo(() => {
@@ -174,6 +154,32 @@ export default function RealStakerPage({}) {
 
     return allFreeze.sub(stakedFreeze)
   }, [allFreeze, stakedFreeze])
+
+  //stake handler invoked from keyboard
+  const enterHandler = useCallback((e) => {
+    if (e.charCode === 13) {
+      if (!balance) return
+      if (!(+amountValue > +balance?.toSignificant(4))) {
+        stakerHandler(amountValue)
+        onPercentSelectForSlider(0)
+        if (percentForSlider === 0) {
+          setAmountValue('')
+        }
+      }
+    }
+  }, [amountValue])
+
+  const reloadClaim = useCallback(() => {
+    if (!account) return
+    setLoadingClaim(true)
+    fetchStakingFn(account.toLowerCase())
+      .then(() => {
+        frozenStakedHandler(account)
+      })
+      .then(() => {
+        setLoadingClaim(false)
+      })
+  }, [account])
 
   useEffect(() => {
     if (!account) return
@@ -247,20 +253,6 @@ export default function RealStakerPage({}) {
     setUnstakeAmount(staked.add(earned))
   }, [staked, earned])
 
-  //stake handler invoked from keyboard
-  const enterHandler = useCallback((e) => {
-    if (e.charCode === 13) {
-      if (!balance) return
-      if (!(+amountValue > +balance?.toSignificant(4))) {
-        stakerHandler(amountValue)
-        onPercentSelectForSlider(0)
-        if (percentForSlider === 0) {
-          setAmountValue('')
-        }
-      }
-    }
-  }, [amountValue])
-
   return (
     <RealStakerPageWrapper>
       <Helmet>
@@ -330,15 +322,15 @@ export default function RealStakerPage({}) {
 
                   `${+(+formatEther(allFreeze || BigNumber.from('0'))).toFixed(2) < 0.01 ? '<' : ''} ${(+formatEther(allFreeze)).toFixed(2)}`} ALGB
 
-                  Frozen {showFrozen ? <ArrowUp size={'16px'} /> : <ArrowDown size={'16px'} />}
+                Frozen {showFrozen ? <ArrowUp size={'16px'} /> : <ArrowDown size={'16px'} />}
               </FrozenDropDown>
             }
             <ReloadButton disabled={loadingClaim} onClick={reloadClaim} refreshing={loadingClaim}>
               <RefreshCw style={{ display: 'block' }} size={18} stroke={'white'} />
             </ReloadButton>
           </RightBlock>
-          {showFrozen && frozenStaked.length !== 0 && typeof frozenStaked !== 'string' && frozenStaked.some(el => +Math.floor(el.timestamp * 1000) > now()) ?
-            <Frozen data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now} /> : null}
+          {showFrozen && frozenStaked.length !== 0 && typeof frozenStaked !== 'string' && frozenStaked.some(el => +Math.floor(+el.timestamp * 1000) > now()) ?
+            <FrozenModal data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now} /> : null}
         </ResBlocksTitle>
         <ResBlocksWrapper>
           <RealStakerResBlocks

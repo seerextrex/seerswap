@@ -51,12 +51,12 @@ export const OptimismWrapperBackgroundLightMode = css`
 const RootWrapper = styled.div<{ chainId: SupportedChainId; darkMode: boolean; logoUrl: string }>`
   ${({ chainId, darkMode }) =>
     [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
-      ? darkMode
-        ? OptimismWrapperBackgroundDarkMode
-        : OptimismWrapperBackgroundLightMode
-      : darkMode
-      ? ArbitrumWrapperBackgroundDarkMode
-      : ArbitrumWrapperBackgroundLightMode};
+        ? darkMode
+            ? OptimismWrapperBackgroundDarkMode
+            : OptimismWrapperBackgroundLightMode
+        : darkMode
+            ? ArbitrumWrapperBackgroundDarkMode
+            : ArbitrumWrapperBackgroundLightMode};
   border-radius: 20px;
   display: flex;
   flex-direction: column;
@@ -118,47 +118,49 @@ const LinkOutToBridge = styled(ExternalLink)`
     background-color: black;
   }
 `
+
 export function NetworkAlert() {
-  const { account, chainId } = useActiveWeb3React()
-  const [darkMode] = useDarkModeManager()
-  const [arbitrumAlphaAcknowledged, setArbitrumAlphaAcknowledged] = useArbitrumAlphaAlert()
-  const [locallyDismissed, setLocallyDimissed] = useState(false)
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+    const { account, chainId } = useActiveWeb3React()
+    const [darkMode] = useDarkModeManager()
+    const [arbitrumAlphaAcknowledged, setArbitrumAlphaAcknowledged] = useArbitrumAlphaAlert()
+    const [locallyDismissed, setLocallyDimissed] = useState(false)
+    const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
-  const dismiss = useCallback(() => {
-    if (userEthBalance?.greaterThan(0)) {
-      setArbitrumAlphaAcknowledged(true)
-    } else {
-      setLocallyDimissed(true)
+    const dismiss = useCallback(() => {
+        if (userEthBalance?.greaterThan(0)) {
+            setArbitrumAlphaAcknowledged(true)
+        } else {
+            setLocallyDimissed(true)
+        }
+    }, [setArbitrumAlphaAcknowledged, userEthBalance])
+    if (!chainId || !L2_CHAIN_IDS.includes(chainId) || arbitrumAlphaAcknowledged || locallyDismissed) {
+        return null
     }
-  }, [setArbitrumAlphaAcknowledged, userEthBalance])
-  if (!chainId || !L2_CHAIN_IDS.includes(chainId) || arbitrumAlphaAcknowledged || locallyDismissed) {
-    return null
-  }
-  const info = CHAIN_INFO[chainId as SupportedL2ChainId]
-  const depositUrl = [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
-    ? `${info.bridge}?chainId=1`
-    : info.bridge
+    const info = CHAIN_INFO[chainId as SupportedL2ChainId]
+    const depositUrl = [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
+        ? `${info.bridge}?chainId=1`
+        : info.bridge
 
-  return (
-    <RootWrapper chainId={chainId} darkMode={darkMode} logoUrl={info.logoUrl}>
-      <CloseIcon onClick={dismiss} />
-      <ContentWrapper>
-        <L2Icon src={info.logoUrl} />
-        <Header>
-          <Trans>Algebra on {info.label}</Trans>
-        </Header>
-        <Body>
-          <Trans>
-            This is an alpha release of Algebra on the {info.label} network. You must bridge L1 assets to the network to
-            swap them.
-          </Trans>
-        </Body>
-      </ContentWrapper>
-      <LinkOutToBridge href={depositUrl}>
-        <Trans>Deposit to {info.label}</Trans>
-        <LinkOutCircle />
-      </LinkOutToBridge>
-    </RootWrapper>
-  )
+    return (
+        <RootWrapper chainId={chainId} darkMode={darkMode} logoUrl={info.logoUrl}>
+            <CloseIcon onClick={dismiss} />
+            <ContentWrapper>
+                <L2Icon src={info.logoUrl} />
+                <Header>
+                    <Trans>Algebra on {info.label}</Trans>
+                </Header>
+                <Body>
+                    <Trans>
+                        This is an alpha release of Algebra on the {info.label} network. You must
+                        bridge L1 assets to the network to
+                        swap them.
+                    </Trans>
+                </Body>
+            </ContentWrapper>
+            <LinkOutToBridge href={depositUrl}>
+                <Trans>Deposit to {info.label}</Trans>
+                <LinkOutCircle />
+            </LinkOutToBridge>
+        </RootWrapper>
+    )
 }

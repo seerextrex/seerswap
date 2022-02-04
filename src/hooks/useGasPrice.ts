@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 export const GAS_PRICE_MULTIPLIER = 1000000000;
 

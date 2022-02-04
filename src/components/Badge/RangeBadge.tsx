@@ -1,7 +1,6 @@
 import Badge, { BadgeVariant } from 'components/Badge'
 import styled from 'styled-components/macro'
-
-import { MouseoverTooltip } from '../../components/Tooltip'
+import { MouseoverTooltip } from '../Tooltip'
 import { Trans } from '@lingui/macro'
 import { AlertCircle } from 'react-feather'
 
@@ -28,56 +27,59 @@ const ActiveDot = styled.span`
 `
 
 export default function RangeBadge({
-  removed,
-  inRange,
+    removed,
+    inRange
 }: {
-  removed: boolean | undefined
-  inRange: boolean | undefined
+    removed: boolean | undefined
+    inRange: boolean | undefined
 }) {
-  return (
-    <BadgeWrapper>
-      {removed ? (
-        <MouseoverTooltip text={<Trans>Your position has 0 liquidity, and is not earning fees.</Trans>}>
-          <Badge variant={BadgeVariant.DEFAULT}>
-            <AlertCircle width={14} height={14} />
-            &nbsp;
-            <BadgeText>
-              <Trans>Closed</Trans>
-            </BadgeText>
-          </Badge>
-        </MouseoverTooltip>
-      ) : inRange ? (
-        <MouseoverTooltip
-          text={
-            <Trans>
-              The price of this pool is within your selected range. Your position is currently earning fees.
-            </Trans>
-          }
-        >
-          <Badge variant={BadgeVariant.DEFAULT}>
-            <ActiveDot /> &nbsp;
-            <BadgeText>
-              <Trans>In range</Trans>
-            </BadgeText>
-          </Badge>
-        </MouseoverTooltip>
-      ) : (
-        <MouseoverTooltip
-          text={
-            <Trans>
-              The price of this pool is outside of your selected range. Your position is not currently earning fees.
-            </Trans>
-          }
-        >
-          <Badge variant={BadgeVariant.WARNING}>
-            <AlertCircle width={14} height={14} />
-            &nbsp;
-            <BadgeText>
-              <Trans>Out of range</Trans>
-            </BadgeText>
-          </Badge>
-        </MouseoverTooltip>
-      )}
-    </BadgeWrapper>
-  )
+    return (
+        <BadgeWrapper>
+            {removed ? (
+                <MouseoverTooltip
+                    text={<Trans>Your position has 0 liquidity, and is not earning fees.</Trans>}>
+                    <Badge variant={BadgeVariant.DEFAULT}>
+                        <AlertCircle width={14} height={14} />
+                        &nbsp;
+                        <BadgeText>
+                            <Trans>Closed</Trans>
+                        </BadgeText>
+                    </Badge>
+                </MouseoverTooltip>
+            ) : inRange ? (
+                <MouseoverTooltip
+                    text={
+                        <Trans>
+                            The price of this pool is within your selected range. Your position is
+                            currently earning fees.
+                        </Trans>
+                    }
+                >
+                    <Badge variant={BadgeVariant.DEFAULT}>
+                        <ActiveDot /> &nbsp;
+                        <BadgeText>
+                            <Trans>In range</Trans>
+                        </BadgeText>
+                    </Badge>
+                </MouseoverTooltip>
+            ) : (
+                <MouseoverTooltip
+                    text={
+                        <Trans>
+                            The price of this pool is outside of your selected range. Your position
+                            is not currently earning fees.
+                        </Trans>
+                    }
+                >
+                    <Badge variant={BadgeVariant.WARNING}>
+                        <AlertCircle width={14} height={14} />
+                        &nbsp;
+                        <BadgeText>
+                            <Trans>Out of range</Trans>
+                        </BadgeText>
+                    </Badge>
+                </MouseoverTooltip>
+            )}
+        </BadgeWrapper>
+    )
 }

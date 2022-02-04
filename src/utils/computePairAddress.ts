@@ -1,16 +1,14 @@
-import { getCreate2Address } from "@ethersproject/address"
-import { pack, keccak256 } from '@ethersproject/solidity'
-import { Token } from '@uniswap/sdk-core'
-
-import { BigintIsh, Price, sqrt, CurrencyAmount } from '@uniswap/sdk-core'
+import { getCreate2Address } from '@ethersproject/address'
+import { keccak256, pack } from '@ethersproject/solidity'
+import { BigintIsh, CurrencyAmount, Price, sqrt, Token } from '@uniswap/sdk-core'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
-import { V2_FACTORY_ADDRESSES, V3_MIGRATOR_ADDRESSES } from "../constants/addresses"
+import { V2_FACTORY_ADDRESSES } from '../constants/addresses'
 
 // import { InsufficientReservesError, InsufficientInputAmountError } from '../errors'
 
 export const FACTORY_ADDRESS = V2_FACTORY_ADDRESSES[137]
-export const SUSHI_FACTORY_ADDRESS = "0xc35dadb65012ec5796536bd9864ed8773abc74c4"
+export const SUSHI_FACTORY_ADDRESS = '0xc35dadb65012ec5796536bd9864ed8773abc74c4'
 
 export const INIT_CODE_HASH = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f'
 
@@ -25,7 +23,7 @@ export const _1000 = JSBI.BigInt(1000)
 
 export const computePairAddress = ({
     factoryAddress,
-    hash = "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+    hash = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
     tokenA,
     tokenB
 }: {
@@ -47,10 +45,6 @@ export class Pair {
     public readonly liquidityToken: Token
     private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>]
 
-    public static getAddress(tokenA: Token, tokenB: Token, sushi?: boolean): string {
-        return computePairAddress({ factoryAddress: sushi ? SUSHI_FACTORY_ADDRESS : FACTORY_ADDRESS, tokenA, tokenB, hash: sushi ? '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303' : '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' })
-    }
-
     public constructor(currencyAmountA: CurrencyAmount<Token>, tokenAmountB: CurrencyAmount<Token>, sushi?: boolean) {
         const tokenAmounts = currencyAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
             ? [currencyAmountA, tokenAmountB]
@@ -68,14 +62,6 @@ export class Pair {
     }
 
     /**
-     * Returns true if the token is either token0 or token1
-     * @param token to check
-     */
-    public involvesToken(token: Token): boolean {
-        return token.equals(this.token0) || token.equals(this.token1)
-    }
-
-    /**
      * Returns the current mid price of the pair in terms of token0, i.e. the ratio of reserve1 to reserve0
      */
     public get token0Price(): Price<Token, Token> {
@@ -89,15 +75,6 @@ export class Pair {
     public get token1Price(): Price<Token, Token> {
         const result = this.tokenAmounts[0].divide(this.tokenAmounts[1])
         return new Price(this.token1, this.token0, result.denominator, result.numerator)
-    }
-
-    /**
-     * Return the price of the given token in terms of the other token in the pair.
-     * @param token token to return price of
-     */
-    public priceOf(token: Token): Price<Token, Token> {
-        invariant(this.involvesToken(token), 'TOKEN')
-        return token.equals(this.token0) ? this.token0Price : this.token1Price
     }
 
     /**
@@ -121,6 +98,32 @@ export class Pair {
 
     public get reserve1(): CurrencyAmount<Token> {
         return this.tokenAmounts[1]
+    }
+
+    public static getAddress(tokenA: Token, tokenB: Token, sushi?: boolean): string {
+        return computePairAddress({
+            factoryAddress: sushi ? SUSHI_FACTORY_ADDRESS : FACTORY_ADDRESS,
+            tokenA,
+            tokenB,
+            hash: sushi ? '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303' : '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f'
+        })
+    }
+
+    /**
+     * Returns true if the token is either token0 or token1
+     * @param token to check
+     */
+    public involvesToken(token: Token): boolean {
+        return token.equals(this.token0) || token.equals(this.token1)
+    }
+
+    /**
+     * Return the price of the given token in terms of the other token in the pair.
+     * @param token token to return price of
+     */
+    public priceOf(token: Token): Price<Token, Token> {
+        invariant(this.involvesToken(token), 'TOKEN')
+        return token.equals(this.token0) ? this.token0Price : this.token1Price
     }
 
     public reserveOf(token: Token): CurrencyAmount<Token> {

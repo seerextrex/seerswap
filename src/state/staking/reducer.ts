@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { incentiveRefundeeAddress, incentiveRewardAmount, incentiveTime, TimePart } from "./actions"
+import { incentiveRefundeeAddress, incentiveRewardAmount, incentiveTime, TimePart } from './actions'
 
 interface StakingState {
     readonly poolAddress: string

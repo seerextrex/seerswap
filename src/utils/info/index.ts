@@ -46,7 +46,7 @@ export function serializeToken(token: Token): SerializedToken {
         address: token.address,
         decimals: token.decimals,
         symbol: token.symbol,
-        name: token.name,
+        name: token.name
     }
 }
 

@@ -7,7 +7,6 @@ import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { FarmingType, useStakerHandlers } from '../../hooks/useStakerHandlers'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAllTransactions } from '../../state/transactions/hooks'
-import { stringToColour } from '../../utils/stringToColour'
 import FarmingPositionInfo from '../FarmingPositionInfo'
 import Loader from '../Loader'
 import Modal from '../Modal'
@@ -630,15 +629,15 @@ const PositionNotDepositedText = styled.div`
 `
 
 export function StakerMyStakes({
-  data,
-  refreshing,
-  now,
-  fetchHandler,
+    data,
+    refreshing,
+    now,
+    fetchHandler
 }: {
-  data: any
-  refreshing: boolean
-  now: number
-  fetchHandler: () => any
+    data: any
+    refreshing: boolean
+    now: number
+    fetchHandler: () => any
 }) {
   const { account } = useActiveWeb3React()
 
@@ -753,8 +752,9 @@ export function StakerMyStakes({
     }
   }, [getRewardsHash, confirmed])
 
-  useEffect(() => {
-    if (!unstaking.state) return
+        function format(digit: number) {
+            return digit < 10 ? `0${digit}` : digit
+        }
 
     if (withdrawnHash === 'failed') {
       setUnstaking({ id: null, state: null })
@@ -769,21 +769,10 @@ export function StakerMyStakes({
         })
       )
     }
-  }, [withdrawnHash, confirmed])
 
-  useEffect(() => {
-    fetchHandler()
-  }, [account])
-
-  function getCountdownTime(time) {
-    const timestamp = (time * 1000 - now) / 1000
-    const days = Math.floor(timestamp / (24 * 60 * 60))
-    const hours = Math.floor(timestamp / (60 * 60)) % 24
-    const minutes = Math.floor(timestamp / 60) % 60
-    const seconds = Math.floor(timestamp / 1) % 60
-
-    function format(digit: number) {
-      return digit < 10 ? `0${digit}` : digit
+    function formatReward(earned) {
+        const _earned = String(earned)
+        return _earned.length > 8 ? `${_earned.slice(0, 8)}..` : _earned
     }
 
     return `${days > 0 ? `${days}d ` : ''}${format(hours)}:${format(minutes)}:${format(seconds)}`
@@ -1076,6 +1065,17 @@ export function StakerMyStakes({
                       <span>
                         <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
                       </span>
+                                        ) : (
+                                            <span>{`Collect reward`}</span>
+                                        )}
+                                    </StakeButton>
+                                    <MoreButton style={{ marginLeft: '8px' }}
+                                                onClick={() => setSendModal(el.L2tokenId)}>
+                                        <Send color={'white'} size={18} />
+                                    </MoreButton>
+                                </>
+                            )
+                        )
                     ) : (
                       <span>{`Undeposit`}</span>
                     )}
@@ -1094,51 +1094,55 @@ export function StakerMyStakes({
     ))
   }
 
-  return (
-    <>
-      <Modal
-        isOpen={sendModal}
-        onDismiss={() => {
-          if (sending.state !== 'pending') {
-            setSendModal(false)
-            setRecipient('')
-            setTimeout(() => setSending({ id: null, state: null }))
-          }
-        }}
-      >
-        <SendModal style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
-          {sending.state === 'done' ? (
-            <>
-              <CheckCircle size={'35px'} stroke={'#27AE60'} />
-              <div style={{ marginTop: '1rem' }}>{`NFT was sent!`}</div>
-            </>
-          ) : (
-            <>
-              <ModalTitle>Send NFT to another account</ModalTitle>
-              <SendNFTWarning>
-                {
-                  'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'
-                }
-              </SendNFTWarning>
-              <div style={{ marginBottom: '1rem' }}>
-                <RecipientInput
-                  placeholder="Enter a recipient"
-                  value={recipient}
-                  onChange={(v) => {
-                    setRecipient(v.target.value)
-                  }}
-                />
-              </div>
-              <div>
-                <SendNFTButton
-                  disabled={!isAddress(recipient) || recipient === account}
-                  onClick={() => {
-                    setSending({ id: sendModal, state: 'pending' })
-                    sendNFTHandler(sendModal)
-                  }}
-                >
-                  {sending && sending.id === sendModal && sending.state !== 'done' ? (
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+    return (
+        <>
+            <Modal
+                isOpen={sendModal}
+                onDismiss={() => {
+                    if (sending.state !== 'pending') {
+                        setSendModal(false)
+                        setRecipient('')
+                        setTimeout(() => setSending({ id: null, state: null }))
+                    }
+                }}
+            >
+                <SendModal
+                    style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
+                    {sending.state === 'done' ? (
+                        <>
+                            <CheckCircle size={'35px'} stroke={'#27AE60'} />
+                            <div style={{ marginTop: '1rem' }}>{`NFT was sent!`}</div>
+                        </>
+                    ) : (
+                        <>
+                            <ModalTitle>Send NFT to another account</ModalTitle>
+                            <SendNFTWarning>
+                                {
+                                    'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'
+                                }
+                            </SendNFTWarning>
+                            <div style={{ marginBottom: '1rem' }}>
+                                <RecipientInput
+                                    placeholder='Enter a recipient'
+                                    value={recipient}
+                                    onChange={(v) => {
+                                        setRecipient(v.target.value)
+                                    }}
+                                />
+                            </div>
+                            <div>
+                                <SendNFTButton
+                                    disabled={!isAddress(recipient) || recipient === account}
+                                    onClick={() => {
+                                        setSending({ id: sendModal, state: 'pending' })
+                                        sendNFTHandler(sendModal)
+                                    }}
+                                >
+                                    {sending && sending.id === sendModal && sending.state !== 'done' ? (
+                                        <span style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center'
+                                        }}>
                       <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto 10px auto' }} />
                       <span>Sending</span>
                     </span>
@@ -1168,7 +1172,5 @@ export function StakerMyStakes({
             </>
           )}
         </>
-      ) : null}
-    </>
-  )
+    )
 }

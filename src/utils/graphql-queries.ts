@@ -158,11 +158,11 @@ export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gq
 
 export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
 query lastPoolHourData {
- 
+
   poolHourDatas(
       first: 1
       where: { pool: "${pool}" }
-      orderBy: periodStartUnix, 
+      orderBy: periodStartUnix,
       orderDirection: desc,
     ) {
       periodStartUnix
@@ -388,14 +388,14 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
           tick
           token0 {
               id
-              symbol 
+              symbol
               name
               decimals
               derivedMatic
           }
           token1 {
               id
-              symbol 
+              symbol
               name
               decimals
               derivedMatic

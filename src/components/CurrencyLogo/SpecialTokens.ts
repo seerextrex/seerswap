@@ -10,15 +10,15 @@ import IrisLogo from '../../assets/images/iris-logo.png'
 export const specialTokens = {
     ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
         name: 'USDC',
-        logo: USDCLogo,
+        logo: USDCLogo
     },
     ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
         name: 'ALGB',
-        logo: AlgebraLogo,
+        logo: AlgebraLogo
     },
     ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
         name: 'WMATIC',
-        logo: WMATICLogo,
+        logo: WMATICLogo
     },
     ['0x7ceb23fd6bc0add59e62ac25578270cff1b9f619']: {
         name: 'WETH',

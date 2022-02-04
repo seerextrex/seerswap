@@ -1,54 +1,54 @@
-import {Helmet} from 'react-helmet'
-import {useCurrency} from '../../hooks/Tokens'
+import { Helmet } from 'react-helmet'
+import { useCurrency } from '../../hooks/Tokens'
 import useDebouncedChangeHandler from '../../hooks/useDebouncedChangeHandler'
-import {useBurnV3ActionHandlers, useBurnV3State} from '../../state/burn/v3/hooks'
-import React, {useCallback, useEffect, useMemo, useState} from 'react'
+import { useBurnV3ActionHandlers, useBurnV3State } from '../../state/burn/v3/hooks'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import RealStakerInputRange from './RealStakerInputRange'
 import RealStakerRangeButtons from './RealStakerRangeButtons'
 import RealStakerResBlocks from './RealStakerResBlocks'
-import {NavLink} from 'react-router-dom'
-import {useCurrencyBalance} from '../../state/wallet/hooks'
-import {useActiveWeb3React} from '../../hooks/web3'
-import {useRealStakerHandlers} from '../../hooks/useRealStaker'
-import {ApprovalState, useApproveCallback} from '../../hooks/useApproveCallback'
-import {REAL_STAKER_ADDRESS} from '../../constants/addresses'
+import { NavLink } from 'react-router-dom'
+import { useCurrencyBalance } from '../../state/wallet/hooks'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { useRealStakerHandlers } from '../../hooks/useRealStaker'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
+import { REAL_STAKER_ADDRESS } from '../../constants/addresses'
 import Loader from '../../components/Loader'
-import {useInfoSubgraph} from '../../hooks/subgraph/useInfoSubgraph'
-import {BigNumber} from 'ethers'
-import {formatEther, formatUnits, parseUnits} from 'ethers/lib/utils'
+import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
+import { BigNumber } from 'ethers'
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
 import RealStakerUnstakeModal from './RealStakerUnstakeModal'
-import {useUSDCValue} from '../../hooks/useUSDCPrice'
-import {Currency, CurrencyAmount} from '@uniswap/sdk-core'
-import {tryParseAmount} from '../../state/swap/hooks'
-import {useWalletModalToggle} from '../../state/application/hooks'
-import {isArray} from "util"
-import {ArrowDown, ArrowUp, RefreshCw} from "react-feather"
-import Frozen from "./Frozen"
+import { useUSDCValue } from '../../hooks/useUSDCPrice'
+import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
+import { tryParseAmount } from '../../state/swap/hooks'
+import { useWalletModalToggle } from '../../state/application/hooks'
+import { isArray } from 'util'
+import { ArrowDown, ArrowUp, RefreshCw } from 'react-feather'
+import FrozenModal from './Frozen'
 import {
-    RealStakerPageWrapper,
-    PageWrapper,
-    StakeTitle,
-    SilderWrapper,
-    StakerSlider,
     EarnedStakedWrapper,
-    StakerStatisticWrapper,
-    ResBlocksTitle,
-    ResBlocksWrapper,
-    ReloadButton,
     FrozenDropDown,
     LeftBlock,
+    PageWrapper,
+    RealStakerPageWrapper,
+    ReloadButton,
+    ResBlocksTitle,
+    ResBlocksWrapper,
     RightBlock,
-    XALGBCousreWrapper,
+    SilderWrapper,
+    StakeButton,
+    StakerSlider,
+    StakerStatisticWrapper,
+    StakeTitle,
     XALGBBalance,
     XALGBCourse,
-    StakeButton
+    XALGBCousreWrapper
 } from './styled'
 
 export default function RealStakerPage({}) {
     const currencyId = '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'
-    const {chainId, account} = useActiveWeb3React()
-    const {percent} = useBurnV3State()
-    const {onPercentSelect} = useBurnV3ActionHandlers()
+    const { chainId, account } = useActiveWeb3React()
+    const { percent } = useBurnV3State()
+    const { onPercentSelect } = useBurnV3ActionHandlers()
     const {
         stakerHandler,
         stakerClaimHandler,
@@ -56,54 +56,118 @@ export default function RealStakerPage({}) {
         frozenStakedHandler,
         frozenStaked
     } = useRealStakerHandlers()
-    const {getStakes: {stakesResult, fetchStakingFn}} = useInfoSubgraph()
+    const { getStakes: { stakesResult, fetchStakingFn } } = useInfoSubgraph()
     const toggleWalletModal = useWalletModalToggle()
     const baseCurrency = useCurrency(currencyId)
 
     //balances
-    const balance = useCurrencyBalance(account ?? undefined, baseCurrency)
-
-    const _balance = useMemo(() => {
-        return balance?.toSignificant(4)
-    }, [balance])
-
-    const numBalance = useMemo(() => {
-        if (!balance) return 0
-        return balance
-    }, [balance])
+    const balance = useCurrencyBalance(account ?? undefined, baseCurrency ?? undefined)
+    const _balance = useMemo(() => !balance ? '' : balance.toSignificant(4), [balance])
+    const numBalance = useMemo(() => !balance ? 0 : balance, [balance])
 
     const [percentForSlider, onPercentSelectForSlider] = useDebouncedChangeHandler(percent, onPercentSelect)
-    const [unstakePercent, setUnstakePercent] = useState(0)
-    const [openModal, setOpenModal] = useState(false)
-    const [amountValue, setAmountValue] = useState('')
-    const [earned, setEarned] = useState(BigNumber.from('0'))
-    const [staked, setStaked] = useState(BigNumber.from('0'))
-    const [unstaked, setUnstaked] = useState('')
-    const [unstakeAmount, setUnstakeAmount] = useState(0)
-    const [algbCourse, setAlbgCourse] = useState(BigNumber.from('0'))
-    const [algbCourseShow, setAlbgCourseShow] = useState('1')
-    const [xALGBBalance, setXALGB] = useState('')
-    const [showFrozen, setFrozen] = useState(false)
-    const [loadingClaim, setLoadingClaim] = useState(false)
+    const [unstakePercent, setUnstakePercent] = useState<number>(0)
+    const [openModal, setOpenModal] = useState<boolean>(false)
+    const [amountValue, setAmountValue] = useState<string>('')
+    const [earned, setEarned] = useState<BigNumber>(BigNumber.from('0'))
+    const [staked, setStaked] = useState<BigNumber>(BigNumber.from('0'))
+    const [unstaked, setUnstaked] = useState<string>('')
+    const [unstakeAmount, setUnstakeAmount] = useState<BigNumber>(BigNumber.from('0'))
+    const [algbCourse, setAlbgCourse] = useState<BigNumber>(BigNumber.from('0'))
+    const [algbCourseShow, setAlbgCourseShow] = useState<number>(1)
+    const [xALGBBalance, setXALGB] = useState<string>('')
+    const [showFrozen, setFrozen] = useState<boolean>(false)
+    const [loadingClaim, setLoadingClaim] = useState<boolean>(false)
 
     const now = Date.now
 
     const [approval, approveCallback] = useApproveCallback(balance, chainId ? REAL_STAKER_ADDRESS[chainId] : undefined)
-    const valueAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(amountValue.toString(), baseCurrency)
-    const earnedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
-        earned !== 0 ? formatEther(earned) : earned.toString(),
-        baseCurrency
-    )
-    const stakedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
-        staked !== 0 ? formatEther(staked) : staked.toString(),
-        baseCurrency
-    )
-    const unstakedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(unstaked.toString(), baseCurrency)
+    const valueAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(amountValue.toString(), baseCurrency ?? undefined)
+    const earnedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(formatEther(earned), baseCurrency ?? undefined)
+    const stakedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(formatEther(staked), baseCurrency ?? undefined)
+    const unstakedAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(unstaked.toString(), baseCurrency ?? undefined)
 
     const fiatValue = useUSDCValue(valueAmount)
     const fiatValueEarned = useUSDCValue(earnedAmount)
     const fiatValueStaked = useUSDCValue(stakedAmount)
     const fiatUnstakedAmount = useUSDCValue(unstakedAmount)
+
+    const allFreeze = useMemo(() => {
+        if (typeof stakesResult === 'string') return
+
+        if (!isArray(frozenStaked) || !stakesResult?.factories) return
+
+        const formatedData = frozenStaked.map((el) => BigNumber.from(el?.xALGBAmount)
+            .mul(BigNumber.from(stakesResult.factories[0]?.ALGBbalance))
+            .div(BigNumber.from(stakesResult.factories[0]?.xALGBtotalSupply)))
+
+        return formatedData.reduce((prev, cur) => prev?.add(cur), BigNumber.from('0'))
+    }, [frozenStaked, account, stakesResult])
+
+    const allFreezeArr = useMemo(() => {
+        if (typeof stakesResult === 'string') return
+
+        if (!isArray(frozenStaked) || !stakesResult?.factories) return
+
+        return frozenStaked?.map(el => BigNumber.from(el?.xALGBAmount)
+            .mul(BigNumber.from(stakesResult?.factories[0]?.ALGBbalance))
+            .div(BigNumber.from(stakesResult?.factories[0]?.xALGBtotalSupply)))
+    }, [frozenStaked, account, stakesResult])
+
+    const allXALGBFreeze = useMemo(() => {
+        if (typeof stakesResult === 'string') return
+
+        if (!isArray(frozenStaked) || !stakesResult?.factories) return
+
+        const formatedData = frozenStaked?.map(el => BigNumber.from(el?.xALGBAmount))
+
+        return formatedData.reduce((prev, cur) => prev.add(cur), BigNumber.from('0'))
+    }, [frozenStaked, account, stakesResult])
+
+    const stakedFreeze = useMemo(() => {
+        if (!isArray(frozenStaked)) return
+
+        const formatedData = frozenStaked?.map(el => BigNumber.from(el?.stakedALGBAmount))
+
+        return formatedData.reduce((prev, cur) => prev.add(cur), BigNumber.from('0'))
+    }, [frozenStaked, account])
+
+    const stakedFreezeArr = useMemo(() => {
+        if (!isArray(frozenStaked)) return
+
+        return frozenStaked?.map(el => BigNumber.from(el?.stakedALGBAmount))
+    }, [frozenStaked, account])
+
+    const earnedFreezeArr = useMemo(() => {
+        if (!allFreezeArr || !stakedFreezeArr) return
+
+        const res = [BigNumber.from('0')]
+
+        for (let i = 0; i < allFreezeArr.length; i++) {
+            res.push(allFreezeArr[i].sub(stakedFreezeArr[i]))
+        }
+        return res
+    }, [allFreezeArr, stakedFreezeArr])
+
+    const earnedFreeze = useMemo(() => {
+        if (!allFreeze || !stakedFreeze) return
+
+        return allFreeze.sub(stakedFreeze)
+    }, [allFreeze, stakedFreeze])
+
+    //stake handler invoked from keyboard
+    const enterHandler = useCallback((e) => {
+        if (e.charCode === 13) {
+            if (!balance) return
+            if (!(+amountValue > +balance?.toSignificant(4))) {
+                stakerHandler(amountValue)
+                onPercentSelectForSlider(0)
+                if (percentForSlider === 0) {
+                    setAmountValue('')
+                }
+            }
+        }
+    }, [amountValue])
 
     const reloadClaim = useCallback(() => {
         if (!account) return
@@ -117,85 +181,11 @@ export default function RealStakerPage({}) {
             })
     }, [account])
 
-    const allFreeze = useMemo(() => {
-        if (!isArray(frozenStaked) || !stakesResult?.factories) return
-
-        const formatedData = frozenStaked?.map((el, i) => {
-            if (!el.xALGBAmount) return
-
-            return BigNumber.from(el?.xALGBAmount)
-                .mul(BigNumber.from(stakesResult?.factories[0]?.ALGBbalance))
-                .div(BigNumber.from(stakesResult?.factories[0]?.xALGBtotalSupply))
-        })
-
-        return formatedData.reduce((prev, cur) => {
-            return prev?.add(cur)
-        }, BigNumber.from('0'))
-    }, [frozenStaked, account, stakesResult])
-
-    const allFreezeArr = useMemo(() => {
-        if (!isArray(frozenStaked) || !stakesResult?.factories) return
-
-        return frozenStaked?.map((el, i) => {
-            if (!el.xALGBAmount) return
-
-            return BigNumber.from(el?.xALGBAmount)
-                .mul(BigNumber.from(stakesResult?.factories[0]?.ALGBbalance))
-                .div(BigNumber.from(stakesResult?.factories[0]?.xALGBtotalSupply))
-        })
-    }, [frozenStaked, account, stakesResult])
-
-    const allXALGBFreeze = useMemo(() => {
-        if (!isArray(frozenStaked) || !stakesResult?.factories) return
-
-        const formatedData = frozenStaked?.map((el, i) => {
-            if (!el.xALGBAmount) return
-
-            return BigNumber.from(el?.xALGBAmount)
-        })
-
-        return formatedData.reduce((prev, cur) => {
-            return prev?.add(cur)
-        }, BigNumber.from('0'))
-    }, [frozenStaked, account, stakesResult])
-
-    const stakedFreeze = useMemo(() => {
-        if (!isArray(frozenStaked)) return
-
-        const formatedData = frozenStaked?.map((el, i) => {
-            return BigNumber.from(el?.stakedALGBAmount)
-        })
-        return formatedData.reduce((prev, cur) => prev.add(cur), BigNumber.from('0'))
-    }, [frozenStaked, account])
-
-    const stakedFreezeArr = useMemo(() => {
-        if (!isArray(frozenStaked)) return
-
-        return frozenStaked?.map((el, i) => {
-            return BigNumber.from(el?.stakedALGBAmount)
-        })
-    }, [frozenStaked, account])
-
-    const earnedFreezeArr = useMemo(() => {
-        if (!allFreezeArr || !stakedFreezeArr) return
-        const res = [BigNumber.from('0')]
-        for (let i = 0; i < allFreezeArr.length; i++) {
-            res.push(allFreezeArr[i].sub(stakedFreezeArr[i]))
-        }
-        return res
-    }, [allFreezeArr, stakedFreezeArr])
-
-    const earnedFreeze = useMemo(() => {
-        if (!allFreeze || !stakedFreeze) return
-
-        return allFreeze.sub(stakedFreeze)
-    }, [allFreeze, stakedFreeze])
-
     useEffect(() => {
-        fetchStakingFn(account?.toLowerCase())
-
         if (!account) return
-        frozenStakedHandler(account)
+
+        fetchStakingFn(account.toLowerCase())
+        frozenStakedHandler(account.toLowerCase())
 
         if (+_balance === 0) {
             onPercentSelectForSlider(0)
@@ -229,7 +219,7 @@ export default function RealStakerPage({}) {
 
     //calc staked, earned, algbCourse
     useEffect(() => {
-        if (!stakesResult || stakesResult === 'failed' || !earnedFreeze || !stakedFreeze) return
+        if (!stakesResult || typeof stakesResult === 'string' || !earnedFreeze || !stakedFreeze) return
 
         if (+(stakesResult.factories[0].xALGBtotalSupply) !== 0) {
 
@@ -243,7 +233,7 @@ export default function RealStakerPage({}) {
         }
 
         if (+stakesResult?.factories[0].xALGBtotalSupply !== 0) {
-            setAlbgCourseShow(stakesResult.factories[0].ALGBbalance / stakesResult.factories[0].xALGBtotalSupply)
+            setAlbgCourseShow(+stakesResult.factories[0].ALGBbalance / +stakesResult.factories[0].xALGBtotalSupply)
             setAlbgCourse(
                 BigNumber.from(stakesResult.factories[0].ALGBbalance)
                     .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
@@ -263,19 +253,6 @@ export default function RealStakerPage({}) {
         setUnstakeAmount(staked.add(earned))
     }, [staked, earned])
 
-    //stake handler invoked from keyboard
-    const enterHandler = useCallback((e) => {
-        if (e.charCode === 13) {
-            if (!(+amountValue > +balance?.toSignificant(4))) {
-                stakerHandler(amountValue)
-                onPercentSelectForSlider(0)
-                if (percentForSlider === 0) {
-                    setAmountValue('')
-                }
-            }
-        }
-    }, [amountValue])
-
     return (
         <RealStakerPageWrapper>
             <Helmet>
@@ -290,24 +267,27 @@ export default function RealStakerPage({}) {
                     fiatValue={fiatValue}
                 />
                 {numBalance == 0 && balance ? (
-                    <NavLink to={''} style={{textDecoration: 'none'}}>
+                    <NavLink to={''} style={{ textDecoration: 'none' }}>
                         <StakeButton>BUY ALGB</StakeButton>
                     </NavLink>
                 ) : (
                     <>
                         <SilderWrapper>
-                            <StakerSlider value={percentForSlider} onChange={onPercentSelectForSlider} size={22}
-                                          disabled={+_balance === 0}/>
+                            <StakerSlider value={percentForSlider}
+                                          onChange={onPercentSelectForSlider} size={22}
+                                          disabled={+_balance === 0} />
                         </SilderWrapper>
-                        <RealStakerRangeButtons onPercentSelect={onPercentSelect} showCalculate={false}
-                                                balance={_balance}/>
+                        <RealStakerRangeButtons onPercentSelect={onPercentSelect}
+                                                showCalculate={false}
+                                                balance={_balance} />
                         {approval === ApprovalState.NOT_APPROVED ? (
                             <StakeButton onClick={approveCallback}>Approve token</StakeButton>
                         ) : approval === ApprovalState.UNKNOWN && account === null ? (
-                            <StakeButton onClick={toggleWalletModal}>Connect to a wallet</StakeButton>
+                            <StakeButton onClick={toggleWalletModal}>Connect to a
+                                wallet</StakeButton>
                         ) : approval === ApprovalState.UNKNOWN ? (
                             <StakeButton>
-                                <Loader stroke={'white'} size={'19px'}/>
+                                <Loader stroke={'white'} size={'19px'} />
                             </StakeButton>
                         ) : approval === ApprovalState.APPROVED ? (
                             <StakeButton
@@ -320,17 +300,17 @@ export default function RealStakerPage({}) {
                                             }
                                         })
                                 }}
-                                disabled={+amountValue > +balance?.toSignificant(30) || amountValue === ''}
+                                disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
                             >
-                                {+amountValue > +balance?.toSignificant(30) ? 'Insufficient ALGB balance' : 'Stake'}
+                                {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
                             </StakeButton>
                         ) : <StakeButton>
-                            <Loader stroke={'white'} size={'19px'}/>
+                            <Loader stroke={'white'} size={'19px'} />
                         </StakeButton>}
                     </>
                 )}
             </PageWrapper>
-            <EarnedStakedWrapper width={'765px'}>
+            <EarnedStakedWrapper>
                 <ResBlocksTitle>
                     <LeftBlock>
                         <h3>Balance</h3>
@@ -341,17 +321,22 @@ export default function RealStakerPage({}) {
                             <FrozenDropDown onClick={() => {
                                 setFrozen(!showFrozen)
                             }}>
-                                {!allFreeze ? <Loader size={'16px'}
-                                                      stroke={'white'}/> : `${(+formatEther(allFreeze || BigNumber.from('0'))).toFixed(2) < 0.01 ? '<' : ''} ${(+formatEther(allFreeze)).toFixed(2)}`} ALGB
-                                Frozen {showFrozen ? <ArrowUp size={'16px'}/> : <ArrowDown size={'16px'}/>}
+                                {!allFreeze ? <Loader size={'16px'} stroke={'white'} /> :
+
+                                    `${+(+formatEther(allFreeze || BigNumber.from('0'))).toFixed(2) < 0.01 ? '<' : ''} ${(+formatEther(allFreeze)).toFixed(2)}`} ALGB
+
+                                Frozen {showFrozen ? <ArrowUp size={'16px'} /> :
+                                <ArrowDown size={'16px'} />}
                             </FrozenDropDown>
                         }
-                        <ReloadButton disabled={loadingClaim} onClick={reloadClaim} refreshing={loadingClaim}>
-                            <RefreshCw style={{display: 'block'}} size={18} stroke={'white'}/>
+                        <ReloadButton disabled={loadingClaim} onClick={reloadClaim}
+                                      refreshing={loadingClaim}>
+                            <RefreshCw style={{ display: 'block' }} size={18} stroke={'white'} />
                         </ReloadButton>
                     </RightBlock>
-                    {showFrozen && frozenStaked?.length !== 0 && frozenStaked?.some(el => +Math.floor(el.timestamp * 1000) > now()) ?
-                        <Frozen data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now}/> : null}
+                    {showFrozen && frozenStaked.length !== 0 && typeof frozenStaked !== 'string' && frozenStaked.some(el => +Math.floor(+el.timestamp * 1000) > now()) ?
+                        <FrozenModal data={frozenStaked} earnedFreeze={earnedFreezeArr}
+                                     now={now} /> : null}
                 </ResBlocksTitle>
                 <ResBlocksWrapper>
                     <RealStakerResBlocks
@@ -377,7 +362,7 @@ export default function RealStakerPage({}) {
                 </ResBlocksWrapper>
                 <XALGBCousreWrapper>
                     <XALGBBalance>{!account ? '' : `You have ${xALGBBalance} xALGB`}</XALGBBalance>
-                    <XALGBCourse>1 xALGB = {(+algbCourseShow).toFixed(2)} ALGB</XALGBCourse>
+                    <XALGBCourse>1 xALGB = {algbCourseShow.toFixed(2)} ALGB</XALGBCourse>
                 </XALGBCousreWrapper>
             </EarnedStakedWrapper>
             <StakerStatisticWrapper to={'staking/analytics'}>

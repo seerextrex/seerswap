@@ -28,11 +28,11 @@ export async function splitQuery<Type>(
             const sliced = values.slice(skip, end)
             const result = await client.query<Type>({
                 query: query(...vars, sliced),
-                fetchPolicy: 'network-only',
+                fetchPolicy: 'network-only'
             })
             fetchedData = {
                 ...fetchedData,
-                ...result.data,
+                ...result.data
             }
             if (Object.keys(result.data).length < skipCount || skip + skipCount > values.length) {
                 allFound = true

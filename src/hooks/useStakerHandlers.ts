@@ -265,7 +265,7 @@ export function useStakerHandlers() {
         } catch (err) {
             setStaked('failed')
             if (err.code !== 4001) {
-                throw new Error('Staking ' + current + " " + err.message)
+                throw new Error('Staking ' + current + ' ' + err.message)
             }
         }
 
@@ -310,7 +310,7 @@ export function useStakerHandlers() {
         } catch (err) {
             setTransfered('failed')
             if (err.code !== 4001) {
-                throw new Error('Staking ' + current + " " + err.message)
+                throw new Error('Staking ' + current + ' ' + err.message)
             }
         }
 
@@ -367,7 +367,7 @@ export function useStakerHandlers() {
         } catch (err) {
             setApproved('failed')
             if (err.code !== 4001) {
-                throw new Error('Approving NFT ' + current + " " + err.message)
+                throw new Error('Approving NFT ' + current + ' ' + err.message)
             }
         }
 

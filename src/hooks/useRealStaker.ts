@@ -1,32 +1,33 @@
 import REAL_STAKER_ABI from 'abis/real-staker.json'
 import { BigNumber, Contract, providers } from 'ethers'
-import {formatEther, formatUnits, parseEther, parseUnits} from 'ethers/lib/utils'
-import { useCallback, useState } from "react"
-import { REAL_STAKER_ADDRESS } from "../constants/addresses"
-import { useActiveWeb3React } from "./web3"
+import { formatEther, parseUnits } from 'ethers/lib/utils'
+import { useCallback, useState } from 'react'
+import { REAL_STAKER_ADDRESS } from '../constants/addresses'
+import { useActiveWeb3React } from './web3'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import {stakerClient} from "../apollo/client"
-import {FROZEN_STAKED} from "../utils/graphql-queries"
-import { useAppSelector } from '../state/hooks'
-import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
+import { stakerClient } from '../apollo/client'
+import { FROZEN_STAKED } from '../utils/graphql-queries'
+import { TransactionResponse } from '@ethersproject/providers'
+import {
+  FactorySubgraph,
+  Frozen,
+  StakeHash,
+  StakeSubgraph,
+  SubgraphResponse,
+  SubgraphResponseStaking
+} from '../models/interfaces'
 
 export function useRealStakerHandlers() {
-
   const addTransaction = useTransactionAdder()
   const { chainId, account } = useActiveWeb3React()
   const _w: any = window
   const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
 
-  const [stakerHash, setStaked] = useState(null)
-  const [frozenStaked, setFrozen] = useState<string | any[]>([])
+  const [stakerHash, setStaked] = useState<null | StakeHash>(null)
+  const [frozenStaked, setFrozen] = useState<string | Frozen[]>([])
 
-  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
-
-  const stakerHandler = useCallback(async (stakedCount) => {
-
-    if (!account || !provider) return
-
-    setStaked(null)
+  const stakerHandler = useCallback(async (stakedCount: string) => {
+    if (!account || !provider || !chainId) return
 
     try {
       const realStaker = new Contract(
@@ -34,25 +35,21 @@ export function useRealStakerHandlers() {
         REAL_STAKER_ABI,
         provider.getSigner()
       )
-      const bigNumStakerCount = parseUnits(stakedCount.toString(), 18)
-      const result = await realStaker.enter(bigNumStakerCount._hex, {
-        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-      })
+      const bigNumStakerCount = parseUnits(stakedCount, 18)
+      const result: TransactionResponse = await realStaker.enter(bigNumStakerCount._hex)
 
       addTransaction(result, {
         summary: `Staked ${stakedCount} ALGB`
       })
-      setStaked({hash: result.hash})
+      setStaked({ hash: result.hash })
 
     } catch (e) {
-      setStaked('failed')
-      console.error(e)
-      return
+      console.log(e)
     }
-
   }, [account, chainId])
 
-  const stakerClaimHandler = useCallback(async (claimCount, stakesResult) => {
+  const stakerClaimHandler = useCallback(async (claimCount: BigNumber, stakesResult: SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]> | null | string) => {
+    if (!account || !provider || !chainId || !stakesResult || typeof stakesResult === 'string') return
     try {
       const realStaker = new Contract(
         REAL_STAKER_ADDRESS[chainId],
@@ -60,24 +57,23 @@ export function useRealStakerHandlers() {
         provider.getSigner()
       )
 
-      const claimSum = (claimCount.mul(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))).div(BigNumber.from(stakesResult.factories[0].ALGBbalance))
+      const claimSum: BigNumber = claimCount.mul(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply)).div(BigNumber.from(stakesResult.factories[0].ALGBbalance))
 
-      const result = await realStaker.leave(claimSum._hex, {
-        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-      })
+      const result: TransactionResponse = await realStaker.leave(claimSum._hex)
 
       addTransaction(result, {
         summary: `Claimed ${formatEther(claimCount)} ALGB`
       })
-      setStaked({hash: result.hash})
+      setStaked({ hash: result.hash })
 
     } catch (e) {
       console.log(e)
-      return
     }
-  }, [account])
+  }, [account, chainId])
 
-  const stakerUnstakeHandler = useCallback(async (unstakeCount, stakesResult, maxALGBAccount, allXALGBFreeze) => {
+  const stakerUnstakeHandler = useCallback(async (unstakeCount: string, stakesResult: SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>, maxALGBAccount: BigNumber, allXALGBFreeze: BigNumber) => {
+    if (!account || !provider || !chainId) return
+
     try {
 
       const realStaker = new Contract(
@@ -88,33 +84,32 @@ export function useRealStakerHandlers() {
 
       const bigNumUnstakeAmount = (parseUnits(unstakeCount.toString(), 18).mul(BigNumber.from(stakesResult.stakes[0].xALGBAmount).sub(allXALGBFreeze))).div(maxALGBAccount)
 
-      const result = await realStaker.leave(bigNumUnstakeAmount._hex, {
-        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-      })
+      const result: TransactionResponse = await realStaker.leave(bigNumUnstakeAmount._hex)
 
       addTransaction(result, {
         summary: `Unstaked ${unstakeCount} ALGB`
       })
-      setStaked({hash: result.hash})
+      setStaked({ hash: result.hash })
 
     } catch (e) {
       console.log(e)
-      return
     }
-  }, [account])
+  }, [account, chainId])
 
-  const frozenStakedHandler = useCallback(async (account) => {
+  const frozenStakedHandler = useCallback(async (account: string) => {
     try {
 
-      const {data: {stakeTxes}, error: error} = await stakerClient.query({
+      const {
+        data: { stakeTxes },
+        error: error
+      } = await stakerClient.query<SubgraphResponse<Frozen[]>>({
         query: FROZEN_STAKED(account.toLowerCase()),
         fetchPolicy: 'network-only'
       })
 
-     setFrozen(stakeTxes)
+      setFrozen(stakeTxes)
 
     } catch (e) {
-      console.log(e)
       setFrozen(`Error: ${e.message}`)
       return
     }

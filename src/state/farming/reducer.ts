@@ -1,11 +1,12 @@
-import {createReducer} from "@reduxjs/toolkit";
-import {isFarming} from "./actions";
+import { createReducer } from '@reduxjs/toolkit'
+import { isFarming } from './actions'
 
 interface Farming {
     endTime: string
     startTime: string
     eternalFarmings: boolean
 }
+
 const initialState: Farming = {
     endTime: '',
     startTime: '',
@@ -13,12 +14,12 @@ const initialState: Farming = {
 }
 
 export default createReducer(initialState, (builder) =>
-builder
-    .addCase(isFarming, (farms, {payload: {endTime = '', startTime = '', eternalFarmings = false}}) => {
-        return {
-            startTime,
-            endTime,
-            eternalFarmings
-        }
-    })
+    builder
+        .addCase(isFarming, (farms, { payload: { endTime = '', startTime = '', eternalFarmings = false } }) => {
+            return {
+                startTime,
+                endTime,
+                eternalFarmings
+            }
+        })
 )

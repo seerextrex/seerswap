@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 export const healthClient = new ApolloClient({
     uri: 'https://api.thegraph.com/index-node/graphql',
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache()
 })
 
 export const blockClient = new ApolloClient({
@@ -11,13 +11,13 @@ export const blockClient = new ApolloClient({
     queryDeduplication: true,
     defaultOptions: {
         watchQuery: {
-            fetchPolicy: 'no-cache',
+            fetchPolicy: 'no-cache'
         },
         query: {
             fetchPolicy: 'no-cache',
-            errorPolicy: 'all',
-        },
-    },
+            errorPolicy: 'all'
+        }
+    }
 })
 
 export const client = new ApolloClient({
@@ -26,13 +26,13 @@ export const client = new ApolloClient({
     queryDeduplication: true,
     defaultOptions: {
         watchQuery: {
-            fetchPolicy: 'no-cache',
+            fetchPolicy: 'no-cache'
         },
         query: {
             fetchPolicy: 'no-cache',
-            errorPolicy: 'all',
-        },
-    },
+            errorPolicy: 'all'
+        }
+    }
 })
 
 export const stakerClient = new ApolloClient({
@@ -41,13 +41,13 @@ export const stakerClient = new ApolloClient({
     queryDeduplication: true,
     defaultOptions: {
         watchQuery: {
-            fetchPolicy: 'no-cache',
+            fetchPolicy: 'no-cache'
         },
         query: {
             fetchPolicy: 'no-cache',
-            errorPolicy: 'all',
-        },
-    },
+            errorPolicy: 'all'
+        }
+    }
 })
 
 export const farmingClient = new ApolloClient({
@@ -56,11 +56,11 @@ export const farmingClient = new ApolloClient({
     queryDeduplication: true,
     defaultOptions: {
         watchQuery: {
-            fetchPolicy: 'no-cache',
+            fetchPolicy: 'no-cache'
         },
         query: {
             fetchPolicy: 'no-cache',
-            errorPolicy: 'all',
-        },
-    },
+            errorPolicy: 'all'
+        }
+    }
 })

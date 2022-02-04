@@ -1,9 +1,7 @@
-import { useEffect, useCallback, useState, useRef } from "react";
-import { useActiveWeb3React } from "./web3";
-import * as request from 'utils/request';
-import { CHAIN_SUBGRAPH_URL } from "../state/data/slice";
-import { Contract, providers } from "ethers";
-import POOL_ABI from 'abis/pool';
+import { useState } from 'react'
+import { useActiveWeb3React } from './web3'
+import { CHAIN_SUBGRAPH_URL } from '../state/data/slice'
+import { Contract, providers } from 'ethers'
 import ERC20_ABI from 'abis/erc20'
 import STAKER_ABI from 'abis/staker'
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
@@ -20,28 +18,26 @@ import { formatUnits } from "@ethersproject/units";
 
 
 export function useIncentiveSubgraph() {
-
     const { chainId, account } = useActiveWeb3React()
-
     const { dataClient, farmingClient } = useClients()
 
-    const [positionsForPool, setPositionsForPool] = useState(null);
-    const [positionsForPoolLoading, setPositionsForPoolLoading] = useState(false)
+    const [positionsForPool, setPositionsForPool] = useState(null)
+    const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
 
-    const [transferredPositions, setTransferredPositions] = useState(null);
-    const [transferredPositionsLoading, setTransferredPositionsLoading] = useState(false)
+    const [transferredPositions, setTransferredPositions] = useState(null)
+    const [transferredPositionsLoading, setTransferredPositionsLoading] = useState<boolean>(false)
 
     const [rewardsResult, setRewardsResult] = useState(null)
-    const [rewardsLoading, setRewardsLoading] = useState(null)
+    const [rewardsLoading, setRewardsLoading] = useState<boolean>(false)
 
     const [futureEvents, setFutureEvents] = useState(null)
-    const [futureEventsLoading, setFutureEventsLoading] = useState(false)
+    const [futureEventsLoading, setFutureEventsLoading] = useState<boolean>(false)
 
     const [currentEvents, setCurrentEvents] = useState(null)
-    const [currentEventsLoading, setCurrentEventsLoading] = useState(false)
+    const [currentEventsLoading, setCurrentEventsLoading] = useState<boolean>(false)
 
     const [positionsOnFarmer, setPositionsOnFarmer] = useState(null)
-    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState(false)
+    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState<boolean>(false)
 
     const [eternalFarms, setEternalFarms] = useState(null)
     const [eternalFarmsLoading, setEternalFarmsLoading] = useState(false)
@@ -59,8 +55,8 @@ export function useIncentiveSubgraph() {
 
             const pool = await fetchPool(events[i].pool)
 
-            const rewardToken = await fetchToken(events[i].rewardToken);
-            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken);
+            const rewardToken = await fetchToken(events[i].rewardToken)
+            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken)
 
             const _event: any = {
                 ...events[i],
@@ -183,7 +179,7 @@ export function useIncentiveSubgraph() {
                     amount: reward.amount > 0 ? (reward.amount / Math.pow(10, decimals)).toFixed(decimals) : 0,
                     trueAmount: reward.amount,
                     symbol,
-                    name,
+                    name
                 }
 
                 newRewards.push(newReward)
@@ -294,11 +290,7 @@ export function useIncentiveSubgraph() {
                     provider.getSigner()
                 )
 
-                console.log('HERE')
-
                 const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
-
-                console.log('HERE 2')
 
                 let _position = {
                     ...position,
@@ -537,7 +529,7 @@ export function useIncentiveSubgraph() {
 
             const transferredPositionsIds = positionsTransferred.map(position => position.id);
 
-            setPositionsOnFarmer(transferredPositionsIds);
+            setPositionsOnFarmer(transferredPositionsIds)
 
         } catch (err) {
             setPositionsOnFarmerLoading(null)

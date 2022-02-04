@@ -220,7 +220,7 @@ export default function InfoPoolsTable({
           .filter((x) => !!x && !POOL_HIDE.includes(x.address))
           .sort((a, b) => {
             if (a && b) {
-              return a[sortField as keyof PoolData] > b[sortField as keyof PoolData]
+              return +a[sortField as keyof PoolData] > +b[sortField as keyof PoolData]
                 ? (sortDirection ? -1 : 1) * 1
                 : (sortDirection ? -1 : 1) * -1
             } else {

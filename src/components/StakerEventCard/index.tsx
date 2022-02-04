@@ -424,13 +424,13 @@ export function StakerEventCard({
       <RewardWrapper style={{ marginBottom: '6px' }}>
         <CurrencyLogo currency={{ address: rewardToken.id, symbol: rewardToken.symbol }} size={'35px'} />
         <div style={{ marginLeft: '1rem' }}>
-          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{eternal ? 'Reward APR' : 'Reward'}</Subtitle>
+          <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{'Reward'}</Subtitle>
           <RewardSymbol>{rewardToken.symbol}</RewardSymbol>
         </div>
         {reward && (
           <RewardAmount title={reward}>
             {eternal ? (
-              <span>{`${apr.toFixed(2)}%`}</span>
+              <span></span>
             ) : (
               <span>{`${('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}`}</span>
             )}
@@ -455,13 +455,13 @@ export function StakerEventCard({
         <RewardWrapper>
           <CurrencyLogo currency={{ address: bonusRewardToken.id, symbol: bonusRewardToken.symbol }} size={'35px'} />
           <div style={{ marginLeft: '1rem' }}>
-            <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{eternal ? 'Bonus APR' : 'Bonus'}</Subtitle>
+            <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>{'Bonus'}</Subtitle>
             <RewardSymbol>{bonusRewardToken.symbol}</RewardSymbol>
           </div>
           {bonusReward && (
             <RewardAmount title={bonusReward}>
               {eternal ? (
-                <span>{`${apr.toFixed(2)}%`}</span>
+                <span></span>
               ) : (
                 <span>{`${('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}`}</span>
               )}
@@ -511,6 +511,14 @@ export function StakerEventCard({
             <EventProgressInner progress={getProgress(createdAtTimestamp, startTime, now)}></EventProgressInner>
           )}
         </EventProgress>
+      )}
+      {eternal && (
+        <RewardWrapper style={{ justifyContent: 'space-between' }}>
+          <Subtitle style={{ fontSize: '14px', color: 'white', textTransform: 'none', lineHeight: '19px' }}>
+            {'Overall APR:'}
+          </Subtitle>
+          <RewardSymbol>{`${apr.toFixed(2)}%`}</RewardSymbol>
+        </RewardWrapper>
       )}
       {account && !active ? (
         <StakeButton

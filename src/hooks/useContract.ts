@@ -30,7 +30,7 @@ import { WMATIC_EXTENDED } from '../constants/tokens'
 import { useActiveWeb3React } from './web3'
 
 import NewQuoterABI from '../abis/quoter.json'
-import { FINITE_FARMING } from "../constants/addresses"
+import { FINITE_FARMING } from '../constants/addresses'
 
 // returns null on errors
 export function useContract<T extends Contract = Contract>(

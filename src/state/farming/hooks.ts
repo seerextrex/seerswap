@@ -1,8 +1,8 @@
-import { useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { useClients } from "../../hooks/subgraph/useClients";
-import { ONE_ETERNAL_FARMING, ONE_FARMING_EVENT } from "../../utils/graphql-queries";
-import { isFarming } from "./actions";
+import { useCallback } from 'react'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { useClients } from '../../hooks/subgraph/useClients'
+import { ONE_ETERNAL_FARMING, ONE_FARMING_EVENT } from '../../utils/graphql-queries'
+import { isFarming } from './actions'
 
 
 export function useFarmingActionsHandlers(): {
@@ -34,7 +34,11 @@ export function useFarmingActionsHandlers(): {
                 return
             }
 
-            dispatch(isFarming({ startTime: incentives[0]?.startTime, endTime: incentives[0]?.endTime, eternalFarmings: !!eternalFarmings[0] }))
+            dispatch(isFarming({
+                startTime: incentives[0]?.startTime,
+                endTime: incentives[0]?.endTime,
+                eternalFarmings: !!eternalFarmings[0]
+            }))
         } catch (e) {
             console.log(e)
         }

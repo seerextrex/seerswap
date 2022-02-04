@@ -52,19 +52,19 @@ export const RUBIC_POLYGON = new Token(
 )
 
 export const ONE_POLYGON = new Token(
-  SupportedChainId.POLYGON,
-  '0x6b7a87899490ece95443e979ca9485cbe7e71522',
-  18,
-  'ONE',
-  'ONE'
+    SupportedChainId.POLYGON,
+    '0x6b7a87899490ece95443e979ca9485cbe7e71522',
+    18,
+    'ONE',
+    'ONE'
 )
 
 export const IRIS_POLYGON = new Token(
-  SupportedChainId.POLYGON,
-  '0xdab35042e63e93cc8556c9bae482e5415b5ac4b1',
-  18,
-  'IRIS',
-  'Iris'
+    SupportedChainId.POLYGON,
+    '0xdab35042e63e93cc8556c9bae482e5415b5ac4b1',
+    18,
+    'IRIS',
+    'Iris'
 )
 
 

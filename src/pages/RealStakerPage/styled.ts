@@ -130,32 +130,32 @@ export const EarnedStakedWrapper = styled.div`
   `}
 `
 export const StakerStatisticWrapper = styled(NavLink)`
-  position: relative;
-  display: inline-block;
-  min-width: 765px;
-  height: 107px;
-  text-decoration: none;
-  background-color: ${({ theme }) => theme.winterBackground};
-  background-image: url("${StakerStatistic}");
-  background-repeat: no-repeat;
-  background-position-y: 80%;
-  border-radius: 16px;
-  padding: 2rem 1rem 0 1rem;
-
-  h2, p {
-    color: white;
-    text-decoration: none;
-    margin: 0 0 0 .5rem;
-    font-size: 15px;
     position: relative;
-  }
+    display: inline-block;
+    min-width: 765px;
+    height: 107px;
+    text-decoration: none;
+    background-color: ${({ theme }) => theme.winterBackground};
+    background-image: url("${StakerStatistic}");
+    background-repeat: no-repeat;
+    background-position-y: 80%;
+    border-radius: 16px;
+    padding: 2rem 1rem 0 1rem;
 
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-  }
+    h2, p {
+        color: white;
+        text-decoration: none;
+        margin: 0 0 0 .5rem;
+        font-size: 15px;
+        position: relative;
+    }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 100%;
     display: flex;
     align-items: center;
@@ -368,16 +368,16 @@ export const ResButton = styled(StakeButton)`
 
 //Frozen
 export const FrozenWrapper = styled.div`
-  width: 100%;
-  background-color: #02253e;
-  height: 190px;
-  position: absolute;
-  top: 40px;
-  z-index: 100;
-  border-radius: 16px;
-  padding: 25px 30px;
-  overflow-y: auto;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+    background-color: #02253e;
+    height: 190px;
+    position: absolute;
+    top: 40px;
+    z-index: 100;
+    border-radius: 16px;
+    padding: 25px 30px;
+    overflow-y: auto;
+    ${({ theme }) => theme.mediaWidth.upToSmall`
      padding: 1rem;
     `}
 `

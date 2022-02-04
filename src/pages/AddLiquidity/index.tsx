@@ -3,7 +3,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { AlertTriangle } from 'react-feather'
 import { ZERO_PERCENT } from '../../constants/misc'
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FINITE_FARMING } from '../../constants/addresses'
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants/addresses'
 import { WMATIC_EXTENDED } from '../../constants/tokens'
 import { useV3NFTPositionManagerContract } from '../../hooks/useContract'
 import { RouteComponentProps } from 'react-router-dom'
@@ -31,6 +31,8 @@ import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '../../stat
 import { ExternalLink, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { Dots } from '../Pool/styleds'
+import { currencyId } from '../../utils/currencyId'
+import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import {
     DynamicSection,
     HideMedium,
@@ -94,6 +96,11 @@ export default function AddLiquidity({
 
     const hasExistingPosition = !!existingPositionDetails && !positionLoading
     const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails)
+    // fee selection from url
+    // const feeAmount: FeeAmount | undefined =
+    //   feeAmountFromUrl && Object.values(FeeAmount).includes(parseFloat(feeAmountFromUrl))
+    //     ? parseFloat(feeAmountFromUrl)
+    //     : undefined
 
     const feeAmount = 100
 
@@ -285,58 +292,142 @@ export default function AddLiquidity({
         }
     }
 
-  return (
-    <>
-      <ScrollablePage>
-        <TransactionConfirmationModal
-          isOpen={showConfirm}
-          onDismiss={handleDismissConfirmation}
-          attemptingTxn={attemptingTxn}
-          hash={txHash}
-          content={() => (
-            <ConfirmationModalContent
-              title={t`Increase Liquidity`}
-              onDismiss={handleDismissConfirmation}
-              topContent={() => (
-                <Review
-                  parsedAmounts={parsedAmounts}
-                  position={position}
-                  existingPosition={existingPosition}
-                  priceLower={priceLower}
-                  priceUpper={priceUpper}
-                  outOfRange={outOfRange}
-                  ticksAtLimit={ticksAtLimit}
-                />
-              )}
-              bottomContent={() => (
-                <ButtonPrimary style={{ marginTop: '1rem', color: 'white' }} onClick={onAdd}>
-                  <Text fontWeight={500} fontSize={20}>
-                    <Trans>Add</Trans>
-                  </Text>
-                </ButtonPrimary>
-              )}
-            />
-          )}
-          pendingText={pendingText}
-        />
-        <PageWrapper wide={!hasExistingPosition && !networkFailed}>
-          <AddRemoveTabs
-            creating={false}
-            adding={true}
-            positionID={tokenId}
-            defaultSlippage={DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE}
-            showBackLink={!hasExistingPosition}
-          ></AddRemoveTabs>
-          <Wrapper>
-            <ResponsiveTwoColumns wide={!hasExistingPosition && !networkFailed}>
-              <AutoColumn gap="lg">
-                {hasExistingPosition && existingPosition && (
-                  <PositionPreview
-                    position={existingPosition}
-                    title={<Trans>Selected Range</Trans>}
-                    inRange={!outOfRange}
-                    ticksAtLimit={ticksAtLimit}
-                  />
+    const handleCurrencySelect = useCallback(
+        (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
+            const currencyIdNew = currencyId(currencyNew, chainId)
+
+            let chainSymbol
+
+            if (chainId === 137) {
+                chainSymbol = 'MATIC'
+            }
+
+            if (currencyIdNew === currencyIdOther) {
+                // not ideal, but for now clobber the other if the currency ids are equal
+                return [currencyIdNew, undefined]
+            } else {
+                // prevent weth + eth
+                const isETHOrWETHNew =
+                    currencyIdNew === chainSymbol ||
+                    (chainId !== undefined && currencyIdNew === WMATIC_EXTENDED[chainId]?.address)
+                const isETHOrWETHOther =
+                    currencyIdOther !== undefined &&
+                    (currencyIdOther === chainSymbol ||
+                        (chainId !== undefined && currencyIdOther === WMATIC_EXTENDED[chainId]?.address))
+
+                if (isETHOrWETHNew && isETHOrWETHOther) {
+                    return [currencyIdNew, undefined]
+                } else {
+                    return [currencyIdNew, currencyIdOther]
+                }
+            }
+        },
+        [chainId]
+    )
+
+    // flag for whether pool creation must be a separate tx
+    const mustCreateSeparately =
+        noLiquidity && (chainId === SupportedChainId.OPTIMISM || chainId === SupportedChainId.OPTIMISTIC_KOVAN)
+
+    const handleDismissConfirmation = useCallback(() => {
+        setShowConfirm(false)
+        // if there was a tx hash, we want to clear the input
+        if (txHash) {
+            onFieldAInput('')
+            // dont jump to pool page if creating
+            if (!mustCreateSeparately) {
+                history.push('/pool')
+            }
+        }
+        setTxHash('')
+    }, [history, mustCreateSeparately, onFieldAInput, txHash])
+
+    // get value and prices at ticks
+    const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
+    const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
+
+    // we need an existence check on parsed amounts for single-asset deposits
+    const showApprovalA = approvalA !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_A]
+    const showApprovalB = approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B]
+
+    const pendingText = mustCreateSeparately
+        ? `Creating ${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} ${
+            dynamicFee ? dynamicFee / 10000 : ''
+        }% Pool`
+        : `Supplying ${!depositADisabled ? parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) : ''} ${
+            !depositADisabled ? currencies[Field.CURRENCY_A]?.symbol : ''
+        } ${!outOfRange ? 'and' : ''} ${!depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ''} ${
+            !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
+        }`
+
+    const {
+        getDecrementLower,
+        getIncrementLower,
+        getDecrementUpper,
+        getIncrementUpper,
+        getSetFullRange
+    } =
+        useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)
+
+    const Buttons = () =>
+        !account ? (
+            <ButtonLight onClick={toggleWalletModal} $borderRadius='12px' padding={'12px'}>
+                <Trans>Connect wallet</Trans>
+            </ButtonLight>
+        ) : (
+            <AutoColumn gap={'md'}>
+                {(approvalA === ApprovalState.NOT_APPROVED ||
+                        approvalA === ApprovalState.PENDING ||
+                        approvalB === ApprovalState.NOT_APPROVED ||
+                        approvalB === ApprovalState.PENDING) &&
+                    isValid && (
+                        <RowBetween>
+                            {showApprovalA && (
+                                <ButtonPrimary
+                                    onClick={approveACallback}
+                                    style={{ color: 'white', background: theme.winterMainButton }}
+                                    disabled={approvalA === ApprovalState.PENDING}
+                                    width={showApprovalB ? '48%' : '100%'}
+                                >
+                                    {approvalA === ApprovalState.PENDING ? (
+                                        <Dots>
+                                            <Trans>Approving {currencies[Field.CURRENCY_A]?.symbol}</Trans>
+                                        </Dots>
+                                    ) : (
+                                        <Trans>Approve {currencies[Field.CURRENCY_A]?.symbol}</Trans>
+                                    )}
+                                </ButtonPrimary>
+                            )}
+                            {showApprovalB && (
+                                <ButtonPrimary
+                                    onClick={approveBCallback}
+                                    style={{ color: 'white', background: theme.winterMainButton }}
+                                    disabled={approvalB === ApprovalState.PENDING}
+                                    width={showApprovalA ? '48%' : '100%'}
+                                >
+                                    {approvalB === ApprovalState.PENDING ? (
+                                        <Dots>
+                                            <Trans>Approving {currencies[Field.CURRENCY_B]?.symbol}</Trans>
+                                        </Dots>
+                                    ) : (
+                                        <Trans>Approve {currencies[Field.CURRENCY_B]?.symbol}</Trans>
+                                    )}
+                                </ButtonPrimary>
+                            )}
+                        </RowBetween>
+                    )}
+                {mustCreateSeparately && (
+                    <ButtonError onClick={onCreate}
+                                 disabled={!isValid || attemptingTxn || !position}>
+                        {attemptingTxn ? (
+                            <Dots>
+                                <Trans>Confirm Create</Trans>
+                            </Dots>
+                        ) : (
+                            <Text fontWeight={500}>{errorMessage ? errorMessage :
+                                <Trans>Create</Trans>}</Text>
+                        )}
+                    </ButtonError>
                 )}
                 <ButtonError
                     onClick={() => {
@@ -383,10 +474,8 @@ export default function AddLiquidity({
                                 />
                             )}
                             bottomContent={() => (
-                                <ButtonPrimary
-                                    style={{ marginTop: '1rem', color: 'white' }}
-                                    onClick={onAdd}
-                                >
+                                <ButtonPrimary style={{ marginTop: '1rem', color: 'white' }}
+                                               onClick={onAdd}>
                                     <Text fontWeight={500} fontSize={20}>
                                         <Trans>Add</Trans>
                                     </Text>
@@ -403,7 +492,7 @@ export default function AddLiquidity({
                         positionID={tokenId}
                         defaultSlippage={DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE}
                         showBackLink={!hasExistingPosition}
-                    />
+                    ></AddRemoveTabs>
                     <Wrapper>
                         <ResponsiveTwoColumns wide={!hasExistingPosition && !networkFailed}>
                             <AutoColumn gap='lg'>
@@ -514,6 +603,21 @@ export default function AddLiquidity({
                                                             </Trans>
                                                         </AutoRow>
                                                     )}
+
+                                                    {/* <LiquidityChartRangeInput
+                            currencyA={baseCurrency ?? undefined}
+                            currencyB={quoteCurrency ?? undefined}
+                            feeAmount={dynamicFee}
+                            ticksAtLimit={ticksAtLimit}
+                            price={
+                              price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined
+                            }
+                            priceLower={priceLower}
+                            priceUpper={priceUpper}
+                            onLeftRangeInput={onLeftRangeInput}
+                            onRightRangeInput={onRightRangeInput}
+                            interactive={!hasExistingPosition}
+                          /> */}
                                                 </>
                                             ) : (
                                                 <AutoColumn gap='md'>
@@ -739,6 +843,12 @@ export default function AddLiquidity({
                         </ResponsiveTwoColumns>
                     </Wrapper>
                 </PageWrapper>
+                {addIsUnsupported && (
+                    <UnsupportedCurrencyFooter
+                        show={addIsUnsupported}
+                        currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]}
+                    />
+                )}
             </ScrollablePage>
             <SwitchLocaleLink />
         </>

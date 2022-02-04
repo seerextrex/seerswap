@@ -1,15 +1,13 @@
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
-import FINITE_FARMING_ABI from 'abis/finite-farming'
 import FARMING_CENTER_ABI from 'abis/farming-center.json'
-import { Contract, providers } from "ethers"
-import { Interface } from "ethers/lib/utils"
-import { useCallback, useState } from "react"
-import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FINITE_FARMING } from "../constants/addresses"
-import { useTransactionAdder } from "../state/transactions/hooks"
-import { useActiveWeb3React } from "./web3"
-import { calculateGasMargin } from "../utils/calculateGasMargin"
+import { Contract, providers } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
+import { useCallback, useState } from 'react'
+import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants/addresses'
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { useActiveWeb3React } from './web3'
 import JSBI from 'jsbi'
-import { toHex } from "../lib/src/utils"
+import { toHex } from '../lib/src/utils'
 import { useAppSelector } from '../state/hooks'
 import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
 
@@ -82,7 +80,13 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const eternalCollectRewardHandler = useCallback(async (token, { pool, eternalRewardToken, eternalBonusRewardToken, eternalStartTime, eternalEndTime }) => {
+    const eternalCollectRewardHandler = useCallback(async (token, {
+        pool,
+        eternalRewardToken,
+        eternalBonusRewardToken,
+        eternalStartTime,
+        eternalEndTime
+    }) => {
         if (!account || !provider) return
 
         const farmingCenterContract = new Contract(
@@ -118,7 +122,17 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const getRewardsHandler = useCallback(async (token, { incentiveRewardToken, incentiveBonusRewardToken, pool, incentiveStartTime, incentiveEndTime, eternalRewardToken, eternalBonusRewardToken, eternalStartTime, eternalEndTime }, eventType) => {
+    const getRewardsHandler = useCallback(async (token, {
+        incentiveRewardToken,
+        incentiveBonusRewardToken,
+        pool,
+        incentiveStartTime,
+        incentiveEndTime,
+        eternalRewardToken,
+        eternalBonusRewardToken,
+        eternalStartTime,
+        eternalEndTime
+    }, eventType) => {
 
         if (!account || !provider) return
 
@@ -176,7 +190,13 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const withdrawHandler = useCallback(async (token, { transfered, rewardToken, pool, startTime, endTime, }) => {
+    const withdrawHandler = useCallback(async (token, {
+        transfered,
+        rewardToken,
+        pool,
+        startTime,
+        endTime
+    }) => {
 
         if (!account || !provider) return
 
@@ -215,7 +235,13 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const stakeHandler = useCallback(async (selectedNFT, { rewardToken, bonusRewardToken, pool, startTime, endTime }, eventType) => {
+    const stakeHandler = useCallback(async (selectedNFT, {
+        rewardToken,
+        bonusRewardToken,
+        pool,
+        startTime,
+        endTime
+    }, eventType) => {
 
         if (!account || !provider) return
 
@@ -350,10 +376,10 @@ export function useStakerHandlers() {
                 ])
 
                 const result = await nonFunPosManContract.multicall([
-                    approveData, transferData
-                ],
+                        approveData, transferData
+                    ],
                     {
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                     })
 
                 addTransaction(result, {
@@ -399,9 +425,9 @@ export function useStakerHandlers() {
             ])
 
             const result = await farmingCenterContract.multicall([
-                approveData,
-                sendData
-            ],
+                    approveData,
+                    sendData
+                ],
                 {
                     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                 })
@@ -437,6 +463,6 @@ export function useStakerHandlers() {
         sendNFTL2Handler,
         sendNFTL2Hash,
         eternalCollectRewardHandler,
-        eternalCollectRewardHash,
+        eternalCollectRewardHash
     }
 }

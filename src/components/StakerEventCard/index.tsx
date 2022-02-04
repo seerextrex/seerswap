@@ -1,22 +1,23 @@
-import { Plus } from "react-feather";
-import { useActiveWeb3React } from "../../hooks/web3";
-import { useWalletModalToggle } from "../../state/application/hooks";
-import { stringToColour } from "../../utils/stringToColour";
-import { getCountdownTime } from "../../utils/time";
-import Loader from "../Loader";
-import { darken } from "polished";
-import CurrencyLogo from "../CurrencyLogo";
-import { FarmingType } from "../../hooks/useStakerHandlers";
+import { Plus } from 'react-feather'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { useWalletModalToggle } from '../../state/application/hooks'
+import { stringToColour } from '../../utils/stringToColour'
+import { getCountdownTime } from '../../utils/time'
+import Loader from '../Loader'
+import { darken } from 'polished'
+import CurrencyLogo from '../CurrencyLogo'
+import styled, { css, keyframes } from 'styled-components/macro'
 
 const skeletonAnimation = keyframes`
-  100% {
-    transform: translateX(100%);
-  }
-`;
+    100% {
+        transform: translateX(100%);
+    }
+`
 
 const skeletonGradient = css`
     position: relative;
     overflow: hidden;
+
     &::after {
         position: absolute;
         top: 0;
@@ -24,19 +25,17 @@ const skeletonGradient = css`
         bottom: 0;
         left: 0;
         transform: translateX(-100%);
-        background-image: linear-gradient(
-            90deg,
-            rgba(91, 105, 141, 0) 0,
-            rgba(94, 131, 225, 0.25) 25%,
-            rgba(94, 131, 225, 0.5) 60%,
-            rgba(91, 105, 141, 0)
-        );
+        background-image: linear-gradient(90deg,
+        rgba(91, 105, 141, 0) 0,
+        rgba(94, 131, 225, 0.25) 25%,
+        rgba(94, 131, 225, 0.5) 60%,
+        rgba(91, 105, 141, 0));
         animation-name: ${skeletonAnimation};
         animation-duration: 1.5s;
         animation-iteration-count: infinite;
         content: "";
     }
-`;
+`
 
 const LoadingShim = styled.div`
     display: flex;
@@ -46,7 +45,7 @@ const LoadingShim = styled.div`
     top: 0;
     left: 0;
     z-index: 5;
-`;
+`
 
 const Card = styled.div<{ refreshing: boolean; skeleton: boolean }>`
     display: flex;
@@ -60,12 +59,12 @@ const Card = styled.div<{ refreshing: boolean; skeleton: boolean }>`
     ${({ refreshing }) =>
         refreshing
             ? css`
-                  & > * {
-                      &:not(${LoadingShim}) {
-                          opacity: 0.4;
-                      }
-                  }
-              `
+                & > * {
+                    &:not(${LoadingShim}) {
+                        opacity: 0.4;
+                    }
+                }
+            `
             : null}
 
     ${({ theme }) => theme.mediaWidth.upToSmall`{
@@ -73,16 +72,16 @@ const Card = styled.div<{ refreshing: boolean; skeleton: boolean }>`
     margin-bottom: 1rem;
   }`}
 
-  ${({ skeleton }) =>
+    ${({ skeleton }) =>
         skeleton &&
         css`
             background-color: #89c4ef;
         `}
-`;
+`
 const CardHeader = styled.div`
     display: flex;
     margin-bottom: 1rem;
-`;
+`
 
 const TokenIcon = styled.div<{ logo: string; name: string; skeleton: boolean }>`
     display: flex;
@@ -90,12 +89,12 @@ const TokenIcon = styled.div<{ logo: string; name: string; skeleton: boolean }>`
     justify-content: center;
     width: 35px;
     height: 35px;
-    background-color: ${({ name }) => (name ? stringToColour(name).background : "#5aa7df")};
-    border: 1px solid ${({ name }) => (name ? stringToColour(name).border : "#5aa7df")};
-    color: ${({ name }) => (name ? stringToColour(name).text : "#5aa7df")};
+    background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
+    border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
+    color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
     border-radius: 50%;
     user-select: none;
-    background: ${({ logo }) => (logo ? `url(${logo})` : "")};
+    background: ${({ logo }) => (logo ? `url(${logo})` : '')};
     background-repeat: no-repeat;
     background-size: contain;
 
@@ -104,12 +103,12 @@ const TokenIcon = styled.div<{ logo: string; name: string; skeleton: boolean }>`
     }
 
     ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
-`;
+`
 
 const TokensIcons = styled.div`
     display: flex;
     margin-right: 1rem;
-`;
+`
 
 const Subtitle = styled.div<{ skeleton: boolean }>`
     color: white;
@@ -120,29 +119,29 @@ const Subtitle = styled.div<{ skeleton: boolean }>`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  width: 50px;
-                  height: 15.2px;
-                  background-color: #5aa7df;
-                  border-radius: 6px;
-                  margin-bottom: 3px;
+                width: 50px;
+                height: 15.2px;
+                background-color: #5aa7df;
+                border-radius: 6px;
+                margin-bottom: 3px;
 
-                  ${skeletonGradient}
-              `
+                ${skeletonGradient}
+            `
             : null}
-`;
+`
 
 const PoolsSymbols = styled.div<{ skeleton: boolean }>`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  background: #5aa7df;
-                  border-radius: 6px;
-                  height: 16.2px;
+                background: #5aa7df;
+                border-radius: 6px;
+                height: 16.2px;
 
-                  ${skeletonGradient}
-              `
+                ${skeletonGradient}
+            `
             : null}
-`;
+`
 
 const RewardWrapper = styled.div<{ skeleton: boolean }>`
     display: flex;
@@ -158,13 +157,13 @@ const RewardWrapper = styled.div<{ skeleton: boolean }>`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  background-color: #5aa7df;
-                  border: 1px solid #5aa7df;
+                background-color: #5aa7df;
+                border: 1px solid #5aa7df;
 
-                  ${skeletonAnimation}
-              `
+                ${skeletonAnimation}
+            `
             : null}
-`;
+`
 
 const RewardAmount = styled.div`
     margin: auto 0 auto auto;
@@ -173,51 +172,52 @@ const RewardAmount = styled.div`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  background-color: #5aa7df;
-                  width: 70px;
-                  height: 19.2px;
-                  border-radius: 6px;
+                background-color: #5aa7df;
+                width: 70px;
+                height: 19.2px;
+                border-radius: 6px;
 
-                  ${skeletonGradient}
-              `
+                ${skeletonGradient}
+            `
             : null}
-`;
+`
 
 const RewardSymbol = styled.div`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  background-color: #5aa7df;
-                  height: 16.2px;
-                  width: 50px;
-                  border-radius: 6px;
-                  ${skeletonGradient}
-              `
+                background-color: #5aa7df;
+                height: 16.2px;
+                width: 50px;
+                border-radius: 6px;
+                ${skeletonGradient}
+            `
             : null}
-`;
+`
 
 const StakeInfo = styled.div`
     display: flex;
-    margin-bottom: ${({ active }) => (active ? "10px" : "1rem")};
+    margin-bottom: ${({ active }) => (active ? '10px' : '1rem')};
     justify-content: space-between;
-`;
+`
 
 const StakeDate = styled.div`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  width: 100px;
-                  height: 16.2px;
-                  background-color: #5aa7df;
-                  border-radius: 6px;
+                width: 100px;
+                height: 16.2px;
+                background-color: #5aa7df;
+                border-radius: 6px;
 
-                  &:not(:last-of-type) {
-                      margin-bottom: 3px;
-                  }
-                  ${skeletonGradient}
-              `
+                &:not(:last-of-type) {
+                    margin-bottom: 3px;
+                }
+
+                ${skeletonGradient}
+            `
             : null}
-`;
+`
 
 const EventProgress = styled.div`
     width: 100%;
@@ -231,12 +231,12 @@ const EventProgress = styled.div`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  background-color: #5aa7df;
-                  margin-top: 3px;
-                  ${skeletonGradient}
-              `
+                background-color: #5aa7df;
+                margin-top: 3px;
+                ${skeletonGradient}
+            `
             : null}
-`;
+`
 const EventEndTime = styled.div`
     line-height: 16px;
     font-size: 13px;
@@ -247,22 +247,22 @@ const EventEndTime = styled.div`
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  & > span {
-                      display: inline-block;
-                      border-radius: 6px;
-                      background-color: #5aa7df;
-                      height: 13px;
-                      width: 100px;
-                      ${skeletonGradient}
-                  }
-              `
+                & > span {
+                    display: inline-block;
+                    border-radius: 6px;
+                    background-color: #5aa7df;
+                    height: 13px;
+                    width: 100px;
+                    ${skeletonGradient}
+                }
+            `
             : null}
-`;
+`
 
 const EventProgressInner = styled.div.attrs(({ progress }) => ({
     style: {
-        width: `${progress}%`,
-    },
+        width: `${progress}%`
+    }
 }))`
     height: 100%;
     background-color: #5bb7ff;
@@ -270,7 +270,7 @@ const EventProgressInner = styled.div.attrs(({ progress }) => ({
     transition-duration: 0.5s;
 
     ${skeletonGradient}
-`;
+`
 
 const StakeButton = styled.button`
     width: 100%;
@@ -286,25 +286,26 @@ const StakeButton = styled.button`
     &:hover {
         background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
     }
+
     ${({ skeleton }) =>
         skeleton
             ? css`
-                  background-color: #5aa7df;
-                  height: 32px;
-                  ${skeletonGradient};
-              `
+                background-color: #5aa7df;
+                height: 32px;
+                ${skeletonGradient};
+            `
             : null}
-`;
+`
 
 function getProgress(startTime: number, endTime: number, now: number) {
-    const length = endTime - startTime;
-    const elapsed = endTime - now / 1000;
+    const length = endTime - startTime
+    const elapsed = endTime - now / 1000
 
-    return 100 - (elapsed * 100) / length;
+    return 100 - (elapsed * 100) / length
 }
 
 function getUntilStart(startTime: number, endTime: number, now: number) {
-    return 100 - ((startTime - now / 1000) / startTime) * 100 * 10000000;
+    return 100 - ((startTime - now / 1000) / startTime) * 100 * 10000000
 }
 
 export function StakerEventCard({
@@ -321,9 +322,9 @@ export function StakerEventCard({
         reward,
         bonusReward,
         startTime,
-        endTime,
+        endTime
     } = {},
-    eternal,
+    eternal
 }: {
     active?: boolean;
     skeleton?: any;
@@ -342,9 +343,9 @@ export function StakerEventCard({
     };
     eternal?: boolean;
 }) {
-    const { account } = useActiveWeb3React();
+    const { account } = useActiveWeb3React()
 
-    const toggleWalletModal = useWalletModalToggle();
+    const toggleWalletModal = useWalletModalToggle()
 
     return skeleton ? (
         <Card skeleton>
@@ -358,31 +359,31 @@ export function StakerEventCard({
                     <PoolsSymbols skeleton></PoolsSymbols>
                 </div>
             </CardHeader>
-            <RewardWrapper skeleton style={{ marginBottom: "6px" }}>
+            <RewardWrapper skeleton style={{ marginBottom: '6px' }}>
                 <TokenIcon skeleton></TokenIcon>
-                <div style={{ marginLeft: "1rem" }}>
+                <div style={{ marginLeft: '1rem' }}>
                     <Subtitle skeleton></Subtitle>
                     <RewardSymbol skeleton></RewardSymbol>
                 </div>
                 <RewardAmount skeleton></RewardAmount>
             </RewardWrapper>
-            <div style={{ position: "relative" }}>
+            <div style={{ position: 'relative' }}>
                 <div
                     style={{
-                        position: "absolute",
-                        left: "calc(50% - 11px)",
-                        top: "-15px",
-                        backgroundColor: "#5aa7df",
-                        borderRadius: "50%",
-                        padding: "3px",
+                        position: 'absolute',
+                        left: 'calc(50% - 11px)',
+                        top: '-15px',
+                        backgroundColor: '#5aa7df',
+                        borderRadius: '50%',
+                        padding: '3px'
                     }}
                 >
-                    <Plus style={{ display: "block" }} size={18}></Plus>
+                    <Plus style={{ display: 'block' }} size={18}></Plus>
                 </div>
             </div>
             <RewardWrapper skeleton>
                 <TokenIcon skeleton></TokenIcon>
-                <div style={{ marginLeft: "1rem" }}>
+                <div style={{ marginLeft: '1rem' }}>
                     <Subtitle skeleton></Subtitle>
                     <RewardSymbol skeleton></RewardSymbol>
                 </div>
@@ -415,18 +416,18 @@ export function StakerEventCard({
         <Card refreshing={refreshing}>
             {refreshing && (
                 <LoadingShim>
-                    <Loader size={"18px"} stroke={"white"} style={{ margin: "auto" }} />
+                    <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto' }} />
                 </LoadingShim>
             )}
             <CardHeader>
                 <TokensIcons>
                     <CurrencyLogo
                         currency={{ address: pool.token0.id, symbol: pool.token0.symbol }}
-                        size={"35px"}
+                        size={'35px'}
                     />
                     <CurrencyLogo
                         currency={{ address: pool.token1.id, symbol: pool.token1.symbol }}
-                        size={"35px"}
+                        size={'35px'}
                     />
                 </TokensIcons>
                 <div>
@@ -434,14 +435,14 @@ export function StakerEventCard({
                     <PoolsSymbols>{`${pool.token0.symbol}/${pool.token1.symbol}`}</PoolsSymbols>
                 </div>
             </CardHeader>
-            <RewardWrapper style={{ marginBottom: "6px" }}>
+            <RewardWrapper style={{ marginBottom: '6px' }}>
                 <CurrencyLogo
                     currency={{ address: rewardToken.id, symbol: rewardToken.symbol }}
-                    size={"35px"}
+                    size={'35px'}
                 />
-                <div style={{ marginLeft: "1rem" }}>
-                    <Subtitle style={{ color: "rgb(138, 190, 243)" }}>
-                        {eternal ? "Reward APR" : "Reward"}
+                <div style={{ marginLeft: '1rem' }}>
+                    <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>
+                        {eternal ? 'Reward APR' : 'Reward'}
                     </Subtitle>
                     <RewardSymbol>{rewardToken.symbol}</RewardSymbol>
                 </div>
@@ -451,37 +452,37 @@ export function StakerEventCard({
                             <span>200%</span>
                         ) : (
                             <span>{`${
-                                ("" + reward).length <= 8
+                                ('' + reward).length <= 8
                                     ? reward
-                                    : ("" + reward).slice(0, 6) + ".."
+                                    : ('' + reward).slice(0, 6) + '..'
                             }`}</span>
                         )}
                     </RewardAmount>
                 )}
             </RewardWrapper>
-            <div style={{ position: "relative" }}>
+            <div style={{ position: 'relative' }}>
                 <div
                     style={{
-                        position: "absolute",
-                        left: "calc(50% - 11px)",
-                        top: "-15px",
-                        backgroundColor: "rgb(19, 56, 93)",
-                        borderRadius: "50%",
-                        padding: "3px",
+                        position: 'absolute',
+                        left: 'calc(50% - 11px)',
+                        top: '-15px',
+                        backgroundColor: 'rgb(19, 56, 93)',
+                        borderRadius: '50%',
+                        padding: '3px'
                     }}
                 >
-                    <Plus style={{ display: "block" }} size={18}></Plus>
+                    <Plus style={{ display: 'block' }} size={18}></Plus>
                 </div>
             </div>
             {bonusReward > 0 && (
                 <RewardWrapper>
                     <CurrencyLogo
                         currency={{ address: bonusRewardToken.id, symbol: bonusRewardToken.symbol }}
-                        size={"35px"}
+                        size={'35px'}
                     />
-                    <div style={{ marginLeft: "1rem" }}>
-                        <Subtitle style={{ color: "rgb(138, 190, 243)" }}>
-                            {eternal ? "Bonus APR" : "Bonus"}
+                    <div style={{ marginLeft: '1rem' }}>
+                        <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>
+                            {eternal ? 'Bonus APR' : 'Bonus'}
                         </Subtitle>
                         <RewardSymbol>{bonusRewardToken.symbol}</RewardSymbol>
                     </div>
@@ -491,9 +492,9 @@ export function StakerEventCard({
                                 <span>200%</span>
                             ) : (
                                 <span>{`${
-                                    ("" + bonusReward).length <= 8
+                                    ('' + bonusReward).length <= 8
                                         ? bonusReward
-                                        : ("" + bonusReward).slice(0, 6) + ".."
+                                        : ('' + bonusReward).slice(0, 6) + '..'
                                 }`}</span>
                             )}
                         </RewardAmount>
@@ -508,7 +509,7 @@ export function StakerEventCard({
                             <div>
                                 <span>
                                     {startTime &&
-                                        new Date(startTime * 1000).toLocaleString().split(",")[0]}
+                                        new Date(startTime * 1000).toLocaleString().split(',')[0]}
                                 </span>
                             </div>
                             <div>
@@ -516,7 +517,7 @@ export function StakerEventCard({
                                     {startTime &&
                                         `${new Date(startTime * 1000)
                                             .toLocaleString()
-                                            .split(",")[1]
+                                            .split(',')[1]
                                             .slice(0, -3)}`}
                                 </span>
                             </div>
@@ -527,14 +528,14 @@ export function StakerEventCard({
                         <Subtitle>End</Subtitle>
                         <div>
                             <span>
-                                {endTime && new Date(endTime * 1000).toLocaleString().split(",")[0]}
+                                {endTime && new Date(endTime * 1000).toLocaleString().split(',')[0]}
                             </span>
                         </div>
                         <div>
                             {endTime && (
                                 <span>{`${new Date(endTime * 1000)
                                     .toLocaleString()
-                                    .split(",")[1]
+                                    .split(',')[1]
                                     .slice(0, -3)}`}</span>
                             )}
                         </div>
@@ -565,7 +566,7 @@ export function StakerEventCard({
             )}
             {account && !active ? (
                 <StakeButton
-                    style={{ marginTop: eternal ? "0" : "10px" }}
+                    style={{ marginTop: eternal ? '0' : '10px' }}
                     onClick={stakeHandler}
                     skeleton={skeleton}
                     refreshing={refreshing}
@@ -584,5 +585,5 @@ export function StakerEventCard({
                 )
             )}
         </Card>
-    );
+    )
 }

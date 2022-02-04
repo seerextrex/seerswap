@@ -18,7 +18,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface StakerInterface extends ethers.utils.Interface {
   functions: {
@@ -28,14 +28,14 @@ interface StakerInterface extends ethers.utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
     "claimReward(address,address,uint256)": FunctionFragment;
-    "createIncentive((address,address,address,uint256,uint256,address),uint256,uint256)": FunctionFragment;
+    "createIncentive(tuple,uint256,uint256)": FunctionFragment;
     "deployer()": FunctionFragment;
     "deposits(uint256)": FunctionFragment;
-    "enterFarming((address,address,address,uint256,uint256,address),uint256)": FunctionFragment;
-    "exitFarming((address,address,address,uint256,uint256,address),uint256)": FunctionFragment;
+    "enterFarming(tuple,uint256)": FunctionFragment;
+    "exitFarming(tuple,uint256)": FunctionFragment;
     "farms(uint256,bytes32)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
-    "getRewardInfo((address,address,address,uint256,uint256,address),uint256)": FunctionFragment;
+    "getRewardInfo(tuple,uint256)": FunctionFragment;
     "incentives(bytes32)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxIncentiveDuration()": FunctionFragment;
@@ -366,92 +366,6 @@ interface StakerInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RewardClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
-
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber] & {
-    owner: string;
-    approved: string;
-    tokenId: BigNumber;
-  }
->;
-
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean] & {
-    owner: string;
-    operator: string;
-    approved: boolean;
-  }
->;
-
-export type DepositTransferredEvent = TypedEvent<
-  [BigNumber, string, string] & {
-    tokenId: BigNumber;
-    oldOwner: string;
-    newOwner: string;
-  }
->;
-
-export type FarmEndedEvent = TypedEvent<
-  [BigNumber, string, string, string, string, BigNumber, BigNumber] & {
-    tokenId: BigNumber;
-    incentiveId: string;
-    rewardAddress: string;
-    bonusRewardToken: string;
-    owner: string;
-    reward: BigNumber;
-    bonusReward: BigNumber;
-  }
->;
-
-export type FarmStartedEvent = TypedEvent<
-  [BigNumber, BigNumber, string, BigNumber] & {
-    tokenId: BigNumber;
-    L2tokenId: BigNumber;
-    incentiveId: string;
-    liquidity: BigNumber;
-  }
->;
-
-export type IncentiveCreatedEvent = TypedEvent<
-  [
-    string,
-    string,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    BigNumber,
-    BigNumber
-  ] & {
-    rewardToken: string;
-    bonusRewardToken: string;
-    pool: string;
-    virtualPool: string;
-    startTime: BigNumber;
-    endTime: BigNumber;
-    refundee: string;
-    reward: BigNumber;
-    bonusReward: BigNumber;
-  }
->;
-
-export type IncentiveMakerChangedEvent = TypedEvent<
-  [string, string] & { incentiveMaker: string; _incentiveMaker: string }
->;
-
-export type RewardClaimedEvent = TypedEvent<
-  [string, BigNumber, string, string] & {
-    to: string;
-    reward: BigNumber;
-    rewardAddress: string;
-    owner: string;
-  }
->;
-
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber] & { from: string; to: string; tokenId: BigNumber }
->;
 
 export class Staker extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -1176,15 +1090,6 @@ export class Staker extends BaseContract {
   };
 
   filters: {
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; approved: string; tokenId: BigNumber }
-    >;
-
     Approval(
       owner?: string | null,
       approved?: string | null,
@@ -1192,15 +1097,6 @@ export class Staker extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { owner: string; approved: string; tokenId: BigNumber }
-    >;
-
-    "ApprovalForAll(address,address,bool)"(
-      owner?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): TypedEventFilter<
-      [string, string, boolean],
-      { owner: string; operator: string; approved: boolean }
     >;
 
     ApprovalForAll(
@@ -1212,15 +1108,6 @@ export class Staker extends BaseContract {
       { owner: string; operator: string; approved: boolean }
     >;
 
-    "DepositTransferred(uint256,address,address)"(
-      tokenId?: BigNumberish | null,
-      oldOwner?: string | null,
-      newOwner?: string | null
-    ): TypedEventFilter<
-      [BigNumber, string, string],
-      { tokenId: BigNumber; oldOwner: string; newOwner: string }
-    >;
-
     DepositTransferred(
       tokenId?: BigNumberish | null,
       oldOwner?: string | null,
@@ -1228,27 +1115,6 @@ export class Staker extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, string, string],
       { tokenId: BigNumber; oldOwner: string; newOwner: string }
-    >;
-
-    "FarmEnded(uint256,bytes32,address,address,address,uint256,uint256)"(
-      tokenId?: BigNumberish | null,
-      incentiveId?: BytesLike | null,
-      rewardAddress?: string | null,
-      bonusRewardToken?: null,
-      owner?: null,
-      reward?: null,
-      bonusReward?: null
-    ): TypedEventFilter<
-      [BigNumber, string, string, string, string, BigNumber, BigNumber],
-      {
-        tokenId: BigNumber;
-        incentiveId: string;
-        rewardAddress: string;
-        bonusRewardToken: string;
-        owner: string;
-        reward: BigNumber;
-        bonusReward: BigNumber;
-      }
     >;
 
     FarmEnded(
@@ -1272,21 +1138,6 @@ export class Staker extends BaseContract {
       }
     >;
 
-    "FarmStarted(uint256,uint256,bytes32,uint128)"(
-      tokenId?: BigNumberish | null,
-      L2tokenId?: BigNumberish | null,
-      incentiveId?: BytesLike | null,
-      liquidity?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, string, BigNumber],
-      {
-        tokenId: BigNumber;
-        L2tokenId: BigNumber;
-        incentiveId: string;
-        liquidity: BigNumber;
-      }
-    >;
-
     FarmStarted(
       tokenId?: BigNumberish | null,
       L2tokenId?: BigNumberish | null,
@@ -1299,41 +1150,6 @@ export class Staker extends BaseContract {
         L2tokenId: BigNumber;
         incentiveId: string;
         liquidity: BigNumber;
-      }
-    >;
-
-    "IncentiveCreated(address,address,address,address,uint256,uint256,address,uint256,uint256)"(
-      rewardToken?: string | null,
-      bonusRewardToken?: string | null,
-      pool?: string | null,
-      virtualPool?: null,
-      startTime?: null,
-      endTime?: null,
-      refundee?: null,
-      reward?: null,
-      bonusReward?: null
-    ): TypedEventFilter<
-      [
-        string,
-        string,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        virtualPool: string;
-        startTime: BigNumber;
-        endTime: BigNumber;
-        refundee: string;
-        reward: BigNumber;
-        bonusReward: BigNumber;
       }
     >;
 
@@ -1372,30 +1188,12 @@ export class Staker extends BaseContract {
       }
     >;
 
-    "IncentiveMakerChanged(address,address)"(
-      incentiveMaker?: string | null,
-      _incentiveMaker?: string | null
-    ): TypedEventFilter<
-      [string, string],
-      { incentiveMaker: string; _incentiveMaker: string }
-    >;
-
     IncentiveMakerChanged(
       incentiveMaker?: string | null,
       _incentiveMaker?: string | null
     ): TypedEventFilter<
       [string, string],
       { incentiveMaker: string; _incentiveMaker: string }
-    >;
-
-    "RewardClaimed(address,uint256,address,address)"(
-      to?: string | null,
-      reward?: null,
-      rewardAddress?: string | null,
-      owner?: string | null
-    ): TypedEventFilter<
-      [string, BigNumber, string, string],
-      { to: string; reward: BigNumber; rewardAddress: string; owner: string }
     >;
 
     RewardClaimed(
@@ -1406,15 +1204,6 @@ export class Staker extends BaseContract {
     ): TypedEventFilter<
       [string, BigNumber, string, string],
       { to: string; reward: BigNumber; rewardAddress: string; owner: string }
-    >;
-
-    "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; tokenId: BigNumber }
     >;
 
     Transfer(

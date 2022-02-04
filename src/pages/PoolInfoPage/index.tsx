@@ -22,7 +22,13 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn }
     } = useInfoSubgraph()
 
-    const { fetchTicksSurroundingPrice: { ticksResult, ticksLoading, fetchTicksSurroundingPriceFn } } = useInfoTickData()
+    const {
+        fetchTicksSurroundingPrice: {
+            ticksResult,
+            ticksLoading,
+            fetchTicksSurroundingPriceFn
+        }
+    } = useInfoTickData()
 
     const [span, setSpan] = useState(ChartSpan.DAY)
     const [type, setType] = useState(ChartType.VOLUME)

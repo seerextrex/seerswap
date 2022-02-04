@@ -73,23 +73,23 @@ export const Wrapper = styled(AutoColumn)<{ showBackground: boolean; bgColor: an
     0px 24px 32px rgba(0, 0, 0, 0.01);`}
 `
 export const TopSection = styled.div`
-  display: grid;
-  grid-template-columns: 48px 1fr 120px;
-  grid-gap: 0px;
-  align-items: center;
-  padding: 1rem;
-  z-index: 1;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: grid;
+    grid-template-columns: 48px 1fr 120px;
+    grid-gap: 0px;
+    align-items: center;
+    padding: 1rem;
+    z-index: 1;
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-template-columns: 48px 1fr 96px;
   `};
 `
 export const BottomSection = styled.div<{ showBackground: boolean }>`
-  padding: 12px 16px;
-  opacity: ${({ showBackground }) => (showBackground ? '1' : '0.4')};
-  border-radius: 0 0 12px 12px;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: space-between;
-  z-index: 1;
+    padding: 12px 16px;
+    opacity: ${({ showBackground }) => (showBackground ? '1' : '0.4')};
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    z-index: 1;
 `

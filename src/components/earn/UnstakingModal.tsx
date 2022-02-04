@@ -1,21 +1,21 @@
-import { TransactionResponse } from "@ethersproject/providers";
-import { Trans } from "@lingui/macro";
-import { ReactNode, useState } from "react";
-import { useStakingContract } from "../../hooks/useContract";
-import { GAS_PRICE_MULTIPLIER } from "../../hooks/useGasPrice";
-import { useActiveWeb3React } from "../../hooks/web3";
-import { useAppSelector } from "../../state/hooks";
-import { StakingInfo } from "../../state/stake/hooks";
-import { TransactionType } from "../../state/transactions/actions";
-import { useTransactionAdder } from "../../state/transactions/hooks";
-import { CloseIcon, TYPE } from "../../theme";
-import { ButtonError } from "../Button";
-import { AutoColumn } from "../Column";
-import FormattedCurrencyAmount from "../FormattedCurrencyAmount";
-import Modal from "../Modal";
-import { LoadingView, SubmittedView } from "../ModalViews";
-import { RowBetween } from "../Row";
-import { ContentWrapper } from "./styled";
+import { TransactionResponse } from '@ethersproject/providers'
+import { Trans } from '@lingui/macro'
+import { ReactNode, useState } from 'react'
+import { useStakingContract } from '../../hooks/useContract'
+import { GAS_PRICE_MULTIPLIER } from '../../hooks/useGasPrice'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { useAppSelector } from '../../state/hooks'
+import { StakingInfo } from '../../state/stake/hooks'
+import { TransactionType } from '../../state/transactions/actions'
+import { useTransactionAdder } from '../../state/transactions/hooks'
+import { CloseIcon, TYPE } from '../../theme'
+import { ButtonError } from '../Button'
+import { AutoColumn } from '../Column'
+import FormattedCurrencyAmount from '../FormattedCurrencyAmount'
+import Modal from '../Modal'
+import { LoadingView, SubmittedView } from '../ModalViews'
+import { RowBetween } from '../Row'
+import { ContentWrapper } from './styled'
 
 interface StakingModalProps {
     isOpen: boolean;
@@ -24,56 +24,57 @@ interface StakingModalProps {
 }
 
 export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: StakingModalProps) {
-    const { account } = useActiveWeb3React();
+    const { account } = useActiveWeb3React()
 
     // monitor call to help UI loading state
-    const addTransaction = useTransactionAdder();
-    const [hash, setHash] = useState<string | undefined>();
-    const [attempting, setAttempting] = useState(false);
+    const addTransaction = useTransactionAdder()
+    const [hash, setHash] = useState<string | undefined>()
+    const [attempting, setAttempting] = useState(false)
 
     const gasPrice = useAppSelector((state) =>
         state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
-    );
+    )
 
     function wrappedOndismiss() {
-        setHash(undefined);
-        setAttempting(false);
-        onDismiss();
+        setHash(undefined)
+        setAttempting(false)
+        onDismiss()
     }
 
-    const stakingContract = useStakingContract(stakingInfo.stakingRewardAddress);
+    const stakingContract = useStakingContract(stakingInfo.stakingRewardAddress)
 
     async function onWithdraw() {
         if (stakingContract && stakingInfo?.stakedAmount) {
-            setAttempting(true);
+            setAttempting(true)
             await stakingContract
                 .exit({ gasLimit: 300000, gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
                 .then((response: TransactionResponse) => {
                     addTransaction(response, {
                         type: TransactionType.WITHDRAW_LIQUIDITY_STAKING,
                         token0Address: stakingInfo.tokens[0].address,
-                        token1Address: stakingInfo.tokens[1].address,
-                    });
-                    setHash(response.hash);
+                        token1Address: stakingInfo.tokens[1].address
+                    })
+                    setHash(response.hash)
                 })
                 .catch((error: any) => {
-                    setAttempting(false);
-                    throw new Error("Withdrawing" + error);
-                });
+                    setAttempting(false)
+                    throw new Error('Withdrawing' + error)
+                })
         }
     }
-    let error: ReactNode | undefined;
+
+    let error: ReactNode | undefined
     if (!account) {
-        error = <Trans>Connect a wallet</Trans>;
+        error = <Trans>Connect a wallet</Trans>
     }
     if (!stakingInfo?.stakedAmount) {
-        error = error ?? <Trans>Enter an amount</Trans>;
+        error = error ?? <Trans>Enter an amount</Trans>
     }
 
     return (
         <Modal isOpen={isOpen} onDismiss={wrappedOndismiss} maxHeight={90}>
             {!attempting && !hash && (
-                <ContentWrapper gap="lg">
+                <ContentWrapper gap='lg'>
                     <RowBetween>
                         <TYPE.mediumHeader>
                             <Trans>Withdraw</Trans>
@@ -81,7 +82,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                         <CloseIcon onClick={wrappedOndismiss} />
                     </RowBetween>
                     {stakingInfo?.stakedAmount && (
-                        <AutoColumn justify="center" gap="md">
+                        <AutoColumn justify='center' gap='md'>
                             <TYPE.body fontWeight={600} fontSize={36}>
                                 {
                                     <FormattedCurrencyAmount
@@ -95,7 +96,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                         </AutoColumn>
                     )}
                     {stakingInfo?.earnedAmount && (
-                        <AutoColumn justify="center" gap="md">
+                        <AutoColumn justify='center' gap='md'>
                             <TYPE.body fontWeight={600} fontSize={36}>
                                 {
                                     <FormattedCurrencyAmount
@@ -108,7 +109,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                             </TYPE.body>
                         </AutoColumn>
                     )}
-                    <TYPE.subHeader style={{ textAlign: "center" }}>
+                    <TYPE.subHeader style={{ textAlign: 'center' }}>
                         <Trans>
                             When you withdraw, your UNI is claimed and your liquidity is removed
                             from the mining pool.
@@ -125,7 +126,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
             )}
             {attempting && !hash && (
                 <LoadingView onDismiss={wrappedOndismiss}>
-                    <AutoColumn gap="12px" justify={"center"}>
+                    <AutoColumn gap='12px' justify={'center'}>
                         <TYPE.body fontSize={20}>
                             <Trans>
                                 Withdrawing {stakingInfo?.stakedAmount?.toSignificant(4)} UNI-V2
@@ -141,7 +142,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
             )}
             {hash && (
                 <SubmittedView onDismiss={wrappedOndismiss} hash={hash}>
-                    <AutoColumn gap="12px" justify={"center"}>
+                    <AutoColumn gap='12px' justify={'center'}>
                         <TYPE.largeHeader>
                             <Trans>Transaction Submitted</Trans>
                         </TYPE.largeHeader>
@@ -155,5 +156,5 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                 </SubmittedView>
             )}
         </Modal>
-    );
+    )
 }

@@ -20,19 +20,19 @@ export const LoaderWrapper = styled.div`
   `}
 `
 export const BackButton = styled(NavLink)`
-  margin-top: 10px;
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  position: relative;
-  z-index: 100;
+    margin-top: 10px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    position: relative;
+    z-index: 100;
 
-  p {
-    margin: 0 0 0 5px;
-  }
+    p {
+        margin: 0 0 0 5px;
+    }
 `
 export const ChartTitleWrapper = styled.div`
   display: flex;

@@ -92,10 +92,10 @@ export const StackedContainer = styled.div`
   display: grid;
 `
 export const StackedItem = styled.div<{ zIndex?: number }>`
-  grid-column: 1;
-  grid-row: 1;
-  height: 100%;
-  z-index: ${({ zIndex }) => zIndex};
+    grid-column: 1;
+    grid-row: 1;
+    height: 100%;
+    z-index: ${({ zIndex }) => zIndex};
 `
 export const MediumOnly = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`

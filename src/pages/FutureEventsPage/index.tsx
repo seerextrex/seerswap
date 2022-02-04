@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
-import { Frown } from "react-feather";
-import { StakerEventCard } from "../../components/StakerEventCard";
-import { useChunkedRows } from "../../utils/chunkForRows";
-import Modal from "../../components/Modal";
-import { StakeModal } from "../../components/StakeModal";
-import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from "./styled";
+import { useEffect, useState } from 'react'
+import { Frown } from 'react-feather'
+import { StakerEventCard } from '../../components/StakerEventCard'
+import { useChunkedRows } from '../../utils/chunkForRows'
+import Modal from '../../components/Modal'
+import { StakeModal } from '../../components/StakeModal'
+import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
 
 function isFuture(startTime: number, now: number) {
-    return startTime * 1000 > now;
+    return startTime * 1000 > now
 }
 
 export function FutureEventsPage({
     data,
     now,
     refreshing,
-    fetchHandler,
+    fetchHandler
 }: {
     data: any;
     now: number;
@@ -22,12 +22,12 @@ export function FutureEventsPage({
     fetchHandler: () => any;
 }) {
     useEffect(() => {
-        fetchHandler();
-    }, []);
+        fetchHandler()
+    }, [])
 
-    const chunked = useChunkedRows(data, 3);
+    const chunked = useChunkedRows(data, 3)
 
-    const [modalForPool, setModalForPool] = useState(false);
+    const [modalForPool, setModalForPool] = useState(false)
 
     return (
         <>
@@ -56,8 +56,8 @@ export function FutureEventsPage({
                             </EventsCardsRow>
                         </EventsCards>
                     ) : data &&
-                      data.length !== 0 &&
-                      !data.every((el) => el.startTime < Math.round(Date.now() / 1000)) ? (
+                    data.length !== 0 &&
+                    !data.every((el) => el.startTime < Math.round(Date.now() / 1000)) ? (
                         chunked.map((el, i) => (
                             <EventsCardsRow key={i}>
                                 {el.map(
@@ -75,15 +75,15 @@ export function FutureEventsPage({
                             </EventsCardsRow>
                         ))
                     ) : data &&
-                      (data.length === 0 ||
-                          data.every((el) => el.startTime < Math.round(Date.now() / 1000))) ? (
+                    (data.length === 0 ||
+                        data.every((el) => el.startTime < Math.round(Date.now() / 1000))) ? (
                         <EmptyMock>
                             <div>No future events</div>
-                            <Frown size={35} stroke={"white"} />
+                            <Frown size={35} stroke={'white'} />
                         </EmptyMock>
                     ) : null}
                 </EventsCards>
             </PageWrapper>
         </>
-    );
+    )
 }

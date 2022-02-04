@@ -147,7 +147,7 @@ export const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   border-radius: 12px;
   padding: 6px 8px;
   width: fit-content;
- 
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex: 1 1 auto;
     width: 100%;
@@ -254,9 +254,9 @@ export const NFTCanvas = styled.canvas`
   grid-area: overlap;
 `
 export const NFTImage = styled.img`
-  grid-area: overlap;
-  height: 400px;
-  z-index: 1;
+    grid-area: overlap;
+    height: 400px;
+    z-index: 1;
 `
 export const RowFixedStyled = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`

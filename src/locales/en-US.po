@@ -207,11 +207,12 @@ msgstr "Amount"
 msgid "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Algebra."
 msgstr "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Algebra."
 
-#: src/components/earn/StakingModal.tsx
-msgid "Approve"
-msgstr "Approve"
+#: 
+#~ msgid "Approve"
+#~ msgstr "Approve"
 
 #: src/components/StakingModal/index.tsx
+#: src/components/earn/StakingModal.tsx
 msgid "Approve NFT"
 msgstr "Approve NFT"
 
@@ -245,9 +246,9 @@ msgstr "Are you sure?"
 msgid "Auto"
 msgstr "Auto"
 
-#: src/components/earn/StakingModal.tsx
-msgid "Available to deposit: {0}"
-msgstr "Available to deposit: {0}"
+#: 
+#~ msgid "Available to deposit: {0}"
+#~ msgstr "Available to deposit: {0}"
 
 #: src/components/WalletModal/index.tsx
 msgid "Back"
@@ -406,9 +407,9 @@ msgstr "Connect a wallet"
 msgid "Connect to a wallet"
 msgstr "Connect to a wallet"
 
-#: src/pages/PoolFinder/index.tsx
-msgid "Connect to a wallet to find pools"
-msgstr "Connect to a wallet to find pools"
+#: 
+#~ msgid "Connect to a wallet to find pools"
+#~ msgstr "Connect to a wallet to find pools"
 
 #: 
 #~ msgid "Connect to a wallet to view your V2 liquidity."
@@ -478,6 +479,7 @@ msgid "Current pool fee."
 msgstr "Current pool fee."
 
 #: src/components/PositionPreview/index.tsx
+#: src/pages/Pool/CurrentPriceCard.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Current price"
 msgstr "Current price"
@@ -499,8 +501,6 @@ msgstr "Current {0} Price:"
 #~ msgstr "Delegating votes"
 
 #: src/components/earn/PoolCard.tsx
-#: src/components/earn/StakingModal.tsx
-#: src/components/earn/StakingModal.tsx
 msgid "Deposit"
 msgstr "Deposit"
 
@@ -509,6 +509,7 @@ msgid "Deposit Amounts"
 msgstr "Deposit Amounts"
 
 #: src/components/StakingModal/index.tsx
+#: src/components/earn/StakingModal.tsx
 msgid "Deposit NFT"
 msgstr "Deposit NFT"
 
@@ -522,13 +523,13 @@ msgstr "Deposit to {0}"
 msgid "Deposited liquidity:"
 msgstr "Deposited liquidity:"
 
-#: src/components/earn/StakingModal.tsx
-msgid "Deposited {0} UNI-V2"
-msgstr "Deposited {0} UNI-V2"
+#: 
+#~ msgid "Deposited {0} UNI-V2"
+#~ msgstr "Deposited {0} UNI-V2"
 
-#: src/components/earn/StakingModal.tsx
-msgid "Depositing Liquidity"
-msgstr "Depositing Liquidity"
+#: 
+#~ msgid "Depositing Liquidity"
+#~ msgstr "Depositing Liquidity"
 
 #: 
 #~ msgid "Detailed"
@@ -547,6 +548,7 @@ msgid "Dismiss"
 msgstr "Dismiss"
 
 #: src/components/StakingModal/index.tsx
+#: src/components/earn/StakingModal.tsx
 msgid "Done!"
 msgstr "Done!"
 
@@ -604,8 +606,8 @@ msgstr "Enter valid token address"
 msgid "Error"
 msgstr "Error"
 
-#: src/components/WalletModal/index.tsx
 #: src/components/WalletModal/PendingView.tsx
+#: src/components/WalletModal/index.tsx
 msgid "Error connecting"
 msgstr "Error connecting"
 
@@ -818,9 +820,9 @@ msgstr "Lists"
 msgid "Loaded"
 msgstr "Loaded"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/Sushi.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 #: src/pages/PoolFinder/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Loading"
@@ -830,10 +832,10 @@ msgstr "Loading"
 msgid "MAX"
 msgstr "MAX"
 
-#: src/components/earn/PoolCard.tsx
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/index.tsx
 #: src/components/SearchModal/Manage.tsx
+#: src/components/earn/PoolCard.tsx
 msgid "Manage"
 msgstr "Manage"
 
@@ -862,9 +864,9 @@ msgstr "Max:"
 msgid "Maximum sent"
 msgstr "Maximum sent"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/Sushi.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Migrate"
 msgstr "Migrate"
 
@@ -1054,15 +1056,15 @@ msgstr "Pool Found!"
 msgid "Pool rate"
 msgstr "Pool rate"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Pool tokens in rewards pool:"
 msgstr "Pool tokens in rewards pool:"
 
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
@@ -1223,6 +1225,7 @@ msgstr "Selected Range"
 #~ msgstr "Self Delegate"
 
 #: src/components/StakingModal/index.tsx
+#: src/components/earn/StakingModal.tsx
 msgid "Send NFT"
 msgstr "Send NFT"
 
@@ -1243,8 +1246,8 @@ msgstr "Set Starting Price"
 #~ msgid "Simple"
 #~ msgstr "Simple"
 
-#: src/components/swap/AdvancedSwapDetails.tsx
 #: src/components/TransactionSettings/index.tsx
+#: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
@@ -1425,6 +1428,7 @@ msgid "To (at least)"
 msgstr "To (at least)"
 
 #: src/components/StakingModal/index.tsx
+#: src/components/earn/StakingModal.tsx
 msgid "To stake your NFT you should approve Algebra to use it"
 msgstr "To stake your NFT you should approve Algebra to use it"
 
@@ -1452,10 +1456,9 @@ msgstr "Total deposited"
 msgid "Transaction Settings"
 msgstr "Transaction Settings"
 
-#: src/components/earn/ClaimRewardModal.tsx
-#: src/components/earn/StakingModal.tsx
-#: src/components/earn/UnstakingModal.tsx
 #: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/earn/ClaimRewardModal.tsx
+#: src/components/earn/UnstakingModal.tsx
 msgid "Transaction Submitted"
 msgstr "Transaction Submitted"
 
@@ -1516,10 +1519,10 @@ msgstr "Unknown error{0}. Try increasing your slippage tolerance. Note: rebase t
 #~ msgid "Unlocking Votes"
 #~ msgstr "Unlocking Votes"
 
-#: src/pages/AddLiquidity/index.tsx
-#: src/pages/Swap/index.tsx
-msgid "Unsupported Asset"
-msgstr "Unsupported Asset"
+#: 
+#: 
+#~ msgid "Unsupported Asset"
+#~ msgstr "Unsupported Asset"
 
 #: src/components/swap/UnsupportedCurrencyFooter.tsx
 msgid "Unsupported Assets"
@@ -1586,9 +1589,9 @@ msgstr "Waiting For Confirmation"
 msgid "Wallet Address or ENS name"
 msgstr "Wallet Address or ENS name"
 
-#: src/components/earn/StakingModal.tsx
-msgid "Weekly Rewards"
-msgstr "Weekly Rewards"
+#: 
+#~ msgid "Weekly Rewards"
+#~ msgstr "Weekly Rewards"
 
 #: src/components/earn/ClaimRewardModal.tsx
 msgid "When you claim without withdrawing your liquidity remains in the mining pool."
@@ -1681,9 +1684,9 @@ msgstr "Your Reward"
 #~ msgid "Your V3 liquidity positions will appear here."
 #~ msgstr "Your V3 liquidity positions will appear here."
 
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Your pool share:"
 msgstr "Your pool share:"
 
@@ -1722,8 +1725,8 @@ msgstr "Your positions"
 msgid "Your rate"
 msgstr "Your rate"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Your total pool tokens:"
 msgstr "Your total pool tokens:"
 
@@ -1827,13 +1830,12 @@ msgstr "{0} Pending"
 
 #: src/components/earn/PoolCard.tsx
 #: src/components/earn/PoolCard.tsx
-#: src/components/earn/StakingModal.tsx
 msgid "{0} UNI / week"
 msgstr "{0} UNI / week"
 
-#: src/components/earn/StakingModal.tsx
-msgid "{0} UNI-V2"
-msgstr "{0} UNI-V2"
+#: 
+#~ msgid "{0} UNI-V2"
+#~ msgstr "{0} UNI-V2"
 
 #: 
 #~ msgid "{0} Votes"
@@ -1842,6 +1844,7 @@ msgstr "{0} UNI-V2"
 #: src/components/PositionPreview/index.tsx
 #: src/components/PositionPreview/index.tsx
 #: src/components/PositionPreview/index.tsx
+#: src/pages/Pool/CurrentPriceCard.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx

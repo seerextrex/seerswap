@@ -44,18 +44,18 @@ import {
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-        accum[poolData.id] = poolData
-        return accum
-    }, {})
+            accum[poolData.id] = poolData
+            return accum
+        }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-        accum[tokenData.id] = tokenData
-        return accum
-    }, {})
+            accum[tokenData.id] = tokenData
+            return accum
+        }, {})
         : {}
 }
 
@@ -88,14 +88,8 @@ export function useInfoSubgraph() {
     const [stakesResult, setStakes] = useState<null | string | SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>(null)
     const [stakesLoading, setStakesLoading] = useState<null | boolean>(null)
 
-    const [totalStats, setTotalStats] = useState(null)
-    const [totalStatsLoading, setTotalStatsLoading] = useState(null)
-
-    const [stakesResult, setStakes] = useState(null);
-    const [stakesLoading, setStakesLoading] = useState(null);
-
-    const [stakeHistoriesResult, setHistories] = useState(null);
-    const [historiesLoading, setHistoriesLoading] = useState(null);
+    const [stakeHistoriesResult, setHistories] = useState(null)
+    const [historiesLoading, setHistoriesLoading] = useState(null)
 
     async function fetchPoolsAPR() {
 
@@ -665,7 +659,11 @@ export function useInfoSubgraph() {
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         getStakes: { stakesResult, stakesLoading, fetchStakingFn: fetchStaking },
-        fetchStakedHistory: { historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory },
+        fetchStakedHistory: {
+            historiesLoading,
+            stakeHistoriesResult,
+            fetchStakingHistoryFn: fetchStakingHistory
+        },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: {
             chartPoolData,

@@ -6,14 +6,14 @@ export const StandardPageWrapper = styled.div`
 `
 
 export const IframeBodyWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 3rem;
-  padding: 1rem;
-  align-items: center;
-  flex: 1;
-  z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 3rem;
+    padding: 1rem;
+    align-items: center;
+    flex: 1;
+    z-index: 1;
 `
 const size = {
     mobileS: '320px',
@@ -45,24 +45,24 @@ export const AppWrapper = styled.div`
   height: 100%;
 `
 export const AppBodyWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 0 16px 0 16px;
-  align-items: center;
-  flex: 1;
-  z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 16px 0 16px;
+    align-items: center;
+    flex: 1;
+    z-index: 1;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0 16px 16px 16px;
   `};
 `
 export const HeaderWrapper = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  width: 100%;
-  justify-content: space-between;
-  top: 0;
-  z-index: 2;
+    ${({ theme }) => theme.flexRowNoWrap};
+    width: 100%;
+    justify-content: space-between;
+    top: 0;
+    z-index: 2;
 `
 export const Marginer = styled.div`
 `
@@ -96,20 +96,21 @@ export const NetworkFailedCard = styled.div`
   `}
 `
 export const InternetError = styled.div`
-  width: 100%;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  h2 {
-    color: white;
-    font-size: 40px;
-    text-align: center;
-  }
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+        color: white;
+        font-size: 40px;
+        text-align: center;
+    }
 `
 export const GlobalStyle = createGlobalStyle`
   button {

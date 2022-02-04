@@ -1,94 +1,90 @@
-import { useCallback, useMemo, useState } from "react";
-import { useV3PositionFromTokenId } from "hooks/useV3Positions";
-import { Redirect, RouteComponentProps } from "react-router-dom";
-import { WMATIC_EXTENDED } from "../../constants/tokens";
-import { calculateGasMargin } from "../../utils/calculateGasMargin";
-import AppBody from "../AppBody";
-import { BigNumber } from "@ethersproject/bignumber";
-import useDebouncedChangeHandler from "hooks/useDebouncedChangeHandler";
-import { useBurnV3ActionHandlers, useBurnV3State, useDerivedV3BurnInfo } from "state/burn/v3/hooks";
-import Slider from "components/Slider";
-import { AutoRow, RowBetween, RowFixed } from "components/Row";
+import { useCallback, useMemo, useState } from 'react'
+import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
+import { Redirect, RouteComponentProps } from 'react-router-dom'
+import { WMATIC_EXTENDED } from '../../constants/tokens'
+import { calculateGasMargin } from '../../utils/calculateGasMargin'
+import AppBody from '../AppBody'
+import { BigNumber } from '@ethersproject/bignumber'
+import useDebouncedChangeHandler from 'hooks/useDebouncedChangeHandler'
+import { useBurnV3ActionHandlers, useBurnV3State, useDerivedV3BurnInfo } from 'state/burn/v3/hooks'
+import Slider from 'components/Slider'
+import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import TransactionConfirmationModal, {
-    ConfirmationModalContent,
-} from "../../components/TransactionConfirmationModal";
-import { AutoColumn } from "components/Column";
-import { ButtonConfirmed, ButtonPrimary } from "components/Button";
-import { LightCard } from "components/Card";
-import { Text } from "rebass";
-import CurrencyLogo from "components/CurrencyLogo";
-import FormattedCurrencyAmount from "components/FormattedCurrencyAmount";
-import { useV3NFTPositionManagerContract } from "hooks/useContract";
-import { useUserSlippageToleranceWithDefault } from "state/user/hooks";
-import useTransactionDeadline from "hooks/useTransactionDeadline";
-import { useActiveWeb3React } from "hooks/web3";
-import { TransactionResponse } from "@ethersproject/providers";
-import { useTransactionAdder } from "state/transactions/hooks";
-import { Percent } from "@uniswap/sdk-core";
-import { TYPE } from "theme";
-import { ResponsiveHeaderText, SmallMaxButton, Wrapper } from "./styled";
-import Loader from "components/Loader";
-import DoubleCurrencyLogo from "components/DoubleLogo";
-import { NonfungiblePositionManager } from "lib/src";
-import useTheme from "hooks/useTheme";
-import { AddRemoveTabs } from "components/NavigationTabs";
-import RangeBadge from "components/Badge/RangeBadge";
-import Toggle from "components/Toggle";
-import { t, Trans } from "@lingui/macro";
-import { SupportedChainId } from "constants/chains";
-import usePrevious from "../../hooks/usePrevious";
+    ConfirmationModalContent
+} from '../../components/TransactionConfirmationModal'
+import { AutoColumn } from 'components/Column'
+import { ButtonConfirmed, ButtonPrimary } from 'components/Button'
+import { LightCard } from 'components/Card'
+import { Text } from 'rebass'
+import CurrencyLogo from 'components/CurrencyLogo'
+import FormattedCurrencyAmount from 'components/FormattedCurrencyAmount'
+import { useV3NFTPositionManagerContract } from 'hooks/useContract'
+import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
+import useTransactionDeadline from 'hooks/useTransactionDeadline'
+import { TransactionResponse } from '@ethersproject/providers'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { Percent } from '@uniswap/sdk-core'
+import { TYPE } from 'theme'
+import { ResponsiveHeaderText, SmallMaxButton, Wrapper } from './styled'
+import Loader from 'components/Loader'
+import DoubleCurrencyLogo from 'components/DoubleLogo'
+import { NonfungiblePositionManager } from 'lib/src'
+import { AddRemoveTabs } from 'components/NavigationTabs'
+import RangeBadge from 'components/Badge/RangeBadge'
+import Toggle from 'components/Toggle'
+import { t, Trans } from '@lingui/macro'
+import { SupportedChainId } from 'constants/chains'
+import usePrevious from '../../hooks/usePrevious'
 
-import ReactGA from "react-ga";
-import { useAppSelector } from "../../state/hooks";
+import ReactGA from 'react-ga'
+import { useAppSelector } from '../../state/hooks'
 
-const DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100);
+const DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
 // redirect invalid tokenIds
 export default function RemoveLiquidityV3({
     location,
     match: {
-        params: { tokenId },
-    },
+        params: { tokenId }
+    }
 }: RouteComponentProps<{ tokenId: string }>) {
     const parsedTokenId = useMemo(() => {
         try {
-            return BigNumber.from(tokenId);
+            return BigNumber.from(tokenId)
         } catch {
-            return null;
+            return null
         }
-    }, [tokenId]);
+    }, [tokenId])
 
     if (parsedTokenId === null || parsedTokenId.eq(0)) {
-        return <Redirect to={{ ...location, pathname: "/pool" }} />;
+        return <Redirect to={{ ...location, pathname: '/pool' }} />
     }
 
-    return <Remove tokenId={parsedTokenId} />;
+    return <Remove tokenId={parsedTokenId} />
 }
 
 function Remove({ tokenId }: { tokenId: BigNumber }) {
-    const { position } = useV3PositionFromTokenId(tokenId);
-    const prevPosition = usePrevious({ ...position });
+    const { position } = useV3PositionFromTokenId(tokenId)
+    const prevPosition = usePrevious({ ...position })
     const _position = useMemo(() => {
         if (!position && prevPosition) {
-            return { ...prevPosition };
+            return { ...prevPosition }
         }
-        return { ...position };
-    }, [position]);
+        return { ...position }
+    }, [position])
 
     const gasPrice = useAppSelector((state) =>
         state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
-    );
-
-    const gasPrice = useAppSelector((state) => state.application.gasPrice);
+    )
 
     // flag for receiving WETH
-    const [receiveWETH, setReceiveWETH] = useState(false);
+    const [receiveWETH, setReceiveWETH] = useState(false)
 
     // burn state
-    const { percent } = useBurnV3State();
+    const { percent } = useBurnV3State()
 
-    const derivedInfo = useDerivedV3BurnInfo(position, receiveWETH);
-    const prevDerivedInfo = usePrevious({ ...derivedInfo });
+    const derivedInfo = useDerivedV3BurnInfo(position, receiveWETH)
+    const prevDerivedInfo = usePrevious({ ...derivedInfo })
     const {
         positionSDK,
         liquidityPercentage,
@@ -97,7 +93,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         feeValue0,
         feeValue1,
         outOfRange,
-        error,
+        error
     } = useMemo(() => {
         if (
             (!derivedInfo.feeValue0 || !derivedInfo.liquidityValue0 || !derivedInfo.position) &&
@@ -107,40 +103,40 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
             return {
                 positionSDK: prevDerivedInfo.position,
                 error: prevDerivedInfo.error,
-                ...prevDerivedInfo,
-            };
+                ...prevDerivedInfo
+            }
         }
 
         return {
             positionSDK: derivedInfo.position,
             error: derivedInfo.error,
-            ...derivedInfo,
-        };
-    }, [derivedInfo]);
+            ...derivedInfo
+        }
+    }, [derivedInfo])
 
-    const { onPercentSelect } = useBurnV3ActionHandlers();
+    const { onPercentSelect } = useBurnV3ActionHandlers()
 
-    const removed = position?.liquidity?.eq(0);
+    const removed = position?.liquidity?.eq(0)
 
     // boilerplate for the slider
     const [percentForSlider, onPercentSelectForSlider] = useDebouncedChangeHandler(
         percent,
         onPercentSelect
-    );
+    )
 
-    const deadline = useTransactionDeadline(); // custom from users settings
+    const deadline = useTransactionDeadline() // custom from users settings
     const allowedSlippage = useUserSlippageToleranceWithDefault(
         DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE
-    ); // custom from users
+    ) // custom from users
 
-    const [showConfirm, setShowConfirm] = useState(false);
-    const [attemptingTxn, setAttemptingTxn] = useState(false);
-    const [txnHash, setTxnHash] = useState<string | undefined>();
-    const addTransaction = useTransactionAdder();
-    const positionManager = useV3NFTPositionManagerContract();
+    const [showConfirm, setShowConfirm] = useState(false)
+    const [attemptingTxn, setAttemptingTxn] = useState(false)
+    const [txnHash, setTxnHash] = useState<string | undefined>()
+    const addTransaction = useTransactionAdder()
+    const positionManager = useV3NFTPositionManagerContract()
 
     const burn = useCallback(async () => {
-        setAttemptingTxn(true);
+        setAttemptingTxn(true)
         if (
             !positionManager ||
             !liquidityValue0 ||
@@ -154,7 +150,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
             !liquidityPercentage ||
             !library
         ) {
-            return;
+            return
         }
 
         const { calldata, value } = NonfungiblePositionManager.removeCallParameters(positionSDK, {
@@ -165,15 +161,15 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
             collectOptions: {
                 expectedCurrencyOwed0: feeValue0,
                 expectedCurrencyOwed1: feeValue1,
-                recipient: account,
-            },
-        });
+                recipient: account
+            }
+        })
 
         const txn = {
             to: positionManager.address,
             data: calldata,
-            value,
-        };
+            value
+        }
 
         library
             .getSigner()
@@ -182,32 +178,32 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 const newTxn = {
                     ...txn,
                     gasLimit: calculateGasMargin(chainId, estimate),
-                    gasPrice: gasPrice * 1000000000,
-                };
+                    gasPrice: gasPrice * 1000000000
+                }
 
                 return library
                     .getSigner()
                     .sendTransaction(newTxn)
                     .then((response: TransactionResponse) => {
                         ReactGA.event({
-                            category: "Liquidity",
-                            action: "RemoveV3",
+                            category: 'Liquidity',
+                            action: 'RemoveV3',
                             label: [
                                 liquidityValue0.currency.symbol,
-                                liquidityValue1.currency.symbol,
-                            ].join("/"),
-                        });
-                        setTxnHash(response.hash);
-                        setAttemptingTxn(false);
+                                liquidityValue1.currency.symbol
+                            ].join('/')
+                        })
+                        setTxnHash(response.hash)
+                        setAttemptingTxn(false)
                         addTransaction(response, {
-                            summary: t`Remove ${liquidityValue0.currency.symbol}/${liquidityValue1.currency.symbol} liquidity`,
-                        });
-                    });
+                            summary: t`Remove ${liquidityValue0.currency.symbol}/${liquidityValue1.currency.symbol} liquidity`
+                        })
+                    })
             })
             .catch((error) => {
-                setAttemptingTxn(false);
-                console.error(error);
-            });
+                setAttemptingTxn(false)
+                console.error(error)
+            })
     }, [
         tokenId,
         liquidityValue0,
@@ -222,56 +218,56 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         feeValue1,
         library,
         liquidityPercentage,
-        positionSDK,
-    ]);
+        positionSDK
+    ])
 
     const handleDismissConfirmation = useCallback(() => {
-        setShowConfirm(false);
+        setShowConfirm(false)
         // if there was a tx hash, we want to clear the input
         if (txnHash) {
-            onPercentSelectForSlider(0);
+            onPercentSelectForSlider(0)
         }
-        setAttemptingTxn(false);
-        setTxnHash("");
-    }, [onPercentSelectForSlider, txnHash]);
+        setAttemptingTxn(false)
+        setTxnHash('')
+    }, [onPercentSelectForSlider, txnHash])
 
     const pendingText = `Removing ${liquidityValue0?.toSignificant(6)} ${
         liquidityValue0?.currency?.symbol
-    } and ${liquidityValue1?.toSignificant(6)} ${liquidityValue1?.currency?.symbol}`;
+    } and ${liquidityValue1?.toSignificant(6)} ${liquidityValue1?.currency?.symbol}`
 
     function modalHeader() {
         return (
-            <AutoColumn gap={"sm"} style={{ padding: "16px" }}>
-                <RowBetween align="flex-end">
+            <AutoColumn gap={'sm'} style={{ padding: '16px' }}>
+                <RowBetween align='flex-end'>
                     <Text fontSize={16} fontWeight={500}>
                         <Trans>Pooled {liquidityValue0?.currency?.symbol}:</Trans>
                     </Text>
                     <RowFixed>
-                        <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                        <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                             {liquidityValue0 && (
                                 <FormattedCurrencyAmount currencyAmount={liquidityValue0} />
                             )}
                         </Text>
                         <CurrencyLogo
-                            size="24px"
-                            style={{ marginLeft: "8px" }}
+                            size='24px'
+                            style={{ marginLeft: '8px' }}
                             currency={liquidityValue0?.currency}
                         />
                     </RowFixed>
                 </RowBetween>
-                <RowBetween align="flex-end">
+                <RowBetween align='flex-end'>
                     <Text fontSize={16} fontWeight={500}>
                         <Trans>Pooled {liquidityValue1?.currency?.symbol}:</Trans>
                     </Text>
                     <RowFixed>
-                        <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                        <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                             {liquidityValue1 && (
                                 <FormattedCurrencyAmount currencyAmount={liquidityValue1} />
                             )}
                         </Text>
                         <CurrencyLogo
-                            size="24px"
-                            style={{ marginLeft: "8px" }}
+                            size='24px'
+                            style={{ marginLeft: '8px' }}
                             currency={liquidityValue1?.currency}
                         />
                     </RowFixed>
@@ -281,8 +277,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                         <TYPE.italic
                             fontSize={12}
                             color={theme.winterDisabledButton}
-                            textAlign="left"
-                            padding={"8px 0 0 0"}
+                            textAlign='left'
+                            padding={'8px 0 0 0'}
                         >
                             <Trans>You will also collect fees earned from this position.</Trans>
                         </TYPE.italic>
@@ -291,14 +287,14 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                 <Trans>{feeValue0?.currency?.symbol} Fees Earned:</Trans>
                             </Text>
                             <RowFixed>
-                                <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                                <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                     {feeValue0 && (
                                         <FormattedCurrencyAmount currencyAmount={feeValue0} />
                                     )}
                                 </Text>
                                 <CurrencyLogo
-                                    size="24px"
-                                    style={{ marginLeft: "8px" }}
+                                    size='24px'
+                                    style={{ marginLeft: '8px' }}
                                     currency={feeValue0?.currency}
                                 />
                             </RowFixed>
@@ -308,49 +304,49 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                 <Trans>{feeValue1?.currency?.symbol} Fees Earned:</Trans>
                             </Text>
                             <RowFixed>
-                                <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                                <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                     {feeValue1 && (
                                         <FormattedCurrencyAmount currencyAmount={feeValue1} />
                                     )}
                                 </Text>
                                 <CurrencyLogo
-                                    size="24px"
-                                    style={{ marginLeft: "8px" }}
+                                    size='24px'
+                                    style={{ marginLeft: '8px' }}
                                     currency={feeValue1?.currency}
                                 />
                             </RowFixed>
                         </RowBetween>
                     </>
                 ) : null}
-                <ButtonPrimary mt="16px" onClick={burn}>
+                <ButtonPrimary mt='16px' onClick={burn}>
                     <Trans>Remove</Trans>
                 </ButtonPrimary>
             </AutoColumn>
-        );
+        )
     }
 
     const onOptimisticChain =
-        chainId && [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId);
+        chainId && [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
     const showCollectAsWeth = Boolean(
         !onOptimisticChain &&
-            liquidityValue0?.currency &&
-            liquidityValue1?.currency &&
-            (liquidityValue0.currency.isNative ||
-                liquidityValue1.currency.isNative ||
-                liquidityValue0.currency.wrapped.equals(
-                    WMATIC_EXTENDED[liquidityValue0.currency.chainId]
-                ) ||
-                liquidityValue1.currency.wrapped.equals(
-                    WMATIC_EXTENDED[liquidityValue1.currency.chainId]
-                ))
-    );
+        liquidityValue0?.currency &&
+        liquidityValue1?.currency &&
+        (liquidityValue0.currency.isNative ||
+            liquidityValue1.currency.isNative ||
+            liquidityValue0.currency.wrapped.equals(
+                WMATIC_EXTENDED[liquidityValue0.currency.chainId]
+            ) ||
+            liquidityValue1.currency.wrapped.equals(
+                WMATIC_EXTENDED[liquidityValue1.currency.chainId]
+            ))
+    )
     return (
         <AutoColumn>
             <TransactionConfirmationModal
                 isOpen={showConfirm}
                 onDismiss={handleDismissConfirmation}
                 attemptingTxn={attemptingTxn}
-                hash={txnHash ?? ""}
+                hash={txnHash ?? ''}
                 content={() => (
                     <ConfirmationModalContent
                         title={<Trans>Remove Liquidity</Trans>}
@@ -369,7 +365,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 />
                 <Wrapper>
                     {_position ? (
-                        <AutoColumn gap="lg">
+                        <AutoColumn gap='lg'>
                             <RowBetween>
                                 <RowFixed>
                                     <DoubleCurrencyLogo
@@ -379,14 +375,14 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                         margin={true}
                                     />
                                     <TYPE.label
-                                        ml="10px"
-                                        fontSize="20px"
+                                        ml='10px'
+                                        fontSize='20px'
                                     >{`${feeValue0?.currency?.symbol}/${feeValue1?.currency?.symbol}`}</TYPE.label>
                                 </RowFixed>
                                 <RangeBadge removed={removed} inRange={!outOfRange} />
                             </RowBetween>
                             <LightCard>
-                                <AutoColumn gap="md">
+                                <AutoColumn gap='md'>
                                     <TYPE.main fontWeight={400}>
                                         <Trans>Amount</Trans>
                                     </TYPE.main>
@@ -394,28 +390,28 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                         <ResponsiveHeaderText>
                                             <Trans>{percentForSlider}%</Trans>
                                         </ResponsiveHeaderText>
-                                        <AutoRow gap="4px" justify="flex-end">
+                                        <AutoRow gap='4px' justify='flex-end'>
                                             <SmallMaxButton
                                                 onClick={() => onPercentSelect(25)}
-                                                width="20%"
+                                                width='20%'
                                             >
                                                 <Trans>25%</Trans>
                                             </SmallMaxButton>
                                             <SmallMaxButton
                                                 onClick={() => onPercentSelect(50)}
-                                                width="20%"
+                                                width='20%'
                                             >
                                                 <Trans>50%</Trans>
                                             </SmallMaxButton>
                                             <SmallMaxButton
                                                 onClick={() => onPercentSelect(75)}
-                                                width="20%"
+                                                width='20%'
                                             >
                                                 <Trans>75%</Trans>
                                             </SmallMaxButton>
                                             <SmallMaxButton
                                                 onClick={() => onPercentSelect(100)}
-                                                width="20%"
+                                                width='20%'
                                             >
                                                 <Trans>Max</Trans>
                                             </SmallMaxButton>
@@ -428,7 +424,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                 </AutoColumn>
                             </LightCard>
                             <LightCard>
-                                <AutoColumn gap="md">
+                                <AutoColumn gap='md'>
                                     <RowBetween>
                                         <Text fontSize={16} fontWeight={500}>
                                             <Trans>
@@ -436,7 +432,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                             </Trans>
                                         </Text>
                                         <RowFixed>
-                                            <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                                            <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                                 {liquidityValue0 && (
                                                     <FormattedCurrencyAmount
                                                         currencyAmount={liquidityValue0}
@@ -444,8 +440,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                 )}
                                             </Text>
                                             <CurrencyLogo
-                                                size="24px"
-                                                style={{ marginLeft: "8px" }}
+                                                size='24px'
+                                                style={{ marginLeft: '8px' }}
                                                 currency={liquidityValue0?.currency}
                                             />
                                         </RowFixed>
@@ -457,7 +453,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                             </Trans>
                                         </Text>
                                         <RowFixed>
-                                            <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                                            <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                                 {liquidityValue1 && (
                                                     <FormattedCurrencyAmount
                                                         currencyAmount={liquidityValue1}
@@ -465,8 +461,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                 )}
                                             </Text>
                                             <CurrencyLogo
-                                                size="24px"
-                                                style={{ marginLeft: "8px" }}
+                                                size='24px'
+                                                style={{ marginLeft: '8px' }}
                                                 currency={liquidityValue1?.currency}
                                             />
                                         </RowFixed>
@@ -483,7 +479,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                     <Text
                                                         fontSize={16}
                                                         fontWeight={500}
-                                                        marginLeft={"6px"}
+                                                        marginLeft={'6px'}
                                                     >
                                                         {feeValue0 && (
                                                             <FormattedCurrencyAmount
@@ -492,8 +488,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                         )}
                                                     </Text>
                                                     <CurrencyLogo
-                                                        size="24px"
-                                                        style={{ marginLeft: "8px" }}
+                                                        size='24px'
+                                                        style={{ marginLeft: '8px' }}
                                                         currency={feeValue0?.currency}
                                                     />
                                                 </RowFixed>
@@ -508,7 +504,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                     <Text
                                                         fontSize={16}
                                                         fontWeight={500}
-                                                        marginLeft={"6px"}
+                                                        marginLeft={'6px'}
                                                     >
                                                         {feeValue1 && (
                                                             <FormattedCurrencyAmount
@@ -517,8 +513,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                         )}
                                                     </Text>
                                                     <CurrencyLogo
-                                                        size="24px"
-                                                        style={{ marginLeft: "8px" }}
+                                                        size='24px'
+                                                        style={{ marginLeft: '8px' }}
                                                         currency={feeValue1?.currency}
                                                     />
                                                 </RowFixed>
@@ -534,15 +530,15 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                         <Trans>Collect as WMATIC</Trans>
                                     </TYPE.main>
                                     <Toggle
-                                        id="receive-as-weth"
+                                        id='receive-as-weth'
                                         isActive={receiveWETH}
                                         toggle={() => setReceiveWETH((receiveWETH) => !receiveWETH)}
                                     />
                                 </RowBetween>
                             )}
 
-                            <div style={{ display: "flex" }}>
-                                <AutoColumn gap="12px" style={{ flex: "1" }}>
+                            <div style={{ display: 'flex' }}>
+                                <AutoColumn gap='12px' style={{ flex: '1' }}>
                                     <ButtonConfirmed
                                         confirmed={false}
                                         disabled={removed || percent === 0 || !liquidityValue0}
@@ -563,5 +559,5 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 </Wrapper>
             </AppBody>
         </AutoColumn>
-    );
+    )
 }

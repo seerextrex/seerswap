@@ -26,7 +26,7 @@ const initialState: ApplicationState = {
     blockNumber: {},
     gasPrice: { fetched: 70, override: true },
     popupList: [],
-    openModal: null,
+    openModal: null
 }
 
 export default createReducer(initialState, (builder) =>

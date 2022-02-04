@@ -1,280 +1,144 @@
-import { TransactionResponse } from '@ethersproject/providers'
-import { Trans } from '@lingui/macro'
-import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { Pair } from '@uniswap/v2-sdk'
-import { useCallback, useState } from 'react'
-import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
-import { usePairContract, useStakingContract, useV2RouterContract } from '../../hooks/useContract'
-import { useV2LiquidityTokenPermit } from '../../hooks/useERC20Permit'
-import { GAS_PRICE_MULTIPLIER } from '../../hooks/useGasPrice'
-import useTransactionDeadline from '../../hooks/useTransactionDeadline'
-import { useActiveWeb3React } from '../../hooks/web3'
-import { useAppSelector } from '../../state/hooks'
-import { StakingInfo, useDerivedStakeInfo } from '../../state/stake/hooks'
-import { TransactionType } from '../../state/transactions/actions'
-import { useTransactionAdder } from '../../state/transactions/hooks'
-import { CloseIcon, TYPE } from '../../theme'
-import { formatCurrencyAmount } from '../../utils/formatCurrencyAmount'
-import { maxAmountSpend } from '../../utils/maxAmountSpend'
-import { ButtonConfirmed, ButtonError } from '../Button'
-import { AutoColumn } from '../Column'
-import CurrencyInputPanel from '../CurrencyInputPanel'
+import { useCallback, useContext, useState } from 'react'
 import Modal from '../Modal'
-import { LoadingView, SubmittedView } from '../ModalViews'
-import ProgressCircles from '../ProgressSteps'
-import { RowBetween } from '../Row'
-import { ContentWrapper, HypotheticalRewardRate } from './styled'
+import styled, { ThemeContext } from 'styled-components/macro'
+import { X } from 'react-feather'
+import { Trans } from '@lingui/macro'
 
-interface StakingModalProps {
-    isOpen: boolean
-    onDismiss: () => void
-    stakingInfo: StakingInfo
-    userLiquidityUnstaked: CurrencyAmount<Token> | undefined
-}
+const ModalContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem;
+  width: 100%;
+  background-color: ${({ theme }) => theme.bg2};
+  border-radius: 20px;
+`
 
-export default function StakingModal({
-    isOpen,
-    onDismiss,
-    stakingInfo,
-    userLiquidityUnstaked
-}: StakingModalProps) {
-    const { library } = useActiveWeb3React()
-
-    // track and parse user input
-    const [typedValue, setTypedValue] = useState('')
-    const { parsedAmount, error } = useDerivedStakeInfo(
-        typedValue,
-        stakingInfo.stakedAmount.currency,
-        userLiquidityUnstaked
-    )
+const StyledCloseIcon = styled(X)`
+  height: 20px;
+  width: 20px;
+  :hover {
+    cursor: pointer;
   }
 
-  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+  > * {
+    stroke: ${({ theme }) => theme.text1};
+  }
+`
 
-  // state for pending and submitted txn views
-  const addTransaction = useTransactionAdder()
-  const [attempting, setAttempting] = useState<boolean>(false)
-  const [hash, setHash] = useState<string | undefined>()
-  const wrappedOnDismiss = useCallback(() => {
-    setHash(undefined)
-    setAttempting(false)
-    onDismiss()
-  }, [onDismiss])
+export default function StakingModal({
+    modal,
+    closeModalCallback,
+}: {
+    modal: boolean
+    closeModalCallback: () => void
+}) {
+    const [approved, setApproved] = useState(false)
 
-  // pair contract for this token to be staked
-  const dummyPair = new Pair(
-    CurrencyAmount.fromRawAmount(stakingInfo.tokens[0], '0'),
-    CurrencyAmount.fromRawAmount(stakingInfo.tokens[1], '0')
-  )
-  const pairContract = usePairContract(dummyPair.liquidityToken.address)
+    const [sent, setSent] = useState(false)
 
-  // approval data for stake
-  const deadline = useTransactionDeadline()
-  const router = useV2RouterContract()
-  const { signatureData, gatherPermitSignature } = useV2LiquidityTokenPermit(parsedAmountWrapped, router?.address)
-  const [approval, approveCallback] = useApproveCallback(parsedAmount, stakingInfo.stakingRewardAddress)
+    const [staked, setStaked] = useState(false)
 
-  const stakingContract = useStakingContract(stakingInfo.stakingRewardAddress)
-  async function onStake() {
-    setAttempting(true)
-    if (stakingContract && parsedAmount && deadline) {
-      if (approval === ApprovalState.APPROVED) {
-        await stakingContract.stake(`0x${parsedAmount.quotient.toString(16)}`, { gasLimit: 350000, gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
-      } else if (signatureData) {
-        stakingContract
-          .stakeWithPermit(
-            `0x${parsedAmount.quotient.toString(16)}`,
-            signatureData.deadline,
-            signatureData.v,
-            signatureData.r,
-            signatureData.s,
-            { gasLimit: 350000, gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
-          )
-          .then((response: TransactionResponse) => {
-            addTransaction(response, {
-              type: TransactionType.DEPOSIT_LIQUIDITY_STAKING,
-              token0Address: stakingInfo.tokens[0].address,
-              token1Address: stakingInfo.tokens[1].address,
-            })
-            setHash(response.hash)
-          })
-          .catch((error: any) => {
-            setAttempting(false)
-            throw new Error('Staking ' + error)
-          })
-      } else {
-        setAttempting(false)
-        onDismiss()
-    }, [onDismiss])
+    const approve = useCallback(() => {
+        setApproved(true)
+    }, [approved])
 
-    // pair contract for this token to be staked
-    const dummyPair = new Pair(
-        CurrencyAmount.fromRawAmount(stakingInfo.tokens[0], '0'),
-        CurrencyAmount.fromRawAmount(stakingInfo.tokens[1], '0')
-    )
-    const pairContract = usePairContract(dummyPair.liquidityToken.address)
+    const send = useCallback(() => {
+        setSent(true)
+    }, [sent])
 
-    // approval data for stake
-    const deadline = useTransactionDeadline()
-    const router = useV2RouterContract()
-    const {
-        signatureData,
-        gatherPermitSignature
-    } = useV2LiquidityTokenPermit(parsedAmountWrapped, router?.address)
-    const [approval, approveCallback] = useApproveCallback(parsedAmount, stakingInfo.stakingRewardAddress)
+    const stake = useCallback(() => {
+        setStaked(true)
+    }, [staked])
 
-    const stakingContract = useStakingContract(stakingInfo.stakingRewardAddress)
-
-    async function onStake() {
-        setAttempting(true)
-        if (stakingContract && parsedAmount && deadline) {
-            if (approval === ApprovalState.APPROVED) {
-                await stakingContract.stake(`0x${parsedAmount.quotient.toString(16)}`, { gasLimit: 350000 })
-            } else if (signatureData) {
-                stakingContract
-                    .stakeWithPermit(
-                        `0x${parsedAmount.quotient.toString(16)}`,
-                        signatureData.deadline,
-                        signatureData.v,
-                        signatureData.r,
-                        signatureData.s,
-                        { gasLimit: 350000 }
-                    )
-                    .then((response: TransactionResponse) => {
-                        addTransaction(response, {
-                            type: TransactionType.DEPOSIT_LIQUIDITY_STAKING,
-                            token0Address: stakingInfo.tokens[0].address,
-                            token1Address: stakingInfo.tokens[1].address
-                        })
-                        setHash(response.hash)
-                    })
-                    .catch((error: any) => {
-                        setAttempting(false)
-                        throw new Error('Staking ' + error)
-                    })
-            } else {
-                setAttempting(false)
-                throw new Error('Attempting to stake without approval or a signature. Please contact support.')
-            }
-        }
-    }
-
-    // wrapped onUserInput to clear signatures
-    const onUserInput = useCallback((typedValue: string) => {
-        setTypedValue(typedValue)
-    }, [])
-
-    // used for max input button
-    const maxAmountInput = maxAmountSpend(userLiquidityUnstaked)
-    const atMaxAmount = Boolean(maxAmountInput && parsedAmount?.equalTo(maxAmountInput))
-    const handleMax = useCallback(() => {
-        maxAmountInput && onUserInput(maxAmountInput.toExact())
-    }, [maxAmountInput, onUserInput])
-
-    async function onAttemptToApprove() {
-        if (!pairContract || !library || !deadline) throw new Error('missing dependencies')
-        if (!parsedAmount) throw new Error('missing liquidity amount')
-
-        if (gatherPermitSignature) {
-            try {
-                await gatherPermitSignature()
-            } catch (error) {
-                // try to approve if gatherPermitSignature failed for any reason other than the user rejecting it
-                if (error?.code !== 4001) {
-                    await approveCallback()
-                }
-            }
-        } else {
-            await approveCallback()
-        }
-    }
+    const theme = useContext(ThemeContext)
 
     return (
-        <Modal isOpen={isOpen} onDismiss={wrappedOnDismiss} maxHeight={90}>
-            {!attempting && !hash && (
-                <ContentWrapper gap='lg'>
-                    <RowBetween>
-                        <TYPE.mediumHeader>
-                            <Trans>Deposit</Trans>
-                        </TYPE.mediumHeader>
-                        <CloseIcon onClick={wrappedOnDismiss} />
-                    </RowBetween>
-                    <CurrencyInputPanel
-                        value={typedValue}
-                        onUserInput={onUserInput}
-                        onMax={handleMax}
-                        showMaxButton={!atMaxAmount}
-                        currency={stakingInfo.stakedAmount.currency}
-                        pair={dummyPair}
-                        label={''}
-                        renderBalance={(amount) => <Trans>Available to
-                            deposit: {formatCurrencyAmount(amount, 4)}</Trans>}
-                        id='stake-liquidity-token'
-                    />
-
-                    <HypotheticalRewardRate dim={!hypotheticalRewardRate.greaterThan('0')}>
-                        <div>
-                            <TYPE.black fontWeight={600}>
-                                <Trans>Weekly Rewards</Trans>
-                            </TYPE.black>
+        <Modal isOpen={modal} onDismiss={() => console.log('here')} maxHeight={80}>
+            <ModalContentWrapper>
+                {!approved ? (
+                    <>
+                        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+                            <Trans>Approve NFT</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
                         </div>
-
-                        <TYPE.black>
-                            <Trans>
-                                {hypotheticalRewardRate
-                                    .multiply((60 * 60 * 24 * 7).toString())
-                                    .toSignificant(4, { groupSeparator: ',' })}{' '}
-                                UNI / week
-                            </Trans>
-                        </TYPE.black>
-                    </HypotheticalRewardRate>
-
-                    <RowBetween>
-                        <ButtonConfirmed
-                            mr='0.5rem'
-                            onClick={onAttemptToApprove}
-                            confirmed={approval === ApprovalState.APPROVED || signatureData !== null}
-                            disabled={approval !== ApprovalState.NOT_APPROVED || signatureData !== null}
+                        <div
+                            style={{
+                                padding: '8px',
+                                borderRadius: '6px',
+                                backgroundColor: '#0f1940',
+                                color: '#5376ff',
+                                marginBottom: '1rem',
+                            }}
                         >
-                            <Trans>Approve</Trans>
-                        </ButtonConfirmed>
-                        <ButtonError
-                            disabled={!!error || (signatureData === null && approval !== ApprovalState.APPROVED)}
-                            error={!!error && !!parsedAmount}
-                            onClick={onStake}
+                            <Trans>To stake your NFT you should approve Algebra to use it</Trans>
+                        </div>
+                        <button
+                            style={{
+                                padding: '1rem',
+                                width: '100%',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                backgroundColor: theme.winterMainButton,
+                                fontSize: '18px',
+                            }}
+                            onClick={approve}
                         >
-                            {error ?? <Trans>Deposit</Trans>}
-                        </ButtonError>
-                    </RowBetween>
-                    <ProgressCircles
-                        steps={[approval === ApprovalState.APPROVED || signatureData !== null]}
-                        disabled={true} />
-                </ContentWrapper>
-            )}
-            {attempting && !hash && (
-                <LoadingView onDismiss={wrappedOnDismiss}>
-                    <AutoColumn gap='12px' justify={'center'}>
-                        <TYPE.largeHeader>
-                            <Trans>Depositing Liquidity</Trans>
-                        </TYPE.largeHeader>
-                        <TYPE.body fontSize={20}>
-                            <Trans>{parsedAmount?.toSignificant(4)} UNI-V2</Trans>
-                        </TYPE.body>
-                    </AutoColumn>
-                </LoadingView>
-            )}
-            {attempting && hash && (
-                <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
-                    <AutoColumn gap='12px' justify={'center'}>
-                        <TYPE.largeHeader>
-                            <Trans>Transaction Submitted</Trans>
-                        </TYPE.largeHeader>
-                        <TYPE.body fontSize={20}>
-                            <Trans>Deposited {parsedAmount?.toSignificant(4)} UNI-V2</Trans>
-                        </TYPE.body>
-                    </AutoColumn>
-                </SubmittedView>
-            )}
+                            Approve
+                        </button>
+                    </>
+                ) : !sent ? (
+                    <>
+                        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+                            <Trans>Send NFT</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
+                        </div>
+                        <button
+                            style={{
+                                padding: '1rem',
+                                width: '100%',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                backgroundColor: theme.winterMainButton,
+                                fontSize: '18px',
+                            }}
+                            onClick={send}
+                        >
+                            Send
+                        </button>
+                    </>
+                ) : !staked ? (
+                    <>
+                        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+                            <Trans>Deposit NFT</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
+                        </div>
+                        <button
+                            style={{
+                                padding: '1rem',
+                                width: '100%',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                backgroundColor: theme.winterMainButton,
+                                fontSize: '18px',
+                            }}
+                            onClick={stake}
+                        >
+                            Deposit
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+                            <Trans>Done!</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
+                        </div>
+                    </>
+                )}
+            </ModalContentWrapper>
         </Modal>
     )
 }

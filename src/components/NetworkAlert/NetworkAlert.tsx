@@ -49,35 +49,35 @@ export const OptimismWrapperBackgroundLightMode = css`
     radial-gradient(100% 97% at 0% 12%, rgba(235, 0, 255, 0.1) 0%, rgba(243, 19, 19, 0.1) 100%), hsla(0, 0%, 100%, 0.5);
 `
 const RootWrapper = styled.div<{ chainId: SupportedChainId; darkMode: boolean; logoUrl: string }>`
-  ${({ chainId, darkMode }) =>
-    [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
-        ? darkMode
-            ? OptimismWrapperBackgroundDarkMode
-            : OptimismWrapperBackgroundLightMode
-        : darkMode
-            ? ArbitrumWrapperBackgroundDarkMode
-            : ArbitrumWrapperBackgroundLightMode};
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  max-width: 480px;
-  min-height: 174px;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
+    ${({ chainId, darkMode }) =>
+        [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
+            ? darkMode
+                ? OptimismWrapperBackgroundDarkMode
+                : OptimismWrapperBackgroundLightMode
+            : darkMode
+                ? ArbitrumWrapperBackgroundDarkMode
+                : ArbitrumWrapperBackgroundLightMode};
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    max-width: 480px;
+    min-height: 174px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
 
-  :before {
-    background-image: url(${({ logoUrl }) => logoUrl});
-    background-repeat: no-repeat;
-    background-size: 300px;
-    content: '';
-    height: 300px;
-    opacity: 0.1;
-    position: absolute;
-    transform: rotate(25deg) translate(-90px, -40px);
-    width: 300px;
-    z-index: -1;
-  }
+    :before {
+        background-image: url(${({ logoUrl }) => logoUrl});
+        background-repeat: no-repeat;
+        background-size: 300px;
+        content: '';
+        height: 300px;
+        opacity: 0.1;
+        position: absolute;
+        transform: rotate(25deg) translate(-90px, -40px);
+        width: 300px;
+        z-index: -1;
+    }
 `
 const Header = styled.h2`
   font-weight: 600;

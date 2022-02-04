@@ -126,24 +126,27 @@ export function useInfoSubgraph() {
                 const twoDay: TokenFields | undefined = parsedPools48[address]
                 const week: TokenFields | undefined = parsedPoolsWeek[address]
 
+                const manageUntrackedVolume = current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD' 
+                const manageUntrackedTVL = current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
-                        ? get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD)
+                        ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
                         : current && oneDay ?
-                            [parseFloat(current.volumeUSD) - parseFloat(oneDay.volumeUSD), 0] : current
-                                ? [parseFloat(current.volumeUSD), 0]
+                            [parseFloat(current[manageUntrackedVolume]) - parseFloat(oneDay[manageUntrackedVolume]), 0] : current
+                                ? [parseFloat(current[manageUntrackedVolume]), 0]
                                 : [0, 0]
 
                 const volumeUSDWeek =
                     current && week
-                        ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
+                        ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume])
                         : current
-                            ? parseFloat(current.volumeUSD)
+                            ? parseFloat(current[manageUntrackedVolume])
                             : 0
 
-                const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
-                const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
-                const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
+                const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
+                const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
+                const tvlToken = current ? parseFloat(current[manageUntrackedTVL]) : 0
 
                 const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
                 const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
@@ -183,7 +186,7 @@ export function useInfoSubgraph() {
                     tvlUSD,
                     feesUSD,
                     tvlUSDChange,
-                    totalValueLockedUSD: current.totalValueLockedUSD,
+                    totalValueLockedUSD: current[manageUntrackedTVL],
                     tvlToken,
                     priceUSD,
                     priceUSDChange,
@@ -244,22 +247,25 @@ export function useInfoSubgraph() {
                 const twoDay: TokenFields | undefined = parsedTokens48[address]
                 const week: TokenFields | undefined = parsedTokensWeek[address]
 
+                const manageUntrackedVolume = current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD' 
+                const manageUntrackedTVL = current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
-                        ? get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD)
+                        ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
                         : current
-                            ? [parseFloat(current.volumeUSD), 0]
+                            ? [parseFloat(current[manageUntrackedVolume]), 0]
                             : [0, 0]
 
                 const volumeUSDWeek =
                     current && week
-                        ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
+                        ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume])
                         : current
-                            ? parseFloat(current.volumeUSD)
+                            ? parseFloat(current[manageUntrackedVolume])
                             : 0
-                const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
-                const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
-                const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
+                const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
+                const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
+                const tvlToken = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
                 const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
                 const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0

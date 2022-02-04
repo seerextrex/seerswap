@@ -194,7 +194,9 @@ export const TOTAL_STATS = (block?: number) => gql`
   query totalStats {
     factories ${block ? `(block: { number: ${block} })` : ''} {
       totalVolumeUSD
+      untrackedVolumeUSD
       totalValueLockedUSD
+      totalValueLockedUSDUntracked
     }
   }
 `
@@ -407,6 +409,8 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
           totalValueLockedToken0
           totalValueLockedToken1
           totalValueLockedUSD
+          totalValueLockedUSDUntracked
+          untrackedVolumeUSD
           feesUSD
         }
       }
@@ -443,8 +447,10 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
           volume
           txCount
           totalValueLocked
+          untrackedVolumeUSD
           feesUSD
           totalValueLockedUSD
+          totalValueLockedUSDUntracked 
         }
       }
       `

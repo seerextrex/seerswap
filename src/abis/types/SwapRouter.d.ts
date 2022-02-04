@@ -18,16 +18,16 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface SwapRouterInterface extends ethers.utils.Interface {
   functions: {
     "WNativeToken()": FunctionFragment;
-    "exactInput((bytes,address,uint256,uint256,uint256))": FunctionFragment;
-    "exactInputSingle((address,address,address,uint256,uint256,uint256,uint160))": FunctionFragment;
-    "exactInputSingleSupportingFeeOnTransferTokens((address,address,address,uint256,uint256,uint256,uint160))": FunctionFragment;
-    "exactOutput((bytes,address,uint256,uint256,uint256))": FunctionFragment;
-    "exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))": FunctionFragment;
+    "exactInput(tuple)": FunctionFragment;
+    "exactInputSingle(tuple)": FunctionFragment;
+    "exactInputSingleSupportingFeeOnTransferTokens(tuple)": FunctionFragment;
+    "exactOutput(tuple)": FunctionFragment;
+    "exactOutputSingle(tuple)": FunctionFragment;
     "factory()": FunctionFragment;
     "AlgebraSwapCallback(int256,int256,bytes)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;

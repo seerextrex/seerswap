@@ -314,7 +314,7 @@ export function StakerEventCard({
   refreshing,
   stakeHandler,
   now,
-  event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime } = {},
+  event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr } = {},
   eternal,
 }: {
   active?: boolean
@@ -331,6 +331,7 @@ export function StakerEventCard({
     bonusReward?: number
     startTime?: number
     endTime?: number
+    apr?: number
   }
   eternal?: boolean
 }) {
@@ -429,7 +430,7 @@ export function StakerEventCard({
         {reward && (
           <RewardAmount title={reward}>
             {eternal ? (
-              <span>200%</span>
+              <span>{`${apr.toFixed(2)}%`}</span>
             ) : (
               <span>{`${('' + reward).length <= 8 ? reward : ('' + reward).slice(0, 6) + '..'}`}</span>
             )}
@@ -460,7 +461,7 @@ export function StakerEventCard({
           {bonusReward && (
             <RewardAmount title={bonusReward}>
               {eternal ? (
-                <span>200%</span>
+                <span>{`${apr.toFixed(2)}%`}</span>
               ) : (
                 <span>{`${('' + bonusReward).length <= 8 ? bonusReward : ('' + bonusReward).slice(0, 6) + '..'}`}</span>
               )}

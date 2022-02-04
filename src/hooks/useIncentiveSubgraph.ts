@@ -51,6 +51,20 @@ export function useIncentiveSubgraph() {
 
     const provider = window.ethereum ? new providers.Web3Provider(window.ethereum) : undefined
 
+    async function fetchEternalFarmAPR() {
+
+        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
+
+        try {
+            const res = await fetch(apiURL).then(v => v.json())
+            return res
+
+        } catch (error: any) {
+            return {}
+        }
+
+    }
+
     async function getEvents(events: any[]) {
 
         const _events = []
@@ -565,6 +579,8 @@ export function useIncentiveSubgraph() {
                 return
             }
 
+            const aprs = await fetchEternalFarmAPR()
+
             let _eternalFarmings = []
 
             for (const farming of eternalFarmings) {
@@ -573,13 +589,16 @@ export function useIncentiveSubgraph() {
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)
 
+                const apr = aprs[farming.id] ? aprs[farming.id] : 200
+
                 _eternalFarmings = [
                     ..._eternalFarmings,
                     {
                         ...farming,
                         rewardToken,
                         bonusRewardToken,
-                        pool
+                        pool,
+                        apr
                     }
                 ]
 

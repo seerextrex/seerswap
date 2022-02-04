@@ -13,7 +13,7 @@ import { feeTierPercent } from 'utils'
 import { Label, ClickableText } from 'components/Text'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks/web3'
-import {BarChart2, ExternalLink} from 'react-feather'
+import { BarChart2, ExternalLink } from 'react-feather'
 import { log } from 'util'
 
 export const PageButtons = styled.div`
@@ -136,8 +136,8 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   const { chainId } = useActiveWeb3React()
 
   const poolTitle = useMemo(() => {
-    if (poolData.token0.symbol === 'USDC'){
-     return  poolData.token1.symbol + '/' + poolData.token0.symbol
+    if (poolData.token0.symbol === 'USDC') {
+      return poolData.token1.symbol + '/' + poolData.token0.symbol
     }
     return poolData.token0.symbol + '/' + poolData.token1.symbol
   }, [poolData])
@@ -148,13 +148,13 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
         <LabelStyled fontWeight={400}>
           <RowFixed>
             <DoubleCurrencyLogo address0={poolData.token0.address} address1={poolData.token1.address} />
-            <LinkWrapper  href={`https://polygonscan.com/address/${poolData.address}`}
-                          rel="noopener noreferrer"
-                          target="_blank">
-              <TYPE.label ml="8px">
-                {poolTitle}
-              </TYPE.label>
-              <ExternalLink size={16} color={'white'}/>
+            <LinkWrapper
+              href={`https://polygonscan.com/address/${poolData.address}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <TYPE.label ml="8px">{poolTitle}</TYPE.label>
+              <ExternalLink size={16} color={'white'} />
             </LinkWrapper>
             <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#02365e' }}>
               {feeTierPercent(poolData.fee)}
@@ -162,7 +162,6 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
             <ChartBadge to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
               <BarChart2 size={18} stroke={'white'} />
             </ChartBadge>
-
           </RowFixed>
         </LabelStyled>
         <LabelStyled end={1} fontWeight={400}>
@@ -273,9 +272,9 @@ export default function InfoPoolsTable({
               Fees 24H {arrow(SORT_FIELD.feesUSD)}
             </ClickableTextStyled> */}
             <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
-              APR {arrow(SORT_FIELD.apr)}
-              {/* <AprInfo title={'based on 24h volume'}>?</AprInfo> */}
+              APR{arrow(SORT_FIELD.apr)}
             </ClickableTextStyled>
+            {/* <AprInfo title={'based on 24h volume'}>?</AprInfo> */}
           </ResponsiveGrid>
           {sortedPools.map((poolData, i) => {
             if (poolData) {

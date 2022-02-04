@@ -63,12 +63,26 @@ export function useInfoSubgraph() {
 
     const [totalStats, setTotalStats] = useState(null)
     const [totalStatsLoading, setTotalStatsLoading] = useState(null)
-    
+
     const [stakesResult, setStakes] = useState(null);
     const [stakesLoading, setStakesLoading] = useState(null);
-  
+
     const [stakeHistoriesResult, setHistories] = useState(null);
     const [historiesLoading, setHistoriesLoading] = useState(null);
+
+    async function fetchPoolsAPR() {
+
+        const apiURL = 'https://api.algebra.finance/api/APR/pools/'
+
+        try {
+            const res = await fetch(apiURL).then(v => v.json())
+            return res
+
+        } catch (error: any) {
+            return {}
+        }
+
+    }
 
     async function fetchInfoPools(reload?: boolean) {
 
@@ -103,6 +117,8 @@ export function useInfoSubgraph() {
             const parsedPools24 = parseTokensData(pools24)
             const parsedPools48 = parseTokensData(pools48)
             const parsedPoolsWeek = parseTokensData(poolsWeek)
+
+            const aprs = await fetchPoolsAPR()
 
             const formatted = poolsAddresses.reduce((accum: { [address: string]: TokenData }, address) => {
                 const current: TokenFields | undefined = parsedPools[address]
@@ -150,7 +166,7 @@ export function useInfoSubgraph() {
                             ? parseFloat(current.feesUSD)
                             : 0
 
-
+                const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
 
                 accum[address] = {
                     token0: current.token0,
@@ -172,7 +188,7 @@ export function useInfoSubgraph() {
                     priceUSD,
                     priceUSDChange,
                     priceUSDChangeWeek,
-                    apr: isNaN(feesUSD * 365 / tvlUSD * 100) ? 0 : feesUSD * 365 / tvlUSD * 100
+                    apr: aprPercent
                 }
 
                 return accum
@@ -405,8 +421,8 @@ export function useInfoSubgraph() {
             console.error('Fees last failed: ', err);
         }
     }
-  
-      const fetchStaking = useCallback(async (id: string) => {
+
+    const fetchStaking = useCallback(async (id: string) => {
 
         setStakes(null)
 
@@ -417,9 +433,9 @@ export function useInfoSubgraph() {
                 query: GET_STAKE(id),
                 fetchPolicy: 'network-only'
             })
-              
-              setStakesLoading(false)
-            setStakes({factories: factories, stakes: stakes})
+
+            setStakesLoading(false)
+            setStakes({ factories: factories, stakes: stakes })
 
             return stakes
 
@@ -510,11 +526,11 @@ export function useInfoSubgraph() {
 
             const { data: { histories }, error: error } = await stakerClient.query({
                 query: GET_STAKE_HISTORY(),
-               fetchPolicy: 'network-only'
+                fetchPolicy: 'network-only'
             })
 
             if (error) throw new Error(`${error.name} ${error.message}`)
-          
+
             setHistoriesLoading(false)
             setHistories(histories)
 
@@ -550,11 +566,11 @@ export function useInfoSubgraph() {
 
             const stats = data.factories[0]
             const stats24 = data24.factories[0]
-            
+
             const volumeUSD =
-            stats && stats24
-              ? parseFloat(stats.totalVolumeUSD) - parseFloat(stats24.totalVolumeUSD)
-              : parseFloat(stats.totalVolumeUSD)
+                stats && stats24
+                    ? parseFloat(stats.totalVolumeUSD) - parseFloat(stats24.totalVolumeUSD)
+                    : parseFloat(stats.totalVolumeUSD)
 
             setTotalStats({
                 tvlUSD: parseFloat(stats.totalValueLockedUSD),
@@ -573,8 +589,8 @@ export function useInfoSubgraph() {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
-        getStakes: {stakesResult, stakesLoading, fetchStakingFn: fetchStaking},
-        fetchStakedHistory: {historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory},
+        getStakes: { stakesResult, stakesLoading, fetchStakingFn: fetchStaking },
+        fetchStakedHistory: { historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
         fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },

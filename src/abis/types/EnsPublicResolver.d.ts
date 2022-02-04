@@ -17,7 +17,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface EnsPublicResolverInterface extends ethers.utils.Interface {
   functions: {
@@ -200,6 +200,70 @@ interface EnsPublicResolverInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "PubkeyChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TextChanged"): EventFragment;
 }
+
+export type ABIChangedEvent = TypedEvent<
+  [string, BigNumber] & { node: string; contentType: BigNumber }
+>;
+
+export type AddrChangedEvent = TypedEvent<
+  [string, string] & { node: string; a: string }
+>;
+
+export type AddressChangedEvent = TypedEvent<
+  [string, BigNumber, string] & {
+    node: string;
+    coinType: BigNumber;
+    newAddress: string;
+  }
+>;
+
+export type AuthorisationChangedEvent = TypedEvent<
+  [string, string, string, boolean] & {
+    node: string;
+    owner: string;
+    target: string;
+    isAuthorised: boolean;
+  }
+>;
+
+export type ContenthashChangedEvent = TypedEvent<
+  [string, string] & { node: string; hash: string }
+>;
+
+export type DNSRecordChangedEvent = TypedEvent<
+  [string, string, number, string] & {
+    node: string;
+    name: string;
+    resource: number;
+    record: string;
+  }
+>;
+
+export type DNSRecordDeletedEvent = TypedEvent<
+  [string, string, number] & { node: string; name: string; resource: number }
+>;
+
+export type DNSZoneClearedEvent = TypedEvent<[string] & { node: string }>;
+
+export type InterfaceChangedEvent = TypedEvent<
+  [string, string, string] & {
+    node: string;
+    interfaceID: string;
+    implementer: string;
+  }
+>;
+
+export type NameChangedEvent = TypedEvent<
+  [string, string] & { node: string; name: string }
+>;
+
+export type PubkeyChangedEvent = TypedEvent<
+  [string, string, string] & { node: string; x: string; y: string }
+>;
+
+export type TextChangedEvent = TypedEvent<
+  [string, string, string] & { node: string; indexedKey: string; key: string }
+>;
 
 export class EnsPublicResolver extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -621,6 +685,14 @@ export class EnsPublicResolver extends BaseContract {
   };
 
   filters: {
+    "ABIChanged(bytes32,uint256)"(
+      node?: BytesLike | null,
+      contentType?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { node: string; contentType: BigNumber }
+    >;
+
     ABIChanged(
       node?: BytesLike | null,
       contentType?: BigNumberish | null
@@ -629,10 +701,24 @@ export class EnsPublicResolver extends BaseContract {
       { node: string; contentType: BigNumber }
     >;
 
+    "AddrChanged(bytes32,address)"(
+      node?: BytesLike | null,
+      a?: null
+    ): TypedEventFilter<[string, string], { node: string; a: string }>;
+
     AddrChanged(
       node?: BytesLike | null,
       a?: null
     ): TypedEventFilter<[string, string], { node: string; a: string }>;
+
+    "AddressChanged(bytes32,uint256,bytes)"(
+      node?: BytesLike | null,
+      coinType?: null,
+      newAddress?: null
+    ): TypedEventFilter<
+      [string, BigNumber, string],
+      { node: string; coinType: BigNumber; newAddress: string }
+    >;
 
     AddressChanged(
       node?: BytesLike | null,
@@ -641,6 +727,16 @@ export class EnsPublicResolver extends BaseContract {
     ): TypedEventFilter<
       [string, BigNumber, string],
       { node: string; coinType: BigNumber; newAddress: string }
+    >;
+
+    "AuthorisationChanged(bytes32,address,address,bool)"(
+      node?: BytesLike | null,
+      owner?: string | null,
+      target?: string | null,
+      isAuthorised?: null
+    ): TypedEventFilter<
+      [string, string, string, boolean],
+      { node: string; owner: string; target: string; isAuthorised: boolean }
     >;
 
     AuthorisationChanged(
@@ -653,10 +749,25 @@ export class EnsPublicResolver extends BaseContract {
       { node: string; owner: string; target: string; isAuthorised: boolean }
     >;
 
+    "ContenthashChanged(bytes32,bytes)"(
+      node?: BytesLike | null,
+      hash?: null
+    ): TypedEventFilter<[string, string], { node: string; hash: string }>;
+
     ContenthashChanged(
       node?: BytesLike | null,
       hash?: null
     ): TypedEventFilter<[string, string], { node: string; hash: string }>;
+
+    "DNSRecordChanged(bytes32,bytes,uint16,bytes)"(
+      node?: BytesLike | null,
+      name?: null,
+      resource?: null,
+      record?: null
+    ): TypedEventFilter<
+      [string, string, number, string],
+      { node: string; name: string; resource: number; record: string }
+    >;
 
     DNSRecordChanged(
       node?: BytesLike | null,
@@ -668,6 +779,15 @@ export class EnsPublicResolver extends BaseContract {
       { node: string; name: string; resource: number; record: string }
     >;
 
+    "DNSRecordDeleted(bytes32,bytes,uint16)"(
+      node?: BytesLike | null,
+      name?: null,
+      resource?: null
+    ): TypedEventFilter<
+      [string, string, number],
+      { node: string; name: string; resource: number }
+    >;
+
     DNSRecordDeleted(
       node?: BytesLike | null,
       name?: null,
@@ -677,9 +797,22 @@ export class EnsPublicResolver extends BaseContract {
       { node: string; name: string; resource: number }
     >;
 
+    "DNSZoneCleared(bytes32)"(
+      node?: BytesLike | null
+    ): TypedEventFilter<[string], { node: string }>;
+
     DNSZoneCleared(
       node?: BytesLike | null
     ): TypedEventFilter<[string], { node: string }>;
+
+    "InterfaceChanged(bytes32,bytes4,address)"(
+      node?: BytesLike | null,
+      interfaceID?: BytesLike | null,
+      implementer?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { node: string; interfaceID: string; implementer: string }
+    >;
 
     InterfaceChanged(
       node?: BytesLike | null,
@@ -690,10 +823,24 @@ export class EnsPublicResolver extends BaseContract {
       { node: string; interfaceID: string; implementer: string }
     >;
 
+    "NameChanged(bytes32,string)"(
+      node?: BytesLike | null,
+      name?: null
+    ): TypedEventFilter<[string, string], { node: string; name: string }>;
+
     NameChanged(
       node?: BytesLike | null,
       name?: null
     ): TypedEventFilter<[string, string], { node: string; name: string }>;
+
+    "PubkeyChanged(bytes32,bytes32,bytes32)"(
+      node?: BytesLike | null,
+      x?: null,
+      y?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { node: string; x: string; y: string }
+    >;
 
     PubkeyChanged(
       node?: BytesLike | null,
@@ -702,6 +849,15 @@ export class EnsPublicResolver extends BaseContract {
     ): TypedEventFilter<
       [string, string, string],
       { node: string; x: string; y: string }
+    >;
+
+    "TextChanged(bytes32,string,string)"(
+      node?: BytesLike | null,
+      indexedKey?: string | null,
+      key?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { node: string; indexedKey: string; key: string }
     >;
 
     TextChanged(

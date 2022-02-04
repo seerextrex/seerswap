@@ -57,11 +57,11 @@ export const MenuFlyout = styled.span<{ flyoutAlignment?: FlyoutAlignment }>`
   z-index: 100;
 
   ${({ flyoutAlignment = FlyoutAlignment.RIGHT }) =>
-          flyoutAlignment === FlyoutAlignment.RIGHT
-                  ? css`
+    flyoutAlignment === FlyoutAlignment.RIGHT
+        ? css`
                     right: 0;
                   `
-                  : css`
+        : css`
                     left: 0;
                   `};
   ${({ theme }) => theme.mediaWidth.upToMedium`

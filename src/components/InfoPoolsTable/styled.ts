@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro'
 import { NavLink } from 'react-router-dom'
-import { Label, ClickableText } from 'components/Text'
+import { ClickableText, Label } from 'components/Text'
 import { DarkGreyCard } from '../Card'
 
-export const  PageButtons = styled.div`
+export const PageButtonsWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
@@ -20,23 +20,23 @@ export const Arrow = styled.div<{ faded: boolean }>`
     cursor: pointer;
   }
 `
-export const  LabelStyled = styled(Label)`
+export const LabelStyled = styled(Label)`
   font-size: 14px;
   justify-content: flex-start;
 `
-export const  ClickableTextStyled = styled(ClickableText)`
+export const ClickableTextStyled = styled(ClickableText)`
   font-size: 14px;
   justify-content: flex-start;
   text-align: start;
 `
-export const  Wrapper = styled(DarkGreyCard)`
+export const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: rgba(60, 97, 126, 0.5);
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 900px;
   `};
 `
-export const  ResponsiveGrid = styled.div`
+export const ResponsiveGrid = styled.div`
   display: grid;
   position: relative;
   grid-gap: 1em;
@@ -51,7 +51,7 @@ export const  ResponsiveGrid = styled.div`
     }
   }
 `
-export const  ChartBadge = styled(NavLink)`
+export const ChartBadge = styled(NavLink)`
   background: #36f;
   margin-left: 10px;
   border-radius: 6px;
@@ -60,7 +60,7 @@ export const  ChartBadge = styled(NavLink)`
     display: block;
   }
 `
-export const  LinkWrapper = styled.a`
+export const LinkWrapper = styled.a`
   display: flex;
   text-decoration: none;
   svg {

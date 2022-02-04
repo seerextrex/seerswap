@@ -4,76 +4,77 @@ import { StakerEventCard } from '../../components/StakerEventCard'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
-import { PageWrapper, EventsCardsRow, EventsCards, EmptyMock } from './styled'
+import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
 
 function isFuture(startTime: number, now: number) {
-  return startTime * 1000 > now
+    return startTime * 1000 > now
 }
 
 export function FutureEventsPage({
-                                   data,
-                                   now,
-                                   refreshing,
-                                   fetchHandler
-                                 }: {
-  data: any
-  now: number
-  refreshing: boolean
-  fetchHandler: () => any
+    data,
+    now,
+    refreshing,
+    fetchHandler
+}: {
+    data: any
+    now: number
+    refreshing: boolean
+    fetchHandler: () => any
 }) {
-  useEffect(() => {
-    fetchHandler()
-  }, [])
+    useEffect(() => {
+        fetchHandler()
+    }, [])
 
-  const chunked = useChunkedRows(data, 3)
+    const chunked = useChunkedRows(data, 3)
 
-  const [modalForPool, setModalForPool] = useState(false)
+    const [modalForPool, setModalForPool] = useState(false)
 
-  return (
-    <>
-      <Modal isOpen={modalForPool} onHide={() => setModalForPool(false)}>
-        {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(false)}/>}
-      </Modal>
-      <PageWrapper>
-        <EventsCards>
-          {!data && refreshing ? (
-            <EventsCards>
-              <EventsCardsRow>
-                {[0, 1, 2].map((el, i) => (
-                  <StakerEventCard skeleton key={i}/>
-                ))}
-              </EventsCardsRow>
-              <EventsCardsRow>
-                {[0, 1].map((el, i) => (
-                  <StakerEventCard skeleton key={i}/>
-                ))}
-              </EventsCardsRow>
-            </EventsCards>
-          ) : data && data.length !== 0 && !data.every((el) => el.startTime < Math.round(Date.now() / 1000)) ? (
-            chunked.map((el, i) => (
-              <EventsCardsRow key={i}>
-                {el.map(
-                  (event, j) =>
-                    isFuture(event.startTime, now) && (
-                      <StakerEventCard
-                        key={j}
-                        stakeHandler={() => setModalForPool(event)}
-                        refreshing={refreshing}
-                        now={now}
-                        event={event}
-                      />
-                    )
-                )}
-              </EventsCardsRow>
-            ))
-          ) : data && (data.length === 0 || data.every((el) => el.startTime < Math.round(Date.now() / 1000))) ? (
-            <EmptyMock>
-              <div>No future events</div>
-              <Frown size={35} stroke={'white'} />
-            </EmptyMock>
-          ) : null}
-        </EventsCards>
-      </PageWrapper>
-    </>
-  )
+    return (
+        <>
+            <Modal isOpen={modalForPool} onHide={() => setModalForPool(false)}>
+                {modalForPool &&
+                    <StakeModal event={modalForPool} closeHandler={() => setModalForPool(false)} />}
+            </Modal>
+            <PageWrapper>
+                <EventsCards>
+                    {!data && refreshing ? (
+                        <EventsCards>
+                            <EventsCardsRow>
+                                {[0, 1, 2].map((el, i) => (
+                                    <StakerEventCard skeleton key={i} />
+                                ))}
+                            </EventsCardsRow>
+                            <EventsCardsRow>
+                                {[0, 1].map((el, i) => (
+                                    <StakerEventCard skeleton key={i} />
+                                ))}
+                            </EventsCardsRow>
+                        </EventsCards>
+                    ) : data && data.length !== 0 && !data.every((el) => el.startTime < Math.round(Date.now() / 1000)) ? (
+                        chunked.map((el, i) => (
+                            <EventsCardsRow key={i}>
+                                {el.map(
+                                    (event, j) =>
+                                        isFuture(event.startTime, now) && (
+                                            <StakerEventCard
+                                                key={j}
+                                                stakeHandler={() => setModalForPool(event)}
+                                                refreshing={refreshing}
+                                                now={now}
+                                                event={event}
+                                            />
+                                        )
+                                )}
+                            </EventsCardsRow>
+                        ))
+                    ) : data && (data.length === 0 || data.every((el) => el.startTime < Math.round(Date.now() / 1000))) ? (
+                        <EmptyMock>
+                            <div>No future events</div>
+                            <Frown size={35} stroke={'white'} />
+                        </EmptyMock>
+                    ) : null}
+                </EventsCards>
+            </PageWrapper>
+        </>
+    )
 }

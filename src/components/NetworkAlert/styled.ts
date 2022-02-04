@@ -1,16 +1,17 @@
 import styled from 'styled-components/macro'
 import { SupportedChainId, SupportedL2ChainId } from '../../constants/chains'
 import {
-  ArbitrumWrapperBackgroundDarkMode, ArbitrumWrapperBackgroundLightMode,
-  OptimismWrapperBackgroundDarkMode,
-  OptimismWrapperBackgroundLightMode
+    ArbitrumWrapperBackgroundDarkMode,
+    ArbitrumWrapperBackgroundLightMode,
+    OptimismWrapperBackgroundDarkMode,
+    OptimismWrapperBackgroundLightMode
 } from './NetworkAlert'
 import { ArrowDownCircle } from 'react-feather'
 import { ExternalLink, MEDIA_WIDTHS } from '../../theme'
 
 
 //AddLiquidityNetworkAlert
-export const  L2Icon = styled.img`
+export const L2Icon = styled.img`
   display: none;
   height: 40px;
   margin: auto 20px auto 4px;
@@ -19,21 +20,21 @@ export const  L2Icon = styled.img`
     display: block;
   }
 `
-export const  DesktopTextBreak = styled.div`
+export const DesktopTextBreak = styled.div`
   display: none;
   @media screen and (min-width: ${MEDIA_WIDTHS.upToMedium}px) {
     display: block;
   }
 `
-export const  Wrapper = styled.div<{ chainId: SupportedL2ChainId; darkMode: boolean; logoUrl: string }>`
+export const Wrapper = styled.div<{ chainId: SupportedL2ChainId; darkMode: boolean; logoUrl: string }>`
   ${({ chainId, darkMode }) =>
-  [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
-    ? darkMode
-      ? OptimismWrapperBackgroundDarkMode
-      : OptimismWrapperBackgroundLightMode
-    : darkMode
-      ? ArbitrumWrapperBackgroundDarkMode
-      : ArbitrumWrapperBackgroundLightMode};
+    [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
+        ? darkMode
+            ? OptimismWrapperBackgroundDarkMode
+            : OptimismWrapperBackgroundLightMode
+        : darkMode
+            ? ArbitrumWrapperBackgroundDarkMode
+            : ArbitrumWrapperBackgroundLightMode};
   border-radius: 20px;
   display: flex;
   flex-direction: column;
@@ -59,7 +60,7 @@ export const  Wrapper = styled.div<{ chainId: SupportedL2ChainId; darkMode: bool
     padding: 16px 20px;
   }
 `
-export const  Body = styled.div`
+export const Body = styled.div`
   font-size: 12px;
   line-height: 143%;
   margin: 12px;
@@ -68,13 +69,13 @@ export const  Body = styled.div`
     margin: auto 0;
   }
 `
-export const  LinkOutCircle = styled(ArrowDownCircle)`
+export const LinkOutCircle = styled(ArrowDownCircle)`
   transform: rotate(230deg);
   width: 20px;
   height: 20px;
   margin-left: 12px;
 `
-export const  LinkOutToBridge = styled(ExternalLink)`
+export const LinkOutToBridge = styled(ExternalLink)`
   align-items: center;
   background-color: black;
   border-radius: 16px;

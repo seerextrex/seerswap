@@ -70,8 +70,8 @@ export const NFTPositionIcon = styled.div<{ skeleton: boolean; name: string }>`
   border-radius: 50%;
   background: ${({ name }) => (name ? gradient('token' + name) : '')};
   ${({ skeleton }) =>
-          skeleton &&
-          css`
+    skeleton &&
+    css`
             background: rgba(60, 97, 126, 0.5);
             ${skeletonGradient}
           `};
@@ -81,8 +81,8 @@ export const NFTPositionDescription = styled.div<{ skeleton: boolean }>`
   line-height: 22px;
 
   ${({ skeleton }) =>
-          skeleton &&
-          css`
+    skeleton &&
+    css`
             & > * {
               background: rgba(60, 97, 126, 0.5);
               border-radius: 6px;

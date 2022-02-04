@@ -1,17 +1,17 @@
 import styled from 'styled-components/macro'
 
-export const  FallbackWrapper = styled.div`
+export const FallbackWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
   align-items: center;
   z-index: 1;
 `
-export const  BodyWrapper = styled.div<{ margin?: string }>`
+export const BodyWrapper = styled.div<{ margin?: string }>`
   padding: 1rem;
   width: 100%;
 `
-export const  CodeBlockWrapper = styled.div`
+export const CodeBlockWrapper = styled.div`
   background: ${({ theme }) => theme.bg0};
   overflow: auto;
   white-space: pre;
@@ -21,6 +21,6 @@ export const  CodeBlockWrapper = styled.div`
   padding: 18px 24px;
   color: ${({ theme }) => theme.text1};
 `
-export const  SomethingWentWrongWrapper = styled.div`
+export const SomethingWentWrongWrapper = styled.div`
   padding: 6px 24px;
 `

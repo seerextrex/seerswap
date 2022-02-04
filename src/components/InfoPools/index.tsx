@@ -3,32 +3,31 @@ import InfoPoolsTable from '../InfoPoolsTable'
 import Loader from '../Loader'
 import { MockLoading, PageWrapper } from './styled'
 
-export function InfoPools({
-  data,
-  fetchHandler,
-  blocksFetched,
-}: {
-  data: any
-  refreshing: boolean
-  fetchHandler: () => any
-  blocksFetched: boolean
-}) {
-  useEffect(() => {
-    if (blocksFetched) {
-      fetchHandler()
-    }
-  }, [blocksFetched])
+interface InfoPoolsProps {
+    data: any
+    refreshing: boolean
+    fetchHandler: () => any
+    blocksFetched: boolean
+}
 
-  if (!data)
+export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
+
+    useEffect(() => {
+        if (blocksFetched) {
+            fetchHandler()
+        }
+    }, [blocksFetched])
+
+    if (!data)
+        return (
+            <MockLoading>
+                <Loader stroke={'white'} size={'25px'} />
+            </MockLoading>
+        )
+
     return (
-      <MockLoading>
-        <Loader stroke={'white'} size={'25px'} />
-      </MockLoading>
+        <PageWrapper style={{ maxWidth: '100%' }}>
+            <InfoPoolsTable poolDatas={data} />
+        </PageWrapper>
     )
-
-  return (
-    <PageWrapper style={{ maxWidth: '100%' }}>
-      <InfoPoolsTable poolDatas={data}/>
-    </PageWrapper>
-  )
 }

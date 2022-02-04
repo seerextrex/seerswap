@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { useState } from 'react'
-import { PaddedColumn, Separator } from './styled'
+import { PaddedColumn, Separator, ToggleOption, ToggleWrapper, Wrapper } from './styled'
 import { RowBetween } from 'components/Row'
 import { ArrowLeft } from 'react-feather'
 import { Text } from 'rebass'
@@ -10,51 +10,52 @@ import { ManageLists } from './ManageLists'
 import ManageTokens from './ManageTokens'
 import { TokenList } from '@uniswap/token-lists'
 import { CurrencyModalView } from './CurrencySearchModal'
-import { Wrapper, ToggleWrapper, ToggleOption } from './styled'
 
 export default function Manage({
-                                 onDismiss,
-                                 setModalView,
-                                 setImportList,
-                                 setImportToken,
-                                 setListUrl
-                               }: {
-  onDismiss: () => void
-  setModalView: (view: CurrencyModalView) => void
-  setImportToken: (token: Token) => void
-  setImportList: (list: TokenList) => void
-  setListUrl: (url: string) => void
+    onDismiss,
+    setModalView,
+    setImportList,
+    setImportToken,
+    setListUrl
+}: {
+    onDismiss: () => void
+    setModalView: (view: CurrencyModalView) => void
+    setImportToken: (token: Token) => void
+    setImportList: (list: TokenList) => void
+    setListUrl: (url: string) => void
 }) {
-  // toggle between tokens and lists
-  const [showLists, setShowLists] = useState(true)
+    // toggle between tokens and lists
+    const [showLists, setShowLists] = useState(true)
 
-  return (
-    <Wrapper>
-      <PaddedColumn>
-        <RowBetween>
-          <ArrowLeft style={{ cursor: 'pointer' }} onClick={() => setModalView(CurrencyModalView.search)} />
-          <Text fontWeight={500} fontSize={20}>
-            <Trans>Manage</Trans>
-          </Text>
-          <CloseIcon onClick={onDismiss} />
-        </RowBetween>
-      </PaddedColumn>
-      <Separator />
-      <PaddedColumn style={{ paddingBottom: 0 }}>
-        <ToggleWrapper>
-          <ToggleOption onClick={() => setShowLists(!showLists)} active={showLists}>
-            <Trans>Lists</Trans>
-          </ToggleOption>
-          <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists}>
-            <Trans>Tokens</Trans>
-          </ToggleOption>
-        </ToggleWrapper>
-      </PaddedColumn>
-      {showLists ? (
-        <ManageLists setModalView={setModalView} setImportList={setImportList} setListUrl={setListUrl} />
-      ) : (
-        <ManageTokens setModalView={setModalView} setImportToken={setImportToken} />
-      )}
-    </Wrapper>
-  )
+    return (
+        <Wrapper>
+            <PaddedColumn>
+                <RowBetween>
+                    <ArrowLeft style={{ cursor: 'pointer' }}
+                               onClick={() => setModalView(CurrencyModalView.search)} />
+                    <Text fontWeight={500} fontSize={20}>
+                        <Trans>Manage</Trans>
+                    </Text>
+                    <CloseIcon onClick={onDismiss} />
+                </RowBetween>
+            </PaddedColumn>
+            <Separator />
+            <PaddedColumn style={{ paddingBottom: 0 }}>
+                <ToggleWrapper>
+                    <ToggleOption onClick={() => setShowLists(!showLists)} active={showLists}>
+                        <Trans>Lists</Trans>
+                    </ToggleOption>
+                    <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists}>
+                        <Trans>Tokens</Trans>
+                    </ToggleOption>
+                </ToggleWrapper>
+            </PaddedColumn>
+            {showLists ? (
+                <ManageLists setModalView={setModalView} setImportList={setImportList}
+                             setListUrl={setListUrl} />
+            ) : (
+                <ManageTokens setModalView={setModalView} setImportToken={setImportToken} />
+            )}
+        </Wrapper>
+    )
 }

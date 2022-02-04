@@ -1,13 +1,13 @@
-import styled, {keyframes} from 'styled-components/macro'
-import {ButtonConfirmed} from "../../components/Button"
-import {Info} from "react-feather"
-import Badge from "../../components/Badge"
-import Loader from "../../components/Loader"
-import {CurrencyDropdown} from "../AddLiquidity/styled"
-import {SmallMaxButton} from "../RemoveLiquidity/styled"
-import Slider from "../../components/Slider"
-import {NavLink} from "react-router-dom"
-import {darken} from "polished"
+import styled, { keyframes } from 'styled-components/macro'
+import { ButtonConfirmed } from '../../components/Button'
+import { Info } from 'react-feather'
+import Badge from '../../components/Badge'
+import Loader from '../../components/Loader'
+import { CurrencyDropdown } from '../AddLiquidity/styled'
+import { SmallMaxButton } from '../RemoveLiquidity/styled'
+import Slider from '../../components/Slider'
+import { NavLink } from 'react-router-dom'
+import { darken } from 'polished'
 import StakerStatistic from '../../assets/images/StakerStatisticBackground.svg'
 
 //All
@@ -16,7 +16,7 @@ export const StakeButton = styled(ButtonConfirmed)`
   width: 100%;
   margin-top: 24px;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-top: 0;
   `}
 `
@@ -27,29 +27,29 @@ export const RealStakerPageWrapper = styled.div`
   width: 765px;
   margin-top: 1rem;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
   `}
 `
 export const PageWrapper = styled.div`
   min-width: 100%;
-  background-color: ${({theme}) => theme.winterBackground};
+  background-color: ${({ theme }) => theme.winterBackground};
   border-radius: 16px;
   padding: 26px 30px 27px;
 
   input[type=range]:disabled {
     cursor: default;
   }
-  
+
   input[type=range]:disabled::-webkit-slider-thumb {
-    border: ${({theme}) => `7px solid ${theme.winterDisabledButton}`};
+    border: ${({ theme }) => `7px solid ${theme.winterDisabledButton}`};
   }
 
   input[type=range]:disabled::-moz-range-thumb {
-    border: ${({theme}) => `7px solid ${theme.winterDisabledButton}`};
+    border: ${({ theme }) => `7px solid ${theme.winterDisabledButton}`};
   }
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 100%;
     padding: 26px 15px 27px;
   `}
@@ -63,34 +63,34 @@ export const SilderWrapper = styled.div`
   width: 100%;
   margin: 0;
 `
-export const StakerSlider = styled(Slider)<{disabled?: boolean}>`  
+export const StakerSlider = styled(Slider)<{ disabled?: boolean }>`
   &::-webkit-slider-runnable-track {
-    background: ${({theme}) => theme.winterDisabledButton};
+    background: ${({ theme }) => theme.winterDisabledButton};
     height: 5px;
     border-radius: 20px;
   }
 
   &::-moz-range-track {
-    background: ${({theme}) => theme.winterDisabledButton};
+    background: ${({ theme }) => theme.winterDisabledButton};
     height: 5px;
     border-radius: 20px;
   }
 
   &::-moz-range-progress {
-    background-color: ${({theme}) => theme.winterMainButton};
+    background-color: ${({ theme }) => theme.winterMainButton};
     height: 5px;
     border-radius: 20px;
   }
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    height: ${({size}) => size}px;
-    width: ${({size}) => size}px;
+    height: ${({ size }) => size}px;
+    width: ${({ size }) => size}px;
     background: white;
     border-radius: 100%;
-    border: ${({theme}) => `7px solid ${theme.winterMainButton}`};
+    border: ${({ theme }) => `7px solid ${theme.winterMainButton}`};
     transform: translateY(-40%);
-    color: ${({theme}) => theme.bg1};
+    color: ${({ theme }) => theme.bg1};
 
     &:hover,
     &:focus {
@@ -99,30 +99,30 @@ export const StakerSlider = styled(Slider)<{disabled?: boolean}>`
   }
 
   &::-moz-range-thumb {
-    height: ${({size}) => size}px;
-    width: ${({size}) => size}px;
+    height: ${({ size }) => size}px;
+    width: ${({ size }) => size}px;
     background: white;
     border-radius: 100%;
-    border: ${({theme}) => `7px solid ${theme.winterMainButton}`};
-    color: ${({theme}) => theme.bg1};
+    border: ${({ theme }) => `7px solid ${theme.winterMainButton}`};
+    color: ${({ theme }) => theme.bg1};
 
     &:hover,
     &:focus {
       box-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08), 0 16px 24px rgba(0, 0, 0, 0.06), 0 24px 32px rgba(0, 0, 0, 0.04);
     }
     &:disabled {
-      border: ${({theme}) => `7px solid ${theme.winterDisabledButton}`};
+      border: ${({ theme }) => `7px solid ${theme.winterDisabledButton}`};
     }
   }
 `
 export const EarnedStakedWrapper = styled.div`
   margin: 2rem 0;
   min-width: 100%;
-  background-color: ${({theme}) => theme.winterBackground};
+  background-color: ${({ theme }) => theme.winterBackground};
   padding: 25px 30px 30px;
   border-radius: 16px;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 100%;
     display: flex;
     flex-direction: column;
@@ -135,13 +135,13 @@ export const StakerStatisticWrapper = styled(NavLink)`
   min-width: 765px;
   height: 107px;
   text-decoration: none;
-  background-color: ${({theme}) => theme.winterBackground};
+  background-color: ${({ theme }) => theme.winterBackground};
   background-image: url("${StakerStatistic}");
   background-repeat: no-repeat;
   background-position-y: 80%;
   border-radius: 16px;
   padding: 2rem 1rem 0 1rem;
-  
+
   h2, p {
     color: white;
     text-decoration: none;
@@ -155,27 +155,27 @@ export const StakerStatisticWrapper = styled(NavLink)`
     font-weight: 600;
   }
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 100%;
     display: flex;
     align-items: center;
     height: unset;
     padding: 15px 10px;
-    
+
     img {
         height: unset;
     }
     p {
         font-size: 13px;
     }
-    
+
     h2,p {
         margin: 0 10px;
         z-index: 10;
     }
     h2 {
         margin-left: 1rem;
-    
+
   `}
 `
 export const ResBlocksTitle = styled.div`
@@ -193,7 +193,7 @@ export const ResBlocksWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
 `
@@ -202,10 +202,10 @@ export const spinAnimation = keyframes`
     transform: rotate(360deg);
   }
 `
-export const ReloadButton = styled.button<{refreshing: boolean}>`
+export const ReloadButton = styled.button<{ refreshing: boolean }>`
   background-color: transparent;
   border: none;
-  animation: ${({refreshing}) => refreshing ? spinAnimation : ''} infinite 3s;
+  animation: ${({ refreshing }) => refreshing ? spinAnimation : ''} infinite 3s;
   cursor: pointer;
 
   &:disabled {
@@ -233,7 +233,7 @@ export const FrozenDropDown = styled.button`
     cursor: default;
   }
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
     padding: .2rem .4rem;
   `}
@@ -257,14 +257,14 @@ export const XALGBCousreWrapper = styled.div`
   margin: 1rem 0 0 0;
   background: linear-gradient(90deg,rgb(23, 81, 124) 56%,rgb(0, 143, 255));
   border-radius: 8px;
-  
+
 `
 export const XALGBBalance = styled.span`
   padding: .5rem 1rem;
   display: inline-block;
   border-radius: 8px 0 0 8px;
   min-width: 70%;
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 50%;
     padding: .5rem;
   `}
@@ -274,7 +274,7 @@ export const XALGBCourse = styled.span`
   border-radius: 0 8px 8px 0;
   min-width: 30%;
   text-align: right;
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   padding: .5rem;
     min-width: 50%;
   `}
@@ -296,7 +296,7 @@ export const ResPageWrapper = styled.div`
     margin-left: 1rem;
   }
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     &:first-child {
       margin-right: unset;
     }
@@ -326,7 +326,7 @@ export const ResPageWrapper = styled.div`
     margin-bottom: 10px;
   }
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 80%;
     &:first-child {
     margin-bottom: 1rem;
@@ -377,7 +377,7 @@ export const FrozenWrapper = styled.div`
   border-radius: 16px;
   padding: 25px 30px;
   overflow-y: auto;
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
      padding: 1rem;
     `}
 `
@@ -393,7 +393,7 @@ export const FrozenTransaction = styled.div`
     font-weight: 600;
   }
 
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     background-color: #202635;
     padding: 5px 7px;
@@ -422,7 +422,7 @@ export const LoaderStyled = styled(Loader)`
 //InputRange
 export const CurrencyInputPanelWrapper = styled.div`
   width: 100%;
-  background-color: ${({theme}) => theme.winterDisabledButton};
+  background-color: ${({ theme }) => theme.winterDisabledButton};
   margin: 26px 0 32px 0;
   border-radius: 16px;
   padding: 20px 24px;
@@ -433,7 +433,7 @@ export const CurrencyInputPanelWrapper = styled.div`
     height: 36px;
   }
 `
-export const CurrencyTop = styled(CurrencyDropdown)<{style: any}>`
+export const CurrencyTop = styled(CurrencyDropdown)<{ style: any }>`
   span {
     font-size: 21px;
   }
@@ -441,7 +441,7 @@ export const CurrencyTop = styled(CurrencyDropdown)<{style: any}>`
     padding: 0;
   }
 `
-export const CurrencyBottom = styled(CurrencyDropdown)<{style: any}>`
+export const CurrencyBottom = styled(CurrencyDropdown)<{ style: any }>`
   span {
     cursor: default;
     &:hover {
@@ -452,11 +452,11 @@ export const CurrencyBottom = styled(CurrencyDropdown)<{style: any}>`
 
 //RangeButtons
 export const StakerSmallMaxButton = styled(SmallMaxButton)`
-  background: ${({theme}) => theme.winterMainButton};
+  background: ${({ theme }) => theme.winterMainButton};
   border: 1px solid transparent;
   box-sizing: border-box;
   &:disabled {
-    background: ${({theme}) => theme.winterDisabledButton};
+    background: ${({ theme }) => theme.winterDisabledButton};
     border: 1px solid transparent;
     cursor: default;
   }
@@ -467,14 +467,14 @@ export const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     align-items: start;
     margin-bottom: 20px;
   `}
  p {
     cursor: pointer;
-    
+
     &:hover {
       color: rgb(222,222,222);
     }
@@ -485,8 +485,8 @@ export const ButtonsWrapper = styled.div`
 export const ContentModal = styled.div`
   width: 100%;
   padding: 5px 30px 20px;
-  ${({theme}) => theme.mediaWidth.upToSmall`
-    padding: 5px 15px 20px;    
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 5px 15px 20px;
   `}
 `
 
@@ -500,7 +500,7 @@ export const UnstakeCurrencyInputPanelWrapper = styled(CurrencyInputPanelWrapper
       color: #C3C5CB;
     }
   }
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 20px 0 10px 12px;
     margin: 15px 0 10px;
   `}

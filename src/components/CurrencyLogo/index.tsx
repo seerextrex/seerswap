@@ -10,7 +10,7 @@ import { stringToColour } from '../../utils/stringToColour'
 import { specialTokens } from './SpecialTokens'
 
 export const getTokenLogoURL = (address: string) =>
-  `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`
+    `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 
 const StyledImgLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
@@ -34,54 +34,54 @@ const StyledLogo = styled.div<{ size: string }>`
 `
 
 export default function CurrencyLogo({
-                                       currency,
-                                       size = '24px',
-                                       style,
-                                       ...rest
-                                     }: {
-  currency?: Currency
-  size?: string
-  style?: React.CSSProperties
+    currency,
+    size = '24px',
+    style,
+    ...rest
+}: {
+    currency?: Currency
+    size?: string
+    style?: React.CSSProperties
 }) {
-  const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
+    const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
 
-  const { chainId } = useActiveWeb3React()
+    const { chainId } = useActiveWeb3React()
 
-  let logo
+    let logo
 
-  if (chainId === 137) {
-    logo = MaticLogo
-  }
+    if (chainId === 137) {
+        logo = MaticLogo
+    }
 
-  if (!currency) return <div />
+    if (!currency) return <div />
 
-  if (currency?.address?.toLowerCase() in specialTokens) {
-    return <StyledImgLogo src={specialTokens[currency?.address.toLowerCase()].logo} size={size}
-                          style={style} {...rest} />
-  }
+    if (currency?.address?.toLowerCase() in specialTokens) {
+        return <StyledImgLogo src={specialTokens[currency?.address.toLowerCase()].logo} size={size}
+                              style={style} {...rest} />
+    }
 
-  if (currency?.wrapped?.address.toLowerCase() === '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'.toLowerCase()) {
-    return <StyledImgLogo src={AlgebraLogo} size={size} style={style} {...rest} />
-  }
+    if (currency?.wrapped?.address.toLowerCase() === '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'.toLowerCase()) {
+        return <StyledImgLogo src={AlgebraLogo} size={size} style={style} {...rest} />
+    }
 
-  if (currency?.isNative) {
-    return <StyledImgLogo src={logo} size={size} style={style} {...rest} />
-  }
+    if (currency?.isNative) {
+        return <StyledImgLogo src={logo} size={size} style={style} {...rest} />
+    }
 
-  return (
-    <StyledLogo
-      size={size}
-      style={{
-        ...style,
-        background: stringToColour(currency?.symbol).background,
-        color: stringToColour(currency?.symbol).text,
-        border: stringToColour(currency?.symbol).border,
+    return (
+        <StyledLogo
+            size={size}
+            style={{
+                ...style,
+                background: stringToColour(currency?.symbol).background,
+                color: stringToColour(currency?.symbol).text,
+                border: stringToColour(currency?.symbol).border,
 
-        fontSize: size === '18px' ? '8px' : size === '24px' ? '12px' : '14px'
-      }}
-      {...rest}
-    >
-      {currency?.symbol?.slice(0, 2)}
-    </StyledLogo>
-  )
+                fontSize: size === '18px' ? '8px' : size === '24px' ? '12px' : '14px'
+            }}
+            {...rest}
+        >
+            {currency?.symbol?.slice(0, 2)}
+        </StyledLogo>
+    )
 }

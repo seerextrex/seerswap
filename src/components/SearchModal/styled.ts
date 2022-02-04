@@ -242,7 +242,11 @@ export const StyledListUrlText = styled(TYPE.main)<{ active: boolean }>`
   color: ${({ theme, active }) => (active ? theme.white : theme.text2)};
 `
 export const RowWrapper = styled(Row)<{ bgColor: string; active: boolean; hasActiveTokens: boolean }>`
-  background-color: ${({ bgColor, active, theme }) => (active ? bgColor ?? 'transparent' : theme.bg2)};
+  background-color: ${({
+    bgColor,
+    active,
+    theme
+}) => (active ? bgColor ?? 'transparent' : theme.bg2)};
   opacity: ${({ hasActiveTokens }) => (hasActiveTokens ? 1 : 0.4)};
   transition: 200ms;
   align-items: center;

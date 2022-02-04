@@ -53,12 +53,12 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
   :focus,
   :hover {
     background-color: ${({ selected, theme, page }) =>
-            page === 'addLiq' ? 'unset' : selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
+    page === 'addLiq' ? 'unset' : selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
   }
 
   ${({ shallow }) =>
-          shallow &&
-          css`
+    shallow &&
+    css`
             padding: 0;
             background-color: transparent;
             box-shadow: none;
@@ -69,8 +69,8 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
           `}
 
   ${({ swap }) =>
-          swap &&
-          css`
+    swap &&
+    css`
             width: 218px;
           `}
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
@@ -164,9 +164,9 @@ export const MaxButton = styled.button<{ page: string }>`
   `}
   &:hover {
     background-color: ${({
-                           page,
-                           theme
-                         }) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
+    page,
+    theme
+}) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`

@@ -1,11 +1,11 @@
 import { css, keyframes } from 'styled-components/macro'
 
-export const  skeletonAnimation = keyframes`
+export const skeletonAnimation = keyframes`
   100% {
     transform: translateX(100%);
   }
 `
-export const  skeletonGradient = css`
+export const skeletonGradient = css`
   position: relative;
   overflow: hidden;
   &::after {

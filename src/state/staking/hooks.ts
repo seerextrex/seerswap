@@ -1,6 +1,12 @@
-import { useCallback } from "react"
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { incentiveRefundeeAddress, incentiveRewardAmount, incentiveBonusRewardAmount, incentiveTime, TimePart } from "./actions"
+import { useCallback } from 'react'
+import { useAppDispatch } from 'state/hooks'
+import {
+    incentiveBonusRewardAmount,
+    incentiveRefundeeAddress,
+    incentiveRewardAmount,
+    incentiveTime,
+    TimePart
+} from './actions'
 
 export function useIncentiveHandlers() {
 

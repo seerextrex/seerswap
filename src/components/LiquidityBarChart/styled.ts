@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 import { darken } from 'polished'
 
 //index
-export const  Wrapper = styled.div`
+export const Wrapper = styled.div`
   position: relative;
   width: 100%;
   padding: 1rem;
@@ -22,7 +22,7 @@ export const  Wrapper = styled.div`
     border-radius: 20px;
   `}
 `
-export const  MockLoading = styled.div`
+export const MockLoading = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,7 +34,7 @@ export const  MockLoading = styled.div`
     width: 100%;
   `}
 `
-export const  ZoomButtonsWrapper = styled.div`
+export const ZoomButtonsWrapper = styled.div`
   display: flex;
   position: absolute;
   right: 1rem;
@@ -44,7 +44,7 @@ export const  ZoomButtonsWrapper = styled.div`
     position: static;
   `}
 `
-export const  ZoomButton = styled.button`
+export const ZoomButton = styled.button`
   border-radius: 50%;
   border: none;
   width: 32px;

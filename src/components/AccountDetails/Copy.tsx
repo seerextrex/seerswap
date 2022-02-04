@@ -5,23 +5,23 @@ import { Trans } from '@lingui/macro'
 import { CopyIcon, TransactionStatusText } from './styled'
 
 export default function CopyHelper(props: { toCopy: string; children?: React.ReactNode }) {
-  const [isCopied, setCopied] = useCopyClipboard()
+    const [isCopied, setCopied] = useCopyClipboard()
 
-  return (
-    <CopyIcon onClick={() => setCopied(props.toCopy)}>
-      {isCopied ? (
-        <TransactionStatusText>
-          <CheckCircle size={'16'} />
-          <TransactionStatusText>
-            <Trans>Copied</Trans>
-          </TransactionStatusText>
-        </TransactionStatusText>
-      ) : (
-        <TransactionStatusText>
-          <Copy size={'16'} stroke={'#080064'} />
-        </TransactionStatusText>
-      )}
-      {isCopied ? '' : props.children}
-    </CopyIcon>
-  )
+    return (
+        <CopyIcon onClick={() => setCopied(props.toCopy)}>
+            {isCopied ? (
+                <TransactionStatusText>
+                    <CheckCircle size={'16'} />
+                    <TransactionStatusText>
+                        <Trans>Copied</Trans>
+                    </TransactionStatusText>
+                </TransactionStatusText>
+            ) : (
+                <TransactionStatusText>
+                    <Copy size={'16'} stroke={'#080064'} />
+                </TransactionStatusText>
+            )}
+            {isCopied ? '' : props.children}
+        </CopyIcon>
+    )
 }

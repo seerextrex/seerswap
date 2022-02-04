@@ -5,7 +5,7 @@ import { darken } from 'polished'
 
 
 //index
-export const  CloseIcon = styled.div`
+export const CloseIcon = styled.div`
   position: absolute;
   right: 1rem;
   top: 14px;
@@ -14,18 +14,18 @@ export const  CloseIcon = styled.div`
     opacity: 0.6;
   }
 `
-export const  CloseColor = styled(Close)`
+export const CloseColor = styled(Close)`
   path {
     stroke: #080064;
   }
 `
-export const  Wrapper = styled.div`
+export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
   padding: 0;
   width: 100%;
 `
-export const  HeaderRow = styled.div`
+export const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
   font-weight: 500;
@@ -34,7 +34,7 @@ export const  HeaderRow = styled.div`
     padding: 1rem;
   `};
 `
-export const  ContentWrapper = styled.div`
+export const ContentWrapper = styled.div`
   background-color: rgb(179,230,255);
   padding: 0 1rem 1rem 1rem;
   border-bottom-left-radius: 20px;
@@ -42,7 +42,7 @@ export const  ContentWrapper = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0 1rem 1rem 1rem`};
 `
-export const  UpperSection = styled.div`
+export const UpperSection = styled.div`
   position: relative;
 
   color: #080064;
@@ -62,7 +62,7 @@ export const  UpperSection = styled.div`
     font-weight: 500;
   }
 `
-export const  OptionGrid = styled.div`
+export const OptionGrid = styled.div`
   display: grid;
   grid-gap: 10px;
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -70,7 +70,7 @@ export const  OptionGrid = styled.div`
     grid-gap: 10px;
   `};
 `
-export const  HoverText = styled.div`
+export const HoverText = styled.div`
   text-decoration: none;
   color: ${({ theme }) => theme.text1};
   display: flex;
@@ -93,7 +93,10 @@ const InfoCard = styled.button<{ active?: boolean }>`
     box-shadow: 0 0 0 1px ${({ theme }) => theme.winterDisabledButton};
   }
 
-  border: 1px solid ${({ theme, active }) => (active ? theme.winterMainButton : theme.winterMainButton)};
+  border: 1px solid ${({
+    theme,
+    active
+}) => (active ? theme.winterMainButton : theme.winterMainButton)};
 `
 const OptionCard = styled(InfoCard as any)`
   display: flex;

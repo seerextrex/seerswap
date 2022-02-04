@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components/macro'
 import { lighten } from 'polished'
 
-export const  ToolbarWrapper = styled.div`
+export const ToolbarWrapper = styled.div`
   width: 100%;
   padding: 1rem 0 0;
   display: flex;
@@ -14,22 +14,22 @@ export const  ToolbarWrapper = styled.div`
     }
   `}
 `
-export const  ToolbarChartTypeWrapper = styled.div`
+export const ToolbarChartTypeWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
   &:first-of-type {
     margin-bottom: 1rem;
   }
 `}
 `
-export const  ToolbarOptionsTitle = styled.div`
+export const ToolbarOptionsTitle = styled.div`
   margin-bottom: 1rem;
   font-weight: 500;
 `
-export const  ToolbarOptions = styled.ul`
+export const ToolbarOptions = styled.ul`
   margin: 0;
   padding: 0;
 `
-export const  ToolbarOptionsItem = styled.li<{selected: boolean}>`
+export const ToolbarOptionsItem = styled.li<{ selected: boolean }>`
   display: inline-flex;
   padding: 6px 10px;
   border-radius: 6px;
@@ -47,8 +47,8 @@ export const  ToolbarOptionsItem = styled.li<{selected: boolean}>`
   }
 
   ${({ selected }) =>
-  selected &&
-  css`
+    selected &&
+    css`
       background-color: #2a87d9;
       cursor: default;
     `}

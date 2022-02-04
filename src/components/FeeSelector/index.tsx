@@ -34,115 +34,121 @@ const FocusedOutlineCard = styled(Card)<{ pulsing: boolean }>`
 `
 
 const FeeAmountLabel = {
-  [FeeAmount.LOW]: {
-    label: '0.05',
-    description: <Trans>Best for stable pairs.</Trans>,
-  },
-  [FeeAmount.MEDIUM]: {
-    label: '0.3',
-    description: <Trans>Best for most pairs.</Trans>,
-  },
-  [FeeAmount.HIGH]: {
-    label: '1',
-    description: <Trans>Best for exotic pairs.</Trans>,
-  },
+    [FeeAmount.LOW]: {
+        label: '0.05',
+        description: <Trans>Best for stable pairs.</Trans>
+    },
+    [FeeAmount.MEDIUM]: {
+        label: '0.3',
+        description: <Trans>Best for most pairs.</Trans>
+    },
+    [FeeAmount.HIGH]: {
+        label: '1',
+        description: <Trans>Best for exotic pairs.</Trans>
+    }
 }
 
 const FeeTierPercentageBadge = ({ percentage }: { percentage: number | undefined }) => {
-  return (
-    <Badge>
-      <TYPE.label fontSize={12}>
-        {percentage !== undefined ? <Trans>{percentage?.toFixed(0)}% select</Trans> : <Trans>Not created</Trans>}
-      </TYPE.label>
-    </Badge>
-  )
+    return (
+        <Badge>
+            <TYPE.label fontSize={12}>
+                {percentage !== undefined ? <Trans>{percentage?.toFixed(0)}% select</Trans> :
+                    <Trans>Not created</Trans>}
+            </TYPE.label>
+        </Badge>
+    )
 }
 
 export default function FeeSelector({
-  disabled = false,
-  feeAmount,
-  dynamicFee,
-  handleFeePoolSelect,
-  noLiquidity,
-  currencyA,
-  currencyB,
+    disabled = false,
+    feeAmount,
+    dynamicFee,
+    handleFeePoolSelect,
+    noLiquidity,
+    currencyA,
+    currencyB
 }: {
-  disabled?: boolean
-  feeAmount?: FeeAmount
-  noLiquidity?: boolean
-  dynamicFee?: number
-  handleFeePoolSelect: (feeAmount: FeeAmount) => void
-  currencyA?: Currency | undefined
-  currencyB?: Currency | undefined
+    disabled?: boolean
+    feeAmount?: FeeAmount
+    noLiquidity?: boolean
+    dynamicFee?: number
+    handleFeePoolSelect: (feeAmount: FeeAmount) => void
+    currencyA?: Currency | undefined
+    currencyB?: Currency | undefined
 }) {
-  const { isLoading, isError, largestUsageFeeTier, distributions } = useFeeTierDistribution(currencyA, currencyB)
+    const {
+        isLoading,
+        isError,
+        largestUsageFeeTier,
+        distributions
+    } = useFeeTierDistribution(currencyA, currencyB)
 
-  const [showOptions, setShowOptions] = useState(true)
-  const [pulsing, setPulsing] = useState(false)
+    const [showOptions, setShowOptions] = useState(true)
+    const [pulsing, setPulsing] = useState(false)
 
-  const previousFeeAmount = usePrevious(dynamicFee)
+    const previousFeeAmount = usePrevious(dynamicFee)
 
-  const recommended = useRef(false)
+    const recommended = useRef(false)
 
-  // const dynamicFeeChange = useDynamicFeeValue()
+    // const dynamicFeeChange = useDynamicFeeValue()
 
-  const handleFeePoolSelectWithEvent = useCallback(
-    (fee) => {
-      handleFeePoolSelect(fee)
-    },
-    [handleFeePoolSelect]
-  )
+    const handleFeePoolSelectWithEvent = useCallback(
+        (fee) => {
+            handleFeePoolSelect(fee)
+        },
+        [handleFeePoolSelect]
+    )
 
-  useEffect(() => {
-    if (dynamicFee || isLoading || isError) {
-      return
-    }
+    useEffect(() => {
+        if (dynamicFee || isLoading || isError) {
+            return
+        }
 
-    if (!largestUsageFeeTier) {
-      // cannot recommend, open options
-      setShowOptions(true)
-    } else {
-      setShowOptions(false)
+        if (!largestUsageFeeTier) {
+            // cannot recommend, open options
+            setShowOptions(true)
+        } else {
+            setShowOptions(false)
 
-      recommended.current = true
+            recommended.current = true
 
-      handleFeePoolSelect(largestUsageFeeTier)
-    }
-  }, [dynamicFee, isLoading, isError, largestUsageFeeTier, handleFeePoolSelect])
+            handleFeePoolSelect(largestUsageFeeTier)
+        }
+    }, [dynamicFee, isLoading, isError, largestUsageFeeTier, handleFeePoolSelect])
 
-  useEffect(() => {
-    setShowOptions(isError)
-  }, [isError])
+    useEffect(() => {
+        setShowOptions(isError)
+    }, [isError])
 
-  useEffect(() => {
-    if (dynamicFee && previousFeeAmount !== dynamicFee) {
-      setPulsing(true)
-    }
-  }, [previousFeeAmount, dynamicFee])
+    useEffect(() => {
+        if (dynamicFee && previousFeeAmount !== dynamicFee) {
+            setPulsing(true)
+        }
+    }, [previousFeeAmount, dynamicFee])
 
-  return (
-    <AutoColumn gap="16px">
-      <DynamicSection gap="md" disabled={disabled}>
-        <FocusedOutlineCard pulsing={pulsing} onAnimationEnd={() => setPulsing(false)}>
-          <RowBetween>
-            <AutoColumn id="add-liquidity-selected-fee">
-              {
-                <>
-                  <TYPE.label className="selected-fee-label">
-                    {/* <Trans>{FeeAmountLabel[feeAmount].label}% fee tier</Trans> */}
-                    <Trans>
-                      {noLiquidity ? 'Fee is 0.05%' : dynamicFee ? `Fee is ${dynamicFee / 10000}%` : 'Loading...'}
-                    </Trans>
-                  </TYPE.label>
-                  {/* <Box style={{ width: 'fit-content', marginTop: '8px' }} className="selected-fee-percentage">
+    return (
+        <AutoColumn gap='16px'>
+            <DynamicSection gap='md' disabled={disabled}>
+                <FocusedOutlineCard pulsing={pulsing} onAnimationEnd={() => setPulsing(false)}>
+                    <RowBetween>
+                        <AutoColumn id='add-liquidity-selected-fee'>
+                            {
+                                <>
+                                    <TYPE.label className='selected-fee-label'>
+                                        {/* <Trans>{FeeAmountLabel[feeAmount].label}% fee tier</Trans> */}
+                                        <Trans>
+                                            {noLiquidity ? 'Fee is 0.05%' : dynamicFee ? `Fee is ${dynamicFee / 10000}%` : 'Loading...'}
+                                        </Trans>
+                                    </TYPE.label>
+                                    {/* <Box style={{ width: 'fit-content', marginTop: '8px' }} className="selected-fee-percentage">
                     {distributions && feeAmount && <FeeTierPercentageBadge percentage={distributions[feeAmount]} />}
                   </Box> */}
-                </>
-              }
-            </AutoColumn>
-          </RowBetween>
-        </FocusedOutlineCard>
-      </DynamicSection>
-    </AutoColumn>
-  )
+                                </>
+                            }
+                        </AutoColumn>
+                    </RowBetween>
+                </FocusedOutlineCard>
+            </DynamicSection>
+        </AutoColumn>
+    )
 }

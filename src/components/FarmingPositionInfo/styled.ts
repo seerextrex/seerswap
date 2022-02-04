@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-export const  PositionIcon = styled.div`
+export const PositionIcon = styled.div`
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -11,7 +11,7 @@ export const  PositionIcon = styled.div`
   cursor: pointer;
 `
 
-export const  PositionInfoModal = styled.div`
+export const PositionInfoModal = styled.div`
   display: flex;
   flex-direction: column;
   padding: 2rem;
@@ -19,16 +19,16 @@ export const  PositionInfoModal = styled.div`
   color: #080064;
 `
 
-export const  PositionInfoRow = styled.div`
+export const PositionInfoRow = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
 `
 
-export const  PositionInfoRowValue = styled.div`
+export const PositionInfoRowValue = styled.div`
   display: flex;
 `
 
-export const  PositionInfoRowTitle = styled.div`
+export const PositionInfoRowTitle = styled.div`
   font-weight: 600;
 `

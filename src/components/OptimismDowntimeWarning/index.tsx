@@ -35,29 +35,29 @@ const LinkOutToNotion = styled.a`
 `
 
 export default function OptimismDowntimeWarning() {
-  const { chainId } = useActiveWeb3React()
-  if (!chainId || ![SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)) {
-    return null
-  }
+    const { chainId } = useActiveWeb3React()
+    if (!chainId || ![SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)) {
+        return null
+    }
 
-  return (
-    <Root>
-      <TitleRow>
-        <WarningIcon />
-        <Trans>{'Optimism'} Scheduled Downtimes</Trans>
-      </TitleRow>
-      <Body>
-        <Trans>
-          {'Optimism'} expects some scheduled downtime in the near future.&nbsp;
-          <LinkOutToNotion
-            href={`https://www.notion.so/Optimism-Regenesis-Schedule-8d14a34902ca4f5a8910762b3ec4b8da`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read more.
-          </LinkOutToNotion>
-        </Trans>
-      </Body>
-    </Root>
-  )
+    return (
+        <Root>
+            <TitleRow>
+                <WarningIcon />
+                <Trans>{'Optimism'} Scheduled Downtimes</Trans>
+            </TitleRow>
+            <Body>
+                <Trans>
+                    {'Optimism'} expects some scheduled downtime in the near future.&nbsp;
+                    <LinkOutToNotion
+                        href={`https://www.notion.so/Optimism-Regenesis-Schedule-8d14a34902ca4f5a8910762b3ec4b8da`}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        Read more.
+                    </LinkOutToNotion>
+                </Trans>
+            </Body>
+        </Root>
+    )
 }

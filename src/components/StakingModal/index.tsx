@@ -5,118 +5,134 @@ import { Trans } from '@lingui/macro'
 import { ModalContentWrapper, StyledCloseIcon } from './styled'
 
 export default function StakingModal({
-  modal,
-  closeModalCallback,
+    modal,
+    closeModalCallback
 }: {
-  modal: boolean
-  closeModalCallback: () => void
+    modal: boolean
+    closeModalCallback: () => void
 }) {
-  const [approved, setApproved] = useState(false)
+    const [approved, setApproved] = useState(false)
 
-  const [sent, setSent] = useState(false)
+    const [sent, setSent] = useState(false)
 
-  const [staked, setStaked] = useState(false)
+    const [staked, setStaked] = useState(false)
 
-  const approve = useCallback(() => {
-    setApproved(true)
-  }, [approved])
+    const approve = useCallback(() => {
+        setApproved(true)
+    }, [approved])
 
-  const send = useCallback(() => {
-    setSent(true)
-  }, [sent])
+    const send = useCallback(() => {
+        setSent(true)
+    }, [sent])
 
-  const stake = useCallback(() => {
-    setStaked(true)
-  }, [staked])
+    const stake = useCallback(() => {
+        setStaked(true)
+    }, [staked])
 
-  const theme = useContext(ThemeContext)
+    const theme = useContext(ThemeContext)
 
-  return (
-    <Modal isOpen={modal} onDismiss={() => console.log('here')} maxHeight={80}>
-      <ModalContentWrapper>
-        {!approved ? (
-          <>
-            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
-              <Trans>Approve NFT</Trans>
-              <StyledCloseIcon onClick={closeModalCallback} />
-            </div>
-            <div
-              style={{
-                padding: '8px',
-                borderRadius: '6px',
-                backgroundColor: '#0f1940',
-                color: '#5376ff',
-                marginBottom: '1rem',
-              }}
-            >
-              <Trans>To stake your NFT you should approve Algebra to use it</Trans>
-            </div>
-            <button
-              style={{
-                padding: '1rem',
-                width: '100%',
-                border: 'none',
-                borderRadius: '8px',
-                color: 'white',
-                backgroundColor: theme.winterMainButton,
-                fontSize: '18px',
-              }}
-              onClick={approve}
-            >
-              Approve
-            </button>
-          </>
-        ) : !sent ? (
-          <>
-            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
-              <Trans>Send NFT</Trans>
-              <StyledCloseIcon onClick={closeModalCallback} />
-            </div>
-            <button
-              style={{
-                padding: '1rem',
-                width: '100%',
-                border: 'none',
-                borderRadius: '8px',
-                color: 'white',
-                backgroundColor: theme.winterMainButton,
-                fontSize: '18px',
-              }}
-              onClick={send}
-            >
-              Send
-            </button>
-          </>
-        ) : !staked ? (
-          <>
-            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
-              <Trans>Deposit NFT</Trans>
-              <StyledCloseIcon onClick={closeModalCallback} />
-            </div>
-            <button
-              style={{
-                padding: '1rem',
-                width: '100%',
-                border: 'none',
-                borderRadius: '8px',
-                color: 'white',
-                backgroundColor: theme.winterMainButton,
-                fontSize: '18px',
-              }}
-              onClick={stake}
-            >
-              Deposit
-            </button>
-          </>
-        ) : (
-          <>
-            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
-              <Trans>Done!</Trans>
-              <StyledCloseIcon onClick={closeModalCallback} />
-            </div>
-          </>
-        )}
-      </ModalContentWrapper>
-    </Modal>
-  )
+    return (
+        <Modal isOpen={modal} onDismiss={() => console.log('here')} maxHeight={80}>
+            <ModalContentWrapper>
+                {!approved ? (
+                    <>
+                        <div style={{
+                            marginBottom: '1rem',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Trans>Approve NFT</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
+                        </div>
+                        <div
+                            style={{
+                                padding: '8px',
+                                borderRadius: '6px',
+                                backgroundColor: '#0f1940',
+                                color: '#5376ff',
+                                marginBottom: '1rem'
+                            }}
+                        >
+                            <Trans>To stake your NFT you should approve Algebra to use it</Trans>
+                        </div>
+                        <button
+                            style={{
+                                padding: '1rem',
+                                width: '100%',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                backgroundColor: theme.winterMainButton,
+                                fontSize: '18px'
+                            }}
+                            onClick={approve}
+                        >
+                            Approve
+                        </button>
+                    </>
+                ) : !sent ? (
+                    <>
+                        <div style={{
+                            marginBottom: '1rem',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Trans>Send NFT</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
+                        </div>
+                        <button
+                            style={{
+                                padding: '1rem',
+                                width: '100%',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                backgroundColor: theme.winterMainButton,
+                                fontSize: '18px'
+                            }}
+                            onClick={send}
+                        >
+                            Send
+                        </button>
+                    </>
+                ) : !staked ? (
+                    <>
+                        <div style={{
+                            marginBottom: '1rem',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Trans>Deposit NFT</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
+                        </div>
+                        <button
+                            style={{
+                                padding: '1rem',
+                                width: '100%',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                backgroundColor: theme.winterMainButton,
+                                fontSize: '18px'
+                            }}
+                            onClick={stake}
+                        >
+                            Deposit
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <div style={{
+                            marginBottom: '1rem',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Trans>Done!</Trans>
+                            <StyledCloseIcon onClick={closeModalCallback} />
+                        </div>
+                    </>
+                )}
+            </ModalContentWrapper>
+        </Modal>
+    )
 }

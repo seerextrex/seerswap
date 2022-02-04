@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { AutoColumn } from '../../components/Column'
 
-export const  PageWrapper = styled(AutoColumn)`
+export const PageWrapper = styled(AutoColumn)`
   max-width: 995px;
   width: 100%;
 
@@ -13,18 +13,18 @@ export const  PageWrapper = styled(AutoColumn)`
     max-width: 600px;
   `};
 `
-export const  InnerWrapper = styled(AutoColumn)`
+export const InnerWrapper = styled(AutoColumn)`
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     min-width: 100%;
   }`}
 `
-export const  MainContentWrapper = styled.div`
+export const MainContentWrapper = styled.div`
   border-radius: 20px;
   display: flex;
   flex-direction: column;
   min-width: 100%;
 `
-export const  MenuWrapper = styled.div`
+export const MenuWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,7 @@ export const  MenuWrapper = styled.div`
     margin-bottom: 1rem;
   }`}
 `
-export const  BodyWrapper = styled.div`
+export const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) => theme.winterBackground};

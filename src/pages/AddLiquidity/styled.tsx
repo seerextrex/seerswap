@@ -16,7 +16,7 @@ export const PageWrapper = styled(BodyWrapper)<{ wide: boolean }>`
   `};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     max-width: 100%!important;
-    
+
   `};
 `
 export const Wrapper = styled.div`
@@ -46,7 +46,7 @@ export const DynamicSection = styled(AutoColumn)<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => (disabled ? '0.2' : '1')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'initial')};
 `
-export const CurrencyDropdown = styled(CurrencyInputPanel)<{style: any; pool: string}>`
+export const CurrencyDropdown = styled(CurrencyInputPanel)<{ style: any; pool: string }>`
   width: ${({ centered }) => (centered ? '100%' : '50%')};
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;

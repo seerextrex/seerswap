@@ -7,7 +7,7 @@ import { ButtonPrimary } from '../../components/Button'
 
 
 //All
-export const  PageWrapper = styled(AutoColumn)`
+export const PageWrapper = styled(AutoColumn)`
   max-width: 1000px;
   width: 100%;
 
@@ -19,7 +19,7 @@ export const  PageWrapper = styled(AutoColumn)`
     max-width: 600px;
   `};
 `
-export const  MainContentWrapper = styled.div`
+export const MainContentWrapper = styled.div`
   border-radius: 20px;
   display: flex;
   flex-direction: column;
@@ -29,12 +29,12 @@ export const  MainContentWrapper = styled.div`
 `
 
 //StakingPage
-export const  InnerWrapper = styled(AutoColumn)`
+export const InnerWrapper = styled(AutoColumn)`
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     min-width: 100%;
   }`}
 `
-export const  MenuWrapper = styled.div`
+export const MenuWrapper = styled.div`
   width: 100%;
   margin-bottom: 2rem;
   margin-top: 2rem;
@@ -81,7 +81,7 @@ export const  MenuWrapper = styled.div`
 }
 `}
 `
-export const  BodyWrapper = styled.div`
+export const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) => theme.winterBackground};
@@ -92,7 +92,7 @@ export const  BodyWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
   `}
 `
-export const  MockScreen = styled.div`
+export const MockScreen = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,7 +103,7 @@ export const  MockScreen = styled.div`
     text-align: center;
   }
 `
-export const  ConnectWalletButton = styled.button`
+export const ConnectWalletButton = styled.button`
   border: 1px solid ${({ theme }) => theme.winterMainButton};
   background-color: ${({ theme }) => theme.winterMainButton};
   color: white;
@@ -160,7 +160,7 @@ export const TokenLogo = styled.div`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background:-moz-linear-gradient(128deg, rgba(255, 0, 99, 1) 0%, rgba(255, 187, 0, 1) 17%, rgba(249, 255, 0, 1) 33%, rgba(76, 175, 80, 1) 48%, rgba(0, 188, 212, 1) 64%, rgba(76, 83, 175, 1) 84%, rgba(238, 130, 238, 1) 100%); 
+  background:-moz-linear-gradient(128deg, rgba(255, 0, 99, 1) 0%, rgba(255, 187, 0, 1) 17%, rgba(249, 255, 0, 1) 33%, rgba(76, 175, 80, 1) 48%, rgba(0, 188, 212, 1) 64%, rgba(76, 83, 175, 1) 84%, rgba(238, 130, 238, 1) 100%);
   background:-webkit-linear-gradient(128deg, rgba(255, 0, 99, 1) 0%, rgba(255, 187, 0, 1) 17%, rgba(249, 255, 0, 1) 33%, rgba(76, 175, 80, 1) 48%, rgba(0, 188, 212, 1) 64%, rgba(76, 83, 175, 1) 84%, rgba(238, 130, 238, 1) 100%);
   background:-o-linear-gradient(128deg, rgba(255, 0, 99, 1) 0%, rgba(255, 187, 0, 1) 17%, rgba(249, 255, 0, 1) 33%, rgba(76, 175, 80, 1) 48%, rgba(0, 188, 212, 1) 64%, rgba(76, 83, 175, 1) 84%, rgba(238, 130, 238, 1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EE82EE', endColorstr='#FF0063', GradientType=0 );

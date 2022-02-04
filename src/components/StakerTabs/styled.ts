@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 export const Tabs = styled.div`
   display: flex;
 `
-export const Tab = styled.div<{active: boolean}>`
+export const Tab = styled.div<{ active: boolean }>`
   display: inline-flex;
   align-items: center;
   padding: 0 8px 12px;

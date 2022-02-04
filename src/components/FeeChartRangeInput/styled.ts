@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-export const  Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   padding: 1rem;
   margin-top: 1rem;
@@ -17,7 +17,7 @@ export const  Wrapper = styled.div`
     border-radius: 20px;
   `}
 `
-export const  MockLoading = styled.div`
+export const MockLoading = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

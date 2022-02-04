@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-export const  QuestionWrapper = styled.div`
+export const QuestionWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,6 +20,6 @@ export const  QuestionWrapper = styled.div`
     opacity: 0.7;
   }
 `
-export const  QuestionMark = styled.span`
+export const QuestionMark = styled.span`
   font-size: 14px;
 `

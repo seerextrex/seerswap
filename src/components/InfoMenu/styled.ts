@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
 
-export const  MenuList = styled.ul`
+export const MenuList = styled.ul`
   padding: 0 1rem;
   margin: 0;
   list-style-type: none;
@@ -49,7 +49,7 @@ export const  MenuList = styled.ul`
   }
 `}
 `
-export const  MenuListItem = styled.li`
+export const MenuListItem = styled.li`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -77,13 +77,13 @@ export const  MenuListItem = styled.li`
     }
   }`}
 `
-export const  MenuListItemIcon = styled.span`
+export const MenuListItemIcon = styled.span`
   margin-right: 6px;
   & > svg {
     display: block;
   }
 `
-export const  MenuListItemTitle = styled.span`
+export const MenuListItemTitle = styled.span`
   font-family: Montserrat, sans-serif;
   line-height: 24px;
 `

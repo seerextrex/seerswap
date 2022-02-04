@@ -1,8 +1,8 @@
-import {useCallback} from "react";
-import {useAppDispatch, useAppSelector} from "../hooks";
-import {useClients} from "../../hooks/subgraph/useClients";
-import {ONE_FARMING_EVENT} from "../../utils/graphql-queries";
-import {isFarming} from "./actions";
+import { useCallback } from 'react'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { useClients } from '../../hooks/subgraph/useClients'
+import { ONE_FARMING_EVENT } from '../../utils/graphql-queries'
+import { isFarming } from './actions'
 
 
 export function useFarmingActionsHandlers(): {
@@ -11,16 +11,19 @@ export function useFarmingActionsHandlers(): {
 } {
 
     const dispatch = useAppDispatch()
-    const {farmingClient} = useClients()
-    const {startTime} = useAppSelector(state => state.farming)
+    const { farmingClient } = useClients()
+    const { startTime } = useAppSelector(state => state.farming)
 
     const isFarmingAdd = useCallback(async () => {
         try {
-            const {data: {incentives}, error: error} = await farmingClient.query({
+            const { data: { incentives }, error: error } = await farmingClient.query({
                 query: ONE_FARMING_EVENT(),
                 fetchPolicy: 'cache-first'
             })
-           dispatch(isFarming({startTime: incentives[0]?.startTime, endTime: incentives[0]?.endTime}))
+            dispatch(isFarming({
+                startTime: incentives[0]?.startTime,
+                endTime: incentives[0]?.endTime
+            }))
         } catch (e) {
             console.log(e)
         }
@@ -41,7 +44,7 @@ export function useFarmingActionsHandlers(): {
     // }, [startTime])
 
     return {
-        onIsFarming: isFarmingAdd,
+        onIsFarming: isFarmingAdd
         // onIsFarmingGet: isFarmingGet
     }
 }

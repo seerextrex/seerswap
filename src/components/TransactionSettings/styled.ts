@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { darken } from 'polished'
 
-const  FancyButton = styled.button`
+const FancyButton = styled.button`
   color: ${({ theme }) => theme.text1};
   align-items: center;
   height: 2rem;
@@ -16,7 +16,7 @@ const  FancyButton = styled.button`
     border: 1px solid ${({ theme }) => theme.primary1};
   }
 `
-export const  Option = styled(FancyButton)<{ active: boolean }>`
+export const Option = styled(FancyButton)<{ active: boolean }>`
   margin-right: 8px;
   :hover {
     cursor: pointer;
@@ -24,7 +24,7 @@ export const  Option = styled(FancyButton)<{ active: boolean }>`
   background-color: ${({ active, theme }) => active && theme.primary1};
   color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
 `
-export const  Input = styled.input`
+export const Input = styled.input`
   background: #161520;
   font-size: 16px;
   width: auto;
@@ -36,17 +36,17 @@ export const  Input = styled.input`
   color: ${({ theme, color }) => (color === 'red' ? theme.red1 : theme.text1)};
   text-align: right;
 `
-export const  OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
+export const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
   height: 2rem;
   position: relative;
   padding: 0 0.75rem;
   flex: 1;
   background-color: white;
   border: ${({ theme, active, warning }) =>
-  active ? `1px solid ${warning ? theme.red1 : theme.primary1}` : warning && `1px solid ${theme.red1}`};
+    active ? `1px solid ${warning ? theme.red1 : theme.primary1}` : warning && `1px solid ${theme.red1}`};
   :hover {
     border: ${({ theme, active, warning }) =>
-  active && `1px solid ${warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary1)}`};
+    active && `1px solid ${warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary1)}`};
   }
 
   input {
@@ -58,9 +58,9 @@ export const  OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: b
     border-radius: 2rem;
   }
 `
-export const  SlippageEmojiContainer = styled.span`
+export const SlippageEmojiContainer = styled.span`
   color: #f3841e;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;  
+    display: none;
   `}
 `

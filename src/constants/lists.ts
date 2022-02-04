@@ -18,21 +18,21 @@ export const UNSUPPORTED_LIST_URLS: string[] = IS_ON_APP_URL ? [BA_LIST] : []
 
 // lower index == higher priority for token import
 export const DEFAULT_LIST_OF_LISTS: string[] = [
-  // COMPOUND_LIST,
-  // AAVE_LIST,
-  // CMC_ALL_LIST,
-  // CMC_STABLECOIN,
-  // WRAPPED_LIST,
-  // SET_LIST,
-  // ROLL_LIST,
-  // COINGECKO_LIST,
-  // KLEROS_LIST,
-  // OPTIMISM_LIST,
-  // GEMINI_LIST,
-  ...UNSUPPORTED_LIST_URLS, // need to load unsupported tokens as well
+    // COMPOUND_LIST,
+    // AAVE_LIST,
+    // CMC_ALL_LIST,
+    // CMC_STABLECOIN,
+    // WRAPPED_LIST,
+    // SET_LIST,
+    // ROLL_LIST,
+    // COINGECKO_LIST,
+    // KLEROS_LIST,
+    // OPTIMISM_LIST,
+    // GEMINI_LIST,
+    ...UNSUPPORTED_LIST_URLS // need to load unsupported tokens as well
 ]
 
 // default lists to be 'active' aka searched across
 export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
-  // GEMINI_LIST
+    // GEMINI_LIST
 ]

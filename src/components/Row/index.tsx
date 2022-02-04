@@ -2,12 +2,12 @@ import styled from 'styled-components/macro'
 import { Box } from 'rebass/styled-components'
 
 const Row = styled(Box)<{
-  width?: string
-  align?: string
-  justify?: string
-  padding?: string
-  border?: string
-  borderRadius?: string
+    width?: string
+    align?: string
+    justify?: string
+    padding?: string
+    border?: string
+    borderRadius?: string
 }>`
   width: ${({ width }) => width ?? '100%'};
   display: flex;

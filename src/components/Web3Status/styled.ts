@@ -3,7 +3,7 @@ import { ButtonSecondary } from '../Button'
 import { darken } from 'polished'
 import { Activity } from 'react-feather'
 
-const  Web3StatusGeneric = styled(ButtonSecondary)`
+const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   align-items: center;
@@ -15,7 +15,7 @@ const  Web3StatusGeneric = styled(ButtonSecondary)`
     outline: none;
   }
 `
-export const  Web3StatusError = styled(Web3StatusGeneric)`
+export const Web3StatusError = styled(Web3StatusGeneric)`
   background-color: ${({ theme }) => theme.red1};
   border: 1px solid ${({ theme }) => theme.red1};
   color: ${({ theme }) => theme.white};
@@ -25,7 +25,7 @@ export const  Web3StatusError = styled(Web3StatusGeneric)`
     background-color: ${({ theme }) => darken(0.1, theme.red1)};
   }
 `
-export const  Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
+export const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
   background-color: ${({ theme }) => theme.primary4};
   border: none;
   padding: 10px 36px;
@@ -40,8 +40,8 @@ export const  Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>
   }
 
   ${({ faded }) =>
-  faded &&
-  css`
+    faded &&
+    css`
       background-color: ${({ theme }) => theme.primary5};
       // border: 1px solid ${({ theme }) => theme.primary5};
       color: ${({ theme }) => theme.primaryText1};
@@ -57,7 +57,7 @@ export const  Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>
       padding: 10px 16px;
     `}
 `
-export const  Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
+export const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg0)};
   color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
   font-weight: 500;
@@ -66,7 +66,7 @@ export const  Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolea
     font-size: 15px;
   `}
 `
-export const  Text = styled.p`
+export const Text = styled.p`
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -80,7 +80,7 @@ export const  Text = styled.p`
       font-size: 11px;
   `}
 `
-export const  NetworkIcon = styled(Activity)`
+export const NetworkIcon = styled(Activity)`
   margin-left: 0.25rem;
   margin-right: 0.5rem;
   width: 16px;

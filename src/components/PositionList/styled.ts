@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { MEDIA_WIDTHS } from 'theme'
 
-export const  DesktopHeader = styled.div`
+export const DesktopHeader = styled.div`
   display: none;
   font-size: 14px;
   font-weight: 500;
@@ -17,7 +17,7 @@ export const  DesktopHeader = styled.div`
     }
   }
 `
-export const  MobileHeader = styled.div`
+export const MobileHeader = styled.div`
   font-size: 16px;
   font-weight: 500;
   padding: 8px;

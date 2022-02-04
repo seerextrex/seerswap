@@ -1,25 +1,36 @@
-import { useState } from "react";
-import { useActiveWeb3React } from "./web3";
-import { CHAIN_SUBGRAPH_URL } from "../state/data/slice";
-import { Contract, providers } from "ethers";
+import { useState } from 'react'
+import { useActiveWeb3React } from './web3'
+import { CHAIN_SUBGRAPH_URL } from '../state/data/slice'
+import { Contract, providers } from 'ethers'
 import ERC20_ABI from 'abis/erc20'
 import STAKER_ABI from 'abis/staker'
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from "../constants/addresses";
-import { BigNumber } from "@ethersproject/bignumber";
-import { CURRENT_EVENTS, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN, FUTURE_EVENTS, POSITIONS_OWNED_FOR_POOL, SHARED_POSITIONS, TRANSFERED_POSITIONS, TRANSFERED_POSITIONS_FOR_POOL } from "../utils/graphql-queries";
-import { useClients } from "./subgraph/useClients";
-import { formatUnits } from "@ethersproject/units";
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from '../constants/addresses'
+import { BigNumber } from '@ethersproject/bignumber'
+import {
+    CURRENT_EVENTS,
+    FETCH_INCENTIVE,
+    FETCH_POOL,
+    FETCH_REWARDS,
+    FETCH_TOKEN,
+    FUTURE_EVENTS,
+    POSITIONS_OWNED_FOR_POOL,
+    SHARED_POSITIONS,
+    TRANSFERED_POSITIONS,
+    TRANSFERED_POSITIONS_FOR_POOL
+} from '../utils/graphql-queries'
+import { useClients } from './subgraph/useClients'
+import { formatUnits } from '@ethersproject/units'
 
 //TODO ТИПИЗИРОВАТЬ !!!!!!!!!!!!!
 export function useIncentiveSubgraph() {
     const { chainId, account } = useActiveWeb3React()
     const { dataClient, farmingClient } = useClients()
 
-    const [positionsForPool, setPositionsForPool] = useState(null);
+    const [positionsForPool, setPositionsForPool] = useState(null)
     const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
 
-    const [transferredPositions, setTransferredPositions] = useState(null);
+    const [transferredPositions, setTransferredPositions] = useState(null)
     const [transferredPositionsLoading, setTransferredPositionsLoading] = useState<boolean>(false)
 
     const [rewardsResult, setRewardsResult] = useState(null)
@@ -44,8 +55,8 @@ export function useIncentiveSubgraph() {
 
             const pool = await fetchPool(events[i].pool)
 
-            const rewardToken = await fetchToken(events[i].rewardToken);
-            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken);
+            const rewardToken = await fetchToken(events[i].rewardToken)
+            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken)
 
             const _event: any = {
                 ...events[i],
@@ -155,7 +166,7 @@ export function useIncentiveSubgraph() {
                     amount: reward.amount > 0 ? (reward.amount / Math.pow(10, decimals)).toFixed(decimals) : 0,
                     trueAmount: reward.amount,
                     symbol,
-                    name,
+                    name
                 }
 
                 newRewards.push(newReward)
@@ -250,7 +261,10 @@ export function useIncentiveSubgraph() {
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            const { data: { deposits: positionsShared }, error: _error } = await farmingClient.query({
+            const {
+                data: { deposits: positionsShared },
+                error: _error
+            } = await farmingClient.query({
                 query: SHARED_POSITIONS(account),
                 fetchPolicy: reload ? 'network-only' : 'cache-first'
             })
@@ -272,7 +286,13 @@ export function useIncentiveSubgraph() {
                     provider.getSigner()
                 )
 
-                const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.tokenId)
+                const {
+                    tickLower,
+                    tickUpper,
+                    liquidity,
+                    token0,
+                    token1
+                } = await nftContract.positions(+position.tokenId)
 
                 let _position = {
                     tickLower,
@@ -284,7 +304,15 @@ export function useIncentiveSubgraph() {
 
                 if (position.incentive) {
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, refundee, id } = await fetchIncentive(position.incentive)
+                    const {
+                        rewardToken,
+                        bonusRewardToken,
+                        pool,
+                        startTime,
+                        endTime,
+                        refundee,
+                        id
+                    } = await fetchIncentive(position.incentive)
 
                     const rewardContract = new Contract(
                         rewardToken,
@@ -393,14 +421,20 @@ export function useIncentiveSubgraph() {
 
             setPositionsForPoolLoading(true)
 
-            const { data: { deposits: positionsTransferred }, error: errorTransferred } = (await farmingClient.query({
+            const {
+                data: { deposits: positionsTransferred },
+                error: errorTransferred
+            } = (await farmingClient.query({
                 query: TRANSFERED_POSITIONS_FOR_POOL(account, pool),
                 fetchPolicy: 'network-only'
             }))
 
             if (errorTransferred) throw new Error(`${errorTransferred.name} ${errorTransferred.message}`)
 
-            const { data: { deposits: positionsOwned }, error: errorOwned } = (await farmingClient.query({
+            const {
+                data: { deposits: positionsOwned },
+                error: errorOwned
+            } = (await farmingClient.query({
                 query: POSITIONS_OWNED_FOR_POOL(account, pool),
                 fetchPolicy: 'network-only'
             }))
@@ -458,9 +492,9 @@ export function useIncentiveSubgraph() {
             }
 
 
-            const transferredPositionsIds = positionsTransferred.map(position => position.tokenId);
+            const transferredPositionsIds = positionsTransferred.map(position => position.tokenId)
 
-            setPositionsOnFarmer(transferredPositionsIds);
+            setPositionsOnFarmer(transferredPositionsIds)
 
         } catch (err) {
             setPositionsOnFarmerLoading(null)
@@ -471,11 +505,31 @@ export function useIncentiveSubgraph() {
 
     return {
         fetchRewards: { rewardsResult, rewardsLoading, fetchRewardsFn: fetchRewards },
-        fetchFutureEvents: { futureEvents, futureEventsLoading, fetchFutureEventsFn: fetchFutureEvents },
-        fetchCurrentEvents: { currentEvents, currentEventsLoading, fetchCurrentEventsFn: fetchCurrentEvents },
-        fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn: fetchPositionsForPool },
-        fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions },
-        fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn: fetchPositionsOnFarmer },
+        fetchFutureEvents: {
+            futureEvents,
+            futureEventsLoading,
+            fetchFutureEventsFn: fetchFutureEvents
+        },
+        fetchCurrentEvents: {
+            currentEvents,
+            currentEventsLoading,
+            fetchCurrentEventsFn: fetchCurrentEvents
+        },
+        fetchPositionsForPool: {
+            positionsForPool,
+            positionsForPoolLoading,
+            fetchPositionsForPoolFn: fetchPositionsForPool
+        },
+        fetchTransferredPositions: {
+            transferredPositions,
+            transferredPositionsLoading,
+            fetchTransferredPositionsFn: fetchTransferredPositions
+        },
+        fetchPositionsOnFarmer: {
+            positionsOnFarmer,
+            positionsOnFarmerLoading,
+            fetchPositionsOnFarmerFn: fetchPositionsOnFarmer
+        },
         fetchPool
     }
 

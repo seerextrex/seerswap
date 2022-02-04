@@ -4,7 +4,7 @@ import { darken } from 'polished'
 import RangeBadge from '../Badge/RangeBadge'
 import { RowBetween } from 'components/Row'
 
-export const  LinkRow = styled(Link)<{onFarming: boolean}>`
+export const LinkRow = styled(Link)<{ onFarming: boolean }>`
   align-items: center;
   border-radius: 20px;
   display: flex;
@@ -33,18 +33,18 @@ export const  LinkRow = styled(Link)<{onFarming: boolean}>`
   `};
 
   ${({ onFarming }) =>
-  onFarming &&
-  css`
+    onFarming &&
+    css`
       border: 1px solid #30b2e6;
       background-color: rgba(60, 97, 126, 0.5);
     `}
 `
-export const  PositionHeader = styled(RowBetween)`
+export const PositionHeader = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
 `
-export const  OnFarmingBadge = styled(Link)`
+export const OnFarmingBadge = styled(Link)`
   display: flex;
   align-items: center;
   padding: 4px 6px;
@@ -54,23 +54,23 @@ export const  OnFarmingBadge = styled(Link)`
   border-radius: 6px;
   text-decoration: none;
   margin-right: auto;
-  
-  ${({theme}) => theme.mediaWidth.upToSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   margin-right: 1rem;
   `}
-  
+
   &:hover {
-    background-color: ${({}) => darken(0.05,'#30b2e6')};
+    background-color: ${({}) => darken(0.05, '#30b2e6')};
   }
 `
-const  DataLineItem = styled.div`
+const DataLineItem = styled.div`
   font-size: 14px;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   background-color: transparent;
     padding: 12px!important;
 `};
 `
-export const  RangeLineItem = styled(DataLineItem)`
+export const RangeLineItem = styled(DataLineItem)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -84,7 +84,7 @@ export const  RangeLineItem = styled(DataLineItem)`
     padding: 8px 0;
 `};
 `
-export const  DoubleArrow = styled.span`
+export const DoubleArrow = styled.span`
   margin: 0 2px;
   color: white;
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -92,7 +92,7 @@ export const  DoubleArrow = styled.span`
     padding: 20px;
   `};
 `
-export const  RangeText = styled.span`
+export const RangeText = styled.span`
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -100,7 +100,7 @@ export const  RangeText = styled.span`
     padding: 0;
 `};
 `
-export const  ExtentsText = styled.span`
+export const ExtentsText = styled.span`
   color: white;
   font-size: 14px;
   margin-right: 4px;
@@ -108,7 +108,7 @@ export const  ExtentsText = styled.span`
     display: none;
   `};
 `
-export const  PrimaryPositionIdData = styled.div`
+export const PrimaryPositionIdData = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -120,7 +120,7 @@ export const  PrimaryPositionIdData = styled.div`
     margin-bottom: 1rem;
   `}
 `
-export const  DataText = styled.div`
+export const DataText = styled.div`
   font-weight: 600;
   font-size: 18px;
 
@@ -128,16 +128,16 @@ export const  DataText = styled.div`
     font-size: 14px;
   `};
 `
-export const  StatusBadge = styled(RangeBadge)`
+export const StatusBadge = styled(RangeBadge)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-top: 1rem;
   `}
 `
-export const  StatusRow = styled.div`
+export const StatusRow = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-end;
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   width: fit-content;
   `}
 `

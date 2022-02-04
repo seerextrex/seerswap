@@ -1,7 +1,7 @@
 import 'inter-ui'
 import '@reach/dialog/styles.css'
 import './components/analytics'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
@@ -30,50 +30,50 @@ type __window = Window & { ethereum: any }
 const _window = window as unknown as __window
 
 if (_window.ethereum) {
-  _window.ethereum.autoRefreshOnNetworkChange = false
+    _window.ethereum.autoRefreshOnNetworkChange = false
 }
 
 const client = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
-  cache: new InMemoryCache(),
+    uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
+    cache: new InMemoryCache()
 })
 
 function Updaters() {
-  return (
-    <>
-      <ListsUpdater />
-      <UserUpdater />
-      <ApplicationUpdater />
-      <TransactionUpdater />
-      <MulticallUpdater />
-      <LogsUpdater />
-      <GasUpdater />
-    </>
-  )
+    return (
+        <>
+            <ListsUpdater />
+            <UserUpdater />
+            <ApplicationUpdater />
+            <TransactionUpdater />
+            <MulticallUpdater />
+            <LogsUpdater />
+            <GasUpdater />
+        </>
+    )
 }
 
 ReactDOM.render(
-  <StrictMode>
-    <ApolloProvider client={client}>
-      <Provider store={store}>
-        <HashRouter>
-          <LanguageProvider>
-            <Web3ReactProvider getLibrary={getLibrary}>
-              <Web3ProviderNetwork getLibrary={getLibrary}>
-                <Blocklist>
-                  <Updaters />
-                  <ThemeProvider>
-                    <ThemedGlobalStyle />
-                    <App />
-                  </ThemeProvider>
-                </Blocklist>
-              </Web3ProviderNetwork>
-            </Web3ReactProvider>
-          </LanguageProvider>
-        </HashRouter>
-      </Provider>
-    </ApolloProvider>
-  </StrictMode>,
-  document.getElementById('root')
+    <StrictMode>
+        <ApolloProvider client={client}>
+            <Provider store={store}>
+                <HashRouter>
+                    <LanguageProvider>
+                        <Web3ReactProvider getLibrary={getLibrary}>
+                            <Web3ProviderNetwork getLibrary={getLibrary}>
+                                <Blocklist>
+                                    <Updaters />
+                                    <ThemeProvider>
+                                        <ThemedGlobalStyle />
+                                        <App />
+                                    </ThemeProvider>
+                                </Blocklist>
+                            </Web3ProviderNetwork>
+                        </Web3ReactProvider>
+                    </LanguageProvider>
+                </HashRouter>
+            </Provider>
+        </ApolloProvider>
+    </StrictMode>,
+    document.getElementById('root')
 )
 serviceWorkerRegistration.unregister()

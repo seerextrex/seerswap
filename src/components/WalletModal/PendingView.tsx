@@ -4,79 +4,79 @@ import Option from './Option'
 import { injected } from '../../connectors'
 import { Trans } from '@lingui/macro'
 import {
-  PendingSection,
-  StyledLoader,
-  LoadingMessage,
-  ErrorGroup,
-  ErrorButton,
-  LoadingWrapper
+    ErrorButton,
+    ErrorGroup,
+    LoadingMessage,
+    LoadingWrapper,
+    PendingSection,
+    StyledLoader
 } from './styled'
 
 
 export default function PendingView({
-                                      connector,
-                                      error = false,
-                                      setPendingError,
-                                      tryActivation
-                                    }: {
-  connector?: AbstractConnector
-  error?: boolean
-  setPendingError: (error: boolean) => void
-  tryActivation: (connector: AbstractConnector) => void
+    connector,
+    error = false,
+    setPendingError,
+    tryActivation
+}: {
+    connector?: AbstractConnector
+    error?: boolean
+    setPendingError: (error: boolean) => void
+    tryActivation: (connector: AbstractConnector) => void
 }) {
-  const isMetamask = window?.ethereum?.isMetaMask
+    const isMetamask = window?.ethereum?.isMetaMask
 
-  return (
-    <PendingSection>
-      <LoadingMessage error={error}>
-        <LoadingWrapper>
-          {error ? (
-            <ErrorGroup>
-              <div>
-                <Trans>Error connecting</Trans>
-              </div>
-              <ErrorButton
-                onClick={() => {
-                  setPendingError(false)
-                  connector && tryActivation(connector)
-                }}
-              >
-                <Trans>Try Again</Trans>
-              </ErrorButton>
-            </ErrorGroup>
-          ) : (
-            <>
-              <StyledLoader />
-              <Trans>Initializing...</Trans>
-            </>
-          )}
-        </LoadingWrapper>
-      </LoadingMessage>
-      {Object.keys(SUPPORTED_WALLETS).map((key) => {
-        const option = SUPPORTED_WALLETS[key]
-        if (option.connector === connector) {
-          if (option.connector === injected) {
-            if (isMetamask && option.name !== 'MetaMask') {
-              return null
-            }
-            if (!isMetamask && option.name === 'MetaMask') {
-              return null
-            }
-          }
-          return (
-            <Option
-              id={`connect-${key}`}
-              key={key}
-              clickable={false}
-              color={option.color}
-              header={option.name}
-              subheader={option.description}
-              icon={option.iconURL}
-            />
-          )
-        }
-        return null
-      })}
-    </PendingSection>
-  )
+    return (
+        <PendingSection>
+            <LoadingMessage error={error}>
+                <LoadingWrapper>
+                    {error ? (
+                        <ErrorGroup>
+                            <div>
+                                <Trans>Error connecting</Trans>
+                            </div>
+                            <ErrorButton
+                                onClick={() => {
+                                    setPendingError(false)
+                                    connector && tryActivation(connector)
+                                }}
+                            >
+                                <Trans>Try Again</Trans>
+                            </ErrorButton>
+                        </ErrorGroup>
+                    ) : (
+                        <>
+                            <StyledLoader />
+                            <Trans>Initializing...</Trans>
+                        </>
+                    )}
+                </LoadingWrapper>
+            </LoadingMessage>
+            {Object.keys(SUPPORTED_WALLETS).map((key) => {
+                const option = SUPPORTED_WALLETS[key]
+                if (option.connector === connector) {
+                    if (option.connector === injected) {
+                        if (isMetamask && option.name !== 'MetaMask') {
+                            return null
+                        }
+                        if (!isMetamask && option.name === 'MetaMask') {
+                            return null
+                        }
+                    }
+                    return (
+                        <Option
+                            id={`connect-${key}`}
+                            key={key}
+                            clickable={false}
+                            color={option.color}
+                            header={option.name}
+                            subheader={option.description}
+                            icon={option.iconURL}
+                        />
+                    )
+                }
+                return null
+            })}
+        </PendingSection>
+    )
 }

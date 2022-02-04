@@ -4,22 +4,26 @@ import { TYPE } from '../../theme'
 
 
 //index
-export const  BaseToggleElement = styled.span<{ isActive?: boolean; isOnSwitch?: boolean }>`
+export const BaseToggleElement = styled.span<{ isActive?: boolean; isOnSwitch?: boolean }>`
   padding: 0.25rem 0.6rem;
   border-radius: 9px;
   background: ${({ theme, isActive, isOnSwitch }) =>
-  isActive ? (isOnSwitch ? theme.winterMainButton : theme.winterMainButton) : 'none'};
+    isActive ? (isOnSwitch ? theme.winterMainButton : theme.winterMainButton) : 'none'};
   color: ${({ theme, isActive }) => (isActive ? theme.white : theme.text2)};
   font-size: 14px;
   font-weight: ${({ isOnSwitch }) => (isOnSwitch ? '500' : '400')};
   :hover {
     user-select: ${({ isOnSwitch }) => (isOnSwitch ? 'none' : 'initial')};
     background: ${({ theme, isActive, isOnSwitch }) =>
-  isActive ? (isOnSwitch ? darken(0.05, theme.winterMainButton) : darken(0.05, theme.winterMainButton)) : 'none'};
-    color: ${({ theme, isActive, isOnSwitch }) => (isActive ? (isOnSwitch ? theme.white : theme.white) : theme.text3)};
+    isActive ? (isOnSwitch ? darken(0.05, theme.winterMainButton) : darken(0.05, theme.winterMainButton)) : 'none'};
+    color: ${({
+    theme,
+    isActive,
+    isOnSwitch
+}) => (isActive ? (isOnSwitch ? theme.white : theme.white) : theme.text3)};
   }
 `
-export const  StyledToggle = styled.button<{ isActive?: boolean; activeElement?: boolean }>`
+export const StyledToggle = styled.button<{ isActive?: boolean; activeElement?: boolean }>`
   border-radius: 12px;
   border: none;
   background: #2f567b;

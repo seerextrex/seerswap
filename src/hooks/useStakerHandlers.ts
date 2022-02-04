@@ -1,12 +1,11 @@
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
 import STAKER_ABI from 'abis/staker'
-import { Contract, providers } from "ethers"
-import { Interface } from "ethers/lib/utils"
-import { useCallback, useState } from "react"
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from "../constants/addresses"
-import { useTransactionAdder } from "../state/transactions/hooks"
-import { useActiveWeb3React } from "./web3"
-import { calculateGasMargin } from "../utils/calculateGasMargin"
+import { Contract, providers } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
+import { useCallback, useState } from 'react'
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, STAKER_ADDRESS } from '../constants/addresses'
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { useActiveWeb3React } from './web3'
 
 export function useStakerHandlers() {
 
@@ -63,7 +62,15 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const getRewardsHandler = useCallback(async (token, { staked, rewardToken, bonusRewardToken, pool, startTime, endTime, refundee }) => {
+    const getRewardsHandler = useCallback(async (token, {
+        staked,
+        rewardToken,
+        bonusRewardToken,
+        pool,
+        startTime,
+        endTime,
+        refundee
+    }) => {
 
         if (!account || !provider) return
 
@@ -98,7 +105,14 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const withdrawHandler = useCallback(async (token, { transfered, rewardToken, pool, startTime, endTime, refundee }) => {
+    const withdrawHandler = useCallback(async (token, {
+        transfered,
+        rewardToken,
+        pool,
+        startTime,
+        endTime,
+        refundee
+    }) => {
 
         if (!account || !provider) return
 
@@ -137,7 +151,14 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const stakeHandler = useCallback(async (selectedNFT, { rewardAddress, bonusRewardAddress, pool, startTime, endTime, refundee }) => {
+    const stakeHandler = useCallback(async (selectedNFT, {
+        rewardAddress,
+        bonusRewardAddress,
+        pool,
+        startTime,
+        endTime,
+        refundee
+    }) => {
 
         if (!account || !provider) return
 
@@ -170,7 +191,7 @@ export function useStakerHandlers() {
         } catch (err) {
             setStaked('failed')
             if (err.code !== 4001) {
-                throw new Error('Staking ' + current + " " + err.message)
+                throw new Error('Staking ' + current + ' ' + err.message)
             }
         }
 
@@ -212,7 +233,7 @@ export function useStakerHandlers() {
         } catch (err) {
             setTransfered('failed')
             if (err.code !== 4001) {
-                throw new Error('Staking ' + current + " " + err.message)
+                throw new Error('Staking ' + current + ' ' + err.message)
             }
         }
 
@@ -253,7 +274,7 @@ export function useStakerHandlers() {
         } catch (err) {
             setApproved('failed')
             if (err.code !== 4001) {
-                throw new Error('Approving NFT ' + current + " " + err.message)
+                throw new Error('Approving NFT ' + current + ' ' + err.message)
             }
         }
 

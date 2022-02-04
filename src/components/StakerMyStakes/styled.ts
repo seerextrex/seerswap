@@ -56,8 +56,8 @@ export const Stake = styled.div<{ navigatedTo: boolean }>`
   `}
 
   ${({ navigatedTo }) =>
-          navigatedTo &&
-          css`
+    navigatedTo &&
+    css`
             background-color: ${darken(0.05, 'rgba(91,183,255,0.6)')};
             border-radius: 5px;
             padding: 8px 5px;
@@ -117,7 +117,7 @@ export const StakeCountdown = styled.div<{ skeleton?: boolean }>`
     margin: 0 0 1rem 0;
     max-width: unset !important;
     min-width: unset !important;
-    
+
      &::before {
     content: "End Time";
     margin-right: 1rem;
@@ -125,8 +125,8 @@ export const StakeCountdown = styled.div<{ skeleton?: boolean }>`
   `}
   & > * {
     ${({ skeleton }) =>
-            skeleton
-                    ? css`
+    skeleton
+        ? css`
                       width: 80px;
                       height: 16px;
                       background: #5aa7df;
@@ -134,7 +134,7 @@ export const StakeCountdown = styled.div<{ skeleton?: boolean }>`
 
                       ${skeletonGradient}
                     `
-                    : null}
+        : null}
   }
 `
 export const StakeActions = styled.div`
@@ -155,19 +155,19 @@ export const StakeButton = styled.button<{ skeleton?: boolean; }>`
   }
 
   ${({ disabled }) =>
-          disabled &&
-          css`
+    disabled &&
+    css`
             opacity: 0.4;
             cursor: default;
           `}
 
   ${({ skeleton }) =>
-          skeleton
-                  ? css`
+    skeleton
+        ? css`
                     ${skeletonGradient};
                     width: 80px;
                   `
-                  : null}
+        : null}
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
@@ -200,8 +200,8 @@ export const TokensNames = styled.div<{ skeleton?: boolean }>`
   `}
   & > * {
     ${({ skeleton }) =>
-            skeleton
-                    ? css`
+    skeleton
+        ? css`
                       width: 40px;
                       height: 16px;
                       background: #5aa7df;
@@ -209,7 +209,7 @@ export const TokensNames = styled.div<{ skeleton?: boolean }>`
                       border-radius: 4px;
                       ${skeletonGradient}
                     `
-                    : null}
+        : null}
   }
 `
 export const EmptyMock = styled.div`

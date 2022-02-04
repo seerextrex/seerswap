@@ -1,14 +1,14 @@
 import styled from 'styled-components/macro'
 
-export const  PageWrapper = styled.div`
+export const PageWrapper = styled.div`
   width: 100%;
 `
-export const  EventsCards = styled.div`
+export const EventsCards = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
 `
-export const  EventsCardsRow = styled.div`
+export const EventsCardsRow = styled.div`
   display: flex;
   width: 100%;
   margin-bottom: 1rem;
@@ -28,7 +28,7 @@ export const  EventsCardsRow = styled.div`
     }
   }`}
 `
-export const  EmptyMock = styled.div`
+export const EmptyMock = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

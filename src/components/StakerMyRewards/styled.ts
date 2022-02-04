@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components/macro'
 import { darken } from 'polished'
 import { skeletonGradient } from '../../theme/styles/skeleton'
 
-export const  LoadingShim = styled.div`
+export const LoadingShim = styled.div`
   display: flex;
   position: absolute;
   width: 100%;
@@ -11,7 +11,7 @@ export const  LoadingShim = styled.div`
   left: 0;
   z-index: 5;
 `
-export const  Rewards = styled.div`
+export const Rewards = styled.div`
   display: flex;
   flex-direction: column;
   max-height: 450px;
@@ -19,14 +19,14 @@ export const  Rewards = styled.div`
   border-radius: 8px;
   overflow: auto;
 `
-export const  RewardsRow = styled.div`
+export const RewardsRow = styled.div`
   display: flex;
   margin-bottom: 8px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
 `
-export const  Reward = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
+export const Reward = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
   display: flex;
   position: relative;
   padding: 8px 16px;
@@ -55,13 +55,13 @@ export const  Reward = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
   `}
 
   ${({ skeleton }) =>
-  skeleton &&
-  css`
+    skeleton &&
+    css`
       background-color: #89c4ef;
       border: none;
     `}
 `
-export const  RewardTokenIcon = styled.div<{skeleton?: boolean}>`
+export const RewardTokenIcon = styled.div<{ skeleton?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,13 +76,13 @@ export const  RewardTokenIcon = styled.div<{skeleton?: boolean}>`
 
   ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
 `
-export const  RewardTokenInfo = styled.div<{skeleton?: boolean}>`
+export const RewardTokenInfo = styled.div<{ skeleton?: boolean }>`
   & > * {
     font-family: Montserrat, sans-serif;
     font-size: 15px;
     ${({ skeleton }) =>
-  skeleton
-    ? css`
+    skeleton
+        ? css`
             width: 40px;
             height: 16px;
             background: #5aa7df;
@@ -90,10 +90,10 @@ export const  RewardTokenInfo = styled.div<{skeleton?: boolean}>`
             border-radius: 4px;
             ${skeletonGradient}
           `
-    : null}
+        : null}
   }
 `
-export const  RewardClaimButton = styled.button<{skeleton?: boolean}>`
+export const RewardClaimButton = styled.button<{ skeleton?: boolean }>`
   border: none;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.winterMainButton};
@@ -105,13 +105,13 @@ export const  RewardClaimButton = styled.button<{skeleton?: boolean}>`
   min-width: 60px;
 
   ${({ skeleton }) =>
-  skeleton
-    ? css`
+    skeleton
+        ? css`
           width: 60px;
           background-color: #5aa7df;
           ${skeletonGradient};
         `
-    : null}
+        : null}
   &:hover {
     background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
@@ -120,7 +120,7 @@ export const  RewardClaimButton = styled.button<{skeleton?: boolean}>`
     cursor: default;
   }
 `
-export const  EmptyMock = styled.div`
+export const EmptyMock = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

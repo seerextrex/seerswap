@@ -28,20 +28,20 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
   background-color: #759fe3;
   border: none;
   z-index: 2;
-  
-  ${({theme}) => theme.mediaWidth.upToExtraSmall`
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   margin-top: -15px;
   `}
 
   ${({ clickable }) =>
     clickable
-      ? css`
+        ? css`
           :hover {
             cursor: pointer;
             opacity: 0.8;
           }
         `
-      : null}
+        : null}
 `
 
 export const SectionBreak = styled.div`
@@ -53,12 +53,12 @@ export const SectionBreak = styled.div`
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
   color: ${({ theme, severity }) =>
     severity === 3 || severity === 4
-      ? theme.red1
-      : severity === 2
-      ? theme.yellow2
-      : severity === 1
-      ? theme.text1
-      : theme.text2};
+        ? theme.red1
+        : severity === 2
+            ? theme.yellow2
+            : severity === 1
+                ? theme.text1
+                : theme.text2};
 `
 
 export const TruncatedText = styled(Text)`
@@ -120,14 +120,14 @@ const SwapCallbackErrorInnerAlertTriangle = styled.div`
 `
 
 export function SwapCallbackError({ error }: { error: ReactNode }) {
-  return (
-    <SwapCallbackErrorInner>
-      <SwapCallbackErrorInnerAlertTriangle>
-        <AlertTriangle size={24} />
-      </SwapCallbackErrorInnerAlertTriangle>
-      <p style={{ wordBreak: 'break-word' }}>{error}</p>
-    </SwapCallbackErrorInner>
-  )
+    return (
+        <SwapCallbackErrorInner>
+            <SwapCallbackErrorInnerAlertTriangle>
+                <AlertTriangle size={24} />
+            </SwapCallbackErrorInnerAlertTriangle>
+            <p style={{ wordBreak: 'break-word' }}>{error}</p>
+        </SwapCallbackErrorInner>
+    )
 }
 
 export const SwapShowAcceptChanges = styled(AutoColumn)`

@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { transparentize } from 'polished'
 
-export const  PopoverContainer = styled.div<{ show: boolean }>`
+export const PopoverContainer = styled.div<{ show: boolean }>`
   z-index: 9999;
   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
   opacity: ${(props) => (props.show ? 1 : 0)};
@@ -12,10 +12,10 @@ export const  PopoverContainer = styled.div<{ show: boolean }>`
   color: ${({ theme }) => theme.text2};
   border-radius: 8px;
 `
-export const  ReferenceElement = styled.div`
+export const ReferenceElement = styled.div`
   display: inline-block;
 `
-export const  Arrow = styled.div`
+export const Arrow = styled.div`
   width: 8px;
   height: 8px;
   z-index: 9998;

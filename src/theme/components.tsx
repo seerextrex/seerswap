@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components/macro'
 import { anonymizeLink } from '../utils/anonymizeLink'
 
-import ReactGA from 'react-ga'
-
 export const ButtonText = styled.button`
   outline: none;
   border: none;
@@ -170,46 +168,48 @@ export const UniTokenAnimated = styled.img`
 `
 
 function handleClickExternalLink(event: React.MouseEvent<HTMLAnchorElement>) {
-  const { target, href } = event.currentTarget
+    const { target, href } = event.currentTarget
 
-  const anonymizedHref = anonymizeLink(href)
+    const anonymizedHref = anonymizeLink(href)
 
-  // don't prevent default, don't redirect if it's a new tab
-  if (target === '_blank' || event.ctrlKey || event.metaKey) {
-    // ReactGA.outboundLink({ label: anonymizedHref }, () => {
-    //   window.location.href = anonymizedHref
-    // })
-  } else {
-    event.preventDefault()
-    // ReactGA.outboundLink({ label: anonymizedHref }, () => {
-    //   window.location.href = anonymizedHref
-    // })
-  }
+    // don't prevent default, don't redirect if it's a new tab
+    if (target === '_blank' || event.ctrlKey || event.metaKey) {
+        // ReactGA.outboundLink({ label: anonymizedHref }, () => {
+        //   window.location.href = anonymizedHref
+        // })
+    } else {
+        event.preventDefault()
+        // ReactGA.outboundLink({ label: anonymizedHref }, () => {
+        //   window.location.href = anonymizedHref
+        // })
+    }
 }
 
 /**
  * Outbound link that handles firing google analytics events
  */
 export function ExternalLink({
-  target = '_blank',
-  href,
-  rel = 'noopener noreferrer',
-  ...rest
+    target = '_blank',
+    href,
+    rel = 'noopener noreferrer',
+    ...rest
 }: Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick'> & { href: string }) {
-  return <StyledLink target={target} rel={rel} href={href} onClick={handleClickExternalLink} {...rest} />
+    return <StyledLink target={target} rel={rel} href={href}
+                       onClick={handleClickExternalLink} {...rest} />
 }
 
 export function ExternalLinkIcon({
-  target = '_blank',
-  href,
-  rel = 'noopener noreferrer',
-  ...rest
+    target = '_blank',
+    href,
+    rel = 'noopener noreferrer',
+    ...rest
 }: Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick'> & { href: string }) {
-  return (
-    <LinkIconWrapper target={target} rel={rel} href={href} onClick={handleClickExternalLink} {...rest}>
-      <LinkIcon />
-    </LinkIconWrapper>
-  )
+    return (
+        <LinkIconWrapper target={target} rel={rel} href={href}
+                         onClick={handleClickExternalLink} {...rest}>
+            <LinkIcon />
+        </LinkIconWrapper>
+    )
 }
 
 const rotate = keyframes`
@@ -230,12 +230,13 @@ const Spinner = styled.img`
 const BackArrowLink = styled(StyledInternalLink)`
   color: ${({ theme }) => theme.text1};
 `
+
 export function BackArrow({ to }: { to: string }) {
-  return (
-    <BackArrowLink to={to}>
-      <ArrowLeft />
-    </BackArrowLink>
-  )
+    return (
+        <BackArrowLink to={to}>
+            <ArrowLeft />
+        </BackArrowLink>
+    )
 }
 
 export const CustomLightSpinner = styled(Spinner)<{ size: string }>`

@@ -13,8 +13,8 @@ export const formatDollarAmount = (num: number | undefined, digits = 2, round = 
         mantissa: num > 1000 ? 2 : digits,
         abbreviations: {
             million: 'M',
-            billion: 'B',
-        },
+            billion: 'B'
+        }
     })
 }
 
@@ -41,7 +41,7 @@ export const formatAmount = (num: number | undefined, digits = 3) => {
         mantissa: num > 1000 ? 2 : digits,
         abbreviations: {
             million: 'M',
-            billion: 'B',
-        },
+            billion: 'B'
+        }
     })
 }

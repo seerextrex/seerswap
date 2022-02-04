@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { X } from 'react-feather'
 
-export const  ModalContentWrapper = styled.div`
+export const ModalContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,7 +10,7 @@ export const  ModalContentWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 20px;
 `
-export const  StyledCloseIcon = styled(X)`
+export const StyledCloseIcon = styled(X)`
   height: 20px;
   width: 20px;
   :hover {

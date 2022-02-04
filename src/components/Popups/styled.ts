@@ -6,7 +6,7 @@ import { AutoRow } from '../Row'
 
 
 //index
-export const  MobilePopupWrapper = styled.div<{ height: string | number }>`
+export const MobilePopupWrapper = styled.div<{ height: string | number }>`
   position: relative;
   max-width: 100%;
   display: none;
@@ -17,7 +17,7 @@ export const  MobilePopupWrapper = styled.div<{ height: string | number }>`
     display: block;
   `};
 `
-export const  MobilePopupInner = styled.div`
+export const MobilePopupInner = styled.div`
   height: 99%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -28,10 +28,10 @@ export const  MobilePopupInner = styled.div`
     display: none;
   }
 `
-export const  StopOverflowQuery = `@media screen and (min-width: ${MEDIA_WIDTHS.upToMedium + 1}px) and (max-width: ${
-  MEDIA_WIDTHS.upToMedium + 500
+export const StopOverflowQuery = `@media screen and (min-width: ${MEDIA_WIDTHS.upToMedium + 1}px) and (max-width: ${
+    MEDIA_WIDTHS.upToMedium + 500
 }px)`
-export const  FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean; xlPadding: boolean }>`
+export const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean; xlPadding: boolean }>`
   position: fixed;
   top: ${({ extraPadding }) => (extraPadding ? '134px' : '56px')};
   right: 1rem;

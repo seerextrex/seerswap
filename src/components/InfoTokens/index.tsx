@@ -1,34 +1,34 @@
 import { useEffect } from 'react'
 import InfoTokensTable from '../InfoTokensTable'
 import Loader from '../Loader'
-import {PageWrapper, MockLoading} from '../InfoPools/styled'
+import { MockLoading, PageWrapper } from '../InfoPools/styled'
 
 export function InfoTokens({
-  data,
-  fetchHandler,
-  blocksFetched,
+    data,
+    fetchHandler,
+    blocksFetched
 }: {
-  data: any
-  refreshing: boolean
-  fetchHandler: () => any
-  blocksFetched: boolean
+    data: any
+    refreshing: boolean
+    fetchHandler: () => any
+    blocksFetched: boolean
 }) {
-  useEffect(() => {
-    if (blocksFetched) {
-      fetchHandler()
-    }
-  }, [blocksFetched])
+    useEffect(() => {
+        if (blocksFetched) {
+            fetchHandler()
+        }
+    }, [blocksFetched])
 
-  if (!data)
+    if (!data)
+        return (
+            <MockLoading>
+                <Loader stroke={'white'} size={'25px'} />
+            </MockLoading>
+        )
+
     return (
-      <MockLoading>
-        <Loader stroke={'white'} size={'25px'} />
-      </MockLoading>
+        <PageWrapper style={{ maxWidth: '100%' }}>
+            <InfoTokensTable tokenDatas={data} />
+        </PageWrapper>
     )
-
-  return (
-    <PageWrapper style={{ maxWidth: '100%' }}>
-      <InfoTokensTable tokenDatas={data}/>
-    </PageWrapper>
-  )
 }

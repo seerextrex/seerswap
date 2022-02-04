@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
-import { useGasPrice } from "../../hooks/useGasPrice"
-import { useActiveWeb3React } from "../../hooks/web3"
-import { useAppDispatch, useAppSelector } from "../hooks"
-import { updateGasPrice } from "./actions"
+import { useEffect } from 'react'
+import { useGasPrice } from '../../hooks/useGasPrice'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { updateGasPrice } from './actions'
 
 export default function GasUpdater(): null {
 

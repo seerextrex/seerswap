@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-export const  Input = styled.input<{ error?: boolean; fontSize?: string }>`
+export const Input = styled.input<{ error?: boolean; fontSize?: string }>`
   font-size: ${({ fontSize }) => fontSize || '1.25rem'};
   outline: none;
   border: none;
@@ -28,7 +28,7 @@ export const  Input = styled.input<{ error?: boolean; fontSize?: string }>`
     color: ${({ theme }) => theme.text4};
   }
 `
-export const  TextAreaInput = styled.textarea<{ error?: boolean; fontSize?: string }>`
+export const TextAreaInput = styled.textarea<{ error?: boolean; fontSize?: string }>`
   font-size: ${({ fontSize }) => fontSize || '1.25rem'};
   outline: none;
   border: none;

@@ -5,8 +5,8 @@ import NumericalInput from '../NumericalInput'
 import { ButtonGray } from '../Button'
 import { TYPE } from '../../theme'
 
-export const  InputRow = styled.div``
-export const  SmallButton = styled(ButtonGray)`
+export const InputRow = styled.div``
+export const SmallButton = styled(ButtonGray)`
   border-radius: 8px;
   padding: 2px 4px;
   margin-left: 10px;
@@ -15,7 +15,7 @@ export const  SmallButton = styled(ButtonGray)`
     background-color: ${darken(0.05, '#759fe3')};
   }
 `
-export const  FocusedOutlineCard = styled(OutlineCard)<{ active?: boolean; pulsing?: boolean; initial: boolean}>`
+export const FocusedOutlineCard = styled(OutlineCard)<{ active?: boolean; pulsing?: boolean; initial: boolean }>`
   background-color: rgba(60, 97, 126, 0.5);
   position: relative;
   padding: 1rem;
@@ -29,7 +29,7 @@ export const  FocusedOutlineCard = styled(OutlineCard)<{ active?: boolean; pulsi
   `}
   }
 `
-export const  StyledInput = styled(NumericalInput)<{ usePercent?: boolean }>`
+export const StyledInput = styled(NumericalInput)<{ usePercent?: boolean }>`
   background-color: transparent;
   text-align: left;
   width: 100%;
@@ -44,13 +44,13 @@ export const  StyledInput = styled(NumericalInput)<{ usePercent?: boolean }>`
     font-size: 12px;
   `};
 `
-export const  InputTitle = styled(TYPE.small)`
+export const InputTitle = styled(TYPE.small)`
   color: white;
   font-size: 12px;
   font-weight: 600;
   font-family: Montserrat, sans-serif;
 `
-export const  ButtonLabel = styled(TYPE.white)<{ disabled: boolean }>`
+export const ButtonLabel = styled(TYPE.white)<{ disabled: boolean }>`
   display: flex;
   color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.text1)} !important;
 `

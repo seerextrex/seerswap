@@ -1,15 +1,15 @@
 import styled from 'styled-components/macro'
 import { stringToColour } from '../../utils/stringToColour'
 
-export const  ModalWrapper = styled.div`
+export const ModalWrapper = styled.div`
   display: flex;
   width: 100%;
 `
-export const  ModalHeader = styled.div`
+export const ModalHeader = styled.div`
   display: flex;
   width: 100%;
 `
-export const  RewardTokenIcon = styled.div<{name?: any}>`
+export const RewardTokenIcon = styled.div<{ name?: any }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,13 +21,13 @@ export const  RewardTokenIcon = styled.div<{name?: any}>`
   border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#3d4a6a')};
   color: ${({ name }) => (name ? stringToColour(name).text : '#3d4a6a')};
 `
-export const  RewardTokenInfo = styled.div`
+export const RewardTokenInfo = styled.div`
   & > * {
     font-family: Montserrat, sans-serif;
     font-size: 15px;
   }
 `
-export const  ClaimRewardButton = styled.button`
+export const ClaimRewardButton = styled.button`
   border: none;
   border-radius: 8px;
   background-color: #4829bb;

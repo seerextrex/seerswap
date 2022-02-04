@@ -23,7 +23,10 @@ export const HeaderFrame = styled.div<{ showBackground: boolean }>`
   z-index: 21;
   background-position: ${({ showBackground }) => (showBackground ? '0 -100%' : '0 0')};
   background-size: 100% 200%;
-  box-shadow: 0 0 0 1px ${({ theme, showBackground }) => (showBackground ? theme.bg2 : 'transparent;')};
+  box-shadow: 0 0 0 1px ${({
+    theme,
+    showBackground
+}) => (showBackground ? theme.bg2 : 'transparent;')};
   transition: background-position 0.1s, box-shadow 0.1s;
   background-blend-mode: hard-light;
   padding: 50px 1rem 1rem;
@@ -292,7 +295,7 @@ export const AlgIcon = styled.div`
   }`}
 `
 export const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
+    activeClassName
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;

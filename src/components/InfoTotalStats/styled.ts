@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-export const  TotalStatsWrapper = styled.div`
+export const TotalStatsWrapper = styled.div`
   display: flex;
   margin-bottom: 1rem;
 
@@ -9,7 +9,7 @@ export const  TotalStatsWrapper = styled.div`
   `}
 `
 
-export const  StatsCard = styled.div`
+export const StatsCard = styled.div`
   border-radius: 20px;
   background-color: rgba(91, 183, 255, 0.6);
   padding: 1rem;
@@ -27,12 +27,12 @@ export const  StatsCard = styled.div`
 `}
 `
 
-export const  StatsCardTitle = styled.div`
+export const StatsCardTitle = styled.div`
   font-weight: 500;
   font-size: 16px;
   margin-bottom: 1rem;
 `
 
-export const  StatsCardValue = styled.div`
+export const StatsCardValue = styled.div`
   font-size: 30px;
 `

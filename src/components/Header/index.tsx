@@ -10,114 +10,116 @@ import usePrevious from '../../hooks/usePrevious'
 import { isMobile } from 'react-device-detect'
 import { useAppSelector } from '../../state/hooks'
 import {
-  HeaderControls,
-  HeaderFrame,
-  HeaderLinks,
-  HeaderElement,
-  AccountElement,
-  AlgIcon,
-  BalanceText,
-  StyledNavLink,
-  FarmingInfoLabel,
-  LogoWrapper,
-  Title,
-  TitleIce,
-  TitleIcicle
+    AccountElement,
+    AlgIcon,
+    BalanceText,
+    FarmingInfoLabel,
+    HeaderControls,
+    HeaderElement,
+    HeaderFrame,
+    HeaderLinks,
+    LogoWrapper,
+    StyledNavLink,
+    Title,
+    TitleIce,
+    TitleIcicle
 } from './styled'
 
 export default function Header() {
-  const { startTime } = useAppSelector((state) => state.farming)
-  const { account, chainId } = useActiveWeb3React()
+    const { startTime } = useAppSelector((state) => state.farming)
+    const { account, chainId } = useActiveWeb3React()
 
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+    const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
-  const prevEthBalance = usePrevious(userEthBalance)
+    const prevEthBalance = usePrevious(userEthBalance)
 
-  const _userEthBalance = useMemo(() => {
-    if (!userEthBalance) {
-      return prevEthBalance
+    const _userEthBalance = useMemo(() => {
+        if (!userEthBalance) {
+            return prevEthBalance
+        }
+
+        return userEthBalance
+    }, [userEthBalance])
+
+    const networkFailed = useIsNetworkFailed()
+
+    const [isEvents, setEvents] = useState(false)
+
+    let chainValue
+
+    if (chainId === 137) {
+        chainValue = 'MATIC'
     }
 
-    return userEthBalance
-  }, [userEthBalance])
+    useEffect(() => {
+        if (startTime.trim()) {
+            setEvents(true)
+        }
+    }, [startTime])
 
-  const networkFailed = useIsNetworkFailed()
+    return (
+        <HeaderFrame showBackground={false}>
+            <LogoWrapper>
+                <Title href='.'>
+                    <TitleIce>
+                        <AlgIcon>
+                            <img width={'calc(100% - 10px)'}
+                                 src={window.innerWidth < 501 ? Logo_logo : WinterLogo}
+                                 alt='logo' />
+                        </AlgIcon>
+                    </TitleIce>
+                </Title>
+                <TitleIcicle />
+            </LogoWrapper>
+            <HeaderLinks>
+                <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+                    Swap
+                </StyledNavLink>
+                <StyledNavLink
+                    id={`pool-nav-link`}
+                    to={'/pool'}
+                    isActive={(match, { pathname }) =>
+                        Boolean(match) ||
+                        pathname.startsWith('/add') ||
+                        pathname.startsWith('/remove') ||
+                        pathname.startsWith('/increase') ||
+                        pathname.startsWith('/find')
+                    }
+                >
+                    Pool
+                </StyledNavLink>
+                <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
+                    Farming
+                    <FarmingInfoLabel isEvents={isEvents} />
+                </StyledNavLink>
+                <StyledNavLink id={`staking-nav-link`} to={'/staking'}>
+                    Staking
+                </StyledNavLink>
+                <StyledNavLink id={`info-nav-link`} to={'/info'}>
+                    Info
+                </StyledNavLink>
+            </HeaderLinks>
 
-  const [isEvents, setEvents] = useState(false)
-
-  let chainValue
-
-  if (chainId === 137) {
-    chainValue = 'MATIC'
-  }
-
-  useEffect(() => {
-    if (startTime.trim()) {
-      setEvents(true)
-    }
-  }, [startTime])
-
-  return (
-    <HeaderFrame showBackground={false}>
-      <LogoWrapper>
-        <Title href='.'>
-          <TitleIce>
-            <AlgIcon>
-              <img width={'calc(100% - 10px)'} src={window.innerWidth < 501 ? Logo_logo : WinterLogo} alt='logo' />
-            </AlgIcon>
-          </TitleIce>
-        </Title>
-        <TitleIcicle />
-      </LogoWrapper>
-      <HeaderLinks>
-        <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-          Swap
-        </StyledNavLink>
-        <StyledNavLink
-          id={`pool-nav-link`}
-          to={'/pool'}
-          isActive={(match, { pathname }) =>
-            Boolean(match) ||
-            pathname.startsWith('/add') ||
-            pathname.startsWith('/remove') ||
-            pathname.startsWith('/increase') ||
-            pathname.startsWith('/find')
-          }
-        >
-          Pool
-        </StyledNavLink>
-        <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
-          Farming
-          <FarmingInfoLabel isEvents={isEvents} />
-        </StyledNavLink>
-        <StyledNavLink id={`staking-nav-link`} to={'/staking'}>
-          Staking
-        </StyledNavLink>
-        <StyledNavLink id={`info-nav-link`} to={'/info'}>
-          Info
-        </StyledNavLink>
-      </HeaderLinks>
-
-      <HeaderControls>
-        <HeaderElement>
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            <NetworkCard />
-            {(chainId === 137 && account && userEthBalance) || networkFailed ? (
-              <BalanceText
-                style={{ flexShrink: 0 }}
-                pl='0.75rem'
-                pt='0.75rem'
-                pb='0.75rem'
-                pr='0.5rem'
-                fontWeight={500}
-              >
-                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
-              </BalanceText>
-            ) : null}
-            <Web3Status />
-          </AccountElement>
-        </HeaderElement>
-      </HeaderControls>
-    </HeaderFrame>
-  )
+            <HeaderControls>
+                <HeaderElement>
+                    <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+                        <NetworkCard />
+                        {(chainId === 137 && account && userEthBalance) || networkFailed ? (
+                            <BalanceText
+                                style={{ flexShrink: 0 }}
+                                pl='0.75rem'
+                                pt='0.75rem'
+                                pb='0.75rem'
+                                pr='0.5rem'
+                                fontWeight={500}
+                            >
+                                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
+                            </BalanceText>
+                        ) : null}
+                        <Web3Status />
+                    </AccountElement>
+                </HeaderElement>
+            </HeaderControls>
+        </HeaderFrame>
+    )
 }

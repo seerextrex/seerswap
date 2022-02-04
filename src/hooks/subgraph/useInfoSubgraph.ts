@@ -153,11 +153,11 @@ export function useInfoSubgraph() {
 
             const aprs = await fetchPoolsAPR()
 
-            const formatted = poolsAddresses.reduce((accum: { [address: string]: TokenData }, address) => {
-                const current: TokenFields | undefined = parsedPools[address]
-                const oneDay: TokenFields | undefined = parsedPools24[address]
-                const twoDay: TokenFields | undefined = parsedPools48[address]
-                const week: TokenFields | undefined = parsedPoolsWeek[address]
+            const formatted = poolsAddresses.reduce((accum: { [address: string]: PoolSubgraph }, address) => {
+                const current: PoolSubgraph | undefined = parsedPools[address]
+                const oneDay: PoolSubgraph | undefined = parsedPools24[address]
+                const twoDay: PoolSubgraph | undefined = parsedPools48[address]
+                const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
 
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
@@ -180,18 +180,6 @@ export function useInfoSubgraph() {
                     priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
                 const priceUSDChangeWeek =
                     priceUSD && priceUSDWeek ? getPercentChange(priceUSD.toString(), priceUSDWeek.toString()) : 0
-                const txCount =
-                    current && oneDay
-                        ? parseFloat(current.txCount) - parseFloat(oneDay.txCount)
-                        : current
-                            ? parseFloat(current.txCount)
-                            : 0
-                const feesUSD =
-                    current && oneDay
-                        ? parseFloat(current.feesUSD) - parseFloat(oneDay.feesUSD)
-                        : current
-                            ? parseFloat(current.feesUSD)
-                            : 0
 
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
 

@@ -124,13 +124,19 @@ const HelperDropdown = styled.span`
   display: none;
   right: 0;
   font-size: 12px;
-  bottom: -2rem;
-  padding: 4px 7px;
+  bottom: -2.5rem;
+  padding: 7px 9px;
   white-space: nowrap;
   background: white;
   border-radius: 4px;
   color: black;
   z-index: 30;
+`
+const HelperDropdownPart = styled.span`
+  padding: 2px 6px; 
+  background-color: #d6d6d6;
+  border-radius: 4px;
+  color: #2d2d2d;
 `
 
 const APRWrapper = styled.span`
@@ -227,7 +233,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
         </LabelStyled> */}
         <LabelStyled end={1} fontWeight={400}>
           {poolData.apr > 0 ? (
-            <span style={{ color: '#33FF89' }}>{`+${formatPercent(poolData.apr)}`}</span>
+            <span style={{ color: '#33FF89' }}>{formatPercent(poolData.apr)}</span>
           ) : (
             <span>-</span>
           )}
@@ -339,7 +345,7 @@ export default function InfoPoolsTable({
                 <span style={{ marginLeft: '6px' }}>
                   <HelpCircle style={{ display: 'block' }} color={'white'} size={'16px'} />
                 </span>
-                <HelperDropdown>Based on fees / active liquidity</HelperDropdown>
+                <HelperDropdown>Based on <HelperDropdownPart>fees</HelperDropdownPart> / <HelperDropdownPart>active liquidity</HelperDropdownPart></HelperDropdown>
               </APRWrapper>
             </ClickableTextStyled>
             <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.farmingApr)}>

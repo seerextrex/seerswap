@@ -37,8 +37,8 @@ export function useIncentiveSubgraph() {
     const [futureEvents, setFutureEvents] = useState(null)
     const [futureEventsLoading, setFutureEventsLoading] = useState(false)
 
-    const [currentEvents, setCurrentEvents] = useState(null)
-    const [currentEventsLoading, setCurrentEventsLoading] = useState(false)
+    const [allEvents, setAllEvents] = useState(null)
+    const [allEventsLoading, setAllEventsLoading] = useState(false)
 
     const [positionsOnFarmer, setPositionsOnFarmer] = useState(null)
     const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState(false)
@@ -244,9 +244,9 @@ export function useIncentiveSubgraph() {
 
     }
 
-    async function fetchCurrentEvents(reload?: boolean) {
+    async function fetchAllEvents(reload?: boolean) {
 
-        setCurrentEventsLoading(true)
+        setAllEventsLoading(true)
 
         try {
 
@@ -257,21 +257,36 @@ export function useIncentiveSubgraph() {
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            if (currentEvents.length === 0) {
-                setCurrentEvents([])
-                setCurrentEventsLoading(false)
+            const { data: { incentives: futureEvents }, error: _error } = await farmingClient.query({
+                query: FUTURE_EVENTS(),
+                fetchPolicy: reload ? 'network-only' : 'cache-first'
+            })
+
+            if (_error) throw new Error(`${error.name} ${error.message}`)
+
+            const allEvents = [
+                ...currentEvents.map(el => ({
+                ...el,
+                active: true
+            })), 
+            ...futureEvents
+            ]
+
+            if (allEvents.length === 0) {
+                setAllEvents([])
+                setAllEventsLoading(false)
                 return
             }
 
-            setCurrentEvents(await getEvents(currentEvents.filter(el => el.id !== '0x5091ad63349a004342a9c834b950a4713dd9a10755a291e9f6713e234a97e7e6')))
-            setCurrentEventsLoading(false)
+            setAllEvents(await getEvents(allEvents.filter(el => el.id !== '0x5091ad63349a004342a9c834b950a4713dd9a10755a291e9f6713e234a97e7e6')))
+            setAllEventsLoading(false)
 
         } catch (err) {
-            setCurrentEventsLoading(null)
+            setAllEventsLoading(null)
             throw new Error('Error while fetching current incentives ' + err)
         }
 
-        setCurrentEventsLoading(false)
+        setAllEventsLoading(false)
 
     }
 
@@ -618,7 +633,7 @@ export function useIncentiveSubgraph() {
     return {
         fetchRewards: { rewardsResult, rewardsLoading, fetchRewardsFn: fetchRewards },
         fetchFutureEvents: { futureEvents, futureEventsLoading, fetchFutureEventsFn: fetchFutureEvents },
-        fetchCurrentEvents: { currentEvents, currentEventsLoading, fetchCurrentEventsFn: fetchCurrentEvents },
+        fetchAllEvents: { allEvents, allEventsLoading, fetchAllEventsFn: fetchAllEvents },
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn: fetchPositionsForPool },
         fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions },
         fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn: fetchPositionsOnFarmer },

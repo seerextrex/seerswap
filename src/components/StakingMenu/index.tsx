@@ -44,23 +44,13 @@ const MenuListItem = styled.li`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20%;
+  width: 25%;
   padding: 10px 0;
   font-weight: 600;
   position: relative;
-  // background-color: #202635;
   color: white;
   text-decoration: none;
   border-radius: 0;
-  &:not(:first-of-type) {
-    // border-left: 1px solid #2c313f;
-  }
-  &:first-of-type {
-    // border-radius: 8px 0 0 8px;
-  }
-  &:last-of-type {
-    // border-radius: 0 8px 8px 0;
-  }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     white-space: nowrap;
@@ -92,24 +82,19 @@ const stakingMenuList = [
     link: 'farms',
   },
   {
-    title: 'My rewards',
-    icon: <Award size={18}></Award>,
-    link: 'rewards',
-  },
-  {
     title: 'Infinite farms',
     icon: <InfinityIcon size={18}></InfinityIcon>,
     link: 'infinite-farms',
   },
   {
-    title: 'Current events',
+    title: 'Farming events',
     icon: <Zap size={18}></Zap>,
-    link: 'current-events',
+    link: 'farming-events',
   },
   {
-    title: 'Future events',
+    title: 'Events history',
     icon: <Calendar size={18}></Calendar>,
-    link: 'future-events',
+    link: 'events-history',
   },
 ]
 
@@ -128,7 +113,7 @@ export function StakingMenu() {
           }}
           key={i}
         >
-          {el.title === 'Future events' && <FarmingInfoLabel isEvents={startTime.trim()} />}
+          {el.title === 'Farming events' && <FarmingInfoLabel isEvents={startTime.trim()} />}
           {el.title === 'Infinite farms' && <FarmingInfoLabel isEvents={eternalFarmings} />}
           <MenuListItemIcon>{el.icon}</MenuListItemIcon>
           <MenuListItemTitle>{el.title}</MenuListItemTitle>

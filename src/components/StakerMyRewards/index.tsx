@@ -55,15 +55,20 @@ const LoadingShim = styled.div`
 const Rewards = styled.div`
   display: flex;
   flex-direction: column;
-  max-height: 450px;
-  min-height: 450px;
   border-radius: 8px;
   overflow: auto;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #1474bf;
+  margin-bottom: 1rem;
 `
 
 const RewardsRow = styled.div`
   display: flex;
   margin-bottom: 8px;
+  &:first-of-type {
+    margin-bottom: 0;
+  }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
@@ -73,12 +78,10 @@ const Reward = styled.div`
   display: flex;
   position: relative;
   padding: 8px 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(60, 97, 126, 0.5);
+  border-radius: 8px;
   font-family: Montserrat;
-  width: calc(33% - 4px);
-  height: 55px;
-  background: rgba(60, 97, 126, 0.5);
+  width: 33%;
+  background: #11446c;
 
   & > * {
     &:not(${LoadingShim}) {
@@ -148,7 +151,6 @@ const RewardClaimButton = styled.button`
   margin: 0 0 0 auto;
   padding: 8px 12px;
   cursor: pointer;
-  font-family: 'Montserrat';
   min-width: 60px;
   font-weight: 600;
 
@@ -174,7 +176,6 @@ const EmptyMock = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 400px;
 
   & > * {
     margin-bottom: 1rem;

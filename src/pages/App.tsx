@@ -54,6 +54,7 @@ import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
 import { useActiveWeb3React } from '../hooks/web3'
 import RealStakerPage from './RealStakerPage'
+import EventsHistory from './EventsHistory'
 
 const AppWrapper = styled.div`
   display: flex;

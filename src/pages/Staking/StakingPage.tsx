@@ -14,7 +14,7 @@ import { StakingMenu } from '../../components/StakingMenu'
 import { StakerMyRewards } from '../../components/StakerMyRewards'
 import { StakerMyStakes } from '../../components/StakerMyStakes'
 import { FutureEventsPage } from '../FutureEventsPage'
-import { CurrentEventsPage } from '../CurrentEventsPage'
+import { FarmingEventsPage } from '../FarmingEventsPage'
 import { PageTitle } from '../../components/PageTitle'
 import { RedirectDuplicateTokenStakingIds } from './redirects'
 import { getCountdownTime } from '../../utils/time'
@@ -27,6 +27,7 @@ import StakerCreateEventRequest from '../../components/StakerCreateEventRequest'
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import EternalFarmsPage from '../EternalFarmsPage'
+import EventsHistory from '../EventsHistory'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1000px;
@@ -139,7 +140,7 @@ export default function StakingPage() {
 
   const {
     fetchRewards,
-    fetchCurrentEvents,
+    fetchAllEvents,
     fetchFutureEvents,
     fetchTransferredPositions,
     fetchEternalFarms,
@@ -176,29 +177,6 @@ export default function StakingPage() {
                   <Route exact path={`${path}`}>
                     <Redirect to={`${path}/${account ? 'farms' : 'infinite-farms'}`} />
                   </Route>
-                  <Route exact path={`${path}/rewards`}>
-                    <Helmet>
-                      <title>Algebra — Farming • My rewards</title>
-                    </Helmet>
-                    <PageTitle
-                      title={'My rewards'}
-                      refreshHandler={() => (account ? fetchRewards?.fetchRewardsFn(true) : undefined)}
-                      isLoading={fetchRewards?.rewardsLoading}
-                    ></PageTitle>
-                    {account ? (
-                      <StakerMyRewards
-                        data={fetchRewards?.rewardsResult}
-                        refreshing={fetchRewards?.rewardsLoading}
-                        fetchHandler={() => fetchRewards?.fetchRewardsFn(true)}
-                      ></StakerMyRewards>
-                    ) : (
-                      <MockScreen>
-                        <Award size={40} stroke={'white'}></Award>
-                        <p>Connect your account to view rewards</p>
-                        <ConnectWalletButton onClick={toggleWalletModal}>Connect Wallet</ConnectWalletButton>
-                      </MockScreen>
-                    )}
-                  </Route>
                   <Route exact path={`${path}/farms`}>
                     <Helmet>
                       <title>Algebra — Farming • My farms</title>
@@ -211,6 +189,12 @@ export default function StakingPage() {
                       isLoading={fetchTransferredPositions?.transferredPositionsLoading}
                     ></PageTitle>
                     {account ? (
+                      <>
+                       <StakerMyRewards
+                        data={fetchRewards?.rewardsResult}
+                        refreshing={fetchRewards?.rewardsLoading}
+                        fetchHandler={() => fetchRewards?.fetchRewardsFn(true)}
+                      ></StakerMyRewards>
                       <StakerMyStakes
                         data={fetchTransferredPositions?.transferredPositions}
                         refreshing={fetchTransferredPositions?.transferredPositionsLoading}
@@ -220,6 +204,7 @@ export default function StakingPage() {
                         }}
                         now={now}
                       ></StakerMyStakes>
+                      </>
                     ) : (
                       <MockScreen>
                         <AlignJustify size={40} stroke={'white'}></AlignJustify>
@@ -228,37 +213,21 @@ export default function StakingPage() {
                       </MockScreen>
                     )}
                   </Route>
-                  <Route exact path={`${path}/future-events`}>
+                  <Route exact path={`${path}/farming-events`}>
                     <Helmet>
-                      <title>Algebra — Farming • Future events</title>
+                      <title>Algebra — Farming • Famring events</title>
                     </Helmet>
                     <PageTitle
-                      title={'Future events'}
-                      refreshHandler={() => fetchFutureEvents?.fetchFutureEventsFn(true)}
-                      isLoading={fetchFutureEvents?.futureEventsLoading}
+                      title={'Farming events'}
+                      refreshHandler={() => fetchAllEvents?.fetchAllEventsFn(true)}
+                      isLoading={fetchAllEvents?.allEventsLoading}
                     ></PageTitle>
-                    <FutureEventsPage
-                      data={fetchFutureEvents?.futureEvents}
-                      refreshing={fetchFutureEvents?.futureEventsLoading}
-                      fetchHandler={() => fetchFutureEvents?.fetchFutureEventsFn(true)}
+                    <FarmingEventsPage
+                      data={fetchAllEvents?.allEvents}
+                      refreshing={fetchAllEvents?.allEventsLoading}
+                      fetchHandler={() => fetchAllEvents?.fetchAllEventsFn(true)}
                       now={now}
-                    ></FutureEventsPage>
-                  </Route>
-                  <Route exact path={`${path}/current-events`}>
-                    <Helmet>
-                      <title>Algebra — Farming • Current events</title>
-                    </Helmet>
-                    <PageTitle
-                      title={'Current events'}
-                      refreshHandler={() => fetchCurrentEvents?.fetchCurrentEventsFn(true)}
-                      isLoading={fetchCurrentEvents?.currentEventsLoading}
-                    ></PageTitle>
-                    <CurrentEventsPage
-                      data={fetchCurrentEvents?.currentEvents}
-                      refreshing={fetchCurrentEvents?.currentEventsLoading}
-                      fetchHandler={() => fetchCurrentEvents?.fetchCurrentEventsFn(true)}
-                      now={now}
-                    ></CurrentEventsPage>
+                    ></FarmingEventsPage>
                   </Route>
                   <Route exact path={`${path}/infinite-farms`}>
                     <Helmet>
@@ -266,14 +235,21 @@ export default function StakingPage() {
                     </Helmet>
                     <PageTitle
                       title={'Infinite farms'}
-                      refreshHandler={() => fetchCurrentEvents?.fetchCurrentEventsFn(true)}
-                      isLoading={fetchCurrentEvents?.currentEventsLoading}
+                      refreshHandler={() => fetchEternalFarms?.fetchEternalFarmsFn(true)}
+                      isLoading={fetchEternalFarms?.eternalFarmsLoading}
                     ></PageTitle>
                     <EternalFarmsPage
                       data={fetchEternalFarms?.eternalFarms}
                       refreshing={fetchEternalFarms?.eternalFarmsLoading}
                       fetchHandler={() => fetchEternalFarms.fetchEternalFarmsFn(true)}
                     ></EternalFarmsPage>
+                  </Route>
+                  <Route exact strict path={`${path}/events-history`}>
+                      <Helmet>
+                        <title>Algebra — Farming • Farming events history</title>
+                      </Helmet>
+                      <PageTitle title={'Farming events history'}></PageTitle>
+                      <EventsHistory></EventsHistory>
                   </Route>
                 </Switch>
               </BodyWrapper>

@@ -54,7 +54,7 @@ function isActive(endTime: number, now: number) {
   return endTime * 1000 > now
 }
 
-export function CurrentEventsPage({
+export function FarmingEventsPage({
   data,
   now,
   refreshing,
@@ -86,20 +86,18 @@ export function CurrentEventsPage({
               ))}
             </EventsCardsRow>
           </EventsCards>
-        ) : data && data.length !== 0 && !data.every((el) => el.endTime < Math.round(Date.now() / 1000)) ? (
+        ) : data && data.length !== 0 ? (
           chunked.map((el, i) => (
             <EventsCardsRow key={i}>
               {el.map(
                 (event, j) =>
-                  isActive(event.endTime, now) && (
-                    <StakerEventCard refreshing={refreshing} active key={j} now={now} event={event}></StakerEventCard>
-                  )
+                    <StakerEventCard refreshing={refreshing} active={event.active} key={j} now={now} event={event}></StakerEventCard>
               )}
             </EventsCardsRow>
           ))
-        ) : data && (data.length === 0 || data.every((el) => el.endTime < Math.round(Date.now() / 1000))) ? (
+        ) : data && data.length === 0 ? (
           <EmptyMock>
-            <div>No current events</div>
+            <div>No farming events</div>
             <Frown size={35} stroke={'white'} />
           </EmptyMock>
         ) : null}

@@ -60,10 +60,10 @@ const ResponsiveGrid = styled.div`
   grid-gap: 1em;
   align-items: center;
 
-  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
+  grid-template-columns: 20px 2.3fr repeat(5, 1fr);
 
   @media screen and (max-width: 1000px) {
-    grid-template-columns: 20px 2.1fr repeat(4, 1fr);
+    grid-template-columns: 20px 2.1fr repeat(5, 1fr);
     & :nth-child(3) {
       display: none;
     }
@@ -179,6 +179,9 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
         <LabelStyled end={1} fontWeight={400}>
           {formatPercent(poolData.apr)}
         </LabelStyled>
+        <LabelStyled end={1} fontWeight={400}>
+          {formatPercent(poolData.farmingApr)}
+        </LabelStyled>
       </ResponsiveGrid>
     </div>
   )
@@ -273,6 +276,9 @@ export default function InfoPoolsTable({
             </ClickableTextStyled> */}
             <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
               APR{arrow(SORT_FIELD.apr)}
+            </ClickableTextStyled>
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
+              Farming{arrow(SORT_FIELD.apr)}
             </ClickableTextStyled>
             {/* <AprInfo title={'based on 24h volume'}>?</AprInfo> */}
           </ResponsiveGrid>

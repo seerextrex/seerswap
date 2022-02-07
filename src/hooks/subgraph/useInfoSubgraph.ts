@@ -20,12 +20,13 @@ import {
     TOTAL_STATS,
     GET_STAKE,
     GET_STAKE_HISTORY,
+    FETCH_ETERNAL_FARM_FROM_POOL,
 } from '../../utils/graphql-queries'
 import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
 import { useDeltaTimestamps } from "../../utils/queries";
 import { formatTokenName, formatTokenSymbol, get2DayChange, getPercentChange } from "../../utils/info";
-import { stakerClient } from '../../apollo/client'
+import { farmingClient, stakerClient } from '../../apollo/client'
 
 function parseTokensData(tokenData) {
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenFields }, poolData) => {
@@ -84,6 +85,20 @@ export function useInfoSubgraph() {
 
     }
 
+    async function fetchEternalFarmAPR() {
+
+        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
+
+        try {
+            const res = await fetch(apiURL).then(v => v.json())
+            return res
+
+        } catch (error: any) {
+            return {}
+        }
+
+    }
+
     async function fetchInfoPools(reload?: boolean) {
 
         if (!blocks || blockError || !ethPrices) return
@@ -119,6 +134,13 @@ export function useInfoSubgraph() {
             const parsedPoolsWeek = parseTokensData(poolsWeek)
 
             const aprs = await fetchPoolsAPR()
+            const farmAprs = await fetchEternalFarmAPR()
+
+            const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
+            const _farmingAprs = farmingAprs.reduce((acc, el) => ({
+                ...acc,
+                [el.pool]: farmAprs[el.id]
+            }), {})
 
             const formatted = poolsAddresses.reduce((accum: { [address: string]: TokenData }, address) => {
                 const current: TokenFields | undefined = parsedPools[address]
@@ -170,6 +192,7 @@ export function useInfoSubgraph() {
                             : 0
 
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
+                const farmingApr = _farmingAprs[address] ? _farmingAprs[address].toFixed(2) : 0
 
                 accum[address] = {
                     token0: current.token0,
@@ -191,7 +214,8 @@ export function useInfoSubgraph() {
                     priceUSD,
                     priceUSDChange,
                     priceUSDChangeWeek,
-                    apr: aprPercent
+                    apr: aprPercent,
+                    farmingApr: farmingApr
                 }
 
                 return accum
@@ -355,6 +379,22 @@ export function useInfoSubgraph() {
 
     }
 
+    async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]) {
+
+        try {
+
+            const { data: { eternalFarmings }, error } = await farmingClient.query({
+                query: FETCH_ETERNAL_FARM_FROM_POOL(poolAddresses),
+                fetchPolicy: 'network-only'
+            })
+
+            return eternalFarmings
+
+        } catch (err) {
+            throw new Error('Eternal fetch error ' + err)
+        }
+
+    }
 
     async function fetchLastEntry(pool) {
         try {

@@ -533,6 +533,7 @@ const SendNFTButton = styled.button`
   background-color: ${({ theme }) => theme.winterMainButton};
   border-radius: 8px;
   border: none;
+  font-weight: 600;
 
   &:disabled {
     opacity: 0.4;
@@ -999,6 +1000,7 @@ export function StakerMyStakes({
           <PositionCardEvent>
             <PositionCardEventTitle>
               <span>Infinite farming</span>
+              { el.enteredInEternalFarming &&
               <span style={{ fontSize: '14px', fontWeight: 400, lineHeight: '21px' }}>
                 <span>Entered at: </span>
                 <span>{new Date(el.enteredInEternalFarming * 1000).toLocaleString().split(',')[0]}</span>
@@ -1007,6 +1009,7 @@ export function StakerMyStakes({
                   .split(',')[1]
                   .slice(0, -3)}`}</span>
               </span>
+            }
             </PositionCardEventTitle>
             {el.eternalFarming ? (
               <>

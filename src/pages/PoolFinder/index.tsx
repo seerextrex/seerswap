@@ -152,7 +152,7 @@ export default function PoolFinder() {
 
   const prerequisiteMessage = (
     <LightCard>
-      <Text textAlign="center">{!account && <Trans>Connect to a wallet to find pools</Trans>}</Text>
+      <Text textAlign="center">{!account && <Trans>Connect wallet to find pools</Trans>}</Text>
     </LightCard>
   )
 

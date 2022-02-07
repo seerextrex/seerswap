@@ -14,6 +14,7 @@ import { useChunkedRows } from '../../utils/chunkForRows'
 
 const PageWrapper = styled.div`
   width: 100%;
+  min-height: 400px;
 `
 
 const EternalFarmsList = styled.ul`
@@ -53,7 +54,7 @@ const EmptyMock = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 400px;
+  height: 100%;
 
   & > * {
     margin-bottom: 1rem;
@@ -175,44 +176,3 @@ export default function EternalFarmsPage({
     </>
   )
 }
-
-// <PageWrapper>
-//         <EventsCards>
-//           {!data && refreshing ? (
-//             <EventsCards>
-//               <EventsCardsRow>
-//                 {[0, 1, 2].map((el, i) => (
-//                   <StakerEventCard skeleton key={i}></StakerEventCard>
-//                 ))}
-//               </EventsCardsRow>
-//               <EventsCardsRow>
-//                 {[0, 1].map((el, i) => (
-//                   <StakerEventCard skeleton key={i}></StakerEventCard>
-//                 ))}
-//               </EventsCardsRow>
-//             </EventsCards>
-//           ) : data && data.length !== 0 && !data.every((el) => el.startTime < Math.round(Date.now() / 1000)) ? (
-//             chunked.map((el, i) => (
-//               <EventsCardsRow key={i}>
-//                 {el.map(
-//                   (event, j) =>
-//                     isFuture(event.startTime, now) && (
-//                       <StakerEventCard
-//                         key={j}
-//                         stakeHandler={() => setModalForPool(event)}
-//                         refreshing={refreshing}
-//                         now={now}
-//                         event={event}
-//                       ></StakerEventCard>
-//                     )
-//                 )}
-//               </EventsCardsRow>
-//             ))
-//           ) : data && (data.length === 0 || data.every((el) => el.startTime < Math.round(Date.now() / 1000))) ? (
-//             <EmptyMock>
-//               <div>No future events</div>
-//               <Frown size={35} stroke={'white'} />
-//             </EmptyMock>
-//           ) : null}
-//         </EventsCards>
-//       </PageWrapper>

@@ -195,7 +195,7 @@ export default function StakingPage() {
                       <MockScreen>
                         <Award size={40} stroke={'white'}></Award>
                         <p>Connect your account to view rewards</p>
-                        <ConnectWalletButton onClick={toggleWalletModal}>Connect to a wallet</ConnectWalletButton>
+                        <ConnectWalletButton onClick={toggleWalletModal}>Connect Wallet</ConnectWalletButton>
                       </MockScreen>
                     )}
                   </Route>
@@ -224,7 +224,7 @@ export default function StakingPage() {
                       <MockScreen>
                         <AlignJustify size={40} stroke={'white'}></AlignJustify>
                         <p>Connect your account to view farms</p>
-                        <ConnectWalletButton onClick={toggleWalletModal}>Connect to a wallet</ConnectWalletButton>
+                        <ConnectWalletButton onClick={toggleWalletModal}>Connect Wallet</ConnectWalletButton>
                       </MockScreen>
                     )}
                   </Route>

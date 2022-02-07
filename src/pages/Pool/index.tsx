@@ -207,7 +207,7 @@ export default function Pool() {
                       }}
                       onClick={toggleWalletModal}
                     >
-                      <Trans>Connect a wallet</Trans>
+                      <Trans>Connect Wallet</Trans>
                     </ButtonPrimary>
                   )}
                 </NoLiquidity>

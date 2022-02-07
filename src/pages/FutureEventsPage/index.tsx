@@ -5,7 +5,7 @@ import { useChunkedRows } from '../../utils/chunkForRows'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
 import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
-import { FarmingType } from '../../hooks/useStakerHandlers'
+import { FarmingType } from '../../models/enums'
 
 function isFuture(startTime: number, now: number) {
     return startTime * 1000 > now

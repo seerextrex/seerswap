@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components/macro'
 import { darken } from 'polished'
 import gradient from 'random-gradient'
 import { skeletonGradient } from '../../theme/styles/skeleton'
+import { Link } from 'react-router-dom'
 
 export const ModalWrapper = styled.div`
     display: flex;
@@ -135,4 +136,18 @@ export const EmptyMock = styled.div`
     height: 350px;
     align-items: center;
     justify-content: center;
+`
+export const ProvideLiquidityLink = styled(Link)`
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    background: linear-gradient(90deg, rgba(72, 41, 187, 1) 0%, rgb(49, 149, 255) 100%);
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 15px;
+  `}
 `

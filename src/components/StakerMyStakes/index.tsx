@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CheckCircle, Frown } from 'react-feather'
-import { FarmingType, useStakerHandlers } from '../../hooks/useStakerHandlers'
+import { useStakerHandlers } from '../../hooks/useStakerHandlers'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import Loader from '../Loader'
@@ -16,7 +16,8 @@ import {
     SendNFTWarning,
     Stakes
 } from './styled'
-import { Deposit } from '../../models/interfaces'
+import { Deposit, RewardInterface, UnstakingInterface } from '../../models/interfaces'
+import { FarmingType } from '../../models/enums'
 
 interface StakerMyStakesProps {
     data: Deposit[]
@@ -36,14 +37,21 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
         sendNFTL2Hash
     } = useStakerHandlers() || {}
 
-    const [sendModal, setSendModal] = useState<boolean>(false)
+    const [sendModal, setSendModal] = useState(null)
     const [recipient, setRecipient] = useState<string>('')
 
-    const [gettingReward, setGettingReward] = useState({ id: null, state: null, farmingType: null })
-    const [eternalCollectReward, setEternalCollectReward] = useState({ id: null, state: null })
+    const [gettingReward, setGettingReward] = useState<RewardInterface>({
+        id: null,
+        state: null,
+        farmingType: null
+    })
+    const [eternalCollectReward, setEternalCollectReward] = useState<UnstakingInterface>({
+        id: null,
+        state: null
+    })
 
-    const [unstaking, setUnstaking] = useState({ id: null, state: null })
-    const [sending, setSending] = useState({ id: null, state: null })
+    const [unstaking, setUnstaking] = useState<UnstakingInterface>({ id: null, state: null })
+    const [sending, setSending] = useState<UnstakingInterface>({ id: null, state: null })
 
     const [shallowPositions, setShallowPositions] = useState<Deposit[] | null>(null)
 
@@ -83,8 +91,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
 
         if (sendNFTL2Hash === 'failed') {
             setSending({ id: null, state: null })
-        } else if (sendNFTL2Hash && confirmed.includes(sendNFTL2Hash.hash)) {
+        } else if (sendNFTL2Hash && confirmed.includes(String(sendNFTL2Hash.hash))) {
             setSending({ id: sendNFTL2Hash.id, state: 'done' })
+            if (!shallowPositions) return
             setShallowPositions(shallowPositions.filter((el) => el.l2TokenId === sendNFTL2Hash.id))
         }
     }, [sendNFTL2Hash, confirmed])
@@ -94,8 +103,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
 
         if (eternalCollectRewardHash === 'failed') {
             setEternalCollectReward({ id: null, state: null })
-        } else if (eternalCollectRewardHash && confirmed.includes(eternalCollectRewardHash.hash)) {
+        } else if (eternalCollectRewardHash && confirmed.includes(String(eternalCollectRewardHash.hash))) {
             setEternalCollectReward({ id: eternalCollectRewardHash.id, state: 'done' })
+            if (!shallowPositions) return
             setShallowPositions(
                 shallowPositions.map((el) => {
                     if (el.id === eternalCollectRewardHash.id) {
@@ -113,12 +123,13 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
 
         if (getRewardsHash === 'failed') {
             setGettingReward({ id: null, state: null, farmingType: null })
-        } else if (getRewardsHash && confirmed.includes(getRewardsHash.hash)) {
+        } else if (getRewardsHash && confirmed.includes(String(getRewardsHash.hash))) {
             setGettingReward({
                 id: getRewardsHash.id,
                 state: 'done',
                 farmingType: getRewardsHash.farmingType
             })
+            if (!shallowPositions) return
             setShallowPositions(
                 shallowPositions.map((el) => {
                     if (el.id === getRewardsHash.id) {
@@ -139,8 +150,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
 
         if (withdrawnHash === 'failed') {
             setUnstaking({ id: null, state: null })
-        } else if (withdrawnHash && confirmed.includes(withdrawnHash.hash)) {
+        } else if (withdrawnHash && confirmed.includes(String(withdrawnHash.hash))) {
             setUnstaking({ id: withdrawnHash.id, state: 'done' })
+            if (!shallowPositions) return
             setShallowPositions(
                 shallowPositions.map((el) => {
                     if (el.id === withdrawnHash.id) {
@@ -159,10 +171,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
     return (
         <>
             <Modal
-                isOpen={sendModal}
+                isOpen={Boolean(sendModal)}
                 onDismiss={() => {
                     if (sending.state !== 'pending') {
-                        setSendModal(false)
+                        setSendModal(null)
                         setRecipient('')
                         setTimeout(() => setSending({ id: null, state: null }))
                     }

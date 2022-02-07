@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro'
 import { AutoColumn } from '../../components/Column'
+// @ts-ignore
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+// @ts-ignore
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import { RowBetween, RowFixed } from '../../components/Row'
 import { ButtonPrimary } from '../../components/Button'

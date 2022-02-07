@@ -1,14 +1,7 @@
 import { useToken } from '../../hooks/Tokens'
 import { usePool } from '../../hooks/usePools'
 import { unwrappedToken } from '../../utils/unwrappedToken'
-
-import styled from 'styled-components/macro'
-
-const PositionRange = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-`
+import { PositionRange } from './styled'
 
 export function IsActive({ el }: { el: any }) {
     const { token0: token0Address, token1: token1Address, tickLower, tickUpper } = el

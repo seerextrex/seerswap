@@ -27,3 +27,4 @@ export type {
     FormattedFeeChart
 } from './info'
 export type { StakingData, StakeHash, Frozen } from './staking'
+export type { Deposit, DefaultFarming, EternalCollectRewardHandlerInterface, GetRewardsHandlerInterface } from './farming'

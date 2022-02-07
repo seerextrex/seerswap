@@ -44,7 +44,7 @@ export const DataRow = ({ tokenData, index }: DataRowProps) => {
                         </MediumOnly>
                         <HideMedium>
                             <RowFixed>
-                                <HoverInlineText text={tokenData.name} />
+                                <HoverInlineText text={tokenData.name} maxCharacters={18}/>
                                 <Label ml='8px' color={'#dedede'}>
                                     ({tokenData.symbol})
                                 </Label>

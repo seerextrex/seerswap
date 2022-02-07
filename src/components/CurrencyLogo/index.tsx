@@ -1,37 +1,16 @@
-import { Currency } from '@uniswap/sdk-core'
+import { Token } from '@uniswap/sdk-core'
 import React from 'react'
-import styled from 'styled-components/macro'
+// @ts-ignore
 import MaticLogo from '../../assets/images/matic-logo.png'
+// @ts-ignore
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
-import useHttpLocations from '../../hooks/useHttpLocations'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
 import { stringToColour } from '../../utils/stringToColour'
 import { specialTokens } from './SpecialTokens'
+import { StyledLogo, StyledImgLogo } from './styled'
 
 export const getTokenLogoURL = (address: string) =>
     `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`
-
-const StyledImgLogo = styled.img<{ size: string }>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.075);
-  border-radius: 24px;
-`
-
-const StyledLogo = styled.div<{ size: string }>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  border-radius: ${({ size }) => size};
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.075);
-  background-color: ${({ theme }) => theme.white};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-family: Montserrat, serif;
-  font-weight: 600;
-`
 
 export default function CurrencyLogo({
     currency,
@@ -39,11 +18,10 @@ export default function CurrencyLogo({
     style,
     ...rest
 }: {
-    currency?: Currency
+    currency?: Token
     size?: string
     style?: React.CSSProperties
 }) {
-    const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
 
     const { chainId } = useActiveWeb3React()
 

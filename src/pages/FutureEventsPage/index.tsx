@@ -5,6 +5,7 @@ import { useChunkedRows } from '../../utils/chunkForRows'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
 import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
+import { FarmingType } from '../../hooks/useStakerHandlers'
 
 function isFuture(startTime: number, now: number) {
     return startTime * 1000 > now
@@ -27,7 +28,7 @@ export function FutureEventsPage({
 
     const chunked = useChunkedRows(data, 3)
 
-    const [modalForPool, setModalForPool] = useState(false)
+    const [modalForPool, setModalForPool] = useState<boolean>(false)
 
     return (
         <>
@@ -35,9 +36,9 @@ export function FutureEventsPage({
                 {modalForPool && (
                     <StakeModal
                         event={modalForPool}
-                        closeHandler={() => setModalForPool(null)}
+                        closeHandler={() => setModalForPool(false)}
                         farmingType={FarmingType.FINITE}
-                    ></StakeModal>
+                    />
                 )}
             </Modal>
             <PageWrapper>
@@ -46,19 +47,19 @@ export function FutureEventsPage({
                         <EventsCards>
                             <EventsCardsRow>
                                 {[0, 1, 2].map((el, i) => (
-                                    <StakerEventCard skeleton key={i}></StakerEventCard>
+                                    <StakerEventCard skeleton key={i}/>
                                 ))}
                             </EventsCardsRow>
                             <EventsCardsRow>
                                 {[0, 1].map((el, i) => (
-                                    <StakerEventCard skeleton key={i}></StakerEventCard>
+                                    <StakerEventCard skeleton key={i}/>
                                 ))}
                             </EventsCardsRow>
                         </EventsCards>
                     ) : data &&
                     data.length !== 0 &&
                     !data.every((el) => el.startTime < Math.round(Date.now() / 1000)) ? (
-                        chunked.map((el, i) => (
+                        chunked?.map((el, i) => (
                             <EventsCardsRow key={i}>
                                 {el.map(
                                     (event, j) =>
@@ -69,7 +70,7 @@ export function FutureEventsPage({
                                                 refreshing={refreshing}
                                                 now={now}
                                                 event={event}
-                                            ></StakerEventCard>
+                                            />
                                         )
                                 )}
                             </EventsCardsRow>

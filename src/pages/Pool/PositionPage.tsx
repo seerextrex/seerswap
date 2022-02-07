@@ -1,20 +1,16 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { NonfungiblePositionManager, Pool, Position } from 'lib/src'
-
+import { useCallback, useMemo, useState } from 'react'
+import { NonfungiblePositionManager, Position } from 'lib/src'
 import { PoolState, usePool } from 'hooks/usePools'
 import { useToken } from 'hooks/Tokens'
 import { useDerivedPositionInfo } from 'hooks/useDerivedPositionInfo'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
 import { Link, RouteComponentProps, useLocation } from 'react-router-dom'
 import { unwrappedToken } from 'utils/unwrappedToken'
-import { usePositionTokenURI } from '../../hooks/usePositionTokenURI'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
-import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
-import styled from 'styled-components/macro'
 import { AutoColumn } from 'components/Column'
 import { RowBetween, RowFixed } from 'components/Row'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { ExternalLink, HideExtraSmall, TYPE } from 'theme'
+import { HideExtraSmall, TYPE } from 'theme'
 import Badge from 'components/Badge'
 import { ButtonConfirmed, ButtonPrimary } from 'components/Button'
 import { DarkCard, LightCard } from 'components/Card'
@@ -24,7 +20,7 @@ import { currencyId } from 'utils/currencyId'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 import { useV3PositionFees } from 'hooks/useV3PositionFees'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Currency, CurrencyAmount, Fraction, Percent, Price, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Fraction, Percent, Token } from '@uniswap/sdk-core'
 import { useActiveWeb3React } from 'hooks/web3'
 import { useV3NFTPositionManagerContract } from 'hooks/useContract'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
@@ -45,330 +41,30 @@ import Toggle from 'components/Toggle'
 import { Bound } from 'state/mint/v3/actions'
 import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { formatTickPrice } from 'utils/formatTickPrice'
-import { SupportedChainId } from 'constants/chains'
 import usePrevious from '../../hooks/usePrevious'
-
 import ReactGA from 'react-ga'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import { useAppSelector } from '../../state/hooks'
 import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants/addresses'
-
-const PageWrapper = styled.div`
-    min-width: 800px;
-    max-width: 960px;
-    background-color: ${({ theme }) => theme.winterBackground};
-    border-radius: 20px;
-    padding: 30px 40px;
-    margin-top: 5rem;
-
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-    min-width: 680px;
-    max-width: 680px;
-  `};
-
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 100%;
-    max-width: 100%;
-    margin-top: 1rem;
-    padding: 30px 10px;
-  `};
-
-    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    min-width: 340px;
-    max-width: 340px;
-  `};
-`
-
-const BadgeText = styled.div`
-    font-weight: 500;
-    font-size: 14px;
-`
-
-// responsive text
-// disable the warning because we don't use the end prop, we just want to filter it out
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Label = styled(({ end, ...props }) => <TYPE.label {...props} />)<{ end?: boolean }>`
-    display: flex;
-    font-size: 16px;
-    justify-content: ${({ end }) => (end ? 'flex-end' : 'flex-start')};
-    align-items: center;
-`
-
-const ExtentsText = styled.span`
-    color: ${({ theme }) => theme.text2};
-    font-size: 14px;
-    text-align: center;
-    margin-right: 4px;
-    font-weight: 500;
-`
-
-const HoverText = styled(TYPE.main)`
-    text-decoration: none;
-    color: white;
-
-    :hover {
-        color: ${({ theme }) => theme.text1};
-        text-decoration: none;
-    }
-`
-
-const DoubleArrow = styled.span`
-    color: ${({ theme }) => theme.text3};
-    margin: 0 1rem;
-`
-const ResponsiveRow = styled(RowBetween)`
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-direction: column;
-    align-items: flex-start;
-    row-gap: 16px;
-    width: 100%:
-  `};
-`
-
-const ResponsiveButtonPrimary = styled(ButtonPrimary)`
-    border-radius: 12px;
-    padding: 6px 8px;
-    width: fit-content;
-    margin-right: 8px;
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex: 1 1 auto;
-  `};
-    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0;
-     width: 49%;
-  `};
-`
-
-const NFTGrid = styled.div`
-    display: grid;
-    grid-template: 'overlap';
-    min-height: 400px;
-`
-
-const NFTCanvas = styled.canvas`
-    grid-area: overlap;
-`
-
-const NFTImage = styled.img`
-    grid-area: overlap;
-    height: 400px;
-    /* Ensures SVG appears on top of canvas. */
-    z-index: 1;
-`
-const RowFixedStyled = styled(RowFixed)`
-    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-   width: 100%;
-    flex-direction: column;
-
-    & > * {
-      margin-bottom: 1rem;
-    }
-  `}
-`
-const RowFixedStyledButtons = styled(RowFixedStyled)`
-    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    flex-direction: unset;
-    gap: .5rem;
-  `}
-`
-const FeeBadge = styled(Badge)`
-    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      margin-right: 0!important;
-      margin-top: 1rem;
-    `}
-`
-
-const PriceRow = styled(RowBetween)`
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-      flex-direction: column;
-    `}
-`
-
-const LoadingMock = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: ${({ theme }) => theme.winterBackground};
-    height: 400px;
-    width: 500px;
-    border-radius: 20px;
-    margin-top: 5rem;
-
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-  width: 100%;
-  margin-top: 1rem;
-  `}
-`
-
-function CurrentPriceCard({
-    inverted,
-    pool,
-    currencyQuote,
-    currencyBase
-}: {
-    inverted?: boolean
-    pool?: Pool | null
-    currencyQuote?: Currency
-    currencyBase?: Currency
-}) {
-    if (!pool || !currencyQuote || !currencyBase) {
-        return null
-    }
-
-    return (
-        <LightCard padding='12px '>
-            <AutoColumn gap='8px' justify='center'>
-                <ExtentsText>
-                    <Trans>Current price</Trans>
-                </ExtentsText>
-                <TYPE.mediumHeader textAlign='center'>
-                    {(inverted ? pool.token1Price : pool.token0Price).toSignificant(6)}{' '}
-                </TYPE.mediumHeader>
-                <ExtentsText>
-                    <Trans>
-                        {currencyQuote?.symbol} per {currencyBase?.symbol}
-                    </Trans>
-                </ExtentsText>
-            </AutoColumn>
-        </LightCard>
-    )
-}
-
-function LinkedCurrency({ chainId, currency }: { chainId?: number; currency?: Currency }) {
-    const address = (currency as Token)?.address
-
-    if (typeof chainId === 'number' && address) {
-        return (
-            <ExternalLink href={getExplorerLink(chainId, address, ExplorerDataType.TOKEN)}>
-                <RowFixed>
-                    <CurrencyLogo currency={currency} size={'24px'}
-                                  style={{ marginRight: '0.5rem' }} />
-                    <TYPE.main>{currency?.symbol} ↗</TYPE.main>
-                </RowFixed>
-            </ExternalLink>
-        )
-    }
-
-    return (
-        <RowFixed>
-            <CurrencyLogo currency={currency} size={'24px'} style={{ marginRight: '0.5rem' }} />
-            <TYPE.main>{currency?.symbol}</TYPE.main>
-        </RowFixed>
-    )
-}
-
-function getRatio(
-    lower: Price<Currency, Currency>,
-    current: Price<Currency, Currency>,
-    upper: Price<Currency, Currency>
-) {
-    try {
-        if (!current.greaterThan(lower)) {
-            return 100
-        } else if (!current.lessThan(upper)) {
-            return 0
-        }
-
-        const a = Number.parseFloat(lower.toSignificant(15))
-        const b = Number.parseFloat(upper.toSignificant(15))
-        const c = Number.parseFloat(current.toSignificant(15))
-
-        const ratio = Math.floor((1 / ((Math.sqrt(a * b) - Math.sqrt(b * c)) / (c - Math.sqrt(b * c)) + 1)) * 100)
-
-        if (ratio < 0 || ratio > 100) {
-            throw Error('Out of range')
-        }
-
-        return ratio
-    } catch {
-        return undefined
-    }
-}
-
-// snapshots a src img into a canvas
-function getSnapshot(src: HTMLImageElement, canvas: HTMLCanvasElement, targetHeight: number) {
-    const context = canvas.getContext('2d')
-
-    if (context) {
-        let { width, height } = src
-
-        // src may be hidden and not have the target dimensions
-        const ratio = width / height
-        height = targetHeight
-        width = Math.round(ratio * targetHeight)
-
-        // Ensure crispness at high DPIs
-        canvas.width = width * devicePixelRatio
-        canvas.height = height * devicePixelRatio
-        canvas.style.width = width + 'px'
-        canvas.style.height = height + 'px'
-        context.scale(devicePixelRatio, devicePixelRatio)
-
-        context.clearRect(0, 0, width, height)
-        context.drawImage(src, 0, 0, width, height)
-    }
-}
-
-function NFT({ image, height: targetHeight }: { image: string; height: number }) {
-    const [animate, setAnimate] = useState(false)
-
-    const canvasRef = useRef<HTMLCanvasElement>(null)
-    const imageRef = useRef<HTMLImageElement>(null)
-
-    return (
-        <NFTGrid
-            onMouseEnter={() => {
-                setAnimate(true)
-            }}
-            onMouseLeave={() => {
-                // snapshot the current frame so the transition to the canvas is smooth
-                if (imageRef.current && canvasRef.current) {
-                    getSnapshot(imageRef.current, canvasRef.current, targetHeight)
-                }
-                setAnimate(false)
-            }}
-        >
-            <NFTCanvas ref={canvasRef} />
-            <NFTImage
-                ref={imageRef}
-                src={image}
-                hidden={!animate}
-                onLoad={() => {
-                    // snapshot for the canvas
-                    if (imageRef.current && canvasRef.current) {
-                        getSnapshot(imageRef.current, canvasRef.current, targetHeight)
-                    }
-                }}
-            />
-        </NFTGrid>
-    )
-}
-
-const useInverter = ({
-    priceLower,
-    priceUpper,
-    quote,
-    base,
-    invert
-}: {
-    priceLower?: Price<Token, Token>
-    priceUpper?: Price<Token, Token>
-    quote?: Token
-    base?: Token
-    invert?: boolean
-}): {
-    priceLower?: Price<Token, Token>
-    priceUpper?: Price<Token, Token>
-    quote?: Token
-    base?: Token
-} => {
-    return {
-        priceUpper: invert ? priceLower?.invert() : priceUpper,
-        priceLower: invert ? priceUpper?.invert() : priceLower,
-        quote: invert ? base : quote,
-        base: invert ? quote : base
-    }
-}
+import {
+    BadgeText,
+    DoubleArrow,
+    ExtentsText,
+    FeeBadge,
+    HoverText,
+    Label,
+    LoadingMock,
+    PositionPageWrapper,
+    PriceRow,
+    ResponsiveButtonPrimary,
+    ResponsiveRow,
+    RowFixedStyled,
+    RowFixedStyledButtons
+} from './styleds'
+import { useInverter } from '../../hooks/useInverter'
+import { getRatio } from '../../utils/getRatio'
+import { LinkedCurrency } from './LinkedCurrency'
+import { CurrentPriceCard } from './CurrentPriceCard'
 
 function useQuery() {
     const { search } = useLocation()
@@ -376,7 +72,7 @@ function useQuery() {
     return useMemo(() => new URLSearchParams(search), [search])
 }
 
-export function PositionPage({
+export default function PositionPage({
     match: {
         params: { tokenId: tokenIdFromUrl }
     }
@@ -395,25 +91,15 @@ export function PositionPage({
 
     const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
 
-    const {
-        token0: token0Address,
-        token1: token1Address,
-        liquidity,
-        tickLower,
-        tickUpper,
-        tokenId,
-        fee: feeAmount
-    } = positionDetails || {}
+    const { tokenId } = positionDetails || {}
 
     const prevPositionDetails = usePrevious({ ...positionDetails })
     const {
         token0: _token0Address,
         token1: _token1Address,
-        fee: _feeAmount,
         liquidity: _liquidity,
         tickLower: _tickLower,
-        tickUpper: _tickUpper,
-        onFarming: _onFarming
+        tickUpper: _tickUpper
     } = useMemo(() => {
         if (!positionDetails && prevPositionDetails && prevPositionDetails.liquidity) {
             return { ...prevPositionDetails }
@@ -426,8 +112,6 @@ export function PositionPage({
     const token0 = useToken(_token0Address)
     const token1 = useToken(_token1Address)
 
-    const metadata = usePositionTokenURI(parsedTokenId)
-
     const currency0 = token0 ? unwrappedToken(token0) : undefined
     const currency1 = token1 ? unwrappedToken(token1) : undefined
 
@@ -435,7 +119,7 @@ export function PositionPage({
     const [receiveWETH, setReceiveWETH] = useState(false)
 
     // construct Position from details returned
-    const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined, _feeAmount || 500)
+    const [poolState, pool] = usePool(token0 ?? undefined, token1 ?? undefined)
     const [prevPoolState, prevPool] = usePrevious([poolState, pool]) || []
     const [_poolState, _pool] = useMemo(() => {
         if (!pool && prevPool && prevPoolState) {
@@ -633,15 +317,13 @@ export function PositionPage({
         )
     }
 
-    const onOptimisticChain = chainId && [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
     const showCollectAsWeth = Boolean(
         (ownsNFT || isOnFarming) &&
         (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) &&
         currency0 &&
         currency1 &&
         (currency0.isNative || currency1.isNative) &&
-        !collectMigrationHash &&
-        !onOptimisticChain
+        !collectMigrationHash
     )
 
     return loading || _poolState === PoolState.LOADING ? (
@@ -650,7 +332,7 @@ export function PositionPage({
         </LoadingMock>
     ) : (
         <>
-            <PageWrapper>
+            <PositionPageWrapper>
                 <TransactionConfirmationModal
                     isOpen={showConfirm}
                     onDismiss={() => setShowConfirm(false)}
@@ -698,7 +380,7 @@ export function PositionPage({
                                     {currency0 && currency1 && tokenId ? (
                                         <ResponsiveButtonPrimary
                                             as={Link}
-                                            to={`/increase/${currencyId(currency0)}/${currencyId(currency1)}/${tokenId}`}
+                                            to={`/increase/${currencyId(currency0, chainId || 137)}/${currencyId(currency1, chainId || 137)}/${tokenId}`}
                                             width='fit-content'
                                             padding='6px 8px'
                                             $borderRadius='12px'
@@ -722,7 +404,7 @@ export function PositionPage({
                                 </RowFixedStyledButtons>
                             )}
                         </ResponsiveRow>
-                        <RowBetween></RowBetween>
+                        <RowBetween />
                     </AutoColumn>
                     <ResponsiveRow align='flex-start'>
                         <AutoColumn gap='sm' style={{ width: '100%', height: '100%' }}>
@@ -977,7 +659,7 @@ export function PositionPage({
                         </AutoColumn>
                     </DarkCard>
                 </AutoColumn>
-            </PageWrapper>
+            </PositionPageWrapper>
             <SwitchLocaleLink />
         </>
     )

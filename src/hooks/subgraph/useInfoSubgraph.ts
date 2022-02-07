@@ -70,34 +70,33 @@ export function useInfoSubgraph() {
     const ethPrices = useEthPrices()
 
     const [poolsResult, setPools] = useState<string | null | FormattedPool[]>(null)
-    const [poolsLoading, setPoolsLoading] = useState<null | boolean>(null)
+    const [poolsLoading, setPoolsLoading] = useState<boolean>(false)
 
     const [tokensResult, setTokens] = useState<string | null | FormattedToken[]>(null)
-    const [tokensLoading, setTokensLoading] = useState<null | boolean>(null)
+    const [tokensLoading, setTokensLoading] = useState<boolean>(false)
 
 
     const [feesResult, setFees] = useState<null | string | FormattedFee>(null)
-    const [feesLoading, setFeesLoading] = useState<null | boolean>(null)
+    const [feesLoading, setFeesLoading] = useState<boolean>(false)
 
     const [chartPoolData, setChartPoolData] = useState<null | string | FormattedChartPool>(null)
-    const [chartPoolDataLoading, setChartPoolDataLoading] = useState<null | boolean>(null)
+    const [chartPoolDataLoading, setChartPoolDataLoading] = useState<boolean>(false)
 
     const [totalStats, setTotalStats] = useState<null | string | FormattedTotalStats>(null)
-    const [totalStatsLoading, setTotalStatsLoading] = useState<null | boolean>(null)
+    const [totalStatsLoading, setTotalStatsLoading] = useState<boolean>(false)
 
     const [stakesResult, setStakes] = useState<null | string | SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>(null)
-    const [stakesLoading, setStakesLoading] = useState<null | boolean>(null)
+    const [stakesLoading, setStakesLoading] = useState<boolean>(false)
 
-    const [stakeHistoriesResult, setHistories] = useState(null)
-    const [historiesLoading, setHistoriesLoading] = useState(null)
+    const [stakeHistoriesResult, setHistories] = useState<null | HistoryStakingSubgraph[] | string>(null)
+    const [historiesLoading, setHistoriesLoading] = useState<boolean>(false)
 
     async function fetchPoolsAPR() {
 
         const apiURL = 'https://api.algebra.finance/api/APR/pools/'
 
         try {
-            const res = await fetch(apiURL).then(v => v.json())
-            return res
+            return await fetch(apiURL).then(v => v.json())
 
         } catch (error: any) {
             return {}
@@ -105,7 +104,7 @@ export function useInfoSubgraph() {
 
     }
 
-    async function fetchInfoPools(reload?: boolean) {
+    async function fetchInfoPools() {
 
         if (!blocks || blockError || !ethPrices) return
 
@@ -153,7 +152,7 @@ export function useInfoSubgraph() {
 
             const aprs = await fetchPoolsAPR()
 
-            const formatted = poolsAddresses.reduce((accum: { [address: string]: PoolSubgraph }, address) => {
+            const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address]
                 const oneDay: PoolSubgraph | undefined = parsedPools24[address]
                 const twoDay: PoolSubgraph | undefined = parsedPools48[address]
@@ -167,20 +166,11 @@ export function useInfoSubgraph() {
                                 ? [parseFloat(current.volumeUSD), 0]
                                 : [0, 0]
 
-                const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD) : current ? parseFloat(current.volumeUSD) : 0
+                const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
+                    : current ? parseFloat(current.volumeUSD) : 0
+
                 const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
                 const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
-                const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
-
-                const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
-                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
-                const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
-
-                const priceUSDChange =
-                    priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
-                const priceUSDChangeWeek =
-                    priceUSD && priceUSDWeek ? getPercentChange(priceUSD.toString(), priceUSDWeek.toString()) : 0
-
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
 
                 accum[address] = {
@@ -195,10 +185,6 @@ export function useInfoSubgraph() {
                     tvlUSD,
                     tvlUSDChange,
                     totalValueLockedUSD: current.totalValueLockedUSD,
-                    tvlToken,
-                    priceUSD,
-                    priceUSDChange,
-                    priceUSDChangeWeek,
                     apr: aprPercent
                 }
                 return accum
@@ -209,9 +195,9 @@ export function useInfoSubgraph() {
         } catch (err) {
             setPools('failed')
             throw new Error('Info pools fetch ' + err)
+        } finally {
+            setPoolsLoading(false)
         }
-
-        setPoolsLoading(false)
     }
 
     async function fetchInfoTokens() {
@@ -323,9 +309,9 @@ export function useInfoSubgraph() {
         } catch (err) {
             setTokens('failed')
             throw new Error('Info tokens fetching ' + err)
+        } finally {
+            setTokensLoading(false)
         }
-
-        setTokensLoading(false)
     }
 
     async function fetchTokensByTime(blockNumber: number, tokenAddresses: string[]): Promise<TokenInSubgraph[] | string> {
@@ -466,7 +452,7 @@ export function useInfoSubgraph() {
                 fetchPolicy: 'network-only'
             })
 
-            setStakesLoading(false)
+
             setStakes({ factories: factories, stakes: stakes })
 
             if (error) {
@@ -474,12 +460,14 @@ export function useInfoSubgraph() {
                 return
             }
 
-            setStakesLoading(false)
+
             setStakes({ factories, stakes })
 
         } catch (err) {
-            setStakesLoading(false)
+
             setStakes('failed')
+        } finally {
+            setStakesLoading(false)
         }
     }, [account])
 
@@ -576,7 +564,6 @@ export function useInfoSubgraph() {
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            setHistoriesLoading(false)
             setHistories(histories)
 
         } catch (e) {

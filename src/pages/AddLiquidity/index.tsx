@@ -32,7 +32,6 @@ import { ExternalLink, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { Dots } from '../Pool/styleds'
 import { currencyId } from '../../utils/currencyId'
-import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import {
     DynamicSection,
     HideMedium,
@@ -61,7 +60,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { AddRemoveTabs } from 'components/NavigationTabs'
 import HoverInlineText from 'components/HoverInlineText'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
-import { SupportedChainId } from 'constants/chains'
 import { CHAIN_INFO } from '../../constants/chains'
 import { NonfungiblePositionManager as NonFunPosMan } from './nft-manager'
 
@@ -96,12 +94,6 @@ export default function AddLiquidity({
 
     const hasExistingPosition = !!existingPositionDetails && !positionLoading
     const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails)
-    // fee selection from url
-    // const feeAmount: FeeAmount | undefined =
-    //   feeAmountFromUrl && Object.values(FeeAmount).includes(parseFloat(feeAmountFromUrl))
-    //     ? parseFloat(feeAmountFromUrl)
-    //     : undefined
-
     const feeAmount = 100
 
     const baseCurrency = useCurrency(currencyIdA)
@@ -233,17 +225,6 @@ export default function AddLiquidity({
                         createPool: noLiquidity
                     })
 
-            const {
-                calldata: calldata2,
-                value: _value
-            } = NonFunPosMan.addCallParameters(position, {
-                slippageTolerance: allowedSlippage,
-                recipient: account,
-                deadline: deadline.toString(),
-                useNative,
-                createPool: noLiquidity
-            })
-
             const txn: { to: string; data: string; value: string } = {
                 to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
                 data: calldata,
@@ -326,8 +307,7 @@ export default function AddLiquidity({
     )
 
     // flag for whether pool creation must be a separate tx
-    const mustCreateSeparately =
-        noLiquidity && (chainId === SupportedChainId.OPTIMISM || chainId === SupportedChainId.OPTIMISTIC_KOVAN)
+    const mustCreateSeparately = noLiquidity
 
     const handleDismissConfirmation = useCallback(() => {
         setShowConfirm(false)
@@ -417,8 +397,7 @@ export default function AddLiquidity({
                         </RowBetween>
                     )}
                 {mustCreateSeparately && (
-                    <ButtonError onClick={onCreate}
-                                 disabled={!isValid || attemptingTxn || !position}>
+                    <ButtonError disabled={!isValid || attemptingTxn || !position}>
                         {attemptingTxn ? (
                             <Dots>
                                 <Trans>Confirm Create</Trans>
@@ -492,7 +471,7 @@ export default function AddLiquidity({
                         positionID={tokenId}
                         defaultSlippage={DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE}
                         showBackLink={!hasExistingPosition}
-                    ></AddRemoveTabs>
+                    />
                     <Wrapper>
                         <ResponsiveTwoColumns wide={!hasExistingPosition && !networkFailed}>
                             <AutoColumn gap='lg'>
@@ -604,20 +583,6 @@ export default function AddLiquidity({
                                                         </AutoRow>
                                                     )}
 
-                                                    {/* <LiquidityChartRangeInput
-                            currencyA={baseCurrency ?? undefined}
-                            currencyB={quoteCurrency ?? undefined}
-                            feeAmount={dynamicFee}
-                            ticksAtLimit={ticksAtLimit}
-                            price={
-                              price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined
-                            }
-                            priceLower={priceLower}
-                            priceUpper={priceUpper}
-                            onLeftRangeInput={onLeftRangeInput}
-                            onRightRangeInput={onRightRangeInput}
-                            interactive={!hasExistingPosition}
-                          /> */}
                                                 </>
                                             ) : (
                                                 <AutoColumn gap='md'>
@@ -843,12 +808,6 @@ export default function AddLiquidity({
                         </ResponsiveTwoColumns>
                     </Wrapper>
                 </PageWrapper>
-                {addIsUnsupported && (
-                    <UnsupportedCurrencyFooter
-                        show={addIsUnsupported}
-                        currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]}
-                    />
-                )}
             </ScrollablePage>
             <SwitchLocaleLink />
         </>

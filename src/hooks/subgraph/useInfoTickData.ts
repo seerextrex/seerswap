@@ -19,7 +19,7 @@ export function useInfoTickData() {
     const PRICE_FIXED_DIGITS = 8
 
     const [ticksResult, setTicksResult] = useState<null | FormattedTick>(null)
-    const [ticksLoading, setTicksLoading] = useState<null | boolean>(null)
+    const [ticksLoading, setTicksLoading] = useState<boolean>(false)
 
     async function fetchInitializedTicks(poolAddress: string, tickIdxLowerBound: number, tickIdxUpperBound: number) {
 

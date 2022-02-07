@@ -14,7 +14,7 @@ const FrozenTrans = ({
     const [time, setTime] = useState<string>('00:00:00')
 
     const tick = () => {
-        setTime(getCountdownTime(el.timestamp, now()))
+        setTime(getCountdownTime(+el.timestamp, now()))
     }
 
     useEffect(() => {

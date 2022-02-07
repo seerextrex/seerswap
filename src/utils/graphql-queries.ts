@@ -122,6 +122,7 @@ query fetchPool {
         liquidity
         tick
         feesUSD
+        untrackedFeesUSD
     }
 }`
 
@@ -181,6 +182,7 @@ export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gq
       volumeUSD
       tvlUSD
       feesUSD
+      untrackedVolumeUSD
     }
   }
 `
@@ -198,6 +200,7 @@ query lastPoolHourData {
       volumeUSD
       tvlUSD
       feesUSD
+      untrackedVolumeUSD
     }
   }
 `
@@ -215,6 +218,7 @@ export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimesta
       volumeUSD
       tvlUSD
       feesUSD
+      untrackedVolumeUSD
     }
   }
 `

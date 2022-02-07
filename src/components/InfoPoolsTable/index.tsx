@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react'
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { Link, NavLink } from 'react-router-dom'
 import { TYPE } from 'theme'
 import { DarkGreyCard, GreyBadge } from 'components/Card'
@@ -13,7 +13,7 @@ import { feeTierPercent } from 'utils'
 import { Label, ClickableText } from 'components/Text'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { BarChart2, ExternalLink } from 'react-feather'
+import { BarChart2, ExternalLink, HelpCircle } from 'react-feather'
 import { log } from 'util'
 
 export const PageButtons = styled.div`
@@ -42,8 +42,13 @@ const LabelStyled = styled(Label)`
 
 const ClickableTextStyled = styled(ClickableText)`
   font-size: 14px;
+  align-items: center;
   justify-content: flex-start;
   text-align: start;
+
+  &:hover {
+    opacity: 1;
+  }
 `
 
 const Wrapper = styled(DarkGreyCard)`
@@ -64,9 +69,6 @@ const ResponsiveGrid = styled.div`
 
   @media screen and (max-width: 1000px) {
     grid-template-columns: 20px 2.1fr repeat(5, 1fr);
-    & :nth-child(3) {
-      display: none;
-    }
   }
 
   //@media screen and (max-width: 500px) {
@@ -117,6 +119,48 @@ const LinkWrapper = styled.a`
   }
 `
 
+const HelperDropdown = styled.span`
+  position: absolute;
+  display: none;
+  right: 0;
+  font-size: 12px;
+  bottom: -2rem;
+  padding: 4px 7px;
+  white-space: nowrap;
+  background: white;
+  border-radius: 4px;
+  color: black;
+  z-index: 30;
+`
+
+const APRWrapper = styled.span`
+  position: relative;
+  &:hover {
+    & > ${HelperDropdown} {
+      display: block;
+    }
+  }
+`
+
+const FarmingLink = styled(NavLink)<{ apr: boolean }>`
+  color: white;
+  text-decoration: none;
+
+  ${({ apr }) =>
+    apr &&
+    css`
+      padding: 4px;
+      border-radius: 3px;
+      color: white;
+      background-color: #36f;
+      text-decoration: underline;
+
+      &:hover {
+        color: #01ffff;
+      }
+    `}
+`
+
 const SORT_FIELD = {
   feeTier: 'feeTier',
   volumeUSD: 'volumeUSD',
@@ -124,6 +168,7 @@ const SORT_FIELD = {
   volumeUSDWeek: 'volumeUSDWeek',
   feesUSD: 'feesUSD',
   apr: 'apr',
+  farmingApr: 'farmingApr',
 }
 
 export const POOL_HIDE = [
@@ -156,7 +201,11 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
               <TYPE.label ml="8px">{poolTitle}</TYPE.label>
               <ExternalLink size={16} color={'white'} />
             </LinkWrapper>
-            <GreyBadge ml="10px" fontSize="14px" style={{ backgroundColor: '#02365e' }}>
+            <GreyBadge
+              ml="10px"
+              fontSize="14px"
+              style={{ backgroundColor: '#02365e', whiteSpace: 'nowrap', maxHeight: 'none' }}
+            >
               {feeTierPercent(poolData.fee)}
             </GreyBadge>
             <ChartBadge to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
@@ -177,10 +226,20 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
           {formatDollarAmount(poolData.feesUSD)}
         </LabelStyled> */}
         <LabelStyled end={1} fontWeight={400}>
-          {formatPercent(poolData.apr)}
+          {poolData.apr > 0 ? (
+            <span style={{ color: '#33FF89' }}>{`+${formatPercent(poolData.apr)}`}</span>
+          ) : (
+            <span>-</span>
+          )}
         </LabelStyled>
         <LabelStyled end={1} fontWeight={400}>
-          {formatPercent(poolData.farmingApr)}
+          {poolData.farmingApr > 0 ? (
+            <FarmingLink to={'/farming/infinite-farms'} apr={poolData.farmingApr > 0}>
+              {formatPercent(poolData.farmingApr)}
+            </FarmingLink>
+          ) : (
+            <span>-</span>
+          )}
         </LabelStyled>
       </ResponsiveGrid>
     </div>
@@ -275,10 +334,16 @@ export default function InfoPoolsTable({
               Fees 24H {arrow(SORT_FIELD.feesUSD)}
             </ClickableTextStyled> */}
             <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
-              APR{arrow(SORT_FIELD.apr)}
+              <APRWrapper style={{ display: 'flex', alignItems: 'center' }}>
+                <span>🚀 APR{arrow(SORT_FIELD.apr)}</span>
+                <span style={{ marginLeft: '6px' }}>
+                  <HelpCircle style={{ display: 'block' }} color={'white'} size={'16px'} />
+                </span>
+                <HelperDropdown>Based on fees / active liquidity</HelperDropdown>
+              </APRWrapper>
             </ClickableTextStyled>
-            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
-              Farming{arrow(SORT_FIELD.apr)}
+            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.farmingApr)}>
+              <span>🔥 Farming{arrow(SORT_FIELD.farmingApr)}</span>
             </ClickableTextStyled>
             {/* <AprInfo title={'based on 24h volume'}>?</AprInfo> */}
           </ResponsiveGrid>

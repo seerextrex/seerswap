@@ -16,8 +16,8 @@ import dayjs from 'dayjs'
 import Loader from '../../components/Loader'
 import { useInfoTickData } from '../../hooks/subgraph/useInfoTickData'
 import LiquidityBarChart from '../../components/LiquidityBarChart'
-import {useInternet} from "../../hooks/useInternet"
-import {useToken} from "../../hooks/Tokens"
+import { useInternet } from '../../hooks/useInternet'
+import { useToken } from '../../hooks/Tokens'
 
 const Wrapper = styled.div`
   min-width: 915px;
@@ -158,7 +158,6 @@ export default function PoolInfoPage({
     }
   }, [feesResult, chartPoolData, ticksResult])
 
-
   const refreshing = useMemo(() => {
     return feesLoading || chartPoolDataLoading || ticksLoading
   }, [feesLoading, chartPoolDataLoading, ticksLoading])
@@ -174,7 +173,7 @@ export default function PoolInfoPage({
             token0={_token0}
             token1={_token1}
             fee={poolResult.fee}
-            collectedFees={poolResult.feesUSD}
+            collectedFees={poolResult.feesUSD < 1 ? poolResult.untrackedFeesUSD : poolResult.feesUSD}
           />
           <BodyWrapper>
             <ChartWrapper>

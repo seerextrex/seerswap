@@ -69,11 +69,19 @@ export function daysCount(month: number, year: number) {
 export default function FeeChartRangeInput({ fetchedData, refreshing, span, type }: FeeChartRangeInputProps) {
   const ref = useRef(null)
 
-
   const formattedData = useMemo(() => {
     if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return []
 
-    const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? 'volumeUSD' : 'feesUSD'
+    const isUntracked = fetchedData.data.some((el) => el.volumeUSD < 1 && el.untrackedVolumeUSD >= 1)
+
+    const field =
+      type === ChartType.TVL
+        ? 'tvlUSD'
+        : type === ChartType.VOLUME
+        ? isUntracked
+          ? 'untrackedVolumeUSD'
+          : 'volumeUSD'
+        : 'feesUSD'
 
     if (type === ChartType.FEES) {
       return {

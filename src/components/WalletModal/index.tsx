@@ -343,7 +343,7 @@ export default function WalletModal({
         ) : (
           <HeaderRow color="#080064">
             <HoverText style={{ color: '#080064' }}>
-              <Trans>Connect to a wallet</Trans>
+              <Trans>Connect Wallet</Trans>
             </HoverText>
           </HeaderRow>
         )}

@@ -204,7 +204,7 @@ function Web3StatusInner() {
         faded={!account}
       >
         <Text>
-          <Trans>Connect to a wallet</Trans>
+          <Trans>Connect Wallet</Trans>
         </Text>
       </Web3StatusConnect>
     )

@@ -472,7 +472,9 @@ export default function AddLiquidityPage({
   const _w: any = window
   const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
 
-  const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+  const gasPrice = useAppSelector((state) =>
+    state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+  )
   const allTransactions = useAllTransactions()
 
   const sortedRecentTransactions = useMemo(() => {
@@ -1218,7 +1220,7 @@ export default function AddLiquidityPage({
           ) : (
             <PairNotSelectedMock>
               <AddLiquidityButton onClick={toggleWalletModal} style={{ margin: 'auto' }}>
-                Connect to a wallet
+                Connect Wallet
               </AddLiquidityButton>
             </PairNotSelectedMock>
           )}

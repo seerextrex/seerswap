@@ -74,6 +74,35 @@ export const FETCH_ETERNAL_FARM = farmId => gql`
   }
 `
 
+export const FETCH_ETERNAL_FARM_FROM_POOL = pools => {
+  let poolString = `[`
+  pools.map((address) => {
+    return (poolString += `"${address}",`)
+  })
+  poolString += ']'
+  const queryString =
+    `
+      query eternalFarmingsFromPools {
+        eternalFarmings(where: {pool_in: ${poolString}}) {
+          id
+          rewardToken
+          bonusRewardToken
+          pool
+          startTime
+          endTime
+          reward
+          bonusReward
+          rewardRate
+          bonusRewardRate
+          isDetached
+        }
+      }
+      `
+
+  return gql(queryString)
+}
+
+
 export const FETCH_POOL = poolId => gql`
 query fetchPool {
     pools(where: { id: "${poolId}" }) {

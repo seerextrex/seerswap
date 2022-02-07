@@ -150,6 +150,7 @@ const RewardClaimButton = styled.button`
   cursor: pointer;
   font-family: 'Montserrat';
   min-width: 60px;
+  font-weight: 600;
 
   ${({ skeleton }) =>
     skeleton

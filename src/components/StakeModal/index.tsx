@@ -157,6 +157,7 @@ const StakeButton = styled.button`
   color: white;
   border-radius: 8px;
   width: 100%;
+  font-weight: 600;
   &:first-of-type {
     margin-right: 1rem;
   }

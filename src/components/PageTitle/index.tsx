@@ -16,6 +16,7 @@ const Title = styled.div`
 `
 const TitleName = styled.span`
   margin-right: 1rem;
+  font-weight: 600;
 `
 
 const ReloadButton = styled.button`

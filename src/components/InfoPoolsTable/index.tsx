@@ -37,14 +37,14 @@ export const Arrow = styled.div<{ faded: boolean }>`
 `
 
 const LabelStyled = styled(Label)`
-    font-size: 14px;
-    justify-content: flex-start;
+  font-size: 14px;
+  justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
 `
 
 const ClickableTextStyled = styled(ClickableText)`
   font-size: 14px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
   text-align: start;
 
   &:hover {
@@ -136,7 +136,7 @@ const HelperDropdown = styled.span`
   z-index: 30;
 `
 const HelperDropdownPart = styled.span`
-  padding: 2px 6px; 
+  padding: 2px 6px;
   background-color: #d6d6d6;
   border-radius: 4px;
   color: #2d2d2d;
@@ -222,26 +222,22 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
             </ChartBadge>
           </RowFixed>
         </LabelStyled>
-        <LabelStyled end={1} fontWeight={400}>
+        <LabelStyled center end={1} fontWeight={400}>
           {formatDollarAmount(poolData.volumeUSD)}
         </LabelStyled>
-        <LabelStyled end={1} fontWeight={400}>
+        <LabelStyled center end={1} fontWeight={400}>
           {formatDollarAmount(poolData.volumeUSDWeek)}
         </LabelStyled>
-        <LabelStyled end={1} fontWeight={400}>
+        <LabelStyled center end={1} fontWeight={400}>
           {formatDollarAmount(poolData.totalValueLockedUSD)}
         </LabelStyled>
         {/* <LabelStyled end={1} fontWeight={400}>
           {formatDollarAmount(poolData.feesUSD)}
         </LabelStyled> */}
-        <LabelStyled end={1} fontWeight={400}>
-          {poolData.apr > 0 ? (
-            <span style={{ color: '#33FF89' }}>{formatPercent(poolData.apr)}</span>
-          ) : (
-            <span>-</span>
-          )}
+        <LabelStyled center end={1} fontWeight={400}>
+          {poolData.apr > 0 ? <span style={{ color: '#33FF89' }}>{formatPercent(poolData.apr)}</span> : <span>-</span>}
         </LabelStyled>
-        <LabelStyled end={1} fontWeight={400}>
+        <LabelStyled center end={1} fontWeight={400}>
           {poolData.farmingApr > 0 ? (
             <FarmingLink to={'/farming/infinite-farms'} apr={poolData.farmingApr > 0}>
               {formatPercent(poolData.farmingApr)}
@@ -321,44 +317,51 @@ export default function InfoPoolsTable({
         return <Loader />
     }
 
-    return (
-        <Wrapper style={{ borderRadius: '8px' }}>
-            {sortedPools.length > 0 ? (
-                <AutoColumn gap='16px'>
-                    <ResponsiveGrid style={{
-                        borderBottom: '1px solid rgba(225, 229, 239, 0.18)',
-                        paddingBottom: '1rem'
-                    }}>
-                        <Label color={'#dedede'}>#</Label>
-                        <ClickableTextStyled color={'#dedede'}
-                                             onClick={() => handleSort(SORT_FIELD.feeTier)}>
-                            Pool {arrow(SORT_FIELD.feeTier)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1}
-                                             onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
-                            Volume 24H {arrow(SORT_FIELD.volumeUSD)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1}
-                                             onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
-                            Volume 7D {arrow(SORT_FIELD.volumeUSDWeek)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1}
-                                             onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
-                            TVL {arrow(SORT_FIELD.tvlUSD)}
-                        </ClickableTextStyled>
-                        {/* <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.feesUSD)}>
+  const arrow = useCallback(
+    (field: string) => {
+      return sortField === field ? (!sortDirection ? '↑' : '↓') : ''
+    },
+    [sortDirection, sortField]
+  )
+
+  if (!poolDatas) {
+    return <Loader />
+  }
+
+  return (
+    <Wrapper style={{ borderRadius: '8px' }}>
+      {sortedPools.length > 0 ? (
+        <AutoColumn gap="16px">
+          <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
+            <Label color={'#dedede'}>#</Label>
+            <ClickableTextStyled color={'#dedede'} onClick={() => handleSort(SORT_FIELD.feeTier)}>
+              Pool {arrow(SORT_FIELD.feeTier)}
+            </ClickableTextStyled>
+            <ClickableTextStyled center color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
+              Volume 24H {arrow(SORT_FIELD.volumeUSD)}
+            </ClickableTextStyled>
+            <ClickableTextStyled center color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
+              Volume 7D {arrow(SORT_FIELD.volumeUSDWeek)}
+            </ClickableTextStyled>
+            <ClickableTextStyled center color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
+              TVL {arrow(SORT_FIELD.tvlUSD)}
+            </ClickableTextStyled>
+            {/* <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.feesUSD)}>
               Fees 24H {arrow(SORT_FIELD.feesUSD)}
             </ClickableTextStyled> */}
-            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
+            <ClickableTextStyled center color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.apr)}>
               <APRWrapper style={{ display: 'flex', alignItems: 'center' }}>
                 <span>🚀 APR{arrow(SORT_FIELD.apr)}</span>
                 <span style={{ marginLeft: '6px' }}>
                   <HelpCircle style={{ display: 'block' }} color={'white'} size={'16px'} />
                 </span>
-                <HelperDropdown>Based on <HelperDropdownPart>fees</HelperDropdownPart> / <HelperDropdownPart>active liquidity</HelperDropdownPart></HelperDropdown>
+                <HelperDropdown>
+                  Based on <HelperDropdownPart>fees</HelperDropdownPart> /{' '}
+                  <HelperDropdownPart>active liquidity</HelperDropdownPart>
+                </HelperDropdown>
               </APRWrapper>
             </ClickableTextStyled>
-            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.farmingApr)}>
+            <ClickableTextStyled center color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.farmingApr)}>
               <span>🔥 Farming{arrow(SORT_FIELD.farmingApr)}</span>
             </ClickableTextStyled>
             {/* <AprInfo title={'based on 24h volume'}>?</AprInfo> */}

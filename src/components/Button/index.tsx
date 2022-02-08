@@ -2,52 +2,54 @@ import styled from 'styled-components/macro'
 import { darken } from 'polished'
 
 import { RowBetween } from '../Row'
-import { ChevronDown, Check } from 'react-feather'
-import { Button as RebassButton, ButtonProps as ButtonPropsOriginal } from 'rebass/styled-components'
+import { Check, ChevronDown } from 'react-feather'
+import {
+    Button as RebassButton,
+    ButtonProps as ButtonPropsOriginal
+} from 'rebass/styled-components'
 import useTheme from 'hooks/useTheme'
 
 type ButtonProps = Omit<ButtonPropsOriginal, 'css'>
 
-const Base = styled(RebassButton)<
-  {
+const Base = styled(RebassButton)<{
     padding?: string
     width?: string
     $borderRadius?: string
     altDisabledStyle?: boolean
-  } & ButtonProps
->`
-  padding: ${({ padding }) => padding ?? '16px'};
-  width: ${({ width }) => width ?? '100%'};
-  font-weight: 500;
-  text-align: center;
-  border-radius: ${({ $borderRadius }) => $borderRadius ?? '20px'};
-  outline: none;
-  border: 1px solid transparent;
-  color: white;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  flex-wrap: nowrap;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  &:disabled {
-    cursor: auto;
-    pointer-events: none;
-  }
-
-  will-change: transform;
-  transition: transform 450ms ease;
-  transform: perspective(1px) translateZ(0);
-
-  > * {
-    user-select: none;
-  }
-
-  > a {
+} & ButtonProps>`
+    padding: ${({ padding }) => padding ?? '16px'};
+    width: ${({ width }) => width ?? '100%'};
+    font-weight: 500;
+    text-align: center;
+    border-radius: ${({ $borderRadius }) => $borderRadius ?? '20px'};
+    outline: none;
+    border: 1px solid transparent;
+    color: white;
     text-decoration: none;
-  }
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+
+    &:disabled {
+        cursor: auto;
+        pointer-events: none;
+    }
+
+    will-change: transform;
+    transition: transform 450ms ease;
+    transform: perspective(1px) translateZ(0);
+
+    > * {
+        user-select: none;
+    }
+
+    > a {
+        text-decoration: none;
+    }
 `
 
 export const ButtonPrimary = styled(Base)`
@@ -66,7 +68,7 @@ export const ButtonPrimary = styled(Base)`
   }
   &:disabled {
     background-color: ${({ theme, altDisabledStyle, disabled }) =>
-      altDisabledStyle ? (disabled ? theme.winterMainButton : theme.winterDisabledButton) : theme.winterDisabledButton};
+    altDisabledStyle ? (disabled ? theme.winterMainButton : theme.winterDisabledButton) : theme.winterDisabledButton};
     color: ${({ theme }) => theme.text2};
     cursor: auto;
     box-shadow: none;
@@ -113,7 +115,10 @@ export const ButtonGray = styled(Base)`
     background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.winterMainButton)};
   }
   &:active {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.1, theme.winterDisabledButton)};
+    background-color: ${({
+    theme,
+    disabled
+}) => !disabled && darken(0.1, theme.winterDisabledButton)};
   }
 `
 
@@ -146,7 +151,6 @@ export const ButtonSecondary = styled(Base)`
 `
 
 export const ButtonOutlined = styled(Base)`
-  // border: 1px solid ${({ theme }) => theme.winterDisabledButton};
   background-color: ${({ theme }) => 'rgba(60,97,126,0.5)'};
   color: ${({ theme }) => theme.text1};
   &:focus {
@@ -268,45 +272,53 @@ const ButtonErrorStyle = styled(Base)`
 `
 
 export function ButtonConfirmed({
-  confirmed,
-  altDisabledStyle,
-  ...rest
+    confirmed,
+    altDisabledStyle,
+    ...rest
 }: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
-  if (confirmed) {
-    return <ButtonConfirmedStyle {...rest} />
-  } else {
-    return <ButtonPrimary {...rest} altDisabledStyle={altDisabledStyle} />
-  }
+    if (confirmed) {
+        return <ButtonConfirmedStyle {...rest} />
+    } else {
+        return <ButtonPrimary {...rest} altDisabledStyle={altDisabledStyle} />
+    }
 }
 
 export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps) {
-  if (error) {
-    return <ButtonErrorStyle {...rest} />
-  } else {
-    return <ButtonPrimary {...rest} />
-  }
+    if (error) {
+        return <ButtonErrorStyle {...rest} />
+    } else {
+        return <ButtonPrimary {...rest} />
+    }
 }
 
-export function ButtonDropdown({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
-  return (
-    <ButtonPrimary {...rest} disabled={disabled}>
-      <RowBetween>
-        <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={24} />
-      </RowBetween>
-    </ButtonPrimary>
-  )
+export function ButtonDropdown({
+    disabled = false,
+    children,
+    ...rest
+}: { disabled?: boolean } & ButtonProps) {
+    return (
+        <ButtonPrimary {...rest} disabled={disabled}>
+            <RowBetween>
+                <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
+                <ChevronDown size={24} />
+            </RowBetween>
+        </ButtonPrimary>
+    )
 }
 
-export function ButtonDropdownLight({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
-  return (
-    <ButtonOutlined {...rest} disabled={disabled}>
-      <RowBetween>
-        <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={24} />
-      </RowBetween>
-    </ButtonOutlined>
-  )
+export function ButtonDropdownLight({
+    disabled = false,
+    children,
+    ...rest
+}: { disabled?: boolean } & ButtonProps) {
+    return (
+        <ButtonOutlined {...rest} disabled={disabled}>
+            <RowBetween>
+                <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
+                <ChevronDown size={24} />
+            </RowBetween>
+        </ButtonOutlined>
+    )
 }
 
 const ActiveOutlined = styled(ButtonOutlined)`
@@ -336,29 +348,33 @@ const ResponsiveCheck = styled(Check)`
   size: 13px;
 `
 
-export function ButtonRadioChecked({ active = false, children, ...rest }: { active?: boolean } & ButtonProps) {
-  const theme = useTheme()
+export function ButtonRadioChecked({
+    active = false,
+    children,
+    ...rest
+}: { active?: boolean } & ButtonProps) {
+    const theme = useTheme()
 
-  if (!active) {
-    return (
-      <ButtonOutlined $borderRadius="12px" padding="12px 8px" {...rest}>
-        {<RowBetween>{children}</RowBetween>}
-      </ButtonOutlined>
-    )
-  } else {
-    return (
-      <ActiveOutlined {...rest} padding="12px 8px" $borderRadius="12px">
-        {
-          <RowBetween>
-            {children}
-            <CheckboxWrapper>
-              <Circle>
-                <ResponsiveCheck size={13} stroke={theme.white} />
-              </Circle>
-            </CheckboxWrapper>
-          </RowBetween>
-        }
-      </ActiveOutlined>
-    )
-  }
+    if (!active) {
+        return (
+            <ButtonOutlined $borderRadius='12px' padding='12px 8px' {...rest}>
+                {<RowBetween>{children}</RowBetween>}
+            </ButtonOutlined>
+        )
+    } else {
+        return (
+            <ActiveOutlined {...rest} padding='12px 8px' $borderRadius='12px'>
+                {
+                    <RowBetween>
+                        {children}
+                        <CheckboxWrapper>
+                            <Circle>
+                                <ResponsiveCheck size={13} stroke={theme.white} />
+                            </Circle>
+                        </CheckboxWrapper>
+                    </RowBetween>
+                }
+            </ActiveOutlined>
+        )
+    }
 }

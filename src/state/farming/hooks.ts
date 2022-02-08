@@ -1,8 +1,8 @@
-import {useCallback} from "react";
-import {useAppDispatch, useAppSelector} from "../hooks";
-import {useClients} from "../../hooks/subgraph/useClients";
-import {ONE_ETERNAL_FARMING, ONE_FARMING_EVENT} from "../../utils/graphql-queries";
-import {isFarming} from "./actions";
+import { useCallback } from 'react'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { useClients } from '../../hooks/subgraph/useClients'
+import { ONE_ETERNAL_FARMING, ONE_FARMING_EVENT } from '../../utils/graphql-queries'
+import { isFarming } from './actions'
 
 
 export function useFarmingActionsHandlers(): {
@@ -11,12 +11,12 @@ export function useFarmingActionsHandlers(): {
 } {
 
     const dispatch = useAppDispatch()
-    const {farmingClient} = useClients()
-    const {startTime} = useAppSelector(state => state.farming)
+    const { farmingClient } = useClients()
+    const { startTime } = useAppSelector(state => state.farming)
 
     const isFarmingAdd = useCallback(async () => {
         try {
-            const {data: {incentives}, error} = await farmingClient.query({
+            const { data: { incentives }, error } = await farmingClient.query({
                 query: ONE_FARMING_EVENT(),
                 fetchPolicy: 'network-only'
             })
@@ -25,7 +25,7 @@ export function useFarmingActionsHandlers(): {
                 return
             }
 
-            const {data: {eternalFarmings}, error: eternalError} = await farmingClient.query({
+            const { data: { eternalFarmings }, error: eternalError } = await farmingClient.query({
                 query: ONE_ETERNAL_FARMING(),
                 fetchPolicy: 'network-only'
             })
@@ -34,7 +34,11 @@ export function useFarmingActionsHandlers(): {
                 return
             }
 
-           dispatch(isFarming({startTime: incentives[0]?.startTime, endTime: incentives[0]?.endTime, eternalFarmings: !!eternalFarmings[0]}))
+            dispatch(isFarming({
+                startTime: incentives[0]?.startTime,
+                endTime: incentives[0]?.endTime,
+                eternalFarmings: !!eternalFarmings[0]
+            }))
         } catch (e) {
             console.log(e)
         }
@@ -55,7 +59,7 @@ export function useFarmingActionsHandlers(): {
     // }, [startTime])
 
     return {
-        onIsFarming: isFarmingAdd,
+        onIsFarming: isFarmingAdd
         // onIsFarmingGet: isFarmingGet
     }
 }

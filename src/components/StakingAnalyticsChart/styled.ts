@@ -1,4 +1,4 @@
-import styled, {css} from "styled-components/macro"
+import styled, { css } from 'styled-components/macro'
 
 
 //Page
@@ -37,13 +37,13 @@ export const ToolbarOptionsItem = styled.li`
     margin-right: 0;
   }
 
-  ${({selected}) =>
+  ${({ selected }) =>
     selected &&
     css`
             background-color: #2a87d9;
             cursor: default;
           `}
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-bottom: 10px;
   `}
 `

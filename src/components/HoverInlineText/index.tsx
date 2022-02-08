@@ -13,50 +13,51 @@ const TextWrapper = styled.span<{ margin: boolean; link?: boolean; fontSize?: st
 `
 
 const HoverInlineText = ({
-  text,
-  maxCharacters = 20,
-  margin = false,
-  adjustSize = false,
-  fontSize,
-  link,
-  ...rest
+    text,
+    maxCharacters = 20,
+    margin = false,
+    adjustSize = false,
+    fontSize,
+    link,
+    ...rest
 }: {
-  text?: string
-  maxCharacters?: number
-  margin?: boolean
-  adjustSize?: boolean
-  fontSize?: string
-  link?: boolean
+    text?: string
+    maxCharacters?: number
+    margin?: boolean
+    adjustSize?: boolean
+    fontSize?: string
+    link?: boolean
 }) => {
-  const [showHover, setShowHover] = useState(false)
+    const [showHover, setShowHover] = useState(false)
 
-  if (!text) {
-    return <span />
-  }
+    if (!text) {
+        return <span />
+    }
 
-  if (text.length > maxCharacters) {
+    if (text.length > maxCharacters) {
+        return (
+            <Tooltip text={text} show={showHover}>
+                <TextWrapper
+                    onMouseEnter={() => setShowHover(true)}
+                    onMouseLeave={() => setShowHover(false)}
+                    margin={margin}
+                    adjustSize={adjustSize}
+                    link={link}
+                    fontSize={fontSize}
+                    {...rest}
+                >
+                    {' ' + text.slice(0, maxCharacters - 1) + '...'}
+                </TextWrapper>
+            </Tooltip>
+        )
+    }
+
     return (
-      <Tooltip text={text} show={showHover}>
-        <TextWrapper
-          onMouseEnter={() => setShowHover(true)}
-          onMouseLeave={() => setShowHover(false)}
-          margin={margin}
-          adjustSize={adjustSize}
-          link={link}
-          fontSize={fontSize}
-          {...rest}
-        >
-          {' ' + text.slice(0, maxCharacters - 1) + '...'}
+        <TextWrapper margin={margin} adjustSize={adjustSize} link={link}
+                     fontSize={fontSize} {...rest}>
+            {text}
         </TextWrapper>
-      </Tooltip>
     )
-  }
-
-  return (
-    <TextWrapper margin={margin} adjustSize={adjustSize} link={link} fontSize={fontSize} {...rest}>
-      {text}
-    </TextWrapper>
-  )
 }
 
 export default HoverInlineText

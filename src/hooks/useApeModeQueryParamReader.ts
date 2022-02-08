@@ -5,18 +5,18 @@ import { updateUserExpertMode } from '../state/user/actions'
 import useParsedQueryString from './useParsedQueryString'
 
 export default function ApeModeQueryParamReader(): null {
-  useApeModeQueryParamReader()
-  return null
+    useApeModeQueryParamReader()
+    return null
 }
 
 function useApeModeQueryParamReader() {
-  const dispatch = useAppDispatch()
-  const { ape } = useParsedQueryString()
+    const dispatch = useAppDispatch()
+    const { ape } = useParsedQueryString()
 
-  useEffect(() => {
-    if (typeof ape !== 'string') return
-    if (ape === '' || ape.toLowerCase() === 'true') {
-      dispatch(updateUserExpertMode({ userExpertMode: true }))
-    }
-  })
+    useEffect(() => {
+        if (typeof ape !== 'string') return
+        if (ape === '' || ape.toLowerCase() === 'true') {
+            dispatch(updateUserExpertMode({ userExpertMode: true }))
+        }
+    })
 }

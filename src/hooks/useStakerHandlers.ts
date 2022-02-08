@@ -1,70 +1,79 @@
-import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
-import FINITE_FARMING_ABI from 'abis/finite-farming'
+import NON_FUN_POS_MAN from 'abis/non-fun-pos-man.json'
 import FARMING_CENTER_ABI from 'abis/farming-center.json'
-import { Contract, providers } from "ethers"
-import { Interface } from "ethers/lib/utils"
-import { useCallback, useState } from "react"
-import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FINITE_FARMING } from "../constants/addresses"
-import { useTransactionAdder } from "../state/transactions/hooks"
-import { useActiveWeb3React } from "./web3"
-import { calculateGasMargin } from "../utils/calculateGasMargin"
+import { Contract, providers } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
+import { useCallback, useState } from 'react'
+import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants/addresses'
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { useActiveWeb3React } from './web3'
 import JSBI from 'jsbi'
-import { toHex } from "../lib/src/utils"
+import { toHex } from '../lib/src'
 import { useAppSelector } from '../state/hooks'
 import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
-
-export enum FarmingType {
-    ETERNAL = 0,
-    FINITE = 1
-}
+import { TransactionResponse } from '@ethersproject/providers'
+import {
+    DefaultFarming,
+    DefaultFarmingWithError,
+    DefaultNFT,
+    EternalCollectRewardHandlerInterface,
+    GetRewardsHandlerInterface,
+    GetRewardsHashInterface,
+    StakeDefault
+} from '../models/interfaces'
+import { FarmingType } from '../models/enums'
 
 export function useStakerHandlers() {
 
-    const { chainId, account, library } = useActiveWeb3React()
-
+    const { chainId, account } = useActiveWeb3React()
     const _w: any = window
     const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
-
-    const nonFunPosManInterface = new Interface(NON_FUN_POS_MAN)
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
-
     const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
-
     const addTransaction = useTransactionAdder()
 
-    const [approvedHash, setApproved] = useState(null)
-    const [transferedHash, setTransfered] = useState(null)
-    const [stakedHash, setStaked] = useState(null)
-    const [getRewardsHash, setGetRewards] = useState(null)
-    const [eternalCollectRewardHash, setEternalCollectReward] = useState(null)
-    const [withdrawnHash, setWithdrawn] = useState(null)
-    const [claimRewardHash, setClaimReward] = useState(null)
-    const [sendNFTL2Hash, setSendNFTL2] = useState(null)
+    const [approvedHash, setApproved] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [stakedHash, setStaked] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [getRewardsHash, setGetRewards] = useState<GetRewardsHashInterface | 'failed'>({
+        hash: null,
+        id: null,
+        farmingType: null
+    })
+    const [eternalCollectRewardHash, setEternalCollectReward] = useState<DefaultFarmingWithError | 'failed'>({
+        hash: null,
+        id: null,
+        error: null
+    })
+    const [withdrawnHash, setWithdrawn] = useState<DefaultFarming | 'failed'>({
+        hash: null,
+        id: null
+    })
+    const [claimRewardHash, setClaimReward] = useState<DefaultFarmingWithError>({
+        hash: null,
+        id: null,
+        error: null
+    })
+    const [sendNFTL2Hash, setSendNFTL2] = useState<DefaultFarming | 'failed'>({
+        hash: null,
+        id: null
+    })
 
-    const claimRewardsHandler = useCallback(async (tokenAddress, amount) => {
+    const claimRewardsHandler = useCallback(async (tokenAddress: string) => {
 
-        if (!account || !provider) return
+        if (!account || !provider || !chainId) return
 
         const MaxUint128 = toHex(JSBI.subtract(JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)), JSBI.BigInt(1)))
-
-        const farmingCenterContract = new Contract(
-            FARMING_CENTER[chainId],
-            FARMING_CENTER_ABI,
-            provider.getSigner()
-        )
+        const farmingCenterContract = new Contract(FARMING_CENTER[chainId], FARMING_CENTER_ABI, provider.getSigner())
 
         setClaimReward({ hash: null, id: null })
 
         try {
 
-            const result = await farmingCenterContract.claimReward(
+            const result: TransactionResponse = await farmingCenterContract.claimReward(
                 tokenAddress,
                 account,
                 MaxUint128,
                 MaxUint128,
-                {
-                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                }
+                { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
             )
 
             addTransaction(result, {
@@ -74,16 +83,23 @@ export function useStakerHandlers() {
             setClaimReward({ hash: result.hash, id: tokenAddress, error: null })
 
         } catch (err) {
-            setClaimReward({ error: err })
-            if (err.code !== 4001) {
+            setClaimReward({ id: null, hash: null, error: err })
+
+            if (err instanceof Error) {
                 throw new Error('Claiming rewards ' + err.message)
             }
         }
 
     }, [account, chainId])
 
-    const eternalCollectRewardHandler = useCallback(async (token, { pool, eternalRewardToken, eternalBonusRewardToken, eternalStartTime, eternalEndTime }) => {
-        if (!account || !provider) return
+    const eternalCollectRewardHandler = useCallback(async (token: string, {
+        pool,
+        eternalRewardToken,
+        eternalBonusRewardToken,
+        eternalStartTime,
+        eternalEndTime
+    }: EternalCollectRewardHandlerInterface) => {
+        if (!account || !provider || !chainId) return
 
         const farmingCenterContract = new Contract(
             FARMING_CENTER[chainId],
@@ -95,7 +111,7 @@ export function useStakerHandlers() {
 
         try {
 
-            const result = await farmingCenterContract.collectRewards(
+            const result: TransactionResponse = await farmingCenterContract.collectRewards(
                 [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime],
                 +token,
                 {
@@ -111,16 +127,26 @@ export function useStakerHandlers() {
 
         } catch (err) {
             setEternalCollectReward('failed')
-            if (err.code !== 4001) {
+            if (err instanceof Error) {
                 throw new Error('Claiming rewards ' + err.message)
             }
         }
 
     }, [account, chainId])
 
-    const getRewardsHandler = useCallback(async (token, { incentiveRewardToken, incentiveBonusRewardToken, pool, incentiveStartTime, incentiveEndTime, eternalRewardToken, eternalBonusRewardToken, eternalStartTime, eternalEndTime }, eventType) => {
+    const getRewardsHandler = useCallback(async (token: string, {
+        incentiveRewardToken,
+        incentiveBonusRewardToken,
+        pool,
+        incentiveStartTime,
+        incentiveEndTime,
+        eternalRewardToken,
+        eternalBonusRewardToken,
+        eternalStartTime,
+        eternalEndTime
+    }: GetRewardsHandlerInterface, eventType: number) => {
 
-        if (!account || !provider) return
+        if (!account || !provider || !chainId) return
 
         setGetRewards({ hash: null, id: null, farmingType: null })
 
@@ -132,16 +158,14 @@ export function useStakerHandlers() {
                 provider.getSigner()
             )
 
-            let result
+            let result: TransactionResponse
 
             if (eventType === FarmingType.ETERNAL) {
 
                 result = await farmingCenterContract.exitEternalFarming(
                     [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime],
                     +token,
-                    {
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                    }
+                    { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
                 )
 
             } else {
@@ -149,9 +173,7 @@ export function useStakerHandlers() {
                 result = await farmingCenterContract.exitFarming(
                     [incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime],
                     +token,
-                    {
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                    }
+                    { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
                 )
             }
 
@@ -169,16 +191,16 @@ export function useStakerHandlers() {
 
         } catch (err) {
             setGetRewards('failed')
-            if (err.code !== 4001) {
+            if (err instanceof Error) {
                 throw new Error('Getting rewards ' + err.message)
             }
         }
 
     }, [account, chainId])
 
-    const withdrawHandler = useCallback(async (token, { transfered, rewardToken, pool, startTime, endTime, }) => {
+    const withdrawHandler = useCallback(async (token: string) => {
 
-        if (!account || !provider) return
+        if (!account || !provider || !chainId) return
 
 
         setWithdrawn({ hash: null, id: null })
@@ -191,14 +213,11 @@ export function useStakerHandlers() {
                 provider.getSigner()
             )
 
-            const result = await farmingCenterContract.withdrawToken(
+            const result: TransactionResponse = await farmingCenterContract.withdrawToken(
                 token,
                 account,
                 0x0,
-                {
-                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
-                    gasLimit: 300000
-                }
+                { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER, gasLimit: 300000 }
             )
 
             addTransaction(result, {
@@ -208,20 +227,26 @@ export function useStakerHandlers() {
             setWithdrawn({ hash: result.hash, id: token })
         } catch (err) {
             setWithdrawn('failed')
-            if (err.code !== 4001) {
+            if (err instanceof Error) {
                 throw new Error('Withdrawing ' + err)
             }
         }
 
     }, [account, chainId])
 
-    const stakeHandler = useCallback(async (selectedNFT, { rewardToken, bonusRewardToken, pool, startTime, endTime }, eventType) => {
+    const stakeHandler = useCallback(async (selectedNFT: DefaultNFT, {
+        rewardToken,
+        bonusRewardToken,
+        pool,
+        startTime,
+        endTime
+    }: StakeDefault, eventType: number) => {
 
-        if (!account || !provider) return
+        if (!account || !provider || !chainId) return
 
-        setStaked(null)
+        setStaked({ hash: null, id: null })
 
-        let current
+        let current = ''
 
         try {
 
@@ -234,7 +259,7 @@ export function useStakerHandlers() {
             if (selectedNFT.onFarmingCenter) {
                 current = selectedNFT.id
 
-                let result
+                let result: TransactionResponse
 
                 if (eventType === FarmingType.ETERNAL) {
 
@@ -264,65 +289,20 @@ export function useStakerHandlers() {
             }
         } catch (err) {
             setStaked('failed')
-            if (err.code !== 4001) {
-                throw new Error('Staking ' + current + " " + err.message)
+            if (err instanceof Error) {
+                throw new Error('Staking ' + current + ' ' + err.message)
             }
         }
 
     }, [account, chainId])
 
-    const transferHandler = useCallback(async (selectedNFT) => {
+    const approveHandler = useCallback(async (selectedNFT: DefaultNFT) => {
 
-        if (!account || !provider) return
+        if (!account || !provider || !chainId) return
 
-        setTransfered(null)
+        setApproved({ hash: null, id: null })
 
-        let current
-
-        try {
-
-            const nonFunPosManContract = new Contract(
-                NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
-                NON_FUN_POS_MAN,
-                provider.getSigner()
-            )
-
-            if (selectedNFT.approved) {
-                current = selectedNFT.id
-
-                const result = await nonFunPosManContract['safeTransferFrom(address,address,uint256)'](
-                    account,
-                    FARMING_CENTER[chainId],
-                    selectedNFT.id,
-                    {
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                    }
-                )
-
-                addTransaction(result, {
-                    summary: `NFT #${selectedNFT.id} was transferred!`
-                })
-
-                setTransfered({ hash: result.hash, id: selectedNFT.id })
-
-            }
-
-        } catch (err) {
-            setTransfered('failed')
-            if (err.code !== 4001) {
-                throw new Error('Staking ' + current + " " + err.message)
-            }
-        }
-
-    }, [account, chainId])
-
-    const approveHandler = useCallback(async (selectedNFT) => {
-
-        if (!account || !provider) return
-
-        setApproved(null)
-
-        let current
+        let current = ''
 
         try {
 
@@ -349,11 +329,11 @@ export function useStakerHandlers() {
                     selectedNFT.id
                 ])
 
-                const result = await nonFunPosManContract.multicall([
-                    approveData, transferData
-                ],
+                const result: TransactionResponse = await nonFunPosManContract.multicall([
+                        approveData, transferData
+                    ],
                     {
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                     })
 
                 addTransaction(result, {
@@ -366,8 +346,8 @@ export function useStakerHandlers() {
 
         } catch (err) {
             setApproved('failed')
-            if (err.code !== 4001) {
-                throw new Error('Approving NFT ' + current + " " + err.message)
+            if (err instanceof Error) {
+                throw new Error('Approving NFT ' + current + ' ' + err.message)
             }
         }
 
@@ -375,9 +355,9 @@ export function useStakerHandlers() {
 
     const sendNFTL2Handler = useCallback(async (recipient: string, l2TokenId: string) => {
 
-        if (!account || !provider) return
+        if (!account || !provider || !chainId) return
 
-        setSendNFTL2(null)
+        setSendNFTL2({ hash: null, id: null })
 
         try {
 
@@ -398,13 +378,12 @@ export function useStakerHandlers() {
                 l2TokenId
             ])
 
-            const result = await farmingCenterContract.multicall([
-                approveData,
-                sendData
-            ],
-                {
-                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                })
+            const result: TransactionResponse = await farmingCenterContract.multicall(
+                [
+                    approveData,
+                    sendData
+                ],
+                { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
 
             addTransaction(result, {
                 summary: `NFT #${l2TokenId} was sent!`
@@ -414,7 +393,7 @@ export function useStakerHandlers() {
 
         } catch (err) {
             setSendNFTL2('failed')
-            if (err.code !== 4001) {
+            if (err instanceof Error) {
                 throw new Error('Send NFT L2 ' + err.message)
             }
         }
@@ -424,8 +403,6 @@ export function useStakerHandlers() {
     return {
         approveHandler,
         approvedHash,
-        transferHandler,
-        transferedHash,
         stakeHandler,
         stakedHash,
         getRewardsHandler,
@@ -437,6 +414,6 @@ export function useStakerHandlers() {
         sendNFTL2Handler,
         sendNFTL2Hash,
         eternalCollectRewardHandler,
-        eternalCollectRewardHash,
+        eternalCollectRewardHash
     }
 }

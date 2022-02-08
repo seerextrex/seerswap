@@ -1,5 +1,4 @@
-import { gql } from "@apollo/client";
-import { FINITE_FARMING } from "../constants/addresses";
+import { gql } from '@apollo/client'
 
 //Farming
 
@@ -127,7 +126,7 @@ query fetchPool {
 }`
 
 export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => {
-  return gql`
+    return gql`
   query feeHourData {
     feeHourDatas (first: 1000, where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
       id
@@ -189,11 +188,11 @@ export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gq
 
 export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
 query lastPoolHourData {
- 
+
   poolHourDatas(
       first: 1
       where: { pool: "${pool}" }
-      orderBy: periodStartUnix, 
+      orderBy: periodStartUnix,
       orderDirection: desc,
     ) {
       periodStartUnix
@@ -405,17 +404,17 @@ query topPools {
 `
 
 export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query pools {
         pools(where: {id_in: ${poolString}},` +
-    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           fee
           liquidity
@@ -423,14 +422,14 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
           tick
           token0 {
               id
-              symbol 
+              symbol
               name
               decimals
               derivedMatic
           }
           token1 {
               id
-              symbol 
+              symbol
               name
               decimals
               derivedMatic
@@ -448,7 +447,7 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
         }
       }
       `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 
@@ -461,17 +460,17 @@ export const TOP_TOKENS = gql`
 `
 
 export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: string[]) => {
-  let tokenString = `[`
-  tokens.map((address) => {
-    return (tokenString += `"${address}",`)
-  })
-  tokenString += ']'
-  const queryString =
-    `
+    let tokenString = `[`
+    tokens.map((address) => {
+        return (tokenString += `"${address}",`)
+    })
+    tokenString += ']'
+    const queryString =
+        `
       query tokens {
         tokens(where: {id_in: ${tokenString}},` +
-    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           symbol
           name
@@ -488,7 +487,7 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
       }
       `
 
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const GET_STAKE = (id: string) => gql`
@@ -523,15 +522,15 @@ query stake {
 //Blocklytics
 
 export const GET_BLOCKS = (timestamps: string[]) => {
-  let queryString = 'query blocks {'
-  queryString += timestamps.map((timestamp) => {
-    return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
-      } }) {
+    let queryString = 'query blocks {'
+    queryString += timestamps.map((timestamp) => {
+        return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
+        } }) {
           number
         }`
-  })
-  queryString += '}'
-  return gql(queryString)
+    })
+    queryString += '}'
+    return gql(queryString)
 }
 
 

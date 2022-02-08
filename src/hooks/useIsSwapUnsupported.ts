@@ -8,14 +8,14 @@ import { useUnsupportedTokens } from './Tokens'
  * @param currencyOut the output currency to check
  */
 export function useIsSwapUnsupported(currencyIn?: Currency, currencyOut?: Currency): boolean {
-  const unsupportedTokens: { [address: string]: Token } = useUnsupportedTokens()
+    const unsupportedTokens: { [address: string]: Token } = useUnsupportedTokens()
 
-  return useMemo(() => {
-    // if unsupported list loaded & either token on list, mark as unsupported
-    return Boolean(
-      unsupportedTokens &&
-        ((currencyIn?.isToken && unsupportedTokens[currencyIn.address]) ||
-          (currencyOut?.isToken && unsupportedTokens[currencyOut.address]))
-    )
-  }, [currencyIn, currencyOut, unsupportedTokens])
+    return useMemo(() => {
+        // if unsupported list loaded & either token on list, mark as unsupported
+        return Boolean(
+            unsupportedTokens &&
+            ((currencyIn?.isToken && unsupportedTokens[currencyIn.address]) ||
+                (currencyOut?.isToken && unsupportedTokens[currencyOut.address]))
+        )
+    }, [currencyIn, currencyOut, unsupportedTokens])
 }

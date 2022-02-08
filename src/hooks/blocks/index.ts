@@ -1,9 +1,9 @@
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client"
-import { useEffect, useMemo, useState } from "react"
-import { GET_BLOCKS } from "../../utils/graphql-queries"
-import { splitQuery } from "../../utils/queries"
-import { useClients } from "../subgraph/useClients"
-import { useActiveWeb3React } from "../web3"
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { useEffect, useMemo, useState } from 'react'
+import { GET_BLOCKS } from '../../utils/graphql-queries'
+import { splitQuery } from '../../utils/queries'
+import { useClients } from '../subgraph/useClients'
+import { useActiveWeb3React } from '../web3'
 
 /**
  * for a given array of timestamps, returns block entities
@@ -14,11 +14,11 @@ export function useBlocksFromTimestamps(
     blockClientOverride?: ApolloClient<NormalizedCacheObject>
 ): {
     blocks:
-    | {
+        | {
         timestamp: string
         number: any
     }[]
-    | undefined
+        | undefined
     error: boolean
 } {
     const { chainId } = useActiveWeb3React()
@@ -40,6 +40,7 @@ export function useBlocksFromTimestamps(
                 setError(true)
             }
         }
+
         if (!networkBlocks && !error) {
             fetchData()
         }
@@ -53,7 +54,7 @@ export function useBlocksFromTimestamps(
                 if (networkBlocks[t].length > 0) {
                     formatted.push({
                         timestamp: t.split('t')[1],
-                        number: networkBlocks[t][0]['number'],
+                        number: networkBlocks[t][0]['number']
                     })
                 }
             }
@@ -64,7 +65,7 @@ export function useBlocksFromTimestamps(
 
     return {
         blocks: blocksFormatted,
-        error,
+        error
     }
 }
 
@@ -91,7 +92,7 @@ export async function getBlocksFromTimestamps(
             if (fetchedData[t].length > 0) {
                 blocks.push({
                     timestamp: t.split('t')[1],
-                    number: fetchedData[t][0]['number'],
+                    number: fetchedData[t][0]['number']
                 })
             }
         }

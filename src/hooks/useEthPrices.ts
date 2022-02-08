@@ -1,10 +1,9 @@
 import { useBlocksFromTimestamps } from '../hooks/blocks'
 import { useDeltaTimestamps } from '../utils/queries'
-import { useState, useEffect, useMemo } from 'react'
-import { gql } from '@apollo/client'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { useEffect, useMemo, useState } from 'react'
+import { ApolloClient, gql, NormalizedCacheObject } from '@apollo/client'
 import { useClients } from '../hooks/subgraph/useClients'
-import { useActiveWeb3React } from "./web3"
+import { useActiveWeb3React } from './web3'
 
 export interface EthPrices {
     current: number
@@ -55,14 +54,14 @@ async function fetchEthPrices(
             variables: {
                 block24: blocks[0],
                 block48: blocks[1],
-                blockWeek: blocks[2] ?? 1,
-            },
+                blockWeek: blocks[2] ?? 1
+            }
         })
 
         if (error) {
             return {
                 error: true,
-                data: undefined,
+                data: undefined
             }
         } else if (data) {
             return {
@@ -70,21 +69,21 @@ async function fetchEthPrices(
                     current: parseFloat(data.current[0].maticPriceUSD ?? 0),
                     oneDay: parseFloat(data.oneDay[0]?.maticPriceUSD ?? 0),
                     twoDay: parseFloat(data.twoDay[0]?.maticPriceUSD ?? 0),
-                    week: parseFloat(data.oneWeek[0]?.maticPriceUSD ?? 0),
+                    week: parseFloat(data.oneWeek[0]?.maticPriceUSD ?? 0)
                 },
-                error: false,
+                error: false
             }
         } else {
             return {
                 data: undefined,
-                error: true,
+                error: true
             }
         }
     } catch (e) {
         console.log(e)
         return {
             data: undefined,
-            error: true,
+            error: true
         }
     }
 }
@@ -113,15 +112,19 @@ export function useEthPrices(): EthPrices | undefined {
 
     useEffect(() => {
         async function fetch() {
-            const { data, error } = await fetchEthPrices(formattedBlocks as [number, number, number], dataClient)
+            const {
+                data,
+                error
+            } = await fetchEthPrices(formattedBlocks as [number, number, number], dataClient)
             if (error || blockError) {
                 setError(true)
             } else if (data) {
                 setPrices({
-                    [chainId]: data,
+                    [chainId]: data
                 })
             }
         }
+
         if (!indexedPrices && !error && formattedBlocks) {
             fetch()
         }

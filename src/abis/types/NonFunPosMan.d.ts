@@ -18,7 +18,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface NonFunPosManInterface extends ethers.utils.Interface {
   functions: {
@@ -30,14 +30,14 @@ interface NonFunPosManInterface extends ethers.utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "collect((uint256,address,uint128,uint128))": FunctionFragment;
+    "collect(tuple)": FunctionFragment;
     "createAndInitializePoolIfNecessary(address,address,uint160)": FunctionFragment;
-    "decreaseLiquidity((uint256,uint128,uint256,uint256,uint256))": FunctionFragment;
+    "decreaseLiquidity(tuple)": FunctionFragment;
     "factory()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
-    "increaseLiquidity((uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "increaseLiquidity(tuple)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint((address,address,int24,int24,uint256,uint256,uint256,uint256,address,uint256))": FunctionFragment;
+    "mint(tuple)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -390,55 +390,6 @@ interface NonFunPosManInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "IncreaseLiquidity"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
-
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber] & {
-    owner: string;
-    approved: string;
-    tokenId: BigNumber;
-  }
->;
-
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean] & {
-    owner: string;
-    operator: string;
-    approved: boolean;
-  }
->;
-
-export type CollectEvent = TypedEvent<
-  [BigNumber, string, BigNumber, BigNumber] & {
-    tokenId: BigNumber;
-    recipient: string;
-    amount0: BigNumber;
-    amount1: BigNumber;
-  }
->;
-
-export type DecreaseLiquidityEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber] & {
-    tokenId: BigNumber;
-    liquidity: BigNumber;
-    amount0: BigNumber;
-    amount1: BigNumber;
-  }
->;
-
-export type IncreaseLiquidityEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, string] & {
-    tokenId: BigNumber;
-    liquidity: BigNumber;
-    actualLiquidity: BigNumber;
-    amount0: BigNumber;
-    amount1: BigNumber;
-    pool: string;
-  }
->;
-
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber] & { from: string; to: string; tokenId: BigNumber }
->;
 
 export class NonFunPosMan extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -1271,15 +1222,6 @@ export class NonFunPosMan extends BaseContract {
   };
 
   filters: {
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; approved: string; tokenId: BigNumber }
-    >;
-
     Approval(
       owner?: string | null,
       approved?: string | null,
@@ -1289,15 +1231,6 @@ export class NonFunPosMan extends BaseContract {
       { owner: string; approved: string; tokenId: BigNumber }
     >;
 
-    "ApprovalForAll(address,address,bool)"(
-      owner?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): TypedEventFilter<
-      [string, string, boolean],
-      { owner: string; operator: string; approved: boolean }
-    >;
-
     ApprovalForAll(
       owner?: string | null,
       operator?: string | null,
@@ -1305,21 +1238,6 @@ export class NonFunPosMan extends BaseContract {
     ): TypedEventFilter<
       [string, string, boolean],
       { owner: string; operator: string; approved: boolean }
-    >;
-
-    "Collect(uint256,address,uint256,uint256)"(
-      tokenId?: BigNumberish | null,
-      recipient?: null,
-      amount0?: null,
-      amount1?: null
-    ): TypedEventFilter<
-      [BigNumber, string, BigNumber, BigNumber],
-      {
-        tokenId: BigNumber;
-        recipient: string;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
     >;
 
     Collect(
@@ -1332,21 +1250,6 @@ export class NonFunPosMan extends BaseContract {
       {
         tokenId: BigNumber;
         recipient: string;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
-
-    "DecreaseLiquidity(uint256,uint128,uint256,uint256)"(
-      tokenId?: BigNumberish | null,
-      liquidity?: null,
-      amount0?: null,
-      amount1?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        tokenId: BigNumber;
-        liquidity: BigNumber;
         amount0: BigNumber;
         amount1: BigNumber;
       }
@@ -1367,25 +1270,6 @@ export class NonFunPosMan extends BaseContract {
       }
     >;
 
-    "IncreaseLiquidity(uint256,uint128,uint128,uint256,uint256,address)"(
-      tokenId?: BigNumberish | null,
-      liquidity?: null,
-      actualLiquidity?: null,
-      amount0?: null,
-      amount1?: null,
-      pool?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, string],
-      {
-        tokenId: BigNumber;
-        liquidity: BigNumber;
-        actualLiquidity: BigNumber;
-        amount0: BigNumber;
-        amount1: BigNumber;
-        pool: string;
-      }
-    >;
-
     IncreaseLiquidity(
       tokenId?: BigNumberish | null,
       liquidity?: null,
@@ -1403,15 +1287,6 @@ export class NonFunPosMan extends BaseContract {
         amount1: BigNumber;
         pool: string;
       }
-    >;
-
-    "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; tokenId: BigNumber }
     >;
 
     Transfer(

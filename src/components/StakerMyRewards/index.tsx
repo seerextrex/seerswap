@@ -15,6 +15,7 @@ import {
     RewardTokenInfo
 } from './styled'
 
+
 export function StakerMyRewards({
     data,
     refreshing,

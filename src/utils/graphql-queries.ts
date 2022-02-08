@@ -73,6 +73,35 @@ export const FETCH_ETERNAL_FARM = farmId => gql`
   }
 `
 
+export const FETCH_ETERNAL_FARM_FROM_POOL = pools => {
+  let poolString = `[`
+  pools.map((address) => {
+    return (poolString += `"${address}",`)
+  })
+  poolString += ']'
+  const queryString =
+    `
+      query eternalFarmingsFromPools {
+        eternalFarmings(where: {pool_in: ${poolString}}) {
+          id
+          rewardToken
+          bonusRewardToken
+          pool
+          startTime
+          endTime
+          reward
+          bonusReward
+          rewardRate
+          bonusRewardRate
+          isDetached
+        }
+      }
+      `
+
+  return gql(queryString)
+}
+
+
 export const FETCH_POOL = poolId => gql`
 query fetchPool {
     pools(where: { id: "${poolId}" }) {
@@ -92,6 +121,7 @@ query fetchPool {
         liquidity
         tick
         feesUSD
+        untrackedFeesUSD
     }
 }`
 
@@ -151,6 +181,7 @@ export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gq
       volumeUSD
       tvlUSD
       feesUSD
+      untrackedVolumeUSD
     }
   }
 `
@@ -168,6 +199,7 @@ query lastPoolHourData {
       volumeUSD
       tvlUSD
       feesUSD
+      untrackedVolumeUSD
     }
   }
 `
@@ -185,6 +217,7 @@ export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimesta
       volumeUSD
       tvlUSD
       feesUSD
+      untrackedVolumeUSD
     }
   }
 `
@@ -193,7 +226,9 @@ export const TOTAL_STATS = (block?: number) => gql`
   query totalStats {
     factories ${block ? `(block: { number: ${block} })` : ''} {
       totalVolumeUSD
+      untrackedVolumeUSD
       totalValueLockedUSD
+      totalValueLockedUSDUntracked
     }
   }
 `
@@ -406,6 +441,8 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
           totalValueLockedToken0
           totalValueLockedToken1
           totalValueLockedUSD
+          totalValueLockedUSDUntracked
+          untrackedVolumeUSD
           feesUSD
         }
       }
@@ -442,8 +479,10 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
           volume
           txCount
           totalValueLocked
+          untrackedVolumeUSD
           feesUSD
           totalValueLockedUSD
+          totalValueLockedUSDUntracked 
         }
       }
       `

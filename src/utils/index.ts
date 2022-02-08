@@ -56,5 +56,5 @@ export function formattedFeeAmount(feeAmount: FeeAmount): number {
 }
 
 export function feeTierPercent(fee: number): string {
-    return (fee / 10000) + '%'
+  return (fee / 10000).toFixed(2) + '%'
 }

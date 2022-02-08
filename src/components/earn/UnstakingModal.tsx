@@ -31,6 +31,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
     const [hash, setHash] = useState<string | undefined>()
     const [attempting, setAttempting] = useState(false)
 
+
     const gasPrice = useAppSelector((state) =>
         state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
     )

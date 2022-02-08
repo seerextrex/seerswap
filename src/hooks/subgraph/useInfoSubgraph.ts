@@ -104,6 +104,21 @@ export function useInfoSubgraph() {
 
     }
 
+
+    async function fetchEternalFarmAPR() {
+
+        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
+
+        try {
+            const res = await fetch(apiURL).then(v => v.json())
+            return res
+
+        } catch (error: any) {
+            return {}
+        }
+
+    }
+
     async function fetchInfoPools() {
 
         if (!blocks || blockError || !ethPrices) return
@@ -151,6 +166,13 @@ export function useInfoSubgraph() {
             const parsedPoolsWeek = parsePoolsData(poolsWeek)
 
             const aprs = await fetchPoolsAPR()
+            const farmAprs = await fetchEternalFarmAPR()
+
+            const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
+            const _farmingAprs = farmingAprs.reduce((acc, el) => ({
+                ...acc,
+                [el.pool]: farmAprs[el.id]
+            }), {})
 
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address]
@@ -158,12 +180,15 @@ export function useInfoSubgraph() {
                 const twoDay: PoolSubgraph | undefined = parsedPools48[address]
                 const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
 
+                const manageUntrackedVolume = current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD' 
+                const manageUntrackedTVL = current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
-                        ? get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD)
+                        ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
                         : current && oneDay ?
-                            [parseFloat(current.volumeUSD) - parseFloat(oneDay.volumeUSD), 0] : current
-                                ? [parseFloat(current.volumeUSD), 0]
+                            [parseFloat(current[manageUntrackedVolume]) - parseFloat(oneDay[manageUntrackedVolume]), 0] : current
+                                ? [parseFloat(current[manageUntrackedVolume]), 0]
                                 : [0, 0]
 
                 const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
@@ -172,6 +197,7 @@ export function useInfoSubgraph() {
                 const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
                 const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
+                const farmingApr = _farmingAprs[address] ? _farmingAprs[address].toFixed(2) : 0
 
                 accum[address] = {
                     token0: current.token0,
@@ -252,11 +278,14 @@ export function useInfoSubgraph() {
                 const twoDay: TokenInSubgraph | undefined = parsedTokens48[address]
                 const week: TokenInSubgraph | undefined = parsedTokensWeek[address]
 
+                const manageUntrackedVolume = current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD' 
+                const manageUntrackedTVL = current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
-                        ? get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD)
+                        ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
                         : current
-                            ? [parseFloat(current.volumeUSD), 0]
+                            ? [parseFloat(current[manageUntrackedVolume]), 0]
                             : [0, 0]
 
                 const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD) : current ? parseFloat(current.volumeUSD) : 0
@@ -356,7 +385,24 @@ export function useInfoSubgraph() {
         }
     }
 
-    async function fetchLastEntry(pool: string): Promise<FeeSubgraph[] | string> {
+    async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]) {
+
+        try {
+
+            const { data: { eternalFarmings }, error } = await farmingClient.query({
+                query: FETCH_ETERNAL_FARM_FROM_POOL(poolAddresses),
+                fetchPolicy: 'network-only'
+            })
+
+            return eternalFarmings
+
+        } catch (err) {
+            throw new Error('Eternal fetch error ' + err)
+        }
+
+    }
+
+    async function fetchLastEntry(pool: string): Promise<FeeSubgraph[] | string>  {
         try {
             const {
                 data: { feeHourDatas },

@@ -21,7 +21,7 @@ export const blockClient = new ApolloClient({
 })
 
 export const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-dev',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

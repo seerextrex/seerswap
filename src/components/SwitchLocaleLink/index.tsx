@@ -1,39 +1,28 @@
-import { Trans } from '@lingui/macro'
 import { useMemo } from 'react'
-import styled from 'styled-components/macro'
-import { DEFAULT_LOCALE, LOCALE_LABEL, SupportedLocale } from '../../constants/locales'
+import { DEFAULT_LOCALE, SupportedLocale } from '../../constants/locales'
 import { navigatorLocale, useActiveLocale } from '../../hooks/useActiveLocale'
-import { StyledInternalLink, TYPE } from '../../theme'
 import { useLocationLinkProps } from 'hooks/useLocationLinkProps'
 
-const Container = styled(TYPE.small)`
-  opacity: 0.6;
-  :hover {
-    opacity: 1;
-  }
-  margin-top: 1rem !important;
-`
-
 const useTargetLocale = (activeLocale: SupportedLocale) => {
-  const browserLocale = useMemo(() => navigatorLocale(), [])
+    const browserLocale = useMemo(() => navigatorLocale(), [])
 
-  if (browserLocale && (browserLocale !== DEFAULT_LOCALE || activeLocale !== DEFAULT_LOCALE)) {
-    if (activeLocale === browserLocale) {
-      return DEFAULT_LOCALE
-    } else {
-      return browserLocale
+    if (browserLocale && (browserLocale !== DEFAULT_LOCALE || activeLocale !== DEFAULT_LOCALE)) {
+        if (activeLocale === browserLocale) {
+            return DEFAULT_LOCALE
+        } else {
+            return browserLocale
+        }
     }
-  }
-  return null
+    return null
 }
 
 export function SwitchLocaleLink() {
-  const activeLocale = useActiveLocale()
-  const targetLocale = useTargetLocale(activeLocale)
+    const activeLocale = useActiveLocale()
+    const targetLocale = useTargetLocale(activeLocale)
 
-  const { to, onClick } = useLocationLinkProps(targetLocale)
+    const { to } = useLocationLinkProps(targetLocale)
 
-  if (!targetLocale || !to) return null
+    if (!targetLocale || !to) return null
 
-  return <></>
+    return <></>
 }

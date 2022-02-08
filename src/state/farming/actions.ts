@@ -1,3 +1,3 @@
-import {createAction} from "@reduxjs/toolkit";
+import { createAction } from '@reduxjs/toolkit'
 
-export const isFarming = createAction<{startTime: string, endTime: string, eternalFarmings: boolean}>('farming/getFarms')
+export const isFarming = createAction<{ startTime: string, endTime: string, eternalFarmings: boolean }>('farming/getFarms')

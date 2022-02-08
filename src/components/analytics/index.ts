@@ -3,7 +3,7 @@ import TagManager from 'react-gtm-module'
 
 import { isMobile } from 'utils/userAgent'
 
-const GOOGLE_ANALYTICS_ID: string | undefined = "UA-213558502-3"
+const GOOGLE_ANALYTICS_ID: string | undefined = 'UA-213558502-3'
 
 const tagManagerArgs = {
     gtmId: 'GTM-MD63ZMK'
@@ -13,8 +13,8 @@ if (typeof GOOGLE_ANALYTICS_ID === 'string') {
     ReactGA.initialize(GOOGLE_ANALYTICS_ID, {
         gaOptions: {
             storage: 'none',
-            storeGac: false,
-        },
+            storeGac: false
+        }
     })
     ReactGA.set({
         anonymizeIp: true,
@@ -22,7 +22,7 @@ if (typeof GOOGLE_ANALYTICS_ID === 'string') {
             ? 'desktop'
             : 'web3' in window || 'ethereum' in window
                 ? 'mobileWeb3'
-                : 'mobileRegular',
+                : 'mobileRegular'
     })
 } else {
     ReactGA.initialize('test', { testMode: true, debug: true })

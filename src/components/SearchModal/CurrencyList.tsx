@@ -1,80 +1,34 @@
-import {Trans} from '@lingui/macro'
-import {Currency, CurrencyAmount, Token} from '@uniswap/sdk-core'
-import {CSSProperties, MutableRefObject, useCallback, useEffect, useMemo} from 'react'
-import {FixedSizeList} from 'react-window'
-import {Text} from 'rebass'
-import styled from 'styled-components/macro'
-import {useActiveWeb3React} from '../../hooks/web3'
-import {useCombinedActiveList} from '../../state/lists/hooks'
-import {WrappedTokenInfo} from '../../state/lists/wrappedTokenInfo'
-import {useCurrencyBalance} from '../../state/wallet/hooks'
-import {TYPE} from '../../theme'
-import {useIsUserAddedToken} from '../../hooks/Tokens'
+import { Trans } from '@lingui/macro'
+import { Currency, Token } from '@uniswap/sdk-core'
+import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
+import { FixedSizeList } from 'react-window'
+import { Text } from 'rebass'
+import { useCombinedActiveList } from '../../state/lists/hooks'
+import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
+import { TYPE } from '../../theme'
+import { useIsUserAddedToken } from '../../hooks/Tokens'
 import Column from '../Column'
-import {RowFixed, RowBetween} from '../Row'
+import { RowBetween, RowFixed } from '../Row'
 import CurrencyLogo from '../CurrencyLogo'
-import {MouseoverTooltip} from '../Tooltip'
-import {MenuItem} from './styleds'
-import Loader from '../Loader'
-import {isTokenOnList} from '../../utils'
+import { MouseoverTooltip } from '../Tooltip'
+import { isTokenOnList } from '../../utils'
 import ImportRow from './ImportRow'
-import {LightGreyCard} from 'components/Card'
+import { LightGreyCard } from 'components/Card'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
+import { FixedContentRow, MenuItem, Tag, TagContainer } from './styled'
 
 function currencyKey(currency: Currency): string {
     return currency.isToken ? currency.address : 'MATIC'
 }
 
-const StyledBalanceText = styled(Text)`
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 5rem;
-  text-overflow: ellipsis;
-`
-
-const Tag = styled.div`
-  background-color: ${({theme}) => theme.bg3};
-  color: ${({theme}) => theme.text2};
-  font-size: 14px;
-  border-radius: 4px;
-  padding: 0.25rem 0.3rem 0.25rem 0.3rem;
-  max-width: 6rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  justify-self: flex-end;
-  margin-right: 4px;
-`
-
-const FixedContentRow = styled.div`
-  padding: 4px 20px;
-  height: 56px;
-  display: grid;
-  grid-gap: 16px;
-  align-items: center;
-`
-
-function Balance({balance}: { balance: CurrencyAmount<Currency> }) {
-    return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(4)}</StyledBalanceText>
-}
-
-const TagContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`
-
-const TokenListLogoWrapper = styled.img`
-  height: 20px;
-`
-
-function TokenTags({currency}: { currency: Currency }) {
+function TokenTags({ currency }: { currency: Currency }) {
     if (!(currency instanceof WrappedTokenInfo)) {
-        return <span/>
+        return <span />
     }
 
     const tags = currency.tags
-    if (!tags || tags.length === 0) return <span/>
+    if (!tags || tags.length === 0) return <span />
 
     const tag = tags[0]
 
@@ -87,7 +41,7 @@ function TokenTags({currency}: { currency: Currency }) {
                 <MouseoverTooltip
                     text={tags
                         .slice(1)
-                        .map(({name, description}) => `${name}: ${description}`)
+                        .map(({ name, description }) => `${name}: ${description}`)
                         .join('; \n')}
                 >
                     <Tag>...</Tag>
@@ -98,13 +52,12 @@ function TokenTags({currency}: { currency: Currency }) {
 }
 
 function CurrencyRow({
-                         currency,
-                         onSelect,
-                         isSelected,
-                         otherSelected,
-                         style,
-                         showCurrencyAmount,
-                     }: {
+    currency,
+    onSelect,
+    isSelected,
+    otherSelected,
+    style
+}: {
     currency: Currency
     onSelect: () => void
     isSelected: boolean
@@ -112,61 +65,63 @@ function CurrencyRow({
     style: CSSProperties
     showCurrencyAmount?: boolean
 }) {
-    const {account} = useActiveWeb3React()
+
     const key = currencyKey(currency)
     const selectedTokenList = useCombinedActiveList()
     const isOnSelectedList = isTokenOnList(selectedTokenList, currency.isToken ? currency : undefined)
     const customAdded = useIsUserAddedToken(currency)
-    // const balance = useCurrencyBalance(account ?? undefined, currency)
 
-  // only show add or remove buttons if not on selected list
-  return (
-    <MenuItem
-      style={style}
-      className={`token-item-${key}`}
-      onClick={() => (isSelected ? null : onSelect())}
-      disabled={isSelected}
-      selected={otherSelected}
-    >
-      <CurrencyLogo currency={currency} size={'24px'} />
-      <Column>
-        <Text title={currency.name} fontWeight={500}>
-          {currency.symbol}
-        </Text>
-        <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300} style={{ color: '#080064' }}>
-          {!currency.isNative && !isOnSelectedList && customAdded ? (
-            <Trans>{currency.name} • Added by user</Trans>
-          ) : (
-            'Matic'
-          )}
-        </TYPE.darkGray>
-      </Column>
-      <TokenTags currency={currency} />
+    // only show add or remove buttons if not on selected list
+    return (
+        <MenuItem
+            style={style}
+            className={`token-item-${key}`}
+            onClick={() => (isSelected ? null : onSelect())}
+            disabled={isSelected}
+            selected={otherSelected}
+        >
+            <CurrencyLogo currency={currency} size={'24px'} />
+            <Column>
+                <Text title={currency.name} fontWeight={500}>
+                    {currency.symbol}
+                </Text>
+                <TYPE.darkGray ml='0px' fontSize={'12px'} fontWeight={300}
+                               style={{ color: '#080064' }}>
+                    {!currency.isNative && !isOnSelectedList && customAdded ? (
+                        <Trans>{currency.name} • Added by user</Trans>
+                    ) : (
+                        'Matic'
+                    )}
+                </TYPE.darkGray>
+            </Column>
+            <TokenTags currency={currency} />
         </MenuItem>
     )
 }
 
 const BREAK_LINE = 'BREAK'
 type BreakLine = typeof BREAK_LINE
+
 function isBreakLine(x: unknown): x is BreakLine {
     return x === BREAK_LINE
 }
 
-function BreakLineComponent({style}: { style: CSSProperties }) {
+function BreakLineComponent({ style }: { style: CSSProperties }) {
     const theme = useTheme()
     return (
         <FixedContentRow style={style}>
-            <LightGreyCard padding="8px 12px" $borderRadius="8px">
+            <LightGreyCard padding='8px 12px' $borderRadius='8px'>
                 <RowBetween>
                     <RowFixed>
-                        <TYPE.main ml="6px" fontSize="12px" color={theme.text1}>
+                        <TYPE.main ml='6px' fontSize='12px' color={theme.text1}>
                             <Trans>Expanded results from inactive Token Lists</Trans>
                         </TYPE.main>
                     </RowFixed>
                     <QuestionHelper
                         text={
                             <Trans>
-                                Tokens from inactive lists. Import specific tokens below or click Manage to activate
+                                Tokens from inactive lists. Import specific tokens below or click
+                                Manage to activate
                                 more lists.
                             </Trans>
                         }
@@ -178,17 +133,17 @@ function BreakLineComponent({style}: { style: CSSProperties }) {
 }
 
 export default function CurrencyList({
-                                         height,
-                                         currencies,
-                                         otherListTokens,
-                                         selectedCurrency,
-                                         onCurrencySelect,
-                                         otherCurrency,
-                                         fixedListRef,
-                                         showImportView,
-                                         setImportToken,
-                                         showCurrencyAmount,
-                                     }: {
+    height,
+    currencies,
+    otherListTokens,
+    selectedCurrency,
+    onCurrencySelect,
+    otherCurrency,
+    fixedListRef,
+    showImportView,
+    setImportToken,
+    showCurrencyAmount
+}: {
     height: number
     currencies: Currency[]
     otherListTokens?: WrappedTokenInfo[]
@@ -208,11 +163,11 @@ export default function CurrencyList({
     }, [currencies, otherListTokens])
 
     const Row = useCallback(
-        function TokenRow({data, index, style}) {
+        function TokenRow({ data, index, style }) {
             const row: Currency | BreakLine = data[index]
 
             if (isBreakLine(row)) {
-                return <BreakLineComponent style={style}/>
+                return <BreakLineComponent style={style} />
             }
 
             const currency = row
@@ -228,7 +183,7 @@ export default function CurrencyList({
             if (showImport && token) {
                 return (
                     <ImportRow style={style} token={token} showImportView={showImportView}
-                               setImportToken={setImportToken} dim/>
+                               setImportToken={setImportToken} dim />
                 )
             } else if (currency) {
                 return (
@@ -252,7 +207,7 @@ export default function CurrencyList({
             selectedCurrency,
             setImportToken,
             showImportView,
-            showCurrencyAmount,
+            showCurrencyAmount
         ]
     )
 
@@ -266,7 +221,7 @@ export default function CurrencyList({
         <FixedSizeList
             height={height}
             ref={fixedListRef as any}
-            width="100%"
+            width='100%'
             itemData={itemData}
             itemCount={itemData.length}
             itemSize={56}

@@ -1,59 +1,23 @@
-import styled from 'styled-components/macro'
-import {CheckCircle, X, Triangle} from 'react-feather'
-
-import {useActiveWeb3React} from '../../hooks/web3'
-import {ExternalLink} from '../../theme'
-import {useAllTransactions} from '../../state/transactions/hooks'
-import {ExplorerDataType, getExplorerLink} from '../../utils/getExplorerLink'
-import {RowFixed} from '../Row'
+import { CheckCircle, Triangle, X } from 'react-feather'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { useAllTransactions } from '../../state/transactions/hooks'
+import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
+import { RowFixed } from '../Row'
 import Loader from '../Loader'
-import {useState} from "react";
-import {useAppDispatch} from "../../state/hooks";
-import {clearAllTransactions, clearOneTransaction} from "../../state/transactions/actions";
+import { useAppDispatch } from '../../state/hooks'
+import { clearOneTransaction } from '../../state/transactions/actions'
+import {
+    IconsWrapper,
+    TransactionsStatusText,
+    TransactionState,
+    TransactionWrapper,
+    TransCloseIcon,
+    TransIconWrapper
+} from './styled'
 
-const TransactionWrapper = styled.div``
 
-const TransactionStatusText = styled.div`
-  margin-right: 0.5rem;
-  display: flex;
-  align-items: center;
-
-  :hover {
-    text-decoration: underline;
-  }
-`
-
-const TransactionState = styled(ExternalLink)<{ pending: boolean; success?: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-decoration: none !important;
-  border-radius: 0.5rem;
-  padding: 0.25rem 0rem;
-  font-weight: 500;
-  font-size: 0.825rem;
-  color: ${({theme}) => theme.winterDisabledButton};
-`
-
-const IconWrapper = styled.div<{ pending: boolean; success?: boolean }>`
-  color: ${({pending, success, theme}) => (pending ? theme.primary1 : success ? theme.green1 : theme.red1)};
-  position: relative;
-  z-index: 10;
-`
-
-const CloseIcon = styled.div`
-  position: relative;
-  z-index: 10;
-  color: ${({theme}) => theme.red1}
-`
-
-const IconsWrapper = styled.div`
-  display: flex;
-  gap: .3rem;
-`
-
-export default function Transaction({hash}: { hash: string }) {
-    const {chainId} = useActiveWeb3React()
+export default function Transaction({ hash }: { hash: string }) {
+    const { chainId } = useActiveWeb3React()
     const allTransactions = useAllTransactions()
     const dispatch = useAppDispatch()
 
@@ -72,18 +36,19 @@ export default function Transaction({hash}: { hash: string }) {
                 success={success}
             >
                 <RowFixed>
-                    <TransactionStatusText>{summary ?? hash} ↗</TransactionStatusText>
+                    <TransactionsStatusText>{summary ?? hash} ↗</TransactionsStatusText>
                 </RowFixed>
                 <IconsWrapper>
-                    <IconWrapper pending={pending} success={success}>
-                        {pending ? <Loader/> : success ? <CheckCircle size="16"/> : <Triangle size="16"/>}
-                    </IconWrapper>
-                    <CloseIcon onClick={(e) => {
+                    <TransIconWrapper pending={pending} success={success}>
+                        {pending ? <Loader /> : success ? <CheckCircle size='16' /> :
+                            <Triangle size='16' />}
+                    </TransIconWrapper>
+                    <TransCloseIcon onClick={(e) => {
                         e.preventDefault()
-                        dispatch(clearOneTransaction({chainId, hash}))
+                        dispatch(clearOneTransaction({ chainId, hash }))
                     }}>
-                        <X size={'16'}/>
-                    </CloseIcon>
+                        <X size={'16'} />
+                    </TransCloseIcon>
                 </IconsWrapper>
             </TransactionState>
         </TransactionWrapper>

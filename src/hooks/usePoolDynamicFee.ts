@@ -1,10 +1,9 @@
-import { utils } from "ethers";
-import { useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { useActiveWeb3React } from "./web3";
+import { utils } from 'ethers'
+import { useMemo } from 'react'
+import { useActiveWeb3React } from './web3'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { updateDynamicFee } from "../state/mint/v3/actions";
-import { AppState } from "../state";
+import { updateDynamicFee } from '../state/mint/v3/actions'
+import { AppState } from '../state'
 
 
 export function useDynamicFeeValue() {
@@ -31,7 +30,7 @@ export function usePoolDynamicFee(
         const filter = {
             address,
             topics: [
-                utils.id("Swap(address,address,int256,int256,uint160,uint128,int24)")
+                utils.id('Swap(address,address,int256,int256,uint160,uint128,int24)')
             ]
         }
 

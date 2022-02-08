@@ -1,56 +1,33 @@
 import { useEffect } from 'react'
 import InfoPoolsTable from '../InfoPoolsTable'
-
-import styled from 'styled-components/macro'
 import Loader from '../Loader'
+import { MockLoading, PageWrapper } from './styled'
 
-const PageWrapper = styled.div`
-  max-width: ${({ wide }) => (wide ? '880px' : '480px')};
-  width: 100%;
-  background-color: ${({ theme }) => theme.winterBackground};
+interface InfoPoolsProps {
+    data: any
+    refreshing: boolean
+    fetchHandler: () => any
+    blocksFetched: boolean
+}
 
-  padding: ${({ wide }) => (wide ? '30px 40px' : '0')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    max-width: 720px!important;
-    overflow-x: scroll;
-    border-radius: 8px;
-  `};
-`
+export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
 
-const MockLoading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 500px;
-`
+    useEffect(() => {
+        if (blocksFetched) {
+            fetchHandler()
+        }
+    }, [blocksFetched])
 
-export function InfoPools({
-  data,
-  refreshing,
-  fetchHandler,
-  blocksFetched,
-}: {
-  data: any
-  refreshing: boolean
-  fetchHandler: () => any
-  blocksFetched: boolean
-}) {
-  useEffect(() => {
-    if (blocksFetched) {
-      fetchHandler()
-    }
-  }, [blocksFetched])
+    if (!data)
+        return (
+            <MockLoading>
+                <Loader stroke={'white'} size={'25px'} />
+            </MockLoading>
+        )
 
-  if (!data)
     return (
-      <MockLoading>
-        <Loader stroke={'white'} size={'25px'} />
-      </MockLoading>
+        <PageWrapper style={{ maxWidth: '100%' }}>
+            <InfoPoolsTable poolDatas={data} />
+        </PageWrapper>
     )
-
-  return (
-    <PageWrapper style={{ maxWidth: '100%' }}>
-      <InfoPoolsTable poolDatas={data}></InfoPoolsTable>
-    </PageWrapper>
-  )
 }

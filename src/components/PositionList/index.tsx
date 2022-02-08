@@ -1,80 +1,50 @@
 import PositionListItem from 'components/PositionListItem'
 import React, { useMemo } from 'react'
 import { Trans } from '@lingui/macro'
-import styled from 'styled-components/macro'
-import { MEDIA_WIDTHS } from 'theme'
 import { PositionDetails } from 'types/position'
-
-const DesktopHeader = styled.div`
-  display: none;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px;
-
-  @media screen and (min-width: ${MEDIA_WIDTHS.upToSmall}px) {
-    align-items: center;
-    display: flex;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    & > div:last-child {
-      text-align: right;
-      margin-right: 12px;
-    }
-  }
-`
-
-const MobileHeader = styled.div`
-  font-weight: medium;
-  font-size: 16px;
-  font-weight: 500;
-  padding: 8px;
-  @media screen and (min-width: ${MEDIA_WIDTHS.upToSmall}px) {
-    display: none;
-  }
-`
+import { DesktopHeader, MobileHeader } from './styled'
 
 type PositionListProps = React.PropsWithChildren<{
-  positions: PositionDetails[]
+    positions: PositionDetails[]
 }>
 
 export default function PositionList({ positions }: PositionListProps) {
-  const _positions = useMemo(() => {
-    if (!positions) {
-      return []
-    }
+    const _positions = useMemo(() => {
+        if (!positions) {
+            return []
+        }
 
-    return positions.filter((position) => !position.onFarming)
-  }, [positions])
+        return positions.filter((position) => !position.onFarming)
+    }, [positions])
 
-  const _positionsOnFarming = useMemo(() => {
-    if (!positions) {
-      return []
-    }
+    const _positionsOnFarming = useMemo(() => {
+        if (!positions) {
+            return []
+        }
 
-    return positions.filter((position) => position.onFarming)
-  }, [positions])
+        return positions.filter((position) => position.onFarming)
+    }, [positions])
 
-  return (
-    <>
-      <DesktopHeader>
-        <div>
-          <Trans>Your positions</Trans>
-          {positions && ' (' + positions.length + ')'}
-        </div>
-        <div>
-          <Trans>Status</Trans>
-        </div>
-      </DesktopHeader>
-      <MobileHeader>
-        <Trans>Your positions</Trans>
-      </MobileHeader>
-      {_positionsOnFarming.map((p) => {
-        return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />
-      })}
-      {_positions.map((p) => {
-        return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />
-      })}
-    </>
-  )
+    return (
+        <>
+            <DesktopHeader>
+                <div>
+                    <Trans>Your positions</Trans>
+                    {positions && ' (' + positions.length + ')'}
+                </div>
+                <div>
+                    <Trans>Status</Trans>
+                </div>
+            </DesktopHeader>
+            <MobileHeader>
+                <Trans>Your positions</Trans>
+            </MobileHeader>
+            {_positionsOnFarming.map((p) => {
+                return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />
+            })}
+            {_positions.map((p) => {
+                return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />
+            })}
+        </>
+    )
 }

@@ -1,5 +1,5 @@
 const EXPLORER_HOSTNAMES: { [hostname: string]: true } = {
-  'polygonscan.com': true,
+    'polygonscan.com': true
 }
 
 /**
@@ -8,17 +8,17 @@ const EXPLORER_HOSTNAMES: { [hostname: string]: true } = {
  * @return string anonymized version of the given href
  */
 export function anonymizeLink(href: string): string {
-  try {
-    const url = new URL(href)
-    if (EXPLORER_HOSTNAMES[url.hostname]) {
-      const pathPieces = url.pathname.split('/')
+    try {
+        const url = new URL(href)
+        if (EXPLORER_HOSTNAMES[url.hostname]) {
+            const pathPieces = url.pathname.split('/')
 
-      const anonymizedPath = pathPieces.map((pc) => (/0x[a-fA-F0-9]+/.test(pc) ? '***' : pc)).join('/')
+            const anonymizedPath = pathPieces.map((pc) => (/0x[a-fA-F0-9]+/.test(pc) ? '***' : pc)).join('/')
 
-      return `${url.protocol}//${url.hostname}${anonymizedPath}`
+            return `${url.protocol}//${url.hostname}${anonymizedPath}`
+        }
+        return href
+    } catch (error) {
+        return href
     }
-    return href
-  } catch (error) {
-    return href
-  }
 }

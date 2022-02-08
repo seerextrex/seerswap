@@ -1,35 +1,50 @@
-import * as d3 from 'd3'
-import {useEffect, useMemo, useRef} from 'react'
-import {ChardDataInterface} from './index'
-import {isMobile} from "react-device-detect"
-import {ChartWrapper} from './styled'
+import {
+    axisBottom,
+    axisLeft,
+    create,
+    curveBumpX,
+    easeCircle,
+    interpolate,
+    line,
+    map,
+    max,
+    min,
+    range,
+    scaleLinear,
+    scaleUtc,
+    select
+} from 'd3'
+import { useEffect, useMemo, useRef } from 'react'
+import { ChardDataInterface, chartTypes } from './index'
+import { isMobile } from 'react-device-detect'
+import { ChartWrapper } from './styled'
 
 interface ChartProps {
     fData: ChardDataInterface[]
     data2?: ChardDataInterface[] | undefined
     margin: { left: number, top: number, right: number, bottom: number }
     dimensions: { width: number, height: number }
-    type: string
+    type: chartTypes
     colors: string[]
 }
 
-export default function Chart({fData, data2,  margin, dimensions, type, colors}: ChartProps) {
-    const data = useMemo(() => type === 'apr' || type === 'ALGBfromVault' ? fData.slice(0, fData.length - 1): fData,[fData])
+export default function Chart({ fData, data2, margin, dimensions, type, colors }: ChartProps) {
+    const data = useMemo(() => type === 'apr' || type === 'ALGBfromVault' ? fData.slice(0, fData.length - 1) : fData, [fData])
     const svgRef = useRef(null)
-    const X = useMemo(() => d3.map(data, d => new Date(d.date)), [data])
-    const Y = useMemo(() => d3.map(data, d => +(d.value)), [data])
-    const Y2 = useMemo(() => d3.map(data2 || [], d => +d.value), [data2])
-    const I = d3.range(X.length)
+    const X = useMemo(() => map(data, d => new Date(d.date)), [data])
+    const Y = useMemo(() => map(data, d => +d.value), [data])
+    const Y2 = useMemo(() => map(data2 || [], d => +d.value), [data2])
+    const I = range(X.length)
     // Compute default domains.
-    const yDomain = useMemo(() => [0, d3.max([...Y, ...Y2])], [Y, Y2])
-    const xDomain = useMemo(() => [d3.min(X), d3.max(X)], [X])
+    const yDomain = useMemo(() => [0, max([...Y, ...Y2])], [Y, Y2])
+    const xDomain = useMemo(() => [min(X), max(X)], [X])
 
     const tickWidth = useMemo(() => {
         return dimensions.width / data.length
     }, [dimensions, data])
 
     useEffect(() => {
-        const svgEl = d3.select(svgRef.current)
+        const svgEl = select(svgRef.current)
         svgEl.selectAll('*').remove()
 
         const svg = svgEl
@@ -39,14 +54,13 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             .attr('viewBox', [0, 0, dimensions.width, dimensions.height])
 
         // Construct scales and axes.
-        const xScale = d3.scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
-        const yScale = d3.scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
-        const xAxis = d3.axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
-        const yAxis = d3.axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val =>  val >= 1000_000 ? `${+val / 1000000}m` : `${val >= 1000 ? `${+val / 1000}k` : val}`)
+        const xScale = scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
+        const yScale = scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
+        const xAxis = axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
+        const yAxis = axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => val >= 1000_000 ? `${+val / 1000000}m` : `${val >= 1000 ? `${+val / 1000}k` : val}`)
 
         // Construct a focus line.
-        const Line = d3
-            .create('svg:line')
+        const Line = create('svg:line')
             .attr('id', 'pointer2')
             .attr('x1', '0px')
             .attr('y1', margin.top)
@@ -57,21 +71,20 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             .style('display', 'none')
 
         // Construct a chart line.
-        const line = d3.line()
-            .curve(d3.curveBumpX)
+        const line1 = line()
+            .curve(curveBumpX)
             .x(i => xScale(X[i]))
             .y(i => yScale(Y[i]))
 
-        const line2 = d3.line()
-            .curve(d3.curveBumpX)
+        const line2 = line()
+            .curve(curveBumpX)
             .x(i => xScale(X[i]))
             .y(i => yScale(Y2[i]))
 
         //Construct infoLabel
-        const InfoRectGroup = d3.create('svg:g').style('pointer-events', 'none').style('display', 'none')
+        const InfoRectGroup = create('svg:g').style('pointer-events', 'none').style('display', 'none')
 
-        const InfoRect = d3
-            .create('svg:rect')
+        const InfoRect = create('svg:rect')
             .append('rect')
             .attr('id', 'info-label')
             .attr('width', '150px')
@@ -79,36 +92,31 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             .attr('rx', '6')
             .style('fill', '#12151d')
 
-        const InfoRectFeeText = d3
-            .create('svg:text')
+        const InfoRectFeeText = create('svg:text')
             .attr('transform', 'translate(16, 25)')
             .attr('fill', 'white')
             .attr('font-weight', '600')
             .attr('font-size', '14px')
 
-        const InfoRectFeeText2 = d3
-            .create('svg:text')
+        const InfoRectFeeText2 = create('svg:text')
             .attr('transform', 'translate(16, 50)')
             .attr('fill', 'white')
             .attr('font-weight', '600')
             .attr('font-size', '14px')
 
-        const InfoRectColor = d3
-            .create('svg:rect')
+        const InfoRectColor = create('svg:rect')
             .attr('transform', 'translate(130, 15)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')
 
-        const InfoRectColor2 = d3
-            .create('svg:rect')
+        const InfoRectColor2 = create('svg:rect')
             .attr('transform', 'translate(130, 40)')
             .attr('width', '10px')
             .attr('height', '10px')
             .attr('rx', '2')
 
-        const InfoRectDateText = d3
-            .create('svg:text')
+        const InfoRectDateText = create('svg:text')
             .attr('transform', `translate(16, ${data2?.length === 0 ? '45' : '75'})`)
             .attr('fill', 'white')
             .attr('font-weight', '500')
@@ -124,9 +132,7 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             InfoRectGroup.node().append(InfoRectColor2.node())
         }
 
-
-        const Focus = d3
-            .create('svg:circle')
+        const Focus = create('svg:circle')
             .style('fill', 'white')
             .attr('stroke', colors[0])
             .attr('stroke-width', '2')
@@ -134,8 +140,7 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             .style('opacity', 1)
             .style('display', 'none')
 
-        const Focus2 = d3
-            .create('svg:circle')
+        const Focus2 = create('svg:circle')
             .style('fill', 'white')
             .attr('stroke', colors[1])
             .attr('stroke-width', '2')
@@ -143,7 +148,7 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             .style('opacity', 1)
             .style('display', 'none')
 
-      const yGroup = svg.append('g')
+        const yGroup = svg.append('g')
             .attr('transform', `translate(${margin.left},0)`)
             .attr('opacity', 0.5)
             .attr('color', 'white')
@@ -163,15 +168,15 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
 
         svg.append('path')
             .attr('fill', 'none')
-            .attr('d', line(I))
+            .attr('d', line1(I))
             .attr('stroke-width', 2)
             .attr('stroke', colors[0])
             .transition()
             .duration(1000)
-            .ease(d3.easeCircle)
-            .attrTween('stroke-dasharray', function () {
+            .ease(easeCircle)
+            .attrTween('stroke-dasharray', function() {
                 const length = this.getTotalLength()
-                return d3.interpolate(`0,${length}`, `${length},${length}`)
+                return interpolate(`0,${length}`, `${length},${length}`)
             })
 
         if (data2?.length !== 0) {
@@ -182,10 +187,10 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
                 .attr('stroke', colors[1])
                 .transition()
                 .duration(1000)
-                .ease(d3.easeCircle)
-                .attrTween('stroke-dasharray', function () {
+                .ease(easeCircle)
+                .attrTween('stroke-dasharray', function() {
                     const length = this.getTotalLength()
-                    return d3.interpolate(`0,${length}`, `${length},${length}`)
+                    return interpolate(`0,${length}`, `${length},${length}`)
                 })
         }
 
@@ -194,26 +199,25 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             .nodes()
             .map((el, i) => {
                 if (isMobile) {
-                 d3.select(el)
-                     .selectAll('text')
-                     .style('text-anchor', 'end')
-                     .attr('dx', '-.8em')
-                     .attr('dy', '.15em')
-                     .attr('transform', 'rotate(-65)')
-                     .attr('transform', 'rotate(-65)')
+                    select(el)
+                        .selectAll('text')
+                        .style('text-anchor', 'end')
+                        .attr('dx', '-.8em')
+                        .attr('dy', '.15em')
+                        .attr('transform', 'rotate(-65)')
+                        .attr('transform', 'rotate(-65)')
                 }
                 if (i % 2 === 0) {
                     if (data.length > 14) {
-                        d3.select(el).attr('display', 'none')
+                        select(el).attr('display', 'none')
                     }
                 }
-                const xTranslate = d3.select(el)
+                const xTranslate = select(el)
                     .attr('transform')
                     .match(/\((.*?)\)/)[1]
                     .split(',')[0]
 
-                const rect = d3
-                    .create('svg:rect')
+                const rect = create('svg:rect')
                     .attr('x', `${xTranslate - tickWidth / 2}px`)
                     .attr('y', `-${0}px`)
                     .attr('width', `${tickWidth}px`)
@@ -251,7 +255,7 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
             Line.style('display', 'block')
             InfoRectGroup.style('display', 'block')
             Focus.style('display', 'block')
-            Focus2.style('display', `${data2?.length !== 0 ? 'block': 'none'}`)
+            Focus2.style('display', `${data2?.length !== 0 ? 'block' : 'none'}`)
         })
 
         svgEl.on('mouseleave', () => {
@@ -269,7 +273,7 @@ export default function Chart({fData, data2,  margin, dimensions, type, colors}:
 
     return (
         <ChartWrapper>
-            <svg ref={svgRef} width={dimensions.width} height={dimensions.height}/>
+            <svg ref={svgRef} width={dimensions.width} height={dimensions.height} />
         </ChartWrapper>
     )
 }

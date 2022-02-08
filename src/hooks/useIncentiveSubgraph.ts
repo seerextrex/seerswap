@@ -1,47 +1,56 @@
-import { useEffect, useCallback, useState, useRef } from "react";
-import { useActiveWeb3React } from "./web3";
-import * as request from 'utils/request';
-import { CHAIN_SUBGRAPH_URL } from "../state/data/slice";
-import { Contract, providers } from "ethers";
-import POOL_ABI from 'abis/pool';
+import { useState } from 'react'
+import { useActiveWeb3React } from './web3'
+import { CHAIN_SUBGRAPH_URL } from '../state/data/slice'
+import { Contract, providers } from 'ethers'
 import ERC20_ABI from 'abis/erc20'
-import STAKER_ABI from 'abis/staker'
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
 import FARMING_CENTER_ABI from 'abis/farming-center'
 import FINITE_FARMING_ABI from 'abis/finite-farming'
-import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FINITE_FARMING } from "../constants/addresses";
+import {
+    FARMING_CENTER,
+    FINITE_FARMING,
+    NONFUNGIBLE_POSITION_MANAGER_ADDRESSES
+} from '../constants/addresses'
 // import BigNumber from 'bignumber.js'
-import { BigNumber } from "@ethersproject/bignumber";
-import { position } from "styled-system";
-import { useApolloClient, useLazyQuery, useQuery, gql } from "@apollo/client";
-import { CURRENT_EVENTS, FETCH_ETERNAL_FARM, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN, FUTURE_EVENTS, INFINITE_EVENTS, LAST_EVENT, POSITIONS_ON_ETERNAL_FARMING, POSITIONS_OWNED_FOR_POOL, SHARED_POSITIONS, TRANSFERED_POSITIONS, TRANSFERED_POSITIONS_FOR_POOL } from "../utils/graphql-queries";
-import { useClients } from "./subgraph/useClients";
-import { formatUnits } from "@ethersproject/units";
+import { BigNumber } from '@ethersproject/bignumber'
+import {
+    CURRENT_EVENTS,
+    FETCH_ETERNAL_FARM,
+    FETCH_INCENTIVE,
+    FETCH_POOL,
+    FETCH_REWARDS,
+    FETCH_TOKEN,
+    FUTURE_EVENTS,
+    INFINITE_EVENTS,
+    POSITIONS_ON_ETERNAL_FARMING,
+    TRANSFERED_POSITIONS,
+    TRANSFERED_POSITIONS_FOR_POOL
+} from '../utils/graphql-queries'
+import { useClients } from './subgraph/useClients'
+import { formatUnits } from '@ethersproject/units'
 
 
 export function useIncentiveSubgraph() {
-
     const { chainId, account } = useActiveWeb3React()
-
     const { dataClient, farmingClient } = useClients()
 
-    const [positionsForPool, setPositionsForPool] = useState(null);
-    const [positionsForPoolLoading, setPositionsForPoolLoading] = useState(false)
+    const [positionsForPool, setPositionsForPool] = useState(null)
+    const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
 
-    const [transferredPositions, setTransferredPositions] = useState(null);
-    const [transferredPositionsLoading, setTransferredPositionsLoading] = useState(false)
+    const [transferredPositions, setTransferredPositions] = useState(null)
+    const [transferredPositionsLoading, setTransferredPositionsLoading] = useState<boolean>(false)
 
     const [rewardsResult, setRewardsResult] = useState(null)
-    const [rewardsLoading, setRewardsLoading] = useState(null)
+    const [rewardsLoading, setRewardsLoading] = useState<boolean>(false)
 
     const [futureEvents, setFutureEvents] = useState(null)
-    const [futureEventsLoading, setFutureEventsLoading] = useState(false)
+    const [futureEventsLoading, setFutureEventsLoading] = useState<boolean>(false)
 
     const [currentEvents, setCurrentEvents] = useState(null)
-    const [currentEventsLoading, setCurrentEventsLoading] = useState(false)
+    const [currentEventsLoading, setCurrentEventsLoading] = useState<boolean>(false)
 
     const [positionsOnFarmer, setPositionsOnFarmer] = useState(null)
-    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState(false)
+    const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState<boolean>(false)
 
     const [eternalFarms, setEternalFarms] = useState(null)
     const [eternalFarmsLoading, setEternalFarmsLoading] = useState(false)
@@ -73,8 +82,8 @@ export function useIncentiveSubgraph() {
 
             const pool = await fetchPool(events[i].pool)
 
-            const rewardToken = await fetchToken(events[i].rewardToken);
-            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken);
+            const rewardToken = await fetchToken(events[i].rewardToken)
+            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken)
 
             const _event: any = {
                 ...events[i],
@@ -197,7 +206,7 @@ export function useIncentiveSubgraph() {
                     amount: reward.amount > 0 ? (reward.amount / Math.pow(10, decimals)).toFixed(decimals) : 0,
                     trueAmount: reward.amount,
                     symbol,
-                    name,
+                    name
                 }
 
                 newRewards.push(newReward)
@@ -308,11 +317,13 @@ export function useIncentiveSubgraph() {
                     provider.getSigner()
                 )
 
-                console.log('HERE')
-
-                const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
-
-                console.log('HERE 2')
+                const {
+                    tickLower,
+                    tickUpper,
+                    liquidity,
+                    token0,
+                    token1
+                } = await nftContract.positions(+position.id)
 
                 let _position = {
                     ...position,
@@ -329,7 +340,7 @@ export function useIncentiveSubgraph() {
 
                     _position = {
                         ..._position,
-                        pool: _pool,
+                        pool: _pool
                     }
 
                 }
@@ -342,7 +353,15 @@ export function useIncentiveSubgraph() {
                         provider.getSigner()
                     )
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, id } = await fetchIncentive(position.incentive)
+                    const {
+                        rewardToken,
+                        bonusRewardToken,
+                        pool,
+                        startTime,
+                        endTime,
+                        createdAtTimestamp,
+                        id
+                    } = await fetchIncentive(position.incentive)
 
                     const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
                         [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
@@ -371,7 +390,14 @@ export function useIncentiveSubgraph() {
 
                 if (position.eternalFarming) {
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, id } = await fetchEternalFarming(position.eternalFarming)
+                    const {
+                        rewardToken,
+                        bonusRewardToken,
+                        pool,
+                        startTime,
+                        endTime,
+                        id
+                    } = await fetchEternalFarming(position.eternalFarming)
 
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],
@@ -379,7 +405,10 @@ export function useIncentiveSubgraph() {
                         provider.getSigner()
                     )
 
-                    const { reward, bonusReward } = await farmingCenterContract.callStatic.collectRewards(
+                    const {
+                        reward,
+                        bonusReward
+                    } = await farmingCenterContract.callStatic.collectRewards(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +position.id,
                         {
@@ -452,7 +481,13 @@ export function useIncentiveSubgraph() {
                     provider.getSigner()
                 )
 
-                const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
+                const {
+                    tickLower,
+                    tickUpper,
+                    liquidity,
+                    token0,
+                    token1
+                } = await nftContract.positions(+position.id)
 
                 let _position = {
                     tickLower,
@@ -462,7 +497,14 @@ export function useIncentiveSubgraph() {
                     token1
                 }
 
-                const { rewardToken, bonusRewardToken, pool, startTime, endTime, id } = await fetchEternalFarming(position.eternalFarming)
+                const {
+                    rewardToken,
+                    bonusRewardToken,
+                    pool,
+                    startTime,
+                    endTime,
+                    id
+                } = await fetchEternalFarming(position.eternalFarming)
 
                 const _pool = await fetchPool(pool)
                 const _rewardToken = await fetchToken(rewardToken)
@@ -499,7 +541,10 @@ export function useIncentiveSubgraph() {
 
             setPositionsForPoolLoading(true)
 
-            const { data: { deposits: positionsTransferred }, error: errorTransferred } = (await farmingClient.query({
+            const {
+                data: { deposits: positionsTransferred },
+                error: errorTransferred
+            } = (await farmingClient.query({
                 query: TRANSFERED_POSITIONS_FOR_POOL(account, pool.id),
                 fetchPolicy: 'network-only'
             }))
@@ -549,9 +594,9 @@ export function useIncentiveSubgraph() {
                 return
             }
 
-            const transferredPositionsIds = positionsTransferred.map(position => position.id);
+            const transferredPositionsIds = positionsTransferred.map(position => position.id)
 
-            setPositionsOnFarmer(transferredPositionsIds);
+            setPositionsOnFarmer(transferredPositionsIds)
 
         } catch (err) {
             setPositionsOnFarmerLoading(null)
@@ -617,13 +662,41 @@ export function useIncentiveSubgraph() {
 
     return {
         fetchRewards: { rewardsResult, rewardsLoading, fetchRewardsFn: fetchRewards },
-        fetchFutureEvents: { futureEvents, futureEventsLoading, fetchFutureEventsFn: fetchFutureEvents },
-        fetchCurrentEvents: { currentEvents, currentEventsLoading, fetchCurrentEventsFn: fetchCurrentEvents },
-        fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn: fetchPositionsForPool },
-        fetchTransferredPositions: { transferredPositions, transferredPositionsLoading, fetchTransferredPositionsFn: fetchTransferredPositions },
-        fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn: fetchPositionsOnFarmer },
-        fetchEternalFarms: { eternalFarms, eternalFarmsLoading, fetchEternalFarmsFn: fetchEternalFarms },
-        fetchPositionsOnEternalFarmings: { positionsEternal, positionsEternalLoading, fetchPositionsOnEternalFarmingFn: fetchPositionsOnEternalFarming }
+        fetchFutureEvents: {
+            futureEvents,
+            futureEventsLoading,
+            fetchFutureEventsFn: fetchFutureEvents
+        },
+        fetchCurrentEvents: {
+            currentEvents,
+            currentEventsLoading,
+            fetchCurrentEventsFn: fetchCurrentEvents
+        },
+        fetchPositionsForPool: {
+            positionsForPool,
+            positionsForPoolLoading,
+            fetchPositionsForPoolFn: fetchPositionsForPool
+        },
+        fetchTransferredPositions: {
+            transferredPositions,
+            transferredPositionsLoading,
+            fetchTransferredPositionsFn: fetchTransferredPositions
+        },
+        fetchPositionsOnFarmer: {
+            positionsOnFarmer,
+            positionsOnFarmerLoading,
+            fetchPositionsOnFarmerFn: fetchPositionsOnFarmer
+        },
+        fetchEternalFarms: {
+            eternalFarms,
+            eternalFarmsLoading,
+            fetchEternalFarmsFn: fetchEternalFarms
+        },
+        fetchPositionsOnEternalFarmings: {
+            positionsEternal,
+            positionsEternalLoading,
+            fetchPositionsOnEternalFarmingFn: fetchPositionsOnEternalFarming
+        }
     }
 
 }

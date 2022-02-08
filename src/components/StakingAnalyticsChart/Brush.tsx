@@ -1,5 +1,16 @@
-import * as d3 from 'd3'
-import {useEffect, useRef} from 'react'
+import {
+    axisLeft,
+    brushX,
+    curveBumpX,
+    line,
+    max,
+    min,
+    scaleLinear,
+    scaleUtc,
+    select,
+    utcDay
+} from 'd3'
+import { useEffect, useRef } from 'react'
 
 interface BrushProps {
     width: number
@@ -12,43 +23,52 @@ interface BrushProps {
     updateChartData: any
 }
 
-export default function Brush({data, data2, colors, focusHeight, width, margin, updateChartData, X}: BrushProps) {
+export default function Brush({
+    data,
+    data2,
+    colors,
+    focusHeight,
+    width,
+    margin,
+    updateChartData,
+    X
+}: BrushProps) {
     const focusRef = useRef(null)
 
     useEffect(() => {
-        const focusEl = d3.select(focusRef.current)
+        const focusEl = select(focusRef.current)
         focusEl.selectAll('*').remove()
 
         const focus = focusEl
             .attr('viewBox', [0, 0, width, focusHeight])
             .style('display', 'block')
 
-        const focusLine = (x, y) => d3.line()
+        const focusLine = (x, y) => line()
             .defined(d => !isNaN(d.value))
-            .curve(d3.curveBumpX)
+            .curve(curveBumpX)
             .x(d => x(new Date(d.date)))
             .y(d => y(d.value))
 
-        const focusX = d3.scaleUtc()
-            .domain([d3.min(data, d => new Date(d.date)), Date.now()])
+        const focusX = scaleUtc()
+            .domain([min(data, d => new Date(d.date)), Date.now()])
             .range([margin.left, width])
 
-        const focusY = d3.scaleLinear()
-            .domain([0, d3.max(data, d => +d.value)])
+        const focusY = scaleLinear()
+            .domain([0, max(data, d => +d.value)])
             .range([focusHeight - margin.bottom, margin.top])
 
-        const focusLine2 = (x, y) => d3.line()
+        const focusLine2 = (x, y) => line()
             .defined(d => !isNaN(d.value))
-            .curve(d3.curveBumpX)
+            .curve(curveBumpX)
             .x(d => x(new Date(d.date)))
             .y(d => y(d.value))
 
-        const focusX2 = d3.scaleUtc()
-            .domain([d3.min(data, d => new Date(d.date)), Date.now()])
+        const focusX2 = scaleUtc()
+            .domain([min(data, d => new Date(d.date)), Date.now()])
             .range([margin.left, width])
 
-        const focusY2 = d3.scaleLinear()
-            .domain([0, d3.max(data, d => +d.value)])
+        const focusY2 = scaleLinear()
+            .domain([0, max(data, d => +d.value)])
             .range([focusHeight - margin.bottom, margin.top])
 
         const focusXAxis = (g, x, height) => g
@@ -56,7 +76,7 @@ export default function Brush({data, data2, colors, focusHeight, width, margin, 
 
         const focusYAxis = (g, y, title) => g
             .attr('transform', `translate(${margin.left},0)`)
-            .call(d3.axisLeft(y))
+            .call(axisLeft(y))
             .call(g => g.select('.domain').remove())
             .call(g => g.selectAll('.title').data([title]).join('text')
                 .attr('class', 'title')
@@ -85,7 +105,7 @@ export default function Brush({data, data2, colors, focusHeight, width, margin, 
                 .attr('d', focusLine2(focusX2, focusY2.copy().range([focusHeight - margin.bottom, 4])))
         }
 
-        const brush = d3.brushX()
+        const brush = brushX()
             .extent([[margin.left, 0.5], [width - margin.right, focusHeight - margin.bottom + 0.5]])
             .on('brush', brushed)
             .on('end', brushended)
@@ -105,14 +125,14 @@ export default function Brush({data, data2, colors, focusHeight, width, margin, 
             .attr('rx', '5')
             .attr('ry', '5')
 
-        function brushed({selection}) {
+        function brushed({ selection }) {
             if (selection) {
-                focus.property('value', selection.map(focusX.invert, focusX).map(d3.utcDay.round))
+                focus.property('value', selection.map(focusX.invert, focusX).map(utcDay.round))
                 focus.dispatch('input')
             }
         }
 
-        function brushended({selection}) {
+        function brushended({ selection }) {
             if (!selection) {
                 gb.call(brush.move, defaultSelection)
                 return
@@ -121,12 +141,12 @@ export default function Brush({data, data2, colors, focusHeight, width, margin, 
             const minX = Math.floor(selection[0] / div)
             const maxX = Math.floor(selection[1] / div)
 
-            updateChartData([data[minX - 1]?.date === undefined ? data[minX]?.date : data[minX - 1]?.date, data[maxX]?.date === undefined ? data[maxX -1]?.date : data[maxX]?.date])
+            updateChartData([data[minX - 1]?.date === undefined ? data[minX]?.date : data[minX - 1]?.date, data[maxX]?.date === undefined ? data[maxX - 1]?.date : data[maxX]?.date])
         }
     }, [data, data2])
 
 
     return (
-        <svg ref={focusRef} width={width} height={focusHeight}/>
+        <svg ref={focusRef} width={width} height={focusHeight} />
     )
 }

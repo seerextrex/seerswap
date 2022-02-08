@@ -10,29 +10,30 @@ import { formatDollarAmount, formatPercent } from 'utils/numbers'
 import { PoolData } from 'state/pools/reducer'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { feeTierPercent } from 'utils'
-import { Label, ClickableText } from 'components/Text'
+import { ClickableText, Label } from 'components/Text'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { BarChart2, ExternalLink, HelpCircle } from 'react-feather'
 import { log } from 'util'
 
 export const PageButtons = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.2em;
-  margin-bottom: 0.5em;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.2em;
+    margin-bottom: 0.5em;
 `
 
 export const Arrow = styled.div<{ faded: boolean }>`
-  color: white;
-  opacity: ${(props) => (props.faded ? 0.3 : 1)};
-  padding: 0 20px;
-  user-select: none;
-  :hover {
-    cursor: pointer;
-  }
+    color: white;
+    opacity: ${(props) => (props.faded ? 0.3 : 1)};
+    padding: 0 20px;
+    user-select: none;
+
+    :hover {
+        cursor: pointer;
+    }
 `
 
 const LabelStyled = styled(Label)`
@@ -52,18 +53,18 @@ const ClickableTextStyled = styled(ClickableText)`
 `
 
 const Wrapper = styled(DarkGreyCard)`
-  width: 100%;
-  background-color: rgba(60, 97, 126, 0.5);
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    background-color: rgba(60, 97, 126, 0.5);
+    ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 900px;
   `};
 `
 
 const ResponsiveGrid = styled.div`
-  display: grid;
-  position: relative;
-  grid-gap: 1em;
-  align-items: center;
+    display: grid;
+    position: relative;
+    grid-gap: 1em;
+    align-items: center;
 
   grid-template-columns: 20px 2.3fr repeat(5, 1fr);
 
@@ -71,52 +72,54 @@ const ResponsiveGrid = styled.div`
     grid-template-columns: 20px 2.1fr repeat(5, 1fr);
   }
 
-  //@media screen and (max-width: 500px) {
-  //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);
-  //  & :nth-child(5) {
-  //    display: none;
-  //  }
-  //}
-  //
-  //@media screen and (max-width: 480px) {
-  //  grid-template-columns: 2.5fr repeat(1, 1fr);
-  //  > *:nth-child(1) {
-  //    display: none;
-  //  }
-  //}
+    //@media screen and (max-width: 500px) {
+    //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);
+    //  & :nth-child(5) {
+    //    display: none;
+    //  }
+    //}
+    //
+    //@media screen and (max-width: 480px) {
+    //  grid-template-columns: 2.5fr repeat(1, 1fr);
+    //  > *:nth-child(1) {
+    //    display: none;
+    //  }
+    //}
 `
 
 const ChartBadge = styled(NavLink)`
-  background: #36f;
-  margin-left: 10px;
-  border-radius: 6px;
-  padding: 2px 3px;
-  & > * {
-    display: block;
-  }
+    background: #36f;
+    margin-left: 10px;
+    border-radius: 6px;
+    padding: 2px 3px;
+
+    & > * {
+        display: block;
+    }
 `
 
 const AprInfo = styled.span`
-  background-color: #02365e;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 10px;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  right: 0;
-  z-index: 101;
+    background-color: #02365e;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    z-index: 101;
 `
 
 const LinkWrapper = styled.a`
-  display: flex;
-  text-decoration: none;
-  svg {
-    margin-left: 8px;
-  }
+    display: flex;
+    text-decoration: none;
+
+    svg {
+        margin-left: 8px;
+    }
 `
 
 const HelperDropdown = styled.span`
@@ -178,13 +181,13 @@ const SORT_FIELD = {
 }
 
 export const POOL_HIDE = [
-  '0x86d257cdb7bc9c0df10e84c8709697f92770b335',
-  '0xf8dbd52488978a79dfe6ffbd81a01fc5948bf9ee',
-  '0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248',
+    '0x86d257cdb7bc9c0df10e84c8709697f92770b335',
+    '0xf8dbd52488978a79dfe6ffbd81a01fc5948bf9ee',
+    '0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'
 ]
 
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
-  const { chainId } = useActiveWeb3React()
+    const { chainId } = useActiveWeb3React()
 
   const poolTitle = useMemo(() => {
     if (poolData.token0.symbol === 'USDC') {
@@ -251,57 +254,68 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
 const MAX_ITEMS = 10
 
 export default function InfoPoolsTable({
-  poolDatas,
-  maxItems = MAX_ITEMS,
+    poolDatas,
+    maxItems = MAX_ITEMS
 }: {
-  poolDatas: PoolData[]
-  maxItems?: number
+    poolDatas: PoolData[]
+    maxItems?: number
 }) {
-  // theming
-  const theme = useTheme()
+    // theming
+    const theme = useTheme()
 
-  // for sorting
-  const [sortField, setSortField] = useState(SORT_FIELD.volumeUSD)
-  const [sortDirection, setSortDirection] = useState<boolean>(true)
+    // for sorting
+    const [sortField, setSortField] = useState(SORT_FIELD.volumeUSD)
+    const [sortDirection, setSortDirection] = useState<boolean>(true)
 
-  // pagination
-  const [page, setPage] = useState(1)
-  const [maxPage, setMaxPage] = useState(1)
+    // pagination
+    const [page, setPage] = useState(1)
+    const [maxPage, setMaxPage] = useState(1)
 
-  useEffect(() => {
-    let extraPages = 1
-    if (poolDatas.length % maxItems === 0) {
-      extraPages = 0
+    useEffect(() => {
+        let extraPages = 1
+        if (poolDatas.length % maxItems === 0) {
+            extraPages = 0
+        }
+        setMaxPage(Math.floor(poolDatas.length / maxItems) + extraPages)
+    }, [maxItems, poolDatas])
+
+    const sortedPools = useMemo(() => {
+        if (!Array.isArray(poolDatas)) return []
+
+        return poolDatas
+            ? poolDatas
+                .filter((x) => !!x && !POOL_HIDE.includes(x.address))
+                .sort((a, b) => {
+                    if (a && b) {
+                        return +a[sortField as keyof PoolData] > +b[sortField as keyof PoolData]
+                            ? (sortDirection ? -1 : 1) * 1
+                            : (sortDirection ? -1 : 1) * -1
+                    } else {
+                        return -1
+                    }
+                })
+                .slice(maxItems * (page - 1), page * maxItems)
+            : []
+    }, [maxItems, page, poolDatas, sortDirection, sortField])
+
+    const handleSort = useCallback(
+        (newField: string) => {
+            setSortField(newField)
+            setSortDirection(sortField !== newField ? true : !sortDirection)
+        },
+        [sortDirection, sortField]
+    )
+
+    const arrow = useCallback(
+        (field: string) => {
+            return sortField === field ? (!sortDirection ? '↑' : '↓') : ''
+        },
+        [sortDirection, sortField]
+    )
+
+    if (!poolDatas) {
+        return <Loader />
     }
-    setMaxPage(Math.floor(poolDatas.length / maxItems) + extraPages)
-  }, [maxItems, poolDatas])
-
-  const sortedPools = useMemo(() => {
-    if (!Array.isArray(poolDatas)) return []
-
-    return poolDatas
-      ? poolDatas
-          .filter((x) => !!x && !POOL_HIDE.includes(x.address))
-          .sort((a, b) => {
-            if (a && b) {
-              return +a[sortField as keyof PoolData] > +b[sortField as keyof PoolData]
-                ? (sortDirection ? -1 : 1) * 1
-                : (sortDirection ? -1 : 1) * -1
-            } else {
-              return -1
-            }
-          })
-          .slice(maxItems * (page - 1), page * maxItems)
-      : []
-  }, [maxItems, page, poolDatas, sortDirection, sortField])
-
-  const handleSort = useCallback(
-    (newField: string) => {
-      setSortField(newField)
-      setSortDirection(sortField !== newField ? true : !sortDirection)
-    },
-    [sortDirection, sortField]
-  )
 
   const arrow = useCallback(
     (field: string) => {

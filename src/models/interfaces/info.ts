@@ -5,6 +5,7 @@ import { Token } from '@uniswap/sdk-core'
 export interface FormattedPool {
     address: string
     apr: number
+    farmingApr: number
     exists: boolean
     fee: string
     token0: TokenSubgraph

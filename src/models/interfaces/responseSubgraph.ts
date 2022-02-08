@@ -14,6 +14,8 @@ export interface PoolSubgraph {
     totalValueLockedUSD: string
     txCount: string
     volumeUSD: string
+    untrackedVolumeUSD: string
+    totalValueLockedUSDUntracked: string
 }
 
 export interface PoolAddressSubgraph {
@@ -51,6 +53,8 @@ export interface TokenInSubgraph {
     txCount: string
     volume: string
     volumeUSD: string
+    untrackedVolumeUSD: string
+    totalValueLockedUSDUntracked: string
 }
 
 export interface TokenAddressSubgraph {
@@ -121,4 +125,18 @@ export interface SmallPoolSubgraph {
     tick: string
     token0: TokenSubgraph
     token1: TokenSubgraph
+}
+
+export interface EternalFarmingByPool {
+    bonusReward: string
+    bonusRewardRate: string
+    bonusRewardToken: string
+    endTime: string
+    id: string
+    isDetached: boolean
+    pool: string
+    reward: string
+    rewardRate: string
+    rewardToken: string
+    startTime: string
 }

@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { NavLink } from 'react-router-dom'
 import { ClickableText, Label } from 'components/Text'
 import { DarkGreyCard } from '../Card'
@@ -20,11 +20,11 @@ export const Arrow = styled.div<{ faded: boolean }>`
     cursor: pointer;
   }
 `
-export const LabelStyled = styled(Label)`
+export const LabelStyled = styled(Label)<{center?: boolean}>`
   font-size: 14px;
   justify-content: flex-start;
 `
-export const ClickableTextStyled = styled(ClickableText)`
+export const ClickableTextStyled = styled(ClickableText)<{center?: boolean}>`
   font-size: 14px;
   justify-content: flex-start;
   text-align: start;
@@ -37,19 +37,14 @@ export const Wrapper = styled(DarkGreyCard)`
   `};
 `
 export const ResponsiveGrid = styled.div`
-  display: grid;
-  position: relative;
-  grid-gap: 1em;
-  align-items: center;
-
-  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
-
-  @media screen and (max-width: 1000px) {
-    grid-template-columns: 20px 2.1fr repeat(4, 1fr);
-    & :nth-child(3) {
-      display: none;
+    display: grid;
+    position: relative;
+    grid-gap: 1em;
+    align-items: center;
+    grid-template-columns: 20px 2.3fr repeat(5, 1fr);
+    @media screen and (max-width: 1000px) {
+        grid-template-columns: 20px 2.1fr repeat(5, 1fr);
     }
-  }
 `
 export const ChartBadge = styled(NavLink)`
   background: #36f;
@@ -66,4 +61,51 @@ export const LinkWrapper = styled.a`
   svg {
     margin-left: 8px;
   }
+`
+export const HelperDropdown = styled.span`
+  position: absolute;
+  display: none;
+  right: 0;
+  font-size: 12px;
+  bottom: -2.5rem;
+  padding: 7px 9px;
+  white-space: nowrap;
+  background: white;
+  border-radius: 4px;
+  color: black;
+  z-index: 30;
+`
+export const HelperDropdownPart = styled.span`
+  padding: 2px 6px;
+  background-color: #d6d6d6;
+  border-radius: 4px;
+  color: #2d2d2d;
+`
+
+export const APRWrapper = styled.span`
+  position: relative;
+  &:hover {
+    & > ${HelperDropdown} {
+      display: block;
+    }
+  }
+`
+
+export const FarmingLink = styled(NavLink)<{ apr: boolean }>`
+  color: white;
+  text-decoration: none;
+
+  ${({ apr }) =>
+    apr &&
+    css`
+      padding: 4px;
+      border-radius: 3px;
+      color: white;
+      background-color: #36f;
+      text-decoration: underline;
+
+      &:hover {
+        color: #01ffff;
+      }
+    `}
 `

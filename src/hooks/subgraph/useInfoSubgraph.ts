@@ -8,6 +8,7 @@ import {
     CHART_POOL_DATA,
     CHART_POOL_LAST_ENTRY,
     CHART_POOL_LAST_NOT_EMPTY,
+    FETCH_ETERNAL_FARM_FROM_POOL,
     GET_STAKE,
     GET_STAKE_HISTORY,
     POOLS_FROM_ADDRESSES,
@@ -20,7 +21,7 @@ import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
 import { useDeltaTimestamps } from 'utils/queries'
 import { formatTokenName, formatTokenSymbol, get2DayChange, getPercentChange } from 'utils/info'
-import { stakerClient } from 'apollo/client'
+import { farmingClient, stakerClient } from 'apollo/client'
 import {
     FactorySubgraph,
     FeeSubgraph,
@@ -40,6 +41,7 @@ import {
     TokenInSubgraph,
     TotalStatSubgraph
 } from '../../models/interfaces'
+import { EternalFarmingByPool } from '../../models/interfaces/responseSubgraph'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
@@ -104,14 +106,12 @@ export function useInfoSubgraph() {
 
     }
 
-
     async function fetchEternalFarmAPR() {
 
         const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
 
         try {
-            const res = await fetch(apiURL).then(v => v.json())
-            return res
+            return await fetch(apiURL).then(v => v.json())
 
         } catch (error: any) {
             return {}
@@ -169,7 +169,7 @@ export function useInfoSubgraph() {
             const farmAprs = await fetchEternalFarmAPR()
 
             const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
-            const _farmingAprs = farmingAprs.reduce((acc, el) => ({
+            const _farmingAprs: {[type: string]: number} = farmingAprs.reduce((acc, el) => ({
                 ...acc,
                 [el.pool]: farmAprs[el.id]
             }), {})
@@ -180,8 +180,8 @@ export function useInfoSubgraph() {
                 const twoDay: PoolSubgraph | undefined = parsedPools48[address]
                 const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
 
-                const manageUntrackedVolume = current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD' 
-                const manageUntrackedTVL = current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+                const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD'
+                const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
 
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
@@ -194,10 +194,10 @@ export function useInfoSubgraph() {
                 const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
                     : current ? parseFloat(current.volumeUSD) : 0
 
-                const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
-                const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
+                const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
+                const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
-                const farmingApr = _farmingAprs[address] ? _farmingAprs[address].toFixed(2) : 0
+                const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0
 
                 accum[address] = {
                     token0: current.token0,
@@ -210,8 +210,9 @@ export function useInfoSubgraph() {
                     volumeUSDWeek,
                     tvlUSD,
                     tvlUSDChange,
-                    totalValueLockedUSD: current.totalValueLockedUSD,
-                    apr: aprPercent
+                    totalValueLockedUSD: current[manageUntrackedTVL],
+                    apr: aprPercent,
+                    farmingApr
                 }
                 return accum
             }, {})
@@ -278,8 +279,8 @@ export function useInfoSubgraph() {
                 const twoDay: TokenInSubgraph | undefined = parsedTokens48[address]
                 const week: TokenInSubgraph | undefined = parsedTokensWeek[address]
 
-                const manageUntrackedVolume = current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD' 
-                const manageUntrackedTVL = current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+                const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD'
+                const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
 
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
@@ -289,9 +290,9 @@ export function useInfoSubgraph() {
                             : [0, 0]
 
                 const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD) : current ? parseFloat(current.volumeUSD) : 0
-                const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0
-                const tvlUSDChange = getPercentChange(current?.totalValueLockedUSD, oneDay?.totalValueLockedUSD)
-                const tvlToken = current ? parseFloat(current.totalValueLocked) : 0
+                const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
+                const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
+                const tvlToken = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices.current : 0
                 const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
                 const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
@@ -385,7 +386,7 @@ export function useInfoSubgraph() {
         }
     }
 
-    async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]) {
+    async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]): Promise<EternalFarmingByPool[]> {
 
         try {
 

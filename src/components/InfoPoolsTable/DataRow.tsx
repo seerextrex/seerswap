@@ -1,4 +1,4 @@
-import { ChartBadge, LabelStyled, LinkWrapper, ResponsiveGrid } from './styled'
+import { ChartBadge, LabelStyled, LinkWrapper, ResponsiveGrid, FarmingLink } from './styled'
 import { BarChart2, ExternalLink } from 'react-feather'
 import { formatDollarAmount, formatPercent } from '../../utils/numbers'
 import React from 'react'
@@ -53,8 +53,17 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                 <LabelStyled end={1} fontWeight={400}>
                     {formatDollarAmount(+poolData.totalValueLockedUSD)}
                 </LabelStyled>
-                <LabelStyled end={1} fontWeight={400}>
-                    {formatPercent(poolData.apr)}
+                <LabelStyled center end={1} fontWeight={400}>
+                    {poolData.apr > 0 ? <span style={{ color: '#33FF89' }}>{formatPercent(poolData.apr)}</span> : <span>-</span>}
+                </LabelStyled>
+                <LabelStyled center end={1} fontWeight={400}>
+                    {poolData.farmingApr > 0 ? (
+                        <FarmingLink to={'/farming/infinite-farms'} apr={poolData.farmingApr > 0}>
+                            {formatPercent(poolData.farmingApr)}
+                        </FarmingLink>
+                    ) : (
+                        <span>-</span>
+                    )}
                 </LabelStyled>
             </ResponsiveGrid>
         </div>

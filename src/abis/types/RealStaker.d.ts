@@ -17,7 +17,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface RealStakerInterface extends ethers.utils.Interface {
   functions: {
@@ -170,6 +170,46 @@ interface RealStakerInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Released"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
+
+export type ApprovalEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    owner: string;
+    spender: string;
+    value: BigNumber;
+  }
+>;
+
+export type EnteredEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    staker: string;
+    ALGBAmount: BigNumber;
+    xALGBAmount: BigNumber;
+  }
+>;
+
+export type FreezedEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    to: string;
+    release: BigNumber;
+    amount: BigNumber;
+  }
+>;
+
+export type LeftEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    staker: string;
+    xALGBAmount: BigNumber;
+    ALGBAmount: BigNumber;
+  }
+>;
+
+export type ReleasedEvent = TypedEvent<
+  [string, BigNumber] & { owner: string; amount: BigNumber }
+>;
+
+export type TransferEvent = TypedEvent<
+  [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
+>;
 
 export class RealStaker extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -477,6 +517,15 @@ export class RealStaker extends BaseContract {
   };
 
   filters: {
+    "Approval(address,address,uint256)"(
+      owner?: string | null,
+      spender?: string | null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { owner: string; spender: string; value: BigNumber }
+    >;
+
     Approval(
       owner?: string | null,
       spender?: string | null,
@@ -484,6 +533,15 @@ export class RealStaker extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { owner: string; spender: string; value: BigNumber }
+    >;
+
+    "Entered(address,uint256,uint256)"(
+      staker?: null,
+      ALGBAmount?: null,
+      xALGBAmount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { staker: string; ALGBAmount: BigNumber; xALGBAmount: BigNumber }
     >;
 
     Entered(
@@ -495,6 +553,15 @@ export class RealStaker extends BaseContract {
       { staker: string; ALGBAmount: BigNumber; xALGBAmount: BigNumber }
     >;
 
+    "Freezed(address,uint64,uint256)"(
+      to?: string | null,
+      release?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { to: string; release: BigNumber; amount: BigNumber }
+    >;
+
     Freezed(
       to?: string | null,
       release?: null,
@@ -502,6 +569,15 @@ export class RealStaker extends BaseContract {
     ): TypedEventFilter<
       [string, BigNumber, BigNumber],
       { to: string; release: BigNumber; amount: BigNumber }
+    >;
+
+    "Left(address,uint256,uint256)"(
+      staker?: null,
+      xALGBAmount?: null,
+      ALGBAmount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { staker: string; xALGBAmount: BigNumber; ALGBAmount: BigNumber }
     >;
 
     Left(
@@ -513,12 +589,29 @@ export class RealStaker extends BaseContract {
       { staker: string; xALGBAmount: BigNumber; ALGBAmount: BigNumber }
     >;
 
+    "Released(address,uint256)"(
+      owner?: string | null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { owner: string; amount: BigNumber }
+    >;
+
     Released(
       owner?: string | null,
       amount?: null
     ): TypedEventFilter<
       [string, BigNumber],
       { owner: string; amount: BigNumber }
+    >;
+
+    "Transfer(address,address,uint256)"(
+      from?: string | null,
+      to?: string | null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { from: string; to: string; value: BigNumber }
     >;
 
     Transfer(

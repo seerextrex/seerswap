@@ -17,7 +17,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface ArgentWalletDetectorInterface extends ethers.utils.Interface {
   functions: {
@@ -104,6 +104,14 @@ interface ArgentWalletDetectorInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ImplementationAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
 }
+
+export type CodeAddedEvent = TypedEvent<[string] & { code: string }>;
+
+export type ImplementationAddedEvent = TypedEvent<
+  [string] & { implementation: string }
+>;
+
+export type OwnerChangedEvent = TypedEvent<[string] & { _newOwner: string }>;
 
 export class ArgentWalletDetector extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -264,13 +272,25 @@ export class ArgentWalletDetector extends BaseContract {
   };
 
   filters: {
+    "CodeAdded(bytes32)"(
+      code?: BytesLike | null
+    ): TypedEventFilter<[string], { code: string }>;
+
     CodeAdded(
       code?: BytesLike | null
     ): TypedEventFilter<[string], { code: string }>;
 
+    "ImplementationAdded(address)"(
+      implementation?: string | null
+    ): TypedEventFilter<[string], { implementation: string }>;
+
     ImplementationAdded(
       implementation?: string | null
     ): TypedEventFilter<[string], { implementation: string }>;
+
+    "OwnerChanged(address)"(
+      _newOwner?: string | null
+    ): TypedEventFilter<[string], { _newOwner: string }>;
 
     OwnerChanged(
       _newOwner?: string | null

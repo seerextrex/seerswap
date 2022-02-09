@@ -190,11 +190,6 @@ export default function StakingPage() {
                     ></PageTitle>
                     {account ? (
                       <>
-                       <StakerMyRewards
-                        data={fetchRewards?.rewardsResult}
-                        refreshing={fetchRewards?.rewardsLoading}
-                        fetchHandler={() => fetchRewards?.fetchRewardsFn(true)}
-                      ></StakerMyRewards>
                       <StakerMyStakes
                         data={fetchTransferredPositions?.transferredPositions}
                         refreshing={fetchTransferredPositions?.transferredPositionsLoading}

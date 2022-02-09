@@ -29,6 +29,7 @@ import CurrencyLogo from '../CurrencyLogo'
 import gradient from 'random-gradient'
 import { NavLink } from 'react-router-dom'
 import { IsActive } from './IsActive'
+import { Token } from '@uniswap/sdk-core'
 
 const skeletonAnimation = keyframes`
   100% {
@@ -644,7 +645,8 @@ export function StakerMyStakes({
   const { account } = useActiveWeb3React()
 
   const {
-    getRewardsHandler,
+    exitHandler,
+    claimRewardsHandler,
     getRewardsHash,
     eternalCollectRewardHandler,
     eternalCollectRewardHash,
@@ -659,16 +661,13 @@ export function StakerMyStakes({
   const [sendModal, setSendModal] = useState(false)
   const [recipient, setRecipient] = useState('')
 
-  const sendNFTHandler = useCallback(
-    (v) => {
+  const sendNFTHandler = useCallback((v) => {
       if (!isAddress(recipient) || recipient === account) {
         return
       }
 
       sendNFTL2Handler(recipient, v)
-    },
-    [recipient]
-  )
+    }, [recipient])
 
   const [gettingReward, setGettingReward] = useState({ id: null, state: null, farmingType: null })
   const [eternalCollectReward, setEternalCollectReward] = useState({ id: null, state: null })
@@ -891,7 +890,7 @@ export function StakerMyStakes({
                     <CurrencyLogo
                       size={'35px'}
                       currency={{ address: el.incentiveRewardToken?.id, symbol: el.incentiveRewardToken?.symbol }}
-                    ></CurrencyLogo>
+                    />
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
                       <PositionCardStatsItemValue title={el.incentiveEarned}>{`${formatReward(el.incentiveEarned)} ${
@@ -906,7 +905,7 @@ export function StakerMyStakes({
                         address: el.incentiveBonusRewardToken?.id,
                         symbol: el.incentiveBonusRewardToken?.symbol,
                       }}
-                    ></CurrencyLogo>
+                    />
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Bonus reward</PositionCardStatsItemTitle>
                       <PositionCardStatsItemValue title={el.incentiveBonusEarned}>{`${formatReward(
@@ -929,11 +928,11 @@ export function StakerMyStakes({
                           {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
                             <EventProgressInner
                               progress={getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}
-                            ></EventProgressInner>
+                            />
                           ) : (
                             <EventProgressInner
                               progress={getProgress(el.incentiveStartTime, el.incentiveEndTime, now)}
-                            ></EventProgressInner>
+                            />
                           )}
                         </EventProgress>
                       </StakeCountdownProgress>
@@ -946,7 +945,7 @@ export function StakerMyStakes({
                           }
                           onClick={() => {
                             setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
-                            getRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
+                            exitHandler(el.id, { ...el })
                           }}
                         >
                           {gettingReward &&
@@ -973,7 +972,7 @@ export function StakerMyStakes({
                       }
                       onClick={() => {
                         setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
-                        getRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
+                        claimRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
                       }}
                     >
                       {gettingReward &&
@@ -1018,7 +1017,7 @@ export function StakerMyStakes({
                     <CurrencyLogo
                       size={'35px'}
                       currency={{ address: el.eternalRewardToken.id, symbol: el.eternalRewardToken.symbol }}
-                    ></CurrencyLogo>
+                    />
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
                       <PositionCardStatsItemValue title={el.eternalEarned}>{`${formatReward(el.eternalEarned)} ${
@@ -1029,8 +1028,8 @@ export function StakerMyStakes({
                   <PositionCardStatsItemWrapper>
                     <CurrencyLogo
                       size={'35px'}
-                      currency={{ address: el.eternalBonusRewardToken.id, symbol: el.eternalBonusRewardToken.symbol }}
-                    ></CurrencyLogo>
+                      currency={new Token(137, el.eternalBonusRewardToken.id, el.eternalBonusRewardToken.symbol)}
+                    />
                     <PositionCardStatsItem>
                       <PositionCardStatsItemTitle>Bonus Reward</PositionCardStatsItemTitle>
                       <PositionCardStatsItemValue title={el.eternalBonusEarned}>{`${formatReward(
@@ -1040,7 +1039,6 @@ export function StakerMyStakes({
                   </PositionCardStatsItemWrapper>
                 </PositionCardStats>
                 <StakeActions>
-                  {console.log(el.eternalEarned, el.eternalBonusEarned)}
                   <StakeButton
                     disabled={
                       (eternalCollectReward.id === el.id && eternalCollectReward.state !== 'done') ||
@@ -1069,7 +1067,7 @@ export function StakerMyStakes({
                     }
                     onClick={() => {
                       setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.ETERNAL })
-                      getRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL)
+                      claimRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL)
                     }}
                   >
                     {gettingReward &&

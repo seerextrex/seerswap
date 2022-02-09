@@ -140,7 +140,7 @@ export default function EternalFarmsPage({
               event={modalForPool}
               closeHandler={() => setModalForPool(null)}
               farmingType={FarmingType.ETERNAL}
-            ></StakeModal>
+            />
           </>
         )}
       </Modal>

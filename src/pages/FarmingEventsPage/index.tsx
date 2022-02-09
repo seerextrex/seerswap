@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowLeft, ArrowRight, Frown } from 'react-feather'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components/macro'
@@ -7,6 +7,9 @@ import { StakerEventCard } from '../../components/StakerEventCard'
 import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import { deviceSizes } from '../styled'
+import { StakeModal } from '../../components/StakeModal'
+import { FarmingType } from '../../hooks/useStakerHandlers'
+import Modal from '../../components/Modal'
 
 const PageWrapper = styled.div`
   width: 100%;
@@ -69,9 +72,21 @@ export function FarmingEventsPage({
     fetchHandler()
   }, [])
 
+  const [modalForPool, setModalForPool] = useState(null)
   const chunked = useChunkedRows(data, 3)
   return (
     <PageWrapper>
+      <Modal isOpen={Boolean(modalForPool)} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
+        {modalForPool && (
+          <>
+            <StakeModal
+              event={modalForPool}
+              closeHandler={() => setModalForPool(null)}
+              farmingType={FarmingType.FINITE}
+            />
+          </>
+        )}
+      </Modal>
       <EventsCards>
         {!data ? (
           <EventsCards>
@@ -91,7 +106,9 @@ export function FarmingEventsPage({
             <EventsCardsRow key={i}>
               {el.map(
                 (event, j) =>
-                    <StakerEventCard refreshing={refreshing} active={event.active} key={j} now={now} event={event}></StakerEventCard>
+                    <StakerEventCard refreshing={refreshing} active={event.active} key={j} now={now} event={event} stakeHandler={() => {
+                      setModalForPool(event)
+                    }}/>
               )}
             </EventsCardsRow>
           ))

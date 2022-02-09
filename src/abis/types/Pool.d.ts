@@ -17,7 +17,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface PoolInterface extends ethers.utils.Interface {
   functions: {
@@ -251,6 +251,91 @@ interface PoolInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SetCommunityFee"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Swap"): EventFragment;
 }
+
+export type BurnEvent = TypedEvent<
+  [string, number, number, BigNumber, BigNumber, BigNumber] & {
+    owner: string;
+    bottomTick: number;
+    topTick: number;
+    amount: BigNumber;
+    amount0: BigNumber;
+    amount1: BigNumber;
+  }
+>;
+
+export type ChangeFeeEvent = TypedEvent<[number] & { Fee: number }>;
+
+export type CollectEvent = TypedEvent<
+  [string, string, number, number, BigNumber, BigNumber] & {
+    owner: string;
+    recipient: string;
+    bottomTick: number;
+    topTick: number;
+    amount0: BigNumber;
+    amount1: BigNumber;
+  }
+>;
+
+export type CollectCommunityFeeEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber] & {
+    sender: string;
+    recipient: string;
+    amount0: BigNumber;
+    amount1: BigNumber;
+  }
+>;
+
+export type FlashEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    sender: string;
+    recipient: string;
+    amount0: BigNumber;
+    amount1: BigNumber;
+    paid0: BigNumber;
+    paid1: BigNumber;
+  }
+>;
+
+export type IncentiveSetEvent = TypedEvent<
+  [string] & { virtualPoolAddress: string }
+>;
+
+export type InitializeEvent = TypedEvent<
+  [BigNumber, number] & { price: BigNumber; tick: number }
+>;
+
+export type MintEvent = TypedEvent<
+  [string, string, number, number, BigNumber, BigNumber, BigNumber] & {
+    sender: string;
+    owner: string;
+    bottomTick: number;
+    topTick: number;
+    amount: BigNumber;
+    amount0: BigNumber;
+    amount1: BigNumber;
+  }
+>;
+
+export type SetCommunityFeeEvent = TypedEvent<
+  [number, number, number, number] & {
+    communityFee0Old: number;
+    communityFee1Old: number;
+    communityFee0New: number;
+    communityFee1New: number;
+  }
+>;
+
+export type SwapEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+    sender: string;
+    recipient: string;
+    amount0: BigNumber;
+    amount1: BigNumber;
+    price: BigNumber;
+    liquidity: BigNumber;
+    tick: number;
+  }
+>;
 
 export class Pool extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -893,6 +978,25 @@ export class Pool extends BaseContract {
   };
 
   filters: {
+    "Burn(address,int24,int24,uint128,uint256,uint256)"(
+      owner?: string | null,
+      bottomTick?: BigNumberish | null,
+      topTick?: BigNumberish | null,
+      amount?: null,
+      amount0?: null,
+      amount1?: null
+    ): TypedEventFilter<
+      [string, number, number, BigNumber, BigNumber, BigNumber],
+      {
+        owner: string;
+        bottomTick: number;
+        topTick: number;
+        amount: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
+    >;
+
     Burn(
       owner?: string | null,
       bottomTick?: BigNumberish | null,
@@ -912,7 +1016,30 @@ export class Pool extends BaseContract {
       }
     >;
 
+    "ChangeFee(uint16)"(
+      Fee?: null
+    ): TypedEventFilter<[number], { Fee: number }>;
+
     ChangeFee(Fee?: null): TypedEventFilter<[number], { Fee: number }>;
+
+    "Collect(address,address,int24,int24,uint128,uint128)"(
+      owner?: string | null,
+      recipient?: null,
+      bottomTick?: BigNumberish | null,
+      topTick?: BigNumberish | null,
+      amount0?: null,
+      amount1?: null
+    ): TypedEventFilter<
+      [string, string, number, number, BigNumber, BigNumber],
+      {
+        owner: string;
+        recipient: string;
+        bottomTick: number;
+        topTick: number;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
+    >;
 
     Collect(
       owner?: string | null,
@@ -933,6 +1060,21 @@ export class Pool extends BaseContract {
       }
     >;
 
+    "CollectCommunityFee(address,address,uint128,uint128)"(
+      sender?: string | null,
+      recipient?: string | null,
+      amount0?: null,
+      amount1?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber],
+      {
+        sender: string;
+        recipient: string;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
+    >;
+
     CollectCommunityFee(
       sender?: string | null,
       recipient?: string | null,
@@ -945,6 +1087,25 @@ export class Pool extends BaseContract {
         recipient: string;
         amount0: BigNumber;
         amount1: BigNumber;
+      }
+    >;
+
+    "Flash(address,address,uint256,uint256,uint256,uint256)"(
+      sender?: string | null,
+      recipient?: string | null,
+      amount0?: null,
+      amount1?: null,
+      paid0?: null,
+      paid1?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        sender: string;
+        recipient: string;
+        amount0: BigNumber;
+        amount1: BigNumber;
+        paid0: BigNumber;
+        paid1: BigNumber;
       }
     >;
 
@@ -967,9 +1128,21 @@ export class Pool extends BaseContract {
       }
     >;
 
+    "IncentiveSet(address)"(
+      virtualPoolAddress?: null
+    ): TypedEventFilter<[string], { virtualPoolAddress: string }>;
+
     IncentiveSet(
       virtualPoolAddress?: null
     ): TypedEventFilter<[string], { virtualPoolAddress: string }>;
+
+    "Initialize(uint160,int24)"(
+      price?: null,
+      tick?: null
+    ): TypedEventFilter<
+      [BigNumber, number],
+      { price: BigNumber; tick: number }
+    >;
 
     Initialize(
       price?: null,
@@ -977,6 +1150,27 @@ export class Pool extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, number],
       { price: BigNumber; tick: number }
+    >;
+
+    "Mint(address,address,int24,int24,uint128,uint256,uint256)"(
+      sender?: null,
+      owner?: string | null,
+      bottomTick?: BigNumberish | null,
+      topTick?: BigNumberish | null,
+      amount?: null,
+      amount0?: null,
+      amount1?: null
+    ): TypedEventFilter<
+      [string, string, number, number, BigNumber, BigNumber, BigNumber],
+      {
+        sender: string;
+        owner: string;
+        bottomTick: number;
+        topTick: number;
+        amount: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
     >;
 
     Mint(
@@ -1000,6 +1194,21 @@ export class Pool extends BaseContract {
       }
     >;
 
+    "SetCommunityFee(uint8,uint8,uint8,uint8)"(
+      communityFee0Old?: null,
+      communityFee1Old?: null,
+      communityFee0New?: null,
+      communityFee1New?: null
+    ): TypedEventFilter<
+      [number, number, number, number],
+      {
+        communityFee0Old: number;
+        communityFee1Old: number;
+        communityFee0New: number;
+        communityFee1New: number;
+      }
+    >;
+
     SetCommunityFee(
       communityFee0Old?: null,
       communityFee1Old?: null,
@@ -1012,6 +1221,27 @@ export class Pool extends BaseContract {
         communityFee1Old: number;
         communityFee0New: number;
         communityFee1New: number;
+      }
+    >;
+
+    "Swap(address,address,int256,int256,uint160,uint128,int24)"(
+      sender?: string | null,
+      recipient?: string | null,
+      amount0?: null,
+      amount1?: null,
+      price?: null,
+      liquidity?: null,
+      tick?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, BigNumber, BigNumber, number],
+      {
+        sender: string;
+        recipient: string;
+        amount0: BigNumber;
+        amount1: BigNumber;
+        price: BigNumber;
+        liquidity: BigNumber;
+        tick: number;
       }
     >;
 

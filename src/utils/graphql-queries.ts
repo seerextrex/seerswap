@@ -122,7 +122,6 @@ query fetchPool {
         liquidity
         tick
         feesUSD
-        untrackedFeesUSD
     }
 }`
 

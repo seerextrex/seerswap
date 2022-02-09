@@ -41,6 +41,8 @@ export function useStakerHandlers() {
     const [claimRewardHash, setClaimReward] = useState(null)
     const [sendNFTL2Hash, setSendNFTL2] = useState(null)
 
+
+
     const claimRewardsHandler = useCallback(async (tokenAddress, amount) => {
 
         if (!account || !provider) return
@@ -96,8 +98,7 @@ export function useStakerHandlers() {
         try {
 
             const result = await farmingCenterContract.collectRewards(
-                [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime],
-                +token,
+                [eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime], +token,
                 {
                     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                 }
@@ -349,12 +350,7 @@ export function useStakerHandlers() {
                     selectedNFT.id
                 ])
 
-                const result = await nonFunPosManContract.multicall([
-                    approveData, transferData
-                ],
-                    {
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
-                    })
+                const result = await nonFunPosManContract.multicall([approveData, transferData], { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER, })
 
                 addTransaction(result, {
                     summary: `NFT #${selectedNFT.id} was approved!`

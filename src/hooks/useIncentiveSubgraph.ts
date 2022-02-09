@@ -17,6 +17,7 @@ import { useApolloClient, useLazyQuery, useQuery, gql } from "@apollo/client";
 import { CURRENT_EVENTS, FETCH_ETERNAL_FARM, FETCH_INCENTIVE, FETCH_POOL, FETCH_REWARDS, FETCH_TOKEN, FUTURE_EVENTS, INFINITE_EVENTS, LAST_EVENT, POSITIONS_ON_ETERNAL_FARMING, POSITIONS_OWNED_FOR_POOL, SHARED_POSITIONS, TRANSFERED_POSITIONS, TRANSFERED_POSITIONS_FOR_POOL } from "../utils/graphql-queries";
 import { useClients } from "./subgraph/useClients";
 import { formatUnits } from "@ethersproject/units";
+import { log } from 'util'
 
 
 export function useIncentiveSubgraph() {
@@ -115,7 +116,6 @@ export function useIncentiveSubgraph() {
             const { data: { pools }, error } = (await dataClient.query({
                 query: FETCH_POOL(poolId)
             }))
-
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
@@ -586,6 +586,8 @@ export function useIncentiveSubgraph() {
                 fetchPolicy: reload ? 'network-only' : 'cache-first'
             }))
 
+
+
             if (error) throw new Error(`${error.name} ${error.message}`)
 
             if (eternalFarmings.length === 0) {
@@ -598,8 +600,9 @@ export function useIncentiveSubgraph() {
 
             let _eternalFarmings = []
 
-            for (const farming of eternalFarmings) {
 
+            for (const farming of eternalFarmings) {
+                console.log(farming.pool)
                 const pool = await fetchPool(farming.pool)
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)

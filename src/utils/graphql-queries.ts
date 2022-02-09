@@ -121,7 +121,6 @@ query fetchPool {
         liquidity
         tick
         feesUSD
-        untrackedFeesUSD
     }
 }`
 
@@ -482,7 +481,7 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
           untrackedVolumeUSD
           feesUSD
           totalValueLockedUSD
-          totalValueLockedUSDUntracked 
+          totalValueLockedUSDUntracked
         }
       }
       `

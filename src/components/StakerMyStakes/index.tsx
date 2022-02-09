@@ -29,13 +29,17 @@ interface StakerMyStakesProps {
 export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMyStakesProps) {
     const { account } = useActiveWeb3React()
 
-    const {
-        getRewardsHash,
-        eternalCollectRewardHash,
-        withdrawnHash,
-        sendNFTL2Handler,
-        sendNFTL2Hash
-    } = useStakerHandlers() || {}
+  const {
+    exitHandler,
+    claimRewardsHandler,
+    getRewardsHash,
+    eternalCollectRewardHandler,
+    eternalCollectRewardHash,
+    withdrawHandler,
+    withdrawnHash,
+    sendNFTL2Handler,
+    sendNFTL2Hash,
+  } = useStakerHandlers() || {}
 
     const [sendModal, setSendModal] = useState(null)
     const [recipient, setRecipient] = useState<string>('')
@@ -62,8 +66,18 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
             return
         }
 
-        sendNFTL2Handler(recipient, v)
+      sendNFTL2Handler(recipient, v)
     }, [recipient])
+
+  const [gettingReward, setGettingReward] = useState({ id: null, state: null, farmingType: null })
+  const [eternalCollectReward, setEternalCollectReward] = useState({ id: null, state: null })
+
+  const [unstaking, setUnstaking] = useState({ id: null, state: null })
+  const [sending, setSending] = useState({ id: null, state: null })
+
+  const [shallowPositions, setShallowPositions] = useState(null)
+
+  const allTransactions = useAllTransactions()
 
     const sortedRecentTransactions = useMemo(() => {
         const txs = Object.values(allTransactions)
@@ -169,54 +183,333 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
     }, [account])
 
     return (
-        <>
-            <Modal
-                isOpen={Boolean(sendModal)}
-                onDismiss={() => {
-                    if (sending.state !== 'pending') {
-                        setSendModal(null)
-                        setRecipient('')
-                        setTimeout(() => setSending({ id: null, state: null }))
-                    }
-                }}
+      <CheckOutLink to={`/farming/${link}`}>
+        <span>Check out available farms →</span>
+      </CheckOutLink>
+    )
+  }
+
+  function getTable(positions) {
+    return positions.map((el, i) => (
+      <PositionCard key={i} navigatedTo={hash == `#${el.id}`}>
+        <PositionCardHeader>
+          <div style={{ display: 'flex' }}>
+            <NFTPositionIcon name={el.id}>
+              <span>{el.id}</span>
+            </NFTPositionIcon>
+            <NFTPositionDescription>
+              <NFTPositionIndex>
+                <IsActive el={el}></IsActive>
+              </NFTPositionIndex>
+              <NFTPositionLink
+                href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                View position
+              </NFTPositionLink>
+            </NFTPositionDescription>
+          </div>
+          <StakePool>
+            <>
+              <CurrencyLogo currency={{ address: el.token0, symbol: el.pool.token0.symbol }} size={'35px'} />
+              <CurrencyLogo
+                currency={{ address: el.token1, symbol: el.pool.token1.symbol }}
+                size={'35px'}
+                style={{ marginLeft: '-1rem' }}
+              />
+              <TokensNames>
+                <PositionCardStatsItemTitle style={{ lineHeight: '20px' }}>Pool</PositionCardStatsItemTitle>
+                <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
+              </TokensNames>
+            </>
+          </StakePool>
+          {!el.incentive && !el.eternalFarming && (
+            <MoreButton
+              disabled={unstaking.id === el.id && unstaking.state !== 'done'}
+              onClick={() => {
+                setUnstaking({ id: el.id, state: 'pending' })
+                withdrawHandler(el.id, { ...el })
+              }}
             >
-                <SendModal
-                    style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
-                    {sending.state === 'done' ? (
-                        <>
-                            <CheckCircle size={'35px'} stroke={'#27AE60'} />
-                            <div style={{ marginTop: '1rem' }}>{`NFT was sent!`}</div>
-                        </>
+              {unstaking && unstaking.id === el.id && unstaking.state !== 'done' ? (
+                <>
+                  <Loader size={'15px'} stroke={'#36f'} style={{ margin: 'auto' }} />
+                  <span style={{ marginLeft: '5px' }}>Withdrawing</span>
+                </>
+              ) : (
+                <>
+                  <ChevronsUp color={'#36f'} size={18} />
+                  <span style={{ marginLeft: '5px' }}>{`Withdraw`}</span>
+                </>
+              )}
+            </MoreButton>
+          )}
+          <MoreButton single={el.incentive || el.eternalFarming} onClick={() => setSendModal(el.L2tokenId)}>
+            <Send color={'#36f'} size={15} />
+            <span style={{ marginLeft: '6px' }}>Send</span>
+          </MoreButton>
+        </PositionCardHeader>
+        <PositionCardBody>
+          <PositionCardEvent>
+            <PositionCardEventTitle>Event</PositionCardEventTitle>
+            {el.incentive ? (
+              <>
+                <PositionCardStats>
+                  <PositionCardStatsItemWrapper>
+                    <CurrencyLogo
+                      size={'35px'}
+                      currency={{ address: el.incentiveRewardToken?.id, symbol: el.incentiveRewardToken?.symbol }}
+                    />
+                    <PositionCardStatsItem>
+                      <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
+                      <PositionCardStatsItemValue title={el.incentiveEarned}>{`${formatReward(el.incentiveEarned)} ${
+                        el.incentiveRewardToken.symbol
+                      }`}</PositionCardStatsItemValue>
+                    </PositionCardStatsItem>
+                  </PositionCardStatsItemWrapper>
+                  <PositionCardStatsItemWrapper>
+                    <CurrencyLogo
+                      size={'35px'}
+                      currency={{
+                        address: el.incentiveBonusRewardToken?.id,
+                        symbol: el.incentiveBonusRewardToken?.symbol,
+                      }}
+                    />
+                    <PositionCardStatsItem>
+                      <PositionCardStatsItemTitle>Bonus reward</PositionCardStatsItemTitle>
+                      <PositionCardStatsItemValue title={el.incentiveBonusEarned}>{`${formatReward(
+                        el.incentiveBonusEarned
+                      )} ${el.incentiveBonusRewardToken.symbol}`}</PositionCardStatsItemValue>
+                    </PositionCardStatsItem>
+                  </PositionCardStatsItemWrapper>
+                </PositionCardStats>
+                <StakeBottomWrapper>
+                  {!el.ended && el.incentiveEndTime * 1000 > Date.now() && (
+                    <StakeCountdownWrapper>
+                      <StakeCountdownProgress started={el.started || el.incentiveStartTime * 1000 < Date.now()}>
+                        {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
+                          <EventEndTime>{`Starts in ${getCountdownTime(el.incentiveStartTime)}`}</EventEndTime>
+                        )}
+                        {(el.started || el.incentiveStartTime * 1000 < Date.now()) && (
+                          <EventEndTime>{`Ends in ${getCountdownTime(el.incentiveEndTime)}`}</EventEndTime>
+                        )}
+                        <EventProgress>
+                          {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
+                            <EventProgressInner
+                              progress={getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}
+                            />
+                          ) : (
+                            <EventProgressInner
+                              progress={getProgress(el.incentiveStartTime, el.incentiveEndTime, now)}
+                            />
+                          )}
+                        </EventProgress>
+                      </StakeCountdownProgress>
+                      {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
+                        <StakeButton
+                          disabled={
+                            gettingReward.id === el.id &&
+                            gettingReward.farmingType === FarmingType.FINITE &&
+                            gettingReward.state !== 'done'
+                          }
+                          onClick={() => {
+                            setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
+                            exitHandler(el.id, { ...el })
+                          }}
+                        >
+                          {gettingReward &&
+                          gettingReward.farmingType === FarmingType.FINITE &&
+                          gettingReward.id === el.id &&
+                          gettingReward.state !== 'done' ? (
+                            <span>
+                              <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
+                            </span>
+                          ) : (
+                            <span>{`Undeposit`}</span>
+                          )}
+                        </StakeButton>
+                      )}
+                    </StakeCountdownWrapper>
+                  )}
+                  {(el.ended || el.incentiveEndTime * 1000 < Date.now()) && (
+                    <StakeButton
+                      disabled={
+                        (gettingReward.id === el.id &&
+                          gettingReward.farmingType === FarmingType.FINITE &&
+                          gettingReward.state !== 'done') ||
+                        el.incentiveReward == 0
+                      }
+                      onClick={() => {
+                        setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.FINITE })
+                        claimRewardsHandler(el.id, { ...el }, FarmingType.FINITE)
+                      }}
+                    >
+                      {gettingReward &&
+                      gettingReward.farmingType === FarmingType.FINITE &&
+                      gettingReward.id === el.id &&
+                      gettingReward.state !== 'done' ? (
+                        <span>
+                          <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
+                        </span>
+                      ) : (
+                        <span>{`Collect rewards & Undeposit`}</span>
+                      )}
+                    </StakeButton>
+                  )}
+                </StakeBottomWrapper>
+              </>
+            ) : (
+              <PositionCardMock>
+                <PositionNotDepositedText>Position is not deposited</PositionNotDepositedText>
+                <CheckOut link={'future-events'} />
+              </PositionCardMock>
+            )}
+          </PositionCardEvent>
+          <PositionCardEvent>
+            <PositionCardEventTitle>
+              <span>Infinite farming</span>
+              { el.enteredInEternalFarming &&
+              <span style={{ fontSize: '14px', fontWeight: 400, lineHeight: '21px' }}>
+                <span>Entered at: </span>
+                <span>{new Date(el.enteredInEternalFarming * 1000).toLocaleString().split(',')[0]}</span>
+                <span>{`${new Date(el.enteredInEternalFarming * 1000)
+                  .toLocaleString()
+                  .split(',')[1]
+                  .slice(0, -3)}`}</span>
+              </span>
+            }
+            </PositionCardEventTitle>
+            {el.eternalFarming ? (
+              <>
+                <PositionCardStats>
+                  <PositionCardStatsItemWrapper>
+                    <CurrencyLogo
+                      size={'35px'}
+                      currency={{ address: el.eternalRewardToken.id, symbol: el.eternalRewardToken.symbol }}
+                    />
+                    <PositionCardStatsItem>
+                      <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
+                      <PositionCardStatsItemValue title={el.eternalEarned}>{`${formatReward(el.eternalEarned)} ${
+                        el.eternalRewardToken.symbol
+                      }`}</PositionCardStatsItemValue>
+                    </PositionCardStatsItem>
+                  </PositionCardStatsItemWrapper>
+                  <PositionCardStatsItemWrapper>
+                    <CurrencyLogo
+                      size={'35px'}
+                      currency={new Token(137, el.eternalBonusRewardToken.id, el.eternalBonusRewardToken.symbol)}
+                    />
+                    <PositionCardStatsItem>
+                      <PositionCardStatsItemTitle>Bonus Reward</PositionCardStatsItemTitle>
+                      <PositionCardStatsItemValue title={el.eternalBonusEarned}>{`${formatReward(
+                        el.eternalBonusEarned
+                      )} ${el.eternalBonusRewardToken.symbol}`}</PositionCardStatsItemValue>
+                    </PositionCardStatsItem>
+                  </PositionCardStatsItemWrapper>
+                </PositionCardStats>
+                <StakeActions>
+                  <StakeButton
+                    disabled={
+                      (eternalCollectReward.id === el.id && eternalCollectReward.state !== 'done') ||
+                      (el.eternalEarned == 0 && el.eternalBonusEarned == 0)
+                    }
+                    onClick={() => {
+                      setEternalCollectReward({ id: el.id, state: 'pending' })
+                      eternalCollectRewardHandler(el.id, { ...el })
+                    }}
+                  >
+                    {eternalCollectReward &&
+                    eternalCollectReward.id === el.id &&
+                    eternalCollectReward.state !== 'done' ? (
+                      <span>
+                        <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
+                      </span>
                     ) : (
-                        <>
-                            <ModalTitle>Send NFT to another account</ModalTitle>
-                            <SendNFTWarning>
-                                {
-                                    'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'
-                                }
-                            </SendNFTWarning>
-                            <div style={{ marginBottom: '1rem' }}>
-                                <RecipientInput
-                                    placeholder='Enter a recipient'
-                                    value={recipient}
-                                    onChange={(v) => {
-                                        setRecipient(v.target.value)
-                                    }}
-                                />
-                            </div>
-                            <div>
-                                <SendNFTButton
-                                    disabled={!isAddress(recipient) || recipient === account}
-                                    onClick={() => {
-                                        setSending({ id: sendModal, state: 'pending' })
-                                        sendNFTHandler(sendModal)
-                                    }}
-                                >
-                                    {sending && sending.id === sendModal && sending.state !== 'done' ? (
-                                        <span style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center'
-                                        }}>
+                      <span>{`Collect rewards`}</span>
+                    )}
+                  </StakeButton>
+                  <StakeButton
+                    disabled={
+                      gettingReward.id === el.id &&
+                      gettingReward.farmingType === FarmingType.ETERNAL &&
+                      gettingReward.state !== 'done'
+                    }
+                    onClick={() => {
+                      setGettingReward({ id: el.id, state: 'pending', farmingType: FarmingType.ETERNAL })
+                      claimRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL)
+                    }}
+                  >
+                    {gettingReward &&
+                    gettingReward.id === el.id &&
+                    gettingReward.farmingType === FarmingType.ETERNAL &&
+                    gettingReward.state !== 'done' ? (
+                      <span>
+                        <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
+                      </span>
+                    ) : (
+                      <span>{`Undeposit`}</span>
+                    )}
+                  </StakeButton>
+                </StakeActions>
+              </>
+            ) : (
+              <PositionCardMock>
+                <PositionNotDepositedText>Position is not deposited</PositionNotDepositedText>
+                <CheckOut link={'infinite-farms'} />
+              </PositionCardMock>
+            )}
+          </PositionCardEvent>
+        </PositionCardBody>
+      </PositionCard>
+    ))
+  }
+
+  return (
+    <>
+      <Modal
+        isOpen={sendModal}
+        onDismiss={() => {
+          if (sending.state !== 'pending') {
+            setSendModal(false)
+            setRecipient('')
+            setTimeout(() => setSending({ id: null, state: null }))
+          }
+        }}
+      >
+        <SendModal style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
+          {sending.state === 'done' ? (
+            <>
+              <CheckCircle size={'35px'} stroke={'#27AE60'} />
+              <div style={{ marginTop: '1rem' }}>{`NFT was sent!`}</div>
+            </>
+          ) : (
+            <>
+              <ModalTitle>Send NFT to another account</ModalTitle>
+              <SendNFTWarning>
+                {
+                  'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'
+                }
+              </SendNFTWarning>
+              <div style={{ marginBottom: '1rem' }}>
+                <RecipientInput
+                  placeholder="Enter a recipient"
+                  value={recipient}
+                  onChange={(v) => {
+                    setRecipient(v.target.value)
+                  }}
+                />
+              </div>
+              <div>
+                <SendNFTButton
+                  disabled={!isAddress(recipient) || recipient === account}
+                  onClick={() => {
+                    setSending({ id: sendModal, state: 'pending' })
+                    sendNFTHandler(sendModal)
+                  }}
+                >
+                  {sending && sending.id === sendModal && sending.state !== 'done' ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                       <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto 10px auto' }} />
                       <span>Sending</span>
                     </span>

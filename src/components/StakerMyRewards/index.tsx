@@ -1,345 +1,165 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Frown } from 'react-feather'
-import styled, { keyframes, css } from 'styled-components/macro'
-import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { useStakerHandlers } from '../../hooks/useStakerHandlers'
 import { useAllTransactions } from '../../state/transactions/hooks'
-import { stringToColour } from '../../utils/stringToColour'
 import Loader from '../Loader'
-
-import AlgebraLogo from '../../assets/images/algebra-logo.png'
-import USDCLogo from '../../assets/images/usdc-logo.png'
-import WMATICLogo from '../../assets/images/matic-logo.png'
 import CurrencyLogo from '../CurrencyLogo'
-import { darken } from 'polished'
-
-const skeletonAnimation = keyframes`
-  100% {
-    transform: translateX(100%);
-  }
-`
-
-const skeletonGradient = css`
-  position: relative;
-  overflow: hidden;
-  &::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      rgba(91, 105, 141, 0) 0,
-      rgba(94, 131, 225, 0.25) 25%,
-      rgba(94, 131, 225, 0.5) 60%,
-      rgba(91, 105, 141, 0)
-    );
-    animation-name: ${skeletonAnimation};
-    animation-duration: 1.5s;
-    animation-iteration-count: infinite;
-    content: '';
-  }
-`
-const LoadingShim = styled.div`
-  display: flex;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 5;
-`
-
-const Rewards = styled.div`
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  overflow: auto;
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: #1474bf;
-  margin-bottom: 1rem;
-`
-
-const RewardsRow = styled.div`
-  display: flex;
-  margin-bottom: 8px;
-  &:first-of-type {
-    margin-bottom: 0;
-  }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-direction: column;
-  `}
-`
-
-const Reward = styled.div`
-  display: flex;
-  position: relative;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-family: Montserrat;
-  width: 33%;
-  background: #11446c;
-
-  & > * {
-    &:not(${LoadingShim}) {
-      opacity: ${({ refreshing }) => (refreshing ? '0.5' : '1')};
-    }
-  }
-
-  &:not(:nth-of-type(3n)) {
-    margin-right: 8px;
-  }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-     width: 100%;
-     margin-bottom: 20px;
-     &:not(:nth-of-type(3n)) {
-      margin-right: 0;
-    }
-  `}
-
-  ${({ skeleton }) =>
-    skeleton &&
-    css`
-      background-color: #89c4ef;
-      border: none;
-    `}
-`
-
-const RewardTokenIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  margin-right: 1rem;
-  width: 35px;
-  height: 35px;
-  background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
-  border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
-  color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
-
-  background: ${({ logo }) => (logo ? `url(${logo})` : '')};
-  background-size: contain;
-
-  ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
-`
-const RewardTokenInfo = styled.div`
-  & > * {
-    font-family: Montserrat;
-    font-size: 15px;
-    ${({ skeleton }) =>
-      skeleton
-        ? css`
-            width: 40px;
-            height: 16px;
-            background: #5aa7df;
-            margin-bottom: 3px;
-            border-radius: 4px;
-            ${skeletonGradient}
-          `
-        : null}
-  }
-`
-
-const RewardClaimButton = styled.button`
-  border: none;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.winterMainButton};
-  color: white;
-  margin: 0 0 0 auto;
-  padding: 8px 12px;
-  cursor: pointer;
-  min-width: 60px;
-  font-weight: 600;
-
-  ${({ skeleton }) =>
-    skeleton
-      ? css`
-          width: 60px;
-          background-color: #5aa7df;
-          ${skeletonGradient};
-        `
-      : null}
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
-  }
-  &:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
-`
-
-const EmptyMock = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  & > * {
-    margin-bottom: 1rem;
-  }
-`
-
-const StakeCTA = styled.button`
-  border: none;
-  background-color: #060320;
-`
+import {
+    EmptyMock,
+    LoadingShim,
+    Reward,
+    RewardClaimButton,
+    Rewards,
+    RewardsRow,
+    RewardTokenIcon,
+    RewardTokenInfo
+} from './styled'
 
 export function StakerMyRewards({
-  data,
-  refreshing,
-  fetchHandler,
+    data,
+    refreshing,
+    fetchHandler
 }: {
-  data: any
-  refreshing: boolean
-  fetchHandler: () => any
+    data: any
+    refreshing: boolean
+    fetchHandler: () => any
 }) {
-  const allTransactions = useAllTransactions()
 
-  const sortedRecentTransactions = useMemo(() => {
-    const txs = Object.values(allTransactions)
-    return txs
-      .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
-      .sort((a, b) => b.addedTime - a.addedTime)
-  }, [allTransactions])
+    const allTransactions = useAllTransactions()
 
-  const confirmed = useMemo(
-    () => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
-    [sortedRecentTransactions, allTransactions]
-  )
+    const formattedData = useMemo(() => data?.filter((el) => Boolean(+el.trueAmount)), [data])
 
-  const { claimRewardHash, claimRewardsHandler } = useStakerHandlers() || {}
+    const sortedRecentTransactions = useMemo(() => {
+        const txs = Object.values(allTransactions)
+        return txs
+            .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
+            .sort((a, b) => b.addedTime - a.addedTime)
+    }, [allTransactions])
 
-  const [rewardsLoader, setRewardsLoader] = useState({ id: null, state: false })
+    const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
+        [sortedRecentTransactions, allTransactions]
+    )
 
-  const isLoading = (id) => rewardsLoader.id === id && rewardsLoader.state
+    const { claimRewardHash, claimReward } = useStakerHandlers() || {}
 
-  useEffect(() => {
-    fetchHandler()
-  }, [])
+    const [rewardsLoader, setRewardsLoader] = useState({ id: null, state: false })
 
-  useEffect(() => {
-    if (!data) return
+    const isLoading = (id) => rewardsLoader.id === id && rewardsLoader.state
 
-    if (claimRewardHash && claimRewardHash.error) {
-      setRewardsLoader({ id: claimRewardHash.id, state: false })
-    } else if (claimRewardHash && confirmed.includes(claimRewardHash.hash)) {
-      setRewardsLoader({ id: claimRewardHash.id, state: false })
-      data.find((el) => el.rewardAddress === claimRewardHash.id).amount = 0
-      data.find((el) => el.rewardAddress === claimRewardHash.id).trueAmount = 0
+    useEffect(() => {
+        fetchHandler()
+    }, [])
+
+    useEffect(() => {
+        if (!formattedData) return
+
+        if (claimRewardHash && claimRewardHash.error) {
+            setRewardsLoader({ id: claimRewardHash.id, state: false })
+        } else if (claimRewardHash && confirmed.includes(claimRewardHash.hash)) {
+            setRewardsLoader({ id: claimRewardHash.id, state: false })
+            formattedData.find((el) => el.rewardAddress === claimRewardHash.id).amount = 0
+            formattedData.find((el) => el.rewardAddress === claimRewardHash.id).trueAmount = 0
+        }
+    }, [claimRewardHash, confirmed])
+
+    const chunkedRewards = useMemo(() => {
+        if (!formattedData) return
+
+        if (!Array.isArray(formattedData) || formattedData.length === 0) return []
+
+        const _rewards = [[formattedData[0]]]
+
+        let j = 0
+
+        for (let i = 1; i < formattedData.length; i++) {
+            if (i % 3 === 0) {
+                j++
+                _rewards.push([])
+            }
+            _rewards[j].push(formattedData[i])
+        }
+
+        return _rewards
+    }, [formattedData])
+
+    function formatReward(earned) {
+        if (earned === 0) {
+            return '0'
+        }
+        const _earned = String(earned).split('.')
+        return `${_earned[0].length > 8 ? `${_earned[0].slice(0, 8)}..` : _earned[0]}${
+            !_earned[1].split('').every((el) => el === '0') ? `.${_earned[1].slice(0, 2)}` : ``
+        }`
     }
-  }, [claimRewardHash, confirmed])
 
-  const chunkedRewards = useMemo(() => {
-    if (!data) return
-
-    if (!Array.isArray(data) || data.length === 0) return []
-
-    const _rewards = [[data[0]]]
-
-    let j = 0
-
-    for (let i = 1; i < data.length; i++) {
-      if (i % 3 === 0) {
-        j++
-        _rewards.push([])
-      }
-      _rewards[j].push(data[i])
-    }
-
-    return _rewards
-  }, [data])
-
-  function formatReward(earned) {
-    if (earned === 0) {
-      return '0'
-    }
-    const _earned = String(earned).split('.')
-    return `${_earned[0].length > 8 ? `${_earned[0].slice(0, 8)}..` : _earned[0]}${
-      !_earned[1].split('').every((el) => el === '0') ? `.${_earned[1].slice(0, 2)}` : ``
-    }`
-  }
-
-  return (
-    <>
-      {!data ? (
-        <Rewards>
-          <RewardsRow>
-            {[0, 1, 2].map((el, i) => (
-              <Reward skeleton key={i}>
-                <RewardTokenIcon skeleton></RewardTokenIcon>
-                <RewardTokenInfo skeleton>
-                  <div> </div>
-                  <div> </div>
-                </RewardTokenInfo>
-                <RewardClaimButton skeleton></RewardClaimButton>
-              </Reward>
-            ))}
-          </RewardsRow>
-          <RewardsRow>
-            {[0, 1].map((el, i) => (
-              <Reward skeleton key={i}>
-                <RewardTokenIcon skeleton></RewardTokenIcon>
-                <RewardTokenInfo skeleton>
-                  <div> </div>
-                  <div> </div>
-                </RewardTokenInfo>
-                <RewardClaimButton skeleton></RewardClaimButton>
-              </Reward>
-            ))}
-          </RewardsRow>
-        </Rewards>
-      ) : chunkedRewards.length !== 0 ? (
-        <Rewards>
-          {chunkedRewards.map((el, i) => (
-            <RewardsRow key={i}>
-              {el.map((rew, j) => (
-                <Reward refreshing={refreshing} key={j}>
-                  {refreshing && (
-                    <LoadingShim>
-                      <Loader style={{ margin: 'auto' }} size={'18px'} stroke={'white'} />
-                    </LoadingShim>
-                  )}
-                  <CurrencyLogo
-                    currency={{ address: rew.rewardAddress, symbol: rew.symbol }}
-                    size={'35px'}
-                    style={{ marginRight: '10px' }}
-                  />
-                  <RewardTokenInfo>
-                    <div title={rew.amount}>{formatReward(rew.amount)}</div>
-                    <div title={rew.symbol}>{rew.symbol}</div>
-                  </RewardTokenInfo>
-                  {isLoading(rew.rewardAddress) ? (
-                    <RewardClaimButton>
+    return (
+        <>
+            {!formattedData ? (
+                <Rewards>
+                    <RewardsRow>
+                        {[0, 1, 2].map((el, i) => (
+                            <Reward skeleton key={i}>
+                                <RewardTokenIcon skeleton/>
+                                <RewardTokenInfo skeleton>
+                                    <div/>
+                                    <div/>
+                                </RewardTokenInfo>
+                                <RewardClaimButton skeleton/>
+                            </Reward>
+                        ))}
+                    </RewardsRow>
+                </Rewards>
+            ) : chunkedRewards?.length !== 0 ? (
+                <Rewards>
+                    {chunkedRewards?.map((el, i) => (
+                        <RewardsRow key={i}>
+                            {el.map((rew, j) => (
+                                <Reward refreshing={refreshing} key={j}>
+                                    {refreshing && (
+                                        <LoadingShim>
+                                            <Loader style={{ margin: 'auto' }} size={'18px'}
+                                                    stroke={'white'} />
+                                        </LoadingShim>
+                                    )}
+                                    <CurrencyLogo
+                                        currency={{
+                                            address: rew.rewardAddress,
+                                            symbol: rew.symbol
+                                        }}
+                                        size={'35px'}
+                                        style={{ marginRight: '10px' }}
+                                    />
+                                    <RewardTokenInfo>
+                                        <div title={rew.amount}>{formatReward(rew.amount)}</div>
+                                        <div title={rew.symbol}>{rew.symbol}</div>
+                                    </RewardTokenInfo>
+                                    {isLoading(rew.rewardAddress) ? (
+                                        <RewardClaimButton>
                       <span>
                         <Loader style={{ margin: 'auto' }} stroke={'white'} />
                       </span>
-                    </RewardClaimButton>
-                  ) : (
-                    <RewardClaimButton
-                      disabled={rew.amount === 0}
-                      onClick={() => {
-                        setRewardsLoader({ id: rew.rewardAddress, state: true })
-                        claimRewardsHandler(rew.rewardAddress, rew.trueAmount)
-                      }}
-                    >
-                      {' '}
-                      Claim
-                    </RewardClaimButton>
-                  )}
-                </Reward>
-              ))}
-            </RewardsRow>
-          ))}
-        </Rewards>
-      ) : chunkedRewards.length === 0 ? (
-        <EmptyMock>
-          <div>No rewards</div>
-          <Frown size={35} stroke={'white'} />
-        </EmptyMock>
-      ) : null}
-    </>
-  )
+                                        </RewardClaimButton>
+                                    ) : (
+                                        <RewardClaimButton
+                                            disabled={rew.amount === 0}
+                                            onClick={() => {
+                                                setRewardsLoader({
+                                                    id: rew.rewardAddress,
+                                                    state: true
+                                                })
+                                                claimReward(rew.rewardAddress)
+                                            }}
+                                        >
+                                            {' '}
+                                            Claim
+                                        </RewardClaimButton>
+                                    )}
+                                </Reward>
+                            ))}
+                        </RewardsRow>
+                    ))}
+                </Rewards>
+            ) : null}
+        </>
+    )
 }

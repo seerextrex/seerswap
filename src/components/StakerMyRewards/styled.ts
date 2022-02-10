@@ -15,7 +15,6 @@ export const Rewards = styled.div`
   display: flex;
   flex-direction: column;
   max-height: 450px;
-  min-height: 450px;
   border-radius: 8px;
   overflow: auto;
 `
@@ -125,7 +124,6 @@ export const EmptyMock = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 400px;
 
   & > * {
     margin-bottom: 1rem;

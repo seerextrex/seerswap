@@ -2,6 +2,7 @@ import { Plus } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { getCountdownTime } from '../../utils/time'
+import { getProgress } from '../../utils/getProgress'
 import Loader from '../Loader'
 import CurrencyLogo from '../CurrencyLogo'
 import {
@@ -22,28 +23,25 @@ import {
     TokenIcon,
     TokensIcons
 } from './styled'
-import { getProgress } from '../../utils/getProgress'
-
 
 interface StakerEventCardProps {
-    active?: boolean;
-    skeleton?: any;
-    now?: number;
-    refreshing?: boolean;
-    stakeHandler?: () => void;
+    active: boolean
+    skeleton?: any
+    now?: number
+    refreshing?: boolean
+    stakeHandler?: () => void
     event?: {
-        pool?: any;
-        createdAtTimestamp?: string;
-        rewardToken?: any;
-        bonusRewardToken?: any;
-        reward?: number;
-        bonusReward?: number;
-        startTime?: number;
-        endTime?: number;
+        pool?: any
+        createdAtTimestamp?: string
+        rewardToken?: any
+        bonusRewardToken?: any
+        reward?: number
+        bonusReward?: number
+        startTime?: number
+        endTime?: number
     };
-    eternal?: boolean;
+    eternal?: boolean
 }
-
 
 export function StakerEventCard({
     active,
@@ -64,7 +62,6 @@ export function StakerEventCard({
     eternal
 }: StakerEventCardProps) {
     const { account } = useActiveWeb3React()
-
     const toggleWalletModal = useWalletModalToggle()
 
     return skeleton ? (
@@ -191,7 +188,7 @@ export function StakerEventCard({
                         padding: '3px'
                     }}
                 >
-                    <Plus style={{ display: 'block' }} size={18}/>
+                    <Plus style={{ display: 'block' }} size={18} />
                 </div>
             </div>
             {bonusReward > 0 && (
@@ -275,7 +272,8 @@ export function StakerEventCard({
                 <EventProgress>
                     {active ?
                         <EventProgressInner progress={getProgress(startTime, endTime, now)} /> :
-                        <EventProgressInner progress={getProgress(Number(createdAtTimestamp), startTime, now)} />
+                        <EventProgressInner
+                            progress={getProgress(Number(createdAtTimestamp), startTime, now)} />
                     }
                 </EventProgress>
             )}

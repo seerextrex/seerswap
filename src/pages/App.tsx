@@ -121,7 +121,7 @@ export default function App() {
                         <Popups />
                         <Polling />
                         <GasPrice />
-                        <React.Suspense fallback={<p>Loadung....</p>}>
+                        <React.Suspense fallback={<p>Loading....</p>}>
                             <Switch>
                                 <Route strict path='/farming' component={StakingPage} />
 

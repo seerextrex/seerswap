@@ -92,17 +92,17 @@ export function FarmingEventsPage({
           <EventsCards>
             <EventsCardsRow>
               {[0, 1, 2].map((el, i) => (
-                <StakerEventCard active skeleton key={i}></StakerEventCard>
+                <StakerEventCard active skeleton key={i}/>
               ))}
             </EventsCardsRow>
             <EventsCardsRow>
               {[0, 1].map((el, i) => (
-                <StakerEventCard active skeleton key={i}></StakerEventCard>
+                <StakerEventCard active skeleton key={i}/>
               ))}
             </EventsCardsRow>
           </EventsCards>
         ) : data && data.length !== 0 ? (
-          chunked.map((el, i) => (
+          chunked?.map((el, i) => (
             <EventsCardsRow key={i}>
               {el.map(
                 (event, j) =>

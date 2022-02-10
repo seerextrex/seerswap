@@ -33,16 +33,16 @@ export default function CurrencyLogo({
 
     if (!currency) return <div />
 
-    if (currency?.address?.toLowerCase() in specialTokens) {
-        return <StyledImgLogo src={specialTokens[currency?.address.toLowerCase()].logo} size={size}
+    if (currency.address?.toLowerCase() in specialTokens) {
+        return <StyledImgLogo src={specialTokens[currency.address.toLowerCase()].logo} size={size}
                               style={style} {...rest} />
     }
 
-    if (currency?.wrapped?.address.toLowerCase() === '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'.toLowerCase()) {
+    if (currency.wrapped?.address.toLowerCase() === '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'.toLowerCase()) {
         return <StyledImgLogo src={AlgebraLogo} size={size} style={style} {...rest} />
     }
 
-    if (currency?.isNative) {
+    if (currency.isNative) {
         return <StyledImgLogo src={logo} size={size} style={style} {...rest} />
     }
 
@@ -51,15 +51,15 @@ export default function CurrencyLogo({
             size={size}
             style={{
                 ...style,
-                background: stringToColour(currency?.symbol).background,
-                color: stringToColour(currency?.symbol).text,
-                border: stringToColour(currency?.symbol).border,
+                background: stringToColour(currency.symbol).background,
+                color: stringToColour(currency.symbol).text,
+                border: stringToColour(currency.symbol).border,
 
                 fontSize: size === '18px' ? '8px' : size === '24px' ? '12px' : '14px'
             }}
             {...rest}
         >
-            {currency?.symbol?.slice(0, 2)}
+            {currency.symbol?.slice(0, 2)}
         </StyledLogo>
     )
 }

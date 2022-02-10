@@ -37,7 +37,7 @@ export const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean; xlPa
   right: 1rem;
   max-width: 355px !important;
   width: 100%;
-  z-index: 3;
+  z-index: 1000000;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;

@@ -114,6 +114,10 @@ export const StakeButton = styled.button`
     padding: 1rem;
     color: white;
     border-radius: 8px;
+    width: 100%;
+    &:first-of-type {
+        margin-right: 1rem;
+    }
 
     &:hover {
         background: ${({ theme }) => darken(0.05, theme.winterMainButton)};

@@ -282,7 +282,7 @@ export const FROZEN_STAKED = (account: string) => gql`
 }
 `
 
-export const TRANSFERED_POSITIONS = (account, chainId) => gql`
+export const TRANSFERED_POSITIONS = (account: string) => gql`
     query transferedPositions {
         deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", onFarmingCenter: true}) {
             id
@@ -297,7 +297,7 @@ export const TRANSFERED_POSITIONS = (account, chainId) => gql`
 }
 `
 
-export const POSITIONS_ON_ETERNAL_FARMING = (account) => gql`
+export const POSITIONS_ON_ETERNAL_FARMING = (account: string) => gql`
   query positionsOnEternalFarming {
     deposits (orderBy: id, orderDirection: desc, where: { owner: "${account}", onFarmingCenter: true, eternalFarming_not: null }) {
       id

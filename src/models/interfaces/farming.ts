@@ -83,3 +83,13 @@ export interface UnstakingInterface {
     id: string | null
     state: string | null
 }
+
+export interface FormattedRewardInterface {
+    amount: number
+    id: string
+    name: string
+    owner: string
+    rewardAddress: string
+    symbol: string
+    trueAmount: string
+}

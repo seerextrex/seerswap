@@ -38,5 +38,6 @@ export type {
     StakeDefault,
     ApprovedNFT,
     RewardInterface,
-    UnstakingInterface
+    UnstakingInterface,
+    FormattedRewardInterface
 } from './farming'

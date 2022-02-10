@@ -75,7 +75,6 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
     const confirmed = useMemo(() => sortedRecentTransactions
         .filter((tx) => tx.receipt)
         .map((tx) => tx.hash), [sortedRecentTransactions, allTransactions])
-
     const stakedNFTs = useMemo(() => {
         if (!shallowPositions) return
         const _positions = shallowPositions.filter((v) => v.onFarmingCenter)

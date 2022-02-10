@@ -212,7 +212,7 @@ export function StakeModal({
             {submitState === 3 ? (
                 <ModalWrapper>
                     <ModalHeader>
-                        <div></div>
+                        <div/>
                         <CloseModalButton onClick={closeHandler}>
                             <X size={18} stroke={'#080064'} />
                         </CloseModalButton>
@@ -261,7 +261,7 @@ export function StakeModal({
                                                 }
                                             }}
                                         >
-                                            <NFTPositionIcon name={el.id}></NFTPositionIcon>
+                                            <NFTPositionIcon name={el.id}/>
                                             <NFTPositionDescription>
                                                 <NFTPositionIndex>{`#${+el.id}`}</NFTPositionIndex>
                                                 <NFTPositionLink
@@ -291,12 +291,12 @@ export function StakeModal({
                             <NFTPositionsRow>
                                 {[0, 1, 2].map((el, i) => (
                                     <NFTPosition key={i} skeleton>
-                                        <NFTPositionIcon skeleton></NFTPositionIcon>
+                                        <NFTPositionIcon skeleton/>
                                         <NFTPositionDescription skeleton>
-                                            <NFTPositionIndex skeleton></NFTPositionIndex>
-                                            <NFTPositionLink skeleton></NFTPositionLink>
+                                            <NFTPositionIndex skeleton/>
+                                            <NFTPositionLink skeleton/>
                                         </NFTPositionDescription>
-                                        <NFTPositionSelectCircle></NFTPositionSelectCircle>
+                                        <NFTPositionSelectCircle/>
                                     </NFTPosition>
                                 ))}
                             </NFTPositionsRow>

@@ -55,7 +55,9 @@ export function useStakerHandlers() {
             eternalEndTime,
             eternalBonusEarned,
             eternalEarned,
-            incentive
+            incentive,
+            incentiveBonusEarned,
+            incentiveEarned
         },
         farmingType) => {
 
@@ -96,11 +98,11 @@ export function useStakerHandlers() {
                     farmingCenterInterface.encodeFunctionData('exitFarming', [[incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime], +token])
                 ]
 
-                if (Boolean(+incentiveRewardToken)) {
+                if (Boolean(+incentiveEarned)) {
                     callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [incentiveRewardToken.id, account, MaxUint128, 0]))
                 }
 
-                if (Boolean(+incentiveBonusRewardToken)) {
+                if (Boolean(+incentiveBonusEarned)) {
                     callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [incentiveBonusRewardToken.id, account, MaxUint128, 0]))
                 }
 

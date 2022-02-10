@@ -1,5 +1,5 @@
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom'
 import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
 import { AlignJustify } from 'react-feather'
@@ -27,12 +27,10 @@ export default function StakingPage() {
     const { account } = useActiveWeb3React()
 
     const {
-        fetchRewards,
+        fetchRewards: {rewardsResult, fetchRewardsFn, rewardsLoading},
         fetchAllEvents,
-        fetchFutureEvents,
         fetchTransferredPositions,
         fetchEternalFarms,
-        fetchPositionsOnEternalFarmings
     } = useIncentiveSubgraph() || {}
 
     const [now, setNow] = useState(Date.now())
@@ -47,6 +45,12 @@ export default function StakingPage() {
     const { path } = useRouteMatch()
 
     const toggleWalletModal = useWalletModalToggle()
+
+    const formattedData = useMemo(() => {
+        if (typeof rewardsResult === 'string') return []
+
+        return rewardsResult.filter((el) => Boolean(+el.trueAmount))
+    }, [rewardsResult])
 
     return (
         <>
@@ -80,9 +84,9 @@ export default function StakingPage() {
                                         {account ? (
                                             <>
                                                 <StakerMyRewards
-                                                    data={fetchRewards?.rewardsResult}
-                                                    refreshing={fetchRewards?.rewardsLoading}
-                                                    fetchHandler={() => fetchRewards?.fetchRewardsFn(true)}
+                                                    data={formattedData}
+                                                    refreshing={rewardsLoading}
+                                                    fetchHandler={() => fetchRewardsFn(true)}
                                                 />
                                                 <StakerMyStakes
                                                     data={fetchTransferredPositions?.transferredPositions}

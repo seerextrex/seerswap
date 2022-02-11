@@ -1,7 +1,7 @@
 import { Plus } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { getCountdownTime } from '../../utils/time'
+import { convertDateTime, getCountdownTime } from '../../utils/time'
 import { getProgress } from '../../utils/getProgress'
 import Loader from '../Loader'
 import CurrencyLogo from '../CurrencyLogo'
@@ -23,6 +23,8 @@ import {
     TokenIcon,
     TokensIcons
 } from './styled'
+import { useMemo } from 'react'
+import { convertLocalDate } from '../../utils/convertDate'
 
 interface StakerEventCardProps {
     active: boolean
@@ -63,6 +65,22 @@ export function StakerEventCard({
 }: StakerEventCardProps) {
     const { account } = useActiveWeb3React()
     const toggleWalletModal = useWalletModalToggle()
+
+    const _startTime = useMemo(() => {
+        if (!startTime) return []
+
+        const date = new Date(+startTime * 1000)
+
+        return [convertLocalDate(date), convertDateTime(date)]
+    }, [startTime])
+
+    const _endTime = useMemo(() => {
+        if (!endTime) return []
+
+        const date = new Date(+endTime * 1000)
+
+        return [convertLocalDate(date), convertDateTime(date)]
+    }, [endTime])
 
     return skeleton ? (
         <Card skeleton>
@@ -220,42 +238,24 @@ export function StakerEventCard({
             )}
             {!eternal && (
                 <StakeInfo active>
-                    <div>
-                        <>
-                            <Subtitle>Start</Subtitle>
-                            <div>
-                                <span>
-                                    {startTime &&
-                                        new Date(startTime * 1000).toLocaleString().split(',')[0]}
-                                </span>
-                            </div>
-                            <div>
-                                <span>
-                                    {startTime &&
-                                        `${new Date(startTime * 1000)
-                                            .toLocaleString()
-                                            .split(',')[1]
-                                            .slice(0, -3)}`}
-                                </span>
-                            </div>
-                        </>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Subtitle>Start</Subtitle>
+                        <span>
+                            {startTime && _startTime[0]}
+                        </span>
+                        <span>
+                    {startTime && _startTime[1]}
+                        </span>
                     </div>
-
-                    <div>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <Subtitle>End</Subtitle>
-                        <div>
-                            <span>
-                                {endTime && new Date(endTime * 1000).toLocaleString().split(',')[0]}
-                            </span>
-                        </div>
-                        <div>
-                            {endTime && (
-                                <span>{`${new Date(endTime * 1000)
-                                    .toLocaleString()
-                                    .split(',')[1]
-                                    .slice(0, -3)}`}</span>
-                            )}
-                        </div>
+                        <span>
+                            {endTime && _endTime[0]}
+
+                        </span>
+                        <span>
+                          {endTime && _endTime[1]}
+                        </span>
                     </div>
                 </StakeInfo>
             )}

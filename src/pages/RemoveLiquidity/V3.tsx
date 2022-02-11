@@ -38,6 +38,8 @@ import usePrevious from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
 import { useAppSelector } from '../../state/hooks'
+import { useActiveWeb3React } from '../../hooks/web3'
+import useTheme from '../../hooks/useTheme'
 
 const DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
@@ -82,6 +84,9 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
     // burn state
     const { percent } = useBurnV3State()
+
+    const {account, chainId, library} = useActiveWeb3React()
+    const theme = useTheme()
 
     const derivedInfo = useDerivedV3BurnInfo(position, receiveWETH)
     const prevDerivedInfo = usePrevious({ ...derivedInfo })

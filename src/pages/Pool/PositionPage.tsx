@@ -384,7 +384,7 @@ export default function PositionPage({
                                             width='fit-content'
                                             padding='6px 8px'
                                             $borderRadius='12px'
-                                            style={{ color: 'white' }}
+                                            style={{ color: 'white', marginRight: 8 }}
                                         >
                                             <Trans>Increase Liquidity</Trans>
                                         </ResponsiveButtonPrimary>
@@ -395,7 +395,7 @@ export default function PositionPage({
                                             to={`/remove/${tokenId}`}
                                             width='fit-content'
                                             padding='6px 8px'
-                                            style={{ color: 'white' }}
+                                            style={{ color: 'white', marginRight: 8 }}
                                             $borderRadius='12px'
                                         >
                                             <Trans>Remove Liquidity</Trans>

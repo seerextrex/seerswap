@@ -11,3 +11,13 @@ export function getCountdownTime(time: number, now: number) {
 
     return `${days > 0 ? `${days}d ` : ''}${format(hours)}:${format(minutes)}:${format(seconds)}`
 }
+
+export function convertDateTime (date: Date) {
+    const h = date.getHours().toString()
+    const m = date.getMinutes().toString()
+
+    const hChars = h.split('')
+    const mChars = m.split('')
+
+    return  (hChars[1] ? h : '0' + hChars[0]) + ':' + (mChars[1] ? m : '0' + mChars[0])
+}

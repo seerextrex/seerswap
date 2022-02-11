@@ -20,22 +20,20 @@ export const EventsCards = styled.div`
     width: 100%;
 `
 export const EventsCardsRow = styled.div`
-    display: flex;
+    display: grid;
     width: 100%;
     margin-bottom: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 1rem;
+    row-gap: 1rem;
 
-    & > * {
-        &:not(:last-of-type) {
-            margin-right: 1rem;
-        }
-    }
 
-    ${({ theme }) => theme.mediaWidth.upToSmall`{
-    flex-direction: column;
-    margin-bottom: unset;
-    display: none;
-    &:first-of-type {
-      display: flex;
-    }
-  }`}
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+     grid-template-columns: repeat(2, 1fr);
+
+  `}
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+     grid-template-columns: repeat(1, 1fr);
+  `}
 `

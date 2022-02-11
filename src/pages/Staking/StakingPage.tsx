@@ -12,6 +12,7 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { Helmet } from 'react-helmet'
 import EternalFarmsPage from '../EternalFarmsPage'
 import EventsHistory from '../EventsHistory'
+import { StakerMyRewards } from '../../components/StakerMyRewards'
 import {
     BodyWrapper,
     ConnectWalletButton,
@@ -21,19 +22,26 @@ import {
     MockScreen,
     PageWrapper
 } from './styled'
-import { StakerMyRewards } from '../../components/StakerMyRewards'
 
 export default function StakingPage() {
     const { account } = useActiveWeb3React()
+    const { path } = useRouteMatch()
+    const toggleWalletModal = useWalletModalToggle()
 
     const {
         fetchRewards: {rewardsResult, fetchRewardsFn, rewardsLoading},
-        fetchAllEvents,
-        fetchTransferredPositions,
-        fetchEternalFarms,
+        fetchAllEvents: {fetchAllEventsFn, allEvents, allEventsLoading},
+        fetchTransferredPositions: {fetchTransferredPositionsFn, transferredPositions, transferredPositionsLoading},
+        fetchEternalFarms: {fetchEternalFarmsFn, eternalFarms, eternalFarmsLoading}
     } = useIncentiveSubgraph() || {}
 
     const [now, setNow] = useState(Date.now())
+
+    const formattedData = useMemo(() => {
+        if (typeof rewardsResult === 'string') return []
+
+        return rewardsResult.filter((el) => Boolean(+el.trueAmount))
+    }, [rewardsResult])
 
     useEffect(() => {
         const timeNow = setInterval(() => setNow(Date.now()), 1000)
@@ -42,15 +50,7 @@ export default function StakingPage() {
         }
     }, [])
 
-    const { path } = useRouteMatch()
-
-    const toggleWalletModal = useWalletModalToggle()
-
-    const formattedData = useMemo(() => {
-        if (typeof rewardsResult === 'string') return []
-
-        return rewardsResult.filter((el) => Boolean(+el.trueAmount))
-    }, [rewardsResult])
+    // useEffect(() => console.log(transferredPositions), [transferredPositions])
 
     return (
         <>
@@ -77,9 +77,9 @@ export default function StakingPage() {
                                         <PageTitle
                                             title={'My farms'}
                                             refreshHandler={() =>
-                                                account ? fetchTransferredPositions?.fetchTransferredPositionsFn(true) : undefined
+                                                account ? fetchTransferredPositionsFn(true) : undefined
                                             }
-                                            isLoading={fetchTransferredPositions?.transferredPositionsLoading}
+                                            isLoading={transferredPositionsLoading}
                                         />
                                         {account ? (
                                             <>
@@ -89,12 +89,9 @@ export default function StakingPage() {
                                                     fetchHandler={() => fetchRewardsFn(true)}
                                                 />
                                                 <StakerMyStakes
-                                                    data={fetchTransferredPositions?.transferredPositions}
-                                                    refreshing={fetchTransferredPositions?.transferredPositionsLoading}
-                                                    fetchHandler={() => {
-                                                        fetchTransferredPositions?.fetchTransferredPositionsFn(true)
-                                                        // fetchPositionsOnEternalFarmings?.fetchPositionsOnEternalFarmingFn(true)
-                                                    }}
+                                                    data={transferredPositions}
+                                                    refreshing={transferredPositionsLoading}
+                                                    fetchHandler={() => {fetchTransferredPositionsFn(true)}}
                                                     now={now}
                                                 />
                                             </>
@@ -113,13 +110,13 @@ export default function StakingPage() {
                                         </Helmet>
                                         <PageTitle
                                             title={'Farming events'}
-                                            refreshHandler={() => fetchAllEvents?.fetchAllEventsFn(true)}
-                                            isLoading={fetchAllEvents?.allEventsLoading}
+                                            refreshHandler={() => fetchAllEventsFn(true)}
+                                            isLoading={allEventsLoading}
                                         />
                                         <FarmingEventsPage
-                                            data={fetchAllEvents?.allEvents}
-                                            refreshing={fetchAllEvents?.allEventsLoading}
-                                            fetchHandler={() => fetchAllEvents?.fetchAllEventsFn(true)}
+                                            data={allEvents}
+                                            refreshing={allEventsLoading}
+                                            fetchHandler={() => fetchAllEventsFn(true)}
                                             now={now}
                                         />
                                     </Route>
@@ -129,13 +126,13 @@ export default function StakingPage() {
                                         </Helmet>
                                         <PageTitle
                                             title={'Infinite farms'}
-                                            refreshHandler={() => fetchEternalFarms?.fetchEternalFarmsFn(true)}
-                                            isLoading={fetchEternalFarms?.eternalFarmsLoading}
+                                            refreshHandler={() => fetchEternalFarmsFn(true)}
+                                            isLoading={eternalFarmsLoading}
                                         />
                                         <EternalFarmsPage
-                                            data={fetchEternalFarms?.eternalFarms}
-                                            refreshing={fetchEternalFarms?.eternalFarmsLoading}
-                                            fetchHandler={() => fetchEternalFarms.fetchEternalFarmsFn(true)}
+                                            data={eternalFarms}
+                                            refreshing={eternalFarmsLoading}
+                                            fetchHandler={() => fetchEternalFarmsFn(true)}
                                         />
                                     </Route>
                                     <Route exact strict path={`${path}/events-history`}>

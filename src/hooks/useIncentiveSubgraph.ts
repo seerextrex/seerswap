@@ -2,16 +2,11 @@ import { useState } from 'react'
 import { useActiveWeb3React } from './web3'
 import { CHAIN_SUBGRAPH_URL } from '../state/data/slice'
 import { Contract, providers } from 'ethers'
-import ERC20_ABI from 'abis/erc20'
-import NON_FUN_POS_MAN from 'abis/non-fun-pos-man'
-import FARMING_CENTER_ABI from 'abis/farming-center'
-import FINITE_FARMING_ABI from 'abis/finite-farming'
-import {
-    FARMING_CENTER,
-    FINITE_FARMING,
-    NONFUNGIBLE_POSITION_MANAGER_ADDRESSES
-} from '../constants/addresses'
-// import BigNumber from 'bignumber.js'
+import ERC20_ABI from 'abis/erc20.json'
+import NON_FUN_POS_MAN from 'abis/non-fun-pos-man.json'
+import FARMING_CENTER_ABI from 'abis/farming-center.json'
+import FINITE_FARMING_ABI from 'abis/finite-farming.json'
+import { FARMING_CENTER, FINITE_FARMING, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants/addresses'
 import { BigNumber } from '@ethersproject/bignumber'
 import {
     CURRENT_EVENTS,
@@ -68,8 +63,7 @@ export function useIncentiveSubgraph() {
         const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
 
         try {
-            const res = await fetch(apiURL).then(v => v.json())
-            return res
+            return await fetch(apiURL).then(v => v.json())
 
         } catch (error: any) {
             return {}
@@ -169,7 +163,9 @@ export function useIncentiveSubgraph() {
 
 
         } catch (err) {
-            throw new Error('Fetch infinite farming ' + err.code + err.message)
+            if (err instanceof Error) {
+                throw new Error('Fetch infinite farming ' + err.message)
+            }
         }
     }
 
@@ -270,31 +266,30 @@ export function useIncentiveSubgraph() {
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            const {
-                data: { incentives: futureEvents },
-                error: _error
-            } = await farmingClient.query({
+            const { data: { incentives: futureEvents }, error: _error } = await farmingClient.query({
                 query: FUTURE_EVENTS(),
                 fetchPolicy: reload ? 'network-only' : 'cache-first'
             })
 
             if (_error) throw new Error(`${error.name} ${error.message}`)
 
-            const allEvents = [
-                ...currentEvents.map(el => ({
-                    ...el,
-                    active: true
-                })),
-                ...futureEvents
-            ]
-
-            if (allEvents.length === 0) {
-                setAllEvents([])
+            if (currentEvents.length === 0 && futureEvents.length === 0 ) {
+                setAllEvents({
+                    currentEvents: [],
+                    futureEvents: []
+                })
                 setAllEventsLoading(false)
                 return
             }
 
-            setAllEvents(await getEvents(allEvents.filter(el => el.id !== '0x5091ad63349a004342a9c834b950a4713dd9a10755a291e9f6713e234a97e7e6')))
+
+            setAllEvents({
+                currentEvents: await getEvents(currentEvents.map(el => ({
+                    ...el,
+                    active: true
+                }))),
+                futureEvents: await getEvents((futureEvents))
+            })
             setAllEventsLoading(false)
 
         } catch (err) {

@@ -19,7 +19,6 @@ export const Card = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
   padding: 1rem;
   border-radius: 1rem;
   background: rgba(60, 97, 126, 0.5);
-  width: calc(33% - 8px);
 
   ${({ refreshing }) =>
     refreshing
@@ -155,7 +154,8 @@ export const RewardSymbol = styled.div<{ skeleton?: boolean }>`
 export const StakeInfo = styled.div<{ active: boolean }>`
   display: flex;
   margin-bottom: ${({ active }) => (active ? '10px' : '1rem')};
-  justify-content: space-between;
+  justify-content: center;
+    column-gap: calc(100% - 10rem);
 `
 export const StakeDate = styled.div<{ skeleton?: boolean }>`
   ${({ skeleton }) =>

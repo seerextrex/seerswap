@@ -167,6 +167,11 @@ export const PositionCardEventTitle = styled.div`
     display: flex;
     justify-content: space-between;
 `
+export const TimeWrapper = styled.span`
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+`
 
 export const PositionCardStats = styled.div`
     display: flex;

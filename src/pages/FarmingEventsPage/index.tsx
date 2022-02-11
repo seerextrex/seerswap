@@ -1,15 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Frown } from 'react-feather'
 import { StakerEventCard } from '../../components/StakerEventCard'
-import { useChunkedRows } from '../../utils/chunkForRows'
 import { StakeModal } from '../../components/StakeModal'
 import { FarmingType } from '../../hooks/useStakerHandlers'
 import Modal from '../../components/Modal'
 import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
-
-function isActive(endTime: number, now: number) {
-    return endTime * 1000 > now
-}
+import Loader from '../../components/Loader'
 
 export function FarmingEventsPage({
     data,
@@ -17,19 +13,22 @@ export function FarmingEventsPage({
     refreshing,
     fetchHandler
 }: {
-    data: any
+    data: { currentEvents: any[]; futureEvents: any[] }
     now: number
     refreshing: boolean
     fetchHandler: () => any
 }) {
+    const [modalForPool, setModalForPool] = useState(null)
+
+    const formattedData = useMemo(() => {
+        if (!data || typeof data === 'string') return []
+
+        return [...data?.futureEvents, ...data?.currentEvents]
+    }, [data])
+
     useEffect(() => {
         fetchHandler()
     }, [])
-
-    // const changeActive = useMemo(() => data.some(el => isActive()), [data])
-
-    const [modalForPool, setModalForPool] = useState(null)
-    const chunked = useChunkedRows(data, 3)
 
     return (
         <PageWrapper>
@@ -46,39 +45,36 @@ export function FarmingEventsPage({
                 )}
             </Modal>
             <EventsCards>
-                {!data ? (
-                    <EventsCards>
-                        <EventsCardsRow>
-                            {[0, 1, 2].map((el, i) => (
-                                <StakerEventCard active skeleton key={i} />
-                            ))}
-                        </EventsCardsRow>
-                        <EventsCardsRow>
-                            {[0, 1].map((el, i) => (
-                                <StakerEventCard active skeleton key={i} />
-                            ))}
-                        </EventsCardsRow>
-                    </EventsCards>
-                ) : data && data.length !== 0 ? (
-                    chunked?.map((el, i) => (
-                        <EventsCardsRow key={i}>
-                            {el.map(
-                                (event, j) => {
-                                   return <StakerEventCard refreshing={refreshing} active={event.active}
-                                                     key={j} now={now} event={event}
-                                                     stakeHandler={() => {
-                                                         setModalForPool(event)
-                                                     }} />
-                                }
-                            )}
-                        </EventsCardsRow>
-                    ))
-                ) : data && data.length === 0 ? (
+                {refreshing ? (
                     <EmptyMock>
-                        <div>No farming events</div>
-                        <Frown size={35} stroke={'white'} />
+                        <Loader stroke={'white'} size={'20px'}/>
                     </EmptyMock>
-                ) : null}
+                ) : formattedData.length !== 0 ?
+                    <EventsCardsRow>
+                        {formattedData.map(
+                            (event, j) => {
+
+                                const isStarted = event.startTime <= Math.round(Date.now() / 1000)
+                                const isEnded = event.endTime <= Math.round(Date.now() / 1000)
+
+                                if (isEnded) return
+
+                                const active = isStarted && !isEnded
+
+                                return <StakerEventCard refreshing={refreshing} active={active}
+                                                 key={j} now={now} event={event}
+                                                 stakeHandler={() => {
+                                                     setModalForPool(event)
+                                                 }} />
+                            }
+                        )}
+                    </EventsCardsRow>
+                    : formattedData && formattedData.length === 0 ? (
+                        <EmptyMock>
+                            <div>No farming events</div>
+                            <Frown size={35} stroke={'white'} />
+                        </EmptyMock>
+                    ) : <EmptyMock/>}
             </EventsCards>
         </PageWrapper>
     )

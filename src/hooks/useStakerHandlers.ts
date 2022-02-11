@@ -2,7 +2,7 @@ import NON_FUN_POS_MAN from 'abis/non-fun-pos-man.json'
 import FARMING_CENTER_ABI from 'abis/farming-center.json'
 import { Contract, providers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants/addresses'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useActiveWeb3React } from './web3'
@@ -11,7 +11,7 @@ import { toHex } from '../lib/src'
 import { useAppSelector } from '../state/hooks'
 import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
 import { TransactionResponse } from '@ethersproject/providers'
-import { ca } from 'make-plural/plurals'
+import { DefaultFarming, DefaultFarmingWithError, GetRewardsHashInterface } from '../models/interfaces'
 
 export enum FarmingType {
     ETERNAL = 0,
@@ -31,15 +31,14 @@ export function useStakerHandlers() {
 
     const addTransaction = useTransactionAdder()
 
-    const [approvedHash, setApproved] = useState(null)
-    const [transferedHash, setTransfered] = useState(null)
-    const [stakedHash, setStaked] = useState(null)
-    const [getRewardsHash, setGetRewards] = useState(null)
-    const [eternalCollectRewardHash, setEternalCollectReward] = useState(null)
-    const [withdrawnHash, setWithdrawn] = useState(null)
-    const [claimRewardHash, setClaimReward] = useState(null)
-    const [sendNFTL2Hash, setSendNFTL2] = useState(null)
-
+    const [approvedHash, setApproved] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [transferedHash, setTransfered] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [stakedHash, setStaked] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [getRewardsHash, setGetRewards] = useState<GetRewardsHashInterface | string>({ hash: null, id: null, farmingType: null })
+    const [eternalCollectRewardHash, setEternalCollectReward] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [withdrawnHash, setWithdrawn] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [claimRewardHash, setClaimReward] = useState<DefaultFarmingWithError | string>(null)
+    const [sendNFTL2Hash, setSendNFTL2] = useState<DefaultFarming | string>({ hash: null, id: null })
 
     //exit from basic farming and claim than
     const claimRewardsHandler = useCallback(async (token,
@@ -57,11 +56,14 @@ export function useStakerHandlers() {
             eternalEarned,
             incentive,
             incentiveBonusEarned,
-            incentiveEarned
+            incentiveEarned,
+            eternalFarming
         },
         farmingType) => {
 
         if (!account || !provider || !chainId) return
+
+        setClaimReward({ hash: null, id: null })
 
         const MaxUint128 = toHex(JSBI.subtract(JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)), JSBI.BigInt(1)))
 
@@ -71,7 +73,6 @@ export function useStakerHandlers() {
             provider.getSigner()
         )
 
-        setClaimReward({ hash: null, id: null })
         try {
             const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
 
@@ -106,6 +107,7 @@ export function useStakerHandlers() {
                     callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [incentiveBonusRewardToken.id, account, MaxUint128, 0]))
                 }
 
+                console.log(+incentiveEarned, +incentiveBonusEarned)
                 result = await farmingCenterContract.multicall(callDatas, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
             }
 
@@ -113,11 +115,11 @@ export function useStakerHandlers() {
                 summary: `Claiming reward`
             })
 
-            setClaimReward({ hash: result.hash, id: incentive, error: null })
+            setClaimReward({ hash: result.hash, id: token, error: null, farmingType:  farmingType === FarmingType.ETERNAL ? 0 : 1})
 
-        } catch (err) {
-            setClaimReward({ error: err })
-            if (err instanceof Error) {
+        } catch (err: any) {
+            setClaimReward('failed')
+            if (err.code !== 4001) {
                 throw new Error('Claiming rewards ' + err.message)
             }
         }
@@ -206,7 +208,7 @@ export function useStakerHandlers() {
         pool,
         incentiveStartTime,
         incentiveEndTime
-    }) => {
+    }, eventType) => {
 
         if (!account || !provider || !chainId) return
 
@@ -220,7 +222,7 @@ export function useStakerHandlers() {
                 provider.getSigner()
             )
 
-            const result = await farmingCenterContract.exitFarming(
+            const result: TransactionResponse = await farmingCenterContract.exitFarming(
                 [incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime],
                 +token,
                 {
@@ -292,7 +294,7 @@ export function useStakerHandlers() {
 
         if (!account || !provider || !chainId) return
 
-        setStaked(null)
+        setStaked({ hash: null, id: null })
 
         let current
 
@@ -348,7 +350,7 @@ export function useStakerHandlers() {
 
         if (!account || !provider || !chainId) return
 
-        setTransfered(null)
+        setTransfered({ hash: null, id: null })
 
         let current
 
@@ -393,7 +395,7 @@ export function useStakerHandlers() {
 
         if (!account || !provider || !chainId) return
 
-        setApproved(null)
+        setApproved({ hash: null, id: null })
 
         let current
 
@@ -445,7 +447,7 @@ export function useStakerHandlers() {
 
         if (!account || !provider || !chainId) return
 
-        setSendNFTL2(null)
+        setSendNFTL2({ hash: null, id: null })
 
         try {
 

@@ -165,6 +165,22 @@ export function useInfoSubgraph() {
             const parsedPools48 = parsePoolsData(pools48)
             const parsedPoolsWeek = parsePoolsData(poolsWeek)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             const aprs = await fetchPoolsAPR()
             const farmAprs = await fetchEternalFarmAPR()
 

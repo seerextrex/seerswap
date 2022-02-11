@@ -44,7 +44,7 @@ export default function EventsHistory() {
             },
             rewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
             reward: 500_000,
-            bonusRewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'USDC' },
+            bonusRewardToken: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USDC' },
             bonusReward: 25_000,
             participants: 113,
             type: 'Finite',

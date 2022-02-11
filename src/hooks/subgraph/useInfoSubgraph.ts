@@ -46,18 +46,18 @@ import { EternalFarmingByPool } from '../../models/interfaces/responseSubgraph'
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-            accum[poolData.id] = poolData
-            return accum
-        }, {})
+        accum[poolData.id] = poolData
+        return accum
+    }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-            accum[tokenData.id] = tokenData
-            return accum
-        }, {})
+        accum[tokenData.id] = tokenData
+        return accum
+    }, {})
         : {}
 }
 
@@ -165,27 +165,11 @@ export function useInfoSubgraph() {
             const parsedPools48 = parsePoolsData(pools48)
             const parsedPoolsWeek = parsePoolsData(poolsWeek)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             const aprs = await fetchPoolsAPR()
             const farmAprs = await fetchEternalFarmAPR()
 
             const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
-            const _farmingAprs: {[type: string]: number} = farmingAprs.reduce((acc, el) => ({
+            const _farmingAprs: { [type: string]: number } = farmingAprs.reduce((acc, el) => ({
                 ...acc,
                 [el.pool]: farmAprs[el.id]
             }), {})
@@ -207,8 +191,8 @@ export function useInfoSubgraph() {
                                 ? [parseFloat(current[manageUntrackedVolume]), 0]
                                 : [0, 0]
 
-                const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
-                    : current ? parseFloat(current.volumeUSD) : 0
+                const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume])
+                    : current ? parseFloat(current[manageUntrackedVolume]) : 0
 
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
@@ -305,7 +289,7 @@ export function useInfoSubgraph() {
                             ? [parseFloat(current[manageUntrackedVolume]), 0]
                             : [0, 0]
 
-                const volumeUSDWeek = current && week ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD) : current ? parseFloat(current.volumeUSD) : 0
+                const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume]) : current ? parseFloat(current[manageUntrackedVolume]) : 0
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
                 const tvlToken = current ? parseFloat(current[manageUntrackedTVL]) : 0
@@ -419,7 +403,7 @@ export function useInfoSubgraph() {
 
     }
 
-    async function fetchLastEntry(pool: string): Promise<FeeSubgraph[] | string>  {
+    async function fetchLastEntry(pool: string): Promise<FeeSubgraph[] | string> {
         try {
             const {
                 data: { feeHourDatas },

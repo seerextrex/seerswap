@@ -19,7 +19,7 @@ import {
     INFINITE_EVENTS,
     POSITIONS_ON_ETERNAL_FARMING,
     TRANSFERED_POSITIONS,
-    TRANSFERED_POSITIONS_FOR_POOL,FETCH_ETERNAL_FARM_FROM_POOL, FETCH_FINITE_FARM_FROM_POOL,
+    TRANSFERED_POSITIONS_FOR_POOL, FETCH_ETERNAL_FARM_FROM_POOL, FETCH_FINITE_FARM_FROM_POOL,
 } from '../utils/graphql-queries'
 import { useClients } from './subgraph/useClients'
 import { formatUnits } from '@ethersproject/units'
@@ -273,7 +273,7 @@ export function useIncentiveSubgraph() {
 
             if (_error) throw new Error(`${error.name} ${error.message}`)
 
-            if (currentEvents.length === 0 && futureEvents.length === 0 ) {
+            if (currentEvents.length === 0 && futureEvents.length === 0) {
                 setAllEvents({
                     currentEvents: [],
                     futureEvents: []
@@ -461,13 +461,28 @@ export function useIncentiveSubgraph() {
                             eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
                         }
 
+                    } else {
+
+                        const { data: { eternalFarmings }, error } = await farmingClient.query({
+                            query: FETCH_ETERNAL_FARM_FROM_POOL([position.pool]),
+                            fetchPolicy: 'network-only'
+                        })
+
+                        if (error) throw new Error(`${error.name} ${error.message}`)
+
+                        if (eternalFarmings.length !== 0) {
+                            _position = {
+                                ..._position,
+                                eternalAvailable: true
+                            }
+                        }
+
+                        _positions.push(_position)
+
                     }
 
-                    _positions.push(_position)
-
+                    setTransferredPositions(_positions)
                 }
-
-                setTransferredPositions(_positions)
 
             }
 

@@ -334,13 +334,11 @@ export function useIncentiveSubgraph() {
                     provider.getSigner()
                 )
 
-                const {
-                    tickLower,
-                    tickUpper,
-                    liquidity,
-                    token0,
-                    token1
-                } = await nftContract.positions(+position.id)
+                console.log('HERE')
+
+                const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
+
+                console.log('HERE 2')
 
                 let _position = {
                     ...position,
@@ -357,7 +355,7 @@ export function useIncentiveSubgraph() {
 
                     _position = {
                         ..._position,
-                        pool: _pool
+                        pool: _pool,
                     }
 
                 }
@@ -370,15 +368,7 @@ export function useIncentiveSubgraph() {
                         provider.getSigner()
                     )
 
-                    const {
-                        rewardToken,
-                        bonusRewardToken,
-                        pool,
-                        startTime,
-                        endTime,
-                        createdAtTimestamp,
-                        id
-                    } = await fetchIncentive(position.incentive)
+                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, id } = await fetchIncentive(position.incentive)
 
                     const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
                         [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
@@ -417,74 +407,63 @@ export function useIncentiveSubgraph() {
                             finiteAvailable: true
                         }
                     }
-
-                    if (position.eternalFarming) {
-
-                        const {
-                            rewardToken,
-                            bonusRewardToken,
-                            pool,
-                            startTime,
-                            endTime,
-                            id
-                        } = await fetchEternalFarming(position.eternalFarming)
-
-                        const farmingCenterContract = new Contract(
-                            FARMING_CENTER[chainId],
-                            FARMING_CENTER_ABI,
-                            provider.getSigner()
-                        )
-
-                        const {
-                            reward,
-                            bonusReward
-                        } = await farmingCenterContract.callStatic.collectRewards(
-                            [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                            +position.id,
-                            {
-                                from: account
-                            }
-                        )
-
-                        const _rewardToken = await fetchToken(rewardToken)
-                        const _bonusRewardToken = await fetchToken(bonusRewardToken)
-                        const _pool = await fetchPool(pool)
-
-                        _position = {
-                            ..._position,
-                            eternalRewardToken: _rewardToken,
-                            eternalBonusRewardToken: _bonusRewardToken,
-                            eternalStartTime: startTime,
-                            eternalEndTime: endTime,
-                            pool: _pool,
-                            eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
-                            eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
-                        }
-
-                    } else {
-
-                        const { data: { eternalFarmings }, error } = await farmingClient.query({
-                            query: FETCH_ETERNAL_FARM_FROM_POOL([position.pool]),
-                            fetchPolicy: 'network-only'
-                        })
-
-                        if (error) throw new Error(`${error.name} ${error.message}`)
-
-                        if (eternalFarmings.length !== 0) {
-                            _position = {
-                                ..._position,
-                                eternalAvailable: true
-                            }
-                        }
-
-                        _positions.push(_position)
-
-                    }
-
-                    setTransferredPositions(_positions)
                 }
 
+                if (position.eternalFarming) {
+
+                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, id } = await fetchEternalFarming(position.eternalFarming)
+
+                    const farmingCenterContract = new Contract(
+                        FARMING_CENTER[chainId],
+                        FARMING_CENTER_ABI,
+                        provider.getSigner()
+                    )
+
+                    const { reward, bonusReward } = await farmingCenterContract.callStatic.collectRewards(
+                        [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                        +position.id,
+                        {
+                            from: account
+                        }
+                    )
+
+                    const _rewardToken = await fetchToken(rewardToken)
+                    const _bonusRewardToken = await fetchToken(bonusRewardToken)
+                    const _pool = await fetchPool(pool)
+
+                    _position = {
+                        ..._position,
+                        eternalRewardToken: _rewardToken,
+                        eternalBonusRewardToken: _bonusRewardToken,
+                        eternalStartTime: startTime,
+                        eternalEndTime: endTime,
+                        pool: _pool,
+                        eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
+                        eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
+                    }
+
+                } else {
+
+                    const { data: { eternalFarmings }, error } = await farmingClient.query({
+                        query: FETCH_ETERNAL_FARM_FROM_POOL([position.pool]),
+                        fetchPolicy: 'network-only'
+                    })
+
+                    if (error) throw new Error(`${error.name} ${error.message}`)
+
+                    if (eternalFarmings.length !== 0) {
+                        _position = {
+                            ..._position,
+                            eternalAvailable: true
+                        }
+                    }
+                }
+
+                _positions.push(_position)
+
             }
+
+            setTransferredPositions(_positions)
 
         } catch (err) {
             setTransferredPositionsLoading(null)

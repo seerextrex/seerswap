@@ -41,6 +41,7 @@ interface StakerEventCardProps {
         bonusReward?: number
         startTime?: number
         endTime?: number
+        apr?: number
     };
     eternal?: boolean
 }
@@ -59,7 +60,8 @@ export function StakerEventCard({
         reward,
         bonusReward,
         startTime,
-        endTime
+        endTime,
+        apr
     } = {},
     eternal
 }: StakerEventCardProps) {
@@ -177,14 +179,14 @@ export function StakerEventCard({
                 />
                 <div style={{ marginLeft: '1rem' }}>
                     <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>
-                        {eternal ? 'Reward APR' : 'Reward'}
+                        {'Reward'}
                     </Subtitle>
                     <RewardSymbol>{rewardToken.symbol}</RewardSymbol>
                 </div>
                 {reward && (
                     <RewardAmount title={reward.toString()}>
                         {eternal ? (
-                            <span>200%</span>
+                            <span></span>
                         ) : (
                             <span>{`${
                                 ('' + reward).length <= 8
@@ -217,14 +219,14 @@ export function StakerEventCard({
                     />
                     <div style={{ marginLeft: '1rem' }}>
                         <Subtitle style={{ color: 'rgb(138, 190, 243)' }}>
-                            {eternal ? 'Bonus APR' : 'Bonus'}
+                            {'Bonus'}
                         </Subtitle>
                         <RewardSymbol>{bonusRewardToken.symbol}</RewardSymbol>
                     </div>
                     {bonusReward && (
                         <RewardAmount title={bonusReward.toString()}>
                             {eternal ? (
-                                <span>200%</span>
+                                <span></span>
                             ) : (
                                 <span>{`${
                                     ('' + bonusReward).length <= 8
@@ -276,6 +278,14 @@ export function StakerEventCard({
                             progress={getProgress(Number(createdAtTimestamp), startTime, now)} />
                     }
                 </EventProgress>
+            )}
+            {eternal && (
+                <RewardWrapper style={{ justifyContent: 'space-between' }}>
+                    <Subtitle style={{ fontSize: '14px', color: 'white', textTransform: 'none', lineHeight: '19px' }}>
+                        {'Overall APR:'}
+                    </Subtitle>
+                    <RewardSymbol>{`${apr.toFixed(2)}%`}</RewardSymbol>
+                </RewardWrapper>
             )}
             {account && !active ?
                 <StakeButton

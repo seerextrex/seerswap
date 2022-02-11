@@ -72,10 +72,10 @@ export default function StakingPage() {
                                     </Route>
                                     <Route exact path={`${path}/farms`}>
                                         <Helmet>
-                                            <title>Algebra — Farming • My farms</title>
+                                            <title>Algebra — Farming • My Farms</title>
                                         </Helmet>
                                         <PageTitle
-                                            title={'My farms'}
+                                            title={'My Farms'}
                                             refreshHandler={() =>
                                                 account ? fetchTransferredPositionsFn(true) : undefined
                                             }
@@ -104,12 +104,12 @@ export default function StakingPage() {
                                             </MockScreen>
                                         )}
                                     </Route>
-                                    <Route exact path={`${path}/farming-events`}>
+                                    <Route exact path={`${path}/limit-farms`}>
                                         <Helmet>
-                                            <title>Algebra — Farming • Famring events</title>
+                                            <title>Algebra — Farming • Limit Farms</title>
                                         </Helmet>
                                         <PageTitle
-                                            title={'Farming events'}
+                                            title={'Limit Farms'}
                                             refreshHandler={() => fetchAllEventsFn(true)}
                                             isLoading={allEventsLoading}
                                         />
@@ -122,10 +122,10 @@ export default function StakingPage() {
                                     </Route>
                                     <Route exact path={`${path}/infinite-farms`}>
                                         <Helmet>
-                                            <title>Algebra — Farming • Infinite farms</title>
+                                            <title>Algebra — Farming • Infinite Farms</title>
                                         </Helmet>
                                         <PageTitle
-                                            title={'Infinite farms'}
+                                            title={'Infinite Farms'}
                                             refreshHandler={() => fetchEternalFarmsFn(true)}
                                             isLoading={eternalFarmsLoading}
                                         />
@@ -135,12 +135,12 @@ export default function StakingPage() {
                                             fetchHandler={() => fetchEternalFarmsFn(true)}
                                         />
                                     </Route>
-                                    <Route exact strict path={`${path}/events-history`}>
+                                    <Route exact strict path={`${path}/farms-history`}>
                                         <Helmet>
-                                            <title>Algebra — Farming • Farming events
+                                            <title>Algebra — Farming • Farms History
                                                 history</title>
                                         </Helmet>
-                                        <PageTitle title={'Farming events history'} />
+                                        <PageTitle title={'Limit Farms History'} />
                                         <EventsHistory />
                                     </Route>
                                 </Switch>

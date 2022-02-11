@@ -74,28 +74,29 @@ const MenuListItemIcon = styled.span`
 const MenuListItemTitle = styled.span`
     font-family: Montserrat;
     line-height: 24px;
+    position: relative;
 `
 
 const stakingMenuList = [
     {
-        title: 'My farms',
+        title: 'My Farms',
         icon: <AlignJustify size={18}></AlignJustify>,
         link: 'farms'
     },
     {
-        title: 'Infinite farms',
+        title: 'Infinite Farms',
         icon: <InfinityIcon size={18}></InfinityIcon>,
         link: 'infinite-farms'
     },
     {
-        title: 'Farming events',
+        title: 'Limit Farms',
         icon: <Zap size={18}></Zap>,
-        link: 'farming-events'
+        link: 'limit-farms'
     },
     {
-        title: 'Events history',
+        title: 'Farms History',
         icon: <Calendar size={18}></Calendar>,
-        link: 'events-history'
+        link: 'farms-history'
     }
 ]
 
@@ -114,12 +115,12 @@ export function StakingMenu() {
                     }}
                     key={i}
                 >
-                    {el.title === 'Farming events' &&
-                        <FarmingInfoLabel isEvents={startTime.trim()} />}
-                    {el.title === 'Infinite farms' &&
-                        <FarmingInfoLabel isEvents={eternalFarmings} />}
                     <MenuListItemIcon>{el.icon}</MenuListItemIcon>
-                    <MenuListItemTitle>{el.title}</MenuListItemTitle>
+                    <MenuListItemTitle>
+                        <span>{el.title}</span>
+                        {el.title === 'Limit Farms' && <FarmingInfoLabel isEvents={startTime.trim()} />}
+                        {el.title === 'Infinite Farms' && <FarmingInfoLabel isEvents={eternalFarmings} />}
+                    </MenuListItemTitle>
                 </MenuListItem>
             ))}
         </MenuList>

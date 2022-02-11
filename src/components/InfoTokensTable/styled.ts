@@ -46,11 +46,11 @@ const LabelTitle = styled(Label)`
     min-width: 93px !important;
   `};
 `
-export const ClickableTextStyled = styled(ClickableText)`
-justify-content: flex-start;
+export const ClickableTextStyled = styled(ClickableText)<{center?: boolean}>`
+    justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
 `
-export const LabelTitleStyled = styled(LabelTitle)`
-justify-content: flex-start;
+export const LabelTitleStyled = styled(LabelTitle)<{center?: boolean}>`
+    justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
 `
 export const CurrencyRow = styled(RowFixed)`
   margin-right: .3rem;

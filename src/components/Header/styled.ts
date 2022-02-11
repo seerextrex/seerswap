@@ -333,8 +333,8 @@ export const FarmingInfoLabel = styled.span<{ isEvents: boolean }>`
   background-color: #ffd967;
   position: absolute;
   border-radius: 50%;
-  top: 30%;
-  right: 5%;
+  top: 0;
+  right: -1rem;
   display: ${({ isEvents }) => (!isEvents ? 'none' : 'block')};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`

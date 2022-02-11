@@ -15,6 +15,7 @@ export const Title = styled.div`
 `
 export const TitleName = styled.span`
   margin-right: 1rem;
+    font-weight: 600;
 `
 export const ReloadButton = styled.button<{ refreshing: boolean }>`
   background-color: transparent;

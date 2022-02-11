@@ -98,6 +98,7 @@ export default function InfoTokensTable({
                         </ClickableTextStyled>
                         <ClickableTextStyled
                             color={'#dedede'}
+                            center
                             end={1}
                             onClick={() => handleSort(SORT_FIELD.priceUSD)}
                         >
@@ -106,6 +107,7 @@ export default function InfoTokensTable({
                         <ClickableTextStyled
                             color={'#dedede'}
                             end={1}
+                            center
                             onClick={() => handleSort(SORT_FIELD.priceUSDChange)}
                         >
                             Price Change {arrow(SORT_FIELD.priceUSDChange)}
@@ -113,6 +115,7 @@ export default function InfoTokensTable({
                         <ClickableTextStyled
                             color={'#dedede'}
                             end={1}
+                            center
                             onClick={() => handleSort(SORT_FIELD.volumeUSD)}
                         >
                             Volume 24H {arrow(SORT_FIELD.volumeUSD)}
@@ -120,6 +123,7 @@ export default function InfoTokensTable({
                         <ClickableTextStyled
                             color={'#dedede'}
                             end={1}
+                            center
                             onClick={() => handleSort(SORT_FIELD.tvlUSD)}
                         >
                             TVL {arrow(SORT_FIELD.tvlUSD)}

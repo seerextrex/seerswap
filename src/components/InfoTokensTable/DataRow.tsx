@@ -56,16 +56,16 @@ export const DataRow = ({ tokenData, index }: DataRowProps) => {
                     </CurrencyRowWrapper>
                 </LinkWrapper>
             </Label>
-            <LabelTitleStyled end={1} fontWeight={400}>
+            <LabelTitleStyled center end={1} fontWeight={400}>
                 {formatDollarAmount(tokenData.priceUSD, 3)}
             </LabelTitleStyled>
-            <LabelTitleStyled end={1} fontWeight={400}>
+            <LabelTitleStyled center end={1} fontWeight={400}>
                 <Percent value={tokenData.priceUSDChange} fontWeight={400} />
             </LabelTitleStyled>
-            <LabelTitleStyled end={1} fontWeight={400}>
+            <LabelTitleStyled center end={1} fontWeight={400}>
                 {formatDollarAmount(tokenData.volumeUSD)}
             </LabelTitleStyled>
-            <LabelTitleStyled end={1} fontWeight={400}>
+            <LabelTitleStyled center end={1} fontWeight={400}>
                 {formatDollarAmount(tokenData.tvlUSD)}
             </LabelTitleStyled>
         </ResponsiveGrid>

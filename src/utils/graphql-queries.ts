@@ -82,7 +82,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = pools => {
   const queryString =
     `
       query eternalFarmingsFromPools {
-        eternalFarmings(where: {pool_in: ${poolString}}) {
+        eternalFarmings(where: {pool_in: ${poolString}, isDetached: false}) {
           id
           rewardToken
           bonusRewardToken
@@ -271,6 +271,33 @@ query currentEvents {
         reward
     }
 }`
+
+export const FETCH_FINITE_FARM_FROM_POOL = pools => {
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
+      query finiteFarmingsFromPools {
+        incentives(where: {pool_in: ${poolString}, isDetached: false, startTime_gt: ${Math.round(Date.now() / 1000)}}) {
+          id
+          createdAtTimestamp
+          rewardToken
+          bonusRewardToken
+          pool
+          startTime
+          endTime
+          reward
+          bonusReward
+          isDetached
+        }
+      }
+      `
+
+    return gql(queryString)
+}
 
 export const FROZEN_STAKED = (account: string) => gql`
    query frozenStaked  {

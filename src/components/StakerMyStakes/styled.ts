@@ -562,12 +562,16 @@ export const EventProgressInner = styled.div.attrs(({ progress }: { progress: nu
 `
 
 export const CheckOutLink = styled(NavLink)`
-    color: #01ffff;
+    color: white;
     font-size: 14px;
     text-decoration: none;
+    background-color: #36f;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
 
     &:hover {
-        text-decoration: underline;
+        background-color: ${({theme}) => darken(0.05, theme.winterMainButton)}};
     }
 `
 

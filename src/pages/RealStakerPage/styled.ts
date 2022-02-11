@@ -15,6 +15,7 @@ export const StakeButton = styled(ButtonConfirmed)`
   border-radius: 8px !important;
   width: 100%;
   margin-top: 24px;
+    font-weight: 600;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-top: 0;

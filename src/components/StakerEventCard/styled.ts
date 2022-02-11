@@ -229,7 +229,7 @@ export const StakeButton = styled.button<{ skeleton: boolean }>`
   color: white;
   border-radius: 8px;
   padding: 8px 12px;
-  font-weight: 500;
+  font-weight: 600;
   margin-top: 10px;
 
   &:hover {

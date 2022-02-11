@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components/macro'
 import { NavLink } from 'react-router-dom'
-import { ClickableText, Label } from 'components/Text'
-import { DarkGreyCard } from '../Card'
+import { DarkGreyCard } from 'components/Card'
+import { Label, ClickableText } from 'components/Text'
 
-export const PageButtonsWrapper = styled.div`
+export const PageButtons = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
@@ -11,24 +11,32 @@ export const PageButtonsWrapper = styled.div`
   margin-top: 0.2em;
   margin-bottom: 0.5em;
 `
+
 export const Arrow = styled.div<{ faded: boolean }>`
   color: white;
-  opacity: ${(faded) => faded ? 0.3 : 1};
+  opacity: ${(props) => (props.faded ? 0.3 : 1)};
   padding: 0 20px;
   user-select: none;
   :hover {
     cursor: pointer;
   }
 `
-export const LabelStyled = styled(Label)<{center?: boolean}>`
+
+export const LabelStyled = styled(Label)`
   font-size: 14px;
-    justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
+  justify-content: flex-start;
 `
-export const ClickableTextStyled = styled(ClickableText)<{center?: boolean}>`
+
+export const ClickableTextStyled = styled(ClickableText)`
   font-size: 14px;
-    justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
+  align-items: center;
+  justify-content: flex-start;
   text-align: start;
+  &:hover {
+    opacity: 1;
+  }
 `
+
 export const Wrapper = styled(DarkGreyCard)`
   width: 100%;
   background-color: rgba(60, 97, 126, 0.5);
@@ -36,16 +44,31 @@ export const Wrapper = styled(DarkGreyCard)`
     min-width: 900px;
   `};
 `
+
 export const ResponsiveGrid = styled.div`
-    display: grid;
-    position: relative;
-    grid-gap: 1em;
-    align-items: center;
-    grid-template-columns: 20px 2.3fr repeat(5, 1fr);
-    @media screen and (max-width: 1000px) {
-        grid-template-columns: 20px 2.3fr repeat(5, 1fr);
-    }
+  display: grid;
+  position: relative;
+  grid-gap: 1em;
+  align-items: center;
+  grid-template-columns: 20px 1fr 1fr 1fr 90px 50px 70px 1fr;
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 20px 1fr 1fr 1fr 90px 50px 70px 1fr;
+  }
+  //@media screen and (max-width: 500px) {
+  //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);
+  //  & :nth-child(5) {
+  //    display: none;
+  //  }
+  //}
+  //
+  //@media screen and (max-width: 480px) {
+  //  grid-template-columns: 2.5fr repeat(1, 1fr);
+  //  > *:nth-child(1) {
+  //    display: none;
+  //  }
+  //}
 `
+
 export const ChartBadge = styled(NavLink)`
   background: #36f;
   margin-left: 10px;
@@ -55,6 +78,22 @@ export const ChartBadge = styled(NavLink)`
     display: block;
   }
 `
+
+export const AprInfo = styled.span`
+  background-color: #02365e;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  z-index: 101;
+`
+
 export const LinkWrapper = styled.a`
   display: flex;
   text-decoration: none;
@@ -62,6 +101,7 @@ export const LinkWrapper = styled.a`
     margin-left: 8px;
   }
 `
+
 export const HelperDropdown = styled.span`
   position: absolute;
   display: none;
@@ -94,7 +134,6 @@ export const APRWrapper = styled.span`
 export const FarmingLink = styled(NavLink)<{ apr: boolean }>`
   color: white;
   text-decoration: none;
-
   ${({ apr }) =>
     apr &&
     css`
@@ -103,7 +142,6 @@ export const FarmingLink = styled(NavLink)<{ apr: boolean }>`
       color: white;
       background-color: #36f;
       text-decoration: underline;
-
       &:hover {
         color: #01ffff;
       }

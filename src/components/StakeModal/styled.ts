@@ -112,6 +112,7 @@ export const StakeButton = styled.button`
     background: ${({ theme }) => theme.winterMainButton};
     border: none;
     padding: 1rem;
+    font-weight: 600;
     color: white;
     border-radius: 8px;
     width: 100%;

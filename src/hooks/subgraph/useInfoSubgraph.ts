@@ -67,7 +67,7 @@ export function useInfoSubgraph() {
     const [t24, t48, tWeek] = useDeltaTimestamps()
 
     const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek])
-    const [block24, block48, blockWeek] = blocks?.reverse() ?? []
+    const [block24, block48, blockWeek] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? []
 
     const ethPrices = useEthPrices()
 

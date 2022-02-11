@@ -91,8 +91,10 @@ export default function Header() {
                     Pool
                 </StyledNavLink>
                 <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
-                    Farming
-                    <FarmingInfoLabel isEvents={isEvents} />
+                <span style={{position: 'relative'}}>
+            <span>Farming</span>
+          <FarmingInfoLabel isEvents={isEvents} />
+            </span>
                 </StyledNavLink>
                 <StyledNavLink id={`staking-nav-link`} to={'/staking'}>
                     Staking

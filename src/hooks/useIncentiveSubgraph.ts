@@ -19,7 +19,7 @@ import {
     INFINITE_EVENTS,
     POSITIONS_ON_ETERNAL_FARMING,
     TRANSFERED_POSITIONS,
-    TRANSFERED_POSITIONS_FOR_POOL
+    TRANSFERED_POSITIONS_FOR_POOL,FETCH_ETERNAL_FARM_FROM_POOL, FETCH_FINITE_FARM_FROM_POOL,
 } from '../utils/graphql-queries'
 import { useClients } from './subgraph/useClients'
 import { formatUnits } from '@ethersproject/units'
@@ -403,58 +403,73 @@ export function useIncentiveSubgraph() {
                         incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
                     }
 
-                }
+                } else {
+                    const { data: { incentives }, error } = await farmingClient.query({
+                        query: FETCH_FINITE_FARM_FROM_POOL([position.pool]),
+                        fetchPolicy: 'network-only'
+                    })
 
-                if (position.eternalFarming) {
+                    if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    const {
-                        rewardToken,
-                        bonusRewardToken,
-                        pool,
-                        startTime,
-                        endTime,
-                        id
-                    } = await fetchEternalFarming(position.eternalFarming)
-
-                    const farmingCenterContract = new Contract(
-                        FARMING_CENTER[chainId],
-                        FARMING_CENTER_ABI,
-                        provider.getSigner()
-                    )
-
-                    const {
-                        reward,
-                        bonusReward
-                    } = await farmingCenterContract.callStatic.collectRewards(
-                        [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +position.id,
-                        {
-                            from: account
+                    if (incentives.length !== 0) {
+                        _position = {
+                            ..._position,
+                            finiteAvailable: true
                         }
-                    )
-
-                    const _rewardToken = await fetchToken(rewardToken)
-                    const _bonusRewardToken = await fetchToken(bonusRewardToken)
-                    const _pool = await fetchPool(pool)
-
-                    _position = {
-                        ..._position,
-                        eternalRewardToken: _rewardToken,
-                        eternalBonusRewardToken: _bonusRewardToken,
-                        eternalStartTime: startTime,
-                        eternalEndTime: endTime,
-                        pool: _pool,
-                        eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
-                        eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
                     }
 
+                    if (position.eternalFarming) {
+
+                        const {
+                            rewardToken,
+                            bonusRewardToken,
+                            pool,
+                            startTime,
+                            endTime,
+                            id
+                        } = await fetchEternalFarming(position.eternalFarming)
+
+                        const farmingCenterContract = new Contract(
+                            FARMING_CENTER[chainId],
+                            FARMING_CENTER_ABI,
+                            provider.getSigner()
+                        )
+
+                        const {
+                            reward,
+                            bonusReward
+                        } = await farmingCenterContract.callStatic.collectRewards(
+                            [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                            +position.id,
+                            {
+                                from: account
+                            }
+                        )
+
+                        const _rewardToken = await fetchToken(rewardToken)
+                        const _bonusRewardToken = await fetchToken(bonusRewardToken)
+                        const _pool = await fetchPool(pool)
+
+                        _position = {
+                            ..._position,
+                            eternalRewardToken: _rewardToken,
+                            eternalBonusRewardToken: _bonusRewardToken,
+                            eternalStartTime: startTime,
+                            eternalEndTime: endTime,
+                            pool: _pool,
+                            eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
+                            eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
+                        }
+
+                    }
+
+                    _positions.push(_position)
+
                 }
 
-                _positions.push(_position)
+                setTransferredPositions(_positions)
 
             }
-
-            setTransferredPositions(_positions)
 
         } catch (err) {
             setTransferredPositionsLoading(null)

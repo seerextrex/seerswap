@@ -71,7 +71,7 @@ export function FarmingEventsPage({
                     </EventsCardsRow>
                     : formattedData && formattedData.length === 0 ? (
                         <EmptyMock>
-                            <div>No farming events</div>
+                            <div>No limit farms</div>
                             <Frown size={35} stroke={'white'} />
                         </EmptyMock>
                     ) : <EmptyMock/>}

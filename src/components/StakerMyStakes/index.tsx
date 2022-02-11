@@ -348,7 +348,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                             </PositionCardHeader>
                                             <PositionCardBody>
                                                 <PositionCardEvent>
-                                                    <PositionCardEventTitle>Event</PositionCardEventTitle>
+                                                    <PositionCardEventTitle>Limit Farming</PositionCardEventTitle>
                                                     {el.incentive ? (
                                                         <>
                                                             <PositionCardStats>
@@ -467,14 +467,16 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </>
                                                     ) : (
                                                         <PositionCardMock>
-                                                            <PositionNotDepositedText>Position is not deposited</PositionNotDepositedText>
-                                                            <CheckOut link={'future-events'} />
+                                                            {
+                                                                el.finiteAvailable ? <CheckOut link={'limit-farms'} /> :
+                                                                    <PositionNotDepositedText>{'Farm is coming soon'}</PositionNotDepositedText>
+                                                            }
                                                         </PositionCardMock>
                                                     )}
                                                 </PositionCardEvent>
                                                 <PositionCardEvent>
                                                     <PositionCardEventTitle>
-                                                        <span>Infinite farming</span>
+                                                        <span>Infinite Farming</span>
                                                         {(el.enteredInEternalFarming && el.eternalFarming) &&
                                                             <TimeWrapper>
                                                                 <span>Entered at: </span>
@@ -568,9 +570,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </>
                                                     ) : (
                                                         <PositionCardMock>
-                                                            <PositionNotDepositedText>Position is not
-                                                                deposited</PositionNotDepositedText>
-                                                            <CheckOut link={'infinite-farms'} />
+                                                            {
+                                                                el.eternalAvailable ? <CheckOut link={'infinite-farms'} /> :
+                                                                    <PositionNotDepositedText>{'Farm for this position is coming soon'}</PositionNotDepositedText>
+                                                            }
                                                         </PositionCardMock>
                                                     )}
                                                 </PositionCardEvent>

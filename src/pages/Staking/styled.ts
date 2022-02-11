@@ -111,6 +111,7 @@ export const ConnectWalletButton = styled.button`
   color: white;
   padding: 8px 12px;
   font-size: 16px;
+    font-weight: 600;
   border-radius: 10px;
 `
 

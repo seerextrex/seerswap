@@ -4,7 +4,7 @@ import Loader from '../../components/Loader'
 import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
 import { StakerEventCard } from '../../components/StakerEventCard'
-import { FarmingType } from '../../hooks/useStakerHandlers'
+import { FarmingType } from '../../models/enums'
 import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
 
 export default function EternalFarmsPage({

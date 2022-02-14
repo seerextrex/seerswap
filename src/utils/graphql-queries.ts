@@ -20,7 +20,7 @@ export const ONE_ETERNAL_FARMING = () => gql`
   }
 `
 
-export const FETCH_REWARDS = account => gql`
+export const FETCH_REWARDS = (account: string) => gql`
 query fetchRewards {
     rewards(orderBy: amount, orderDirection: desc, where: {owner: "${account}"}) {
         id
@@ -30,7 +30,7 @@ query fetchRewards {
     }
 }`
 
-export const FETCH_TOKEN = tokenId => gql`
+export const FETCH_TOKEN = (tokenId: string) => gql`
 query fetchToken {
     tokens(where: { id: "${tokenId}" }) {
         id
@@ -40,7 +40,7 @@ query fetchToken {
     }
 }`
 
-export const FETCH_INCENTIVE = incentiveId => gql`
+export const FETCH_INCENTIVE = (incentiveId: string) => gql`
 query fetchIncentive {
     incentives(where: { id: "${incentiveId}" }) {
         id
@@ -55,7 +55,7 @@ query fetchIncentive {
     }
 }`
 
-export const FETCH_ETERNAL_FARM = farmId => gql`
+export const FETCH_ETERNAL_FARM = (farmId: string) => gql`
   query fetchEternalFarm {
     eternalFarmings (where: { id: "${farmId}" }) {
       id
@@ -73,7 +73,7 @@ export const FETCH_ETERNAL_FARM = farmId => gql`
   }
 `
 
-export const FETCH_ETERNAL_FARM_FROM_POOL = pools => {
+export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
   let poolString = `[`
   pools.map((address) => {
     return (poolString += `"${address}",`)
@@ -102,7 +102,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = pools => {
 }
 
 
-export const FETCH_POOL = poolId => gql`
+export const FETCH_POOL = (poolId: string) => gql`
 query fetchPool {
     pools(where: { id: "${poolId}" }) {
         id
@@ -203,7 +203,7 @@ query lastPoolHourData {
   }
 `
 
-export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimestamp) => gql`
+export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimestamp: number) => gql`
   query poolHourData {
     poolHourDatas (
       first: 1000
@@ -272,7 +272,7 @@ query currentEvents {
     }
 }`
 
-export const FETCH_FINITE_FARM_FROM_POOL = pools => {
+export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
     let poolString = `[`
     pools.map((address) => {
         return (poolString += `"${address}",`)
@@ -338,7 +338,7 @@ export const POSITIONS_ON_ETERNAL_FARMING = (account: string) => gql`
   }
 `
 
-export const TRANSFERED_POSITIONS_FOR_POOL = (account, pool) => gql`
+export const TRANSFERED_POSITIONS_FOR_POOL = (account: string, pool: string) => gql`
 query transferedPositionsForPool {
     deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}"}) {
         id
@@ -352,7 +352,7 @@ query transferedPositionsForPool {
     }
 }`
 
-export const POSITIONS_OWNED_FOR_POOL = (account, pool) => gql`
+export const POSITIONS_OWNED_FOR_POOL = (account: string, pool: string) => gql`
 query positionsOwnedForPool {
     deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}",  pool: "${pool}"}) {
         id

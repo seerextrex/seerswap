@@ -9,8 +9,10 @@ import { RowBetween, RowFixed } from '../Row'
 import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
 import { ButtonLight, ButtonPrimary } from '../Button'
 import { AutoColumn } from '../Column'
+// @ts-ignore
 import Circle from '../../assets/images/blue-loader.svg'
-import MetaMaskLogo from '../../assets/images/metamask.png'
+// @ts-ignore
+import MetaMaskLogo from '../../assets/svg/metamask-logo.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { Trans } from '@lingui/macro'

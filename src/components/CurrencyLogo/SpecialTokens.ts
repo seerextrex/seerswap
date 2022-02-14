@@ -1,7 +1,7 @@
 // @ts-ignore
 import AlgebraLogo from '../../assets/images/algebra-logo.png'
 // @ts-ignore
-import USDCLogo from '../../assets/images/usdc-logo.png'
+import USDCLogo from '../../assets/svg/usd-coin-usdc-logo.svg'
 // @ts-ignore
 import WMATICLogo from '../../assets/images/matic-logo.png'
 // @ts-ignore

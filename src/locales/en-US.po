@@ -388,9 +388,6 @@ msgid "Confirm this transaction in your wallet"
 msgstr "Confirm this transaction in your wallet"
 
 #: src/components/earn/ClaimRewardModal.tsx
-#: src/components/WalletModal/index.tsx
-#: src/components/Web3Status/index.tsx
-#: src/pages/Pool/index.tsx
 #: src/pages/Swap/index.tsx
 #: src/state/burn/hooks.ts
 #: src/state/burn/v3/hooks.ts
@@ -401,18 +398,18 @@ msgid "Connect Wallet"
 msgstr "Connect Wallet"
 
 #: src/components/earn/UnstakingModal.tsx
-msgid "Connect Wwallet"
-msgstr "Connect Wwallet"
+#~ msgid "Connect Wwallet"
+#~ msgstr "Connect Wwallet"
 
 #: src/components/earn/UnstakingModal.tsx
 #: src/pages/Pool/index.tsx
-#~ msgid "Connect a wallet"
-#~ msgstr "Connect a wallet"
+msgid "Connect a wallet"
+msgstr "Connect a wallet"
 
 #: src/components/WalletModal/index.tsx
 #: src/components/Web3Status/index.tsx
-#~ msgid "Connect to a wallet"
-#~ msgstr "Connect to a wallet"
+msgid "Connect to a wallet"
+msgstr "Connect to a wallet"
 
 #: src/pages/PoolFinder/index.tsx
 #~ msgid "Connect to a wallet to find pools"
@@ -427,8 +424,8 @@ msgid "Connect wallet"
 msgstr "Connect wallet"
 
 #: src/pages/PoolFinder/index.tsx
-msgid "Connect wallet to find pools"
-msgstr "Connect wallet to find pools"
+#~ msgid "Connect wallet to find pools"
+#~ msgstr "Connect wallet to find pools"
 
 #: src/components/AccountDetails/index.tsx
 msgid "Connected with {name}"
@@ -491,7 +488,6 @@ msgstr "Current pool fee."
 
 #: src/components/PositionPreview/index.tsx
 #: src/pages/Pool/CurrentPriceCard.tsx
-#: src/pages/Pool/PositionPage.tsx
 msgid "Current price"
 msgstr "Current price"
 
@@ -1856,7 +1852,6 @@ msgstr "{0} UNI / week"
 #: src/components/PositionPreview/index.tsx
 #: src/components/PositionPreview/index.tsx
 #: src/pages/Pool/CurrentPriceCard.tsx
-#: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "{0} per {1}"

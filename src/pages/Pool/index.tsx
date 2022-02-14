@@ -16,15 +16,15 @@ import { PositionDetails } from 'types/position'
 import { Helmet } from 'react-helmet'
 import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 import Loader from '../../components/Loader'
-import {
-    ButtonRow,
-    MainContentWrapper,
-    MigrateButtonPrimary,
-    NoLiquidity,
-    PageWrapper,
-    ResponsiveButtonPrimary,
-    TitleRow
-} from './styleds'
+import { ButtonRow, FilterPanelWrapper, MainContentWrapper, MigrateButtonPrimary, NoLiquidity, PageWrapper, ResponsiveButtonPrimary, ResponsiveRow, TitleRow } from './styleds'
+import FilterPanelItem from './FilterPanelItem'
+
+const filters = [
+    'In Range',
+    'Closed',
+    'Out of Range',
+    'Farming'
+]
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React()
@@ -102,6 +102,14 @@ export default function Pool() {
                                 </ResponsiveButtonPrimary>
                             </ButtonRow>
                         </TitleRow>
+                        <FilterPanelWrapper>
+                            {filters.map((item, key) =>  <FilterPanelItem
+                                closedPositions={userHideClosedPositions}
+                                setClosedPositions={setUserHideClosedPositions}
+                                item={item}
+                                key={key}
+                            />)}
+                        </FilterPanelWrapper>
                         <MainContentWrapper>
                             {positionsLoading ? (
                                 <Loader style={{ margin: 'auto' }} stroke='white' size={'30px'} />

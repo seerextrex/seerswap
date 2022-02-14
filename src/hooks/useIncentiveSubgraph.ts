@@ -334,11 +334,7 @@ export function useIncentiveSubgraph() {
                     provider.getSigner()
                 )
 
-                console.log('HERE')
-
                 const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
-
-                console.log('HERE 2')
 
                 let _position = {
                     ...position,

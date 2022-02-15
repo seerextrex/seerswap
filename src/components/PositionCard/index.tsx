@@ -22,14 +22,8 @@ import { Dots } from '../swap/styled'
 import { BIG_INT_ZERO } from '../../constants/misc'
 import Badge, { BadgeVariant } from '../Badge'
 import { Pair } from '../../utils/computePairAddress'
-import {
-    ButtonPrimaryStyled,
-    FixedHeightRow,
-    FixedHeightRowCurrency,
-    MigrateShortcut,
-    RowFixedLogo,
-    StyledPositionCard
-} from './styled'
+import { ButtonPrimaryStyled, FixedHeightRow, FixedHeightRowCurrency, MigrateShortcut, RowFixedLogo, RowFixedPrice, StyledPositionCard } from './styled'
+import { isMobile } from 'react-device-detect'
 
 interface PositionCardProps {
     pair: Pair
@@ -42,7 +36,6 @@ interface PositionCardProps {
 export function MinimalPositionCard({
     pair,
     showUnwrapped = false,
-    border,
     sushi
 }: PositionCardProps) {
     const { account } = useActiveWeb3React()
@@ -101,23 +94,34 @@ export function MinimalPositionCard({
                                       fontWeight={500} fontSize={20}>
                                     {currency1.symbol}/{currency0.symbol}
                                 </Text>
-                                <Badge
-                                    style={{
-                                        backgroundColor: 'white',
-                                        color: sushi ? '#ed1185' : '#48b9cd',
-                                        minWidth: '100px'
-                                    }}
-                                >
-                                    {sushi ? 'SushiSwap' : 'QuickSwap'}
-                                </Badge>
+                                {!isMobile &&
+                                    <Badge
+                                        style={{
+                                            backgroundColor: 'white',
+                                            color: sushi ? '#ed1185' : '#48b9cd',
+                                            minWidth: '100px'
+                                        }}
+                                    >
+                                        {sushi ? 'SushiSwap' : 'QuickSwap'}
+                                    </Badge>}
                             </RowFixedLogo>
-                            <RowFixed>
+                            <RowFixedPrice>
                                 <Text fontWeight={500} fontSize={20}
                                       title={userPoolBalance.toExact()}
                                       style={{ cursor: 'default' }}>
                                     {userPoolBalance ? parseFloat(userPoolBalance.toExact()).toFixed(6) : '-'}
                                 </Text>
-                            </RowFixed>
+                                {isMobile &&
+                                    <Badge
+                                        style={{
+                                            backgroundColor: 'white',
+                                            color: sushi ? '#ed1185' : '#48b9cd',
+                                            minWidth: '100px'
+                                        }}
+                                    >
+                                        {sushi ? 'SushiSwap' : 'QuickSwap'}
+                                    </Badge>}
+                            </RowFixedPrice>
                         </FixedHeightRowCurrency>
                         <AutoColumn gap='4px'>
                             <FixedHeightRow>

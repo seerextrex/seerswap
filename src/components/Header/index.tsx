@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useETHBalances } from 'state/wallet/hooks'
+// @ts-ignore
 import WinterLogo from '../../assets/images/winter-logo.png'
+// @ts-ignore
 import Logo_logo from '../../assets/svg/alg-logo-svg.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import Web3Status from '../Web3Status'
@@ -55,7 +57,7 @@ export default function Header() {
         if (startTime.trim() || eternalFarmings) {
             setEvents(true)
         }
-    }, [startTime])
+    }, [startTime, eternalFarmings])
 
     return (
         <HeaderFrame showBackground={false}>

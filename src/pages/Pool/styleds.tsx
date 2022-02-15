@@ -181,6 +181,9 @@ export const FilterPanelWrapper = styled.div`
     label {
         margin-bottom: .5rem;
     }
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    justify-content: center;
+  `}
 `
 
 //PositionPage

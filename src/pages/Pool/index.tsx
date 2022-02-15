@@ -114,18 +114,20 @@ export default function Pool() {
                                 </ResponsiveButtonPrimary>
                             </ButtonRow>
                         </TitleRow>
-                        <FilterPanelWrapper>
-                            {filters.map((item, key) =>
-                                <FilterPanelItem
-                                    item={item}
-                                    key={key}
-                                />)}
-                        </FilterPanelWrapper>
                         <MainContentWrapper>
                             {positionsLoading ? (
                                 <Loader style={{ margin: 'auto' }} stroke='white' size={'30px'} />
                             ) : _filteredPositions && _filteredPositions.length > 0 ? (
-                                <PositionList positions={_filteredPositions} />
+                                <>
+                                    <FilterPanelWrapper>
+                                        {filters.map((item, key) =>
+                                            <FilterPanelItem
+                                                item={item}
+                                                key={key}
+                                            />)}
+                                    </FilterPanelWrapper>
+                                    <PositionList positions={_filteredPositions} />
+                                </>
                             ) : (
                                 <NoLiquidity>
                                     <TYPE.body color={'white'} textAlign='center'>

@@ -50,9 +50,9 @@ export const ResponsiveGrid = styled.div`
   position: relative;
   grid-gap: 1em;
   align-items: center;
-  grid-template-columns: 20px 1fr 1fr 1fr 90px 50px 70px 1fr;
+  grid-template-columns: 20px repeat(3, 1.1fr) repeat(2, .9fr) 1.1fr;
   @media screen and (max-width: 1000px) {
-    grid-template-columns: 20px 1fr 1fr 1fr 90px 50px 70px 1fr;
+    grid-template-columns: 20px repeat(3, 1.1fr) repeat(2, .9fr) 1.1fr;
   }
   //@media screen and (max-width: 500px) {
   //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);

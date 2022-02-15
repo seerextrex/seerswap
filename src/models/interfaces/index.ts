@@ -39,5 +39,16 @@ export type {
     ApprovedNFT,
     RewardInterface,
     UnstakingInterface,
-    FormattedRewardInterface
+    FormattedRewardInterface,
+    GetRewardsHashInterfaceWithError,
+    Position,
+    EternalFarming,
+    FormattedEternalFarming,
+    DetachedEternalFarming,
+    TickFarming,
+    FarmingEvent,
+    FutureFarmingEvent,
+    Reward,
+    FarmingEventString,
+    Aprs,
 } from './farming'

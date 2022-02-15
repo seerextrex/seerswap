@@ -2,7 +2,7 @@ import NON_FUN_POS_MAN from 'abis/non-fun-pos-man.json'
 import FARMING_CENTER_ABI from 'abis/farming-center.json'
 import { Contract, providers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants/addresses'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useActiveWeb3React } from './web3'
@@ -11,12 +11,8 @@ import { toHex } from '../lib/src'
 import { useAppSelector } from '../state/hooks'
 import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
 import { TransactionResponse } from '@ethersproject/providers'
-import { DefaultFarming, DefaultFarmingWithError, GetRewardsHashInterface } from '../models/interfaces'
-
-export enum FarmingType {
-    ETERNAL = 0,
-    FINITE = 1
-}
+import { DefaultFarming, DefaultFarmingWithError, GetRewardsHashInterface, GetRewardsHashInterfaceWithError } from '../models/interfaces'
+import { FarmingType } from '../models/enums'
 
 export function useStakerHandlers() {
 
@@ -37,8 +33,9 @@ export function useStakerHandlers() {
     const [getRewardsHash, setGetRewards] = useState<GetRewardsHashInterface | string>({ hash: null, id: null, farmingType: null })
     const [eternalCollectRewardHash, setEternalCollectReward] = useState<DefaultFarming | string>({ hash: null, id: null })
     const [withdrawnHash, setWithdrawn] = useState<DefaultFarming | string>({ hash: null, id: null })
-    const [claimRewardHash, setClaimReward] = useState<DefaultFarmingWithError | string>(null)
+    const [claimRewardHash, setClaimReward] = useState<GetRewardsHashInterfaceWithError | string>({ hash: null, id: null, farmingType: null })
     const [sendNFTL2Hash, setSendNFTL2] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [claimHash, setClaimHash] = useState<DefaultFarmingWithError | string>({ hash: null, id: null, error: null })
 
     //exit from basic farming and claim than
     const claimRewardsHandler = useCallback(async (token,
@@ -54,16 +51,14 @@ export function useStakerHandlers() {
             eternalEndTime,
             eternalBonusEarned,
             eternalEarned,
-            incentive,
             incentiveBonusEarned,
             incentiveEarned,
-            eternalFarming
         },
         farmingType) => {
 
         if (!account || !provider || !chainId) return
 
-        setClaimReward({ hash: null, id: null })
+        setClaimReward({ hash: null, id: null , farmingType: null})
 
         const MaxUint128 = toHex(JSBI.subtract(JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)), JSBI.BigInt(1)))
 
@@ -107,7 +102,6 @@ export function useStakerHandlers() {
                     callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [incentiveBonusRewardToken.id, account, MaxUint128, 0]))
                 }
 
-                console.log(+incentiveEarned, +incentiveBonusEarned)
                 result = await farmingCenterContract.multicall(callDatas, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
             }
 
@@ -190,10 +184,12 @@ export function useStakerHandlers() {
 
             const result: TransactionResponse = await farmingCenterContract.claimReward(tokenReward, account, MaxUint128, MaxUint128, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
 
+            setClaimHash({hash: result.hash, id: tokenReward})
             addTransaction(result, {
                 summary: 'Claiming reward'
             })
         } catch (e) {
+            setClaimHash('failed')
             if (e instanceof Error) {
                 throw new Error('Claim rewards ' + e.message)
             }
@@ -508,6 +504,7 @@ export function useStakerHandlers() {
         sendNFTL2Hash,
         eternalCollectRewardHandler,
         eternalCollectRewardHash,
-        claimReward
+        claimReward,
+        claimHash
     }
 }

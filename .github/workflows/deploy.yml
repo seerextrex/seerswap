@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - beta-release-clone
+      - dev-deploy
 
 jobs:
   deploy:

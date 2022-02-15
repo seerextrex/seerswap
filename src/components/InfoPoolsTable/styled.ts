@@ -18,6 +18,7 @@ export const Arrow = styled.div<{ faded: boolean }>`
   user-select: none;
   :hover {
     cursor: pointer;
+      opacity: 1;
   }
 `
 export const LabelStyled = styled(Label)<{center?: boolean}>`

@@ -1,6 +1,8 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
+// @ts-ignore
 import INJECTED_ICON_URL from '../assets/images/arrow-right.svg'
-import METAMASK_ICON_URL from '../assets/images/metamask.png'
+// @ts-ignore
+import METAMASK_ICON_URL from '../assets/svg/metamask-logo.svg'
 import { injected } from '../connectors'
 
 interface WalletInfo {

@@ -6,11 +6,18 @@ import { ButtonPrimary } from '../../components/Button'
 import Badge from '../../components/Badge'
 import { TYPE } from '../../theme'
 
+const loadingAnimation = keyframes`
+    0% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0 50%;
+    }
+`
 export const Wrapper = styled.div`
     position: relative;
     padding: 20px;
 `
-
 export const ClickableText = styled(Text)`
     :hover {
         cursor: pointer;
@@ -42,7 +49,6 @@ export const MaxButton = styled.button<{ width?: string }>`
         outline: none;
     }
 `
-
 export const Dots = styled.span`
     &::after {
         display: inline-block;
@@ -64,16 +70,6 @@ export const Dots = styled.span`
         }
     }
 `
-
-const loadingAnimation = keyframes`
-    0% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0 50%;
-    }
-`
-
 export const LoadingRows = styled.div`
     display: grid;
     min-width: 75%;
@@ -175,6 +171,20 @@ export const MainContentWrapper = styled.main`
     color: white;
     padding: 0 40px 30px;
 `
+export const FilterPanelWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    gap: .8rem;
+    text-align: start;
+    margin-bottom: .5rem;
+    label {
+        margin-bottom: .5rem;
+    }
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    justify-content: center;
+  `}
+`
 
 //PositionPage
 export const PositionPageWrapper = styled.div`
@@ -206,7 +216,7 @@ export const BadgeText = styled.div`
     font-weight: 500;
     font-size: 14px;
 `
-export const Label = styled(({...props }) => <TYPE.label {...props} />)<{ end?: boolean }>`
+export const Label = styled(({ ...props }) => <TYPE.label {...props} />)<{ end?: boolean }>`
     display: flex;
     font-size: 16px;
     justify-content: ${({ end }) => (end ? 'flex-end' : 'flex-start')};
@@ -307,4 +317,10 @@ export const LoadingMock = styled.div`
   width: 100%;
   margin-top: 1rem;
   `}
+`
+
+//FilterPanelItem
+export const FilterPanelItemWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
 `

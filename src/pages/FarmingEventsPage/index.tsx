@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Frown } from 'react-feather'
 import { StakerEventCard } from '../../components/StakerEventCard'
 import { StakeModal } from '../../components/StakeModal'
-import { FarmingType } from '../../hooks/useStakerHandlers'
+import { FarmingType } from '../../models/enums'
 import Modal from '../../components/Modal'
 import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
 import Loader from '../../components/Loader'
@@ -13,7 +13,7 @@ export function FarmingEventsPage({
     refreshing,
     fetchHandler
 }: {
-    data: { currentEvents: any[]; futureEvents: any[] }
+    data: { currentEvents: any[]; futureEvents: any[] } | null
     now: number
     refreshing: boolean
     fetchHandler: () => any

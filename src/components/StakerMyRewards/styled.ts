@@ -25,7 +25,7 @@ export const RewardsRow = styled.div`
     flex-direction: column;
   `}
 `
-export const Reward = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
+export const RewardWrapper = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
   display: flex;
   position: relative;
   padding: 8px 16px;

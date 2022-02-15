@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Position } from 'lib/src'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { usePool } from 'hooks/usePools'
@@ -125,7 +125,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     const currency1 = token1 ? unwrappedToken(token1) : undefined
 
     // construct Position from details returned
-    const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined, _feeAmount)
+    const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined)
     const prevPool = usePrevious(pool)
     const _pool = useMemo(() => {
         if (!pool && prevPool) {
@@ -150,22 +150,13 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
 
     // prices
     const { priceLower, priceUpper, quote, base } = getPriceOrderingFromPositionForUI(position)
-
     const currencyQuote = quote && unwrappedToken(quote)
     const currencyBase = base && unwrappedToken(base)
 
-    // useEffect(() => {
-    //   console.log(currencyQuote, currencyBase)
-    // }, [currencyQuote, currencyBase])
-
     // check if price is within range
-    const outOfRange: boolean = _pool
-        ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper
-        : false
+    const outOfRange: boolean = _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false
 
-    const positionSummaryLink = `/pool/${positionDetails.tokenId}${
-        _onFarming ? '?onFarming=true' : ''
-    }`
+    const positionSummaryLink = `/pool/${positionDetails.tokenId}${_onFarming ? '?onFarming=true' : ''}`
 
     const farmingLink = `/farming/farms#${positionDetails.tokenId}`
 

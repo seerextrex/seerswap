@@ -44,13 +44,13 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                         </ChartBadge>
                     </RowFixed>
                 </LabelStyled>
-                <LabelStyled end={1} fontWeight={400}>
+                <LabelStyled center end={1} fontWeight={400}>
                     {formatDollarAmount(poolData.volumeUSD)}
                 </LabelStyled>
-                <LabelStyled end={1} fontWeight={400}>
+                <LabelStyled center end={1} fontWeight={400}>
                     {formatDollarAmount(poolData.volumeUSDWeek)}
                 </LabelStyled>
-                <LabelStyled end={1} fontWeight={400}>
+                <LabelStyled center end={1} fontWeight={400}>
                     {formatDollarAmount(+poolData.totalValueLockedUSD)}
                 </LabelStyled>
                 <LabelStyled center end={1} fontWeight={400}>

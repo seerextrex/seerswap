@@ -110,7 +110,7 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
 
 
     const refreshing = useMemo(() => {
-        if (!feesLoading || !chartPoolDataLoading || !ticksLoading) return false
+        if (!feesLoading && !chartPoolDataLoading && !ticksLoading) return false
         return feesLoading || chartPoolDataLoading || ticksLoading
     }, [feesLoading, chartPoolDataLoading, ticksLoading])
 
@@ -128,32 +128,32 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
                         collectedFees={poolResult.feesUSD}
                     />
                     <BodyWrapper>
-                        <ChartWrapper>
-                            <PoolInfoChartToolbar
-                                chartSpans={chartSpans}
-                                chartTypes={chartTypes}
-                                setType={setType}
-                                span={span}
-                                type={type}
-                                setSpan={setSpan}
-                            />
-                            {type === ChartType.LIQUIDITY ? (
-                                <LiquidityBarChart
-                                    data={data}
-                                    token0={poolResult.token0.symbol}
-                                    token1={poolResult.token1.symbol}
-                                    refreshing={refreshing}
-                                />
-                            ) : (
-                                <FeeChartRangeInput
-                                    fetchedData={data ?? undefined}
-                                    refreshing={refreshing}
-                                    id={id || ''}
+                            <ChartWrapper>
+                                <PoolInfoChartToolbar
+                                    chartSpans={chartSpans}
+                                    chartTypes={chartTypes}
+                                    setType={setType}
                                     span={span}
                                     type={type}
+                                    setSpan={setSpan}
                                 />
-                            )}
-                        </ChartWrapper>
+                                {type === ChartType.LIQUIDITY ? (
+                                    <LiquidityBarChart
+                                        data={data}
+                                        token0={poolResult.token0.symbol}
+                                        token1={poolResult.token1.symbol}
+                                        refreshing={refreshing}
+                                    />
+                                ) : (
+                                    <FeeChartRangeInput
+                                        fetchedData={data ?? undefined}
+                                        refreshing={refreshing}
+                                        id={id || ''}
+                                        span={span}
+                                        type={type}
+                                    />
+                                )}
+                            </ChartWrapper>
                     </BodyWrapper>
                 </>
             ) : (

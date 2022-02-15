@@ -4,7 +4,7 @@ import { darken } from 'polished'
 import RangeBadge from '../Badge/RangeBadge'
 import { RowBetween } from 'components/Row'
 
-export const LinkRow = styled(Link)<{ onFarming: boolean }>`
+export const LinkRow = styled(Link)<{ onFarming?: boolean }>`
   align-items: center;
   border-radius: 20px;
   display: flex;

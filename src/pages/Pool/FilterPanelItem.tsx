@@ -2,25 +2,28 @@ import React from 'react'
 import { Trans } from '@lingui/macro'
 import { TYPE } from '../../theme'
 import { FilterPanelItemWrapper } from './styleds'
+import Toggle from '../../components/Toggle'
 
 interface FilterPanelProps {
-    closedPositions: any
-    setClosedPositions: any
-    item: string
+    item: {
+        title: string
+        method: (v: boolean) => void
+        checkValue: boolean
+    }
 }
 
-const FilterPanelItem = ({ closedPositions, setClosedPositions, item }: FilterPanelProps) => {
+const FilterPanelItem = ({ item }: FilterPanelProps) => {
+
     return (
         <FilterPanelItemWrapper>
             <label>
                 <TYPE.body>
-                    <Trans>{item}</Trans>
+                    <Trans>{item.title}</Trans>
                 </TYPE.body>
             </label>
-            <input
-                type='checkbox'
-                onChange={() => setClosedPositions(!closedPositions)}
-                checked={!closedPositions}
+            <Toggle
+                isActive={!item.checkValue}
+                toggle={() => item.method(!item.checkValue)}
             />
         </FilterPanelItemWrapper>
     )

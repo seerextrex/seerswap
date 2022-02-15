@@ -173,10 +173,14 @@ export const MainContentWrapper = styled.main`
 `
 export const FilterPanelWrapper = styled.div`
     width: 100%;
-    padding: 1rem 2rem;
+    padding: 0 3rem;
     display: flex;
     justify-content: start;
     gap: .8rem;
+
+    label {
+        margin-bottom: .5rem;
+    }
 `
 
 //PositionPage
@@ -314,7 +318,7 @@ export const LoadingMock = styled.div`
 
 //FilterPanelItem
 export const FilterPanelItemWrapper = styled.div`
-  display: flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
 `

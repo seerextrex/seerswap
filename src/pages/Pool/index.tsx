@@ -6,7 +6,7 @@ import PositionList from 'components/PositionList'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { useV3Positions } from 'hooks/useV3Positions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useContext, useMemo } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useUserHideClosedPositions } from 'state/user/hooks'
@@ -16,15 +16,8 @@ import { PositionDetails } from 'types/position'
 import { Helmet } from 'react-helmet'
 import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 import Loader from '../../components/Loader'
-import { ButtonRow, FilterPanelWrapper, MainContentWrapper, MigrateButtonPrimary, NoLiquidity, PageWrapper, ResponsiveButtonPrimary, ResponsiveRow, TitleRow } from './styleds'
+import { ButtonRow, FilterPanelWrapper, MainContentWrapper, MigrateButtonPrimary, NoLiquidity, PageWrapper, ResponsiveButtonPrimary, TitleRow } from './styleds'
 import FilterPanelItem from './FilterPanelItem'
-
-const filters = [
-    'In Range',
-    'Closed',
-    'Out of Range',
-    'Farming'
-]
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React()
@@ -32,6 +25,7 @@ export default function Pool() {
 
     const theme = useContext(ThemeContext)
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions()
+    const [hideFarmingPositions, setHideFarmingPositions] = useState(false)
 
     const { positions, loading: positionsLoading } = useV3Positions(account)
 
@@ -43,11 +37,29 @@ export default function Pool() {
         [[], []]
     ) ?? [[], []]
 
+    const filters = [
+        {
+            title: 'Closed',
+            method: setUserHideClosedPositions,
+            checkValue: userHideClosedPositions
+        },
+        {
+            title: 'Farming',
+            method: setHideFarmingPositions,
+            checkValue: hideFarmingPositions
+        }
+    ]
+
+    const farmingPositions = useMemo(() => positions?.filter(el => el.onFarming), [positions])
+    const inRangeWithOutFarmingPositions = useMemo(() => openPositions.filter(el => !el.onFarming), [openPositions])
+
     const filteredPositions = [
-        ...openPositions,
-        ...(userHideClosedPositions ? [] : closedPositions)
+        ...inRangeWithOutFarmingPositions,
+        ...(userHideClosedPositions ? [] : closedPositions),
+        ...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions)
     ]
     const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
+
     const _filteredPositions = useMemo(() => {
         if (filteredPositions.length === 0 && prevFilteredPositions) {
             return prevFilteredPositions
@@ -57,7 +69,7 @@ export default function Pool() {
 
     const showConnectAWallet = Boolean(!account)
 
-    let chainSymbol
+    let chainSymbol: string
 
     if (chainId === 137) {
         chainSymbol = 'MATIC'
@@ -103,12 +115,11 @@ export default function Pool() {
                             </ButtonRow>
                         </TitleRow>
                         <FilterPanelWrapper>
-                            {filters.map((item, key) =>  <FilterPanelItem
-                                closedPositions={userHideClosedPositions}
-                                setClosedPositions={setUserHideClosedPositions}
-                                item={item}
-                                key={key}
-                            />)}
+                            {filters.map((item, key) =>
+                                <FilterPanelItem
+                                    item={item}
+                                    key={key}
+                                />)}
                         </FilterPanelWrapper>
                         <MainContentWrapper>
                             {positionsLoading ? (

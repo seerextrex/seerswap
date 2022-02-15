@@ -1792,6 +1792,7 @@ msgstr "{0, plural, one {Import token} other {Import tokens}}"
 #: src/components/FeeSelector/index.tsx
 #: src/components/RateToggle/index.tsx
 #: src/components/RateToggle/index.tsx
+#: src/pages/Pool/FilterPanelItem.tsx
 msgid "{0}"
 msgstr "{0}"
 

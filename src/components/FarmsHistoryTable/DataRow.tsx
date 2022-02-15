@@ -45,10 +45,10 @@ export default function DataRow ({ eventData, index }: { eventData: any; index: 
                     {eventData.participants}
                 </LabelStyled>
                 <LabelStyled end={1} fontWeight={400}>
-                    {eventData.apr}
+                    <span style={{ color: '#33FF89' }}>{eventData.apr}%</span>
                 </LabelStyled>
                 <LabelStyled end={1} fontWeight={400}>
-                    {`${eventData.start} — ${eventData.end}`}
+                    {`${eventData.startStr} — ${eventData.end}`}
                 </LabelStyled>
             </ResponsiveGrid>
         </div>

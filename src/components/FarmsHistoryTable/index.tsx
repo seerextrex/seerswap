@@ -15,7 +15,7 @@ const SORT_FIELD = {
     participants: 'participants',
     tvlUSD: 'tvlUSD',
     bestApr: 'apr',
-    dates: 'dates'
+    start: 'start'
 }
 
 const MAX_ITEMS = 10
@@ -27,8 +27,8 @@ interface FarmsHistoryTableProps {
 
 export default function FarmsHistoryTable({ eventDatas, maxItems = MAX_ITEMS }: FarmsHistoryTableProps) {
     // for sorting
-    const [sortField, setSortField] = useState(SORT_FIELD.dates)
-    const [sortDirection, setSortDirection] = useState<boolean>(false)
+    const [sortField, setSortField] = useState(SORT_FIELD.start)
+    const [sortDirection, setSortDirection] = useState<boolean>(true)
 
     // pagination
     const [page, setPage] = useState(1)
@@ -36,6 +36,8 @@ export default function FarmsHistoryTable({ eventDatas, maxItems = MAX_ITEMS }: 
 
     //sort
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField)
+
+
 
     const sortedPools = useMemo(() => {
         if (!Array.isArray(eventDatas)) return []
@@ -90,8 +92,8 @@ export default function FarmsHistoryTable({ eventDatas, maxItems = MAX_ITEMS }: 
                         <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.bestApr)}>
                             Best APR {arrow(SORT_FIELD.bestApr)}
                         </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.dates)}>
-                            Dates {arrow(SORT_FIELD.dates)}
+                        <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.start)}>
+                            Dates {arrow(SORT_FIELD.start)}
                         </ClickableTextStyled>
                     </ResponsiveGrid>
                     {sortedPools.map((eventData, i) => {

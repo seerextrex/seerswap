@@ -5,7 +5,6 @@ export const StyledImgLogo = styled.img<{ size: string }>`
     height: ${({ size }) => size};
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.075);
     border-radius: 24px;
-    object-fit: contain;
 `
 
 export const StyledLogo = styled.div<{ size: string }>`

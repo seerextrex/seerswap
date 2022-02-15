@@ -3,44 +3,34 @@ import { useStakerHandlers } from '../../hooks/useStakerHandlers'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import Loader from '../Loader'
 import CurrencyLogo from '../CurrencyLogo'
-import {
-    LoadingShim,
-    Reward,
-    RewardClaimButton,
-    Rewards,
-    RewardsRow,
-    RewardTokenInfo
-} from './styled'
+import { LoadingShim, RewardWrapper, RewardClaimButton, Rewards, RewardsRow, RewardTokenInfo } from './styled'
 import { formatReward } from '../../utils/formatReward'
+import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
+import { Reward } from '../../models/interfaces'
+import { Token } from '@uniswap/sdk-core'
 
 export function StakerMyRewards({
     data,
     refreshing,
     fetchHandler
 }: {
-    data: any
+    data: Reward[]
     refreshing: boolean
     fetchHandler: () => any
 }) {
 
     const allTransactions = useAllTransactions()
-
-    const sortedRecentTransactions = useMemo(() => {
-        const txs = Object.values(allTransactions)
-        return txs
-            .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
-            .sort((a, b) => b.addedTime - a.addedTime)
-    }, [allTransactions])
+    const sortedRecentTransactions = useSortedRecentTransactions()
 
     const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
         [sortedRecentTransactions, allTransactions]
     )
 
-    const { claimRewardHash, claimReward } = useStakerHandlers() || {}
+    const { claimHash, claimReward } = useStakerHandlers() || {}
 
-    const [rewardsLoader, setRewardsLoader] = useState({ id: null, state: false })
+    const [rewardsLoader, setRewardsLoader] = useState<{id: string | null, state: boolean}>({ id: null, state: false })
 
-    const isLoading = (id) => rewardsLoader.id === id && rewardsLoader.state
+    const isLoading = (id: string) => rewardsLoader.id === id && rewardsLoader.state
 
     useEffect(() => {
         fetchHandler()
@@ -49,14 +39,14 @@ export function StakerMyRewards({
     useEffect(() => {
         if (!data) return
 
-        if (claimRewardHash && claimRewardHash.error) {
-            setRewardsLoader({ id: claimRewardHash.id, state: false })
-        } else if (claimRewardHash && confirmed.includes(claimRewardHash.hash)) {
-            setRewardsLoader({ id: claimRewardHash.id, state: false })
-            data.find((el) => el.rewardAddress === claimRewardHash.id).amount = 0
-            data.find((el) => el.rewardAddress === claimRewardHash.id).trueAmount = 0
+        if (typeof claimHash === 'string') {
+            setRewardsLoader({ id: null, state: false })
+        } else if (typeof claimHash !== 'string' && confirmed.includes(String(claimHash.hash))) {
+            setRewardsLoader({ id: claimHash.id, state: false })
+            data.find((el) => el.rewardAddress === claimHash.id).amount = '0'
+            data.find((el) => el.rewardAddress === claimHash.id).trueAmount = '0'
         }
-    }, [claimRewardHash, confirmed])
+    }, [claimHash, confirmed])
 
     const chunkedRewards = useMemo(() => {
         if (!data) return
@@ -84,7 +74,7 @@ export function StakerMyRewards({
             {chunkedRewards?.map((el, i) => (
                 <RewardsRow key={i}>
                     {el.map((rew, j) => (
-                        <Reward refreshing={refreshing} key={j}>
+                        <RewardWrapper refreshing={refreshing} key={j}>
                             {refreshing && (
                                 <LoadingShim>
                                     <Loader style={{ margin: 'auto' }} size={'18px'}
@@ -92,10 +82,7 @@ export function StakerMyRewards({
                                 </LoadingShim>
                             )}
                             <CurrencyLogo
-                                currency={{
-                                    address: rew.rewardAddress,
-                                    symbol: rew.symbol
-                                }}
+                                currency={new Token(137, rew.rewardAddress, 18, rew.symbol)}
                                 size={'35px'}
                                 style={{ marginRight: '10px' }}
                             />
@@ -111,7 +98,7 @@ export function StakerMyRewards({
                                 </RewardClaimButton>
                             ) : (
                                 <RewardClaimButton
-                                    disabled={rew.amount === 0}
+                                    disabled={+rew.amount === 0}
                                     onClick={() => {
                                         setRewardsLoader({
                                             id: rew.rewardAddress,
@@ -124,7 +111,7 @@ export function StakerMyRewards({
                                     Claim
                                 </RewardClaimButton>
                             )}
-                        </Reward>
+                        </RewardWrapper>
                     ))}
                 </RewardsRow>
             ))}

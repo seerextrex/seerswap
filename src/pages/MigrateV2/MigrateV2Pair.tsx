@@ -129,16 +129,14 @@ function V2PairMigration({
     const networkFailed = useIsNetworkFailed()
 
     const pairFactory = useSingleCallResult(pair, 'factory')
-    const isNotUniswap = !pairFactory.result
-        ? null
-        : pairFactory.result?.[0] && pairFactory.result[0].toLowerCase() !== v2FactoryAddress.toLowerCase()
+    const isNotUniswap = !pairFactory.result ? null : pairFactory.result?.[0] && pairFactory.result[0].toLowerCase() !== v2FactoryAddress.toLowerCase()
     const prevIsNotUniswap = usePrevious(isNotUniswap)
     const _isNotUniswap = useMemo(() => {
         if (isNotUniswap === null && prevIsNotUniswap) {
             return prevIsNotUniswap
         }
         return isNotUniswap
-    }, [])
+    }, [pairFactory])
 
     const deadline = useTransactionDeadline() // custom from users settings
     const blockTimestamp = useCurrentBlockTimestamp()
@@ -423,15 +421,17 @@ function V2PairMigration({
                                 {currency1.symbol}/{currency0.symbol} LP Tokens
                             </TYPE.mediumHeader>
                         </RowFixed>
-                        <Badge
-                            variant={BadgeVariant.WARNING}
-                            style={{
-                                backgroundColor: 'white',
-                                color: _isNotUniswap ? '#48b9cd' : '#f241a5'
-                            }}
-                        >
-                            {_isNotUniswap ? 'SushiSwap' : 'QuickSwap'}
-                        </Badge>
+                        {
+                            pairFactory.result && <Badge
+                                variant={BadgeVariant.WARNING}
+                                style={{
+                                    backgroundColor: 'white',
+                                    color: _isNotUniswap ? '#48b9cd' : '#f241a5'
+                                }}
+                            >
+                                {_isNotUniswap ? 'SushiSwap' : 'QuickSwap'}
+                            </Badge>
+                        }
                     </RowBetween>
                     <LiquidityInfo token0Amount={token0Value} token1Amount={token1Value} />
                 </AutoColumn>

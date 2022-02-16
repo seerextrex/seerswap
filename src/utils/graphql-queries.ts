@@ -74,13 +74,13 @@ export const FETCH_ETERNAL_FARM = (farmId: string) => gql`
 `
 
 export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query eternalFarmingsFromPools {
         eternalFarmings(where: {pool_in: ${poolString}, isDetached: false}) {
           id
@@ -98,7 +98,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
       }
       `
 
-  return gql(queryString)
+    return gql(queryString)
 }
 
 
@@ -340,7 +340,7 @@ export const POSITIONS_ON_ETERNAL_FARMING = (account: string) => gql`
 
 export const TRANSFERED_POSITIONS_FOR_POOL = (account: string, pool: string) => gql`
 query transferedPositionsForPool {
-    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}"}) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}", liquidity_not: "0"}) {
         id
         owner
         pool

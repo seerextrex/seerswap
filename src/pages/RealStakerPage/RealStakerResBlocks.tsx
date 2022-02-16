@@ -1,13 +1,6 @@
 import { formatEther } from 'ethers/lib/utils'
 import { useCallback, useState } from 'react'
-import {
-    AmountTitle,
-    EarnedBadge,
-    InfoStyled,
-    ResButton,
-    ResPageWrapper,
-    TitleWrapper
-} from './styled'
+import { AmountTitle, EarnedBadge, InfoStyled, ResButton, ResPageWrapper, TitleWrapper } from './styled'
 import { BigNumber } from '@ethersproject/bignumber'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 

@@ -1,10 +1,4 @@
-import {
-    addMulticallListeners,
-    errorFetchingMulticallResults,
-    fetchingMulticallResults,
-    removeMulticallListeners,
-    updateMulticallResults
-} from './actions'
+import { addMulticallListeners, errorFetchingMulticallResults, fetchingMulticallResults, removeMulticallListeners, updateMulticallResults } from './actions'
 import reducer, { MulticallState } from './reducer'
 import { createStore, Store } from '@reduxjs/toolkit'
 

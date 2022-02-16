@@ -7,7 +7,7 @@ import AlgebraLogo from '../../assets/images/algebra-logo.png'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { stringToColour } from '../../utils/stringToColour'
 import { specialTokens } from './SpecialTokens'
-import { StyledLogo, StyledImgLogo } from './styled'
+import { StyledImgLogo, StyledLogo } from './styled'
 
 export const getTokenLogoURL = (address: string) =>
     `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`

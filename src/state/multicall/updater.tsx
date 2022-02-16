@@ -6,11 +6,7 @@ import chunkArray from '../../utils/chunkArray'
 import { retry, RetryableError } from '../../utils/retry'
 import { useBlockNumber } from '../application/hooks'
 import { AppState } from '../index'
-import {
-    errorFetchingMulticallResults,
-    fetchingMulticallResults,
-    updateMulticallResults
-} from './actions'
+import { errorFetchingMulticallResults, fetchingMulticallResults, updateMulticallResults } from './actions'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { Call, parseCallKey } from './utils'
 import { UniswapInterfaceMulticall } from 'types/v3'

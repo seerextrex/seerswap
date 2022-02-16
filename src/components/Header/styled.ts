@@ -24,9 +24,9 @@ export const HeaderFrame = styled.div<{ showBackground: boolean }>`
     background-position: ${({ showBackground }) => (showBackground ? '0 -100%' : '0 0')};
     background-size: 100% 200%;
     box-shadow: 0 0 0 1px ${({
-        theme,
-        showBackground
-    }) => (showBackground ? theme.bg2 : 'transparent;')};
+    theme,
+    showBackground
+}) => (showBackground ? theme.bg2 : 'transparent;')};
     transition: background-position 0.1s, box-shadow 0.1s;
     background-blend-mode: hard-light;
     padding: 50px 1rem 1rem;

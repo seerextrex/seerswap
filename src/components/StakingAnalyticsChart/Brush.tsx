@@ -1,15 +1,4 @@
-import {
-    axisLeft,
-    brushX,
-    curveBumpX,
-    line,
-    max,
-    min,
-    scaleLinear,
-    scaleUtc,
-    select,
-    utcDay
-} from 'd3'
+import { axisLeft, brushX, curveBumpX, line, max, min, scaleLinear, scaleUtc, select, utcDay } from 'd3'
 import { useEffect, useRef } from 'react'
 
 interface BrushProps {

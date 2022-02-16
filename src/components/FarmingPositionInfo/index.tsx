@@ -13,13 +13,7 @@ import { formatTickPrice } from 'utils/formatTickPrice'
 import { Bound } from 'state/mint/v3/actions'
 import { X } from 'react-feather'
 import { Percent } from '@uniswap/sdk-core'
-import {
-    PositionIcon,
-    PositionInfoModal,
-    PositionInfoRow,
-    PositionInfoRowTitle,
-    PositionInfoRowValue
-} from './styled'
+import { PositionIcon, PositionInfoModal, PositionInfoRow, PositionInfoRowTitle, PositionInfoRowValue } from './styled'
 
 export default function FarmingPositionInfo({ el }: { el: any }) {
     const [positionModal, setPositionModal] = useState(false)

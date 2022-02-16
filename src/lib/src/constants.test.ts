@@ -1,9 +1,7 @@
 import { POOL_INIT_CODE_HASH, POOL_INIT_CODE_HASH_OPTIMISM } from './constants'
 
 import { bytecode } from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
-import {
-    bytecode as SwapRouterBytecode
-} from '@uniswap/v3-periphery-optimism/artifacts-ovm/contracts/SwapRouter.sol/SwapRouter.json'
+import { bytecode as SwapRouterBytecode } from '@uniswap/v3-periphery-optimism/artifacts-ovm/contracts/SwapRouter.sol/SwapRouter.json'
 import { keccak256 } from '@ethersproject/solidity'
 
 // this _could_ go in constants, except that it would cost every consumer of the sdk the CPU to compute the hash

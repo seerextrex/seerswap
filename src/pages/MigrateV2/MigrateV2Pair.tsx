@@ -22,11 +22,7 @@ import { Redirect, RouteComponentProps } from 'react-router'
 import { Text } from 'rebass'
 import { useAppDispatch } from 'state/hooks'
 import { Bound, resetMintState } from 'state/mint/v3/actions'
-import {
-    useRangeHopCallbacks,
-    useV3DerivedMintInfo,
-    useV3MintActionHandlers
-} from 'state/mint/v3/hooks'
+import { useRangeHopCallbacks, useV3DerivedMintInfo, useV3MintActionHandlers } from 'state/mint/v3/hooks'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
 import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'

@@ -47,12 +47,12 @@ export function FutureEventsPage({
                         <EventsCards>
                             <EventsCardsRow>
                                 {[0, 1, 2].map((el, i) => (
-                                    <StakerEventCard skeleton key={i}/>
+                                    <StakerEventCard skeleton key={i} />
                                 ))}
                             </EventsCardsRow>
                             <EventsCardsRow>
                                 {[0, 1].map((el, i) => (
-                                    <StakerEventCard skeleton key={i}/>
+                                    <StakerEventCard skeleton key={i} />
                                 ))}
                             </EventsCardsRow>
                         </EventsCards>

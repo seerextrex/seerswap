@@ -8,14 +8,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { stakerClient } from '../apollo/client'
 import { FROZEN_STAKED } from '../utils/graphql-queries'
 import { TransactionResponse } from '@ethersproject/providers'
-import {
-    FactorySubgraph,
-    Frozen,
-    StakeHash,
-    StakeSubgraph,
-    SubgraphResponse,
-    SubgraphResponseStaking
-} from '../models/interfaces'
+import { FactorySubgraph, Frozen, StakeHash, StakeSubgraph, SubgraphResponse, SubgraphResponseStaking } from '../models/interfaces'
 
 export function useRealStakerHandlers() {
     const addTransaction = useTransactionAdder()

@@ -9,12 +9,7 @@ import { useDerivedPositionInfo } from '../../hooks/useDerivedPositionInfo'
 import { useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
 import { CurrencyDropdown, StyledInput } from '../AddLiquidity/styled'
 import { useCurrency } from '../../hooks/Tokens'
-import {
-    useRangeHopCallbacks,
-    useV3DerivedMintInfo,
-    useV3MintActionHandlers,
-    useV3MintState
-} from '../../state/mint/v3/hooks'
+import { useRangeHopCallbacks, useV3DerivedMintInfo, useV3MintActionHandlers, useV3MintState } from '../../state/mint/v3/hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'

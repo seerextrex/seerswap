@@ -34,14 +34,14 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
   `}
 
     ${({ clickable }) =>
-        clickable
-            ? css`
+    clickable
+        ? css`
                 :hover {
                     cursor: pointer;
                     opacity: 0.8;
                 }
             `
-            : null}
+        : null}
 `
 
 export const SectionBreak = styled.div`
@@ -52,13 +52,13 @@ export const SectionBreak = styled.div`
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
     color: ${({ theme, severity }) =>
-        severity === 3 || severity === 4
-            ? theme.red1
-            : severity === 2
-                ? theme.yellow2
-                : severity === 1
-                    ? theme.text1
-                    : theme.text2};
+    severity === 3 || severity === 4
+        ? theme.red1
+        : severity === 2
+            ? theme.yellow2
+            : severity === 1
+                ? theme.text1
+                : theme.text2};
 `
 
 export const TruncatedText = styled(Text)`

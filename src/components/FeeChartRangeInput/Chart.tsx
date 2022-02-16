@@ -1,27 +1,13 @@
 import React, { useEffect, useMemo, useRef } from 'react'
-import {
-    area,
-    axisBottom,
-    axisLeft,
-    create,
-    curveBumpX,
-    easeCircleOut,
-    interpolate,
-    line,
-    max,
-    min,
-    scaleLinear,
-    scaleTime,
-    select
-} from 'd3'
+import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpolate, line, max, min, scaleLinear, scaleTime, select } from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
 import { FormattedFeeChart } from '../../models/interfaces'
 
 interface ChartInterface {
     feeData: {
-        data: FormattedFeeChart[]
-        previousData: FormattedFeeChart[]
+        data: FormattedFeeChart[] | undefined[]
+        previousData: FormattedFeeChart[] | undefined[]
     }
     dimensions: {
         width: number
@@ -33,13 +19,7 @@ interface ChartInterface {
     isMobile: boolean
 }
 
-export default function Chart({
-    feeData: { data, previousData },
-    span,
-    type,
-    dimensions,
-    isMobile
-}: ChartInterface) {
+export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile }: ChartInterface) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -90,14 +70,14 @@ export default function Chart({
 
         if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0].timestamp))) {
             res.push({
-                value: data[0].value,
-                timestamp: data[0].timestamp
+                value: data[0]?.value,
+                timestamp: data[0]?.timestamp
             })
         }
 
         for (let i = 1; i < data.length; i++) {
             if (
-                dayjs(data[i].timestamp)
+                dayjs(data[i]?.timestamp)
                     .startOf(span !== ChartSpan.DAY ? 'day' : _span)
                     .isSame(dayjs(data[i - 1].timestamp).startOf(_span))
             ) {
@@ -234,13 +214,10 @@ export default function Chart({
                 last = res[i]
             }
 
-            // _data.push(last)
-
             if (lastRealDay < lastAdditionalDay) {
-                for (
-                    let i = lastRealDay.add(1, _span).unix();
-                    i <= lastAdditionalDay.unix();
-                    i += span === ChartSpan.DAY ? 3600 : 24 * 3600
+                for (let i = lastRealDay.add(1, _span).unix();
+                     i <= lastAdditionalDay.unix();
+                     i += span === ChartSpan.DAY ? 3600 : 24 * 3600
                 ) {
                     _data.push({
                         timestamp: new Date(i * 1000),

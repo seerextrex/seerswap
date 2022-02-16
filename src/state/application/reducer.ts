@@ -1,14 +1,5 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
-import {
-    addPopup,
-    ApplicationModal,
-    PopupContent,
-    removePopup,
-    setOpenModal,
-    updateBlockNumber,
-    updateChainId,
-    updateGasPrice
-} from './actions'
+import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal, updateBlockNumber, updateChainId, updateGasPrice } from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
 

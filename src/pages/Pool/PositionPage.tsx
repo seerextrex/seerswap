@@ -24,9 +24,7 @@ import { Currency, CurrencyAmount, Fraction, Percent, Token } from '@uniswap/sdk
 import { useActiveWeb3React } from 'hooks/web3'
 import { useV3NFTPositionManagerContract } from 'hooks/useContract'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
-import TransactionConfirmationModal, {
-    ConfirmationModalContent
-} from 'components/TransactionConfirmationModal'
+import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Dots } from 'components/swap/styled'
 import { getPriceOrderingFromPositionForUI } from '../../components/PositionListItem'

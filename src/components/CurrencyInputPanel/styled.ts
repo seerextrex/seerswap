@@ -3,6 +3,7 @@ import { ButtonGray } from '../Button'
 import { darken } from 'polished'
 import { AutoColumn } from 'components/Column'
 import { Input as NumericalInput } from '../NumericalInput'
+// @ts-ignore
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 
 //index
@@ -87,7 +88,7 @@ export const InputRow = styled.div<{ selected: boolean; hideCurrency: boolean }>
     align-items: stretch;
   }`}
 `
-export const AutoColumnStyled = styled(AutoColumn)<{ page: string }>`
+export const AutoColumnStyled = styled(AutoColumn)<{ page?: string }>`
   left: 1rem;
   bottom: -13% !important;
   ${({ theme, page }) => theme.mediaWidth.upToExtraSmall`
@@ -108,7 +109,7 @@ export const LabelRow = styled.div`
     color: ${({ theme }) => darken(0.2, theme.text2)};
   }
 `
-export const FiatRow = styled(LabelRow)<{ shallow: boolean; page: string }>`
+export const FiatRow = styled(LabelRow)<{ shallow?: boolean; page: string }>`
   justify-content: flex-end;
   padding: ${({ shallow, page }) => (page === 'addLiq' ? '0 1rem' : shallow ? '0' : '0 1rem 1rem')};
   margin-top: ${({ page }) => (page === 'pool' ? '.3rem' : '0')};

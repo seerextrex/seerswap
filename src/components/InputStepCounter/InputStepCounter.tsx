@@ -51,8 +51,6 @@ const StepCounter = ({
     const [useLocalValue, setUseLocalValue] = useState(false)
 
     // animation if parent value updates local value
-    const [pulsing, setPulsing] = useState<boolean>(false)
-
     const handleOnFocus = () => {
         setUseLocalValue(true)
         setActive(true)
@@ -79,10 +77,6 @@ const StepCounter = ({
         if (localValue !== value && !useLocalValue) {
             setTimeout(() => {
                 setLocalValue(value) // reset local value to match parent
-                setPulsing(true) // trigger animation
-                setTimeout(function() {
-                    setPulsing(false)
-                }, 1800)
             }, 0)
         }
     }, [localValue, useLocalValue, value])

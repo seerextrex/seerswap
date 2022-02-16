@@ -1,9 +1,7 @@
 import { Trans } from '@lingui/macro'
 import React, { ErrorInfo } from 'react'
-import store, { AppState } from '../../state'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
-import { getUserAgent } from '../../utils/getUserAgent'
 import ReactGA from 'react-ga'
 import { BodyWrapper, CodeBlockWrapper, FallbackWrapper, SomethingWentWrongWrapper } from './styled'
 
@@ -33,7 +31,6 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
     render() {
         const { error } = this.state
         if (error !== null) {
-            const encodedBody = encodeURIComponent(issueBody(error))
             return (
                 <FallbackWrapper>
                     <BodyWrapper>
@@ -55,70 +52,4 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
         }
         return this.props.children
     }
-}
-
-function getRelevantState(): null | keyof AppState {
-    const path = window.location.hash
-    if (!path.startsWith('#/')) {
-        return null
-    }
-    const pieces = path.substring(2).split(/[\/\\?]/)
-    switch (pieces[0]) {
-        case 'swap':
-            return 'swap'
-        case 'add':
-            if (pieces[1] === 'v2') return 'mint'
-            else return 'mintV3'
-        case 'remove':
-            if (pieces[1] === 'v2') return 'burn'
-            else return 'burnV3'
-    }
-    return null
-}
-
-function issueBody(error: Error): string {
-    const relevantState = getRelevantState()
-    const deviceData = getUserAgent()
-    return `## URL
-
-${window.location.href}
-
-${
-        relevantState
-            ? `## \`${relevantState}\` state
-
-\`\`\`json
-${JSON.stringify(store.getState()[relevantState], null, 2)}
-\`\`\`
-`
-            : ''
-    }
-${
-        error.name &&
-        `## Error
-
-\`\`\`
-${error.name}${error.message && `: ${error.message}`}
-\`\`\`
-`
-    }
-${
-        error.stack &&
-        `## Stacktrace
-
-\`\`\`
-${error.stack}
-\`\`\`
-`
-    }
-${
-        deviceData &&
-        `## Device data
-
-\`\`\`json
-${JSON.stringify(deviceData, null, 2)}
-\`\`\`
-`
-    }
-`
 }

@@ -340,7 +340,7 @@ export const POSITIONS_ON_ETERNAL_FARMING = (account: string) => gql`
 
 export const TRANSFERED_POSITIONS_FOR_POOL = (account: string, pool: string) => gql`
 query transferedPositionsForPool {
-    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}"}) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}", liquidity_not: "0"}) {
         id
         owner
         pool

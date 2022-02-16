@@ -78,26 +78,26 @@ export const ButtonPrimary = styled(Base)`
 `
 
 export const ButtonLight = styled(Base)`
-  background-color: ${({ theme }) => '#6ec2eb'};
-  color: ${({ theme }) => 'white'};
+  background-color: ${({}) => '#6ec2eb'};
+  color: ${({}) => 'white'};
   font-size: 16px;
   font-weight: 500;
   &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, '#6ec2eb')};
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, '#6ec2eb')};
+    box-shadow: 0 0 0 1pt ${({ disabled }) => !disabled && darken(0.03, '#6ec2eb')};
+    background-color: ${({ disabled }) => !disabled && darken(0.03, '#6ec2eb')};
   }
   &:hover {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, '#6ec2eb')};
+    background-color: ${({ disabled }) => !disabled && darken(0.03, '#6ec2eb')};
   }
   &:active {
-    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.05, '#6ec2eb')};
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, '#6ec2eb')};
+    box-shadow: 0 0 0 1pt ${({ disabled }) => !disabled && darken(0.05, '#6ec2eb')};
+    background-color: ${({ disabled }) => !disabled && darken(0.05, '#6ec2eb')};
   }
   :disabled {
     opacity: 0.4;
     :hover {
       cursor: auto;
-      background-color: ${({ theme }) => '#6ec2eb'};
+      background-color: ${({}) => '#6ec2eb'};
       box-shadow: none;
       border: 1px solid transparent;
       outline: none;
@@ -151,7 +151,7 @@ export const ButtonSecondary = styled(Base)`
 `
 
 export const ButtonOutlined = styled(Base)`
-  background-color: ${({ theme }) => 'rgba(60,97,126,0.5)'};
+  background-color: ${({}) => 'rgba(60,97,126,0.5)'};
   color: ${({ theme }) => theme.text1};
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
@@ -266,8 +266,8 @@ const ButtonErrorStyle = styled(Base)`
     cursor: auto;
     box-shadow: none;
     color: rgb(195, 197, 203);
-    background-color: ${({ theme }) => '#073c66'};
-    border: 1px solid ${({ theme }) => '#073c66'};
+    background-color: ${({}) => '#073c66'};
+    border: 1px solid ${({}) => '#073c66'};
   }
 `
 

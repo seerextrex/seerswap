@@ -32,7 +32,7 @@ export const NFTPositionsRow = styled.div`
     width: 100%;
     margin-bottom: 8px;
 `
-export const NFTPosition = styled.div<{ selected: boolean }>`
+export const NFTPosition = styled.div<{ selected?: boolean; skeleton?: boolean }>`
     display: inline-flex;
     cursor: pointer;
     position: relative;
@@ -51,7 +51,7 @@ export const NFTPosition = styled.div<{ selected: boolean }>`
     }
   `}
 `
-export const NFTPositionSelectCircle = styled.div<{ selected: boolean }>`
+export const NFTPositionSelectCircle = styled.div<{ selected?: boolean; skeleton?: boolean }>`
     position: absolute;
     width: 20px;
     height: 20px;
@@ -65,7 +65,7 @@ export const NFTPositionSelectCircle = styled.div<{ selected: boolean }>`
     border: 1px solid ${({ selected }) => (selected ? '#3970FF' : 'rgba(60, 97, 126, 0.5)')};
     background-color: ${({ selected }) => (selected ? '#3970FF' : 'transparent')}
 `
-export const NFTPositionIcon = styled.div<{ skeleton: boolean; name: string }>`
+export const NFTPositionIcon = styled.div<{ skeleton?: boolean; name?: string }>`
     width: 45px;
     height: 45px;
     border-radius: 50%;
@@ -77,7 +77,7 @@ export const NFTPositionIcon = styled.div<{ skeleton: boolean; name: string }>`
             ${skeletonGradient}
         `};
 `
-export const NFTPositionDescription = styled.div<{ skeleton: boolean }>`
+export const NFTPositionDescription = styled.div<{ skeleton?: boolean }>`
     margin-left: 10px;
     line-height: 22px;
 
@@ -104,8 +104,8 @@ export const NFTPositionDescription = styled.div<{ skeleton: boolean }>`
             }
         `}
 `
-export const NFTPositionIndex = styled.div``
-export const NFTPositionLink = styled.a`
+export const NFTPositionIndex = styled.div<{skeleton?: boolean}>``
+export const NFTPositionLink = styled.a<{skeleton?: boolean}>`
     font-size: 13px;
 `
 export const StakeButton = styled.button`

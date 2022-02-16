@@ -13,7 +13,9 @@ export type {
     TotalStatSubgraph,
     SubgraphResponseStaking,
     SmallPoolSubgraph,
-    PoolChartSubgraph
+    PoolChartSubgraph,
+    PoolHourData,
+    EternalFarmingByPool
 } from './responseSubgraph'
 export type {
     FormattedPool,

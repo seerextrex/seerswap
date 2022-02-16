@@ -37,12 +37,7 @@ import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
-import {
-    useDefaultsFromURLSearch,
-    useDerivedSwapInfo,
-    useSwapActionHandlers,
-    useSwapState
-} from '../../state/swap/hooks'
+import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { useExpertModeManager, useUserSingleHopOnly } from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { computeFiatValuePriceImpact } from '../../utils/computeFiatValuePriceImpact'
@@ -387,8 +382,9 @@ export default function Swap({ history }: RouteComponentProps) {
     return (
         <>
             <Helmet>
-                <meta name={"description"} content={"Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."} />
-                <meta name={"keywords"} content={"best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"}/>
+                <meta name={'description'}
+                      content={'Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees.'} />
+                <meta name={'keywords'} content={'best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange'} />
                 <title>Algebra — Swap</title>
             </Helmet>
             <TokenWarningModal
@@ -422,10 +418,7 @@ export default function Swap({ history }: RouteComponentProps) {
                             borderRadius: '14px'
                         }}>
                             <CurrencyInputPanel
-                                label={
-                                    independentField === Field.OUTPUT && !showWrap ?
-                                        <Trans>From (at most)</Trans> : <Trans>From</Trans>
-                                }
+                                label={independentField === Field.OUTPUT && !showWrap ? <Trans>From (at most)</Trans> : <Trans>From</Trans>}
                                 value={formattedAmounts[Field.INPUT]}
                                 showMaxButton={showMaxButton}
                                 currency={currencies[Field.INPUT]}
@@ -466,8 +459,7 @@ export default function Swap({ history }: RouteComponentProps) {
                             <CurrencyInputPanel
                                 value={formattedAmounts[Field.OUTPUT]}
                                 onUserInput={handleTypeOutput}
-                                label={independentField === Field.INPUT && !showWrap ?
-                                    <Trans>To (at least)</Trans> : <Trans>To</Trans>}
+                                label={independentField === Field.INPUT && !showWrap ? <Trans>To (at least)</Trans> : <Trans>To</Trans>}
                                 showMaxButton={false}
                                 hideBalance={false}
                                 fiatValue={fiatValueOutput ?? undefined}
@@ -493,13 +485,11 @@ export default function Swap({ history }: RouteComponentProps) {
                                         <ArrowWrapper clickable={false}>
                                             <ArrowDown size='16' color={theme.text2} />
                                         </ArrowWrapper>
-                                        <LinkStyledButton id='remove-recipient-button'
-                                                          onClick={() => onChangeRecipient(null)}>
+                                        <LinkStyledButton id='remove-recipient-button' onClick={() => onChangeRecipient(null)}>
                                             <Trans>- Remove send</Trans>
                                         </LinkStyledButton>
                                     </AutoRow>
-                                    <AddressInputPanel id='recipient' value={recipient}
-                                                       onChange={onChangeRecipient} />
+                                    <AddressInputPanel id='recipient' value={recipient} onChange={onChangeRecipient} />
                                 </>
                             ) : null}
 
@@ -520,8 +510,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         action: 'Transaction Details Tooltip Open'
                                                     })
                                                 }}
-                                                content={<AdvancedSwapDetails trade={trade}
-                                                                              allowedSlippage={allowedSlippage} />}
+                                                content={<AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />}
                                             >
                                                 <StyledInfo />
                                             </MouseoverTooltipContent>
@@ -611,7 +600,6 @@ export default function Swap({ history }: RouteComponentProps) {
                               size={'24px'}
                               style={{ marginRight: '8px', flexShrink: 0 }}
                           />
-                            {/* we need to shorten this string on mobile */}
                             {approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED ? (
                                 <Trans>You can now trade {currencies[Field.INPUT]?.symbol}</Trans>
                             ) : (

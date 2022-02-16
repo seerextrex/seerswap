@@ -1,14 +1,6 @@
 import React from 'react'
 import { ExternalLink } from '../../theme'
-import {
-    CircleWrapper,
-    GreenCircle,
-    HeaderText,
-    IconWrapper,
-    OptionCardClickable,
-    OptionCardLeft,
-    SubHeader
-} from './styled'
+import { CircleWrapper, GreenCircle, HeaderText, IconWrapper, OptionCardClickable, OptionCardLeft, SubHeader } from './styled'
 
 
 export default function Option({

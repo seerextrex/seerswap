@@ -52,13 +52,13 @@ export function useStakerHandlers() {
             eternalBonusEarned,
             eternalEarned,
             incentiveBonusEarned,
-            incentiveEarned,
+            incentiveEarned
         },
         farmingType) => {
 
         if (!account || !provider || !chainId) return
 
-        setClaimReward({ hash: null, id: null , farmingType: null})
+        setClaimReward({ hash: null, id: null, farmingType: null })
 
         const MaxUint128 = toHex(JSBI.subtract(JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)), JSBI.BigInt(1)))
 
@@ -109,7 +109,7 @@ export function useStakerHandlers() {
                 summary: `Claiming reward`
             })
 
-            setClaimReward({ hash: result.hash, id: token, error: null, farmingType:  farmingType === FarmingType.ETERNAL ? 0 : 1})
+            setClaimReward({ hash: result.hash, id: token, error: null, farmingType: farmingType === FarmingType.ETERNAL ? 0 : 1 })
 
         } catch (err: any) {
             setClaimReward('failed')
@@ -184,7 +184,7 @@ export function useStakerHandlers() {
 
             const result: TransactionResponse = await farmingCenterContract.claimReward(tokenReward, account, MaxUint128, MaxUint128, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
 
-            setClaimHash({hash: result.hash, id: tokenReward})
+            setClaimHash({ hash: result.hash, id: tokenReward })
             addTransaction(result, {
                 summary: 'Claiming reward'
             })

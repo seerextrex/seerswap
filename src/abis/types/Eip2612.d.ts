@@ -2,116 +2,114 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import {
-  ethers,
-  EventFilter,
-  Signer,
-  BigNumber,
-  BigNumberish,
-  PopulatedTransaction,
-  BaseContract,
-  ContractTransaction,
-  CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+import { BaseContract, BigNumber, CallOverrides, ethers, PopulatedTransaction, Signer } from 'ethers'
+import { BytesLike } from '@ethersproject/bytes'
+import { Listener, Provider } from '@ethersproject/providers'
+import { FunctionFragment, Result } from '@ethersproject/abi'
+import type { TypedEvent, TypedEventFilter, TypedListener } from './common'
 
 interface Eip2612Interface extends ethers.utils.Interface {
-  functions: {
-    "nonces(address)": FunctionFragment;
-    "DOMAIN_SEPARATOR()": FunctionFragment;
-  };
+    functions: {
+        'nonces(address)': FunctionFragment;
+        'DOMAIN_SEPARATOR()': FunctionFragment;
+    };
+    events: {};
 
-  encodeFunctionData(functionFragment: "nonces", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "DOMAIN_SEPARATOR",
-    values?: undefined
-  ): string;
+    encodeFunctionData(functionFragment: 'nonces', values: [string]): string;
 
-  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "DOMAIN_SEPARATOR",
-    data: BytesLike
-  ): Result;
+    encodeFunctionData(
+        functionFragment: 'DOMAIN_SEPARATOR',
+        values?: undefined
+    ): string;
 
-  events: {};
+    decodeFunctionResult(functionFragment: 'nonces', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'DOMAIN_SEPARATOR',
+        data: BytesLike
+    ): Result;
 }
 
 export class Eip2612 extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    interface: Eip2612Interface
+    functions: {
+        nonces(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
+    }
+    callStatic: {
+        nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
+    }
+    filters: {}
+    estimateGas: {
+        nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
+    }
+    populateTransaction: {
+        nonces(
+            owner: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
 
-  interface: Eip2612Interface;
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    }
 
-  functions: {
-    nonces(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    connect(signerOrProvider: Signer | Provider | string): this;
 
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
-  };
+    attach(addressOrName: string): this;
 
-  nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    deployed(): Promise<this>;
 
-  DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
+    listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
 
-  callStatic: {
+    off<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    on<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    once<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): this;
+
+    listeners(eventName?: string): Array<Listener>;
+
+    off(eventName: string, listener: Listener): this;
+
+    on(eventName: string, listener: Listener): this;
+
+    once(eventName: string, listener: Listener): this;
+
+    removeListener(eventName: string, listener: Listener): this;
+
+    removeAllListeners(eventName?: string): this;
+
+    queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+        event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
-  };
-
-  filters: {};
-
-  estimateGas: {
-    nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    nonces(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
 }

@@ -3,7 +3,7 @@ import { useStakerHandlers } from '../../hooks/useStakerHandlers'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import Loader from '../Loader'
 import CurrencyLogo from '../CurrencyLogo'
-import { LoadingShim, RewardWrapper, RewardClaimButton, Rewards, RewardsRow, RewardTokenInfo } from './styled'
+import { LoadingShim, RewardClaimButton, Rewards, RewardsRow, RewardTokenInfo, RewardWrapper } from './styled'
 import { formatReward } from '../../utils/formatReward'
 import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
 import { Reward } from '../../models/interfaces'
@@ -28,7 +28,7 @@ export function StakerMyRewards({
 
     const { claimHash, claimReward } = useStakerHandlers() || {}
 
-    const [rewardsLoader, setRewardsLoader] = useState<{id: string | null, state: boolean}>({ id: null, state: false })
+    const [rewardsLoader, setRewardsLoader] = useState<{ id: string | null, state: boolean }>({ id: null, state: false })
 
     const isLoading = (id: string) => rewardsLoader.id === id && rewardsLoader.state
 

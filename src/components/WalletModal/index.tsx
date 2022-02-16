@@ -17,16 +17,7 @@ import Option from './Option'
 import PendingView from './PendingView'
 import { Frown } from 'react-feather'
 import ReactGA from 'react-ga'
-import {
-    CloseColor,
-    CloseIcon,
-    ContentWrapper,
-    HeaderRow,
-    HoverText,
-    OptionGrid,
-    UpperSection,
-    Wrapper
-} from './styled'
+import { CloseColor, CloseIcon, ContentWrapper, HeaderRow, HoverText, OptionGrid, UpperSection, Wrapper } from './styled'
 
 
 const WALLET_VIEWS = {

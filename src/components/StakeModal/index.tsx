@@ -159,20 +159,20 @@ export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken,
     }, [selectedNFT, submitState])
 
     const stakeNFTs = useCallback((eventType: FarmingType) => {
-            setSubmitLoader(true)
-            setSubmitState(2)
-            stakeHandler(
-                selectedNFT,
-                {
-                    pool: pool.id,
-                    rewardToken: rewardToken.id,
-                    bonusRewardToken: bonusRewardToken.id,
-                    startTime,
-                    endTime
-                },
-                eventType
-            )
-        }, [selectedNFT, submitState])
+        setSubmitLoader(true)
+        setSubmitState(2)
+        stakeHandler(
+            selectedNFT,
+            {
+                pool: pool.id,
+                rewardToken: rewardToken.id,
+                bonusRewardToken: bonusRewardToken.id,
+                startTime,
+                endTime
+            },
+            eventType
+        )
+    }, [selectedNFT, submitState])
 
     const linkToProviding = `/add/${pool.token0.id}/${pool.token1.id}`
 

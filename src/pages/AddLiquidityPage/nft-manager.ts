@@ -1,12 +1,4 @@
-import {
-    BigintIsh,
-    Currency,
-    CurrencyAmount,
-    NativeCurrency,
-    Percent,
-    Token,
-    validateAndParseAddress
-} from '@uniswap/sdk-core'
+import { BigintIsh, Currency, CurrencyAmount, NativeCurrency, Percent, Token, validateAndParseAddress } from '@uniswap/sdk-core'
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 //   import { PermitOptions, SelfPermit } from 'lib/src'

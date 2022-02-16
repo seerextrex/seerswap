@@ -13,15 +13,7 @@ import { unwrappedToken } from '../../utils/unwrappedToken'
 import { ButtonPrimary } from '../Button'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
-import {
-    BottomSection,
-    Break,
-    CardBGImage,
-    CardNoise,
-    StatContainer,
-    TopSection,
-    Wrapper
-} from './styled'
+import { BottomSection, Break, CardBGImage, CardNoise, StatContainer, TopSection, Wrapper } from './styled'
 
 export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) {
     const token0 = stakingInfo.tokens[0]

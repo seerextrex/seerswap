@@ -104,8 +104,8 @@ export const NFTPositionDescription = styled.div<{ skeleton?: boolean }>`
             }
         `}
 `
-export const NFTPositionIndex = styled.div<{skeleton?: boolean}>``
-export const NFTPositionLink = styled.a<{skeleton?: boolean}>`
+export const NFTPositionIndex = styled.div<{ skeleton?: boolean }>``
+export const NFTPositionLink = styled.a<{ skeleton?: boolean }>`
     font-size: 13px;
 `
 export const StakeButton = styled.button`
@@ -116,6 +116,7 @@ export const StakeButton = styled.button`
     color: white;
     border-radius: 8px;
     width: 100%;
+
     &:first-of-type {
         margin-right: 1rem;
     }

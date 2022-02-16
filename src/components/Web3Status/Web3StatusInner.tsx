@@ -50,7 +50,7 @@ export function Web3StatusInner() {
                 {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
             </Web3StatusConnected>
         )
-    } else if (error){
+    } else if (error) {
         return (
             <Web3StatusError onClick={toggleWalletModal}>
                 <NetworkIcon />

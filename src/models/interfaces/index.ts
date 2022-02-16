@@ -52,5 +52,5 @@ export type {
     FutureFarmingEvent,
     Reward,
     FarmingEventString,
-    Aprs,
+    Aprs
 } from './farming'

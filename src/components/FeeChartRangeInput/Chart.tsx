@@ -216,8 +216,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
             if (lastRealDay < lastAdditionalDay) {
                 for (let i = lastRealDay.add(1, _span).unix();
-                    i <= lastAdditionalDay.unix();
-                    i += span === ChartSpan.DAY ? 3600 : 24 * 3600
+                     i <= lastAdditionalDay.unix();
+                     i += span === ChartSpan.DAY ? 3600 : 24 * 3600
                 ) {
                     _data.push({
                         timestamp: new Date(i * 1000),

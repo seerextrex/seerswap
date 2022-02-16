@@ -1,13 +1,6 @@
 import { useMemo } from 'react'
 import { ArrowLeft } from 'react-feather'
-import {
-    Header,
-    Navigation,
-    PoolCollectedFees,
-    PoolFee,
-    PoolInfoWrapper,
-    PoolTitle
-} from './styled'
+import { Header, Navigation, PoolCollectedFees, PoolFee, PoolInfoWrapper, PoolTitle } from './styled'
 
 export function PoolInfoHeader({
     token0,

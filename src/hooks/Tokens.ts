@@ -4,12 +4,7 @@ import { arrayify } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { createTokenFilterFunction } from '../components/SearchModal/filtering'
 import { ExtendedEther, WMATIC_EXTENDED } from '../constants/tokens'
-import {
-    TokenAddressMap,
-    useAllLists,
-    useCombinedActiveList,
-    useInactiveListUrls
-} from '../state/lists/hooks'
+import { TokenAddressMap, useAllLists, useCombinedActiveList, useInactiveListUrls } from '../state/lists/hooks'
 import { WrappedTokenInfo } from '../state/lists/wrappedTokenInfo'
 import { NEVER_RELOAD, useSingleCallResult } from '../state/multicall/hooks'
 import { useUserAddedTokens } from '../state/user/hooks'

@@ -11,21 +11,7 @@ import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 import usePrevious from '../../hooks/usePrevious'
 import { isMobile } from 'react-device-detect'
 import { useAppSelector } from '../../state/hooks'
-import {
-    AccountElement,
-    AlgIcon,
-    BalanceText,
-    FarmingInfoLabel,
-    HeaderControls,
-    HeaderElement,
-    HeaderFrame,
-    HeaderLinks,
-    LogoWrapper,
-    StyledNavLink,
-    Title,
-    TitleIce,
-    TitleIcicle
-} from './styled'
+import { AccountElement, AlgIcon, BalanceText, FarmingInfoLabel, HeaderControls, HeaderElement, HeaderFrame, HeaderLinks, LogoWrapper, StyledNavLink, Title, TitleIce, TitleIcicle } from './styled'
 
 export default function Header() {
     const { startTime, eternalFarmings } = useAppSelector((state) => state.farming)
@@ -93,7 +79,7 @@ export default function Header() {
                     Pool
                 </StyledNavLink>
                 <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
-                <span style={{position: 'relative'}}>
+                <span style={{ position: 'relative' }}>
             <span>Farming</span>
           <FarmingInfoLabel isEvents={isEvents} />
             </span>

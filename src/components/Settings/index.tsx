@@ -14,16 +14,7 @@ import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
 import TransactionSettings from '../TransactionSettings'
 import { Percent } from '@uniswap/sdk-core'
-import {
-    Break,
-    EmojiWrapper,
-    MenuFlyout,
-    ModalContentWrapper,
-    StyledCloseIcon,
-    StyledMenu,
-    StyledMenuButton,
-    StyledMenuIcon
-} from './styled'
+import { Break, EmojiWrapper, MenuFlyout, ModalContentWrapper, StyledCloseIcon, StyledMenu, StyledMenuButton, StyledMenuIcon } from './styled'
 
 export default function SettingsTab({ placeholderSlippage }: { placeholderSlippage: Percent }) {
     const node = useRef<HTMLDivElement>()

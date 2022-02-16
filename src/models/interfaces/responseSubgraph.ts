@@ -89,7 +89,7 @@ export interface LastPoolSubgraph {
     volumeUSD: string
 }
 
-export interface PoolHourData extends LastPoolSubgraph{
+export interface PoolHourData extends LastPoolSubgraph {
     untrackedVolumeUSD: string
 }
 

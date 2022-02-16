@@ -8,6 +8,7 @@ interface DefaultFarmingEvent {
     endTime: string
     reward: string
 }
+
 export interface Position {
     id: string
     owner: string
@@ -18,6 +19,7 @@ export interface Position {
     onFarmingCenter: boolean
     enteredInEternalFarming: string
 }
+
 export interface EternalFarming {
     id: string
     rewardToken: string
@@ -30,10 +32,12 @@ export interface EternalFarming {
     rewardRate: string
     bonusRewardRate: string
 }
-export interface DetachedEternalFarming extends EternalFarming{
+
+export interface DetachedEternalFarming extends EternalFarming {
     isDetached: boolean
 }
-export interface TickFarming{
+
+export interface TickFarming {
     tickLower: number
     tickUpper: number
     token0: string
@@ -45,6 +49,7 @@ export interface TickFarming{
     startTime?: string
     endTime?: string
 }
+
 export interface FormattedEternalFarming {
     apr: number
     bonusReward: string
@@ -58,20 +63,24 @@ export interface FormattedEternalFarming {
     rewardToken: TokenSubgraph
     startTime: string
 }
-export interface FarmingEvent extends DefaultFarmingEvent{
+
+export interface FarmingEvent extends DefaultFarmingEvent {
     pool: PoolSubgraph
     bonusRewardToken: TokenSubgraph
     rewardToken: TokenSubgraph
 }
-export interface FarmingEventString extends DefaultFarmingEvent{
+
+export interface FarmingEventString extends DefaultFarmingEvent {
     pool: string
     bonusRewardToken: string
     rewardToken: string
     createdAtTimestamp: string
 }
-export interface FutureFarmingEvent extends FarmingEventString{
+
+export interface FutureFarmingEvent extends FarmingEventString {
     createdAtTimestamp: string
 }
+
 export interface Deposit {
     L2tokenId: string
     enteredInEternalFarming: string
@@ -94,6 +103,7 @@ export interface Deposit {
     token1: string
     l2TokenId: string | null
 }
+
 export interface StakeDefault {
     rewardToken: string
     bonusRewardToken: string
@@ -101,29 +111,36 @@ export interface StakeDefault {
     startTime: string
     endTime: string
 }
+
 export interface DefaultFarming {
     hash: string | null
     id: string | null
 }
+
 export interface DefaultNFT {
     id: string
     onFarmingCenter: boolean
 }
+
 export interface ApprovedNFT {
     id: string
     approved: boolean
 }
+
 export interface DefaultFarmingWithError extends DefaultFarming {
     error?: unknown
 }
+
 export interface GetRewardsHashInterface {
     hash: string | null
     id: string | null
     farmingType: number | null
 }
-export interface GetRewardsHashInterfaceWithError extends GetRewardsHashInterface{
+
+export interface GetRewardsHashInterfaceWithError extends GetRewardsHashInterface {
     error?: unknown
 }
+
 export interface EternalCollectRewardHandlerInterface {
     pool: PoolChartSubgraph
     eternalRewardToken: TokenSubgraph
@@ -131,21 +148,25 @@ export interface EternalCollectRewardHandlerInterface {
     eternalStartTime: string
     eternalEndTime: string
 }
+
 export interface GetRewardsHandlerInterface extends EternalCollectRewardHandlerInterface {
     incentiveRewardToken: TokenSubgraph
     incentiveBonusRewardToken: TokenSubgraph
     incentiveStartTime: string
     incentiveEndTime: string
 }
+
 export interface RewardInterface {
     id: string | null
     state: string | null
     farmingType: number | null
 }
+
 export interface UnstakingInterface {
     id: string | null
     state: string | null
 }
+
 export interface FormattedRewardInterface {
     amount: number
     id: string
@@ -155,9 +176,11 @@ export interface FormattedRewardInterface {
     symbol: string
     trueAmount: string
 }
+
 export interface Aprs {
     [type: string]: number
 }
+
 export interface Reward {
     amount: string
     id: string

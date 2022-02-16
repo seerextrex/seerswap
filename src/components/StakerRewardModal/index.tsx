@@ -1,10 +1,4 @@
-import {
-    ClaimRewardButton,
-    ModalHeader,
-    ModalWrapper,
-    RewardTokenIcon,
-    RewardTokenInfo
-} from './styled'
+import { ClaimRewardButton, ModalHeader, ModalWrapper, RewardTokenIcon, RewardTokenInfo } from './styled'
 
 export function StakerRewardModal({
     rew

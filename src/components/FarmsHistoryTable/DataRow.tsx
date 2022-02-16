@@ -2,7 +2,7 @@ import { LabelStyled, ResponsiveGrid } from './styled'
 import CurrencyLogo from '../CurrencyLogo'
 import React from 'react'
 
-export default function DataRow ({ eventData, index }: { eventData: any; index: number }) {
+export default function DataRow({ eventData, index }: { eventData: any; index: number }) {
     return (
         <div>
             <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>

@@ -27,13 +27,15 @@ import { formatUnits } from '@ethersproject/units'
 import {
     Deposit,
     DetachedEternalFarming,
-    EternalFarming, FarmingEvent,
+    EternalFarming,
+    FarmingEvent,
     FormattedEternalFarming,
     FormattedRewardInterface,
     PoolChartSubgraph,
     PoolSubgraph,
     Position,
-    SubgraphResponse, TickFarming,
+    SubgraphResponse,
+    TickFarming,
     TokenSubgraph
 } from '../models/interfaces'
 import { EthereumWindow } from '../models/types'
@@ -58,7 +60,7 @@ export function useIncentiveSubgraph() {
     const [futureEvents, setFutureEvents] = useState<FutureFarmingEvent[] | null>(null)
     const [futureEventsLoading, setFutureEventsLoading] = useState<boolean>(false)
 
-    const [allEvents, setAllEvents] = useState<{currentEvents: FarmingEvent[]; futureEvents: FutureFarmingEvent[]} | null>(null)
+    const [allEvents, setAllEvents] = useState<{ currentEvents: FarmingEvent[]; futureEvents: FutureFarmingEvent[] } | null>(null)
     const [allEventsLoading, setAllEventsLoading] = useState<boolean>(false)
 
     const [positionsOnFarmer, setPositionsOnFarmer] = useState<string[] | null>(null)
@@ -176,7 +178,7 @@ export function useIncentiveSubgraph() {
 
 
         } catch (err: any) {
-                throw new Error('Fetch infinite farming ' + err.message)
+            throw new Error('Fetch infinite farming ' + err.message)
         }
     }
 
@@ -373,23 +375,23 @@ export function useIncentiveSubgraph() {
                         +position.id
                     )
 
-                       const _rewardToken = await fetchToken(rewardToken)
-                       const _bonusRewardToken = await fetchToken(bonusRewardToken)
-                       const _pool = await fetchPool(pool)
+                    const _rewardToken = await fetchToken(rewardToken)
+                    const _bonusRewardToken = await fetchToken(bonusRewardToken)
+                    const _pool = await fetchPool(pool)
 
-                       _position = {
-                           ..._position,
-                           pool: _pool,
-                           incentiveRewardToken: _rewardToken,
-                           incentiveBonusRewardToken: _bonusRewardToken,
-                           incentiveStartTime: startTime,
-                           incentiveEndTime: endTime,
-                           started: +startTime * 1000 < Date.now(),
-                           ended: +endTime * 1000 < Date.now(),
-                           createdAtTimestamp,
-                           incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
-                           incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
-                       }
+                    _position = {
+                        ..._position,
+                        pool: _pool,
+                        incentiveRewardToken: _rewardToken,
+                        incentiveBonusRewardToken: _bonusRewardToken,
+                        incentiveStartTime: startTime,
+                        incentiveEndTime: endTime,
+                        started: +startTime * 1000 < Date.now(),
+                        ended: +endTime * 1000 < Date.now(),
+                        createdAtTimestamp,
+                        incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
+                        incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
+                    }
 
                 } else {
                     const { data: { incentives }, error } = await farmingClient.query({

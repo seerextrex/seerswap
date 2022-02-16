@@ -73,7 +73,7 @@ export default function EventsHistory() {
         },
         {
             start: new Date('Jan 6 2022').getTime(),
-            startStr: 'Jan 20',
+            startStr: 'Jan 6',
             end: 'Jan 20',
             pool: {
                 token0: { address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', symbol: 'WMATIC' },

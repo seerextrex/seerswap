@@ -1,10 +1,4 @@
-import {
-    encodeSqrtRatioX96,
-    FeeAmount,
-    nearestUsableTick,
-    priceToClosestTick,
-    TickMath
-} from 'lib/src'
+import { encodeSqrtRatioX96, FeeAmount, nearestUsableTick, priceToClosestTick, TickMath } from 'lib/src'
 import { Price, Token } from '@uniswap/sdk-core'
 import JSBI from 'jsbi'
 

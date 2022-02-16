@@ -9,9 +9,7 @@ import useDebouncedChangeHandler from 'hooks/useDebouncedChangeHandler'
 import { useBurnV3ActionHandlers, useBurnV3State, useDerivedV3BurnInfo } from 'state/burn/v3/hooks'
 import Slider from 'components/Slider'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-import TransactionConfirmationModal, {
-    ConfirmationModalContent
-} from '../../components/TransactionConfirmationModal'
+import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import { AutoColumn } from 'components/Column'
 import { ButtonConfirmed, ButtonPrimary } from 'components/Button'
 import { LightCard } from 'components/Card'
@@ -85,7 +83,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
     // burn state
     const { percent } = useBurnV3State()
 
-    const {account, chainId, library} = useActiveWeb3React()
+    const { account, chainId, library } = useActiveWeb3React()
     const theme = useTheme()
 
     const derivedInfo = useDerivedV3BurnInfo(position, receiveWETH)

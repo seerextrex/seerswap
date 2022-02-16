@@ -12,19 +12,7 @@ import { Trans } from '@lingui/macro'
 import { FiatValue } from './FiatValue'
 import Loader from '../Loader'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
-import {
-    Aligner,
-    AutoColumnStyled,
-    Container,
-    CurrencySelect,
-    FiatRow,
-    FixedContainer,
-    InputPanel,
-    InputRow,
-    MaxButton,
-    NumericalInputStyled,
-    StyledTokenName
-} from './styled'
+import { Aligner, AutoColumnStyled, Container, CurrencySelect, FiatRow, FixedContainer, InputPanel, InputRow, MaxButton, NumericalInputStyled, StyledTokenName } from './styled'
 
 interface CurrencyInputPanelProps {
     value: string

@@ -2,14 +2,7 @@ import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { AutoColumn } from 'components/Column'
 import { FeeAmount } from 'lib/src'
 import { Minus, Plus } from 'react-feather'
-import {
-    ButtonLabel,
-    FocusedOutlineCard,
-    InputRow,
-    InputTitle,
-    SmallButton,
-    StyledInput
-} from './styled'
+import { ButtonLabel, FocusedOutlineCard, InputRow, InputTitle, SmallButton, StyledInput } from './styled'
 
 
 interface StepCounterProps {

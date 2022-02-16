@@ -1,12 +1,4 @@
-import {
-    Banner,
-    BannerButton,
-    BannerDescription,
-    BannerPart,
-    BannerSubtitle,
-    BannerTime,
-    BannerTitle
-} from './styled'
+import { Banner, BannerButton, BannerDescription, BannerPart, BannerSubtitle, BannerTime, BannerTitle } from './styled'
 
 export function StakingBanner() {
     return (

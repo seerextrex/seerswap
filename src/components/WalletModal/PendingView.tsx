@@ -3,14 +3,7 @@ import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import Option from './Option'
 import { injected } from '../../connectors'
 import { Trans } from '@lingui/macro'
-import {
-    ErrorButton,
-    ErrorGroup,
-    LoadingMessage,
-    LoadingWrapper,
-    PendingSection,
-    StyledLoader
-} from './styled'
+import { ErrorButton, ErrorGroup, LoadingMessage, LoadingWrapper, PendingSection, StyledLoader } from './styled'
 
 
 export default function PendingView({

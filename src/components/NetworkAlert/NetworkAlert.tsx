@@ -50,13 +50,13 @@ export const OptimismWrapperBackgroundLightMode = css`
 `
 const RootWrapper = styled.div<{ chainId: SupportedChainId; darkMode: boolean; logoUrl: string }>`
     ${({ chainId, darkMode }) =>
-        [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
-            ? darkMode
-                ? OptimismWrapperBackgroundDarkMode
-                : OptimismWrapperBackgroundLightMode
-            : darkMode
-                ? ArbitrumWrapperBackgroundDarkMode
-                : ArbitrumWrapperBackgroundLightMode};
+    [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
+        ? darkMode
+            ? OptimismWrapperBackgroundDarkMode
+            : OptimismWrapperBackgroundLightMode
+        : darkMode
+            ? ArbitrumWrapperBackgroundDarkMode
+            : ArbitrumWrapperBackgroundLightMode};
     border-radius: 20px;
     display: flex;
     flex-direction: column;

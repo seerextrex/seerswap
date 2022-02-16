@@ -2,18 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import {
-    BaseContract,
-    BigNumber,
-    BigNumberish,
-    CallOverrides,
-    ContractTransaction,
-    ethers,
-    Overrides,
-    PayableOverrides,
-    PopulatedTransaction,
-    Signer
-} from 'ethers'
+import { BaseContract, BigNumber, BigNumberish, CallOverrides, ContractTransaction, ethers, Overrides, PayableOverrides, PopulatedTransaction, Signer } from 'ethers'
 import { BytesLike } from '@ethersproject/bytes'
 import { Listener, Provider } from '@ethersproject/providers'
 import { EventFragment, FunctionFragment, Result } from '@ethersproject/abi'

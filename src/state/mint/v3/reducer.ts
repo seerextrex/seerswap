@@ -1,14 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import {
-    Field,
-    resetMintState,
-    setFullRange,
-    typeInput,
-    typeLeftRangeInput,
-    typeRightRangeInput,
-    typeStartPriceInput,
-    updateDynamicFee
-} from './actions'
+import { Field, resetMintState, setFullRange, typeInput, typeLeftRangeInput, typeRightRangeInput, typeStartPriceInput, updateDynamicFee } from './actions'
 
 export type FullRange = true
 

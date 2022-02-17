@@ -38,19 +38,18 @@ export default function FarmsHistoryTable({ eventDatas, maxItems = MAX_ITEMS }: 
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField)
 
 
-
     const sortedPools = useMemo(() => {
         if (!Array.isArray(eventDatas)) return []
 
         return eventDatas ? eventDatas.sort((a, b) => {
-                    if (a && b) {
-                        return +a[sortField as keyof PoolData] > +b[sortField as keyof PoolData]
-                            ? (sortDirection ? -1 : 1) * 1
-                            : (sortDirection ? -1 : 1) * -1
-                    } else {
-                        return -1
-                    }
-                })
+                if (a && b) {
+                    return +a[sortField as keyof PoolData] > +b[sortField as keyof PoolData]
+                        ? (sortDirection ? -1 : 1) * 1
+                        : (sortDirection ? -1 : 1) * -1
+                } else {
+                    return -1
+                }
+            })
                 .slice(maxItems * (page - 1), page * maxItems)
             : []
     }, [maxItems, page, eventDatas, sortDirection, sortField])

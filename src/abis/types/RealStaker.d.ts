@@ -2,808 +2,812 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import {
-  ethers,
-  EventFilter,
-  Signer,
-  BigNumber,
-  BigNumberish,
-  PopulatedTransaction,
-  BaseContract,
-  ContractTransaction,
-  Overrides,
-  CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+import { BaseContract, BigNumber, BigNumberish, CallOverrides, ContractTransaction, ethers, Overrides, PopulatedTransaction, Signer } from 'ethers'
+import { BytesLike } from '@ethersproject/bytes'
+import { Listener, Provider } from '@ethersproject/providers'
+import { EventFragment, FunctionFragment, Result } from '@ethersproject/abi'
+import type { TypedEvent, TypedEventFilter, TypedListener } from './common'
 
 interface RealStakerInterface extends ethers.utils.Interface {
-  functions: {
-    "ALGB()": FunctionFragment;
-    "actualBalanceOf(address)": FunctionFragment;
-    "allowance(address,address)": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
-    "currentBalance(uint256)": FunctionFragment;
-    "decimals()": FunctionFragment;
-    "decreaseAllowance(address,uint256)": FunctionFragment;
-    "enter(uint256)": FunctionFragment;
-    "freezeTime()": FunctionFragment;
-    "freezingBalanceOf(address)": FunctionFragment;
-    "increaseAllowance(address,uint256)": FunctionFragment;
-    "leave(uint256)": FunctionFragment;
-    "name()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "setFreezeTime(uint256)": FunctionFragment;
-    "symbol()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "transfer(address,uint256)": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
-    "transferOwner(address)": FunctionFragment;
-  };
+    functions: {
+        'ALGB()': FunctionFragment;
+        'actualBalanceOf(address)': FunctionFragment;
+        'allowance(address,address)': FunctionFragment;
+        'approve(address,uint256)': FunctionFragment;
+        'balanceOf(address)': FunctionFragment;
+        'currentBalance(uint256)': FunctionFragment;
+        'decimals()': FunctionFragment;
+        'decreaseAllowance(address,uint256)': FunctionFragment;
+        'enter(uint256)': FunctionFragment;
+        'freezeTime()': FunctionFragment;
+        'freezingBalanceOf(address)': FunctionFragment;
+        'increaseAllowance(address,uint256)': FunctionFragment;
+        'leave(uint256)': FunctionFragment;
+        'name()': FunctionFragment;
+        'owner()': FunctionFragment;
+        'setFreezeTime(uint256)': FunctionFragment;
+        'symbol()': FunctionFragment;
+        'totalSupply()': FunctionFragment;
+        'transfer(address,uint256)': FunctionFragment;
+        'transferFrom(address,address,uint256)': FunctionFragment;
+        'transferOwner(address)': FunctionFragment;
+    };
+    events: {
+        'Approval(address,address,uint256)': EventFragment;
+        'Entered(address,uint256,uint256)': EventFragment;
+        'Freezed(address,uint64,uint256)': EventFragment;
+        'Left(address,uint256,uint256)': EventFragment;
+        'Released(address,uint256)': EventFragment;
+        'Transfer(address,address,uint256)': EventFragment;
+    };
 
-  encodeFunctionData(functionFragment: "ALGB", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "actualBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "allowance",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approve",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "currentBalance",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "decreaseAllowance",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "enter", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "freezeTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "freezingBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "increaseAllowance",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "leave", values: [BigNumberish]): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "setFreezeTime",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transfer",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwner",
-    values: [string]
-  ): string;
+    encodeFunctionData(functionFragment: 'ALGB', values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "ALGB", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "actualBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "currentBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "decreaseAllowance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "enter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "freezeTime", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "freezingBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "increaseAllowance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "leave", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setFreezeTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwner",
-    data: BytesLike
-  ): Result;
+    encodeFunctionData(
+        functionFragment: 'actualBalanceOf',
+        values: [string]
+    ): string;
 
-  events: {
-    "Approval(address,address,uint256)": EventFragment;
-    "Entered(address,uint256,uint256)": EventFragment;
-    "Freezed(address,uint64,uint256)": EventFragment;
-    "Left(address,uint256,uint256)": EventFragment;
-    "Released(address,uint256)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
-  };
+    encodeFunctionData(
+        functionFragment: 'allowance',
+        values: [string, string]
+    ): string;
 
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Entered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Freezed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Left"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Released"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+    encodeFunctionData(
+        functionFragment: 'approve',
+        values: [string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string;
+
+    encodeFunctionData(
+        functionFragment: 'currentBalance',
+        values: [BigNumberish]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'decimals', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'decreaseAllowance',
+        values: [string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'enter', values: [BigNumberish]): string;
+
+    encodeFunctionData(
+        functionFragment: 'freezeTime',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'freezingBalanceOf',
+        values: [string]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'increaseAllowance',
+        values: [string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'leave', values: [BigNumberish]): string;
+
+    encodeFunctionData(functionFragment: 'name', values?: undefined): string;
+
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'setFreezeTime',
+        values: [BigNumberish]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'totalSupply',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'transfer',
+        values: [string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'transferFrom',
+        values: [string, string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'transferOwner',
+        values: [string]
+    ): string;
+
+    decodeFunctionResult(functionFragment: 'ALGB', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'actualBalanceOf',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'allowance', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'currentBalance',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'decimals', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'decreaseAllowance',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'enter', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'freezeTime', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'freezingBalanceOf',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'increaseAllowance',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'leave', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'setFreezeTime',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'totalSupply',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'transferFrom',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'transferOwner',
+        data: BytesLike
+    ): Result;
+
+    getEvent(nameOrSignatureOrTopic: 'Approval'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'Entered'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'Freezed'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'Left'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'Released'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'Transfer'): EventFragment;
 }
 
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber] & {
+export type ApprovalEvent = TypedEvent<[string, string, BigNumber] & {
     owner: string;
     spender: string;
     value: BigNumber;
-  }
->;
+}>;
 
-export type EnteredEvent = TypedEvent<
-  [string, BigNumber, BigNumber] & {
+export type EnteredEvent = TypedEvent<[string, BigNumber, BigNumber] & {
     staker: string;
     ALGBAmount: BigNumber;
     xALGBAmount: BigNumber;
-  }
->;
+}>;
 
-export type FreezedEvent = TypedEvent<
-  [string, BigNumber, BigNumber] & {
+export type FreezedEvent = TypedEvent<[string, BigNumber, BigNumber] & {
     to: string;
     release: BigNumber;
     amount: BigNumber;
-  }
->;
+}>;
 
-export type LeftEvent = TypedEvent<
-  [string, BigNumber, BigNumber] & {
+export type LeftEvent = TypedEvent<[string, BigNumber, BigNumber] & {
     staker: string;
     xALGBAmount: BigNumber;
     ALGBAmount: BigNumber;
-  }
->;
+}>;
 
-export type ReleasedEvent = TypedEvent<
-  [string, BigNumber] & { owner: string; amount: BigNumber }
->;
+export type ReleasedEvent = TypedEvent<[string, BigNumber] & { owner: string; amount: BigNumber }>;
 
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
->;
+export type TransferEvent = TypedEvent<[string, string, BigNumber] & { from: string; to: string; value: BigNumber }>;
 
 export class RealStaker extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    interface: RealStakerInterface
+    functions: {
+        ALGB(overrides?: CallOverrides): Promise<[string]>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
+        actualBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { balance: BigNumber }>;
 
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
+        allowance(
+            owner: string,
+            spender: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>;
 
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+        approve(
+            spender: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-  interface: RealStakerInterface;
+        balanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { balance: BigNumber }>;
 
-  functions: {
-    ALGB(overrides?: CallOverrides): Promise<[string]>;
+        currentBalance(
+            _amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>;
 
-    actualBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { balance: BigNumber }>;
+        decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+        decreaseAllowance(
+            spender: string,
+            subtractedValue: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        enter(
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    balanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { balance: BigNumber }>;
+        freezeTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    currentBalance(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+        freezingBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { balance: BigNumber }>;
 
-    decimals(overrides?: CallOverrides): Promise<[number]>;
+        increaseAllowance(
+            spender: string,
+            addedValue: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        leave(
+            _share: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    enter(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        name(overrides?: CallOverrides): Promise<[string]>;
 
-    freezeTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+        owner(overrides?: CallOverrides): Promise<[string]>;
 
-    freezingBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { balance: BigNumber }>;
+        setFreezeTime(
+            _freezeTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    leave(
-      _share: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+        transfer(
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+        transferFrom(
+            sender: string,
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    setFreezeTime(
-      _freezeTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        transferOwner(
+            _newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
+    }
+    callStatic: {
+        ALGB(overrides?: CallOverrides): Promise<string>;
 
-    symbol(overrides?: CallOverrides): Promise<[string]>;
+        actualBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+        allowance(
+            owner: string,
+            spender: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-    transfer(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        approve(
+            spender: string,
+            amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<boolean>;
 
-    transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    transferOwner(
-      _newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+        currentBalance(
+            _amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-  ALGB(overrides?: CallOverrides): Promise<string>;
+        decimals(overrides?: CallOverrides): Promise<number>;
 
-  actualBalanceOf(
-    _owner: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        decreaseAllowance(
+            spender: string,
+            subtractedValue: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<boolean>;
 
-  allowance(
-    owner: string,
-    spender: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        enter(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-  approve(
-    spender: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        freezeTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-  balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+        freezingBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-  currentBalance(
-    _amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        increaseAllowance(
+            spender: string,
+            addedValue: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<boolean>;
 
-  decimals(overrides?: CallOverrides): Promise<number>;
+        leave(_share: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-  decreaseAllowance(
-    spender: string,
-    subtractedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        name(overrides?: CallOverrides): Promise<string>;
 
-  enter(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        owner(overrides?: CallOverrides): Promise<string>;
 
-  freezeTime(overrides?: CallOverrides): Promise<BigNumber>;
+        setFreezeTime(
+            _freezeTime: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  freezingBalanceOf(
-    _owner: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        symbol(overrides?: CallOverrides): Promise<string>;
 
-  increaseAllowance(
-    spender: string,
-    addedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-  leave(
-    _share: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        transfer(
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<boolean>;
 
-  name(overrides?: CallOverrides): Promise<string>;
+        transferFrom(
+            sender: string,
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<boolean>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
+        transferOwner(_newOwner: string, overrides?: CallOverrides): Promise<void>;
+    }
+    filters: {
+        'Approval(address,address,uint256)'(
+            owner?: string | null,
+            spender?: string | null,
+            value?: null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { owner: string; spender: string; value: BigNumber }>;
 
-  setFreezeTime(
-    _freezeTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        Approval(
+            owner?: string | null,
+            spender?: string | null,
+            value?: null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { owner: string; spender: string; value: BigNumber }>;
 
-  symbol(overrides?: CallOverrides): Promise<string>;
+        'Entered(address,uint256,uint256)'(
+            staker?: null,
+            ALGBAmount?: null,
+            xALGBAmount?: null
+        ): TypedEventFilter<[string, BigNumber, BigNumber],
+            { staker: string; ALGBAmount: BigNumber; xALGBAmount: BigNumber }>;
 
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+        Entered(
+            staker?: null,
+            ALGBAmount?: null,
+            xALGBAmount?: null
+        ): TypedEventFilter<[string, BigNumber, BigNumber],
+            { staker: string; ALGBAmount: BigNumber; xALGBAmount: BigNumber }>;
 
-  transfer(
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        'Freezed(address,uint64,uint256)'(
+            to?: string | null,
+            release?: null,
+            amount?: null
+        ): TypedEventFilter<[string, BigNumber, BigNumber],
+            { to: string; release: BigNumber; amount: BigNumber }>;
 
-  transferFrom(
-    sender: string,
-    recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        Freezed(
+            to?: string | null,
+            release?: null,
+            amount?: null
+        ): TypedEventFilter<[string, BigNumber, BigNumber],
+            { to: string; release: BigNumber; amount: BigNumber }>;
 
-  transferOwner(
-    _newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        'Left(address,uint256,uint256)'(
+            staker?: null,
+            xALGBAmount?: null,
+            ALGBAmount?: null
+        ): TypedEventFilter<[string, BigNumber, BigNumber],
+            { staker: string; xALGBAmount: BigNumber; ALGBAmount: BigNumber }>;
 
-  callStatic: {
+        Left(
+            staker?: null,
+            xALGBAmount?: null,
+            ALGBAmount?: null
+        ): TypedEventFilter<[string, BigNumber, BigNumber],
+            { staker: string; xALGBAmount: BigNumber; ALGBAmount: BigNumber }>;
+
+        'Released(address,uint256)'(
+            owner?: string | null,
+            amount?: null
+        ): TypedEventFilter<[string, BigNumber],
+            { owner: string; amount: BigNumber }>;
+
+        Released(
+            owner?: string | null,
+            amount?: null
+        ): TypedEventFilter<[string, BigNumber],
+            { owner: string; amount: BigNumber }>;
+
+        'Transfer(address,address,uint256)'(
+            from?: string | null,
+            to?: string | null,
+            value?: null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { from: string; to: string; value: BigNumber }>;
+
+        Transfer(
+            from?: string | null,
+            to?: string | null,
+            value?: null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { from: string; to: string; value: BigNumber }>;
+    }
+    estimateGas: {
+        ALGB(overrides?: CallOverrides): Promise<BigNumber>;
+
+        actualBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        allowance(
+            owner: string,
+            spender: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        approve(
+            spender: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+        currentBalance(
+            _amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+        decreaseAllowance(
+            spender: string,
+            subtractedValue: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        enter(
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        freezeTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+        freezingBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        increaseAllowance(
+            spender: string,
+            addedValue: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        leave(
+            _share: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        name(overrides?: CallOverrides): Promise<BigNumber>;
+
+        owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+        setFreezeTime(
+            _freezeTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        symbol(overrides?: CallOverrides): Promise<BigNumber>;
+
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+        transfer(
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        transferFrom(
+            sender: string,
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        transferOwner(
+            _newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+    }
+    populateTransaction: {
+        ALGB(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        actualBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        allowance(
+            owner: string,
+            spender: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        approve(
+            spender: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        balanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        currentBalance(
+            _amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        decreaseAllowance(
+            spender: string,
+            subtractedValue: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        enter(
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        freezeTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        freezingBalanceOf(
+            _owner: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        increaseAllowance(
+            spender: string,
+            addedValue: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        leave(
+            _share: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        setFreezeTime(
+            _freezeTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        transfer(
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        transferFrom(
+            sender: string,
+            recipient: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        transferOwner(
+            _newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+    }
+
+    connect(signerOrProvider: Signer | Provider | string): this;
+
+    attach(addressOrName: string): this;
+
+    deployed(): Promise<this>;
+
+    listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+
+    off<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    on<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    once<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): this;
+
+    listeners(eventName?: string): Array<Listener>;
+
+    off(eventName: string, listener: Listener): this;
+
+    on(eventName: string, listener: Listener): this;
+
+    once(eventName: string, listener: Listener): this;
+
+    removeListener(eventName: string, listener: Listener): this;
+
+    removeAllListeners(eventName?: string): this;
+
+    queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+        event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+
     ALGB(overrides?: CallOverrides): Promise<string>;
 
     actualBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
+        _owner: string,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
+        owner: string,
+        spender: string,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+        spender: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     currentBalance(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
+        _amount: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
     decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+        spender: string,
+        subtractedValue: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    enter(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    enter(
+        _amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     freezeTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     freezingBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
+        _owner: string,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+        spender: string,
+        addedValue: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    leave(_share: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    leave(
+        _share: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
     setFreezeTime(
-      _freezeTime: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _freezeTime: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+        recipient: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    transferOwner(_newOwner: string, overrides?: CallOverrides): Promise<void>;
-  };
-
-  filters: {
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      spender?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; spender: string; value: BigNumber }
-    >;
-
-    Approval(
-      owner?: string | null,
-      spender?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; spender: string; value: BigNumber }
-    >;
-
-    "Entered(address,uint256,uint256)"(
-      staker?: null,
-      ALGBAmount?: null,
-      xALGBAmount?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { staker: string; ALGBAmount: BigNumber; xALGBAmount: BigNumber }
-    >;
-
-    Entered(
-      staker?: null,
-      ALGBAmount?: null,
-      xALGBAmount?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { staker: string; ALGBAmount: BigNumber; xALGBAmount: BigNumber }
-    >;
-
-    "Freezed(address,uint64,uint256)"(
-      to?: string | null,
-      release?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { to: string; release: BigNumber; amount: BigNumber }
-    >;
-
-    Freezed(
-      to?: string | null,
-      release?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { to: string; release: BigNumber; amount: BigNumber }
-    >;
-
-    "Left(address,uint256,uint256)"(
-      staker?: null,
-      xALGBAmount?: null,
-      ALGBAmount?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { staker: string; xALGBAmount: BigNumber; ALGBAmount: BigNumber }
-    >;
-
-    Left(
-      staker?: null,
-      xALGBAmount?: null,
-      ALGBAmount?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { staker: string; xALGBAmount: BigNumber; ALGBAmount: BigNumber }
-    >;
-
-    "Released(address,uint256)"(
-      owner?: string | null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; amount: BigNumber }
-    >;
-
-    Released(
-      owner?: string | null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; amount: BigNumber }
-    >;
-
-    "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; value: BigNumber }
-    >;
-
-    Transfer(
-      from?: string | null,
-      to?: string | null,
-      value?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; value: BigNumber }
-    >;
-  };
-
-  estimateGas: {
-    ALGB(overrides?: CallOverrides): Promise<BigNumber>;
-
-    actualBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    balanceOf(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    currentBalance(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    enter(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    freezeTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    freezingBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    leave(
-      _share: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setFreezeTime(
-      _freezeTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transfer(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        sender: string,
+        recipient: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwner(
-      _newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    ALGB(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    actualBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    currentBalance(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    enter(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    freezeTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    freezingBalanceOf(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    leave(
-      _share: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setFreezeTime(
-      _freezeTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transfer(
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwner(
-      _newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        _newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 }

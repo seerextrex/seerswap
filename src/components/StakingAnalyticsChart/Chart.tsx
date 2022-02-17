@@ -1,19 +1,4 @@
-import {
-    axisBottom,
-    axisLeft,
-    create,
-    curveBumpX,
-    easeCircle,
-    interpolate,
-    line,
-    map,
-    max,
-    min,
-    range,
-    scaleLinear,
-    scaleUtc,
-    select
-} from 'd3'
+import { axisBottom, axisLeft, create, curveBumpX, easeCircle, interpolate, line, map, max, min, range, scaleLinear, scaleUtc, select } from 'd3'
 import { useEffect, useMemo, useRef } from 'react'
 import { ChardDataInterface, chartTypes } from './index'
 import { isMobile } from 'react-device-detect'

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Position } from 'lib/src'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { usePool } from 'hooks/usePools'
@@ -16,19 +16,7 @@ import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { Bound } from 'state/mint/v3/actions'
 import { ArrowRight } from 'react-feather'
 import usePrevious from '../../hooks/usePrevious'
-import {
-    DataText,
-    DoubleArrow,
-    ExtentsText,
-    LinkRow,
-    OnFarmingBadge,
-    PositionHeader,
-    PrimaryPositionIdData,
-    RangeLineItem,
-    RangeText,
-    StatusBadge,
-    StatusRow
-} from './styled'
+import { DataText, DoubleArrow, ExtentsText, LinkRow, OnFarmingBadge, PositionHeader, PrimaryPositionIdData, RangeLineItem, RangeText, StatusBadge, StatusRow } from './styled'
 
 interface PositionListItemProps {
     positionDetails: PositionDetails;

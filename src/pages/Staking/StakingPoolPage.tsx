@@ -6,15 +6,7 @@ import { Link, useParams } from 'react-router-dom'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from 'theme'
 import StakingModal from '../../components/StakingModal'
-import {
-    ButtonRow,
-    MainContentWrapper,
-    PageWrapper,
-    ResponsiveButtonPrimary,
-    TitleRow,
-    TokenCard,
-    TokenLogo
-} from './styled'
+import { ButtonRow, MainContentWrapper, PageWrapper, ResponsiveButtonPrimary, TitleRow, TokenCard, TokenLogo } from './styled'
 
 export default function StakingPoolPage() {
     const { currencyIdA, currencyIdB } = useParams() as { currencyIdA: string; currencyIdB: string }

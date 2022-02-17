@@ -9,17 +9,7 @@ import { CHAIN_INFO, L2_CHAIN_IDS, SupportedChainId } from 'constants/chains'
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from 'constants/locales'
 import { useLocationLinkProps } from 'hooks/useLocationLinkProps'
 import { useActiveLocale } from 'hooks/useActiveLocale'
-import {
-    ExternalMenuItem,
-    InternalLinkMenuItem,
-    MenuFlyout,
-    NewMenuFlyout,
-    NewMenuItem,
-    StyledMenu,
-    StyledMenuButton,
-    StyledMenuIcon,
-    ToggleMenuItem
-} from './styled'
+import { ExternalMenuItem, InternalLinkMenuItem, MenuFlyout, NewMenuFlyout, NewMenuItem, StyledMenu, StyledMenuButton, StyledMenuIcon, ToggleMenuItem } from './styled'
 
 export enum FlyoutAlignment {
     LEFT = 'LEFT',

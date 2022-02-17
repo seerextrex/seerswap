@@ -9,23 +9,10 @@ import { RowBetween, RowFixed } from '../Row'
 import { TYPE } from '../../theme'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { Trans } from '@lingui/macro'
-import useTheme from '../../hooks/useTheme'
 import { FiatValue } from './FiatValue'
 import Loader from '../Loader'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
-import {
-    Aligner,
-    AutoColumnStyled,
-    Container,
-    CurrencySelect,
-    FiatRow,
-    FixedContainer,
-    InputPanel,
-    InputRow,
-    MaxButton,
-    NumericalInputStyled,
-    StyledTokenName
-} from './styled'
+import { Aligner, AutoColumnStyled, Container, CurrencySelect, FiatRow, FixedContainer, InputPanel, InputRow, MaxButton, NumericalInputStyled, StyledTokenName } from './styled'
 
 interface CurrencyInputPanelProps {
     value: string
@@ -68,7 +55,6 @@ export default function CurrencyInputPanel({
     showCommonBases,
     showCurrencyAmount,
     disableNonToken,
-    renderBalance,
     fiatValue,
     priceImpact,
     hideBalance = false,
@@ -87,8 +73,6 @@ export default function CurrencyInputPanel({
     const { chainId } = useActiveWeb3React()
     const [modalOpen, setModalOpen] = useState(false)
     const { account } = useActiveWeb3React()
-    const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-    const theme = useTheme()
 
     const balance = useCurrencyBalance(account ?? undefined, currency)
 

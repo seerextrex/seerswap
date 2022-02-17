@@ -28,7 +28,7 @@ const StyledCloseIcon = styled(X)`
 
 export default function StakingModal({
     modal,
-    closeModalCallback,
+    closeModalCallback
 }: {
     modal: boolean
     closeModalCallback: () => void
@@ -68,7 +68,7 @@ export default function StakingModal({
                                 borderRadius: '6px',
                                 backgroundColor: '#0f1940',
                                 color: '#5376ff',
-                                marginBottom: '1rem',
+                                marginBottom: '1rem'
                             }}
                         >
                             <Trans>To stake your NFT you should approve Algebra to use it</Trans>
@@ -81,7 +81,7 @@ export default function StakingModal({
                                 borderRadius: '8px',
                                 color: 'white',
                                 backgroundColor: theme.winterMainButton,
-                                fontSize: '18px',
+                                fontSize: '18px'
                             }}
                             onClick={approve}
                         >
@@ -102,7 +102,7 @@ export default function StakingModal({
                                 borderRadius: '8px',
                                 color: 'white',
                                 backgroundColor: theme.winterMainButton,
-                                fontSize: '18px',
+                                fontSize: '18px'
                             }}
                             onClick={send}
                         >
@@ -123,7 +123,7 @@ export default function StakingModal({
                                 borderRadius: '8px',
                                 color: 'white',
                                 backgroundColor: theme.winterMainButton,
-                                fontSize: '18px',
+                                fontSize: '18px'
                             }}
                             onClick={stake}
                         >

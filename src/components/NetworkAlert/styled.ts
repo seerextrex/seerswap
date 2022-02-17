@@ -1,11 +1,6 @@
 import styled from 'styled-components/macro'
 import { SupportedChainId, SupportedL2ChainId } from '../../constants/chains'
-import {
-    ArbitrumWrapperBackgroundDarkMode,
-    ArbitrumWrapperBackgroundLightMode,
-    OptimismWrapperBackgroundDarkMode,
-    OptimismWrapperBackgroundLightMode
-} from './NetworkAlert'
+import { ArbitrumWrapperBackgroundDarkMode, ArbitrumWrapperBackgroundLightMode, OptimismWrapperBackgroundDarkMode, OptimismWrapperBackgroundLightMode } from './NetworkAlert'
 import { ArrowDownCircle } from 'react-feather'
 import { ExternalLink, MEDIA_WIDTHS } from '../../theme'
 

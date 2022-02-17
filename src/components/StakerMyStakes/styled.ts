@@ -58,8 +58,8 @@ export const PositionCard = styled.div<{ navigatedTo: boolean }>`
   `}
 
     ${({ navigatedTo }) =>
-        navigatedTo &&
-        css`
+    navigatedTo &&
+    css`
             background-color: ${darken(0.05, 'rgba(91,183,255,0.6)')};
             border-radius: 5px;
             padding: 8px 5px;
@@ -89,8 +89,8 @@ export const NFTPositionIcon = styled.div<{ name: string; skeleton?: boolean }>`
     margin-top: 2px;
     background: ${({ name }) => (name ? gradient('token' + name) : '')};
     ${({ skeleton }) =>
-        skeleton &&
-        css`
+    skeleton &&
+    css`
             background: rgba(60, 97, 126, 0.5);
             ${skeletonGradient}
         `};
@@ -100,8 +100,8 @@ export const NFTPositionDescription = styled.div<{ skeleton?: boolean }>`
     line-height: 18px;
 
     ${({ skeleton }) =>
-        skeleton &&
-        css`
+    skeleton &&
+    css`
             & > * {
                 background: rgba(60, 97, 126, 0.5);
                 border-radius: 6px;
@@ -304,8 +304,8 @@ export const StakeCountdown = styled.div<{ skeleton: boolean }>`
   `}
     & > * {
         ${({ skeleton }) =>
-            skeleton
-                ? css`
+    skeleton
+        ? css`
                     width: 80px;
                     height: 16px;
                     background: #5aa7df;
@@ -313,7 +313,7 @@ export const StakeCountdown = styled.div<{ skeleton: boolean }>`
 
                     ${skeletonGradient}
                 `
-                : null}
+        : null}
     }
 `
 
@@ -377,8 +377,8 @@ export const StakeButton = styled.button<{ skeleton?: boolean }>`
     }
 
     ${({ disabled }) =>
-        disabled &&
-        css`
+    disabled &&
+    css`
             opacity: 0.4;
             cursor: default;
 
@@ -388,12 +388,12 @@ export const StakeButton = styled.button<{ skeleton?: boolean }>`
         `}
 
     ${({ skeleton }) =>
-        skeleton
-            ? css`
+    skeleton
+        ? css`
                 ${skeletonGradient};
                 width: 80px;
             `
-            : null}
+        : null}
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
@@ -428,8 +428,8 @@ export const TokensNames = styled.div<{ skeleton?: boolean }>`
   `}
     & > * {
         ${({ skeleton }) =>
-            skeleton
-                ? css`
+    skeleton
+        ? css`
                     width: 40px;
                     height: 16px;
                     background: #5aa7df;
@@ -437,7 +437,7 @@ export const TokensNames = styled.div<{ skeleton?: boolean }>`
                     border-radius: 4px;
                     ${skeletonGradient}
                 `
-                : null}
+        : null}
     }
 `
 
@@ -571,7 +571,7 @@ export const CheckOutLink = styled(NavLink)`
     font-weight: 600;
 
     &:hover {
-        background-color: ${({theme}) => darken(0.05, theme.winterMainButton)}};
+        background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)}};
     }
 `
 

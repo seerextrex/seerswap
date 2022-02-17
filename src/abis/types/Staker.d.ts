@@ -2,397 +2,457 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import {
-  ethers,
-  EventFilter,
-  Signer,
-  BigNumber,
-  BigNumberish,
-  PopulatedTransaction,
-  BaseContract,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+import { BaseContract, BigNumber, BigNumberish, CallOverrides, ContractTransaction, ethers, Overrides, PayableOverrides, PopulatedTransaction, Signer } from 'ethers'
+import { BytesLike } from '@ethersproject/bytes'
+import { Listener, Provider } from '@ethersproject/providers'
+import { EventFragment, FunctionFragment, Result } from '@ethersproject/abi'
+import type { TypedEvent, TypedEventFilter, TypedListener } from './common'
 
 interface StakerInterface extends ethers.utils.Interface {
-  functions: {
-    "DOMAIN_SEPARATOR()": FunctionFragment;
-    "PERMIT_TYPEHASH()": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
-    "baseURI()": FunctionFragment;
-    "claimReward(address,address,uint256)": FunctionFragment;
-    "createIncentive((address,address,address,uint256,uint256,address),uint256,uint256)": FunctionFragment;
-    "deployer()": FunctionFragment;
-    "deposits(uint256)": FunctionFragment;
-    "enterFarming((address,address,address,uint256,uint256,address),uint256)": FunctionFragment;
-    "exitFarming((address,address,address,uint256,uint256,address),uint256)": FunctionFragment;
-    "farms(uint256,bytes32)": FunctionFragment;
-    "getApproved(uint256)": FunctionFragment;
-    "getRewardInfo((address,address,address,uint256,uint256,address),uint256)": FunctionFragment;
-    "incentives(bytes32)": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "maxIncentiveDuration()": FunctionFragment;
-    "maxIncentiveStartLeadTime()": FunctionFragment;
-    "multicall(bytes[])": FunctionFragment;
-    "name()": FunctionFragment;
-    "nonfungiblePositionManager()": FunctionFragment;
-    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
-    "permit(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "rewards(address,address)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
-    "setIncentiveMaker(address)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "symbol()": FunctionFragment;
-    "tokenByIndex(uint256)": FunctionFragment;
-    "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
-    "tokenURI(uint256)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
-    "vdeployer()": FunctionFragment;
-    "withdrawToken(uint256,address,bytes)": FunctionFragment;
-  };
+    functions: {
+        'DOMAIN_SEPARATOR()': FunctionFragment;
+        'PERMIT_TYPEHASH()': FunctionFragment;
+        'approve(address,uint256)': FunctionFragment;
+        'balanceOf(address)': FunctionFragment;
+        'baseURI()': FunctionFragment;
+        'claimReward(address,address,uint256)': FunctionFragment;
+        'createIncentive((address,address,address,uint256,uint256,address),uint256,uint256)': FunctionFragment;
+        'deployer()': FunctionFragment;
+        'deposits(uint256)': FunctionFragment;
+        'enterFarming((address,address,address,uint256,uint256,address),uint256)': FunctionFragment;
+        'exitFarming((address,address,address,uint256,uint256,address),uint256)': FunctionFragment;
+        'farms(uint256,bytes32)': FunctionFragment;
+        'getApproved(uint256)': FunctionFragment;
+        'getRewardInfo((address,address,address,uint256,uint256,address),uint256)': FunctionFragment;
+        'incentives(bytes32)': FunctionFragment;
+        'isApprovedForAll(address,address)': FunctionFragment;
+        'maxIncentiveDuration()': FunctionFragment;
+        'maxIncentiveStartLeadTime()': FunctionFragment;
+        'multicall(bytes[])': FunctionFragment;
+        'name()': FunctionFragment;
+        'nonfungiblePositionManager()': FunctionFragment;
+        'onERC721Received(address,address,uint256,bytes)': FunctionFragment;
+        'ownerOf(uint256)': FunctionFragment;
+        'permit(address,uint256,uint256,uint8,bytes32,bytes32)': FunctionFragment;
+        'rewards(address,address)': FunctionFragment;
+        'safeTransferFrom(address,address,uint256)': FunctionFragment;
+        'setApprovalForAll(address,bool)': FunctionFragment;
+        'setIncentiveMaker(address)': FunctionFragment;
+        'supportsInterface(bytes4)': FunctionFragment;
+        'symbol()': FunctionFragment;
+        'tokenByIndex(uint256)': FunctionFragment;
+        'tokenOfOwnerByIndex(address,uint256)': FunctionFragment;
+        'tokenURI(uint256)': FunctionFragment;
+        'totalSupply()': FunctionFragment;
+        'transferFrom(address,address,uint256)': FunctionFragment;
+        'vdeployer()': FunctionFragment;
+        'withdrawToken(uint256,address,bytes)': FunctionFragment;
+    };
+    events: {
+        'Approval(address,address,uint256)': EventFragment;
+        'ApprovalForAll(address,address,bool)': EventFragment;
+        'DepositTransferred(uint256,address,address)': EventFragment;
+        'FarmEnded(uint256,bytes32,address,address,address,uint256,uint256)': EventFragment;
+        'FarmStarted(uint256,uint256,bytes32,uint128)': EventFragment;
+        'IncentiveCreated(address,address,address,address,uint256,uint256,address,uint256,uint256)': EventFragment;
+        'IncentiveMakerChanged(address,address)': EventFragment;
+        'RewardClaimed(address,uint256,address,address)': EventFragment;
+        'Transfer(address,address,uint256)': EventFragment;
+    };
 
-  encodeFunctionData(
-    functionFragment: "DOMAIN_SEPARATOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PERMIT_TYPEHASH",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approve",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "claimReward",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createIncentive",
-    values: [
-      {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "deposits",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "enterFarming",
-    values: [
-      {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exitFarming",
-    values: [
-      {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "farms",
-    values: [BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getApproved",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRewardInfo",
-    values: [
-      {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "incentives",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isApprovedForAll",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxIncentiveDuration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxIncentiveStartLeadTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "multicall",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "nonfungiblePositionManager",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "onERC721Received",
-    values: [string, string, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ownerOf",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "permit",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewards",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeTransferFrom",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setApprovalForAll",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setIncentiveMaker",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "tokenByIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenOfOwnerByIndex",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenURI",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "vdeployer", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "withdrawToken",
-    values: [BigNumberish, string, BytesLike]
-  ): string;
+    encodeFunctionData(
+        functionFragment: 'DOMAIN_SEPARATOR',
+        values?: undefined
+    ): string;
 
-  decodeFunctionResult(
-    functionFragment: "DOMAIN_SEPARATOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PERMIT_TYPEHASH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "claimReward",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createIncentive",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "deposits", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "enterFarming",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exitFarming",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "farms", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getApproved",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRewardInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "incentives", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isApprovedForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxIncentiveDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxIncentiveStartLeadTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "nonfungiblePositionManager",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "onERC721Received",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setApprovalForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setIncentiveMaker",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenOfOwnerByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "vdeployer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawToken",
-    data: BytesLike
-  ): Result;
+    encodeFunctionData(
+        functionFragment: 'PERMIT_TYPEHASH',
+        values?: undefined
+    ): string;
 
-  events: {
-    "Approval(address,address,uint256)": EventFragment;
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "DepositTransferred(uint256,address,address)": EventFragment;
-    "FarmEnded(uint256,bytes32,address,address,address,uint256,uint256)": EventFragment;
-    "FarmStarted(uint256,uint256,bytes32,uint128)": EventFragment;
-    "IncentiveCreated(address,address,address,address,uint256,uint256,address,uint256,uint256)": EventFragment;
-    "IncentiveMakerChanged(address,address)": EventFragment;
-    "RewardClaimed(address,uint256,address,address)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
-  };
+    encodeFunctionData(
+        functionFragment: 'approve',
+        values: [string, BigNumberish]
+    ): string;
 
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "DepositTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FarmEnded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FarmStarted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "IncentiveCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "IncentiveMakerChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RewardClaimed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+    encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string;
+
+    encodeFunctionData(functionFragment: 'baseURI', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'claimReward',
+        values: [string, string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'createIncentive',
+        values: [
+            {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            BigNumberish,
+            BigNumberish
+        ]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'deployer', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'deposits',
+        values: [BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'enterFarming',
+        values: [
+            {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            BigNumberish
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'exitFarming',
+        values: [
+            {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            BigNumberish
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'farms',
+        values: [BigNumberish, BytesLike]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'getApproved',
+        values: [BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'getRewardInfo',
+        values: [
+            {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            BigNumberish
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'incentives',
+        values: [BytesLike]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'isApprovedForAll',
+        values: [string, string]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'maxIncentiveDuration',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'maxIncentiveStartLeadTime',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'multicall',
+        values: [BytesLike[]]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'name', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'nonfungiblePositionManager',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'onERC721Received',
+        values: [string, string, BigNumberish, BytesLike]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'ownerOf',
+        values: [BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'permit',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'rewards',
+        values: [string, string]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'safeTransferFrom',
+        values: [string, string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'setApprovalForAll',
+        values: [string, boolean]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'setIncentiveMaker',
+        values: [string]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'supportsInterface',
+        values: [BytesLike]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'tokenByIndex',
+        values: [BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'tokenOfOwnerByIndex',
+        values: [string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'tokenURI',
+        values: [BigNumberish]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'totalSupply',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'transferFrom',
+        values: [string, string, BigNumberish]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'vdeployer', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'withdrawToken',
+        values: [BigNumberish, string, BytesLike]
+    ): string;
+
+    decodeFunctionResult(
+        functionFragment: 'DOMAIN_SEPARATOR',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'PERMIT_TYPEHASH',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'baseURI', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'claimReward',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'createIncentive',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'deployer', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'deposits', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'enterFarming',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'exitFarming',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'farms', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'getApproved',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'getRewardInfo',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'incentives', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'isApprovedForAll',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'maxIncentiveDuration',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'maxIncentiveStartLeadTime',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'multicall', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'nonfungiblePositionManager',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'onERC721Received',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'ownerOf', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'permit', data: BytesLike): Result;
+
+    decodeFunctionResult(functionFragment: 'rewards', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'safeTransferFrom',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'setApprovalForAll',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'setIncentiveMaker',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'supportsInterface',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'tokenByIndex',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'tokenOfOwnerByIndex',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'tokenURI', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'totalSupply',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'transferFrom',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'vdeployer', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'withdrawToken',
+        data: BytesLike
+    ): Result;
+
+    getEvent(nameOrSignatureOrTopic: 'Approval'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'ApprovalForAll'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'DepositTransferred'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'FarmEnded'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'FarmStarted'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'IncentiveCreated'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'IncentiveMakerChanged'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'RewardClaimed'): EventFragment;
+
+    getEvent(nameOrSignatureOrTopic: 'Transfer'): EventFragment;
 }
 
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber] & {
+export type ApprovalEvent = TypedEvent<[string, string, BigNumber] & {
     owner: string;
     approved: string;
     tokenId: BigNumber;
-  }
->;
+}>;
 
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean] & {
+export type ApprovalForAllEvent = TypedEvent<[string, string, boolean] & {
     owner: string;
     operator: string;
     approved: boolean;
-  }
->;
+}>;
 
-export type DepositTransferredEvent = TypedEvent<
-  [BigNumber, string, string] & {
+export type DepositTransferredEvent = TypedEvent<[BigNumber, string, string] & {
     tokenId: BigNumber;
     oldOwner: string;
     newOwner: string;
-  }
->;
+}>;
 
-export type FarmEndedEvent = TypedEvent<
-  [BigNumber, string, string, string, string, BigNumber, BigNumber] & {
+export type FarmEndedEvent = TypedEvent<[BigNumber, string, string, string, string, BigNumber, BigNumber] & {
     tokenId: BigNumber;
     incentiveId: string;
     rewardAddress: string;
@@ -400,20 +460,16 @@ export type FarmEndedEvent = TypedEvent<
     owner: string;
     reward: BigNumber;
     bonusReward: BigNumber;
-  }
->;
+}>;
 
-export type FarmStartedEvent = TypedEvent<
-  [BigNumber, BigNumber, string, BigNumber] & {
+export type FarmStartedEvent = TypedEvent<[BigNumber, BigNumber, string, BigNumber] & {
     tokenId: BigNumber;
     L2tokenId: BigNumber;
     incentiveId: string;
     liquidity: BigNumber;
-  }
->;
+}>;
 
-export type IncentiveCreatedEvent = TypedEvent<
-  [
+export type IncentiveCreatedEvent = TypedEvent<[
     string,
     string,
     string,
@@ -423,7 +479,7 @@ export type IncentiveCreatedEvent = TypedEvent<
     string,
     BigNumber,
     BigNumber
-  ] & {
+] & {
     rewardToken: string;
     bonusRewardToken: string;
     pool: string;
@@ -433,725 +489,1355 @@ export type IncentiveCreatedEvent = TypedEvent<
     refundee: string;
     reward: BigNumber;
     bonusReward: BigNumber;
-  }
->;
+}>;
 
-export type IncentiveMakerChangedEvent = TypedEvent<
-  [string, string] & { incentiveMaker: string; _incentiveMaker: string }
->;
+export type IncentiveMakerChangedEvent = TypedEvent<[string, string] & { incentiveMaker: string; _incentiveMaker: string }>;
 
-export type RewardClaimedEvent = TypedEvent<
-  [string, BigNumber, string, string] & {
+export type RewardClaimedEvent = TypedEvent<[string, BigNumber, string, string] & {
     to: string;
     reward: BigNumber;
     rewardAddress: string;
     owner: string;
-  }
->;
+}>;
 
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber] & { from: string; to: string; tokenId: BigNumber }
->;
+export type TransferEvent = TypedEvent<[string, string, BigNumber] & { from: string; to: string; tokenId: BigNumber }>;
 
 export class Staker extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    interface: StakerInterface
+    functions: {
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
+        PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
+        approve(
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+        balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-  interface: StakerInterface;
+        baseURI(overrides?: CallOverrides): Promise<[string]>;
 
-  functions: {
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
+        claimReward(
+            rewardToken: string,
+            to: string,
+            amountRequested: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+        createIncentive(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            reward: BigNumberish,
+            bonusReward: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        deployer(overrides?: CallOverrides): Promise<[string]>;
 
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+        deposits(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, string, number, number] & {
+            L2TokenId: BigNumber;
+            owner: string;
+            tickLower: number;
+            tickUpper: number;
+        }>;
 
-    baseURI(overrides?: CallOverrides): Promise<[string]>;
+        enterFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    claimReward(
-      rewardToken: string,
-      to: string,
-      amountRequested: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        exitFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    createIncentive(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      reward: BigNumberish,
-      bonusReward: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        farms(
+            arg0: BigNumberish,
+            arg1: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>;
 
-    deployer(overrides?: CallOverrides): Promise<[string]>;
+        getApproved(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[string]>;
 
-    deposits(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, string, number, number] & {
-        L2TokenId: BigNumber;
-        owner: string;
-        tickLower: number;
-        tickUpper: number;
-      }
-    >;
+        getRewardInfo(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { reward: BigNumber; bonusReward: BigNumber }>;
 
-    enterFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        incentives(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber, string, BigNumber, boolean, BigNumber] & {
+            totalReward: BigNumber;
+            bonusReward: BigNumber;
+            virtualPoolAddress: string;
+            numberOfFarms: BigNumber;
+            isPoolCreated: boolean;
+            totalLiquidity: BigNumber;
+        }>;
 
-    exitFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        isApprovedForAll(
+            owner: string,
+            operator: string,
+            overrides?: CallOverrides
+        ): Promise<[boolean]>;
 
-    farms(
-      arg0: BigNumberish,
-      arg1: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+        maxIncentiveDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+        maxIncentiveStartLeadTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getRewardInfo(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { reward: BigNumber; bonusReward: BigNumber }
-    >;
+        multicall(
+            data: BytesLike[],
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    incentives(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, boolean, BigNumber] & {
-        totalReward: BigNumber;
-        bonusReward: BigNumber;
-        virtualPoolAddress: string;
-        numberOfFarms: BigNumber;
-        isPoolCreated: boolean;
-        totalLiquidity: BigNumber;
-      }
-    >;
+        name(overrides?: CallOverrides): Promise<[string]>;
 
-    isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+        nonfungiblePositionManager(overrides?: CallOverrides): Promise<[string]>;
 
-    maxIncentiveDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+        onERC721Received(
+            arg0: string,
+            from: string,
+            tokenId: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    maxIncentiveStartLeadTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+        ownerOf(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[string]>;
 
-    multicall(
-      data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        permit(
+            spender: string,
+            tokenId: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+        rewards(
+            arg0: string,
+            arg1: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>;
 
-    nonfungiblePositionManager(overrides?: CallOverrides): Promise<[string]>;
+        'safeTransferFrom(address,address,uint256)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    onERC721Received(
-      arg0: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        'safeTransferFrom(address,address,uint256,bytes)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            _data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    ownerOf(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+        setApprovalForAll(
+            operator: string,
+            approved: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    permit(
-      spender: string,
-      tokenId: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setIncentiveMaker(
+            _incentiveMaker: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    rewards(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+        supportsInterface(
+            interfaceId: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[boolean]>;
 
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        tokenByIndex(
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>;
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        tokenOfOwnerByIndex(
+            owner: string,
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>;
 
-    setIncentiveMaker(
-      _incentiveMaker: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        tokenURI(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[string]>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+        totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    symbol(overrides?: CallOverrides): Promise<[string]>;
+        transferFrom(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+        vdeployer(overrides?: CallOverrides): Promise<[string]>;
 
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    vdeployer(overrides?: CallOverrides): Promise<[string]>;
-
-    withdrawToken(
-      tokenId: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
-
-  PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
-
-  approve(
-    to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  baseURI(overrides?: CallOverrides): Promise<string>;
-
-  claimReward(
-    rewardToken: string,
-    to: string,
-    amountRequested: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  createIncentive(
-    key: {
-      rewardToken: string;
-      bonusRewardToken: string;
-      pool: string;
-      startTime: BigNumberish;
-      endTime: BigNumberish;
-      refundee: string;
-    },
-    reward: BigNumberish,
-    bonusReward: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  deployer(overrides?: CallOverrides): Promise<string>;
-
-  deposits(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, string, number, number] & {
-      L2TokenId: BigNumber;
-      owner: string;
-      tickLower: number;
-      tickUpper: number;
+        withdrawToken(
+            tokenId: BigNumberish,
+            to: string,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
     }
-  >;
+    callStatic: {
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-  enterFarming(
-    key: {
-      rewardToken: string;
-      bonusRewardToken: string;
-      pool: string;
-      startTime: BigNumberish;
-      endTime: BigNumberish;
-      refundee: string;
-    },
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  exitFarming(
-    key: {
-      rewardToken: string;
-      bonusRewardToken: string;
-      pool: string;
-      startTime: BigNumberish;
-      endTime: BigNumberish;
-      refundee: string;
-    },
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        approve(
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  farms(
-    arg0: BigNumberish,
-    arg1: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  getApproved(
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+        baseURI(overrides?: CallOverrides): Promise<string>;
 
-  getRewardInfo(
-    key: {
-      rewardToken: string;
-      bonusRewardToken: string;
-      pool: string;
-      startTime: BigNumberish;
-      endTime: BigNumberish;
-      refundee: string;
-    },
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { reward: BigNumber; bonusReward: BigNumber }
-  >;
+        claimReward(
+            rewardToken: string,
+            to: string,
+            amountRequested: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-  incentives(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, string, BigNumber, boolean, BigNumber] & {
-      totalReward: BigNumber;
-      bonusReward: BigNumber;
-      virtualPoolAddress: string;
-      numberOfFarms: BigNumber;
-      isPoolCreated: boolean;
-      totalLiquidity: BigNumber;
+        createIncentive(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            reward: BigNumberish,
+            bonusReward: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<string>;
+
+        deployer(overrides?: CallOverrides): Promise<string>;
+
+        deposits(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, string, number, number] & {
+            L2TokenId: BigNumber;
+            owner: string;
+            tickLower: number;
+            tickUpper: number;
+        }>;
+
+        enterFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        exitFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        farms(
+            arg0: BigNumberish,
+            arg1: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        getApproved(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<string>;
+
+        getRewardInfo(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { reward: BigNumber; bonusReward: BigNumber }>;
+
+        incentives(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber, string, BigNumber, boolean, BigNumber] & {
+            totalReward: BigNumber;
+            bonusReward: BigNumber;
+            virtualPoolAddress: string;
+            numberOfFarms: BigNumber;
+            isPoolCreated: boolean;
+            totalLiquidity: BigNumber;
+        }>;
+
+        isApprovedForAll(
+            owner: string,
+            operator: string,
+            overrides?: CallOverrides
+        ): Promise<boolean>;
+
+        maxIncentiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+        maxIncentiveStartLeadTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+        multicall(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+
+        name(overrides?: CallOverrides): Promise<string>;
+
+        nonfungiblePositionManager(overrides?: CallOverrides): Promise<string>;
+
+        onERC721Received(
+            arg0: string,
+            from: string,
+            tokenId: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<string>;
+
+        ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+        permit(
+            spender: string,
+            tokenId: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        rewards(
+            arg0: string,
+            arg1: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        'safeTransferFrom(address,address,uint256)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        'safeTransferFrom(address,address,uint256,bytes)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            _data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        setApprovalForAll(
+            operator: string,
+            approved: boolean,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        setIncentiveMaker(
+            _incentiveMaker: string,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        supportsInterface(
+            interfaceId: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<boolean>;
+
+        symbol(overrides?: CallOverrides): Promise<string>;
+
+        tokenByIndex(
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        tokenOfOwnerByIndex(
+            owner: string,
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+        transferFrom(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>;
+
+        vdeployer(overrides?: CallOverrides): Promise<string>;
+
+        withdrawToken(
+            tokenId: BigNumberish,
+            to: string,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
     }
-  >;
+    filters: {
+        'Approval(address,address,uint256)'(
+            owner?: string | null,
+            approved?: string | null,
+            tokenId?: BigNumberish | null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { owner: string; approved: string; tokenId: BigNumber }>;
 
-  isApprovedForAll(
-    owner: string,
-    operator: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+        Approval(
+            owner?: string | null,
+            approved?: string | null,
+            tokenId?: BigNumberish | null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { owner: string; approved: string; tokenId: BigNumber }>;
 
-  maxIncentiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+        'ApprovalForAll(address,address,bool)'(
+            owner?: string | null,
+            operator?: string | null,
+            approved?: null
+        ): TypedEventFilter<[string, string, boolean],
+            { owner: string; operator: string; approved: boolean }>;
 
-  maxIncentiveStartLeadTime(overrides?: CallOverrides): Promise<BigNumber>;
+        ApprovalForAll(
+            owner?: string | null,
+            operator?: string | null,
+            approved?: null
+        ): TypedEventFilter<[string, string, boolean],
+            { owner: string; operator: string; approved: boolean }>;
 
-  multicall(
-    data: BytesLike[],
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        'DepositTransferred(uint256,address,address)'(
+            tokenId?: BigNumberish | null,
+            oldOwner?: string | null,
+            newOwner?: string | null
+        ): TypedEventFilter<[BigNumber, string, string],
+            { tokenId: BigNumber; oldOwner: string; newOwner: string }>;
 
-  name(overrides?: CallOverrides): Promise<string>;
+        DepositTransferred(
+            tokenId?: BigNumberish | null,
+            oldOwner?: string | null,
+            newOwner?: string | null
+        ): TypedEventFilter<[BigNumber, string, string],
+            { tokenId: BigNumber; oldOwner: string; newOwner: string }>;
 
-  nonfungiblePositionManager(overrides?: CallOverrides): Promise<string>;
+        'FarmEnded(uint256,bytes32,address,address,address,uint256,uint256)'(
+            tokenId?: BigNumberish | null,
+            incentiveId?: BytesLike | null,
+            rewardAddress?: string | null,
+            bonusRewardToken?: null,
+            owner?: null,
+            reward?: null,
+            bonusReward?: null
+        ): TypedEventFilter<[BigNumber, string, string, string, string, BigNumber, BigNumber],
+            {
+                tokenId: BigNumber;
+                incentiveId: string;
+                rewardAddress: string;
+                bonusRewardToken: string;
+                owner: string;
+                reward: BigNumber;
+                bonusReward: BigNumber;
+            }>;
 
-  onERC721Received(
-    arg0: string,
-    from: string,
-    tokenId: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        FarmEnded(
+            tokenId?: BigNumberish | null,
+            incentiveId?: BytesLike | null,
+            rewardAddress?: string | null,
+            bonusRewardToken?: null,
+            owner?: null,
+            reward?: null,
+            bonusReward?: null
+        ): TypedEventFilter<[BigNumber, string, string, string, string, BigNumber, BigNumber],
+            {
+                tokenId: BigNumber;
+                incentiveId: string;
+                rewardAddress: string;
+                bonusRewardToken: string;
+                owner: string;
+                reward: BigNumber;
+                bonusReward: BigNumber;
+            }>;
 
-  ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+        'FarmStarted(uint256,uint256,bytes32,uint128)'(
+            tokenId?: BigNumberish | null,
+            L2tokenId?: BigNumberish | null,
+            incentiveId?: BytesLike | null,
+            liquidity?: null
+        ): TypedEventFilter<[BigNumber, BigNumber, string, BigNumber],
+            {
+                tokenId: BigNumber;
+                L2tokenId: BigNumber;
+                incentiveId: string;
+                liquidity: BigNumber;
+            }>;
 
-  permit(
-    spender: string,
-    tokenId: BigNumberish,
-    deadline: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        FarmStarted(
+            tokenId?: BigNumberish | null,
+            L2tokenId?: BigNumberish | null,
+            incentiveId?: BytesLike | null,
+            liquidity?: null
+        ): TypedEventFilter<[BigNumber, BigNumber, string, BigNumber],
+            {
+                tokenId: BigNumber;
+                L2tokenId: BigNumber;
+                incentiveId: string;
+                liquidity: BigNumber;
+            }>;
 
-  rewards(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        'IncentiveCreated(address,address,address,address,uint256,uint256,address,uint256,uint256)'(
+            rewardToken?: string | null,
+            bonusRewardToken?: string | null,
+            pool?: string | null,
+            virtualPool?: null,
+            startTime?: null,
+            endTime?: null,
+            refundee?: null,
+            reward?: null,
+            bonusReward?: null
+        ): TypedEventFilter<[
+            string,
+            string,
+            string,
+            string,
+            BigNumber,
+            BigNumber,
+            string,
+            BigNumber,
+            BigNumber
+        ],
+            {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                virtualPool: string;
+                startTime: BigNumber;
+                endTime: BigNumber;
+                refundee: string;
+                reward: BigNumber;
+                bonusReward: BigNumber;
+            }>;
 
-  "safeTransferFrom(address,address,uint256)"(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        IncentiveCreated(
+            rewardToken?: string | null,
+            bonusRewardToken?: string | null,
+            pool?: string | null,
+            virtualPool?: null,
+            startTime?: null,
+            endTime?: null,
+            refundee?: null,
+            reward?: null,
+            bonusReward?: null
+        ): TypedEventFilter<[
+            string,
+            string,
+            string,
+            string,
+            BigNumber,
+            BigNumber,
+            string,
+            BigNumber,
+            BigNumber
+        ],
+            {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                virtualPool: string;
+                startTime: BigNumber;
+                endTime: BigNumber;
+                refundee: string;
+                reward: BigNumber;
+                bonusReward: BigNumber;
+            }>;
 
-  "safeTransferFrom(address,address,uint256,bytes)"(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        'IncentiveMakerChanged(address,address)'(
+            incentiveMaker?: string | null,
+            _incentiveMaker?: string | null
+        ): TypedEventFilter<[string, string],
+            { incentiveMaker: string; _incentiveMaker: string }>;
 
-  setApprovalForAll(
-    operator: string,
-    approved: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        IncentiveMakerChanged(
+            incentiveMaker?: string | null,
+            _incentiveMaker?: string | null
+        ): TypedEventFilter<[string, string],
+            { incentiveMaker: string; _incentiveMaker: string }>;
 
-  setIncentiveMaker(
-    _incentiveMaker: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        'RewardClaimed(address,uint256,address,address)'(
+            to?: string | null,
+            reward?: null,
+            rewardAddress?: string | null,
+            owner?: string | null
+        ): TypedEventFilter<[string, BigNumber, string, string],
+            { to: string; reward: BigNumber; rewardAddress: string; owner: string }>;
 
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+        RewardClaimed(
+            to?: string | null,
+            reward?: null,
+            rewardAddress?: string | null,
+            owner?: string | null
+        ): TypedEventFilter<[string, BigNumber, string, string],
+            { to: string; reward: BigNumber; rewardAddress: string; owner: string }>;
 
-  symbol(overrides?: CallOverrides): Promise<string>;
+        'Transfer(address,address,uint256)'(
+            from?: string | null,
+            to?: string | null,
+            tokenId?: BigNumberish | null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { from: string; to: string; tokenId: BigNumber }>;
 
-  tokenByIndex(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        Transfer(
+            from?: string | null,
+            to?: string | null,
+            tokenId?: BigNumberish | null
+        ): TypedEventFilter<[string, string, BigNumber],
+            { from: string; to: string; tokenId: BigNumber }>;
+    }
+    estimateGas: {
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
-  tokenOfOwnerByIndex(
-    owner: string,
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-  tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+        approve(
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+        balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  transferFrom(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        baseURI(overrides?: CallOverrides): Promise<BigNumber>;
 
-  vdeployer(overrides?: CallOverrides): Promise<string>;
+        claimReward(
+            rewardToken: string,
+            to: string,
+            amountRequested: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  withdrawToken(
-    tokenId: BigNumberish,
-    to: string,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        createIncentive(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            reward: BigNumberish,
+            bonusReward: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  callStatic: {
+        deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+        deposits(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+        enterFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        exitFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        farms(
+            arg0: BigNumberish,
+            arg1: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        getApproved(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        getRewardInfo(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        incentives(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+        isApprovedForAll(
+            owner: string,
+            operator: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        maxIncentiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+        maxIncentiveStartLeadTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+        multicall(
+            data: BytesLike[],
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        name(overrides?: CallOverrides): Promise<BigNumber>;
+
+        nonfungiblePositionManager(overrides?: CallOverrides): Promise<BigNumber>;
+
+        onERC721Received(
+            arg0: string,
+            from: string,
+            tokenId: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        ownerOf(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        permit(
+            spender: string,
+            tokenId: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        rewards(
+            arg0: string,
+            arg1: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        'safeTransferFrom(address,address,uint256)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        'safeTransferFrom(address,address,uint256,bytes)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            _data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        setApprovalForAll(
+            operator: string,
+            approved: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        setIncentiveMaker(
+            _incentiveMaker: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        supportsInterface(
+            interfaceId: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        symbol(overrides?: CallOverrides): Promise<BigNumber>;
+
+        tokenByIndex(
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        tokenOfOwnerByIndex(
+            owner: string,
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        tokenURI(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
+
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+        transferFrom(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        vdeployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+        withdrawToken(
+            tokenId: BigNumberish,
+            to: string,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+    }
+    populateTransaction: {
+        DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        approve(
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        balanceOf(
+            owner: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        claimReward(
+            rewardToken: string,
+            to: string,
+            amountRequested: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        createIncentive(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            reward: BigNumberish,
+            bonusReward: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        deposits(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        enterFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        exitFarming(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        farms(
+            arg0: BigNumberish,
+            arg1: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        getApproved(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        getRewardInfo(
+            key: {
+                rewardToken: string;
+                bonusRewardToken: string;
+                pool: string;
+                startTime: BigNumberish;
+                endTime: BigNumberish;
+                refundee: string;
+            },
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        incentives(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        isApprovedForAll(
+            owner: string,
+            operator: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        maxIncentiveDuration(
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        maxIncentiveStartLeadTime(
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        multicall(
+            data: BytesLike[],
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        nonfungiblePositionManager(
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        onERC721Received(
+            arg0: string,
+            from: string,
+            tokenId: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        ownerOf(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        permit(
+            spender: string,
+            tokenId: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        rewards(
+            arg0: string,
+            arg1: string,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        'safeTransferFrom(address,address,uint256)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        'safeTransferFrom(address,address,uint256,bytes)'(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            _data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        setApprovalForAll(
+            operator: string,
+            approved: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        setIncentiveMaker(
+            _incentiveMaker: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        supportsInterface(
+            interfaceId: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        tokenByIndex(
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        tokenOfOwnerByIndex(
+            owner: string,
+            index: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        tokenURI(
+            tokenId: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>;
+
+        totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        transferFrom(
+            from: string,
+            to: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        vdeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        withdrawToken(
+            tokenId: BigNumberish,
+            to: string,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+    }
+
+    connect(signerOrProvider: Signer | Provider | string): this;
+
+    attach(addressOrName: string): this;
+
+    deployed(): Promise<this>;
+
+    listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+
+    off<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    on<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    once<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): this;
+
+    listeners(eventName?: string): Array<Listener>;
+
+    off(eventName: string, listener: Listener): this;
+
+    on(eventName: string, listener: Listener): this;
+
+    once(eventName: string, listener: Listener): this;
+
+    removeListener(eventName: string, listener: Listener): this;
+
+    removeAllListeners(eventName?: string): this;
+
+    queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+        event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
     approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        to: string,
+        tokenId: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     baseURI(overrides?: CallOverrides): Promise<string>;
 
     claimReward(
-      rewardToken: string,
-      to: string,
-      amountRequested: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        rewardToken: string,
+        to: string,
+        amountRequested: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     createIncentive(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      reward: BigNumberish,
-      bonusReward: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        key: {
+            rewardToken: string;
+            bonusRewardToken: string;
+            pool: string;
+            startTime: BigNumberish;
+            endTime: BigNumberish;
+            refundee: string;
+        },
+        reward: BigNumberish,
+        bonusReward: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
 
     deposits(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, string, number, number] & {
+        arg0: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<[BigNumber, string, number, number] & {
         L2TokenId: BigNumber;
         owner: string;
         tickLower: number;
         tickUpper: number;
-      }
-    >;
+    }>;
 
     enterFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        key: {
+            rewardToken: string;
+            bonusRewardToken: string;
+            pool: string;
+            startTime: BigNumberish;
+            endTime: BigNumberish;
+            refundee: string;
+        },
+        tokenId: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     exitFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        key: {
+            rewardToken: string;
+            bonusRewardToken: string;
+            pool: string;
+            startTime: BigNumberish;
+            endTime: BigNumberish;
+            refundee: string;
+        },
+        tokenId: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     farms(
-      arg0: BigNumberish,
-      arg1: BytesLike,
-      overrides?: CallOverrides
+        arg0: BigNumberish,
+        arg1: BytesLike,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
+        tokenId: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<string>;
 
     getRewardInfo(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { reward: BigNumber; bonusReward: BigNumber }
-    >;
+        key: {
+            rewardToken: string;
+            bonusRewardToken: string;
+            pool: string;
+            startTime: BigNumberish;
+            endTime: BigNumberish;
+            refundee: string;
+        },
+        tokenId: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { reward: BigNumber; bonusReward: BigNumber }>;
 
     incentives(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, boolean, BigNumber] & {
+        arg0: BytesLike,
+        overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, string, BigNumber, boolean, BigNumber] & {
         totalReward: BigNumber;
         bonusReward: BigNumber;
         virtualPoolAddress: string;
         numberOfFarms: BigNumber;
         isPoolCreated: boolean;
         totalLiquidity: BigNumber;
-      }
-    >;
+    }>;
 
     isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
+        owner: string,
+        operator: string,
+        overrides?: CallOverrides
     ): Promise<boolean>;
 
     maxIncentiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxIncentiveStartLeadTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-    multicall(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+    multicall(
+        data: BytesLike[],
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
     nonfungiblePositionManager(overrides?: CallOverrides): Promise<string>;
 
     onERC721Received(
-      arg0: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        arg0: string,
+        from: string,
+        tokenId: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     permit(
-      spender: string,
-      tokenId: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        spender: string,
+        tokenId: BigNumberish,
+        deadline: BigNumberish,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     rewards(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
+        arg0: string,
+        arg1: string,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    'safeTransferFrom(address,address,uint256)'(
+        from: string,
+        to: string,
+        tokenId: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    'safeTransferFrom(address,address,uint256,bytes)'(
+        from: string,
+        to: string,
+        tokenId: BigNumberish,
+        _data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        operator: string,
+        approved: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setIncentiveMaker(
-      _incentiveMaker: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _incentiveMaker: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
+        interfaceId: BytesLike,
+        overrides?: CallOverrides
     ): Promise<boolean>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
     tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
+        index: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
+        owner: string,
+        index: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
@@ -1159,702 +1845,18 @@ export class Staker extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        from: string,
+        to: string,
+        tokenId: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     vdeployer(overrides?: CallOverrides): Promise<string>;
 
     withdrawToken(
-      tokenId: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
-
-  filters: {
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; approved: string; tokenId: BigNumber }
-    >;
-
-    Approval(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; approved: string; tokenId: BigNumber }
-    >;
-
-    "ApprovalForAll(address,address,bool)"(
-      owner?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): TypedEventFilter<
-      [string, string, boolean],
-      { owner: string; operator: string; approved: boolean }
-    >;
-
-    ApprovalForAll(
-      owner?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): TypedEventFilter<
-      [string, string, boolean],
-      { owner: string; operator: string; approved: boolean }
-    >;
-
-    "DepositTransferred(uint256,address,address)"(
-      tokenId?: BigNumberish | null,
-      oldOwner?: string | null,
-      newOwner?: string | null
-    ): TypedEventFilter<
-      [BigNumber, string, string],
-      { tokenId: BigNumber; oldOwner: string; newOwner: string }
-    >;
-
-    DepositTransferred(
-      tokenId?: BigNumberish | null,
-      oldOwner?: string | null,
-      newOwner?: string | null
-    ): TypedEventFilter<
-      [BigNumber, string, string],
-      { tokenId: BigNumber; oldOwner: string; newOwner: string }
-    >;
-
-    "FarmEnded(uint256,bytes32,address,address,address,uint256,uint256)"(
-      tokenId?: BigNumberish | null,
-      incentiveId?: BytesLike | null,
-      rewardAddress?: string | null,
-      bonusRewardToken?: null,
-      owner?: null,
-      reward?: null,
-      bonusReward?: null
-    ): TypedEventFilter<
-      [BigNumber, string, string, string, string, BigNumber, BigNumber],
-      {
-        tokenId: BigNumber;
-        incentiveId: string;
-        rewardAddress: string;
-        bonusRewardToken: string;
-        owner: string;
-        reward: BigNumber;
-        bonusReward: BigNumber;
-      }
-    >;
-
-    FarmEnded(
-      tokenId?: BigNumberish | null,
-      incentiveId?: BytesLike | null,
-      rewardAddress?: string | null,
-      bonusRewardToken?: null,
-      owner?: null,
-      reward?: null,
-      bonusReward?: null
-    ): TypedEventFilter<
-      [BigNumber, string, string, string, string, BigNumber, BigNumber],
-      {
-        tokenId: BigNumber;
-        incentiveId: string;
-        rewardAddress: string;
-        bonusRewardToken: string;
-        owner: string;
-        reward: BigNumber;
-        bonusReward: BigNumber;
-      }
-    >;
-
-    "FarmStarted(uint256,uint256,bytes32,uint128)"(
-      tokenId?: BigNumberish | null,
-      L2tokenId?: BigNumberish | null,
-      incentiveId?: BytesLike | null,
-      liquidity?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, string, BigNumber],
-      {
-        tokenId: BigNumber;
-        L2tokenId: BigNumber;
-        incentiveId: string;
-        liquidity: BigNumber;
-      }
-    >;
-
-    FarmStarted(
-      tokenId?: BigNumberish | null,
-      L2tokenId?: BigNumberish | null,
-      incentiveId?: BytesLike | null,
-      liquidity?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, string, BigNumber],
-      {
-        tokenId: BigNumber;
-        L2tokenId: BigNumber;
-        incentiveId: string;
-        liquidity: BigNumber;
-      }
-    >;
-
-    "IncentiveCreated(address,address,address,address,uint256,uint256,address,uint256,uint256)"(
-      rewardToken?: string | null,
-      bonusRewardToken?: string | null,
-      pool?: string | null,
-      virtualPool?: null,
-      startTime?: null,
-      endTime?: null,
-      refundee?: null,
-      reward?: null,
-      bonusReward?: null
-    ): TypedEventFilter<
-      [
-        string,
-        string,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        virtualPool: string;
-        startTime: BigNumber;
-        endTime: BigNumber;
-        refundee: string;
-        reward: BigNumber;
-        bonusReward: BigNumber;
-      }
-    >;
-
-    IncentiveCreated(
-      rewardToken?: string | null,
-      bonusRewardToken?: string | null,
-      pool?: string | null,
-      virtualPool?: null,
-      startTime?: null,
-      endTime?: null,
-      refundee?: null,
-      reward?: null,
-      bonusReward?: null
-    ): TypedEventFilter<
-      [
-        string,
-        string,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        virtualPool: string;
-        startTime: BigNumber;
-        endTime: BigNumber;
-        refundee: string;
-        reward: BigNumber;
-        bonusReward: BigNumber;
-      }
-    >;
-
-    "IncentiveMakerChanged(address,address)"(
-      incentiveMaker?: string | null,
-      _incentiveMaker?: string | null
-    ): TypedEventFilter<
-      [string, string],
-      { incentiveMaker: string; _incentiveMaker: string }
-    >;
-
-    IncentiveMakerChanged(
-      incentiveMaker?: string | null,
-      _incentiveMaker?: string | null
-    ): TypedEventFilter<
-      [string, string],
-      { incentiveMaker: string; _incentiveMaker: string }
-    >;
-
-    "RewardClaimed(address,uint256,address,address)"(
-      to?: string | null,
-      reward?: null,
-      rewardAddress?: string | null,
-      owner?: string | null
-    ): TypedEventFilter<
-      [string, BigNumber, string, string],
-      { to: string; reward: BigNumber; rewardAddress: string; owner: string }
-    >;
-
-    RewardClaimed(
-      to?: string | null,
-      reward?: null,
-      rewardAddress?: string | null,
-      owner?: string | null
-    ): TypedEventFilter<
-      [string, BigNumber, string, string],
-      { to: string; reward: BigNumber; rewardAddress: string; owner: string }
-    >;
-
-    "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; tokenId: BigNumber }
-    >;
-
-    Transfer(
-      from?: string | null,
-      to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; tokenId: BigNumber }
-    >;
-  };
-
-  estimateGas: {
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
-
-    approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    baseURI(overrides?: CallOverrides): Promise<BigNumber>;
-
-    claimReward(
-      rewardToken: string,
-      to: string,
-      amountRequested: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    createIncentive(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      reward: BigNumberish,
-      bonusReward: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    deployer(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deposits(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    enterFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    exitFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    farms(
-      arg0: BigNumberish,
-      arg1: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getRewardInfo(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    incentives(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxIncentiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxIncentiveStartLeadTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    multicall(
-      data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nonfungiblePositionManager(overrides?: CallOverrides): Promise<BigNumber>;
-
-    onERC721Received(
-      arg0: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    ownerOf(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    permit(
-      spender: string,
-      tokenId: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    rewards(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setIncentiveMaker(
-      _incentiveMaker: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    vdeployer(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdrawToken(
-      tokenId: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    claimReward(
-      rewardToken: string,
-      to: string,
-      amountRequested: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    createIncentive(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      reward: BigNumberish,
-      bonusReward: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    deposits(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    enterFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    exitFarming(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    farms(
-      arg0: BigNumberish,
-      arg1: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getRewardInfo(
-      key: {
-        rewardToken: string;
-        bonusRewardToken: string;
-        pool: string;
-        startTime: BigNumberish;
-        endTime: BigNumberish;
-        refundee: string;
-      },
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    incentives(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxIncentiveDuration(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxIncentiveStartLeadTime(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    multicall(
-      data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    nonfungiblePositionManager(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    onERC721Received(
-      arg0: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    ownerOf(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    permit(
-      spender: string,
-      tokenId: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    rewards(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setIncentiveMaker(
-      _incentiveMaker: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    vdeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    withdrawToken(
-      tokenId: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        tokenId: BigNumberish,
+        to: string,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 }

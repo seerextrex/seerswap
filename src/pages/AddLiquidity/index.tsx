@@ -12,9 +12,7 @@ import { ThemeContext } from 'styled-components/macro'
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonYellow } from '../../components/Button'
 import { BlueCard, OutlineCard, YellowCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
-import TransactionConfirmationModal, {
-    ConfirmationModalContent
-} from '../../components/TransactionConfirmationModal'
+import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import Row, { AutoRow, RowBetween, RowFixed } from '../../components/Row'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
@@ -32,26 +30,9 @@ import { ExternalLink, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { Dots } from '../Pool/styleds'
 import { currencyId } from '../../utils/currencyId'
-import {
-    DynamicSection,
-    HideMedium,
-    MediumOnly,
-    PageWrapper,
-    ResponsiveTwoColumns,
-    RightContainer,
-    ScrollablePage,
-    StackedContainer,
-    StackedItem,
-    StyledInput,
-    Wrapper
-} from './styled'
+import { DynamicSection, HideMedium, MediumOnly, PageWrapper, ResponsiveTwoColumns, RightContainer, ScrollablePage, StackedContainer, StackedItem, StyledInput, Wrapper } from './styled'
 import { t, Trans } from '@lingui/macro'
-import {
-    useRangeHopCallbacks,
-    useV3DerivedMintInfo,
-    useV3MintActionHandlers,
-    useV3MintState
-} from 'state/mint/v3/hooks'
+import { useRangeHopCallbacks, useV3DerivedMintInfo, useV3MintActionHandlers, useV3MintState } from 'state/mint/v3/hooks'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
 import { useDerivedPositionInfo } from 'hooks/useDerivedPositionInfo'
 import { PositionPreview } from 'components/PositionPreview'

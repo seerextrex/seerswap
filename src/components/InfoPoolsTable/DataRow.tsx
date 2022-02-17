@@ -1,4 +1,4 @@
-import { ChartBadge, LabelStyled, LinkWrapper, ResponsiveGrid, FarmingLink } from './styled'
+import { ChartBadge, FarmingLink, LabelStyled, LinkWrapper, ResponsiveGrid } from './styled'
 import { BarChart2, ExternalLink } from 'react-feather'
 import { formatDollarAmount, formatPercent } from '../../utils/numbers'
 import React from 'react'

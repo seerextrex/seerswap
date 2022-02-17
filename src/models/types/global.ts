@@ -1,1 +1,1 @@
-export type EthereumWindow = Window & {ethereum: any}
+export type EthereumWindow = Window & { ethereum: any }

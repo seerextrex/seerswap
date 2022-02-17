@@ -24,16 +24,7 @@ import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsRepo
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
 import { useActiveWeb3React } from '../hooks/web3'
-import {
-    AppWrapper,
-    AppBodyWrapper,
-    BugReportLink,
-    GlobalStyle,
-    HeaderWrapper,
-    InternetError,
-    Marginer,
-    NetworkFailedCard
-} from './styled'
+import { AppBodyWrapper, AppWrapper, BugReportLink, GlobalStyle, HeaderWrapper, InternetError, Marginer, NetworkFailedCard } from './styled'
 
 const RealStakerPage = React.lazy(() => import('./RealStakerPage'))
 const StakingAnalyticsPage = React.lazy(() => import('./StakingAnalyticsPage'))
@@ -61,7 +52,7 @@ export default function App() {
     useEffect(() => {
         if (!account) return
 
-        type __window = Window & {dataLayer: any}
+        type __window = Window & { dataLayer: any }
         const _window = window as unknown as __window
 
         _window.dataLayer = _window.dataLayer || []

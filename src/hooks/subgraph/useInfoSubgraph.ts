@@ -46,18 +46,18 @@ import { EternalFarmingByPool } from '../../models/interfaces/responseSubgraph'
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-        accum[poolData.id] = poolData
-        return accum
-    }, {})
+            accum[poolData.id] = poolData
+            return accum
+        }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-        accum[tokenData.id] = tokenData
-        return accum
-    }, {})
+            accum[tokenData.id] = tokenData
+            return accum
+        }, {})
         : {}
 }
 

@@ -21,11 +21,11 @@ export const Arrow = styled.div<{ faded: boolean }>`
       opacity: 1;
   }
 `
-export const LabelStyled = styled(Label)<{center?: boolean}>`
+export const LabelStyled = styled(Label)<{ center?: boolean }>`
   font-size: 14px;
     justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
 `
-export const ClickableTextStyled = styled(ClickableText)<{center?: boolean}>`
+export const ClickableTextStyled = styled(ClickableText)<{ center?: boolean }>`
   font-size: 14px;
     justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
   text-align: start;

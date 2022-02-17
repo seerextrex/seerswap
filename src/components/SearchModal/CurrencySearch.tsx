@@ -5,12 +5,7 @@ import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { ExtendedEther } from '../../constants/tokens'
 import { useActiveWeb3React } from '../../hooks/web3'
-import {
-    useAllTokens,
-    useIsUserAddedToken,
-    useSearchInactiveTokenLists,
-    useToken
-} from '../../hooks/Tokens'
+import { useAllTokens, useIsUserAddedToken, useSearchInactiveTokenLists, useToken } from '../../hooks/Tokens'
 import { CloseIcon, TYPE } from '../../theme'
 import { isAddress } from '../../utils'
 import Column from '../Column'

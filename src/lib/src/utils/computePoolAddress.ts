@@ -2,12 +2,7 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256 } from '@ethersproject/solidity'
 import { Token } from '@uniswap/sdk-core'
-import {
-    FeeAmount,
-    POOL_INIT_CODE_HASH,
-    POOL_INIT_CODE_HASH_OPTIMISM,
-    POOL_INIT_CODE_HASH_OPTIMISM_KOVAN
-} from '../constants'
+import { FeeAmount, POOL_INIT_CODE_HASH, POOL_INIT_CODE_HASH_OPTIMISM, POOL_INIT_CODE_HASH_OPTIMISM_KOVAN } from '../constants'
 
 /**
  * Computes a pool address

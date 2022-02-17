@@ -47,7 +47,7 @@ export function FarmingEventsPage({
             <EventsCards>
                 {refreshing ? (
                     <EmptyMock>
-                        <Loader stroke={'white'} size={'20px'}/>
+                        <Loader stroke={'white'} size={'20px'} />
                     </EmptyMock>
                 ) : formattedData.length !== 0 ?
                     <EventsCardsRow>
@@ -62,10 +62,10 @@ export function FarmingEventsPage({
                                 const active = isStarted && !isEnded
 
                                 return <StakerEventCard refreshing={refreshing} active={active}
-                                                 key={j} now={now} event={event}
-                                                 stakeHandler={() => {
-                                                     setModalForPool(event)
-                                                 }} />
+                                                        key={j} now={now} event={event}
+                                                        stakeHandler={() => {
+                                                            setModalForPool(event)
+                                                        }} />
                             }
                         )}
                     </EventsCardsRow>
@@ -74,7 +74,7 @@ export function FarmingEventsPage({
                             <div>No limit farms</div>
                             <Frown size={35} stroke={'white'} />
                         </EmptyMock>
-                    ) : <EmptyMock/>}
+                    ) : <EmptyMock />}
             </EventsCards>
         </PageWrapper>
     )

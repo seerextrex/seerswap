@@ -3,14 +3,7 @@ import Loader, { LoadingRows } from 'components/Loader'
 import { AutoColumn } from 'components/Column'
 import { Label } from 'components/Text'
 import { HelpCircle } from 'react-feather'
-import {
-    APRWrapper,
-    ClickableTextStyled,
-    HelperDropdown,
-    HelperDropdownPart,
-    ResponsiveGrid,
-    Wrapper
-} from './styled'
+import { APRWrapper, ClickableTextStyled, HelperDropdown, HelperDropdownPart, ResponsiveGrid, Wrapper } from './styled'
 import { DataRow } from './DataRow'
 import PageButtons from './PageButtons'
 import { FormattedPool } from '../../models/interfaces'

@@ -1,11 +1,5 @@
 import { ChartType } from '../../models/enums'
-import {
-    ToolbarChartTypeWrapper,
-    ToolbarOptions,
-    ToolbarOptionsItem,
-    ToolbarOptionsTitle,
-    ToolbarWrapper
-} from './styled'
+import { ToolbarChartTypeWrapper, ToolbarOptions, ToolbarOptionsItem, ToolbarOptionsTitle, ToolbarWrapper } from './styled'
 
 export default function PoolInfoChartToolbar({
     chartTypes,

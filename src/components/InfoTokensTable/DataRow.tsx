@@ -1,12 +1,5 @@
 import { FormattedToken } from '../../models/interfaces'
-import {
-    CurrencyRow,
-    CurrencyRowWrapper,
-    LabelTitleStyled,
-    LinkWrapper,
-    ResponsiveGrid,
-    ResponsiveLogo
-} from './styled'
+import { CurrencyRow, CurrencyRowWrapper, LabelTitleStyled, LinkWrapper, ResponsiveGrid, ResponsiveLogo } from './styled'
 import { Label } from '../Text'
 import { HideMedium, MediumOnly } from '../../theme'
 import HoverInlineText from '../HoverInlineText'
@@ -44,7 +37,7 @@ export const DataRow = ({ tokenData, index }: DataRowProps) => {
                         </MediumOnly>
                         <HideMedium>
                             <RowFixed>
-                                <HoverInlineText text={tokenData.name} maxCharacters={18}/>
+                                <HoverInlineText text={tokenData.name} maxCharacters={18} />
                                 <Label ml='8px' color={'#dedede'}>
                                     ({tokenData.symbol})
                                 </Label>

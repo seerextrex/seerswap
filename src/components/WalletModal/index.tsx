@@ -4,7 +4,6 @@ import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 // @ts-ignore
-<<<<<<< HEAD
 import MetamaskIcon from "../../assets/svg/metamask-logo.svg";
 import { injected } from "../../connectors";
 import { SUPPORTED_WALLETS } from "../../constants/wallet";
@@ -19,23 +18,6 @@ import PendingView from "./PendingView";
 import { Frown } from "react-feather";
 import ReactGA from "react-ga";
 import { CloseColor, CloseIcon, ContentWrapper, HeaderRow, HoverText, OptionGrid, UpperSection, Wrapper } from "./styled";
-=======
-import MetamaskIcon from '../../assets/svg/metamask-logo.svg'
-import { injected } from '../../connectors'
-import { SUPPORTED_WALLETS } from '../../constants/wallet'
-import usePrevious from '../../hooks/usePrevious'
-import { ApplicationModal } from '../../state/application/actions'
-import { useModalOpen, useWalletModalToggle } from '../../state/application/hooks'
-import AccountDetails from '../AccountDetails'
-import { Trans } from '@lingui/macro'
-import Modal from '../Modal'
-import Option from './Option'
-import PendingView from './PendingView'
-import { Frown } from 'react-feather'
-import ReactGA from 'react-ga'
-import { CloseColor, CloseIcon, ContentWrapper, HeaderRow, HoverText, OptionGrid, UpperSection, Wrapper } from './styled'
-
->>>>>>> 2a996faaae84179f30552f3f78a9e9f11475f293
 
 const WALLET_VIEWS = {
     OPTIONS: "options",

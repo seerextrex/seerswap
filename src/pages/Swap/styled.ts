@@ -13,13 +13,15 @@ export const StyledInfo = styled(Info)`
   }
 `
 
-export const ContestBanner = styled.div`
+export const ContestBanner = styled.a`
   position: absolute;
   display: flex;
   top: -6rem;
+  color: white;
   background-image: url(${IphoneBanner});
   width: calc(100% - 5px);
   height: 110px;
+  text-decoration: none;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;

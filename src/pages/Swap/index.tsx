@@ -338,7 +338,7 @@ export default function Swap({ history }: RouteComponentProps) {
             />
             <NetworkAlert />
             <AppBody>
-                <ContestBanner>
+                <ContestBanner href="https://medium.com/@crypto_algebra/the-algebra-swapping-competition-win-an-iphone-13-on-the-algebra-dex-5c48d05fc4a" target="_blank" rel="noreferrer noopener">
                     <div style={{ width: "100%" }}>
                         <ContestBannerTitle>
                             Swap now & win an <ContestBannerTitleIphone>&nbsp;IPHONE 13</ContestBannerTitleIphone>{" "}

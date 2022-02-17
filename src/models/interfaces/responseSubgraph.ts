@@ -91,6 +91,8 @@ export interface LastPoolSubgraph {
 
 export interface PoolHourData extends LastPoolSubgraph {
     untrackedVolumeUSD: string
+    token0Price: string
+    token1Price: string
 }
 
 export interface FactorySubgraph {

@@ -43,7 +43,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             case ChartSpan.DAY:
                 return 24
             case ChartSpan.MONTH:
-                return 30
+                return 31
             case ChartSpan.WEEK:
                 return 7
         }
@@ -68,7 +68,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         let sameDays = []
         let res = []
 
-        if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0].timestamp))) {
+        if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0]?.timestamp))) {
             res.push({
                 value: data[0]?.value,
                 timestamp: data[0]?.timestamp
@@ -76,39 +76,29 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         }
 
         for (let i = 1; i < data.length; i++) {
-            if (
-                dayjs(data[i]?.timestamp)
-                    .startOf(span !== ChartSpan.DAY ? 'day' : _span)
-                    .isSame(dayjs(data[i - 1].timestamp).startOf(_span))
-            ) {
+            if (dayjs(data[i]?.timestamp).startOf(span !== ChartSpan.DAY ? 'day' : _span).isSame(dayjs(data[i - 1]?.timestamp).startOf(_span))) {
                 sameDays.push(data[i])
             } else {
                 if (sameDays.length !== 0) {
-
-                    res.push(
-                        sameDays.reduce(
-                            (prev, cur) => {
+                    res.push(sameDays.reduce((prev, cur) => {
                                 return {
                                     timestamp: cur.timestamp,
                                     value:
-                                        span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME
+                                        span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || ChartType.PRICE
                                             ? prev.value + cur.value
                                             : Math.max(prev.value, cur.value)
                                 }
-                            },
-                            {
+                            }, {
                                 value: 0,
                                 timestamp: new Date()
-                            }
-                        )
-                    )
-                    if (type === ChartType.FEES) {
+                            }))
+                    if (type === ChartType.FEES || type === ChartType.PRICE) {
                         res[res.length - 1].value = res[res.length - 1].value / sameDays.length
                     }
                 } else {
                     res.push({
-                        value: data[i].value,
-                        timestamp: data[i].timestamp
+                        value: data[i]?.value,
+                        timestamp: data[i]?.timestamp
                     })
                 }
                 sameDays = []
@@ -116,24 +106,20 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         }
 
         if (sameDays.length !== 0) {
-            res.push(
-                sameDays.reduce(
+            res.push(sameDays.reduce(
                     (prev, cur) => {
                         return {
                             timestamp: cur.timestamp,
                             value:
-                                span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME
+                                span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || ChartType.PRICE
                                     ? prev.value + cur.value
                                     : Math.max(prev.value, cur.value)
                         }
-                    },
-                    {
+                    }, {
                         value: 0,
                         timestamp: new Date()
-                    }
-                )
-            )
-            if (type === ChartType.FEES) {
+                    }))
+            if (type === ChartType.FEES || ChartType.PRICE) {
                 res[res.length - 1].value = res[res.length - 1].value / sameDays.length
             }
         }
@@ -143,8 +129,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         }
 
         res = res.map((date) => ({
-            timestamp: new Date(dayjs(date.timestamp).startOf(_span).unix() * 1000),
-            value: date.value
+            timestamp: new Date(dayjs(date?.timestamp).startOf(_span).unix() * 1000),
+            value: date?.value
         }))
 
         let _data = []
@@ -160,11 +146,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             const lastAdditionalDay = dayjs(Date.now()).startOf(_span)
 
             if (firstRealDay > firstAdditionalDay) {
-                for (
-                    let i = firstAdditionalDay.unix();
-                    i < firstRealDay.unix();
-                    i += span === ChartSpan.DAY ? 3600 : 24 * 3600
-                ) {
+                for (let i = firstAdditionalDay.unix(); i < firstRealDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
                     _data.push({
                         timestamp: new Date(i * 1000),
                         value: type === ChartType.VOLUME ? 0 : firstNonEmptyValue ? firstNonEmptyValue.value : 0
@@ -176,6 +158,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 timestamp: new Date(res[0].timestamp),
                 value: res[0].value
             })
+
+
 
             let last = _data[_data.length - 1]
 
@@ -215,10 +199,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             }
 
             if (lastRealDay < lastAdditionalDay) {
-                for (let i = lastRealDay.add(1, _span).unix();
-                     i <= lastAdditionalDay.unix();
-                     i += span === ChartSpan.DAY ? 3600 : 24 * 3600
-                ) {
+                for (let i = lastRealDay.add(1, _span).unix(); i <= lastAdditionalDay.unix(); i += span === ChartSpan.DAY ? 3600 : 24 * 3600) {
                     _data.push({
                         timestamp: new Date(i * 1000),
                         value: type === ChartType.VOLUME ? 0 : res[res.length - 1].value
@@ -232,11 +213,11 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         return [..._data]
     }, [data, previousData])
 
+    useEffect(() => console.log(_chartData, previousData), [_chartData])
+
     const xScale = useMemo(() => scaleTime()
-            .domain([
-                min(_chartData, (d) => new Date(d.timestamp)),
-                max(_chartData, (d) => new Date(d.timestamp))
-            ]).range([0, width]),
+            .domain([min(_chartData, (d) => new Date(d.timestamp)), max(_chartData, (d) => new Date(d.timestamp))])
+            .range([0, width]),
         [span, _chartData])
 
     const Line = create('svg:line')

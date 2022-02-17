@@ -45,10 +45,13 @@ export default function App() {
     const { onIsFarming } = useFarmingActionsHandlers()
     const networkFailed = useIsNetworkFailed()
 
+    let _networkFailed
+
+    setTimeout(() => _networkFailed = networkFailed, 0)
+
     useEffect(() => {
         onIsFarming()
     }, [])
-
     useEffect(() => {
         if (!account) return
 
@@ -80,7 +83,7 @@ export default function App() {
                         </InternetError>
                     )}
                     <AppBodyWrapper style={{ zIndex: 2 }}>
-                        {networkFailed && (
+                        {_networkFailed && (
                             <NetworkFailedCard>
                                 <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon
                                     network failed
@@ -119,35 +122,21 @@ export default function App() {
                                 <Route strict path='/info' component={InfoPage} />
 
                                 <Route exact strict path='/send' component={RedirectPathToSwapOnly} />
-                                <Route exact strict path='/swap/:outputCurrency'
-                                       component={RedirectToSwap} />
+                                <Route exact strict path='/swap/:outputCurrency' component={RedirectToSwap} />
                                 <Route exact strict path='/swap' component={Swap} />
 
                                 <Route exact strict path='/pool/find' component={PoolFinder} />
                                 <Route exact strict path='/pool' component={PoolPage} />
                                 <Route exact strict path='/pool/:tokenId' component={PositionPage} />
 
-                                <Route
-                                    exact
-                                    strict
-                                    path='/add/:currencyIdA?/:currencyIdB?/:feeAmount?'
-                                    component={RedirectDuplicateTokenIds}
-                                />
-
-                                <Route exact strict
-                                       path='/increase/:currencyIdA?/:currencyIdB?/:tokenId?'
-                                       component={AddLiquidity} />
-
-                                <Route exact strict path='/remove/:tokenId'
-                                       component={RemoveLiquidityV3} />
-
+                                <Route exact strict path='/add/:currencyIdA?/:currencyIdB?/:feeAmount?' component={RedirectDuplicateTokenIds} />
+                                <Route exact strict path='/increase/:currencyIdA?/:currencyIdB?/:tokenId?' component={AddLiquidity} />
+                                <Route exact strict path='/remove/:tokenId' component={RemoveLiquidityV3} />
                                 <Route exact strict path='/migrate' component={MigrateV2} />
-                                <Route exact strict path='/migrate/:address'
-                                       component={MigrateV2Pair} />
+                                <Route exact strict path='/migrate/:address' component={MigrateV2Pair} />
 
                                 <Route exact strict path='/staking' component={RealStakerPage} />
-                                <Route exact strict path='/staking/analytics'
-                                       component={StakingAnalyticsPage} />
+                                <Route exact strict path='/staking/analytics' component={StakingAnalyticsPage} />
 
                                 <Route component={RedirectPathToSwapOnly} />
                             </Switch>

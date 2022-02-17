@@ -3,8 +3,12 @@ import Chart from './Chart'
 import Loader from '../Loader'
 import { ChartType } from '../../models/enums'
 import { isMobile, isTablet } from 'react-device-detect'
-import { MockLoading, Wrapper } from './styled'
+import { MockLoading, ToggleToken, Wrapper } from './styled'
 import { FeeSubgraph, PoolHourData } from '../../models/interfaces'
+import { ChartToken } from '../../models/enums/poolInfoPage'
+import { Trans } from '@lingui/macro'
+import { Token } from '@uniswap/sdk-core'
+import Toggle from '../Toggle'
 
 interface FeeChartRangeInputProps {
     fetchedData: {
@@ -15,9 +19,13 @@ interface FeeChartRangeInputProps {
     id: string
     span: number
     type: number
+    token: number
+    token1: Token
+    token0: Token
+    setToken: (a: number) => void
 }
 
-export default function FeeChartRangeInput({ fetchedData, refreshing, span, type }: FeeChartRangeInputProps) {
+export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken }: FeeChartRangeInputProps) {
 
     const ref = useRef<HTMLDivElement>(null)
 
@@ -38,11 +46,9 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
             }
             return
         })
-
-        const field = type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? isUntracked ? 'untrackedVolumeUSD' : 'volumeUSD' : 'feesUSD'
+        const field = type === ChartType.PRICE ? token === ChartToken.TOKEN0 ? 'token0Price' : 'token1Price' : type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? isUntracked ? 'untrackedVolumeUSD' : 'volumeUSD' : 'feesUSD'
 
         if (type === ChartType.FEES) {
-
             return {
                 data: fetchedData.data.map((el) => {
                     if ('fee' in el) {
@@ -85,7 +91,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                 })
             }
         }
-    }, [fetchedData])
+    }, [fetchedData, token])
 
     return (
         <Wrapper ref={ref}>
@@ -93,17 +99,31 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                 <MockLoading>
                     <Loader stroke={'white'} size={'25px'} />
                 </MockLoading> :
-                <Chart
-                    feeData={formattedData}
-                    dimensions={{
-                        width: isTablet || isMobile ? ref && ref.current && ref.current.offsetWidth - 80 || 0 : 810,
-                        height: isTablet || isMobile ? 200 : 300,
-                        margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
-                    }}
-                    isMobile={isMobile}
-                    span={span}
-                    type={type}
-                />
+                <>
+                    {
+                        type === ChartType.PRICE &&
+                        <ToggleToken>
+                            <Toggle
+                                isActive={token}
+                                toggle={() => setToken(token === ChartToken.TOKEN0 ? 1 : 0)}
+                                checked={<Trans>{token1?.symbol}</Trans>}
+                                unchecked={<Trans>{token0?.symbol}</Trans>}
+                            />
+                        </ToggleToken>
+                    }
+                    <Chart
+                        feeData={formattedData}
+                        dimensions={{
+                            width: isTablet || isMobile ? ref && ref.current && ref.current.offsetWidth - 80 || 0 : 810,
+                            height: isTablet || isMobile ? 200 : 300,
+                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
+                        }}
+                        isMobile={isMobile}
+                        span={span}
+                        type={type}
+                    />
+                </>
+
             }
         </Wrapper>
     )

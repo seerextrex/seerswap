@@ -12,7 +12,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { POOL_DEPLOYER_ADDRESS } from '../../constants/addresses'
 import { MockLoading, Wrapper, ZoomButton, ZoomButtonsWrapper } from './styled'
 
-
 export default function LiquidityBarChart({
     data,
     token0,

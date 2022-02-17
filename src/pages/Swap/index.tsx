@@ -47,7 +47,7 @@ import { warningSeverity } from "../../utils/prices";
 import AppBody from "../AppBody";
 import { Helmet } from "react-helmet";
 import ReactGA from "react-ga";
-import { StyledInfo } from "./styled";
+import { ContestBanner, ContestBannerTitle, ContestBannerTitleIphone, StyledInfo } from "./styled";
 
 export default function Swap({ history }: RouteComponentProps) {
     const { account } = useActiveWeb3React();
@@ -337,6 +337,20 @@ export default function Swap({ history }: RouteComponentProps) {
             />
             <NetworkAlert />
             <AppBody>
+                <ContestBanner>
+                    <div style={{ width: "100%" }}>
+                        <ContestBannerTitle>
+                            Swap now & win an <ContestBannerTitleIphone>&nbsp;IPHONE 13</ContestBannerTitleIphone>{" "}
+                            <span style={{ marginLeft: "1rem" }}>
+                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="30" height="30" rx="12" fill="#72B5FA" />
+                                    <path d="M20.5 9L15 13.5L10 9.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                    <path d="M20.5 15.5L15 20L10 16" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                </svg>
+                            </span>
+                        </ContestBannerTitle>
+                    </div>
+                </ContestBanner>
                 <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
                 <Wrapper id="swap-page">
                     <ConfirmSwapModal

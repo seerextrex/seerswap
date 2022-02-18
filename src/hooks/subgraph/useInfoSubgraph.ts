@@ -431,6 +431,8 @@ export function useInfoSubgraph() {
                 variables: { pool, timestamp}
             })
 
+            console.log(timestamp)
+
             if (error) return `${error.name} ${error.message}`
 
             if (poolHourDatas.length === 0) return []
@@ -443,7 +445,6 @@ export function useInfoSubgraph() {
     }
 
     async function fetchPoolLastEntry(pool: string): Promise<LastPoolSubgraph[] | string> {
-        console.log(pool)
         try {
 
             const { data: { poolHourDatas }, error } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
@@ -503,8 +504,6 @@ export function useInfoSubgraph() {
                 variables: { pool, startTimestamp, endTimestamp }
             })
 
-            console.log(feeHourDatas)
-
             const _feeHourData = feeHourDatas.length === 0 ? await fetchLastEntry(pool) : feeHourDatas
 
             if (typeof _feeHourData === 'string') return
@@ -535,7 +534,6 @@ export function useInfoSubgraph() {
 
     async function fetchChartPoolData(pool: string, startTimestamp: number, endTimestamp: number) {
         try {
-
             setChartPoolDataLoading(true)
 
             const { data: { poolHourDatas }, error } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
@@ -550,10 +548,11 @@ export function useInfoSubgraph() {
 
             if (typeof _poolHourDatas === 'string') return
 
-            const previousData = await fetchPoolLastNotEmptyEntry(pool, poolHourDatas[0].periodStartUnix)
+            const previousData = await fetchPoolLastNotEmptyEntry(pool, _poolHourDatas[0].periodStartUnix)
+
+            if (typeof previousData === 'string') return
 
             console.log(previousData)
-            if (typeof previousData === 'string') return
 
             if (_poolHourDatas.length !== 0) {
                 setChartPoolData({

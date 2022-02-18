@@ -5936,8 +5936,8 @@ export type FetchPoolQuery = (
 
 export type FeeHourDataQueryVariables = Exact<{
   pool?: Maybe<Scalars['String']>;
-  timestampStart?: Maybe<Scalars['BigInt']>;
-  timestampFinish?: Maybe<Scalars['BigInt']>;
+  startTimestamp?: Maybe<Scalars['BigInt']>;
+  endTimestamp?: Maybe<Scalars['BigInt']>;
 }>;
 
 
@@ -6341,10 +6341,10 @@ export const FetchPoolDocument = `
 }
     `;
 export const FeeHourDataDocument = `
-    query feeHourData($pool: String, $timestampStart: BigInt, $timestampFinish: BigInt) {
+    query feeHourData($pool: String, $startTimestamp: BigInt, $endTimestamp: BigInt) {
   feeHourDatas(
     first: 1000
-    where: {pool: $pool, timestamp_gte: $timestampStart, timestamp_lte: $timestampStart}
+    where: {pool: $pool, timestamp_gte: $startTimestamp, timestamp_lte: $endTimestamp}
   ) {
     id
     pool

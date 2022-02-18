@@ -108,6 +108,8 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
         }
     }, [feesResult, chartPoolData, ticksResult])
 
+    // useEffect(() => console.log(data), [data])
+
 
     const refreshing = useMemo(() => {
         if (!feesLoading && !chartPoolDataLoading && !ticksLoading) return false

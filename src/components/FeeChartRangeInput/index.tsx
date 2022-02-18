@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import Chart from './Chart'
 import Loader from '../Loader'
 import { ChartType } from '../../models/enums'
@@ -93,6 +93,8 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
         }
     }, [fetchedData, token])
 
+
+    // useEffect(() => console.log(fetchedData?.previousData), [fetchedData?.previousData])
     return (
         <Wrapper ref={ref}>
             {refreshing ?

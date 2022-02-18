@@ -49,14 +49,15 @@ export function useInfoTickData() {
         return { ticks: surroundingTicksResult, loading: false, error: false }
     }
 
-    async function fetchTicksSurroundingPrice(pool: string) {
+    async function fetchTicksSurroundingPrice(poolId: string) {
 
         setTicksLoading(true)
 
         try {
 
             const { data: { pools }, error } = await dataClient.query<SubgraphResponse<SmallPoolSubgraph[]>>({
-                query: FETCH_POOL(pool)
+                query: FETCH_POOL(),
+                variables: {poolId}
             })
 
             if (error) return
@@ -76,7 +77,7 @@ export function useInfoTickData() {
             const tickIdxLowerBound = activeTickIdx - numSurroundingTicks * tickSpacing
             const tickIdxUpperBound = activeTickIdx + numSurroundingTicks * tickSpacing
 
-            const initializedTicksResult = await fetchInitializedTicks(pool, tickIdxLowerBound, tickIdxUpperBound)
+            const initializedTicksResult = await fetchInitializedTicks(poolId, tickIdxLowerBound, tickIdxUpperBound)
             if (initializedTicksResult.error || initializedTicksResult.loading) {
                 return {
                     error: initializedTicksResult.error,
@@ -204,7 +205,7 @@ export function useInfoTickData() {
                 token0,
                 token1
             })
-        } catch (err) {
+        } catch (err: any) {
             throw new Error(err)
         } finally {
             setTicksLoading(false)

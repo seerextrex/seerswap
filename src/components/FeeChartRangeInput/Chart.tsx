@@ -3,6 +3,7 @@ import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpol
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
 import { FormattedFeeChart } from '../../models/interfaces'
+import { ChartToken } from '../../models/enums/poolInfoPage'
 
 interface ChartInterface {
     feeData: {
@@ -17,9 +18,14 @@ interface ChartInterface {
     span: ChartSpan
     type: ChartType
     isMobile: boolean
+    tokens: {
+        token0: string | undefined
+        token1: string | undefined
+    }
+    token: number
 }
 
-export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile }: ChartInterface) {
+export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: {token0, token1}, token }: ChartInterface) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -422,20 +428,16 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         'transform',
                         `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
                     )
-                    InfoRectFeeText.property(
-                        'innerHTML',
-                        `${type === ChartType.FEES ? 'Fee:' : type === ChartType.TVL ? 'TVL:' : 'Volume:'} ${
-                            type !== ChartType.FEES ? '$' : ''
-                        }${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : 2)}${
-                            type === ChartType.FEES ? '%' : ''
-                        }`
+                    InfoRectFeeText.property('innerHTML',
+                        `${type === ChartType.FEES ? 'Fee:' : type === ChartType.PRICE ? 'Price' : type === ChartType.TVL ? 'TVL:' : 'Volume:'}
+                        ${type !== ChartType.FEES && ChartType.PRICE ? '$' : ''}
+                        ${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? 5 : 2)}
+                        ${type === ChartType.FEES ? '%' : type === ChartType.PRICE ? `${token === ChartToken.TOKEN0 ? token0 : token1}` : ''}`
                     )
-                    InfoRectDateText.property(
-                        'innerHTML',
-                        span === ChartSpan.DAY
-                            ? `${date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()}:${
-                                date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-                            }:${date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()}`
+                    InfoRectDateText.property('innerHTML', span === ChartSpan.DAY ? `${date.getHours() < 10 ? `0${date.getHours()}`
+                            : date.getHours()}:${date.getMinutes() < 10 ? `0${date.getMinutes()}`
+                            : date.getMinutes()}:${date.getSeconds() < 10 ? `0${date.getSeconds()}`
+                            : date.getSeconds()}`
                             : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
                     )
                     Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)

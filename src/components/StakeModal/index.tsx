@@ -9,6 +9,7 @@ import { FarmingType } from '../../models/enums'
 import {
     CloseModalButton,
     EmptyMock,
+    LoaderMock,
     ModalBody,
     ModalHeader,
     ModalWrapper,
@@ -190,6 +191,12 @@ export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken,
                         <CheckCircle size={55} stroke={'#24ae2c'} />
                         <p>{`NFT #${selectedNFT.id} deposited succesfully!`}</p>
                     </ModalBody>
+                </ModalWrapper>
+            ) : positionsForPoolLoading ? (
+                <ModalWrapper>
+                    <LoaderMock>
+                        <Loader stroke={'#080064'} size={'25px'} />
+                    </LoaderMock>
                 </ModalWrapper>
             ) : (
                 <ModalWrapper>

@@ -45,10 +45,6 @@ export default function App() {
     const { onIsFarming } = useFarmingActionsHandlers()
     const networkFailed = useIsNetworkFailed()
 
-    let _networkFailed
-
-    setTimeout(() => _networkFailed = networkFailed, 0)
-
     useEffect(() => {
         onIsFarming()
     }, [])
@@ -83,7 +79,7 @@ export default function App() {
                         </InternetError>
                     )}
                     <AppBodyWrapper style={{ zIndex: 2 }}>
-                        {_networkFailed && (
+                        {networkFailed && (
                             <NetworkFailedCard>
                                 <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon
                                     network failed

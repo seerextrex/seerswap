@@ -124,8 +124,7 @@ query fetchPool {
     }
 }`
 
-export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => {
-    return gql`
+export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => gql`
   query feeHourData {
     feeHourDatas (first: 1000, where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
       id
@@ -140,7 +139,6 @@ export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timest
     }
   }
 `
-}
 
 export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
   query lastFeeHourData {
@@ -181,6 +179,8 @@ export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gq
       tvlUSD
       feesUSD
       untrackedVolumeUSD
+      token1Price
+      token0Price
     }
   }
 `
@@ -217,6 +217,8 @@ export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimesta
       tvlUSD
       feesUSD
       untrackedVolumeUSD
+      token0Price
+      token1Price
     }
   }
 `

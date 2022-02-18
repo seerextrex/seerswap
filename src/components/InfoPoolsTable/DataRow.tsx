@@ -1,7 +1,7 @@
 import { ChartBadge, FarmingLink, LabelStyled, LinkWrapper, ResponsiveGrid } from './styled'
 import { BarChart2, ExternalLink } from 'react-feather'
 import { formatDollarAmount, formatPercent } from '../../utils/numbers'
-import React from 'react'
+import React, { useMemo } from 'react'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { GreyBadge } from 'components/Card'
 import { TYPE } from 'theme'
@@ -15,6 +15,14 @@ interface DataRowProps {
 }
 
 export const DataRow = ({ poolData, index }: DataRowProps) => {
+
+    const poolTitle = useMemo(() => {
+        if (!poolData.token1 || !poolData.token0) return []
+        if (poolData.token0.symbol === 'USDC') {
+            return [poolData.token1.symbol, poolData.token0.symbol]
+        }
+        return [poolData.token0.symbol, poolData.token1.symbol]
+    }, [poolData.token0, poolData.token1])
 
     return (
         <div>
@@ -31,7 +39,7 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                                      rel='noopener noreferrer'
                                      target='_blank'>
                             <TYPE.label ml='8px'>
-                                {poolData.token0.symbol}/{poolData.token1.symbol}
+                                {poolTitle[0]}/{poolTitle[1]}
                             </TYPE.label>
                             <ExternalLink size={16} color={'white'} />
                         </LinkWrapper>

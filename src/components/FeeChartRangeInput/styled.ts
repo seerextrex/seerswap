@@ -11,11 +11,10 @@ export const Wrapper = styled.div`
     justify-content: center;
     flex-direction: column;
     position: relative;
+
     ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-left: -1.3rem;
-    margin-right: -1.3rem;
-    width: unset;
     border-radius: 20px;
+    padding: 0;
   `}
 `
 export const MockLoading = styled.div`
@@ -31,4 +30,12 @@ export const ToggleToken = styled.div`
     position: absolute !important;
     right: 1rem;
     top: 1rem;
+`
+
+export const TokenInfo = styled.div`
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    opacity: .8;
+    font-size: 0.75rem;
 `

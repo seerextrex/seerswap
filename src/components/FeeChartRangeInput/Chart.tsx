@@ -25,7 +25,7 @@ interface ChartInterface {
     token: number
 }
 
-export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: {token0, token1}, token }: ChartInterface) {
+export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token }: ChartInterface) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -49,7 +49,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             case ChartSpan.DAY:
                 return 24
             case ChartSpan.MONTH:
-                return 31
+                return 30
             case ChartSpan.WEEK:
                 return 7
         }
@@ -86,18 +86,18 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 sameDays.push(data[i])
             } else {
                 if (sameDays.length !== 0) {
-                    res.push(sameDays.reduce((prev, cur) => {
-                                return {
-                                    timestamp: cur.timestamp,
-                                    value:
-                                        span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || ChartType.PRICE
-                                            ? prev.value + cur.value
-                                            : Math.max(prev.value, cur.value)
-                                }
-                            }, {
-                                value: 0,
-                                timestamp: new Date()
-                            }))
+                    res.push(sameDays.reduce((prev, cur) => (
+                            {
+                                timestamp: cur.timestamp,
+                                value:
+                                    span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || type === ChartType.PRICE
+                                        ? prev.value + cur.value
+                                        : Math.max(prev.value, cur.value)
+                            }), {
+                            value: 0,
+                            timestamp: new Date()
+                        }
+                    ))
                     if (type === ChartType.FEES || type === ChartType.PRICE) {
                         res[res.length - 1].value = res[res.length - 1].value / sameDays.length
                     }
@@ -111,21 +111,23 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             }
         }
 
+        console.log(sameDays)
+
         if (sameDays.length !== 0) {
             res.push(sameDays.reduce(
-                    (prev, cur) => {
-                        return {
-                            timestamp: cur.timestamp,
-                            value:
-                                span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || ChartType.PRICE
-                                    ? prev.value + cur.value
-                                    : Math.max(prev.value, cur.value)
-                        }
-                    }, {
-                        value: 0,
-                        timestamp: new Date()
-                    }))
-            if (type === ChartType.FEES || ChartType.PRICE) {
+                (prev, cur) => {
+                    return {
+                        timestamp: cur.timestamp,
+                        value:
+                            span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || type === ChartType.PRICE
+                                ? prev.value + cur.value
+                                : Math.max(prev.value, cur.value)
+                    }
+                }, {
+                    value: 0,
+                    timestamp: new Date()
+                }))
+            if (type === ChartType.FEES || type === ChartType.PRICE) {
                 res[res.length - 1].value = res[res.length - 1].value / sameDays.length
             }
         }
@@ -164,7 +166,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 timestamp: new Date(res[0].timestamp),
                 value: res[0].value
             })
-
 
 
             let last = _data[_data.length - 1]
@@ -219,7 +220,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         return [..._data]
     }, [data, previousData])
 
-    useEffect(() => console.log(_chartData, previousData), [_chartData])
+    // useEffect(() => console.log(_chartData), [_chartData])
 
     const xScale = useMemo(() => scaleTime()
             .domain([min(_chartData, (d) => new Date(d.timestamp)), max(_chartData, (d) => new Date(d.timestamp))])
@@ -243,7 +244,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const InfoRect = create('svg:rect')
         .append('rect')
         .attr('id', 'info-label')
-        .attr('width', `${type === ChartType.PRICE ? '190px' : '150px'}`)
+        .attr('width', `${type === ChartType.PRICE ? '190px' : '160px'}`)
         .attr('height', '60px')
         .attr('rx', '6')
         .style('fill', '#12151d')
@@ -323,7 +324,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         const yAxisGroup = svg.append('g').call(
             axisLeft(y)
                 .ticks(10)
-                .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : `$${val >= 1000 ? `${+val / 1000}k` : val}`}`)
+                .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : type === ChartType.PRICE ? `${val}` : `$${val >= 1000 ? `${+val / 1000}k` : val}`}`)
                 .tickSize(-width)
         )
 
@@ -438,7 +439,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                             : date.getHours()}:${date.getMinutes() < 10 ? `0${date.getMinutes()}`
                             : date.getMinutes()}:${date.getSeconds() < 10 ? `0${date.getSeconds()}`
                             : date.getSeconds()}`
-                            : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+                        : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
                     )
                     Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
                 }

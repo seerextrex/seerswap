@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components/macro'
 import { NavLink } from 'react-router-dom'
 import { DarkGreyCard } from 'components/Card'
-import { Label, ClickableText } from 'components/Text'
+import { ClickableText, Label } from 'components/Text'
 
 export const PageButtons = styled.div`
   width: 100%;

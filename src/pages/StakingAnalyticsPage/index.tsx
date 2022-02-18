@@ -3,19 +3,7 @@ import React, { useEffect } from 'react'
 import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import Loader from '../../components/Loader'
 import { ArrowLeft } from 'react-feather'
-import {
-    BackButton,
-    ChartCard,
-    ChartHint,
-    ChartTitle,
-    ChartTitleLeft,
-    ChartTitleRight,
-    ChartTitleWrapper,
-    ColorRect,
-    ColorTextWrapper,
-    LoaderWrapper,
-    StakingAnalyticsPageWrapper
-} from './styled'
+import { BackButton, ChartCard, ChartHint, ChartTitle, ChartTitleLeft, ChartTitleRight, ChartTitleWrapper, ColorRect, ColorTextWrapper, LoaderWrapper, StakingAnalyticsPageWrapper } from './styled'
 
 const chartsInfo = [
     {

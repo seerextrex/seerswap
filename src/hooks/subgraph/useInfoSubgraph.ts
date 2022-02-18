@@ -46,18 +46,18 @@ import { EternalFarmingByPool } from '../../models/interfaces/responseSubgraph'
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-        accum[poolData.id] = poolData
-        return accum
-    }, {})
+            accum[poolData.id] = poolData
+            return accum
+        }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-        accum[tokenData.id] = tokenData
-        return accum
-    }, {})
+            accum[tokenData.id] = tokenData
+            return accum
+        }, {})
         : {}
 }
 
@@ -560,10 +560,7 @@ export function useInfoSubgraph() {
 
             setChartPoolDataLoading(true)
 
-            const {
-                data: { poolHourDatas },
-                error
-            } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
+            const { data: { poolHourDatas }, error } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
                 query: CHART_POOL_DATA(pool, startTimestamp, endTimestamp),
                 fetchPolicy: 'network-only'
             })
@@ -681,17 +678,9 @@ export function useInfoSubgraph() {
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         getStakes: { stakesResult, stakesLoading, fetchStakingFn: fetchStaking },
-        fetchStakedHistory: {
-            historiesLoading,
-            stakeHistoriesResult,
-            fetchStakingHistoryFn: fetchStakingHistory
-        },
+        fetchStakedHistory: { historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
-        fetchChartPoolData: {
-            chartPoolData,
-            chartPoolDataLoading,
-            fetchChartPoolDataFn: fetchChartPoolData
-        },
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
         fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
     }
 }

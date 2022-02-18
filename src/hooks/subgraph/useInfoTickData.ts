@@ -5,13 +5,7 @@ import keyBy from 'lodash.keyby'
 import { TickMath, tickToPrice } from '@uniswap/v3-sdk'
 import { Token } from '@uniswap/sdk-core'
 import JSBI from 'jsbi'
-import {
-    ActiveTick,
-    FormattedTick,
-    Liquidity,
-    SmallPoolSubgraph,
-    SubgraphResponse
-} from '../../models/interfaces'
+import { ActiveTick, FormattedTick, Liquidity, SmallPoolSubgraph, SubgraphResponse } from '../../models/interfaces'
 
 export function useInfoTickData() {
     const { dataClient } = useClients()
@@ -61,10 +55,7 @@ export function useInfoTickData() {
 
         try {
 
-            const {
-                data: { pools },
-                error
-            } = await dataClient.query<SubgraphResponse<SmallPoolSubgraph[]>>({
+            const { data: { pools }, error } = await dataClient.query<SubgraphResponse<SmallPoolSubgraph[]>>({
                 query: FETCH_POOL(pool)
             })
 

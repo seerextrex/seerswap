@@ -6,14 +6,7 @@ import { RowFixed } from '../Row'
 import Loader from '../Loader'
 import { useAppDispatch } from '../../state/hooks'
 import { clearOneTransaction } from '../../state/transactions/actions'
-import {
-    IconsWrapper,
-    TransactionsStatusText,
-    TransactionState,
-    TransactionWrapper,
-    TransCloseIcon,
-    TransIconWrapper
-} from './styled'
+import { IconsWrapper, TransactionsStatusText, TransactionState, TransactionWrapper, TransCloseIcon, TransIconWrapper } from './styled'
 
 
 export default function Transaction({ hash }: { hash: string }) {

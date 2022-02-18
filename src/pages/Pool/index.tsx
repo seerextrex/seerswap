@@ -90,7 +90,7 @@ export default function Pool() {
                         borderRadius: '20px'
                     }}
                 >
-                    <AutoColumn gap='lg' style={{ width: '100%' }}>
+                    <AutoColumn gap='lg' style={{ width: '100%', gridRowGap: '0' }}>
                         <TitleRow style={{ marginTop: '1rem', padding: '1rem 40px' }} padding={'0'}>
                             <TYPE.body fontSize={'20px'}>
                                 <Trans>Pools Overview</Trans>

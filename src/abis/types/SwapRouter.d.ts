@@ -2,1076 +2,1106 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import {
-  ethers,
-  EventFilter,
-  Signer,
-  BigNumber,
-  BigNumberish,
-  PopulatedTransaction,
-  BaseContract,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+import { BaseContract, BigNumber, BigNumberish, CallOverrides, ContractTransaction, ethers, Overrides, PayableOverrides, PopulatedTransaction, Signer } from 'ethers'
+import { BytesLike } from '@ethersproject/bytes'
+import { Listener, Provider } from '@ethersproject/providers'
+import { FunctionFragment, Result } from '@ethersproject/abi'
+import type { TypedEvent, TypedEventFilter, TypedListener } from './common'
 
 interface SwapRouterInterface extends ethers.utils.Interface {
-  functions: {
-    "WNativeToken()": FunctionFragment;
-    "exactInput((bytes,address,uint256,uint256,uint256))": FunctionFragment;
-    "exactInputSingle((address,address,address,uint256,uint256,uint256,uint160))": FunctionFragment;
-    "exactInputSingleSupportingFeeOnTransferTokens((address,address,address,uint256,uint256,uint256,uint160))": FunctionFragment;
-    "exactOutput((bytes,address,uint256,uint256,uint256))": FunctionFragment;
-    "exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))": FunctionFragment;
-    "factory()": FunctionFragment;
-    "AlgebraSwapCallback(int256,int256,bytes)": FunctionFragment;
-    "multicall(bytes[])": FunctionFragment;
-    "poolDeployer()": FunctionFragment;
-    "refundNativeToken()": FunctionFragment;
-    "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "sweepToken(address,uint256,address)": FunctionFragment;
-    "sweepTokenWithFee(address,uint256,address,uint256,address)": FunctionFragment;
-    "unwrapWNativeToken(uint256,address)": FunctionFragment;
-    "unwrapWNativeTokenWithFee(uint256,address,uint256,address)": FunctionFragment;
-  };
+    functions: {
+        'WNativeToken()': FunctionFragment;
+        'exactInput((bytes,address,uint256,uint256,uint256))': FunctionFragment;
+        'exactInputSingle((address,address,address,uint256,uint256,uint256,uint160))': FunctionFragment;
+        'exactInputSingleSupportingFeeOnTransferTokens((address,address,address,uint256,uint256,uint256,uint160))': FunctionFragment;
+        'exactOutput((bytes,address,uint256,uint256,uint256))': FunctionFragment;
+        'exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))': FunctionFragment;
+        'factory()': FunctionFragment;
+        'AlgebraSwapCallback(int256,int256,bytes)': FunctionFragment;
+        'multicall(bytes[])': FunctionFragment;
+        'poolDeployer()': FunctionFragment;
+        'refundNativeToken()': FunctionFragment;
+        'selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)': FunctionFragment;
+        'selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)': FunctionFragment;
+        'selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)': FunctionFragment;
+        'selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)': FunctionFragment;
+        'sweepToken(address,uint256,address)': FunctionFragment;
+        'sweepTokenWithFee(address,uint256,address,uint256,address)': FunctionFragment;
+        'unwrapWNativeToken(uint256,address)': FunctionFragment;
+        'unwrapWNativeTokenWithFee(uint256,address,uint256,address)': FunctionFragment;
+    };
+    events: {};
 
-  encodeFunctionData(
-    functionFragment: "WNativeToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exactInput",
-    values: [
-      {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-      }
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exactInputSingle",
-    values: [
-      {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      }
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exactInputSingleSupportingFeeOnTransferTokens",
-    values: [
-      {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      }
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exactOutput",
-    values: [
-      {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-      }
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exactOutputSingle",
-    values: [
-      {
-        tokenIn: string;
-        tokenOut: string;
-        fee: BigNumberish;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      }
-    ]
-  ): string;
-  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "AlgebraSwapCallback",
-    values: [BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "multicall",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "poolDeployer",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "refundNativeToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "selfPermit",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "selfPermitAllowed",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "selfPermitAllowedIfNecessary",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "selfPermitIfNecessary",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sweepToken",
-    values: [string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sweepTokenWithFee",
-    values: [string, BigNumberish, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unwrapWNativeToken",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unwrapWNativeTokenWithFee",
-    values: [BigNumberish, string, BigNumberish, string]
-  ): string;
+    encodeFunctionData(
+        functionFragment: 'WNativeToken',
+        values?: undefined
+    ): string;
 
-  decodeFunctionResult(
-    functionFragment: "WNativeToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "exactInput", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "exactInputSingle",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exactInputSingleSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exactOutput",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exactOutputSingle",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "AlgebraSwapCallback",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "poolDeployer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "refundNativeToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "selfPermit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "selfPermitAllowed",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "selfPermitAllowedIfNecessary",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "selfPermitIfNecessary",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "sweepToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "sweepTokenWithFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unwrapWNativeToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unwrapWNativeTokenWithFee",
-    data: BytesLike
-  ): Result;
+    encodeFunctionData(
+        functionFragment: 'exactInput',
+        values: [
+            {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+            }
+        ]
+    ): string;
 
-  events: {};
+    encodeFunctionData(
+        functionFragment: 'exactInputSingle',
+        values: [
+            {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            }
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'exactInputSingleSupportingFeeOnTransferTokens',
+        values: [
+            {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            }
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'exactOutput',
+        values: [
+            {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+            }
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'exactOutputSingle',
+        values: [
+            {
+                tokenIn: string;
+                tokenOut: string;
+                fee: BigNumberish;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            }
+        ]
+    ): string;
+
+    encodeFunctionData(functionFragment: 'factory', values?: undefined): string;
+
+    encodeFunctionData(
+        functionFragment: 'AlgebraSwapCallback',
+        values: [BigNumberish, BigNumberish, BytesLike]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'multicall',
+        values: [BytesLike[]]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'poolDeployer',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'refundNativeToken',
+        values?: undefined
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'selfPermit',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'selfPermitAllowed',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'selfPermitAllowedIfNecessary',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'selfPermitIfNecessary',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'sweepToken',
+        values: [string, BigNumberish, string]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'sweepTokenWithFee',
+        values: [string, BigNumberish, string, BigNumberish, string]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'unwrapWNativeToken',
+        values: [BigNumberish, string]
+    ): string;
+
+    encodeFunctionData(
+        functionFragment: 'unwrapWNativeTokenWithFee',
+        values: [BigNumberish, string, BigNumberish, string]
+    ): string;
+
+    decodeFunctionResult(
+        functionFragment: 'WNativeToken',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'exactInput', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'exactInputSingle',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'exactInputSingleSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'exactOutput',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'exactOutputSingle',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'factory', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'AlgebraSwapCallback',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'multicall', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'poolDeployer',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'refundNativeToken',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'selfPermit', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'selfPermitAllowed',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'selfPermitAllowedIfNecessary',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'selfPermitIfNecessary',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(functionFragment: 'sweepToken', data: BytesLike): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'sweepTokenWithFee',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'unwrapWNativeToken',
+        data: BytesLike
+    ): Result;
+
+    decodeFunctionResult(
+        functionFragment: 'unwrapWNativeTokenWithFee',
+        data: BytesLike
+    ): Result;
 }
 
 export class SwapRouter extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    interface: SwapRouterInterface
+    functions: {
+        WNativeToken(overrides?: CallOverrides): Promise<[string]>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
+        exactInput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
+        exactInputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+        exactInputSingleSupportingFeeOnTransferTokens(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-  interface: SwapRouterInterface;
+        exactOutput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-  functions: {
-    WNativeToken(overrides?: CallOverrides): Promise<[string]>;
+        exactOutputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                fee: BigNumberish;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    exactInput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        factory(overrides?: CallOverrides): Promise<[string]>;
 
-    exactInputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        AlgebraSwapCallback(
+            amount0Delta: BigNumberish,
+            amount1Delta: BigNumberish,
+            _data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    exactInputSingleSupportingFeeOnTransferTokens(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        multicall(
+            data: BytesLike[],
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    exactOutput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        poolDeployer(overrides?: CallOverrides): Promise<[string]>;
 
-    exactOutputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        fee: BigNumberish;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        refundNativeToken(
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    factory(overrides?: CallOverrides): Promise<[string]>;
+        selfPermit(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    AlgebraSwapCallback(
-      amount0Delta: BigNumberish,
-      amount1Delta: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        selfPermitAllowed(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    multicall(
-      data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        selfPermitAllowedIfNecessary(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    poolDeployer(overrides?: CallOverrides): Promise<[string]>;
+        selfPermitIfNecessary(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    refundNativeToken(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        sweepToken(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    selfPermit(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        sweepTokenWithFee(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    selfPermitAllowed(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        unwrapWNativeToken(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
 
-    selfPermitAllowedIfNecessary(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        unwrapWNativeTokenWithFee(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>;
+    }
+    callStatic: {
+        WNativeToken(overrides?: CallOverrides): Promise<string>;
 
-    selfPermitIfNecessary(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        exactInput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+            },
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-    sweepToken(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        exactInputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-    sweepTokenWithFee(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        exactInputSingleSupportingFeeOnTransferTokens(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-    unwrapWNativeToken(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        exactOutput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+            },
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-    unwrapWNativeTokenWithFee(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+        exactOutputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                fee: BigNumberish;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: CallOverrides
+        ): Promise<BigNumber>;
 
-  WNativeToken(overrides?: CallOverrides): Promise<string>;
+        factory(overrides?: CallOverrides): Promise<string>;
 
-  exactInput(
-    params: {
-      path: BytesLike;
-      recipient: string;
-      deadline: BigNumberish;
-      amountIn: BigNumberish;
-      amountOutMinimum: BigNumberish;
-    },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        AlgebraSwapCallback(
+            amount0Delta: BigNumberish,
+            amount1Delta: BigNumberish,
+            _data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  exactInputSingle(
-    params: {
-      tokenIn: string;
-      tokenOut: string;
-      recipient: string;
-      deadline: BigNumberish;
-      amountIn: BigNumberish;
-      amountOutMinimum: BigNumberish;
-      sqrtPriceLimitX96: BigNumberish;
-    },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        multicall(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
 
-  exactInputSingleSupportingFeeOnTransferTokens(
-    params: {
-      tokenIn: string;
-      tokenOut: string;
-      recipient: string;
-      deadline: BigNumberish;
-      amountIn: BigNumberish;
-      amountOutMinimum: BigNumberish;
-      sqrtPriceLimitX96: BigNumberish;
-    },
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        poolDeployer(overrides?: CallOverrides): Promise<string>;
 
-  exactOutput(
-    params: {
-      path: BytesLike;
-      recipient: string;
-      deadline: BigNumberish;
-      amountOut: BigNumberish;
-      amountInMaximum: BigNumberish;
-    },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        refundNativeToken(overrides?: CallOverrides): Promise<void>;
 
-  exactOutputSingle(
-    params: {
-      tokenIn: string;
-      tokenOut: string;
-      fee: BigNumberish;
-      recipient: string;
-      deadline: BigNumberish;
-      amountOut: BigNumberish;
-      amountInMaximum: BigNumberish;
-      sqrtPriceLimitX96: BigNumberish;
-    },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        selfPermit(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  factory(overrides?: CallOverrides): Promise<string>;
+        selfPermitAllowed(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  AlgebraSwapCallback(
-    amount0Delta: BigNumberish,
-    amount1Delta: BigNumberish,
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        selfPermitAllowedIfNecessary(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  multicall(
-    data: BytesLike[],
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        selfPermitIfNecessary(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  poolDeployer(overrides?: CallOverrides): Promise<string>;
+        sweepToken(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  refundNativeToken(
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        sweepTokenWithFee(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  selfPermit(
-    token: string,
-    value: BigNumberish,
-    deadline: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        unwrapWNativeToken(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: CallOverrides
+        ): Promise<void>;
 
-  selfPermitAllowed(
-    token: string,
-    nonce: BigNumberish,
-    expiry: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        unwrapWNativeTokenWithFee(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: CallOverrides
+        ): Promise<void>;
+    }
+    filters: {}
+    estimateGas: {
+        WNativeToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-  selfPermitAllowedIfNecessary(
-    token: string,
-    nonce: BigNumberish,
-    expiry: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        exactInput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  selfPermitIfNecessary(
-    token: string,
-    value: BigNumberish,
-    deadline: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        exactInputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  sweepToken(
-    token: string,
-    amountMinimum: BigNumberish,
-    recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        exactInputSingleSupportingFeeOnTransferTokens(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  sweepTokenWithFee(
-    token: string,
-    amountMinimum: BigNumberish,
-    recipient: string,
-    feeBips: BigNumberish,
-    feeRecipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        exactOutput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  unwrapWNativeToken(
-    amountMinimum: BigNumberish,
-    recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        exactOutputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                fee: BigNumberish;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
 
-  unwrapWNativeTokenWithFee(
-    amountMinimum: BigNumberish,
-    recipient: string,
-    feeBips: BigNumberish,
-    feeRecipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        factory(overrides?: CallOverrides): Promise<BigNumber>;
 
-  callStatic: {
+        AlgebraSwapCallback(
+            amount0Delta: BigNumberish,
+            amount1Delta: BigNumberish,
+            _data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        multicall(
+            data: BytesLike[],
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        poolDeployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+        refundNativeToken(
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        selfPermit(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        selfPermitAllowed(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        selfPermitAllowedIfNecessary(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        selfPermitIfNecessary(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        sweepToken(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        sweepTokenWithFee(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        unwrapWNativeToken(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+
+        unwrapWNativeTokenWithFee(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>;
+    }
+    populateTransaction: {
+        WNativeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        exactInput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        exactInputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        exactInputSingleSupportingFeeOnTransferTokens(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                recipient: string;
+                deadline: BigNumberish;
+                amountIn: BigNumberish;
+                amountOutMinimum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        exactOutput(
+            params: {
+                path: BytesLike;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        exactOutputSingle(
+            params: {
+                tokenIn: string;
+                tokenOut: string;
+                fee: BigNumberish;
+                recipient: string;
+                deadline: BigNumberish;
+                amountOut: BigNumberish;
+                amountInMaximum: BigNumberish;
+                sqrtPriceLimitX96: BigNumberish;
+            },
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        AlgebraSwapCallback(
+            amount0Delta: BigNumberish,
+            amount1Delta: BigNumberish,
+            _data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        multicall(
+            data: BytesLike[],
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        poolDeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+        refundNativeToken(
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        selfPermit(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        selfPermitAllowed(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        selfPermitAllowedIfNecessary(
+            token: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        selfPermitIfNecessary(
+            token: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        sweepToken(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        sweepTokenWithFee(
+            token: string,
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        unwrapWNativeToken(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+
+        unwrapWNativeTokenWithFee(
+            amountMinimum: BigNumberish,
+            recipient: string,
+            feeBips: BigNumberish,
+            feeRecipient: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>;
+    }
+
+    connect(signerOrProvider: Signer | Provider | string): this;
+
+    attach(addressOrName: string): this;
+
+    deployed(): Promise<this>;
+
+    listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+
+    off<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    on<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    once<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        listener: TypedListener<EventArgsArray, EventArgsObject>
+    ): this;
+
+    removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+        eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    ): this;
+
+    listeners(eventName?: string): Array<Listener>;
+
+    off(eventName: string, listener: Listener): this;
+
+    on(eventName: string, listener: Listener): this;
+
+    once(eventName: string, listener: Listener): this;
+
+    removeListener(eventName: string, listener: Listener): this;
+
+    removeAllListeners(eventName?: string): this;
+
+    queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+        event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+
     WNativeToken(overrides?: CallOverrides): Promise<string>;
 
     exactInput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        params: {
+            path: BytesLike;
+            recipient: string;
+            deadline: BigNumberish;
+            amountIn: BigNumberish;
+            amountOutMinimum: BigNumberish;
+        },
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     exactInputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        params: {
+            tokenIn: string;
+            tokenOut: string;
+            recipient: string;
+            deadline: BigNumberish;
+            amountIn: BigNumberish;
+            amountOutMinimum: BigNumberish;
+            sqrtPriceLimitX96: BigNumberish;
+        },
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     exactInputSingleSupportingFeeOnTransferTokens(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        params: {
+            tokenIn: string;
+            tokenOut: string;
+            recipient: string;
+            deadline: BigNumberish;
+            amountIn: BigNumberish;
+            amountOutMinimum: BigNumberish;
+            sqrtPriceLimitX96: BigNumberish;
+        },
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     exactOutput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        params: {
+            path: BytesLike;
+            recipient: string;
+            deadline: BigNumberish;
+            amountOut: BigNumberish;
+            amountInMaximum: BigNumberish;
+        },
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     exactOutputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        fee: BigNumberish;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        params: {
+            tokenIn: string;
+            tokenOut: string;
+            fee: BigNumberish;
+            recipient: string;
+            deadline: BigNumberish;
+            amountOut: BigNumberish;
+            amountInMaximum: BigNumberish;
+            sqrtPriceLimitX96: BigNumberish;
+        },
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     factory(overrides?: CallOverrides): Promise<string>;
 
     AlgebraSwapCallback(
-      amount0Delta: BigNumberish,
-      amount1Delta: BigNumberish,
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amount0Delta: BigNumberish,
+        amount1Delta: BigNumberish,
+        _data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    multicall(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+    multicall(
+        data: BytesLike[],
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     poolDeployer(overrides?: CallOverrides): Promise<string>;
 
-    refundNativeToken(overrides?: CallOverrides): Promise<void>;
-
-    selfPermit(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    selfPermitAllowed(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    selfPermitAllowedIfNecessary(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    selfPermitIfNecessary(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    sweepToken(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    sweepTokenWithFee(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unwrapWNativeToken(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unwrapWNativeTokenWithFee(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
-
-  filters: {};
-
-  estimateGas: {
-    WNativeToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    exactInput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    exactInputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    exactInputSingleSupportingFeeOnTransferTokens(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    exactOutput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    exactOutputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        fee: BigNumberish;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    factory(overrides?: CallOverrides): Promise<BigNumber>;
-
-    AlgebraSwapCallback(
-      amount0Delta: BigNumberish,
-      amount1Delta: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    multicall(
-      data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    poolDeployer(overrides?: CallOverrides): Promise<BigNumber>;
-
     refundNativeToken(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     selfPermit(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        token: string,
+        value: BigNumberish,
+        deadline: BigNumberish,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     selfPermitAllowed(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        token: string,
+        nonce: BigNumberish,
+        expiry: BigNumberish,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     selfPermitAllowedIfNecessary(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        token: string,
+        nonce: BigNumberish,
+        expiry: BigNumberish,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     selfPermitIfNecessary(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        token: string,
+        value: BigNumberish,
+        deadline: BigNumberish,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     sweepToken(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        token: string,
+        amountMinimum: BigNumberish,
+        recipient: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     sweepTokenWithFee(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        token: string,
+        amountMinimum: BigNumberish,
+        recipient: string,
+        feeBips: BigNumberish,
+        feeRecipient: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     unwrapWNativeToken(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        amountMinimum: BigNumberish,
+        recipient: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     unwrapWNativeTokenWithFee(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    WNativeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    exactInput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    exactInputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    exactInputSingleSupportingFeeOnTransferTokens(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        recipient: string;
-        deadline: BigNumberish;
-        amountIn: BigNumberish;
-        amountOutMinimum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    exactOutput(
-      params: {
-        path: BytesLike;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    exactOutputSingle(
-      params: {
-        tokenIn: string;
-        tokenOut: string;
-        fee: BigNumberish;
-        recipient: string;
-        deadline: BigNumberish;
-        amountOut: BigNumberish;
-        amountInMaximum: BigNumberish;
-        sqrtPriceLimitX96: BigNumberish;
-      },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    AlgebraSwapCallback(
-      amount0Delta: BigNumberish,
-      amount1Delta: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    multicall(
-      data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    poolDeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    refundNativeToken(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    selfPermit(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    selfPermitAllowed(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    selfPermitAllowedIfNecessary(
-      token: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    selfPermitIfNecessary(
-      token: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    sweepToken(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    sweepTokenWithFee(
-      token: string,
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unwrapWNativeToken(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unwrapWNativeTokenWithFee(
-      amountMinimum: BigNumberish,
-      recipient: string,
-      feeBips: BigNumberish,
-      feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        amountMinimum: BigNumberish,
+        recipient: string,
+        feeBips: BigNumberish,
+        feeRecipient: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 }

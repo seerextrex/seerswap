@@ -2,7 +2,7 @@ import { LabelStyled, ResponsiveGrid } from './styled'
 import CurrencyLogo from '../CurrencyLogo'
 import React from 'react'
 
-export default function DataRow ({ eventData, index }: { eventData: any; index: number }) {
+export default function DataRow({ eventData, index }: { eventData: any; index: number }) {
     return (
         <div>
             <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
@@ -45,10 +45,10 @@ export default function DataRow ({ eventData, index }: { eventData: any; index: 
                     {eventData.participants}
                 </LabelStyled>
                 <LabelStyled end={1} fontWeight={400}>
-                    {eventData.apr}
+                    <span style={{ color: '#33FF89' }}>{eventData.apr}%</span>
                 </LabelStyled>
                 <LabelStyled end={1} fontWeight={400}>
-                    {`${eventData.start} — ${eventData.end}`}
+                    {`${eventData.startStr} — ${eventData.end}`}
                 </LabelStyled>
             </ResponsiveGrid>
         </div>

@@ -3,8 +3,11 @@ import Row from '../Row'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
 import { darken } from 'polished'
+// @ts-ignore
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+// @ts-ignore
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
+// @ts-ignore
 import LogoIcicles from '../../assets/svg/logo-icicles.svg'
 import { YellowCard } from 'components/Card'
 import { TYPE } from '../../theme'
@@ -24,9 +27,9 @@ export const HeaderFrame = styled.div<{ showBackground: boolean }>`
     background-position: ${({ showBackground }) => (showBackground ? '0 -100%' : '0 0')};
     background-size: 100% 200%;
     box-shadow: 0 0 0 1px ${({
-        theme,
-        showBackground
-    }) => (showBackground ? theme.bg2 : 'transparent;')};
+    theme,
+    showBackground
+}) => (showBackground ? theme.bg2 : 'transparent;')};
     transition: background-position 0.1s, box-shadow 0.1s;
     background-blend-mode: hard-light;
     padding: 50px 1rem 1rem;

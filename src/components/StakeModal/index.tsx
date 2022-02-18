@@ -19,16 +19,13 @@ import {
     NFTPositionLink,
     NFTPositionSelectCircle,
     NFTPositionsRow,
+    ProvideLiquidityLink,
     StakeButton,
-    StakeButtonLoader,
-    ProvideLiquidityLink
+    StakeButtonLoader
 } from './styled'
+import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
 
-export function StakeModal({
-    event: { pool, startTime, endTime, id, rewardToken, bonusRewardToken },
-    closeHandler,
-    farmingType
-}: {
+interface StakeModalProps {
     event: {
         pool: any
         startTime: string
@@ -39,16 +36,12 @@ export function StakeModal({
     }
     closeHandler: () => void
     farmingType: FarmingType
-}) {
-    const [selectedNFT, setSelectedNFT] = useState(null)
+}
 
-    const {
-        fetchPositionsForPool: {
-            positionsForPool,
-            positionsForPoolLoading,
-            fetchPositionsForPoolFn
-        }
-    } = useIncentiveSubgraph() || {}
+export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken, bonusRewardToken }, closeHandler, farmingType }: StakeModalProps) {
+
+    const [selectedNFT, setSelectedNFT] = useState(null)
+    const { fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn } } = useIncentiveSubgraph() || {}
 
     const { approveHandler, approvedHash, stakeHandler, stakedHash } = useStakerHandlers() || {}
 
@@ -57,7 +50,7 @@ export function StakeModal({
     }, [])
 
     const positionsForStake = useMemo(() => {
-        if (!positionsForPool) return
+        if (!positionsForPool) return []
 
         return positionsForPool.filter((position) => {
             if (position.pool !== pool.id) return
@@ -69,8 +62,7 @@ export function StakeModal({
             return true
         })
     }, [positionsForPool])
-
-    const [chunkedPositions, setChunkedPositions] = useState(null)
+    const [chunkedPositions, setChunkedPositions] = useState<any[][] | null | undefined>(null)
 
     const _chunked = useChunkedRows(positionsForStake, 3)
 
@@ -81,38 +73,17 @@ export function StakeModal({
 
     const allTransactions = useAllTransactions()
 
-    const sortedRecentTransactions = useMemo(() => {
-        const txs = Object.values(allTransactions)
-        return txs
-            .filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000)
-            .sort((a, b) => b.addedTime - a.addedTime)
-    }, [allTransactions])
+    const sortedRecentTransactions = useSortedRecentTransactions()
 
-    const confirmed = useMemo(
-        () => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
-        [sortedRecentTransactions, allTransactions]
-    )
+    const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash), [sortedRecentTransactions, allTransactions])
 
-    const filterNFTs = useCallback(
-        (fn) => {
-            if (!selectedNFT) return
+    const filterNFTs = useCallback((fn) => {
+        if (!selectedNFT) return
 
-            const _filtered = [selectedNFT].filter(fn)
+        const _filtered = [selectedNFT].filter(fn)
 
-            return _filtered.length > 0 ? _filtered[0] : null
-        },
-        [selectedNFT]
-    )
-
-    const isOnFarming = useMemo(
-        () =>
-            selectedNFT
-                ? farmingType === FarmingType.ETERNAL
-                    ? selectedNFT.eternalFarming
-                    : selectedNFT.incentive
-                : undefined,
-        [selectedNFT]
-    )
+        return _filtered.length > 0 ? _filtered[0] : null
+    }, [selectedNFT])
 
     const NFTsForApprove = useMemo(() => filterNFTs((v) => !v.onFarmingCenter), [selectedNFT, submitState])
 
@@ -121,28 +92,29 @@ export function StakeModal({
     useEffect(() => {
         if (!approvedHash || (approvedHash && submitState !== 0)) return
 
-        if (approvedHash === 'failed') {
+        if (typeof approvedHash === 'string') {
             setSubmitLoader(false)
-        } else if (approvedHash && confirmed.includes(approvedHash.hash)) {
+        } else if (approvedHash.hash && confirmed.includes(approvedHash.hash)) {
             const _newChunked = []
 
-            for (const row of chunkedPositions) {
-                const _newRow = []
+            if (chunkedPositions) {
+                for (const row of chunkedPositions) {
+                    const _newRow = []
 
-                for (const position of row) {
-                    if (position.id === approvedHash.id) {
-                        position.onFarmingCenter = true
-                        setSelectedNFT((old) => ({
-                            ...old,
-                            onFarmingCenter: true
-                        }))
+                    for (const position of row) {
+                        if (position.id === approvedHash.id) {
+                            position.onFarmingCenter = true
+                            setSelectedNFT((old) => ({
+                                ...old,
+                                onFarmingCenter: true
+                            }))
+                        }
+                        _newRow.push(position)
                     }
-
-                    _newRow.push(position)
+                    _newChunked.push(_newRow)
                 }
-
-                _newChunked.push(_newRow)
             }
+
             setChunkedPositions(_newChunked)
             setSubmitState(1)
             setSubmitLoader(false)
@@ -152,27 +124,27 @@ export function StakeModal({
     useEffect(() => {
         if (!stakedHash || (stakedHash && submitState !== 2)) return
 
-        if (stakedHash === 'failed') {
+        if (typeof stakedHash === 'string') {
             setSubmitLoader(false)
-        } else if (stakedHash && confirmed.includes(stakedHash.hash)) {
+        } else if (stakedHash.hash && confirmed.includes(stakedHash.hash)) {
             const _newChunked = []
 
-            for (const row of chunkedPositions) {
-                const _newRow = []
+            if (chunkedPositions) {
+                for (const row of chunkedPositions) {
+                    const _newRow = []
 
-                for (const position of row) {
-                    if (position.id === stakedHash.id) {
-                        position.onFarmingCenter = true
-                        setSelectedNFT((old) => ({
-                            ...old,
-                            onFarmingCenter: true
-                        }))
+                    for (const position of row) {
+                        if (position.id === stakedHash.id) {
+                            position.onFarmingCenter = true
+                            setSelectedNFT((old) => ({
+                                ...old,
+                                onFarmingCenter: true
+                            }))
+                        }
+                        _newRow.push(position)
                     }
-
-                    _newRow.push(position)
+                    _newChunked.push(_newRow)
                 }
-
-                _newChunked.push(_newRow)
             }
             setChunkedPositions(_newChunked)
             setSubmitState(3)
@@ -186,24 +158,21 @@ export function StakeModal({
         approveHandler(selectedNFT)
     }, [selectedNFT, submitState])
 
-    const stakeNFTs = useCallback(
-        (eventType: FarmingType) => {
-            setSubmitLoader(true)
-            setSubmitState(2)
-            stakeHandler(
-                selectedNFT,
-                {
-                    pool: pool.id,
-                    rewardToken: rewardToken.id,
-                    bonusRewardToken: bonusRewardToken.id,
-                    startTime,
-                    endTime
-                },
-                eventType
-            )
-        },
-        [selectedNFT, submitState]
-    )
+    const stakeNFTs = useCallback((eventType: FarmingType) => {
+        setSubmitLoader(true)
+        setSubmitState(2)
+        stakeHandler(
+            selectedNFT,
+            {
+                pool: pool.id,
+                rewardToken: rewardToken.id,
+                bonusRewardToken: bonusRewardToken.id,
+                startTime,
+                endTime
+            },
+            eventType
+        )
+    }, [selectedNFT, submitState])
 
     const linkToProviding = `/add/${pool.token0.id}/${pool.token1.id}`
 
@@ -212,7 +181,7 @@ export function StakeModal({
             {submitState === 3 ? (
                 <ModalWrapper>
                     <ModalHeader>
-                        <div/>
+                        <div />
                         <CloseModalButton onClick={closeHandler}>
                             <X size={18} stroke={'#080064'} />
                         </CloseModalButton>
@@ -261,7 +230,7 @@ export function StakeModal({
                                                 }
                                             }}
                                         >
-                                            <NFTPositionIcon name={el.id}/>
+                                            <NFTPositionIcon name={el.id} />
                                             <NFTPositionDescription>
                                                 <NFTPositionIndex>{`#${+el.id}`}</NFTPositionIndex>
                                                 <NFTPositionLink
@@ -291,12 +260,12 @@ export function StakeModal({
                             <NFTPositionsRow>
                                 {[0, 1, 2].map((el, i) => (
                                     <NFTPosition key={i} skeleton>
-                                        <NFTPositionIcon skeleton/>
+                                        <NFTPositionIcon skeleton />
                                         <NFTPositionDescription skeleton>
-                                            <NFTPositionIndex skeleton/>
-                                            <NFTPositionLink skeleton/>
+                                            <NFTPositionIndex skeleton />
+                                            <NFTPositionLink skeleton />
                                         </NFTPositionDescription>
-                                        <NFTPositionSelectCircle/>
+                                        <NFTPositionSelectCircle />
                                     </NFTPosition>
                                 ))}
                             </NFTPositionsRow>

@@ -4,7 +4,8 @@ import FarmsHistoryTable from '../../components/FarmsHistoryTable'
 export default function EventsHistory() {
     const eventsHistory = [
         {
-            start: 'Nov 19',
+            start: new Date('Nov 19 2021'),
+            startStr: 'Nov 19',
             end: 'Nov 26',
             pool: {
                 token0: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
@@ -16,11 +17,12 @@ export default function EventsHistory() {
             bonusReward: 5000,
             participants: 92,
             type: 'Finite',
-            apr: '3404%',
+            apr: '3404',
             tvl: '$175k'
         },
         {
-            start: 'Dec 7',
+            start: new Date('Dec 7 2021'),
+            startStr: 'Dec 7',
             end: 'Dec 14',
             pool: {
                 token0: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
@@ -32,11 +34,12 @@ export default function EventsHistory() {
             bonusReward: 5000,
             participants: 64,
             type: 'Finite',
-            apr: '472%',
+            apr: '472',
             tvl: '$192k'
         },
         {
-            start: 'Dec 22',
+            start: new Date('Dec 22 2021'),
+            startStr: 'Dec 22',
             end: 'Jan 5',
             pool: {
                 token0: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
@@ -48,11 +51,12 @@ export default function EventsHistory() {
             bonusReward: 25_000,
             participants: 113,
             type: 'Finite',
-            apr: '312%',
+            apr: '312',
             tvl: '$234k'
         },
         {
-            start: 'Jan 3',
+            start: new Date('Jan 3 2022'),
+            startStr: 'Jan 3',
             end: 'Jan 17',
             pool: {
                 token0: { address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', symbol: 'WMATIC' },
@@ -64,11 +68,12 @@ export default function EventsHistory() {
             bonusReward: 10_000,
             participants: 23,
             type: 'Finite',
-            apr: '200%',
+            apr: '200',
             tvl: '$93k'
         },
         {
-            start: 'Jan 6',
+            start: new Date('Jan 6 2022').getTime(),
+            startStr: 'Jan 6',
             end: 'Jan 20',
             pool: {
                 token0: { address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', symbol: 'WMATIC' },
@@ -80,7 +85,7 @@ export default function EventsHistory() {
             bonusReward: 14_000,
             participants: 64,
             type: 'Finite',
-            apr: '840%',
+            apr: '840',
             tvl: '$400k'
         }
     ]

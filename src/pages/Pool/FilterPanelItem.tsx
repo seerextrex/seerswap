@@ -24,6 +24,8 @@ const FilterPanelItem = ({ item }: FilterPanelProps) => {
             <Toggle
                 isActive={!item.checkValue}
                 toggle={() => item.method(!item.checkValue)}
+                checked={<Trans>Show</Trans>}
+                unchecked={<Trans>Hide</Trans>}
             />
         </FilterPanelItemWrapper>
     )

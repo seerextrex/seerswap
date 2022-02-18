@@ -173,15 +173,15 @@ export const MainContentWrapper = styled.main`
 `
 export const FilterPanelWrapper = styled.div`
     width: 100%;
-    padding: 0 3rem;
     display: flex;
     justify-content: start;
     gap: .8rem;
-
+    text-align: start;
+    margin-bottom: .5rem;
     label {
         margin-bottom: .5rem;
     }
-  ${({theme}) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-content: center;
   `}
 `
@@ -323,5 +323,4 @@ export const LoadingMock = styled.div`
 export const FilterPanelItemWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
 `

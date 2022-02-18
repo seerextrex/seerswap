@@ -1,11 +1,6 @@
 import React, { useMemo } from 'react'
 import { Text, TextProps as TextPropsOriginal } from 'rebass'
-import styled, {
-    createGlobalStyle,
-    css,
-    DefaultTheme,
-    ThemeProvider as StyledComponentsThemeProvider
-} from 'styled-components/macro'
+import styled, { createGlobalStyle, css, DefaultTheme, ThemeProvider as StyledComponentsThemeProvider } from 'styled-components/macro'
 import { useIsDarkMode } from '../state/user/hooks'
 import { Colors } from './styled'
 

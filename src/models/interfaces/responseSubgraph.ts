@@ -89,6 +89,12 @@ export interface LastPoolSubgraph {
     volumeUSD: string
 }
 
+export interface PoolHourData extends LastPoolSubgraph {
+    untrackedVolumeUSD: string
+    token0Price: string
+    token1Price: string
+}
+
 export interface FactorySubgraph {
     ALGBbalance: string
     currentStakedAmount: string

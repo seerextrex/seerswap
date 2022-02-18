@@ -14,13 +14,7 @@ import DoubleCurrencyLogo from '../DoubleLogo'
 import { AutoRow } from '../Row'
 import { Dots } from '../swap/styled'
 import Badge, { BadgeVariant } from 'components/Badge'
-import {
-    ArrowBack,
-    FixedHeightRow,
-    RowFixedStyled,
-    StyledSushiPositionCard,
-    TextStyled
-} from './styled'
+import { ArrowBack, FixedHeightRow, RowFixedStyled, StyledSushiPositionCard, TextStyled } from './styled'
 
 
 interface PositionCardProps {

@@ -13,15 +13,7 @@ import { Helmet } from 'react-helmet'
 import EternalFarmsPage from '../EternalFarmsPage'
 import EventsHistory from '../EventsHistory'
 import { StakerMyRewards } from '../../components/StakerMyRewards'
-import {
-    BodyWrapper,
-    ConnectWalletButton,
-    InnerWrapper,
-    MainContentWrapper,
-    MenuWrapper,
-    MockScreen,
-    PageWrapper
-} from './styled'
+import { BodyWrapper, ConnectWalletButton, InnerWrapper, MainContentWrapper, MenuWrapper, MockScreen, PageWrapper } from './styled'
 
 export default function StakingPage() {
     const { account } = useActiveWeb3React()
@@ -29,10 +21,10 @@ export default function StakingPage() {
     const toggleWalletModal = useWalletModalToggle()
 
     const {
-        fetchRewards: {rewardsResult, fetchRewardsFn, rewardsLoading},
-        fetchAllEvents: {fetchAllEventsFn, allEvents, allEventsLoading},
-        fetchTransferredPositions: {fetchTransferredPositionsFn, transferredPositions, transferredPositionsLoading},
-        fetchEternalFarms: {fetchEternalFarmsFn, eternalFarms, eternalFarmsLoading}
+        fetchRewards: { rewardsResult, fetchRewardsFn, rewardsLoading },
+        fetchAllEvents: { fetchAllEventsFn, allEvents, allEventsLoading },
+        fetchTransferredPositions: { fetchTransferredPositionsFn, transferredPositions, transferredPositionsLoading },
+        fetchEternalFarms: { fetchEternalFarmsFn, eternalFarms, eternalFarmsLoading }
     } = useIncentiveSubgraph() || {}
 
     const [now, setNow] = useState(Date.now())
@@ -91,7 +83,9 @@ export default function StakingPage() {
                                                 <StakerMyStakes
                                                     data={transferredPositions}
                                                     refreshing={transferredPositionsLoading}
-                                                    fetchHandler={() => {fetchTransferredPositionsFn(true)}}
+                                                    fetchHandler={() => {
+                                                        fetchTransferredPositionsFn(true)
+                                                    }}
                                                     now={now}
                                                 />
                                             </>

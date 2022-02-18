@@ -2,14 +2,7 @@ import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { AutoColumn } from 'components/Column'
 import { FeeAmount } from 'lib/src'
 import { Minus, Plus } from 'react-feather'
-import {
-    ButtonLabel,
-    FocusedOutlineCard,
-    InputRow,
-    InputTitle,
-    SmallButton,
-    StyledInput
-} from './styled'
+import { ButtonLabel, FocusedOutlineCard, InputRow, InputTitle, SmallButton, StyledInput } from './styled'
 
 
 interface StepCounterProps {
@@ -51,8 +44,6 @@ const StepCounter = ({
     const [useLocalValue, setUseLocalValue] = useState(false)
 
     // animation if parent value updates local value
-    const [pulsing, setPulsing] = useState<boolean>(false)
-
     const handleOnFocus = () => {
         setUseLocalValue(true)
         setActive(true)
@@ -79,10 +70,6 @@ const StepCounter = ({
         if (localValue !== value && !useLocalValue) {
             setTimeout(() => {
                 setLocalValue(value) // reset local value to match parent
-                setPulsing(true) // trigger animation
-                setTimeout(function() {
-                    setPulsing(false)
-                }, 1800)
             }, 0)
         }
     }, [localValue, useLocalValue, value])

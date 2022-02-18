@@ -1,4 +1,4 @@
-import {SupportedChainId} from './chains'
+import { SupportedChainId } from './chains'
 
 type AddressMap = { [chainId: number]: string }
 
@@ -27,7 +27,7 @@ export const MULTICALL_ADDRESS: AddressMap = {
 }
 
 export const V3_MIGRATOR_ADDRESSES: AddressMap = {
-    [SupportedChainId.POLYGON]: '0x76716bc0ae7639191c479C2432aC1f271f13dBd9',
+    [SupportedChainId.POLYGON]: '0x76716bc0ae7639191c479C2432aC1f271f13dBd9'
 }
 
 export const REAL_STAKER_ADDRESS: AddressMap = {
@@ -55,9 +55,9 @@ export const V2_ROUTER_ADDRESS: AddressMap = {
 }
 
 export const ENS_REGISTRAR_ADDRESSES: AddressMap = {
-    [SupportedChainId.POLYGON]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [SupportedChainId.POLYGON]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 }
 
 export const SOCKS_CONTROLLER_ADDRESSES: AddressMap = {
-    [SupportedChainId.POLYGON]: '0x65770b5283117639760beA3F867b69b3697a91dd',
+    [SupportedChainId.POLYGON]: '0x65770b5283117639760beA3F867b69b3697a91dd'
 }

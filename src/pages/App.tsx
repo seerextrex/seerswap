@@ -24,16 +24,7 @@ import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsRepo
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
 import { useActiveWeb3React } from '../hooks/web3'
-import {
-    AppWrapper,
-    AppBodyWrapper,
-    BugReportLink,
-    GlobalStyle,
-    HeaderWrapper,
-    InternetError,
-    Marginer,
-    NetworkFailedCard
-} from './styled'
+import { AppBodyWrapper, AppWrapper, BugReportLink, GlobalStyle, HeaderWrapper, InternetError, Marginer, NetworkFailedCard } from './styled'
 
 const RealStakerPage = React.lazy(() => import('./RealStakerPage'))
 const StakingAnalyticsPage = React.lazy(() => import('./StakingAnalyticsPage'))
@@ -57,11 +48,10 @@ export default function App() {
     useEffect(() => {
         onIsFarming()
     }, [])
-
     useEffect(() => {
         if (!account) return
 
-        type __window = Window & {dataLayer: any}
+        type __window = Window & { dataLayer: any }
         const _window = window as unknown as __window
 
         _window.dataLayer = _window.dataLayer || []
@@ -128,35 +118,21 @@ export default function App() {
                                 <Route strict path='/info' component={InfoPage} />
 
                                 <Route exact strict path='/send' component={RedirectPathToSwapOnly} />
-                                <Route exact strict path='/swap/:outputCurrency'
-                                       component={RedirectToSwap} />
+                                <Route exact strict path='/swap/:outputCurrency' component={RedirectToSwap} />
                                 <Route exact strict path='/swap' component={Swap} />
 
                                 <Route exact strict path='/pool/find' component={PoolFinder} />
                                 <Route exact strict path='/pool' component={PoolPage} />
                                 <Route exact strict path='/pool/:tokenId' component={PositionPage} />
 
-                                <Route
-                                    exact
-                                    strict
-                                    path='/add/:currencyIdA?/:currencyIdB?/:feeAmount?'
-                                    component={RedirectDuplicateTokenIds}
-                                />
-
-                                <Route exact strict
-                                       path='/increase/:currencyIdA?/:currencyIdB?/:tokenId?'
-                                       component={AddLiquidity} />
-
-                                <Route exact strict path='/remove/:tokenId'
-                                       component={RemoveLiquidityV3} />
-
+                                <Route exact strict path='/add/:currencyIdA?/:currencyIdB?/:feeAmount?' component={RedirectDuplicateTokenIds} />
+                                <Route exact strict path='/increase/:currencyIdA?/:currencyIdB?/:tokenId?' component={AddLiquidity} />
+                                <Route exact strict path='/remove/:tokenId' component={RemoveLiquidityV3} />
                                 <Route exact strict path='/migrate' component={MigrateV2} />
-                                <Route exact strict path='/migrate/:address'
-                                       component={MigrateV2Pair} />
+                                <Route exact strict path='/migrate/:address' component={MigrateV2Pair} />
 
                                 <Route exact strict path='/staking' component={RealStakerPage} />
-                                <Route exact strict path='/staking/analytics'
-                                       component={StakingAnalyticsPage} />
+                                <Route exact strict path='/staking/analytics' component={StakingAnalyticsPage} />
 
                                 <Route component={RedirectPathToSwapOnly} />
                             </Switch>

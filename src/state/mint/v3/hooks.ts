@@ -3,31 +3,14 @@ import { BIG_INT_ZERO } from '../../../constants/misc'
 import { getTickToPrice } from 'utils/getTickToPrice'
 import JSBI from 'jsbi'
 import { PoolState } from '../../../hooks/usePools'
-import {
-    encodeSqrtRatioX96,
-    FeeAmount,
-    nearestUsableTick,
-    Pool,
-    Position,
-    priceToClosestTick,
-    TickMath,
-    tickToPrice
-} from 'lib/src'
+import { encodeSqrtRatioX96, FeeAmount, nearestUsableTick, Pool, Position, priceToClosestTick, TickMath, tickToPrice } from 'lib/src'
 import { Currency, CurrencyAmount, Price, Rounding, Token } from '@uniswap/sdk-core'
 import { useCallback, useMemo } from 'react'
 import { useActiveWeb3React } from '../../../hooks/web3'
 import { AppState } from '../../index'
 import { tryParseAmount } from '../../swap/hooks'
 import { useCurrencyBalances } from '../../wallet/hooks'
-import {
-    Bound,
-    Field,
-    setFullRange,
-    typeInput,
-    typeLeftRangeInput,
-    typeRightRangeInput,
-    typeStartPriceInput
-} from './actions'
+import { Bound, Field, setFullRange, typeInput, typeLeftRangeInput, typeRightRangeInput, typeStartPriceInput } from './actions'
 import { tryParseTick } from './utils'
 import { usePool } from 'hooks/usePools'
 import { useAppDispatch, useAppSelector } from 'state/hooks'

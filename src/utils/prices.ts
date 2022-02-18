@@ -2,12 +2,7 @@ import JSBI from 'jsbi'
 import { Currency, CurrencyAmount, Fraction, Percent, TradeType } from '@uniswap/sdk-core'
 import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { Trade as V3Trade } from 'lib/src'
-import {
-    ALLOWED_PRICE_IMPACT_HIGH,
-    ALLOWED_PRICE_IMPACT_LOW,
-    ALLOWED_PRICE_IMPACT_MEDIUM,
-    BLOCKED_PRICE_IMPACT_NON_EXPERT
-} from '../constants/misc'
+import { ALLOWED_PRICE_IMPACT_HIGH, ALLOWED_PRICE_IMPACT_LOW, ALLOWED_PRICE_IMPACT_MEDIUM, BLOCKED_PRICE_IMPACT_NON_EXPERT } from '../constants/misc'
 
 const THIRTY_BIPS_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000))
 const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))

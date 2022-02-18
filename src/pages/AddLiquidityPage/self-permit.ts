@@ -1,8 +1,6 @@
 import { BigintIsh, Token } from '@uniswap/sdk-core'
 import { Interface } from '@ethersproject/abi'
-import {
-    abi
-} from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
+import { abi } from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
 import JSBI from 'jsbi'
 
 function toHex(bigintIsh: BigintIsh) {

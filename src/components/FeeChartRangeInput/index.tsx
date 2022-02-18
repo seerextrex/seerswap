@@ -3,82 +3,95 @@ import Chart from './Chart'
 import Loader from '../Loader'
 import { ChartType } from '../../models/enums'
 import { isMobile, isTablet } from 'react-device-detect'
-import { MockLoading, Wrapper } from './styled'
+import { MockLoading, ToggleToken, Wrapper, TokenInfo } from './styled'
+import { FeeSubgraph, PoolHourData } from '../../models/interfaces'
+import { ChartToken } from '../../models/enums/poolInfoPage'
+import { Trans } from '@lingui/macro'
+import { Token } from '@uniswap/sdk-core'
+import Toggle from '../Toggle'
 
 interface FeeChartRangeInputProps {
     fetchedData: {
-        data: Array<any>
-        previousData: Array<any>
+        data: FeeSubgraph[] | PoolHourData[]
+        previousData: FeeSubgraph[] | PoolHourData[]
     } | undefined | string
     refreshing: boolean
     id: string
     span: number
     type: number
+    token: number
+    token1: Token
+    token0: Token
+    setToken: (a: number) => void
 }
 
-export function daysCount(month: number, year: number) {
-    switch (month) {
-        case 3:
-        case 10:
-        case 8:
-        case 5:
-            return 30
-        case 0:
-        case 2:
-        case 4:
-        case 6:
-        case 7:
-        case 9:
-        case 11:
-            return 31
-        case 1:
-            return (year - 2000) % 4 === 0 ? 29 : 28
-        default:
-            return 31
-    }
-}
+export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken }: FeeChartRangeInputProps) {
 
-export default function FeeChartRangeInput({ fetchedData, refreshing, span, type }: FeeChartRangeInputProps) {
-  const ref = useRef(null)
+    const ref = useRef<HTMLDivElement>(null)
 
-  const formattedData = useMemo(() => {
-    if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return []
+    const formattedData = useMemo(() => {
+        if (!fetchedData || typeof fetchedData === 'string') return {
+            data: [],
+            previousData: []
+        }
 
-    const isUntracked = fetchedData.data.some((el) => el.volumeUSD < 1 && el.untrackedVolumeUSD >= 1)
+        if (!fetchedData || !fetchedData.data || fetchedData.data.length === 0) return {
+            data: [],
+            previousData: []
+        }
 
-    const field =
-      type === ChartType.TVL
-        ? 'tvlUSD'
-        : type === ChartType.VOLUME
-        ? isUntracked
-          ? 'untrackedVolumeUSD'
-          : 'volumeUSD'
-        : 'feesUSD'
+        const isUntracked = fetchedData.data.some((el) => {
+            if ('volumeUSD' in el) {
+                return +el.volumeUSD < 1 && +el.untrackedVolumeUSD >= 1
+            }
+            return
+        })
+        const field = type === ChartType.PRICE ? token === ChartToken.TOKEN0 ? 'token0Price' : 'token1Price' : type === ChartType.TVL ? 'tvlUSD' : type === ChartType.VOLUME ? isUntracked ? 'untrackedVolumeUSD' : 'volumeUSD' : 'feesUSD'
 
         if (type === ChartType.FEES) {
             return {
-                data: fetchedData.data.map((el) => ({
-                    timestamp: new Date(el.timestamp * 1000),
-                    value: el.fee / el.changesCount / 10000
-                })),
-                previousData: fetchedData.previousData.map((el) => ({
-                    timestamp: new Date(el.timestamp * 1000),
-                    value: el.fee / el.changesCount / 10000
-                }))
+                data: fetchedData.data.map((el) => {
+                    if ('fee' in el) {
+                        return {
+                            timestamp: new Date(+el.timestamp * 1000),
+                            value: +el.fee / +el.changesCount / 10000
+                        }
+                    }
+                    return
+                }),
+                previousData: fetchedData.previousData.map((el) => {
+                    if ('fee' in el) {
+                        return {
+                            timestamp: new Date(+el.timestamp * 1000),
+                            value: +el.fee / +el.changesCount / 10000
+                        }
+                    }
+                    return
+                })
             }
         } else {
             return {
-                data: fetchedData.data.map((el) => ({
-                    timestamp: new Date(el.periodStartUnix * 1000),
-                    value: +el[field]
-                })),
-                previousData: fetchedData.previousData.map((el) => ({
-                    timestamp: new Date(el.periodStartUnix * 1000),
-                    value: +el[field]
-                }))
+                data: fetchedData.data.map((el) => {
+                    if ('volumeUSD' in el) {
+                        return {
+                            timestamp: new Date(el.periodStartUnix * 1000),
+                            value: +el[field]
+                        }
+                    }
+                    return
+                }),
+                previousData: fetchedData.previousData.map((el) => {
+                    if ('volumeUSD' in el) {
+                        return {
+                            timestamp: new Date(el.periodStartUnix * 1000),
+                            value: +el[field]
+                        }
+                    }
+                    return
+                })
             }
         }
-    }, [fetchedData])
+    }, [fetchedData, token])
 
     return (
         <Wrapper ref={ref}>
@@ -86,17 +99,39 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                 <MockLoading>
                     <Loader stroke={'white'} size={'25px'} />
                 </MockLoading> :
-                <Chart
-                    feeData={formattedData || undefined}
-                    dimensions={{
-                        width: isTablet || isMobile ? ref?.current?.offsetWidth - 80 || 0 : 810,
-                        height: isTablet || isMobile ? 200 : 300,
-                        margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
-                    }}
-                    isMobile={isMobile}
-                    span={span}
-                    type={type}
-                />
+                <>
+                    {
+                        type === ChartType.PRICE &&
+                        <TokenInfo>
+                            { token === ChartToken.TOKEN0 ? token0?.symbol : token1?.symbol }
+                        </TokenInfo>
+                    }
+                    {
+                        type === ChartType.PRICE &&
+                        <ToggleToken>
+                            <Toggle
+                                isActive={token}
+                                toggle={() => setToken(token === ChartToken.TOKEN0 ? 1 : 0)}
+                                checked={<Trans>{token0?.symbol}</Trans>}
+                                unchecked={<Trans>{token1?.symbol}</Trans>}
+                            />
+                        </ToggleToken>
+                    }
+                    <Chart
+                        feeData={formattedData}
+                        dimensions={{
+                            width: isTablet || isMobile ? ref && ref.current && ref.current.offsetWidth - 80 || 0 : 810,
+                            height: isTablet || isMobile ? 200 : 300,
+                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
+                        }}
+                        tokens={{ token0: token0?.symbol, token1: token1?.symbol }}
+                        isMobile={isMobile}
+                        span={span}
+                        type={type}
+                        token={token}
+                    />
+                </>
+
             }
         </Wrapper>
     )

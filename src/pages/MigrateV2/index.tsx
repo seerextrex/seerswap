@@ -1,11 +1,9 @@
-import { getCreate2Address } from '@ethersproject/address'
-import { keccak256, pack } from '@ethersproject/solidity'
 import { Token } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
 import MigrateV2PositionCard from 'components/PositionCard/V2'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { PairState, useV2Pairs } from 'hooks/useV2Pairs'
-import { ReactNode, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'
 import { LightCard } from '../../components/Card'
@@ -21,36 +19,8 @@ import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { StyledInternalLink, TYPE } from '../../theme'
 import { BodyWrapper } from '../styled'
 import { Helmet } from 'react-helmet'
-
-function EmptyState({ message }: { message: ReactNode }) {
-    return (
-        <AutoColumn style={{ minHeight: 200, justifyContent: 'center', alignItems: 'center' }}>
-            <TYPE.body>{message}</TYPE.body>
-        </AutoColumn>
-    )
-}
-
-// quick hack because sushi init code hash is different
-const computeSushiPairAddress = ({ tokenA, tokenB }: { tokenA: Token; tokenB: Token }): string => {
-    const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
-    return getCreate2Address(
-        '0xc35dadb65012ec5796536bd9864ed8773abc74c4',
-        keccak256(['bytes'], [pack(['address', 'address'], [token0.address, token1.address])]),
-        '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303'
-    )
-}
-
-/**
- * Given two tokens return the sushiswap liquidity token that represents its liquidity shares
- * @param tokenA one of the two tokens
- * @param tokenB the other token
- */
-function toSushiLiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
-    return new Token(tokenA.chainId, computeSushiPairAddress({
-        tokenA,
-        tokenB
-    }), 18, 'SLP', 'SushiSwap LP Token')
-}
+import { EmptyState } from './EmptyState'
+import { toSushiLiquidityToken } from '../../utils/toSushiLiquidityToken'
 
 export default function MigrateV2() {
     const theme = useContext(ThemeContext)
@@ -59,6 +29,8 @@ export default function MigrateV2() {
     const networkFailed = useIsNetworkFailed()
 
     const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
+
+
 
     // fetch the user's balances of all tracked V2 LP tokens
     const trackedTokenPairs = useTrackedTokenPairs()

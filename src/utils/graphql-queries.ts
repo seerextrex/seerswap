@@ -74,13 +74,13 @@ export const FETCH_ETERNAL_FARM = (farmId: string) => gql`
 `
 
 export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query eternalFarmingsFromPools {
         eternalFarmings(where: {pool_in: ${poolString}, isDetached: false}) {
           id
@@ -98,7 +98,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
       }
       `
 
-  return gql(queryString)
+    return gql(queryString)
 }
 
 
@@ -124,8 +124,7 @@ query fetchPool {
     }
 }`
 
-export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => {
-    return gql`
+export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => gql`
   query feeHourData {
     feeHourDatas (first: 1000, where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
       id
@@ -140,7 +139,6 @@ export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timest
     }
   }
 `
-}
 
 export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
   query lastFeeHourData {
@@ -181,6 +179,8 @@ export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gq
       tvlUSD
       feesUSD
       untrackedVolumeUSD
+      token1Price
+      token0Price
     }
   }
 `
@@ -217,6 +217,8 @@ export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimesta
       tvlUSD
       feesUSD
       untrackedVolumeUSD
+      token0Price
+      token1Price
     }
   }
 `
@@ -340,7 +342,7 @@ export const POSITIONS_ON_ETERNAL_FARMING = (account: string) => gql`
 
 export const TRANSFERED_POSITIONS_FOR_POOL = (account: string, pool: string) => gql`
 query transferedPositionsForPool {
-    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}"}) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}", liquidity_not: "0"}) {
         id
         owner
         pool

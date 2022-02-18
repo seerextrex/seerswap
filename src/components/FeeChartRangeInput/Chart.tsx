@@ -243,7 +243,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const InfoRect = create('svg:rect')
         .append('rect')
         .attr('id', 'info-label')
-        .attr('width', '150px')
+        .attr('width', `${type === ChartType.PRICE ? '190px' : '150px'}`)
         .attr('height', '60px')
         .attr('rx', '6')
         .style('fill', '#12151d')
@@ -430,7 +430,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     )
                     InfoRectFeeText.property('innerHTML',
                         `${type === ChartType.FEES ? 'Fee:' : type === ChartType.PRICE ? 'Price' : type === ChartType.TVL ? 'TVL:' : 'Volume:'}
-                        ${type !== ChartType.FEES && ChartType.PRICE ? '$' : ''}
+                        ${type === ChartType.PRICE || type === ChartType.FEES ? '' : '$'}
                         ${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? 5 : 2)}
                         ${type === ChartType.FEES ? '%' : type === ChartType.PRICE ? `${token === ChartToken.TOKEN0 ? token0 : token1}` : ''}`
                     )

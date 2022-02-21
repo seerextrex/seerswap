@@ -6,7 +6,7 @@ import PositionList from 'components/PositionList'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { useV3Positions } from 'hooks/useV3Positions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useUserHideClosedPositions } from 'state/user/hooks'
@@ -58,10 +58,11 @@ export default function Pool() {
         ...(userHideClosedPositions ? [] : closedPositions),
         ...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions)
     ]
+
     const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
 
     const _filteredPositions = useMemo(() => {
-        if (filteredPositions.length === 0 && prevFilteredPositions) {
+        if (filteredPositions.length === 0 && prevFilteredPositions && !hideFarmingPositions && !userHideClosedPositions) {
             return prevFilteredPositions
         }
         return filteredPositions
@@ -114,20 +115,18 @@ export default function Pool() {
                                 </ResponsiveButtonPrimary>
                             </ButtonRow>
                         </TitleRow>
+                        <FilterPanelWrapper>
+                            {filters.map((item, key) =>
+                                <FilterPanelItem
+                                    item={item}
+                                    key={key}
+                                />)}
+                        </FilterPanelWrapper>
                         <MainContentWrapper>
                             {positionsLoading ? (
                                 <Loader style={{ margin: 'auto' }} stroke='white' size={'30px'} />
                             ) : _filteredPositions && _filteredPositions.length > 0 ? (
-                                <>
-                                    <FilterPanelWrapper>
-                                        {filters.map((item, key) =>
-                                            <FilterPanelItem
-                                                item={item}
-                                                key={key}
-                                            />)}
-                                    </FilterPanelWrapper>
-                                    <PositionList positions={_filteredPositions} />
-                                </>
+                                <PositionList positions={_filteredPositions} />
                             ) : (
                                 <NoLiquidity>
                                     <TYPE.body color={'white'} textAlign='center'>

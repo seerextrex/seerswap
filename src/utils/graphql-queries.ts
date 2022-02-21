@@ -120,6 +120,7 @@ query fetchPool ($poolId: ID) {
         liquidity
         tick
         feesUSD
+        untrackedFeesUSD
     }
 }`
 

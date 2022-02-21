@@ -108,9 +108,6 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
         }
     }, [feesResult, chartPoolData, ticksResult])
 
-    // useEffect(() => console.log(data), [data])
-
-
     const refreshing = useMemo(() => {
         if (!feesLoading && !chartPoolDataLoading && !ticksLoading) return false
         return feesLoading || chartPoolDataLoading || ticksLoading
@@ -118,7 +115,6 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
 
     const _token0 = useToken(poolResult?.token0.id)
     const _token1 = useToken(poolResult?.token1.id)
-
     return (
         <Wrapper>
             {poolResult ? (
@@ -127,7 +123,7 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
                         token0={_token0}
                         token1={_token1}
                         fee={poolResult.fee}
-                        collectedFees={poolResult.feesUSD}
+                        collectedFees={+poolResult.feesUSD < 1 ? poolResult.untrackedFeesUSD : poolResult.feesUSD}
                     />
                     <BodyWrapper>
                         <ChartWrapper>

@@ -86,8 +86,6 @@ export default function RealStakerPage({}) {
     const fiatValueStaked = useUSDCValue(stakedAmount)
     const fiatUnstakedAmount = useUSDCValue(unstakedAmount)
 
-    useEffect(() => console.log(stakesResult), [stakesResult])
-
     const allFreeze = useMemo(() => {
         if (typeof stakesResult === 'string') return
 
@@ -267,40 +265,42 @@ export default function RealStakerPage({}) {
                 ) : (
                     <>
                         <SilderWrapper>
-                            <StakerSlider value={percentForSlider}
-                                          onChange={onPercentSelectForSlider} size={22}
-                                          disabled={+_balance === 0} />
+                            <StakerSlider
+                                value={percentForSlider}
+                                onChange={onPercentSelectForSlider} size={22}
+                                disabled={+_balance === 0} />
                         </SilderWrapper>
-                        <RealStakerRangeButtons onPercentSelect={onPercentSelect}
-                                                showCalculate={false}
-                                                balance={_balance} />
+                        <RealStakerRangeButtons
+                            onPercentSelect={onPercentSelect}
+                            showCalculate={false}
+                            balance={_balance} />
                         {approval === ApprovalState.NOT_APPROVED ? (
                             <StakeButton onClick={approveCallback}>Approve token</StakeButton>
                         ) : approval === ApprovalState.UNKNOWN && account === null ? (
-                            <StakeButton onClick={toggleWalletModal}>Connect to a
-                                wallet</StakeButton>
+                            <StakeButton onClick={toggleWalletModal}>Connect Wallet</StakeButton>
                         ) : approval === ApprovalState.UNKNOWN ? (
                             <StakeButton>
                                 <Loader stroke={'white'} size={'19px'} />
                             </StakeButton>
                         ) : approval === ApprovalState.APPROVED ? (
-                            <StakeButton
-                                onClick={() => {
-                                    stakerHandler(amountValue)
-                                        .then(() => {
-                                            onPercentSelectForSlider(0)
-                                            if (percentForSlider === 0) {
-                                                setAmountValue('')
-                                            }
-                                        })
-                                }}
-                                disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
-                            >
-                                {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
-                            </StakeButton>
-                        ) : <StakeButton>
-                            <Loader stroke={'white'} size={'19px'} />
-                        </StakeButton>}
+                                <StakeButton
+                                    onClick={() => {
+                                        stakerHandler(amountValue)
+                                            .then(() => {
+                                                onPercentSelectForSlider(0)
+                                                if (percentForSlider === 0) {
+                                                    setAmountValue('')
+                                                }
+                                            })
+                                    }}
+                                    disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
+                                >
+                                    {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
+                                </StakeButton>
+                            ) :
+                            <StakeButton>
+                                <Loader stroke={'white'} size={'19px'} />
+                            </StakeButton>}
                     </>
                 )}
             </PageWrapper>

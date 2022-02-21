@@ -119,7 +119,8 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { tokens }, error } = (await dataClient.query<SubgraphResponse<TokenSubgraph[]>>({
-                query: FETCH_TOKEN(tokenId)
+                query: FETCH_TOKEN(),
+                variables: { tokenId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -134,7 +135,8 @@ export function useIncentiveSubgraph() {
     async function fetchPool(poolId: string) {
         try {
             const { data: { pools }, error } = (await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
-                query: FETCH_POOL(poolId)
+                query: FETCH_POOL(),
+                variables: { poolId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -151,7 +153,8 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { incentives }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
-                query: FETCH_INCENTIVE(incentiveId)
+                query: FETCH_INCENTIVE(),
+                variables: { incentiveId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -190,8 +193,9 @@ export function useIncentiveSubgraph() {
             setRewardsLoading(true)
 
             const { data: { rewards }, error } = (await farmingClient.query({
-                query: FETCH_REWARDS(account),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                query: FETCH_REWARDS(),
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -243,7 +247,8 @@ export function useIncentiveSubgraph() {
 
             const { data: { incentives: futureEvents }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
                 query: FUTURE_EVENTS(),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { timestamp: Math.round(Date.now() / 1000) }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -271,14 +276,19 @@ export function useIncentiveSubgraph() {
 
             const { data: { incentives: currentEvents }, error } = (await farmingClient.query<SubgraphResponse<FarmingEvent[]>>({
                 query: CURRENT_EVENTS(),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: {
+                    startTime: Math.round(Date.now() / 1000),
+                    endTime: Math.round(Date.now() / 1000)
+                }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
             const { data: { incentives: futureEvents }, error: _error } = await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
                 query: FUTURE_EVENTS(),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { timestamp: Math.round(Date.now() / 1000) }
             })
 
             if (_error) throw new Error(`${_error.name} ${_error.message}`)
@@ -320,8 +330,9 @@ export function useIncentiveSubgraph() {
             setTransferredPositionsLoading(true)
 
             const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: TRANSFERED_POSITIONS(account),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                query: TRANSFERED_POSITIONS(),
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -479,8 +490,9 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { deposits: eternalPositions }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: POSITIONS_ON_ETERNAL_FARMING(account),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                query: POSITIONS_ON_ETERNAL_FARMING(),
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -540,8 +552,9 @@ export function useIncentiveSubgraph() {
             setPositionsForPoolLoading(true)
 
             const { data: { deposits: positionsTransferred }, error: errorTransferred } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: TRANSFERED_POSITIONS_FOR_POOL(account, pool.id),
-                fetchPolicy: 'network-only'
+                query: TRANSFERED_POSITIONS_FOR_POOL(),
+                fetchPolicy: 'network-only',
+                variables: { account, pool: pool.id }
             }))
 
             if (errorTransferred) throw new Error(`${errorTransferred.name} ${errorTransferred.message}`)
@@ -574,8 +587,9 @@ export function useIncentiveSubgraph() {
             setPositionsOnFarmerLoading(true)
 
             const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: TRANSFERED_POSITIONS(account),
-                fetchPolicy: 'network-only'
+                query: TRANSFERED_POSITIONS(),
+                fetchPolicy: 'network-only',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)

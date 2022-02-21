@@ -49,7 +49,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             case ChartSpan.DAY:
                 return 24
             case ChartSpan.MONTH:
-                return 30
+                return 31
             case ChartSpan.WEEK:
                 return 7
         }
@@ -60,7 +60,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             case ChartSpan.DAY:
                 return dimensions.width / 24
             case ChartSpan.MONTH:
-                return dimensions.width / 30
+                return dimensions.width / 31
             case ChartSpan.WEEK:
                 return dimensions.width / 7
         }
@@ -110,8 +110,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 sameDays = []
             }
         }
-
-        console.log(sameDays)
 
         if (sameDays.length !== 0) {
             res.push(sameDays.reduce(
@@ -220,7 +218,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         return [..._data]
     }, [data, previousData])
 
-    // useEffect(() => console.log(_chartData), [_chartData])
+    // useEffect(() => console.log(_chartData, previousData, xTicks), [_chartData])
 
     const xScale = useMemo(() => scaleTime()
             .domain([min(_chartData, (d) => new Date(d.timestamp)), max(_chartData, (d) => new Date(d.timestamp))])

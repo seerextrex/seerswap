@@ -1,7 +1,7 @@
 import { ChartBadge, FarmingLink, LabelStyled, LinkWrapper, ResponsiveGrid } from './styled'
 import { BarChart2, ExternalLink } from 'react-feather'
 import { formatDollarAmount, formatPercent } from '../../utils/numbers'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { GreyBadge } from 'components/Card'
 import { TYPE } from 'theme'

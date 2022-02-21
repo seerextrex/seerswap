@@ -3,8 +3,8 @@ import { gql } from '@apollo/client'
 //Farming
 
 export const ONE_FARMING_EVENT = () => gql`
-query incentive {
-   incentives(orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: ${Math.round(Date.now() / 1000)}}) {
+query incentive ($time: BigInt) {
+   incentives (orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: $time}) {
     startTime,
     endTime
   }
@@ -12,7 +12,7 @@ query incentive {
 `
 
 export const ONE_ETERNAL_FARMING = () => gql`
-  query eternalFarm {
+  query eternalFarm{
     eternalFarmings (where: { isDetached: false }, first: 1) {
       startTime
       endTime
@@ -20,9 +20,9 @@ export const ONE_ETERNAL_FARMING = () => gql`
   }
 `
 
-export const FETCH_REWARDS = (account: string) => gql`
-query fetchRewards {
-    rewards(orderBy: amount, orderDirection: desc, where: {owner: "${account}"}) {
+export const FETCH_REWARDS = () => gql`
+query fetchRewards ($account: Bytes) {
+    rewards(orderBy: amount, orderDirection: desc, where: {owner: $account}) {
         id
         rewardAddress
         amount
@@ -30,9 +30,9 @@ query fetchRewards {
     }
 }`
 
-export const FETCH_TOKEN = (tokenId: string) => gql`
-query fetchToken {
-    tokens(where: { id: "${tokenId}" }) {
+export const FETCH_TOKEN = () => gql`
+query fetchToken ($tokenId: ID) {
+    tokens(where: { id: $tokenId}) {
         id
         symbol
         name
@@ -40,9 +40,9 @@ query fetchToken {
     }
 }`
 
-export const FETCH_INCENTIVE = (incentiveId: string) => gql`
-query fetchIncentive {
-    incentives(where: { id: "${incentiveId}" }) {
+export const FETCH_INCENTIVE = () => gql`
+query fetchIncentive($incentiveId: ID) {
+    incentives(where: { id: $incentiveId}) {
         id
         rewardToken
         bonusRewardToken
@@ -55,9 +55,9 @@ query fetchIncentive {
     }
 }`
 
-export const FETCH_ETERNAL_FARM = (farmId: string) => gql`
-  query fetchEternalFarm {
-    eternalFarmings (where: { id: "${farmId}" }) {
+export const FETCH_ETERNAL_FARM = () => gql`
+  query fetchEternalFarm ($farmId: ID) {
+    eternalFarmings (where: { id: $farmId}) {
       id
       rewardToken
       bonusRewardToken
@@ -97,14 +97,13 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
         }
       }
       `
-
     return gql(queryString)
 }
 
 
-export const FETCH_POOL = (poolId: string) => gql`
-query fetchPool {
-    pools(where: { id: "${poolId}" }) {
+export const FETCH_POOL = () => gql`
+query fetchPool ($poolId: ID) {
+    pools(where: { id: $poolId}) {
         id
         fee
         token0 {
@@ -124,9 +123,9 @@ query fetchPool {
     }
 }`
 
-export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timestampFinish: number) => gql`
-  query feeHourData {
-    feeHourDatas (first: 1000, where: {pool: "${pool}", timestamp_gte: "${timestampStart}", timestamp_lte: "${timestampFinish}"}) {
+export const CHART_FEE_POOL_DATA = () => gql`
+  query feeHourData ($pool: String, $startTimestamp: BigInt, $endTimestamp: BigInt) {
+    feeHourDatas (first: 1000, where: {pool: $pool, timestamp_gte: $startTimestamp, timestamp_lte: $endTimestamp}) {
       id
       pool
       fee
@@ -140,9 +139,9 @@ export const CHART_FEE_POOL_DATA = (pool: string, timestampStart: number, timest
   }
 `
 
-export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
-  query lastFeeHourData {
-    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}" }) {
+export const CHART_FEE_LAST_ENTRY = () => gql`
+  query lastFeeHourData ($pool: String) {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: $pool}) {
       id
       pool
       fee
@@ -155,9 +154,9 @@ export const CHART_FEE_LAST_ENTRY = (pool: string) => gql`
     }
   }
 `
-export const CHART_FEE_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
-  query lastNotEmptyHourData {
-    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: "${pool}", timestamp_lt: ${timestamp} }) {
+export const CHART_FEE_LAST_NOT_EMPTY = () => gql`
+  query lastNotEmptyHourData ($pool: String, $timestamp: BigInt) {
+    feeHourDatas (first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: $pool, timestamp_lt: $timestamp}) {
       id
       pool
       fee
@@ -171,9 +170,9 @@ export const CHART_FEE_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql
   }
 `
 
-export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gql`
-  query lastNotEmptyPoolHourData {
-    poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: "${pool}", periodStartUnix_lt: ${timestamp} }) {
+export const CHART_POOL_LAST_NOT_EMPTY = () => gql`
+  query lastNotEmptyPoolHourData ($pool: String, $timestamp: Int) {
+    poolHourDatas (first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: $pool, periodStartUnix_lt: $timestamp}) {
       periodStartUnix
       volumeUSD
       tvlUSD
@@ -185,15 +184,9 @@ export const CHART_POOL_LAST_NOT_EMPTY = (pool: string, timestamp: string) => gq
   }
 `
 
-export const CHART_POOL_LAST_ENTRY = (pool: string) => gql`
-query lastPoolHourData {
-
-  poolHourDatas(
-      first: 1
-      where: { pool: "${pool}" }
-      orderBy: periodStartUnix,
-      orderDirection: desc,
-    ) {
+export const CHART_POOL_LAST_ENTRY = () => gql`
+query lastPoolHourData ($pool: String) {
+  poolHourDatas( first: 1, where: { pool: $pool}orderBy: periodStartUnix, orderDirection: desc) {
       periodStartUnix
       volumeUSD
       tvlUSD
@@ -203,11 +196,11 @@ query lastPoolHourData {
   }
 `
 
-export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimestamp: number) => gql`
-  query poolHourData {
+export const CHART_POOL_DATA = () => gql`
+  query poolHourData ($pool: String, $startTimestamp: Int, $endTimestamp: Int) {
     poolHourDatas (
       first: 1000
-      where: { pool: "${pool}", periodStartUnix_gte: ${startTimestamp}, periodStartUnix_lte: ${endTimestamp} }
+      where: { pool: $pool, periodStartUnix_gte: $startTimestamp, periodStartUnix_lte: $endTimestamp }
       orderBy: periodStartUnix
       orderDirection: asc
       subgraphError: allow
@@ -223,7 +216,8 @@ export const CHART_POOL_DATA = (pool: string, startTimestamp: number, endTimesta
   }
 `
 
-export const TOTAL_STATS = (block?: number) => gql`
+export const TOTAL_STATS = (block?: number) => {
+    const qString =`
   query totalStats {
     factories ${block ? `(block: { number: ${block} })` : ''} {
       totalVolumeUSD
@@ -233,6 +227,8 @@ export const TOTAL_STATS = (block?: number) => gql`
     }
   }
 `
+    return gql(qString)
+}
 
 export const LAST_EVENT = () => gql`
 query lastEvent {
@@ -246,8 +242,8 @@ query lastEvent {
 `
 
 export const FUTURE_EVENTS = () => gql`
-query futureEvents {
-    incentives(orderBy: startTime, orderDirection: asc, where: { startTime_gt: "${Math.round(Date.now() / 1000)}" }) {
+query futureEvents ($timestamp: BigInt) {
+    incentives(orderBy: startTime, orderDirection: asc, where: { startTime_gt: $timestamp}) {
         id
         createdAtTimestamp
         rewardToken
@@ -261,8 +257,8 @@ query futureEvents {
 }`
 
 export const CURRENT_EVENTS = () => gql`
-query currentEvents {
-    incentives(orderBy: endTime, orderDirection: desc, where: { startTime_lte: "${Math.round(Date.now() / 1000)}", endTime_gt: "${Math.round(Date.now() / 1000)}" }) {
+query currentEvents ($startTime: BigInt, $endTime: BigInt) {
+    incentives(orderBy: endTime, orderDirection: desc, where: { startTime_lte: $startTime, endTime_gt: $endTime}) {
         id
         rewardToken
         bonusReward
@@ -297,13 +293,12 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
         }
       }
       `
-
     return gql(queryString)
 }
 
-export const FROZEN_STAKED = (account: string) => gql`
-   query frozenStaked  {
-     stakeTxes (where: {owner: "${account.toLowerCase()}", timestamp_gte: ${Math.round(Date.now() / 1000)}}, orderBy: timestamp, orderDirection: asc) {
+export const FROZEN_STAKED = () => gql`
+   query frozenStaked ($account: String, $timestamp: Int) {
+     stakeTxes (where: {owner: $account, timestamp_gte: $timestamp}, orderBy: timestamp, orderDirection: asc) {
      timestamp
      stakedALGBAmount
      xALGBAmount
@@ -311,9 +306,9 @@ export const FROZEN_STAKED = (account: string) => gql`
 }
 `
 
-export const TRANSFERED_POSITIONS = (account: string) => gql`
-    query transferedPositions {
-        deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", onFarmingCenter: true}) {
+export const TRANSFERED_POSITIONS = () => gql`
+    query transferedPositions ($account: Bytes) {
+        deposits (orderBy: id, orderDirection: desc, where: {owner: $account, onFarmingCenter: true}) {
             id
             owner
             pool
@@ -326,9 +321,9 @@ export const TRANSFERED_POSITIONS = (account: string) => gql`
 }
 `
 
-export const POSITIONS_ON_ETERNAL_FARMING = (account: string) => gql`
-  query positionsOnEternalFarming {
-    deposits (orderBy: id, orderDirection: desc, where: { owner: "${account}", onFarmingCenter: true, eternalFarming_not: null }) {
+export const POSITIONS_ON_ETERNAL_FARMING = () => gql`
+  query positionsOnEternalFarming ($account: Bytes) {
+    deposits (orderBy: id, orderDirection: desc, where: { owner: $account, onFarmingCenter: true, eternalFarming_not: null }) {
       id
       owner
       pool
@@ -340,9 +335,9 @@ export const POSITIONS_ON_ETERNAL_FARMING = (account: string) => gql`
   }
 `
 
-export const TRANSFERED_POSITIONS_FOR_POOL = (account: string, pool: string) => gql`
-query transferedPositionsForPool {
-    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}", pool: "${pool}", liquidity_not: "0"}) {
+export const TRANSFERED_POSITIONS_FOR_POOL = () => gql`
+query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: $account, pool: $pool, liquidity_not: "0"}) {
         id
         owner
         pool
@@ -350,19 +345,6 @@ query transferedPositionsForPool {
         incentive
         eternalFarming
         onFarmingCenter
-        enteredInEternalFarming
-    }
-}`
-
-export const POSITIONS_OWNED_FOR_POOL = (account: string, pool: string) => gql`
-query positionsOwnedForPool {
-    deposits (orderBy: id, orderDirection: desc, where: {owner: "${account}",  pool: "${pool}"}) {
-        id
-        owner
-        pool
-        L2tokenId
-        incentive
-        eternalFarming
         enteredInEternalFarming
     }
 }`
@@ -385,43 +367,43 @@ export const INFINITE_EVENTS = gql`
         }
     }
 `
-
-export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
-  query swapsPerDay {
-    swaps (first: 1000, where: {timestamp_gt: ${startTimestamp}, timestamp_lt: ${Math.round(Date.now() / 1000)}} ) {
-      pool {
-        id
-      }
-      timestamp
-      tick
-      amountUSD
-    }
-  }
-`
-export const ALL_POSITIONS = gql`
-query allPositions {
-  positions (first: 1000) {
-    pool {
-      id
-    }
-    id
-    liquidity
-    tickLower {
-      tickIdx
-      liquidityGross
-    }
-    tickUpper {
-      tickIdx
-      liquidityGross
-    }
-    transaction {
-      mints {
-        amountUSD
-      }
-    }
-  }
-}
-`
+//
+// export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
+//   query swapsPerDay {
+//     swaps (first: 1000, where: {timestamp_gt: ${startTimestamp}, timestamp_lt: ${Math.round(Date.now() / 1000)}} ) {
+//       pool {
+//         id
+//       }
+//       timestamp
+//       tick
+//       amountUSD
+//     }
+//   }
+// `
+// export const ALL_POSITIONS = gql`
+// query allPositions {
+//   positions (first: 1000) {
+//     pool {
+//       id
+//     }
+//     id
+//     liquidity
+//     tickLower {
+//       tickIdx
+//       liquidityGross
+//     }
+//     tickUpper {
+//       tickIdx
+//       liquidityGross
+//     }
+//     transaction {
+//       mints {
+//         amountUSD
+//       }
+//     }
+//   }
+// }
+// `
 
 export const TOP_POOLS = gql`
 query topPools {
@@ -518,15 +500,15 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
     return gql(queryString)
 }
 
-export const GET_STAKE = (id: string) => gql`
-query stakeHistory {
+export const GET_STAKE = () => gql`
+query stakeHistory ($id: ID) {
   factories {
     currentStakedAmount
     earnedForAllTime
     ALGBbalance
     xALGBtotalSupply
   }
-  stakes (where:{id: "${id}"}) {
+  stakes (where:{id: $id}) {
     stakedALGBAmount
     xALGBAmount
   }

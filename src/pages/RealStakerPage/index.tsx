@@ -49,13 +49,7 @@ export default function RealStakerPage({}) {
     const { chainId, account } = useActiveWeb3React()
     const { percent } = useBurnV3State()
     const { onPercentSelect } = useBurnV3ActionHandlers()
-    const {
-        stakerHandler,
-        stakerClaimHandler,
-        stakerUnstakeHandler,
-        frozenStakedHandler,
-        frozenStaked
-    } = useRealStakerHandlers()
+    const { stakerHandler, stakerClaimHandler, stakerUnstakeHandler, frozenStakedHandler, frozenStaked } = useRealStakerHandlers()
     const { getStakes: { stakesResult, fetchStakingFn } } = useInfoSubgraph()
     const toggleWalletModal = useWalletModalToggle()
     const baseCurrency = useCurrency(currencyId)
@@ -182,9 +176,10 @@ export default function RealStakerPage({}) {
     }, [account])
 
     useEffect(() => {
+        fetchStakingFn(account?.toLowerCase())
+
         if (!account) return
 
-        fetchStakingFn(account.toLowerCase())
         frozenStakedHandler(account.toLowerCase())
 
         if (+_balance === 0) {
@@ -234,10 +229,7 @@ export default function RealStakerPage({}) {
 
         if (+stakesResult?.factories[0].xALGBtotalSupply !== 0) {
             setAlbgCourseShow(+stakesResult.factories[0].ALGBbalance / +stakesResult.factories[0].xALGBtotalSupply)
-            setAlbgCourse(
-                BigNumber.from(stakesResult.factories[0].ALGBbalance)
-                    .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
-            )
+            setAlbgCourse(BigNumber.from(stakesResult.factories[0].ALGBbalance).div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply)))
         }
 
         if (!stakesResult?.stakes[0]) {
@@ -273,40 +265,42 @@ export default function RealStakerPage({}) {
                 ) : (
                     <>
                         <SilderWrapper>
-                            <StakerSlider value={percentForSlider}
-                                          onChange={onPercentSelectForSlider} size={22}
-                                          disabled={+_balance === 0} />
+                            <StakerSlider
+                                value={percentForSlider}
+                                onChange={onPercentSelectForSlider} size={22}
+                                disabled={+_balance === 0} />
                         </SilderWrapper>
-                        <RealStakerRangeButtons onPercentSelect={onPercentSelect}
-                                                showCalculate={false}
-                                                balance={_balance} />
+                        <RealStakerRangeButtons
+                            onPercentSelect={onPercentSelect}
+                            showCalculate={false}
+                            balance={_balance} />
                         {approval === ApprovalState.NOT_APPROVED ? (
                             <StakeButton onClick={approveCallback}>Approve token</StakeButton>
                         ) : approval === ApprovalState.UNKNOWN && account === null ? (
-                            <StakeButton onClick={toggleWalletModal}>Connect to a
-                                wallet</StakeButton>
+                            <StakeButton onClick={toggleWalletModal}>Connect Wallet</StakeButton>
                         ) : approval === ApprovalState.UNKNOWN ? (
                             <StakeButton>
                                 <Loader stroke={'white'} size={'19px'} />
                             </StakeButton>
                         ) : approval === ApprovalState.APPROVED ? (
-                            <StakeButton
-                                onClick={() => {
-                                    stakerHandler(amountValue)
-                                        .then(() => {
-                                            onPercentSelectForSlider(0)
-                                            if (percentForSlider === 0) {
-                                                setAmountValue('')
-                                            }
-                                        })
-                                }}
-                                disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
-                            >
-                                {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
-                            </StakeButton>
-                        ) : <StakeButton>
-                            <Loader stroke={'white'} size={'19px'} />
-                        </StakeButton>}
+                                <StakeButton
+                                    onClick={() => {
+                                        stakerHandler(amountValue)
+                                            .then(() => {
+                                                onPercentSelectForSlider(0)
+                                                if (percentForSlider === 0) {
+                                                    setAmountValue('')
+                                                }
+                                            })
+                                    }}
+                                    disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
+                                >
+                                    {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
+                                </StakeButton>
+                            ) :
+                            <StakeButton>
+                                <Loader stroke={'white'} size={'19px'} />
+                            </StakeButton>}
                     </>
                 )}
             </PageWrapper>

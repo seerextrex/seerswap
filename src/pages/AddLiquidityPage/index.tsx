@@ -958,7 +958,7 @@ export default function AddLiquidityPage({
                                 onClick={toggleWalletModal}
                                 style={{ margin: 'auto' }}
                             >
-                                Connect to a wallet
+                                Connect Wallet
                             </AddLiquidityButton>
                         </PairNotSelectedMock>
                     )}

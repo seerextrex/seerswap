@@ -15,11 +15,9 @@ export function useInfoPoolChart() {
 
             setPoolLoading(true)
 
-            const {
-                data: { pools },
-                error
-            } = (await dataClient.query<SubgraphResponse<PoolChartSubgraph[]>>({
-                query: FETCH_POOL(poolId)
+            const { data: { pools }, error } = (await dataClient.query<SubgraphResponse<PoolChartSubgraph[]>>({
+                query: FETCH_POOL(),
+                variables: {poolId}
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)

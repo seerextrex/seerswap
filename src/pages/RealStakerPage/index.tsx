@@ -49,13 +49,7 @@ export default function RealStakerPage({}) {
     const { chainId, account } = useActiveWeb3React()
     const { percent } = useBurnV3State()
     const { onPercentSelect } = useBurnV3ActionHandlers()
-    const {
-        stakerHandler,
-        stakerClaimHandler,
-        stakerUnstakeHandler,
-        frozenStakedHandler,
-        frozenStaked
-    } = useRealStakerHandlers()
+    const { stakerHandler, stakerClaimHandler, stakerUnstakeHandler, frozenStakedHandler, frozenStaked } = useRealStakerHandlers()
     const { getStakes: { stakesResult, fetchStakingFn } } = useInfoSubgraph()
     const toggleWalletModal = useWalletModalToggle()
     const baseCurrency = useCurrency(currencyId)
@@ -91,6 +85,8 @@ export default function RealStakerPage({}) {
     const fiatValueEarned = useUSDCValue(earnedAmount)
     const fiatValueStaked = useUSDCValue(stakedAmount)
     const fiatUnstakedAmount = useUSDCValue(unstakedAmount)
+
+    useEffect(() => console.log(stakesResult), [stakesResult])
 
     const allFreeze = useMemo(() => {
         if (typeof stakesResult === 'string') return
@@ -182,9 +178,10 @@ export default function RealStakerPage({}) {
     }, [account])
 
     useEffect(() => {
+        fetchStakingFn(account?.toLowerCase())
+
         if (!account) return
 
-        fetchStakingFn(account.toLowerCase())
         frozenStakedHandler(account.toLowerCase())
 
         if (+_balance === 0) {
@@ -234,10 +231,7 @@ export default function RealStakerPage({}) {
 
         if (+stakesResult?.factories[0].xALGBtotalSupply !== 0) {
             setAlbgCourseShow(+stakesResult.factories[0].ALGBbalance / +stakesResult.factories[0].xALGBtotalSupply)
-            setAlbgCourse(
-                BigNumber.from(stakesResult.factories[0].ALGBbalance)
-                    .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
-            )
+            setAlbgCourse(BigNumber.from(stakesResult.factories[0].ALGBbalance).div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply)))
         }
 
         if (!stakesResult?.stakes[0]) {

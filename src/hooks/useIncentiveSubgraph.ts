@@ -172,7 +172,8 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { eternalFarmings }, error } = (await farmingClient.query<SubgraphResponse<DetachedEternalFarming[]>>({
-                query: FETCH_ETERNAL_FARM(farmId)
+                query: FETCH_ETERNAL_FARM(),
+                variables: {farmId}
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -424,6 +425,8 @@ export function useIncentiveSubgraph() {
 
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(position.eternalFarming)
 
+                    // console.log(rewardToken, 'sdsada')
+
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],
                         FARMING_CENTER_ABI,
@@ -473,7 +476,7 @@ export function useIncentiveSubgraph() {
             setTransferredPositions(_positions)
 
         } catch (err: any) {
-            throw new Error('Transferred positions' + err.code + err.message)
+            throw new Error('Transferred positions ' + err.code + ' ' + err.message)
         } finally {
             setTransferredPositionsLoading(false)
         }

@@ -36,7 +36,7 @@ import { RowFixed } from '../../components/Row'
 import usePrevious from '../../hooks/usePrevious'
 import ReactGA from 'react-ga'
 import { useAppSelector } from '../../state/hooks'
-import { Contract } from 'ethers'
+import { Contract, providers } from 'ethers'
 import {
     AddLiquidityButton,
     ApproveButton,
@@ -70,6 +70,7 @@ import {
 
 //TODO test merge without failed polygon
 import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
+import { EthereumWindow } from '../../models/types'
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
@@ -88,6 +89,8 @@ export default function AddLiquidityPage({
     const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
     const addTransaction = useTransactionAdder()
     const positionManager = useV3NFTPositionManagerContract()
+    const _window = window as unknown as EthereumWindow
+    const provider = _window.ethereum ? new providers.Web3Provider(_window.ethereum) : undefined
 
     const gasPrice = useAppSelector((state) =>
         state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
@@ -111,7 +114,7 @@ export default function AddLiquidityPage({
             const nonFunPosManContract = new Contract(
                 NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId || 137],
                 NON_FUN_POS_MAN,
-                provider.getSigner()
+                provider?.getSigner()
             )
 
             try {

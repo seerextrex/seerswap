@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro'
 import { Info } from 'react-feather'
 import IphoneBanner from '../../assets/images/iphone-contest.png'
+import IphoneBannerMobile from '../../assets/images/iphone-contest-mobile.png'
+import AppBody from '../AppBody'
 
 export const StyledInfo = styled(Info)`
     opacity: 0.6;
@@ -25,7 +27,10 @@ export const ContestBanner = styled.a`
     background-size: cover;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
+        top: -5.5rem;
+        background-image: url(${IphoneBannerMobile});
+        background-size: contain;
+        background-repeat: no-repeat;
   `}
 
 `
@@ -39,8 +44,24 @@ export const ContestBannerTitle = styled.div`
     margin-left: auto;
     margin-top: 1.3rem;
     margin-right: 2rem;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+`}
 `
 
 export const ContestBannerTitleIphone = styled.span`
     color: #F4BE32;
+`
+
+export const ContestArrow = styled.span`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        display: none;
+    `}
+`
+
+export const WrappedAppBody = styled(AppBody)`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        margin-top: 6rem;
+    `}
 `

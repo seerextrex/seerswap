@@ -143,6 +143,14 @@ export const EmptyMock = styled.div`
     align-items: center;
     justify-content: center;
 `
+export const LoaderMock = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 487px;
+    align-items: center;
+    justify-content: center;
+`
 export const ProvideLiquidityLink = styled(Link)`
     display: flex;
     justify-content: center;

@@ -1,53 +1,53 @@
-import { Trans } from '@lingui/macro'
-import { Currency, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
-import { Trade as V3Trade } from 'lib/src'
-import { NetworkAlert } from 'components/NetworkAlert/NetworkAlert'
-import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
-import { MouseoverTooltip, MouseoverTooltipContent } from 'components/Tooltip'
-import JSBI from 'jsbi'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown, CheckCircle, HelpCircle } from 'react-feather'
-import { RouteComponentProps } from 'react-router-dom'
-import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components/macro'
-import AddressInputPanel from '../../components/AddressInputPanel'
-import { ButtonConfirmed, ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
-import { GreyCard } from '../../components/Card'
-import { AutoColumn } from '../../components/Column'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import CurrencyLogo from '../../components/CurrencyLogo'
-import Loader from '../../components/Loader'
-import Row, { AutoRow, RowFixed } from '../../components/Row'
-import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
-import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
-import { ArrowWrapper, Dots, SwapCallbackError, Wrapper } from '../../components/swap/styled'
-import SwapHeader from '../../components/swap/SwapHeader'
-import TradePrice from '../../components/swap/TradePrice'
-import { SwitchLocaleLink } from '../../components/SwitchLocaleLink'
-import TokenWarningModal from '../../components/TokenWarningModal'
-import { useAllTokens, useCurrency } from '../../hooks/Tokens'
-import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
-import { V3TradeState } from '../../hooks/useBestV3Trade'
-import useENSAddress from '../../hooks/useENSAddress'
-import { useERC20PermitFromTrade, UseERC20PermitState } from '../../hooks/useERC20Permit'
-import { useSwapCallback } from '../../hooks/useSwapCallback'
-import useToggledVersion, { Version } from '../../hooks/useToggledVersion'
-import { useUSDCValue } from '../../hooks/useUSDCPrice'
-import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
-import { useActiveWeb3React } from '../../hooks/web3'
-import { useWalletModalToggle } from '../../state/application/hooks'
-import { Field } from '../../state/swap/actions'
-import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
-import { useExpertModeManager, useUserSingleHopOnly } from '../../state/user/hooks'
-import { LinkStyledButton, TYPE } from '../../theme'
-import { computeFiatValuePriceImpact } from '../../utils/computeFiatValuePriceImpact'
-import { getTradeVersion } from '../../utils/getTradeVersion'
-import { maxAmountSpend } from '../../utils/maxAmountSpend'
-import { warningSeverity } from '../../utils/prices'
-import AppBody from '../AppBody'
-import { Helmet } from 'react-helmet'
-import ReactGA from 'react-ga'
-import { StyledInfo } from './styled'
+import { Trans } from "@lingui/macro";
+import { Currency, CurrencyAmount, Token, TradeType } from "@uniswap/sdk-core";
+import { Trade as V3Trade } from "lib/src";
+import { NetworkAlert } from "components/NetworkAlert/NetworkAlert";
+import { AdvancedSwapDetails } from "components/swap/AdvancedSwapDetails";
+import { MouseoverTooltip, MouseoverTooltipContent } from "components/Tooltip";
+import JSBI from "jsbi";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { ArrowDown, CheckCircle, HelpCircle } from "react-feather";
+import { RouteComponentProps } from "react-router-dom";
+import { Text } from "rebass";
+import { ThemeContext } from "styled-components/macro";
+import AddressInputPanel from "../../components/AddressInputPanel";
+import { ButtonConfirmed, ButtonError, ButtonLight, ButtonPrimary } from "../../components/Button";
+import { GreyCard } from "../../components/Card";
+import { AutoColumn } from "../../components/Column";
+import CurrencyInputPanel from "../../components/CurrencyInputPanel";
+import CurrencyLogo from "../../components/CurrencyLogo";
+import Loader from "../../components/Loader";
+import Row, { AutoRow, RowFixed } from "../../components/Row";
+import confirmPriceImpactWithoutFee from "../../components/swap/confirmPriceImpactWithoutFee";
+import ConfirmSwapModal from "../../components/swap/ConfirmSwapModal";
+import { ArrowWrapper, Dots, SwapCallbackError, Wrapper } from "../../components/swap/styled";
+import SwapHeader from "../../components/swap/SwapHeader";
+import TradePrice from "../../components/swap/TradePrice";
+import { SwitchLocaleLink } from "../../components/SwitchLocaleLink";
+import TokenWarningModal from "../../components/TokenWarningModal";
+import { useAllTokens, useCurrency } from "../../hooks/Tokens";
+import { ApprovalState, useApproveCallbackFromTrade } from "../../hooks/useApproveCallback";
+import { V3TradeState } from "../../hooks/useBestV3Trade";
+import useENSAddress from "../../hooks/useENSAddress";
+import { useERC20PermitFromTrade, UseERC20PermitState } from "../../hooks/useERC20Permit";
+import { useSwapCallback } from "../../hooks/useSwapCallback";
+import useToggledVersion, { Version } from "../../hooks/useToggledVersion";
+import { useUSDCValue } from "../../hooks/useUSDCPrice";
+import useWrapCallback, { WrapType } from "../../hooks/useWrapCallback";
+import { useActiveWeb3React } from "../../hooks/web3";
+import { useWalletModalToggle } from "../../state/application/hooks";
+import { Field } from "../../state/swap/actions";
+import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from "../../state/swap/hooks";
+import { useExpertModeManager, useUserSingleHopOnly } from "../../state/user/hooks";
+import { LinkStyledButton, TYPE } from "../../theme";
+import { computeFiatValuePriceImpact } from "../../utils/computeFiatValuePriceImpact";
+import { getTradeVersion } from "../../utils/getTradeVersion";
+import { maxAmountSpend } from "../../utils/maxAmountSpend";
+import { warningSeverity } from "../../utils/prices";
+import AppBody from "../AppBody";
+import { Helmet } from "react-helmet";
+import ReactGA from "react-ga";
+import { ContestArrow, ContestBanner, ContestBannerTitle, ContestBannerTitleIphone, StyledInfo, WrappedAppBody } from "./styled";
 
 export default function Swap({ history }: RouteComponentProps) {
     const { account } = useActiveWeb3React();
@@ -320,9 +320,13 @@ export default function Swap({ history }: RouteComponentProps) {
     return (
         <>
             <Helmet>
-                <meta name={'description'}
-                      content={'Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees.'} />
-                <meta name={'keywords'} content={'best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange'} />
+                <meta
+                    name={"description"}
+                    content={
+                        "Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
+                    }
+                />
+                <meta name={"keywords"} content={"best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"} />
 
                 <title>Algebra — Swap</title>
             </Helmet>
@@ -333,7 +337,21 @@ export default function Swap({ history }: RouteComponentProps) {
                 onDismiss={handleDismissTokenWarning}
             />
             <NetworkAlert />
-            <AppBody>
+            <WrappedAppBody>
+                <ContestBanner href="https://medium.com/@crypto_algebra/the-algebra-swapping-competition-win-an-iphone-13-on-the-algebra-dex-5c48d05fc4a" target="_blank" rel="noreferrer noopener">
+                    <div style={{ width: "100%" }}>
+                        <ContestBannerTitle>
+                            Swap now & win an <ContestBannerTitleIphone>&nbsp;IPHONE 13</ContestBannerTitleIphone>{" "}
+                            <ContestArrow style={{ marginLeft: "1rem" }}>
+                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="30" height="30" rx="12" fill="#72B5FA" />
+                                    <path d="M20.5 9L15 13.5L10 9.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                    <path d="M20.5 15.5L15 20L10 16" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                </svg>
+                            </ContestArrow>
+                        </ContestBannerTitle>
+                    </div>
+                </ContestBanner>
                 <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
                 <Wrapper id="swap-page">
                     <ConfirmSwapModal
@@ -621,7 +639,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         </div>
                     </AutoColumn>
                 </Wrapper>
-            </AppBody>
+            </WrappedAppBody>
             <SwitchLocaleLink />
         </>
     );

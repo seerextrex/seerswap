@@ -176,7 +176,7 @@ export default function RealStakerPage({}) {
     }, [account])
 
     useEffect(() => {
-        fetchStakingFn(account?.toLowerCase())
+        fetchStakingFn(account ?? undefined)
 
         if (!account) return
 

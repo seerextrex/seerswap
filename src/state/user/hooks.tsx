@@ -11,7 +11,7 @@ import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants/routing'
 import { useAllTokens } from '../../hooks/Tokens'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { computePairAddress } from '../../utils/computePairAddress'
+import { computePairAddress, Pair } from '../../utils/computePairAddress'
 import { AppState } from '../index'
 import {
     addSerializedPair,
@@ -354,14 +354,4 @@ export function useTrackedTokenPairs(): [Token, Token][] {
 
         return Object.keys(keyed).map((key) => keyed[key])
     }, [combinedList])
-}
-
-export function useArbitrumAlphaAlert(): [boolean, (arbitrumAlphaAcknowledged: boolean) => void] {
-    const dispatch = useAppDispatch()
-    const arbitrumAlphaAcknowledged = useAppSelector(({ user }) => user.arbitrumAlphaAcknowledged)
-    const setArbitrumAlphaAcknowledged = (arbitrumAlphaAcknowledged: boolean) => {
-        dispatch(updateArbitrumAlphaAcknowledged({ arbitrumAlphaAcknowledged }))
-    }
-
-    return [arbitrumAlphaAcknowledged, setArbitrumAlphaAcknowledged]
 }

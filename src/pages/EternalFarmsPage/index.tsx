@@ -7,17 +7,12 @@ import { StakerEventCard } from '../../components/StakerEventCard'
 import { FarmingType } from '../../models/enums'
 import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
 
-export default function EternalFarmsPage({
-    data,
-    refreshing,
-    fetchHandler
-}: {
+export default function EternalFarmsPage({ data, refreshing, fetchHandler }: {
     data: any
     refreshing: boolean
     fetchHandler: () => any
 }) {
     const [modalForPool, setModalForPool] = useState(null)
-    const [tokenId, setTokenId] = useState('')
 
     useEffect(() => {
         fetchHandler()
@@ -25,15 +20,13 @@ export default function EternalFarmsPage({
 
     return (
         <>
-            <Modal isOpen={modalForPool} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
+            <Modal isOpen={!!modalForPool} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
                 {modalForPool && (
-                    <>
-                        <StakeModal
-                            event={modalForPool}
-                            closeHandler={() => setModalForPool(null)}
-                            farmingType={FarmingType.ETERNAL}
-                        />
-                    </>
+                    <StakeModal
+                        event={modalForPool}
+                        closeHandler={() => setModalForPool(null)}
+                        farmingType={FarmingType.ETERNAL}
+                    />
                 )}
             </Modal>
             <PageWrapper>
@@ -49,7 +42,7 @@ export default function EternalFarmsPage({
                 ) : !refreshing && data.length !== 0 ? (
                     <EventsCards>
                         <EventsCardsRow>
-                            {data.map((event, j) => (
+                            {data.map((event: any, j: number) => (
                                 <StakerEventCard
                                     key={j}
                                     stakeHandler={() => setModalForPool(event)}

@@ -27,7 +27,7 @@ import { useMemo } from 'react'
 import { convertLocalDate } from '../../utils/convertDate'
 
 interface StakerEventCardProps {
-    active: boolean
+    active?: boolean
     skeleton?: any
     now?: number
     refreshing?: boolean

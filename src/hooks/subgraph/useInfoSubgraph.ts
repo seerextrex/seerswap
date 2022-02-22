@@ -460,7 +460,7 @@ export function useInfoSubgraph() {
         }
     }
 
-    const fetchStaking = useCallback(async (id: string) => {
+    const fetchStaking = useCallback(async (id: string | undefined) => {
 
         setStakes(null)
 
@@ -470,7 +470,7 @@ export function useInfoSubgraph() {
             const { data: { factories, stakes }, error } = await stakerClient.query<SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>({
                 query: GET_STAKE(),
                 fetchPolicy: 'network-only',
-                variables: { id }
+                variables: { id: id ? id.toLowerCase() : '' }
             })
 
 

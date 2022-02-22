@@ -14,6 +14,7 @@ import { ExternalLink } from '../../theme'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { AddressText, PaddedColumn, Wrapper } from './styled'
 import { Plural, Trans } from '@lingui/macro'
+import { WrappedCurrency } from '../../models/types'
 
 interface ImportProps {
     tokens: Token[]
@@ -52,7 +53,7 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
                             padding='2rem'
                         >
                             <AutoColumn gap='10px' justify='center'>
-                                <CurrencyLogo currency={token} size={'32px'} />
+                                <CurrencyLogo currency={token as WrappedCurrency} size={'32px'} />
                                 <AutoColumn gap='4px' justify='center'>
                                     <TYPE.body ml='8px' mr='8px' fontWeight={500} fontSize={20}>
                                         {token.symbol}

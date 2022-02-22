@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { TYPE } from 'theme'
 import Loader, { LoadingRows } from 'components/Loader'
 import { AutoColumn } from 'components/Column'
-import { PoolData } from 'state/pools/reducer'
 import { Label } from 'components/Text'
 import { Arrow, ClickableTextStyled, PageButtons, ResponsiveGrid, Wrapper } from './styled'
 import { useHandleSort } from '../../hooks/useHandleSort'
 import DataRow from './DataRow'
+import { FormattedPool } from '../../models/interfaces'
 
 const SORT_FIELD = {
     pool: 'pool',
@@ -43,7 +43,7 @@ export default function FarmsHistoryTable({ eventDatas, maxItems = MAX_ITEMS }: 
 
         return eventDatas ? eventDatas.sort((a, b) => {
                 if (a && b) {
-                    return +a[sortField as keyof PoolData] > +b[sortField as keyof PoolData]
+                    return +a[sortField as keyof FormattedPool] > +b[sortField as keyof FormattedPool]
                         ? (sortDirection ? -1 : 1) * 1
                         : (sortDirection ? -1 : 1) * -1
                 } else {

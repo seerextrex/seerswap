@@ -1,7 +1,6 @@
 import JSBI from 'jsbi'
 import { useState } from 'react'
 import { CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
-import { Pair } from '@uniswap/v2-sdk'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
@@ -25,9 +24,10 @@ import { BIG_INT_ZERO } from '../../constants/misc'
 import { AutoColumnInfo, FixedHeightRow, RowFixedMigrate, StyledV2PositionCard } from './styled'
 
 import Badge, { BadgeVariant } from '../Badge'
+import { Pair } from '../../utils/computePairAddress'
 
 interface PositionCardProps {
-    pair: Pair
+    pair: Pair | null
     showUnwrapped?: boolean
     border?: string
     stakedBalance?: CurrencyAmount<Token> // optional balance to indicate that liquidity is deposited in mining pool

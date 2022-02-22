@@ -54,7 +54,6 @@ export default function RangeSelector({
                     value={ticksAtLimit[Bound.LOWER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
                     onUserInput={onLeftRangeInput}
                     width='100%'
-                    style={{ marginTop: '1rem' }}
                     decrement={isSorted ? getDecrementLower : getIncrementUpper}
                     increment={isSorted ? getIncrementLower : getDecrementUpper}
                     decrementDisabled={ticksAtLimit[Bound.LOWER]}
@@ -66,6 +65,7 @@ export default function RangeSelector({
                     tokenB={currencyB?.symbol}
                     initial={initial}
                     disabled={disabled}
+                    style={{ marginTop: '1rem' }}
                 />
                 <StepCounter
                     value={ticksAtLimit[Bound.UPPER] ? '∞' : rightPrice?.toSignificant(5) ?? ''}

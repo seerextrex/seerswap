@@ -31,7 +31,6 @@ export default function MigrateV2() {
     const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
 
 
-
     // fetch the user's balances of all tracked V2 LP tokens
     const trackedTokenPairs = useTrackedTokenPairs()
 
@@ -145,10 +144,10 @@ export default function MigrateV2() {
                                 <>
                                     {_v2Pairs
                                         .filter(([, pair]) => !!pair)
-                                        .map(([, pair]) => (
+                                        .map(([, pair], index) => (
                                             <MigrateV2PositionCard
-                                                key={(pair as Pair).liquidityToken.address}
-                                                pair={pair as Pair} />
+                                                key={index}
+                                                pair={pair} />
                                         ))}
                                 </>
                             )}
@@ -156,11 +155,11 @@ export default function MigrateV2() {
                                 <>
                                     {_v2SushiPairs
                                         .filter(([, pair]) => !!pair)
-                                        .map(([, pair]) => (
+                                        .map(([, pair], index) => (
                                             <MigrateV2PositionCard
-                                                key={(pair as Pair).liquidityToken.address}
+                                                key={index}
                                                 sushi={true}
-                                                pair={pair as Pair}
+                                                pair={pair}
                                             />
                                         ))}
                                 </>

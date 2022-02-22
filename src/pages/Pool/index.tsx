@@ -6,18 +6,18 @@ import PositionList from 'components/PositionList'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { useV3Positions } from 'hooks/useV3Positions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useUserHideClosedPositions } from 'state/user/hooks'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from 'theme'
-import { PositionDetails } from 'types/position'
 import { Helmet } from 'react-helmet'
 import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 import Loader from '../../components/Loader'
 import { ButtonRow, FilterPanelWrapper, MainContentWrapper, MigrateButtonPrimary, NoLiquidity, PageWrapper, ResponsiveButtonPrimary, TitleRow } from './styleds'
 import FilterPanelItem from './FilterPanelItem'
+import { PositionPool } from '../../models/interfaces'
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React()
@@ -29,7 +29,7 @@ export default function Pool() {
 
     const { positions, loading: positionsLoading } = useV3Positions(account)
 
-    const [openPositions, closedPositions] = positions?.reduce<[PositionDetails[], PositionDetails[]]>(
+    const [openPositions, closedPositions] = positions?.reduce<[PositionPool[], PositionPool[]]>(
         (acc, p) => {
             acc[p.liquidity?.isZero() ? 1 : 0].push(p)
             return acc
@@ -70,7 +70,7 @@ export default function Pool() {
 
     const showConnectAWallet = Boolean(!account)
 
-    let chainSymbol: string
+    let chainSymbol
 
     if (chainId === 137) {
         chainSymbol = 'MATIC'

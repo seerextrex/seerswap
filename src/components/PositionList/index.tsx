@@ -1,11 +1,11 @@
 import PositionListItem from 'components/PositionListItem'
 import React, { useMemo } from 'react'
 import { Trans } from '@lingui/macro'
-import { PositionDetails } from 'types/position'
 import { DesktopHeader, MobileHeader } from './styled'
+import { PositionPool } from '../../models/interfaces'
 
 type PositionListProps = React.PropsWithChildren<{
-    positions: PositionDetails[]
+    positions: PositionPool[]
 }>
 
 export default function PositionList({ positions }: PositionListProps) {

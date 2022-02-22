@@ -160,21 +160,8 @@ export type TransactionInfo =
     | RemoveLiquidityV3TransactionInfo
     | SubmitProposalTransactionInfo
 
-export const addTransaction = createAction<{
-    chainId: number
-    hash: string
-    from: string
-    info: TransactionInfo
-}>('transactions/addTransaction')
+export const addTransaction = createAction<{ chainId: number; hash: string; approval: any, summary: any, claim: any, from: string; info?: TransactionInfo }>('transactions/addTransaction')
 export const clearAllTransactions = createAction<{ chainId: number }>('transactions/clearAllTransactions')
 export const clearOneTransaction = createAction<{ chainId: number; hash: string }>('transactions/clearOneTransaction')
-export const finalizeTransaction = createAction<{
-    chainId: number
-    hash: string
-    receipt: SerializableTransactionReceipt
-}>('transactions/finalizeTransaction')
-export const checkedTransaction = createAction<{
-    chainId: number
-    hash: string
-    blockNumber: number
-}>('transactions/checkedTransaction')
+export const finalizeTransaction = createAction<{ chainId: number; hash: string; receipt: SerializableTransactionReceipt }>('transactions/finalizeTransaction')
+export const checkedTransaction = createAction<{ chainId: number; hash: string; blockNumber: number }>('transactions/checkedTransaction')

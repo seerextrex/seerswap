@@ -4,7 +4,6 @@ import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { usePool } from 'hooks/usePools'
 import { useToken } from 'hooks/Tokens'
 import { HideSmall, SmallOnly } from 'theme'
-import { PositionDetails } from 'types/position'
 import { Price, Token } from '@uniswap/sdk-core'
 import { formatTickPrice } from 'utils/formatTickPrice'
 import Loader from 'components/Loader'
@@ -17,9 +16,10 @@ import { Bound } from 'state/mint/v3/actions'
 import { ArrowRight } from 'react-feather'
 import usePrevious from '../../hooks/usePrevious'
 import { DataText, DoubleArrow, ExtentsText, LinkRow, OnFarmingBadge, PositionHeader, PrimaryPositionIdData, RangeLineItem, RangeText, StatusBadge, StatusRow } from './styled'
+import { PositionPool } from '../../models/interfaces'
 
 interface PositionListItemProps {
-    positionDetails: PositionDetails;
+    positionDetails: PositionPool;
 }
 
 export function getPriceOrderingFromPositionForUI(position?: Position): {
@@ -80,21 +80,10 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 }
 
 export default function PositionListItem({ positionDetails }: PositionListItemProps) {
-    const {
-        token0: token0Address,
-        token1: token1Address,
-        fee: feeAmount,
-        liquidity,
-        tickLower,
-        tickUpper,
-        onFarming
-    } = positionDetails || {}
-
     const prevPositionDetails = usePrevious({ ...positionDetails })
     const {
         token0: _token0Address,
         token1: _token1Address,
-        fee: _feeAmount,
         liquidity: _liquidity,
         tickLower: _tickLower,
         tickUpper: _tickUpper,

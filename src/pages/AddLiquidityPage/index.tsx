@@ -30,6 +30,7 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { t } from '@lingui/macro'
 import { SupportedChainId } from '../../constants/chains'
 import { ArrowLeft, Download } from 'react-feather'
+// @ts-ignore
 import PDFAlgebra from '../../assets/pdf/Algebra_Tech_Paper.pdf'
 import SettingsTab from '../../components/Settings'
 import { RowFixed } from '../../components/Row'
@@ -401,23 +402,7 @@ export default function AddLiquidityPage({
     const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
     const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-    useEffect(() => {
-        console.log(
-            'TIKSSS',
-            pricesAtTicks?.LOWER?.invert().toSignificant(5),
-            pricesAtTicks?.UPPER?.invert().toSignificant(5),
-            pricesAtTicks?.LOWER?.toSignificant(5),
-            pricesAtTicks?.UPPER?.toSignificant(5)
-        )
-    }, [pricesAtTicks])
-
-    const {
-        getDecrementLower,
-        getIncrementLower,
-        getDecrementUpper,
-        getIncrementUpper,
-        getSetFullRange
-    } = useRangeHopCallbacks(
+    const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } = useRangeHopCallbacks(
         baseCurrency ?? undefined,
         quoteCurrency ?? undefined,
         dynamicFee,
@@ -512,29 +497,15 @@ export default function AddLiquidityPage({
                                             <span style={{ userSelect: 'none' }}>?</span>
                                             <TechPaperHint>
                                                 <TechPaperHintTitle>
-                                                    <span
-                                                        style={{
-                                                            fontSize: '16px',
-                                                            fontWeight: 600
-                                                        }}
-                                                    >
+                                                    <span style={{ fontSize: '16px', fontWeight: 600 }}>
                                                         📄 Tech paper
                                                     </span>
                                                 </TechPaperHintTitle>
-                                                <div
-                                                    style={{
-                                                        fontSize: '14px',
-                                                        lineHeight: '18px',
-                                                        marginTop: '10px'
-                                                    }}
-                                                >
+                                                <div style={{ fontSize: '14px', lineHeight: '18px', marginTop: '10px' }}>
                                                     Check out how dynamic fee is calculated
                                                 </div>
                                                 <div style={{ marginTop: '10px', width: '100%' }}>
-                                                    <TechPaperDownloadButton
-                                                        download='Algebra-Tech-Paper.pdf'
-                                                        href={PDFAlgebra}
-                                                    >
+                                                    <TechPaperDownloadButton download='Algebra-Tech-Paper.pdf' href={PDFAlgebra}>
                                                         <span>
                                                             <Download size={16} color={'white'} />
                                                         </span>
@@ -586,20 +557,9 @@ export default function AddLiquidityPage({
                                     </PoolInfoItem>
                                 )}
                             </PoolInfo>
-
                             {account && (
                                 <>
-                                    <div
-                                        style={
-                                            !startPriceTypedValue && !price
-                                                ? {
-                                                    opacity: 0.2,
-                                                    pointerEvents: 'none',
-                                                    userSelect: 'none'
-                                                }
-                                                : {}
-                                        }
-                                    >
+                                    <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: 'none', userSelect: 'none' } : {}}>
                                         <Title>
                                             {outOfRange && (
                                                 <Warning>
@@ -643,7 +603,7 @@ export default function AddLiquidityPage({
                                                         />
                                                     </PriceRangeChart>
                                                 )}
-                                            <PriceRangeInputs initial={noLiquidity}>
+                                            <PriceRangeInputs initial={!!noLiquidity}>
                                                 <RangeSelector
                                                     priceLower={priceLower}
                                                     priceUpper={priceUpper}
@@ -657,7 +617,7 @@ export default function AddLiquidityPage({
                                                     currencyB={quoteCurrency}
                                                     feeAmount={dynamicFee}
                                                     ticksAtLimit={ticksAtLimit}
-                                                    initial={noLiquidity}
+                                                    initial={!!noLiquidity}
                                                     disabled={!startPriceTypedValue && !price}
                                                 />
                                                 {!noLiquidity && (
@@ -851,9 +811,7 @@ export default function AddLiquidityPage({
                                                 <TokenItemBottomInputWrapper>
                                                     <div style={{ width: '100%' }}>
                                                         <CurrencyInputPanel
-                                                            value={
-                                                                formattedAmounts[Field.CURRENCY_B]
-                                                            }
+                                                            value={formattedAmounts[Field.CURRENCY_B]}
                                                             onUserInput={onFieldBInput}
                                                             onMax={() => {
                                                                 onFieldBInput(
@@ -862,9 +820,7 @@ export default function AddLiquidityPage({
                                                                         ]?.toExact() ?? ''
                                                                 )
                                                             }}
-                                                            showMaxButton={
-                                                                !atMaxAmounts[Field.CURRENCY_B]
-                                                            }
+                                                            showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                                                             fiatValue={usdcValues[Field.CURRENCY_B]}
                                                             currency={currencies[Field.CURRENCY_B]}
                                                             id='add-liquidity-input-tokenb'
@@ -881,6 +837,7 @@ export default function AddLiquidityPage({
                                                             }
                                                             shallow={true}
                                                             page={'pool'}
+                                                            swap={false}
                                                         />
                                                     </div>
                                                     {showApprovalB && !depositBDisabled && (

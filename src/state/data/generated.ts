@@ -5923,7 +5923,7 @@ export type FetchPoolQuery = (
   { __typename?: 'Query' }
   & { pools: Array<(
     { __typename?: 'Pool' }
-    & Pick<Pool, 'id' | 'fee' | 'sqrtPrice' | 'liquidity' | 'tick' | 'feesUSD'>
+    & Pick<Pool, 'id' | 'fee' | 'sqrtPrice' | 'liquidity' | 'tick' | 'feesUSD' | 'untrackedFeesUSD'>
     & { token0: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
@@ -6337,6 +6337,7 @@ export const FetchPoolDocument = `
     liquidity
     tick
     feesUSD
+    untrackedFeesUSD
   }
 }
     `;

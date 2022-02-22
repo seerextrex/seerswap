@@ -13,6 +13,7 @@ import { FiatValue } from './FiatValue'
 import Loader from '../Loader'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import { Aligner, AutoColumnStyled, Container, CurrencySelect, FiatRow, FixedContainer, InputPanel, InputRow, MaxButton, NumericalInputStyled, StyledTokenName } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 interface CurrencyInputPanelProps {
     value: string
@@ -21,7 +22,7 @@ interface CurrencyInputPanelProps {
     showMaxButton: boolean
     label?: ReactNode
     onCurrencySelect?: (currency: Currency) => void
-    currency?: Currency | null
+    currency?: WrappedCurrency | null
     hideBalance?: boolean
     pair?: Pair | null
     hideInput?: boolean
@@ -102,12 +103,12 @@ export default function CurrencyInputPanel({
 
     }, [balance])
 
-    if (currency && currency.symbol === 'MATIC') {
-        if (chainId === 137) {
-            currency.symbol = 'MATIC'
-            currency.name = 'Matic'
-        }
-    }
+    // if (currency && currency.symbol === 'MATIC') {
+    //     if (chainId === 137) {
+    //         currency.symbol = 'MATIC'
+    //         currency.name = 'Matic'
+    //     }
+    // }
 
     return (
         <InputPanel id={id} hideInput={hideInput} {...rest}>

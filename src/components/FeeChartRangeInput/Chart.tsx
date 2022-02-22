@@ -87,18 +87,18 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             } else {
                 if (sameDays.length !== 0) {
                     res.push(sameDays.reduce((prev, cur) => (
-                            {
-                                timestamp: cur.timestamp,
-                                value:
-                                    span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || type === ChartType.PRICE
-                                        ? prev.value + cur.value
-                                        : Math.max(prev.value, cur.value)
-                            }), {
-                            value: 0,
-                            timestamp: new Date()
-                        }
+                        {// @ts-ignore
+                            timestamp: cur.timestamp,
+                            value:
+                                span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || type === ChartType.PRICE
+                                    // @ts-ignore
+                                    ? prev.value + cur.value
+                                    // @ts-ignore
+                                    : Math.max(prev.value, cur.value)
+                        }), { value: 0, timestamp: new Date() }
                     ))
                     if (type === ChartType.FEES || type === ChartType.PRICE) {
+                        // @ts-ignore
                         res[res.length - 1].value = res[res.length - 1].value / sameDays.length
                     }
                 } else {
@@ -115,10 +115,13 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             res.push(sameDays.reduce(
                 (prev, cur) => {
                     return {
+                        // @ts-ignore
                         timestamp: cur.timestamp,
                         value:
                             span === ChartSpan.DAY || type === ChartType.FEES || type === ChartType.VOLUME || type === ChartType.PRICE
+                                // @ts-ignore
                                 ? prev.value + cur.value
+                                // @ts-ignore
                                 : Math.max(prev.value, cur.value)
                     }
                 }, {
@@ -126,6 +129,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     timestamp: new Date()
                 }))
             if (type === ChartType.FEES || type === ChartType.PRICE) {
+                // @ts-ignore
                 res[res.length - 1].value = res[res.length - 1].value / sameDays.length
             }
         }
@@ -221,6 +225,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     // useEffect(() => console.log(_chartData, previousData, xTicks), [_chartData])
 
     const xScale = useMemo(() => scaleTime()
+            // @ts-ignore
             .domain([min(_chartData, (d) => new Date(d.timestamp)), max(_chartData, (d) => new Date(d.timestamp))])
             .range([0, width]),
         [span, _chartData])
@@ -261,8 +266,11 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .attr('fill', '#b0b0b0')
 
     if (InfoRectGroup) {
+        // @ts-ignore
         InfoRectGroup.node().append(InfoRect.node())
+        // @ts-ignore
         InfoRectGroup.node().append(InfoRectFeeText.node())
+        // @ts-ignore
         InfoRectGroup.node().append(InfoRectDateText.node())
     }
 
@@ -313,8 +321,11 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         xAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
 
         const y = scaleLinear()
+            // @ts-ignore
             .domain([
+                // @ts-ignore
                 min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
+                // @ts-ignore
                 max(_chartData, (d) => +d.value + d.value * 0.2)
             ])
             .range([height, 0])
@@ -361,12 +372,15 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .attr('fill', 'none')
             .attr('stroke', '#63c0f8')
             .attr('stroke-width', 2)
+            // @ts-ignore
             .attr('d', line()
                 .curve(curveBumpX)
                 .x(function(d) {
+                    // @ts-ignore
                     return xScale(d.timestamp)
                 })
                 .y(function(d) {
+                    // @ts-ignore
                     return y(d.value)
                 })
             )
@@ -382,10 +396,14 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .append('path')
             .datum(_chartData)
             .attr('fill', 'url(#gradient)')
+            // @ts-ignore
             .attr('d', area()
                 .curve(curveBumpX)
+                // @ts-ignore
                 .x((d) => xScale(d.timestamp))
+                // @ts-ignore
                 .y0((d) => y(min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
+                // @ts-ignore
                 .y1((d) => y(d.value))
             )
             .style('opacity', 0)
@@ -399,6 +417,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .selectAll('.tick')
             .nodes()
             .map((el, i) => {
+                // @ts-ignore
                 const xTranslate = select(el)
                     .attr('transform')
                     .match(/\((.*?)\)/)[1]
@@ -439,6 +458,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                             : date.getSeconds()}`
                         : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
                     )
+                    // @ts-ignore
                     Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
                 }
 
@@ -451,6 +471,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     .on('mouseover', hoverHandle)
                     .on('touchmove', hoverHandle)
 
+                // @ts-ignore
                 svg.node().append(rect.node())
             })
 

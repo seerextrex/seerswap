@@ -1,5 +1,5 @@
 import { Percent, Token } from '@uniswap/sdk-core'
-import { L2_CHAIN_IDS } from 'constants/chains'
+import { L2_CHAIN_IDS, SupportedChainId } from 'constants/chains'
 import { SupportedLocale } from 'constants/locales'
 import { L2_DEADLINE_FROM_NOW } from 'constants/misc'
 import JSBI from 'jsbi'
@@ -207,11 +207,9 @@ export function useUserSlippageToleranceWithDefault(defaultSlippageTolerance: Pe
 }
 
 export function useUserTransactionTTL(): [number, (slippage: number) => void] {
-    const { chainId } = useActiveWeb3React()
+
     const dispatch = useAppDispatch()
-    const userDeadline = useAppSelector((state) => state.user.userDeadline)
-    const onL2 = Boolean(chainId && L2_CHAIN_IDS.includes(chainId))
-    const deadline = onL2 ? L2_DEADLINE_FROM_NOW : userDeadline
+    const deadline =  useAppSelector((state) => state.user.userDeadline)
 
     const setUserDeadline = useCallback(
         (userDeadline: number) => {

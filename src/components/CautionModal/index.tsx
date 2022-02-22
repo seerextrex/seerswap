@@ -21,7 +21,7 @@ export default function CautionModal() {
     }, [])
 
     return (
-        <Modal isOpen={cautionModal}>
+        <Modal isOpen={cautionModal} onDismiss={() => {}}>
             <CautionModalInner>
                 <div style={{ textAlign: 'center', marginBottom: '2rem', fontWeight: 600 }}>
                     Welcome to Algebra, the first concentrated liquidity DEX on Polygon!

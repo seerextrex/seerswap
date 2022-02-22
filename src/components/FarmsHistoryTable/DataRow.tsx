@@ -1,6 +1,9 @@
 import { LabelStyled, ResponsiveGrid } from './styled'
 import CurrencyLogo from '../CurrencyLogo'
 import React from 'react'
+import { Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from '../../constants/chains'
+import { WrappedCurrency } from '../../models/types'
 
 export default function DataRow({ eventData, index }: { eventData: any; index: number }) {
     return (
@@ -9,11 +12,11 @@ export default function DataRow({ eventData, index }: { eventData: any; index: n
                 <LabelStyled fontWeight={400}>{index + 1}</LabelStyled>
                 <LabelStyled fontWeight={400}>
                     <div>
-                        <CurrencyLogo size='35px' currency={{ address: eventData.pool.token0.address }} />
+                        <CurrencyLogo size='35px' currency={ new Token(SupportedChainId.POLYGON, eventData.pool.token0.address, 18) as WrappedCurrency} />
                         <CurrencyLogo
                             size='35px'
                             style={{ marginLeft: '-10px' }}
-                            currency={{ address: eventData.pool.token1.address }}
+                            currency={ new Token(SupportedChainId.POLYGON, eventData.pool.token1.address, 18) as WrappedCurrency}
                         />
                     </div>
                     <div style={{ marginLeft: '10px' }}>
@@ -24,7 +27,7 @@ export default function DataRow({ eventData, index }: { eventData: any; index: n
                 <LabelStyled end={1} fontWeight={400}>
                     <CurrencyLogo
                         size='35px'
-                        currency={{ address: eventData.rewardToken.address, symbol: eventData.rewardToken.symbol }}
+                        currency={ new Token(SupportedChainId.POLYGON, eventData.rewardToken.address, 18, eventData.rewardToken.symbol) as WrappedCurrency}
                     />
                     <div style={{ marginLeft: '10px' }}>
                         <div>{eventData.reward}</div>
@@ -34,7 +37,7 @@ export default function DataRow({ eventData, index }: { eventData: any; index: n
                 <LabelStyled end={1} fontWeight={400}>
                     <CurrencyLogo
                         size='35px'
-                        currency={{ address: eventData.bonusRewardToken.address, symbol: eventData.bonusRewardToken.symbol }}
+                        currency={ new Token(SupportedChainId.POLYGON, eventData.bonusRewardToken.address, 18, eventData.bonusRewardToken.symbol) as WrappedCurrency}
                     />
                     <div style={{ marginLeft: '10px' }}>
                         <div>{eventData.bonusReward}</div>

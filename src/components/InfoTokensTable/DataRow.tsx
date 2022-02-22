@@ -8,6 +8,9 @@ import { formatDollarAmount } from '../../utils/numbers'
 import React from 'react'
 import { RowFixed } from '../Row'
 import Percent from '../Percent'
+import { Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from '../../constants/chains'
+import { WrappedCurrency } from '../../models/types'
 
 interface DataRowProps {
     tokenData: FormattedToken;
@@ -27,10 +30,7 @@ export const DataRow = ({ tokenData, index }: DataRowProps) => {
                 >
                     <CurrencyRowWrapper>
                         <CurrencyRow>
-                            <ResponsiveLogo currency={{
-                                address: tokenData.address,
-                                symbol: tokenData.symbol
-                            }} />
+                            <ResponsiveLogo currency={new Token(SupportedChainId.POLYGON, tokenData.address, 18, tokenData.symbol) as WrappedCurrency} />
                         </CurrencyRow>
                         <MediumOnly>
                             <Label>{tokenData.symbol}</Label>

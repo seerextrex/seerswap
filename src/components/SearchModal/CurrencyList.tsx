@@ -17,6 +17,7 @@ import { LightGreyCard } from 'components/Card'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
 import { FixedContentRow, MenuItem, Tag, TagContainer } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 function currencyKey(currency: Currency): string {
     return currency.isToken ? currency.address : 'MATIC'
@@ -80,7 +81,7 @@ function CurrencyRow({
             disabled={isSelected}
             selected={otherSelected}
         >
-            <CurrencyLogo currency={currency} size={'24px'} />
+            <CurrencyLogo currency={currency as WrappedCurrency} size={'24px'} />
             <Column>
                 <Text title={currency.name} fontWeight={500}>
                     {currency.symbol}

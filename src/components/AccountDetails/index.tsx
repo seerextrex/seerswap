@@ -31,6 +31,7 @@ import {
     WalletName,
     YourAccount
 } from './styled'
+import { EthereumWindow } from '../../models/types'
 
 function renderTransactions(transactions: string[]) {
     return (
@@ -50,17 +51,12 @@ interface AccountDetailsProps {
     openOptions: () => void
 }
 
-export default function AccountDetails({
-    toggleWalletModal,
-    pendingTransactions,
-    confirmedTransactions,
-    ENSName
-}: AccountDetailsProps) {
+export default function AccountDetails({ toggleWalletModal, pendingTransactions, confirmedTransactions, ENSName }: AccountDetailsProps) {
     const { chainId, account, connector } = useActiveWeb3React()
     const dispatch = useAppDispatch()
 
     function formatConnectorName() {
-        const { ethereum } = window
+        const { ethereum } = window as unknown as EthereumWindow
         const isMetaMask = !!(ethereum && ethereum.isMetaMask)
         const name = Object.keys(SUPPORTED_WALLETS)
             .filter(
@@ -105,7 +101,7 @@ export default function AccountDetails({
                             <AccountGroupingRow>
                                 {formatConnectorName()}
                                 <div>
-                                    {connector !== injected && connector !== walletlink && (
+                                    {connector !== injected && (
                                         <WalletAction
                                             style={{
                                                 fontSize: '.825rem',

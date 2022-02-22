@@ -1,4 +1,3 @@
-import { Token } from '@uniswap/sdk-core'
 import React from 'react'
 // @ts-ignore
 import MaticLogo from '../../assets/images/matic-logo.png'
@@ -8,6 +7,7 @@ import { useActiveWeb3React } from '../../hooks/web3'
 import { stringToColour } from '../../utils/stringToColour'
 import { specialTokens } from './SpecialTokens'
 import { StyledImgLogo, StyledLogo } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 export const getTokenLogoURL = (address: string) =>
     `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`
@@ -18,7 +18,7 @@ export default function CurrencyLogo({
     style,
     ...rest
 }: {
-    currency?: Token
+    currency?: WrappedCurrency
     size?: string
     style?: React.CSSProperties
 }) {

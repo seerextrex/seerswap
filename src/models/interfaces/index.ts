@@ -54,3 +54,4 @@ export type {
     FarmingEventString,
     Aprs
 } from './farming'
+export type { PositionPool } from './pool'

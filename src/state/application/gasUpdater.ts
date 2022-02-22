@@ -3,6 +3,7 @@ import { useGasPrice } from '../../hooks/useGasPrice'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { updateGasPrice } from './actions'
+import { SupportedChainId } from '../../constants/chains'
 
 export default function GasUpdater(): null {
 
@@ -11,7 +12,7 @@ export default function GasUpdater(): null {
     const { chainId } = useActiveWeb3React()
 
     const block = useAppSelector((state) => {
-        return state.application.blockNumber[chainId]
+        return state.application.blockNumber[chainId ?? SupportedChainId.POLYGON]
     })
 
     const { fetchGasPrice, gasPrice, gasPriceLoading } = useGasPrice()

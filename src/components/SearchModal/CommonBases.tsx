@@ -8,6 +8,7 @@ import CurrencyLogo from '../CurrencyLogo'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { SupportedChainId } from '../../constants/chains'
 import { BaseWrapper, MobileWrapper } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 export default function CommonBases({
     onSelect,
@@ -17,7 +18,7 @@ export default function CommonBases({
     onSelect: (currency: Currency) => void
 }) {
 
-    const bases = COMMON_BASES[SupportedChainId.POLYGON]
+    const bases = COMMON_BASES[SupportedChainId.POLYGON] as WrappedCurrency[]
 
     const { chainId } = useActiveWeb3React()
 
@@ -29,13 +30,13 @@ export default function CommonBases({
                 </Text>
             </AutoRow>
             <AutoRow gap='4px'>
-                {bases.map((currency: Currency) => {
+                {bases.map((currency) => {
                     const isSelected = selectedCurrency?.equals(currency)
                     return (
                         <BaseWrapper
                             onClick={() => !isSelected && onSelect(currency)}
                             disable={isSelected}
-                            key={currencyId(currency, chainId)}
+                            key={currencyId(currency, chainId || SupportedChainId.POLYGON)}
                         >
                             <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
                             <Text fontWeight={500} fontSize={16}>

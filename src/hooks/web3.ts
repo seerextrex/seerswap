@@ -1,5 +1,4 @@
 import { Web3Provider } from '@ethersproject/providers'
-import { useSafeAppConnection } from '@gnosis.pm/safe-apps-web3-react'
 import { useWeb3React } from '@web3-react/core'
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
 import { useEffect, useState } from 'react'

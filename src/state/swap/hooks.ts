@@ -35,7 +35,7 @@ export function useSwapActionHandlers(): {
 
     const { chainId } = useActiveWeb3React()
 
-    let symbol
+    let symbol: string
 
     if (chainId === 137) {
         symbol = 'MATIC'

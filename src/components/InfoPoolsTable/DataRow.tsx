@@ -8,6 +8,8 @@ import { TYPE } from 'theme'
 import { feeTierPercent } from 'utils'
 import { RowFixed } from 'components/Row'
 import { FormattedPool } from '../../models/interfaces'
+import { Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from '../../constants/chains'
 
 interface DataRowProps {
     poolData: FormattedPool;
@@ -33,8 +35,8 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                 <LabelStyled fontWeight={400}>{index + 1}</LabelStyled>
                 <LabelStyled fontWeight={400}>
                     <RowFixed>
-                        <DoubleCurrencyLogo address0={poolData.token0.address}
-                                            address1={poolData.token1.address} />
+                        <DoubleCurrencyLogo currency0={new Token(SupportedChainId.POLYGON, poolData.token0.address, 18)}
+                                            currency1={new Token(SupportedChainId.POLYGON, poolData.token1.address, 18)} />
                         <LinkWrapper href={`https://polygonscan.com/address/${poolData.address}`}
                                      rel='noopener noreferrer'
                                      target='_blank'>

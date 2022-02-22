@@ -95,19 +95,22 @@ export default function Header() {
             <HeaderControls>
                 <HeaderElement>
                     <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-                        <NetworkCard />
-                        {(chainId === 137 && account && userEthBalance) || networkFailed ? (
-                            <BalanceText
-                                style={{ flexShrink: 0 }}
-                                pl='0.75rem'
-                                pt='0.75rem'
-                                pb='0.75rem'
-                                pr='0.5rem'
-                                fontWeight={500}
-                            >
-                                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
-                            </BalanceText>
-                        ) : null}
+                        {account &&
+                            <>
+                                <NetworkCard />
+                                {chainId === 137 && account && userEthBalance || networkFailed ? (
+                                    <BalanceText
+                                        style={{ flexShrink: 0 }}
+                                        pl='0.75rem'
+                                        pt='0.75rem'
+                                        pb='0.75rem'
+                                        pr='0.5rem'
+                                        fontWeight={500}
+                                    >
+                                        {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
+                                    </BalanceText>
+                                ) : null}
+                            </>}
                         <Web3Status />
                     </AccountElement>
                 </HeaderElement>

@@ -74,9 +74,9 @@ export default function CurrencyInputPanel({
     const [modalOpen, setModalOpen] = useState(false)
     const { account } = useActiveWeb3React()
 
-    const balance = useCurrencyBalance(account ?? undefined, currency)
+    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
 
-    const currentPrice = useUSDCPrice(currency)
+    const currentPrice = useUSDCPrice(currency ?? undefined)
 
     const handleDismissSearch = useCallback(() => {
         setModalOpen(false)
@@ -184,12 +184,7 @@ export default function CurrencyInputPanel({
                                                 '...' +
                                                 currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
                                             ) : currency ? (
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center'
-                                                    }}
-                                                >
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
                           <span>
                             {
                                 shallow && showBalance && balance && page === 'addLiq' && +(balance.toSignificant(4)) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
@@ -198,25 +193,12 @@ export default function CurrencyInputPanel({
                                         : currency.symbol}
                           </span>
                                                     {showBalance && balance && !shallow ? (
-                                                        <span
-                                                            style={{
-                                                                position: 'absolute',
-                                                                right: 0,
-                                                                fontSize: '13px'
-                                                            }}
-                                                            title={balance.toExact()}
-                                                        >
+                                                        <span style={{ position: 'absolute', right: 0, fontSize: '13px' }} title={balance.toExact()}>
                               {balanceString}
                             </span>
                                                     ) : (
-                                                        showBalance &&
-                                                        !balance && (
-                                                            <span
-                                                                style={{
-                                                                    position: 'absolute',
-                                                                    right: 0
-                                                                }}
-                                                            >
+                                                        showBalance && !balance && (
+                                                            <span style={{ position: 'absolute', right: 0 }}>
                                 <Loader />
                               </span>
                                                         )

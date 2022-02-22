@@ -87,7 +87,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         if (account) {
             fetchPositionsOnFarmerFn(account)
         }
-    }, [])
+    }, [account])
 
 
     const tokenIdsArgs = useMemo(() => {

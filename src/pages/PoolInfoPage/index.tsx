@@ -12,6 +12,7 @@ import LiquidityBarChart from '../../components/LiquidityBarChart'
 import { useToken } from '../../hooks/Tokens'
 import { BodyWrapper, ChartWrapper, LoaderMock, Wrapper } from './styled'
 import { ChartSpan, ChartType } from '../../models/enums'
+import { ChartToken } from '../../models/enums/poolInfoPage'
 
 export default function PoolInfoPage({ match: { params: { id } } }: RouteComponentProps<{ id?: string }>) {
 
@@ -22,16 +23,11 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn }
     } = useInfoSubgraph()
 
-    const {
-        fetchTicksSurroundingPrice: {
-            ticksResult,
-            ticksLoading,
-            fetchTicksSurroundingPriceFn
-        }
-    } = useInfoTickData()
+    const { fetchTicksSurroundingPrice: { ticksResult, ticksLoading, fetchTicksSurroundingPriceFn } } = useInfoTickData()
 
     const [span, setSpan] = useState(ChartSpan.DAY)
     const [type, setType] = useState(ChartType.VOLUME)
+    const [token, settoken] = useState(ChartToken.TOKEN0)
 
     const startTimestamp = useMemo(() => {
         const day = dayjs()
@@ -62,6 +58,10 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
         {
             type: ChartType.LIQUIDITY,
             title: 'Liquidity'
+        },
+        {
+            type: ChartType.PRICE,
+            title: 'Price'
         }
     ]
 
@@ -108,7 +108,6 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
         }
     }, [feesResult, chartPoolData, ticksResult])
 
-
     const refreshing = useMemo(() => {
         if (!feesLoading && !chartPoolDataLoading && !ticksLoading) return false
         return feesLoading || chartPoolDataLoading || ticksLoading
@@ -116,7 +115,6 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
 
     const _token0 = useToken(poolResult?.token0.id)
     const _token1 = useToken(poolResult?.token1.id)
-
     return (
         <Wrapper>
             {poolResult ? (
@@ -125,7 +123,7 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
                         token0={_token0}
                         token1={_token1}
                         fee={poolResult.fee}
-                        collectedFees={poolResult.feesUSD}
+                        collectedFees={+poolResult.feesUSD < 1 ? poolResult.untrackedFeesUSD : poolResult.feesUSD}
                     />
                     <BodyWrapper>
                         <ChartWrapper>
@@ -151,6 +149,10 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
                                     id={id || ''}
                                     span={span}
                                     type={type}
+                                    token={token}
+                                    token0={_token0}
+                                    token1={_token1}
+                                    setToken={settoken}
                                 />
                             )}
                         </ChartWrapper>

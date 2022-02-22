@@ -42,6 +42,7 @@ import {
     TotalStatSubgraph
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces/responseSubgraph'
+import { log } from 'util'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
@@ -126,10 +127,7 @@ export function useInfoSubgraph() {
         try {
             setPoolsLoading(true)
 
-            const {
-                data: { pools: topPools },
-                error
-            } = (await dataClient.query<SubgraphResponse<PoolAddressSubgraph[]>>({
+            const { data: { pools: topPools }, error } = (await dataClient.query<SubgraphResponse<PoolAddressSubgraph[]>>({
                 query: TOP_POOLS,
                 fetchPolicy: 'network-only'
             }))
@@ -141,10 +139,7 @@ export function useInfoSubgraph() {
 
             const poolsAddresses = topPools.map(el => el.id)
 
-            const {
-                data: { pools },
-                error: _error2
-            } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
+            const { data: { pools }, error: _error2 } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
                 query: POOLS_FROM_ADDRESSES(undefined, poolsAddresses),
                 fetchPolicy: 'network-only'
             })
@@ -234,10 +229,7 @@ export function useInfoSubgraph() {
         try {
             setTokensLoading(true)
 
-            const {
-                data: { tokens: topTokens },
-                error
-            } = (await dataClient.query<SubgraphResponse<TokenAddressSubgraph[]>>({
+            const { data: { tokens: topTokens }, error } = (await dataClient.query<SubgraphResponse<TokenAddressSubgraph[]>>({
                 query: TOP_TOKENS,
                 fetchPolicy: 'network-only'
             }))
@@ -249,10 +241,7 @@ export function useInfoSubgraph() {
 
             const tokenAddresses: string[] = topTokens.map(el => el.id)
 
-            const {
-                data: { tokens },
-                error: _error
-            } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
+            const { data: { tokens }, error: _error } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
                 query: TOKENS_FROM_ADDRESSES(undefined, tokenAddresses),
                 fetchPolicy: 'network-only'
             })
@@ -348,10 +337,7 @@ export function useInfoSubgraph() {
 
         try {
 
-            const {
-                data: { tokens },
-                error: error
-            } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
+            const { data: { tokens }, error: error } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
                 query: TOKENS_FROM_ADDRESSES(blockNumber, tokenAddresses),
                 fetchPolicy: 'network-only'
             })
@@ -369,10 +355,7 @@ export function useInfoSubgraph() {
 
         try {
 
-            const {
-                data: { pools },
-                error
-            } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
+            const { data: { pools }, error } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
                 query: POOLS_FROM_ADDRESSES(blockNumber, tokenAddresses),
                 fetchPolicy: 'network-only'
             })
@@ -405,12 +388,10 @@ export function useInfoSubgraph() {
 
     async function fetchLastEntry(pool: string): Promise<FeeSubgraph[] | string> {
         try {
-            const {
-                data: { feeHourDatas },
-                error
-            } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
-                query: CHART_FEE_LAST_ENTRY(pool),
-                fetchPolicy: 'network-only'
+            const { data: { feeHourDatas }, error } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
+                query: CHART_FEE_LAST_ENTRY(),
+                fetchPolicy: 'network-only',
+                variables: { pool }
             })
 
             if (error) return `${error.name} ${error.message}`
@@ -424,12 +405,10 @@ export function useInfoSubgraph() {
 
     async function fetchLastNotEmptyEntry(pool: string, timestamp: string): Promise<FeeSubgraph[] | string> {
         try {
-            const {
-                data: { feeHourDatas },
-                error
-            } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
-                query: CHART_FEE_LAST_NOT_EMPTY(pool, timestamp),
-                fetchPolicy: 'network-only'
+            const { data: { feeHourDatas }, error } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
+                query: CHART_FEE_LAST_NOT_EMPTY(),
+                fetchPolicy: 'network-only',
+                variables: { pool, timestamp: Number(timestamp) }
             })
             if (error) return `${error.name} ${error.message}`
 
@@ -442,15 +421,14 @@ export function useInfoSubgraph() {
         }
     }
 
-    async function fetchPoolLastNotEmptyEntry(pool: string, timestamp: string): Promise<LastPoolSubgraph[] | string> {
+    async function fetchPoolLastNotEmptyEntry(pool: string, timestamp: number): Promise<LastPoolSubgraph[] | string> {
+
         try {
 
-            const {
-                data: { poolHourDatas },
-                error
-            } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
-                query: CHART_POOL_LAST_NOT_EMPTY(pool, timestamp),
-                fetchPolicy: 'network-only'
+            const { data: { poolHourDatas }, error } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
+                query: CHART_POOL_LAST_NOT_EMPTY(),
+                fetchPolicy: 'network-only',
+                variables: { pool, timestamp}
             })
 
             if (error) return `${error.name} ${error.message}`
@@ -467,12 +445,10 @@ export function useInfoSubgraph() {
     async function fetchPoolLastEntry(pool: string): Promise<LastPoolSubgraph[] | string> {
         try {
 
-            const {
-                data: { poolHourDatas },
-                error
-            } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
-                query: CHART_POOL_LAST_ENTRY(pool),
-                fetchPolicy: 'network-only'
+            const { data: { poolHourDatas }, error } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
+                query: CHART_POOL_LAST_ENTRY(),
+                fetchPolicy: 'network-only',
+                variables: { pool }
             })
 
             if (error) return `${error.name} ${error.message}`
@@ -491,12 +467,10 @@ export function useInfoSubgraph() {
         try {
             setStakesLoading(true)
 
-            const {
-                data: { factories, stakes },
-                error
-            } = await stakerClient.query<SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>({
-                query: GET_STAKE(id),
-                fetchPolicy: 'network-only'
+            const { data: { factories, stakes }, error } = await stakerClient.query<SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>({
+                query: GET_STAKE(),
+                fetchPolicy: 'network-only',
+                variables: { id }
             })
 
 
@@ -523,8 +497,9 @@ export function useInfoSubgraph() {
             setFeesLoading(true)
 
             const { data: { feeHourDatas } } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
-                query: CHART_FEE_POOL_DATA(pool, startTimestamp, endTimestamp),
-                fetchPolicy: 'network-only'
+                query: CHART_FEE_POOL_DATA(),
+                fetchPolicy: 'network-only',
+                variables: { pool, startTimestamp, endTimestamp }
             })
 
             const _feeHourData = feeHourDatas.length === 0 ? await fetchLastEntry(pool) : feeHourDatas
@@ -557,15 +532,12 @@ export function useInfoSubgraph() {
 
     async function fetchChartPoolData(pool: string, startTimestamp: number, endTimestamp: number) {
         try {
-
             setChartPoolDataLoading(true)
 
-            const {
-                data: { poolHourDatas },
-                error
-            } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
-                query: CHART_POOL_DATA(pool, startTimestamp, endTimestamp),
-                fetchPolicy: 'network-only'
+            const { data: { poolHourDatas }, error } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
+                query: CHART_POOL_DATA(),
+                fetchPolicy: 'network-only',
+                variables: { pool, startTimestamp, endTimestamp }
             })
 
             if (error) return
@@ -574,7 +546,7 @@ export function useInfoSubgraph() {
 
             if (typeof _poolHourDatas === 'string') return
 
-            const previousData = await fetchPoolLastNotEmptyEntry(pool, String(poolHourDatas[0].periodStartUnix))
+            const previousData = await fetchPoolLastNotEmptyEntry(pool, _poolHourDatas[0].periodStartUnix)
 
             if (typeof previousData === 'string') return
 
@@ -629,10 +601,7 @@ export function useInfoSubgraph() {
 
             const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
 
-            const {
-                data: data,
-                error: error
-            } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
+            const { data: data, error: error } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
                 query: TOTAL_STATS(),
                 fetchPolicy: 'network-only'
             })
@@ -642,10 +611,7 @@ export function useInfoSubgraph() {
                 return
             }
 
-            const {
-                data: data24,
-                error: error24
-            } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
+            const { data: data24, error: error24 } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
                 query: TOTAL_STATS(_block24.number),
                 fetchPolicy: 'network-only'
             })
@@ -681,17 +647,9 @@ export function useInfoSubgraph() {
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         getStakes: { stakesResult, stakesLoading, fetchStakingFn: fetchStaking },
-        fetchStakedHistory: {
-            historiesLoading,
-            stakeHistoriesResult,
-            fetchStakingHistoryFn: fetchStakingHistory
-        },
+        fetchStakedHistory: { historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
-        fetchChartPoolData: {
-            chartPoolData,
-            chartPoolDataLoading,
-            fetchChartPoolDataFn: fetchChartPoolData
-        },
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
         fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
     }
 }

@@ -3,8 +3,11 @@ import Row from '../Row'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
 import { darken } from 'polished'
+// @ts-ignore
 import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+// @ts-ignore
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
+// @ts-ignore
 import LogoIcicles from '../../assets/svg/logo-icicles.svg'
 import { YellowCard } from 'components/Card'
 import { TYPE } from '../../theme'

@@ -178,6 +178,7 @@ export const FilterPanelWrapper = styled.div`
     gap: .8rem;
     text-align: start;
     margin-bottom: .5rem;
+    padding-left: 40px;
     label {
         margin-bottom: .5rem;
     }

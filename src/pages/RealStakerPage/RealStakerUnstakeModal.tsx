@@ -73,8 +73,7 @@ export default function RealStakerUnstakeModal({
                 </SilderWrapper>
                 <RealStakerRangeButtons
                     onPercentSelect={onPercentSelect}
-                    showCalculate={false}
-                    balance={''}
+                    balance={formatEther(baseCurrency)}
                 />
                 <StakeButton onClick={() => {
                     unstakeHandler(unstaked, stakedResult, baseCurrency, allXALGBFreeze)

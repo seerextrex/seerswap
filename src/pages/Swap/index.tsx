@@ -471,13 +471,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         </div>
                         <div>
                             {!account ? (
-                                <ButtonLight
-                                    style={{
-                                        backgroundColor: theme.winterMainButton,
-                                        color: 'white'
-                                    }}
-                                    onClick={toggleWalletModal}
-                                >
+                                <ButtonLight onClick={toggleWalletModal}>
                                     <Trans>Connect Wallet</Trans>
                                 </ButtonLight>
                             ) : showWrap ? (

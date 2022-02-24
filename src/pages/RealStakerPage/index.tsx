@@ -272,7 +272,6 @@ export default function RealStakerPage({}) {
                         </SilderWrapper>
                         <RealStakerRangeButtons
                             onPercentSelect={onPercentSelect}
-                            showCalculate={false}
                             balance={_balance} />
                         {approval === ApprovalState.NOT_APPROVED ? (
                             <StakeButton onClick={approveCallback}>Approve token</StakeButton>

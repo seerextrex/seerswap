@@ -184,12 +184,14 @@ export const FilterPanelWrapper = styled.div`
     justify-content: start;
     gap: 2rem;
     text-align: start;
+    padding-left: 2rem;
     margin-bottom: .5rem;
     label {
         margin-bottom: .5rem;
     }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-content: center;
+    padding-left: unset;
   `}
 `
 

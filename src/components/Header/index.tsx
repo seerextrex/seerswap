@@ -81,7 +81,7 @@ export default function Header() {
                 <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
                 <span style={{ position: 'relative' }}>
             <span>Farming</span>
-          <FarmingInfoLabel isEvents={isEvents} />
+          <FarmingInfoLabel isEvents={isEvents} isHeader />
             </span>
                 </StyledNavLink>
                 <StyledNavLink id={`staking-nav-link`} to={'/staking'}>

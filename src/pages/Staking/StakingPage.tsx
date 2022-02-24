@@ -94,8 +94,9 @@ export default function StakingPage() {
                                             <MockScreen>
                                                 <AlignJustify size={40} stroke={'white'} />
                                                 <p>Connect your account to view farms</p>
-                                                <ConnectWalletButton onClick={toggleWalletModal}>Connect
-                                                    Wallet</ConnectWalletButton>
+                                                <ConnectWalletButton onClick={toggleWalletModal}>
+                                                    Connect Wallet
+                                                </ConnectWalletButton>
                                             </MockScreen>
                                         )}
                                     </Route>

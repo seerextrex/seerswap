@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components/macro'
 import { NavLink } from 'react-router-dom'
 import { ClickableText, Label } from 'components/Text'
 import { DarkGreyCard } from '../Card'
+import { darken } from 'polished'
 
 export const PageButtonsWrapper = styled.div`
     width: 100%;
@@ -56,6 +57,9 @@ export const ChartBadge = styled(NavLink)`
 
     & > * {
         display: block;
+    }
+    &:hover {
+        background: ${darken(.05, '#36f')}
     }
 `
 export const LinkWrapper = styled.a`

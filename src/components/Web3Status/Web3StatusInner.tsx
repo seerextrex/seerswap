@@ -56,11 +56,6 @@ export function Web3StatusInner() {
         return (
             <Web3StatusConnect
                 id="connect-wallet"
-                style={{
-                    border: `1px solid ${theme.winterBackground}`,
-                    backgroundColor: "#5bb7ff",
-                    color: "white",
-                }}
                 onClick={toggleWalletModal}
                 faded={!account}
             >

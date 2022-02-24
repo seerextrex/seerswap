@@ -27,9 +27,9 @@ export const HeaderFrame = styled.div<{ showBackground: boolean }>`
     background-position: ${({ showBackground }) => (showBackground ? '0 -100%' : '0 0')};
     background-size: 100% 200%;
     box-shadow: 0 0 0 1px ${({
-    theme,
-    showBackground
-}) => (showBackground ? theme.bg2 : 'transparent;')};
+        theme,
+        showBackground
+    }) => (showBackground ? theme.bg2 : 'transparent;')};
     transition: background-position 0.1s, box-shadow 0.1s;
     background-blend-mode: hard-light;
     padding: 50px 1rem 1rem;
@@ -331,18 +331,18 @@ export const StyledNavLink = styled(NavLink).attrs({
         }
     }
 `
-export const FarmingInfoLabel = styled.span<{ isEvents: boolean }>`
+export const FarmingInfoLabel = styled.span<{ isEvents: boolean; isHeader: boolean }>`
     padding: 5px;
     background-color: #ffd967;
     position: absolute;
     border-radius: 50%;
-    top: .2rem;
-    right: .5rem;
+    top: ${({ isHeader }) => isHeader ? ' -.5rem' : '.5rem'};
+    right: ${({ isHeader }) => isHeader ? ' -1rem' : '1.5rem'};
     display: ${({ isEvents }) => (!isEvents ? 'none' : 'block')};
 
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-        top: 20%;
-        right: 0%;
+    ${({ theme, isHeader }) => theme.mediaWidth.upToMedium`
+        top: ${isHeader ? '-.5rem' : '.5rem'};
+        right: ${isHeader ? '-.8rem' : '0'};
   `}
 `
 

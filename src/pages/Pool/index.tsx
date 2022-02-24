@@ -138,9 +138,7 @@ export default function Pool() {
                                         <ButtonPrimary
                                             style={{
                                                 marginTop: '2em',
-                                                padding: '8px 16px',
-                                                background: theme.winterMainButton,
-                                                color: 'white'
+                                                padding: '8px 16px'
                                             }}
                                             onClick={toggleWalletModal}
                                         >

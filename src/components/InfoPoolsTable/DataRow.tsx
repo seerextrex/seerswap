@@ -35,9 +35,6 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                 <LabelStyled fontWeight={400}>{index + 1}</LabelStyled>
                 <LabelStyled fontWeight={400}>
                     <RowFixed>
-                        {/*<DoubleCurrencyLogo currency0={new Token(SupportedChainId.POLYGON, poolData.token0.id ?? '', 18, poolData.token0.symbol)}*/}
-                        {/*                    currency1={new Token(SupportedChainId.POLYGON, poolData.token1.id ?? '', 18, poolData.token1.symbol)}*/}
-                        {/*size={25}/>*/}
                         <LinkWrapper href={`https://polygonscan.com/address/${poolData.address}`} rel='noopener noreferrer' target='_blank'>
                             <TYPE.label ml='8px'>
                                 {poolTitle[0]}/{poolTitle[1]}
@@ -47,7 +44,7 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                         <GreyBadge ml='10px' fontSize='14px' style={{ backgroundColor: '#02365e' }}>
                             {feeTierPercent(+poolData.fee)}
                         </GreyBadge>
-                        <ChartBadge to={`/info/pools/${poolData.address}`} style={{ textDecoration: 'none' }}>
+                        <ChartBadge to={`/info/pools/${poolData.address}`}>
                             <BarChart2 size={18} stroke={'white'} />
                         </ChartBadge>
                     </RowFixed>

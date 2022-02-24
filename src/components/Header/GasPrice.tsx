@@ -4,5 +4,5 @@ import { GasPriceWrapper } from './styled'
 export function GasPrice() {
     const gasPrice = useAppSelector((state) => state.application.gasPrice.fetched)
 
-    return <GasPriceWrapper>{`Gas price: ${Math.round(gasPrice)}`}</GasPriceWrapper>
+    return <GasPriceWrapper>{`Gas price: ${gasPrice && Math.round(gasPrice)}`}</GasPriceWrapper>
 }

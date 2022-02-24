@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../web3'
 import { useClients } from './useClients'
 import {
@@ -42,7 +42,6 @@ import {
     TotalStatSubgraph
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces/responseSubgraph'
-import { log } from 'util'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
@@ -77,7 +76,6 @@ export function useInfoSubgraph() {
 
     const [tokensResult, setTokens] = useState<string | null | FormattedToken[]>(null)
     const [tokensLoading, setTokensLoading] = useState<boolean>(false)
-
 
     const [feesResult, setFees] = useState<null | string | FormattedFee>(null)
     const [feesLoading, setFeesLoading] = useState<boolean>(false)
@@ -164,10 +162,12 @@ export function useInfoSubgraph() {
             const farmAprs = await fetchEternalFarmAPR()
 
             const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
-            const _farmingAprs: { [type: string]: number } = farmingAprs.reduce((acc, el) => ({
-                ...acc,
-                [el.pool]: farmAprs[el.id]
-            }), {})
+            const _farmingAprs: { [type: string]: number } = farmingAprs.reduce((acc, el) => (
+                {
+                    ...acc,
+                    [el.pool]: farmAprs[el.id]
+                }
+            ), {})
 
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address]
@@ -428,7 +428,7 @@ export function useInfoSubgraph() {
             const { data: { poolHourDatas }, error } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
                 query: CHART_POOL_LAST_NOT_EMPTY(),
                 fetchPolicy: 'network-only',
-                variables: { pool, timestamp}
+                variables: { pool, timestamp }
             })
 
             if (error) return `${error.name} ${error.message}`

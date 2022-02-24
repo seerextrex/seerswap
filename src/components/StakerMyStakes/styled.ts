@@ -216,7 +216,7 @@ export const PositionCardStatsItemTitle = styled.div`
     text-transform: uppercase;
 `
 
-export const PositionCardStatsItemValue = styled.div`
+export const PositionCardStatsItemValue = styled.div<{title: any}>`
     font-size: 16px;
     line-height: 25px;
 `

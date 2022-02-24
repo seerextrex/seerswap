@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { axisBottom, create, max, scaleBand, scaleLinear, select } from 'd3'
 import { ChartSvg } from './styled'
+import { ProcessedData } from '../../models/interfaces'
 
-interface BarChartInterface {
-    data: any[]
+interface BarChartProps {
+    data: ProcessedData[] | undefined
     dimensions: {
         width: number
         height: number
         margin: { top: number; right: number; bottom: number; left: number }
     }
-    activeTickIdx: number
+    activeTickIdx: number | undefined
     isMobile: boolean
 }
 
-export default function BarChart({ data, activeTickIdx, dimensions }: BarChartInterface) {
+export default function BarChart({ data, activeTickIdx, dimensions }: BarChartProps) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -23,7 +24,6 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartIn
         if (!data) return
         return data[0].token0
     }, [data])
-
     const token1 = useMemo(() => {
         if (!data) return
         return data[0].token1
@@ -42,6 +42,7 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartIn
         const yDomain = [0, max(data, (v) => v.activeLiquidity)]
 
         const xScale = scaleBand(xDomain, [0, width])
+        // @ts-ignore
         const yScale = scaleLinear(yDomain, [height, 0])
 
         const svgEl = select(svgRef.current)

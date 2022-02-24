@@ -54,6 +54,7 @@ import { getProgress } from '../../utils/getProgress'
 import { CheckOut } from './CheckOut'
 import { useLocation } from 'react-router-dom'
 import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
+import { WrappedCurrency } from '../../models/types'
 
 interface StakerMyStakesProps {
     data: Deposit[] | null
@@ -315,8 +316,8 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                             </div>
                                             <StakePool>
                                                 <>
-                                                    <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol)} size={'35px'} />
-                                                    <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol)} size={'35px'} style={{ marginLeft: '-1rem' }} />
+                                                    <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={'35px'} />
+                                                    <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={'35px'} style={{ marginLeft: '-1rem' }} />
                                                     <TokensNames>
                                                         <PositionCardStatsItemTitle style={{ lineHeight: '20px' }}>Pool</PositionCardStatsItemTitle>
                                                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
@@ -344,7 +345,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     )}
                                                 </MoreButton>
                                             )}
-                                            <MoreButton single={el.incentive || el.eternalFarming} onClick={() => setSendModal(el.L2tokenId)}>
+                                            <MoreButton single={!!el.incentive || !!el.eternalFarming} onClick={() => setSendModal(el.L2tokenId)}>
                                                 <Send color={'#36f'} size={15} />
                                                 <span style={{ marginLeft: '6px' }}>Send</span>
                                             </MoreButton>
@@ -356,19 +357,19 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     <>
                                                         <PositionCardStats>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.incentiveRewardToken?.id, 18, el.incentiveRewardToken?.symbol)} />
+                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.incentiveRewardToken?.id, 18, el.incentiveRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
-                                                                    <PositionCardStatsItemValue title={el.incentiveEarned}>{`${formatReward(el.incentiveEarned)} ${
+                                                                    <PositionCardStatsItemValue title={el.incentiveEarned}>{`${formatReward(+el.incentiveEarned)} ${
                                                                         el.incentiveRewardToken.symbol
                                                                     }`}</PositionCardStatsItemValue>
                                                                 </PositionCardStatsItem>
                                                             </PositionCardStatsItemWrapper>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.incentiveBonusRewardToken?.id, 18, el.incentiveBonusRewardToken?.symbol)} />
+                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.incentiveBonusRewardToken?.id, 18, el.incentiveBonusRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Bonus reward</PositionCardStatsItemTitle>
-                                                                    <PositionCardStatsItemValue title={el.incentiveBonusEarned}>{`${formatReward(el.incentiveBonusEarned)} ${
+                                                                    <PositionCardStatsItemValue title={el.incentiveBonusEarned}>{`${formatReward(+el.incentiveBonusEarned)} ${
                                                                         el.incentiveBonusRewardToken.symbol
                                                                     }`}</PositionCardStatsItemValue>
                                                                 </PositionCardStatsItem>
@@ -422,7 +423,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 <StakeButton
                                                                     disabled={
                                                                         (gettingReward.id === el.id && gettingReward.farmingType === FarmingType.FINITE && gettingReward.state !== 'done') ||
-                                                                        el.incentiveReward == 0
+                                                                        +el.incentiveReward == 0
                                                                     }
                                                                     onClick={() => {
                                                                         setGettingReward({
@@ -467,20 +468,20 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     <>
                                                         <PositionCardStats>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.eternalRewardToken?.id, 18, el.eternalRewardToken?.symbol)} />
+                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.eternalRewardToken?.id, 18, el.eternalRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
-                                                                    <PositionCardStatsItemValue title={el.eternalEarned}>{`${formatReward(el.eternalEarned)} ${
+                                                                    <PositionCardStatsItemValue title={el.eternalEarned}>{`${formatReward(+el.eternalEarned)} ${
                                                                         el.eternalRewardToken.symbol
                                                                     }`}</PositionCardStatsItemValue>
                                                                 </PositionCardStatsItem>
                                                             </PositionCardStatsItemWrapper>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.eternalBonusRewardToken?.id, 18, el.eternalBonusRewardToken?.symbol)} />
+                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.eternalBonusRewardToken?.id, 18, el.eternalBonusRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Bonus Reward</PositionCardStatsItemTitle>
                                                                     <PositionCardStatsItemValue title={el.eternalBonusEarned}>
-                                                                        {`${formatReward(el.eternalBonusEarned)} ${el.eternalBonusRewardToken.symbol}`}
+                                                                        {`${formatReward(+el.eternalBonusEarned)} ${el.eternalBonusRewardToken.symbol}`}
                                                                     </PositionCardStatsItemValue>
                                                                 </PositionCardStatsItem>
                                                             </PositionCardStatsItemWrapper>

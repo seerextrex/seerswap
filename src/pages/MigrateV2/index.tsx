@@ -1,5 +1,4 @@
 import { Token } from '@uniswap/sdk-core'
-import { Pair } from '@uniswap/v2-sdk'
 import MigrateV2PositionCard from 'components/PositionCard/V2'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { PairState, useV2Pairs } from 'hooks/useV2Pairs'

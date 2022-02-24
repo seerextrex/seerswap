@@ -71,16 +71,11 @@ import {
 
 //TODO test merge without failed polygon
 import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
-import { EthereumWindow } from '../../models/types'
+import { EthereumWindow, WrappedCurrency } from '../../models/types'
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
-export default function AddLiquidityPage({
-    match: {
-        params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId }
-    },
-    history
-}: RouteComponentProps<{
+export default function AddLiquidityPage({ match: { params: { currencyIdA, currencyIdB, tokenId } }, history }: RouteComponentProps<{
     currencyIdA?: string;
     currencyIdB?: string;
     feeAmount?: string;
@@ -93,9 +88,7 @@ export default function AddLiquidityPage({
     const _window = window as unknown as EthereumWindow
     const provider = _window.ethereum ? new providers.Web3Provider(_window.ethereum) : undefined
 
-    const gasPrice = useAppSelector((state) =>
-        state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
-    )
+    const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
     const allTransactions = useAllTransactions()
 
     const sortedRecentTransactions = useMemo(() => {
@@ -105,11 +98,12 @@ export default function AddLiquidityPage({
             .sort((a, b) => b.addedTime - a.addedTime)
     }, [allTransactions])
 
-    const confirmed = useMemo(
-        () => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash),
-        [sortedRecentTransactions, allTransactions]
-    )
+    const confirmed = useMemo(() => sortedRecentTransactions
+            .filter((tx) => tx.receipt)
+            .map((tx) => tx.hash),
+        [sortedRecentTransactions, allTransactions])
 
+    // @ts-ignore
     useEffect(async () => {
         if (confirmed.some((hash) => hash === txHash)) {
             const nonFunPosManContract = new Contract(
@@ -128,8 +122,7 @@ export default function AddLiquidityPage({
     }, [confirmed])
 
     // check for existing position if tokenId in url
-    const { position: existingPositionDetails, loading: positionLoading } =
-        useV3PositionFromTokenId(tokenId ? BigNumber.from(tokenId) : undefined)
+    const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(tokenId ? BigNumber.from(tokenId) : undefined)
     const hasExistingPosition = !!existingPositionDetails && !positionLoading
 
     const baseCurrency = useCurrency(currencyIdA)
@@ -137,10 +130,7 @@ export default function AddLiquidityPage({
 
     // prevent an error if they input ETH/WETH
     //TODO
-    const quoteCurrency =
-        baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped)
-            ? undefined
-            : currencyB
+    const quoteCurrency = baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
 
     const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails)
 
@@ -169,11 +159,13 @@ export default function AddLiquidityPage({
     // mint state
     const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
 
+
     const derivedMintInfo = useV3DerivedMintInfo(
         baseCurrency ?? undefined,
         quoteCurrency ?? undefined,
         feeAmount,
         baseCurrency ?? undefined,
+        // @ts-ignore
         _existingPosition
     )
     const prevDerivedMintInfo = usePrevious({ ...derivedMintInfo })
@@ -199,10 +191,7 @@ export default function AddLiquidityPage({
         ticksAtLimit,
         dynamicFee
     } = useMemo(() => {
-        if (
-            (!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) &&
-            prevDerivedMintInfo
-        ) {
+        if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
             return {
                 ...prevDerivedMintInfo
             }
@@ -234,25 +223,21 @@ export default function AddLiquidityPage({
     }
 
     // get the max amounts user can add
-    const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [
-        Field.CURRENCY_A,
-        Field.CURRENCY_B
-    ].reduce((accumulator, field) => {
-        return {
-            ...accumulator,
-            [field]: maxAmountSpend(currencyBalances[field])
-        }
-    }, {})
+    const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B]
+        .reduce((accumulator, field) => {
+            return {
+                ...accumulator,
+                [field]: maxAmountSpend(currencyBalances[field])
+            }
+        }, {})
 
-    const atMaxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [
-        Field.CURRENCY_A,
-        Field.CURRENCY_B
-    ].reduce((accumulator, field) => {
-        return {
-            ...accumulator,
-            [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
-        }
-    }, {})
+    const atMaxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B]
+        .reduce((accumulator, field) => {
+            return {
+                ...accumulator,
+                [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
+            }
+        }, {})
 
     // check whether the user has approved the router on the tokens
     const [approvalA, approveACallback] = useApproveCallback(
@@ -311,7 +296,7 @@ export default function AddLiquidityPage({
                     const newTxn = {
                         ...txn,
                         gasLimit: calculateGasMargin(chainId, estimate),
-                        gasPrice: gasPrice * 1000000000
+                        gasPrice: gasPrice ? gasPrice * 1000000000 : 10 * 1000000000
                     }
 
                     return library
@@ -456,11 +441,14 @@ export default function AddLiquidityPage({
                                 }}
                                 onCurrencySelect={handleCurrencyASelect}
                                 showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-                                currency={currencies[Field.CURRENCY_A]}
+                                currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
                                 id='add-liquidity-input-tokena'
                                 showCommonBases
                                 showBalance={false}
                                 pool={'page'}
+                                disabled={false}
+                                swap={false}
+                                shallow={false}
                             />
                         </TokenItem>
                         <TokenItem noPadding>
@@ -474,12 +462,14 @@ export default function AddLiquidityPage({
                                     onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
                                 }}
                                 showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
-                                currency={currencies[Field.CURRENCY_B]}
+                                currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
                                 id='add-liquidity-input-tokenb'
                                 showCommonBases
                                 showBalance={false}
                                 page={'page'}
-                            />
+                                swap={false}
+                                shallow={false}
+                                disabled={false} />
                         </TokenItem>
                     </TokenPair>
                     {baseCurrency && quoteCurrency && account ? (
@@ -693,7 +683,7 @@ export default function AddLiquidityPage({
                                                     }}
                                                     onCurrencySelect={handleCurrencyASelect}
                                                     showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-                                                    currency={currencies[Field.CURRENCY_A]}
+                                                    currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
                                                     id='add-liquidity-input-tokena'
                                                     showCommonBases
                                                     showBalance={true}
@@ -704,13 +694,11 @@ export default function AddLiquidityPage({
                                                     }
                                                     shallow={true}
                                                     page={'pool'}
-                                                />
+                                                    swap={false} />
                                                 <TokenItemBottomInputWrapper>
                                                     <div style={{ width: '100%' }}>
                                                         <CurrencyInputPanel
-                                                            value={
-                                                                formattedAmounts[Field.CURRENCY_A]
-                                                            }
+                                                            value={formattedAmounts[Field.CURRENCY_A]}
                                                             onUserInput={onFieldAInput}
                                                             onMax={() => {
                                                                 onFieldAInput(
@@ -719,10 +707,8 @@ export default function AddLiquidityPage({
                                                                         ]?.toExact() ?? ''
                                                                 )
                                                             }}
-                                                            showMaxButton={
-                                                                !atMaxAmounts[Field.CURRENCY_A]
-                                                            }
-                                                            currency={currencies[Field.CURRENCY_A]}
+                                                            showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
+                                                            currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
                                                             id='add-liquidity-input-tokena'
                                                             fiatValue={usdcValues[Field.CURRENCY_A]}
                                                             showCommonBases
@@ -737,7 +723,7 @@ export default function AddLiquidityPage({
                                                             }
                                                             shallow={true}
                                                             page={'pool'}
-                                                        />
+                                                            swap={false} />
                                                     </div>
                                                     {showApprovalA && !depositADisabled && (
                                                         <ApproveButtonContainer
@@ -791,11 +777,12 @@ export default function AddLiquidityPage({
                                                         </MaxButton>
                                                     )}
                                                 <CurrencyDropdown
+                                                    swap={false}
                                                     value={formattedAmounts[Field.CURRENCY_B]}
                                                     hideInput={true}
                                                     onUserInput={onFieldBInput}
                                                     onCurrencySelect={handleCurrencyBSelect}
-                                                    currency={currencies[Field.CURRENCY_B]}
+                                                    currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
                                                     id='add-liquidity-input-tokenb'
                                                     showCommonBases
                                                     showBalance={true}
@@ -807,7 +794,7 @@ export default function AddLiquidityPage({
                                                     }
                                                     shallow={true}
                                                     page={'pool'}
-                                                />
+                                                    showMaxButton={false} />
                                                 <TokenItemBottomInputWrapper>
                                                     <div style={{ width: '100%' }}>
                                                         <CurrencyInputPanel
@@ -822,7 +809,7 @@ export default function AddLiquidityPage({
                                                             }}
                                                             showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                                                             fiatValue={usdcValues[Field.CURRENCY_B]}
-                                                            currency={currencies[Field.CURRENCY_B]}
+                                                            currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
                                                             id='add-liquidity-input-tokenb'
                                                             showCommonBases
                                                             locked={depositBDisabled}

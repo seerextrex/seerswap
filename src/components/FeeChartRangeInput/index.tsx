@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import Chart from './Chart'
 import Loader from '../Loader'
 import { ChartType } from '../../models/enums'
 import { isMobile, isTablet } from 'react-device-detect'
-import { MockLoading, ToggleToken, Wrapper, TokenInfo } from './styled'
-import { FeeSubgraph, PoolHourData } from '../../models/interfaces'
+import { MockLoading, ToggleToken, TokenInfo, Wrapper } from './styled'
+import { FeeChart, FeeSubgraph, PoolHourData } from '../../models/interfaces'
 import { ChartToken } from '../../models/enums/poolInfoPage'
 import { Trans } from '@lingui/macro'
 import { Token } from '@uniswap/sdk-core'
@@ -20,8 +20,8 @@ interface FeeChartRangeInputProps {
     span: number
     type: number
     token: number
-    token1: Token
-    token0: Token
+    token1: Token | undefined
+    token0: Token | undefined
     setToken: (a: number) => void
 }
 
@@ -29,7 +29,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
 
     const ref = useRef<HTMLDivElement>(null)
 
-    const formattedData = useMemo(() => {
+    const formattedData: FeeChart = useMemo(() => {
         if (!fetchedData || typeof fetchedData === 'string') return {
             data: [],
             previousData: []
@@ -57,7 +57,10 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                             value: +el.fee / +el.changesCount / 10000
                         }
                     }
-                    return
+                    return {
+                        timestamp: new Date(),
+                        value: 0
+                    }
                 }),
                 previousData: fetchedData.previousData.map((el) => {
                     if ('fee' in el) {
@@ -66,7 +69,10 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                             value: +el.fee / +el.changesCount / 10000
                         }
                     }
-                    return
+                    return {
+                        timestamp: new Date(),
+                        value: 0
+                    }
                 })
             }
         } else {
@@ -78,16 +84,22 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                             value: +el[field]
                         }
                     }
-                    return
+                    return {
+                        timestamp: new Date(),
+                        value: 0
+                    }
                 }),
                 previousData: fetchedData.previousData.map((el) => {
                     if ('volumeUSD' in el) {
                         return {
-                            timestamp: new Date(el.periodStartUnix * 1000),
-                            value: +el[field]
+                            timestamp: new Date(),
+                            value: 0
                         }
                     }
-                    return
+                    return {
+                        timestamp: new Date(),
+                        value: 0
+                    }
                 })
             }
         }
@@ -105,14 +117,14 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                     {
                         type === ChartType.PRICE &&
                         <TokenInfo>
-                            { token === ChartToken.TOKEN0 ? token0?.symbol : token1?.symbol }
+                            {token === ChartToken.TOKEN0 ? token0?.symbol : token1?.symbol}
                         </TokenInfo>
                     }
                     {
                         type === ChartType.PRICE &&
                         <ToggleToken>
                             <Toggle
-                                isActive={token}
+                                isActive={!!token}
                                 toggle={() => setToken(token === ChartToken.TOKEN0 ? 1 : 0)}
                                 checked={<Trans>{token0?.symbol}</Trans>}
                                 unchecked={<Trans>{token1?.symbol}</Trans>}

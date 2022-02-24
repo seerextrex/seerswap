@@ -15,6 +15,7 @@ import ImportRow from './ImportRow'
 import useTheme from '../../hooks/useTheme'
 import { Trans } from '@lingui/macro'
 import { CurrencyModalView } from './CurrencySearchModal'
+import { WrappedCurrency } from '../../models/types'
 
 export default function ManageTokens({
     setModalView,
@@ -58,7 +59,7 @@ export default function ManageTokens({
             userAddedTokens.map((token) => (
                 <RowBetween key={token.address} width='100%'>
                     <RowFixed>
-                        <CurrencyLogo currency={token} size={'20px'} />
+                        <CurrencyLogo currency={token as WrappedCurrency} size={'20px'} />
                         <ExternalLink
                             href={getExplorerLink(chainId, token.address, ExplorerDataType.ADDRESS)}>
                             <TYPE.main ml={'10px'} fontWeight={600}>

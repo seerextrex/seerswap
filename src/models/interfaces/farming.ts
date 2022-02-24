@@ -93,6 +93,18 @@ export interface Deposit {
     eternalStartTime: string
     id: string
     incentive: null | string
+    incentiveRewardToken: TokenSubgraph
+    incentiveEarned: string | number
+    incentiveBonusEarned: string | number
+    incentiveBonusRewardToken: TokenSubgraph
+    incentiveStartTime: number
+    started: boolean
+    incentiveEndTime: number
+    createdAtTimestamp: number
+    incentiveReward: string
+    ended: boolean
+    finiteAvailable: boolean
+    eternalAvailable: boolean
     liquidity: BigNumber
     onFarmingCenter: boolean
     owner: string
@@ -189,4 +201,9 @@ export interface Reward {
     rewardAddress: string
     symbol: string
     trueAmount: string
+}
+
+export interface NTFInterface {
+    onFarmingCenter?: boolean
+    id?: string | undefined
 }

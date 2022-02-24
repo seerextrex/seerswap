@@ -137,6 +137,7 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
                             />
                             {type === ChartType.LIQUIDITY ? (
                                 <LiquidityBarChart
+                                    //@ts-ignore
                                     data={data}
                                     token0={poolResult.token0.symbol}
                                     token1={poolResult.token1.symbol}
@@ -144,14 +145,15 @@ export default function PoolInfoPage({ match: { params: { id } } }: RouteCompone
                                 />
                             ) : (
                                 <FeeChartRangeInput
+                                    //@ts-ignore
                                     fetchedData={data ?? undefined}
                                     refreshing={refreshing}
                                     id={id || ''}
                                     span={span}
                                     type={type}
                                     token={token}
-                                    token0={_token0}
-                                    token1={_token1}
+                                    token0={_token0 ?? undefined}
+                                    token1={_token1 ?? undefined}
                                     setToken={settoken}
                                 />
                             )}

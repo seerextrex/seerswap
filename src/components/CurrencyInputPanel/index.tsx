@@ -41,7 +41,7 @@ interface CurrencyInputPanelProps {
     disabled: boolean
     shallow: boolean
     swap: boolean
-    page: string
+    page?: string
 }
 
 export default function CurrencyInputPanel({
@@ -71,7 +71,6 @@ export default function CurrencyInputPanel({
     page,
     ...rest
 }: CurrencyInputPanelProps) {
-    const { chainId } = useActiveWeb3React()
     const [modalOpen, setModalOpen] = useState(false)
     const { account } = useActiveWeb3React()
 

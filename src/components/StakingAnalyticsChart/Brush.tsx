@@ -34,7 +34,6 @@ export default function Brush({
 
         const focusLine = (x: any, y: any) => line()
             .defined(d => {
-                console.log(d)
             // @ts-ignore
                 return !isNaN(d.value)})
             .curve(curveBumpX)

@@ -2,14 +2,11 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpolate, line, max, min, scaleLinear, scaleTime, select } from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
-import { FormattedFeeChart } from '../../models/interfaces'
+import { FeeChart } from '../../models/interfaces'
 import { ChartToken } from '../../models/enums/poolInfoPage'
 
 interface ChartInterface {
-    feeData: {
-        data: FormattedFeeChart[] | undefined[]
-        previousData: FormattedFeeChart[] | undefined[]
-    }
+    feeData: FeeChart
     dimensions: {
         width: number
         height: number

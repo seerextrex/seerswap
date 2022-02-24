@@ -24,6 +24,7 @@ import { TYPE } from '../../theme'
 import AppBody from '../AppBody'
 import { Dots } from '../Pool/styleds'
 import { Helmet } from 'react-helmet'
+import { WrappedCurrency } from '../../models/types'
 
 enum Fields {
     TOKEN0 = 0,
@@ -152,7 +153,7 @@ export default function PoolFinder() {
                     >
                         {currency0 ? (
                             <Row>
-                                <CurrencyLogo currency={currency0} />
+                                <CurrencyLogo currency={currency0 as WrappedCurrency} />
                                 <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
                                     {currency0.symbol}
                                 </Text>
@@ -176,7 +177,7 @@ export default function PoolFinder() {
                     >
                         {currency1 ? (
                             <Row>
-                                <CurrencyLogo currency={currency1} />
+                                <CurrencyLogo currency={currency1 as WrappedCurrency} />
                                 <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
                                     {currency1.symbol}
                                 </Text>

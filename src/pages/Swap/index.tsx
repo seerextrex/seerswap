@@ -46,6 +46,7 @@ import { warningSeverity } from '../../utils/prices'
 import { Helmet } from 'react-helmet'
 import ReactGA from 'react-ga'
 import { ContestArrow, ContestBanner, ContestBannerTitle, ContestBannerTitleIphone, StyledInfo, WrappedAppBody } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 export default function Swap({ history }: RouteComponentProps) {
     const { account } = useActiveWeb3React()
@@ -88,26 +89,21 @@ export default function Swap({ history }: RouteComponentProps) {
         parsedAmount,
         currencies,
         inputError: swapInputError
-    } = useDerivedSwapInfo(toggledVersion)
+    } = useDerivedSwapInfo()
 
     const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
 
     const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
     const { address: recipientAddress } = useENSAddress(recipient)
 
-    const parsedAmounts = useMemo(
-        () =>
-            showWrap
-                ? {
-                    [Field.INPUT]: parsedAmount,
-                    [Field.OUTPUT]: parsedAmount
-                }
-                : {
-                    [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-                    [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
-                },
-        [independentField, parsedAmount, showWrap, trade]
-    )
+    const parsedAmounts = useMemo(() =>
+        showWrap ? {
+            [Field.INPUT]: parsedAmount,
+            [Field.OUTPUT]: parsedAmount
+        } : {
+            [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount
+        }, [independentField, parsedAmount, showWrap, trade])
 
     const fiatValueInput = useUSDCValue(parsedAmounts[Field.INPUT])
     const fiatValueOutput = useUSDCValue(parsedAmounts[Field.OUTPUT])
@@ -162,8 +158,9 @@ export default function Swap({ history }: RouteComponentProps) {
     const isLoadingRoute = toggledVersion === Version.v3 && V3TradeState.LOADING === v3TradeState
 
     let dynamicFee
-
+        //@ts-ignore
     if (trade?.swaps[0]?.route?.pools[0]) {
+        //@ts-ignore
         dynamicFee = trade?.swaps[0]?.route?.pools[0].fee
     }
 
@@ -175,7 +172,7 @@ export default function Swap({ history }: RouteComponentProps) {
         if (signatureState === UseERC20PermitState.NOT_SIGNED && gatherPermitSignature) {
             try {
                 await gatherPermitSignature()
-            } catch (error) {
+            } catch (error: any) {
                 // try to approve if gatherPermitSignature failed for any reason other than the user rejecting it
                 if (error?.code !== 4001) {
                     await approveCallback()
@@ -205,6 +202,7 @@ export default function Swap({ history }: RouteComponentProps) {
     const showMaxButton = Boolean(maxInputAmount?.greaterThan(0) && !parsedAmounts[Field.INPUT]?.equalTo(maxInputAmount))
 
     // the callback to execute the swap
+    // @ts-ignore
     const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient, signatureData)
 
     const [singleHopOnly] = useUserSingleHopOnly()
@@ -281,6 +279,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
     const handleAcceptChanges = useCallback(() => {
         setSwapState({
+            //@ts-ignore
             tradeToConfirm: trade,
             swapErrorMessage,
             txHash,
@@ -377,7 +376,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                 label={independentField === Field.OUTPUT && !showWrap ? <Trans>From (at most)</Trans> : <Trans>From</Trans>}
                                 value={formattedAmounts[Field.INPUT]}
                                 showMaxButton={showMaxButton}
-                                currency={currencies[Field.INPUT]}
+                                currency={currencies[Field.INPUT] as WrappedCurrency}
                                 onUserInput={handleTypeInput}
                                 onMax={handleMaxInput}
                                 fiatValue={fiatValueInput ?? undefined}
@@ -419,7 +418,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                 hideBalance={false}
                                 fiatValue={fiatValueOutput ?? undefined}
                                 priceImpact={priceImpact}
-                                currency={currencies[Field.OUTPUT]}
+                                currency={currencies[Field.OUTPUT] as WrappedCurrency}
                                 onCurrencySelect={handleOutputSelect}
                                 otherCurrency={currencies[Field.INPUT]}
                                 showCommonBases={true}
@@ -454,6 +453,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                         <RowFixed>
                                             <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
                                             <MouseoverTooltipContent
+                                                //@ts-ignore
                                                 onOpen={() => {
                                                     ReactGA.event({
                                                         category: 'Swap',
@@ -535,7 +535,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         color: 'white'
                                                     }}
                                                 >
-                                                    <CurrencyLogo currency={currencies[Field.INPUT]} size={'24px'} style={{ marginRight: '8px', flexShrink: 0 }} />
+                                                    <CurrencyLogo currency={currencies[Field.INPUT] as WrappedCurrency} size={'24px'} style={{ marginRight: '8px', flexShrink: 0 }} />
                                                     {/* we need to shorten this string on mobile */}
                                                     {approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED ? (
                                                         <Trans>You can now trade {currencies[Field.INPUT]?.symbol}</Trans>
@@ -567,6 +567,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                     handleSwap()
                                                 } else {
                                                     setSwapState({
+                                                        //@ts-ignore
                                                         tradeToConfirm: trade,
                                                         attemptingTxn: false,
                                                         swapErrorMessage: undefined,
@@ -587,7 +588,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                 border:
                                                     !isValid || (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) || priceImpactTooHigh || priceImpactSeverity
                                                         ? '1px solid #073c66'
-                                                        : `1px solid ${({ theme }) => theme.winterMainButton}`
+                                                        : `1px solid ${({ theme }: any) => theme.winterMainButton}`
                                             }}
                                             width='100%'
                                             id='swap-button'
@@ -607,6 +608,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                             handleSwap()
                                         } else {
                                             setSwapState({
+                                                //@ts-ignore
                                                 tradeToConfirm: trade,
                                                 attemptingTxn: false,
                                                 swapErrorMessage: undefined,

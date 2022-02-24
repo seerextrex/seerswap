@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { ZERO_PERCENT } from '../../constants/misc'
@@ -28,7 +28,7 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { Dots } from '../Pool/styleds'
 import { DynamicSection, HideMedium, MediumOnly, PageWrapper, ResponsiveTwoColumns, RightContainer, ScrollablePage, Wrapper } from './styled'
 import { t, Trans } from '@lingui/macro'
-import { useRangeHopCallbacks, useV3DerivedMintInfo, useV3MintActionHandlers, useV3MintState } from 'state/mint/v3/hooks'
+import { useV3DerivedMintInfo, useV3MintActionHandlers, useV3MintState } from 'state/mint/v3/hooks'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
 import { useDerivedPositionInfo } from 'hooks/useDerivedPositionInfo'
 import { PositionPreview } from 'components/PositionPreview'
@@ -40,12 +40,13 @@ import { NonfungiblePositionManager as NonFunPosMan } from './nft-manager'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 
 import ReactGA from 'react-ga'
+import { WrappedCurrency } from '../../models/types'
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidity({
     match: {
-        params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId }
+        params: { currencyIdA, currencyIdB, tokenId }
     },
     history
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
@@ -72,13 +73,11 @@ export default function AddLiquidity({
     const quoteCurrency = baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
 
     // mint state
-    const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
+    const { independentField, typedValue } = useV3MintState()
 
     const {
-        pool,
         ticks,
         dependentField,
-        price,
         pricesAtTicks,
         parsedAmounts,
         currencyBalances,
@@ -91,7 +90,6 @@ export default function AddLiquidity({
         outOfRange,
         depositADisabled,
         depositBDisabled,
-        invertPrice,
         ticksAtLimit,
         dynamicFee
     } = useV3DerivedMintInfo(
@@ -102,19 +100,13 @@ export default function AddLiquidity({
         existingPosition
     )
 
-    const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
-        useV3MintActionHandlers(noLiquidity)
+    const { onFieldAInput, onFieldBInput } = useV3MintActionHandlers(noLiquidity)
 
     const isValid = !errorMessage && !invalidRange
 
     // modal and loading
     const [showConfirm, setShowConfirm] = useState<boolean>(false)
     const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirm
-
-    // capital efficiency warning
-    const [showCapitalEfficiencyWarning, setShowCapitalEfficiencyWarning] = useState(false)
-
-    useEffect(() => setShowCapitalEfficiencyWarning(false), [baseCurrency, quoteCurrency, dynamicFee])
 
     // txn values
     const deadline = useTransactionDeadline() // custom from users settings
@@ -266,15 +258,6 @@ export default function AddLiquidity({
         } ${!outOfRange ? 'and' : ''} ${!depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ''} ${
             !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
         }`
-
-    const {
-        getDecrementLower,
-        getIncrementLower,
-        getDecrementUpper,
-        getIncrementUpper,
-        getSetFullRange
-    } =
-        useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)
 
     const Buttons = () =>
         !account ? (
@@ -437,7 +420,7 @@ export default function AddLiquidity({
                                                 onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
                                             }}
                                             showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-                                            currency={currencies[Field.CURRENCY_A]}
+                                            currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
                                             id='add-liquidity-input-tokena'
                                             fiatValue={usdcValues[Field.CURRENCY_A]}
                                             showCommonBases
@@ -446,7 +429,8 @@ export default function AddLiquidity({
                                             shallow={true}
                                             showBalance={!depositADisabled}
                                             page={'addLiq'}
-                                        />
+                                            disabled={false}
+                                            swap={false} />
 
                                         <CurrencyInputPanel
                                             value={formattedAmounts[Field.CURRENCY_B]}
@@ -456,7 +440,7 @@ export default function AddLiquidity({
                                             }}
                                             showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                                             fiatValue={usdcValues[Field.CURRENCY_B]}
-                                            currency={currencies[Field.CURRENCY_B]}
+                                            currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
                                             id='add-liquidity-input-tokenb'
                                             showCommonBases
                                             locked={depositBDisabled}
@@ -464,7 +448,8 @@ export default function AddLiquidity({
                                             showBalance={!depositBDisabled}
                                             shallow={true}
                                             page={'addLiq'}
-                                        />
+                                            disabled={false}
+                                            swap={false} />
                                     </AutoColumn>
                                 </DynamicSection>
                             </div>

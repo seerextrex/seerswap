@@ -90,3 +90,33 @@ export interface FormattedFeeChart {
     timestamp: Date
     value: number
 }
+
+export interface LiquidityChartData {
+    activeTickIdx: number
+    tickSpacing: number
+    ticksProcessed: FormattedProcessedData[]
+    token0: TokenSubgraph
+    token1: TokenSubgraph
+}
+
+export interface ProcessedData {
+    activeLiquidity: number
+    index: number
+    isCurrent: boolean
+    price0: number
+    price1: number
+    token0: string
+    token1: string
+    tvlToken0: number
+    tvlToken1: number
+
+}
+
+export interface FormattedProcessedData extends ProcessedData {
+    tickIdx: number
+}
+
+export interface FeeChart {
+    data: FormattedFeeChart[] | undefined[]
+    previousData: FormattedFeeChart[] | undefined[]
+}

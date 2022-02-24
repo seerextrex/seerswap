@@ -3,6 +3,7 @@ import CurrencyLogo from '../../components/CurrencyLogo'
 import { useCurrency } from '../../hooks/Tokens'
 import { useMemo } from 'react'
 import { UnstakeCurrencyInputPanelWrapper, UnstakeTitle } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 interface StakerInputRangeProps {
     baseCurrency?: any
@@ -28,7 +29,7 @@ export default function RealStakerUnstakeInputRange({
         <UnstakeCurrencyInputPanelWrapper>
             <UnstakeTitle>
                 <CurrencyLogo
-                    currency={ALGBCurrency ?? undefined} />
+                    currency={ALGBCurrency as WrappedCurrency} />
                 {rightBalance} ALGB
             </UnstakeTitle>
             <CurrencyDropdown
@@ -36,7 +37,7 @@ export default function RealStakerUnstakeInputRange({
                 onUserInput={(e) => {
                     setAmountValue(e)
                 }}
-                currency={ALGBCurrency}
+                currency={ALGBCurrency as WrappedCurrency}
                 value={amountValue}
                 hideInput={false}
                 hideCurrency={true}
@@ -46,7 +47,9 @@ export default function RealStakerUnstakeInputRange({
                 disabled={false}
                 shallow={true}
                 fiatValue={fiatValue}
-            />
+                id={''}
+                swap={false}
+                showMaxButton={false} />
         </UnstakeCurrencyInputPanelWrapper>
     )
 }

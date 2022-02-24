@@ -114,10 +114,13 @@ export const PageWrapper = styled(AutoColumn)`
 `
 export const TitleRow = styled(RowBetween)`
     color: ${({ theme }) => theme.text2};
+    margin-top: 1rem;
+    padding: 1rem 2rem;
     ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-wrap: wrap;
     gap: 12px;
     width: 100%;
+    padding: 1rem;
   `};
 `
 export const ButtonRow = styled(RowFixed)`
@@ -170,15 +173,18 @@ export const MainContentWrapper = styled.main`
     flex-direction: column;
     color: white;
     padding: 0 40px 30px;
+
+    ${({theme}) => theme.mediaWidth.upToSmall`
+        padding: 1rem;
+    `}
 `
 export const FilterPanelWrapper = styled.div`
     width: 100%;
     display: flex;
     justify-content: start;
-    gap: .8rem;
+    gap: 2rem;
     text-align: start;
     margin-bottom: .5rem;
-    padding-left: 40px;
     label {
         margin-bottom: .5rem;
     }

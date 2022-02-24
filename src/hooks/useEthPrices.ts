@@ -1,9 +1,10 @@
-import { useBlocksFromTimestamps } from '../hooks/blocks'
+import { useBlocksFromTimestamps } from './blocks'
 import { useDeltaTimestamps } from '../utils/queries'
 import { useEffect, useMemo, useState } from 'react'
 import { ApolloClient, gql, NormalizedCacheObject } from '@apollo/client'
-import { useClients } from '../hooks/subgraph/useClients'
+import { useClients } from './subgraph/useClients'
 import { useActiveWeb3React } from './web3'
+import { SupportedChainId } from '../constants/chains'
 
 export interface EthPrices {
     current: number
@@ -101,7 +102,7 @@ export function useEthPrices(): EthPrices | undefined {
 
     // index on active network
     const { chainId } = useActiveWeb3React()
-    const indexedPrices = prices?.[chainId]
+    const indexedPrices = prices?.[chainId ?? SupportedChainId.POLYGON]
 
     const formattedBlocks = useMemo(() => {
         if (blocks) {
@@ -120,7 +121,7 @@ export function useEthPrices(): EthPrices | undefined {
                 setError(true)
             } else if (data) {
                 setPrices({
-                    [chainId]: data
+                    [chainId ?? SupportedChainId.POLYGON]: data
                 })
             }
         }
@@ -130,5 +131,5 @@ export function useEthPrices(): EthPrices | undefined {
         }
     }, [error, prices, formattedBlocks, blockError, dataClient, indexedPrices, chainId])
 
-    return prices?.[chainId]
+    return prices?.[chainId ?? SupportedChainId.POLYGON]
 }

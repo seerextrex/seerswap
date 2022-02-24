@@ -128,19 +128,7 @@ export function V2PairMigration({ pair, pairBalance, totalSupply, reserve0, rese
 
     // the following is a small hack to get access to price range data/input handlers
     const [baseToken, setBaseToken] = useState(token0)
-    const {
-        ticks,
-        pricesAtTicks,
-        invertPrice,
-        invalidRange,
-        outOfRange,
-        ticksAtLimit
-    } = useV3DerivedMintInfo(
-        token0,
-        token1,
-        feeAmount,
-        baseToken
-    )
+    const { ticks, pricesAtTicks, invertPrice, invalidRange, outOfRange, ticksAtLimit } = useV3DerivedMintInfo(token0, token1, feeAmount, baseToken)
 
     // get value and prices at ticks
     const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
@@ -237,6 +225,7 @@ export function V2PairMigration({ pair, pairBalance, totalSupply, reserve0, rese
         // permit if necessary
         if (signatureData) {
             data.push(
+                //@ts-ignore
                 migrator.interface.encodeFunctionData('selfPermit', [
                     pair?.address,
                     `0x${pairBalance.quotient.toString(16)}`,
@@ -251,6 +240,7 @@ export function V2PairMigration({ pair, pairBalance, totalSupply, reserve0, rese
         // create/initialize pool if necessary
         if (noLiquidity) {
             data.push(
+                //@ts-ignore
                 migrator.interface.encodeFunctionData('createAndInitializePoolIfNecessary', [
                     token0.address,
                     token1.address,
@@ -261,6 +251,7 @@ export function V2PairMigration({ pair, pairBalance, totalSupply, reserve0, rese
 
         // TODO could save gas by not doing this in multicall
         data.push(
+            //@ts-ignore
             migrator.interface.encodeFunctionData('migrate', [
                 {
                     pair: pair?.address,

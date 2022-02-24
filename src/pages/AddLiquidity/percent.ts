@@ -2,7 +2,9 @@ import JSBI from 'jsbi'
 import { BigintIsh, Rounding } from '@uniswap/sdk-core'
 import invariant from 'tiny-invariant'
 import _Decimal from 'decimal.js-light'
+// @ts-ignore
 import _Big, { RoundingMode } from 'big.js'
+// @ts-ignore
 import toFormat from 'toformat'
 
 
@@ -122,7 +124,7 @@ export class Fraction {
 
     public toSignificant(
         significantDigits: number,
-        format: object = { groupSeparator: '' },
+        format: any = { groupSeparator: '' },
         rounding: Rounding = Rounding.ROUND_HALF_UP
     ): string {
         invariant(Number.isInteger(significantDigits), `${significantDigits} is not an integer.`)
@@ -137,7 +139,7 @@ export class Fraction {
 
     public toFixed(
         decimalPlaces: number,
-        format: object = { groupSeparator: '' },
+        format: any = { groupSeparator: '' },
         rounding: Rounding = Rounding.ROUND_HALF_UP
     ): string {
         invariant(Number.isInteger(decimalPlaces), `${decimalPlaces} is not an integer.`)
@@ -182,11 +184,11 @@ export class Percent extends Fraction {
         return toPercent(super.divide(other))
     }
 
-    public toSignificant(significantDigits: number = 5, format?: object, rounding?: Rounding): string {
+    public toSignificant(significantDigits = 5, format?: any, rounding?: Rounding): string {
         return super.multiply(ONE_HUNDRED).toSignificant(significantDigits, format, rounding)
     }
 
-    public toFixed(decimalPlaces: number = 2, format?: object, rounding?: Rounding): string {
+    public toFixed(decimalPlaces = 2, format?: any, rounding?: Rounding): string {
         return super.multiply(ONE_HUNDRED).toFixed(decimalPlaces, format, rounding)
     }
 }

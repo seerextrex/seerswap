@@ -31,13 +31,14 @@ import { AddRemoveTabs } from 'components/NavigationTabs'
 import RangeBadge from 'components/Badge/RangeBadge'
 import Toggle from 'components/Toggle'
 import { t, Trans } from '@lingui/macro'
-import { SupportedChainId } from 'constants/chains'
 import usePrevious from '../../hooks/usePrevious'
 
 import ReactGA from 'react-ga'
 import { useAppSelector } from '../../state/hooks'
 import { useActiveWeb3React } from '../../hooks/web3'
 import useTheme from '../../hooks/useTheme'
+import { WrappedCurrency } from '../../models/types'
+import { GAS_PRICE_MULTIPLIER } from '../../hooks/useGasPrice'
 
 const DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
@@ -73,9 +74,10 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         return { ...position }
     }, [position])
 
-    const gasPrice = useAppSelector((state) =>
-        state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
-    )
+    const gasPrice = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 70
+            return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+    })
 
     // flag for receiving WETH
     const [receiveWETH, setReceiveWETH] = useState(false)
@@ -181,7 +183,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 const newTxn = {
                     ...txn,
                     gasLimit: calculateGasMargin(chainId, estimate),
-                    gasPrice: gasPrice * 1000000000
+                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                 }
 
                 return library
@@ -254,7 +256,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                         <CurrencyLogo
                             size='24px'
                             style={{ marginLeft: '8px' }}
-                            currency={liquidityValue0?.currency}
+                            currency={liquidityValue0?.currency as WrappedCurrency}
                         />
                     </RowFixed>
                 </RowBetween>
@@ -271,7 +273,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                         <CurrencyLogo
                             size='24px'
                             style={{ marginLeft: '8px' }}
-                            currency={liquidityValue1?.currency}
+                            currency={liquidityValue1?.currency as WrappedCurrency}
                         />
                     </RowFixed>
                 </RowBetween>
@@ -298,7 +300,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                 <CurrencyLogo
                                     size='24px'
                                     style={{ marginLeft: '8px' }}
-                                    currency={feeValue0?.currency}
+                                    currency={feeValue0?.currency as WrappedCurrency}
                                 />
                             </RowFixed>
                         </RowBetween>
@@ -315,7 +317,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                 <CurrencyLogo
                                     size='24px'
                                     style={{ marginLeft: '8px' }}
-                                    currency={feeValue1?.currency}
+                                    currency={feeValue1?.currency as WrappedCurrency}
                                 />
                             </RowFixed>
                         </RowBetween>
@@ -328,10 +330,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         )
     }
 
-    const onOptimisticChain =
-        chainId && [SupportedChainId.OPTIMISM, SupportedChainId.OPTIMISTIC_KOVAN].includes(chainId)
     const showCollectAsWeth = Boolean(
-        !onOptimisticChain &&
+        !chainId &&
         liquidityValue0?.currency &&
         liquidityValue1?.currency &&
         (liquidityValue0.currency.isNative ||
@@ -445,7 +445,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                             <CurrencyLogo
                                                 size='24px'
                                                 style={{ marginLeft: '8px' }}
-                                                currency={liquidityValue0?.currency}
+                                                currency={liquidityValue0?.currency as WrappedCurrency}
                                             />
                                         </RowFixed>
                                     </RowBetween>
@@ -466,7 +466,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                             <CurrencyLogo
                                                 size='24px'
                                                 style={{ marginLeft: '8px' }}
-                                                currency={liquidityValue1?.currency}
+                                                currency={liquidityValue1?.currency as WrappedCurrency}
                                             />
                                         </RowFixed>
                                     </RowBetween>
@@ -493,7 +493,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                     <CurrencyLogo
                                                         size='24px'
                                                         style={{ marginLeft: '8px' }}
-                                                        currency={feeValue0?.currency}
+                                                        currency={feeValue0?.currency as WrappedCurrency}
                                                     />
                                                 </RowFixed>
                                             </RowBetween>
@@ -518,7 +518,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                                     <CurrencyLogo
                                                         size='24px'
                                                         style={{ marginLeft: '8px' }}
-                                                        currency={feeValue1?.currency}
+                                                        currency={feeValue1?.currency as WrappedCurrency}
                                                     />
                                                 </RowFixed>
                                             </RowBetween>

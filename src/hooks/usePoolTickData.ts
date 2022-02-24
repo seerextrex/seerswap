@@ -60,7 +60,7 @@ export function usePoolActiveLiquidity(
     activeTick: number | undefined
     data: TickProcessed[] | undefined
 } {
-    const pool = usePool(currencyA, currencyB, feeAmount)
+    const pool = usePool(currencyA, currencyB)
 
     // Find nearest valid tick for pool in case tick is not initialized.
     const activeTick = useMemo(() => getActiveTick(pool[1]?.tickCurrent, feeAmount), [pool, feeAmount])

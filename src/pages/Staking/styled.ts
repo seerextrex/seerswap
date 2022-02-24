@@ -92,6 +92,7 @@ export const BodyWrapper = styled.div`
   margin-bottom: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 1rem;
   `}
 `
 export const MockScreen = styled.div`

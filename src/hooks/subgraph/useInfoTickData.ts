@@ -49,6 +49,7 @@ export function useInfoTickData() {
         return { ticks: surroundingTicksResult, loading: false, error: false }
     }
 
+    //@ts-ignore
     async function fetchTicksSurroundingPrice(poolId: string) {
 
         setTicksLoading(true)

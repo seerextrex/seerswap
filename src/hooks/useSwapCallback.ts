@@ -14,8 +14,7 @@ import { SignatureData } from './useERC20Permit'
 import useTransactionDeadline from './useTransactionDeadline'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
-
-import { SwapRouter } from '../lib/src/swapRouter'
+import { SwapRouter } from '../lib/src'
 
 // import abi from '../abis/swap-router.json'
 import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
@@ -204,7 +203,10 @@ export function useSwapCallback(
 
     const addTransaction = useTransactionAdder()
 
-    const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+    const gasPrice = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 70
+        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+    })
 
     const { address: recipientAddress } = useENS(recipientAddressOrName)
     const recipient = recipientAddressOrName === null ? account : recipientAddress

@@ -336,19 +336,14 @@ export const FarmingInfoLabel = styled.span<{ isEvents: boolean }>`
     background-color: #ffd967;
     position: absolute;
     border-radius: 50%;
-    top: 0;
-    right: -1rem;
+    top: .2rem;
+    right: .5rem;
     display: ${({ isEvents }) => (!isEvents ? 'none' : 'block')};
 
     ${({ theme }) => theme.mediaWidth.upToMedium`
         top: 20%;
         right: 0%;
   `}
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-        top: -10%;
-        right: -15%;
-    `}
-
 `
 
 //NetworkCard

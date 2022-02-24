@@ -1,7 +1,6 @@
 import { nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
 import { useCallback } from 'react'
-
 import { getNetworkLibrary } from '../connectors'
 import { useAppDispatch } from 'state/hooks'
 import { fetchTokenList } from '../state/lists/actions'
@@ -33,7 +32,7 @@ export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean
         async (listUrl: string, sendDispatch = true) => {
             const requestId = nanoid()
             sendDispatch && dispatch(fetchTokenList.pending({ requestId, url: listUrl }))
-            return getTokenList(listUrl, ensResolver)
+            return getTokenList(listUrl)
                 .then((tokenList) => {
                     sendDispatch && dispatch(fetchTokenList.fulfilled({
                         url: listUrl,

@@ -24,7 +24,7 @@ export const ChartWrapper = styled.div`
 export const RangeButtonsWrapper = styled.ul`
   padding: 0;
 `
-export const ToolbarOptionsItem = styled.li`
+export const ToolbarOptionsItem = styled.li<{selected?: boolean}>`
   display: inline-flex;
   padding: 6px 10px;
   border-radius: 6px;

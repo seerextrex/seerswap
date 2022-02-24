@@ -23,7 +23,10 @@ export function useStakerHandlers() {
 
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
 
-    const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+    const gasPrice = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 70
+            return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+    })
 
     const addTransaction = useTransactionAdder()
 

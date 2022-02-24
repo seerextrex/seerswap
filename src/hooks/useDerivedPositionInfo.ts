@@ -1,9 +1,9 @@
 import { Pool, Position } from 'lib/src'
 import { usePool } from 'hooks/usePools'
-import { PositionDetails } from 'types/position'
 import { useCurrency } from './Tokens'
+import { PositionPool } from '../models/interfaces'
 
-export function useDerivedPositionInfo(positionDetails: PositionDetails | undefined): {
+export function useDerivedPositionInfo(positionDetails: PositionPool | undefined): {
     position: Position | undefined
     pool: Pool | undefined
 } {
@@ -11,7 +11,7 @@ export function useDerivedPositionInfo(positionDetails: PositionDetails | undefi
     const currency1 = useCurrency(positionDetails?.token1)
 
     // construct pool data
-    const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined, positionDetails?.fee)
+    const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined)
 
     let position = undefined
     if (pool && positionDetails) {

@@ -63,6 +63,7 @@ import { useInverter } from '../../hooks/useInverter'
 import { getRatio } from '../../utils/getRatio'
 import { LinkedCurrency } from './LinkedCurrency'
 import { CurrentPriceCard } from './CurrentPriceCard'
+import { WrappedCurrency } from '../../models/types'
 
 function useQuery() {
     const { search } = useLocation()
@@ -70,11 +71,7 @@ function useQuery() {
     return useMemo(() => new URLSearchParams(search), [search])
 }
 
-export default function PositionPage({
-    match: {
-        params: { tokenId: tokenIdFromUrl }
-    }
-}: RouteComponentProps<{ tokenId?: string }>) {
+export default function PositionPage({ match: { params: { tokenId: tokenIdFromUrl } } }: RouteComponentProps<{ tokenId?: string }>) {
     const { chainId, account, library } = useActiveWeb3React()
 
     const query = useQuery()
@@ -87,7 +84,10 @@ export default function PositionPage({
     const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
     const { position: existingPosition } = useDerivedPositionInfo(positionDetails)
 
-    const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+    const gasPrice = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 70
+        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+    })
 
     const { tokenId } = positionDetails || {}
 
@@ -289,7 +289,7 @@ export default function PositionPage({
                     <AutoColumn gap='md'>
                         <RowBetween>
                             <RowFixed>
-                                <CurrencyLogo currency={feeValueUpper?.currency} size={'24px'}
+                                <CurrencyLogo currency={feeValueUpper?.currency as WrappedCurrency} size={'24px'}
                                               style={{ marginRight: '0.5rem' }} />
                                 <TYPE.main>{feeValueUpper ? formatCurrencyAmount(feeValueUpper, 4) : '-'}</TYPE.main>
                             </RowFixed>
@@ -297,7 +297,7 @@ export default function PositionPage({
                         </RowBetween>
                         <RowBetween>
                             <RowFixed>
-                                <CurrencyLogo currency={feeValueLower?.currency} size={'24px'}
+                                <CurrencyLogo currency={feeValueLower?.currency as WrappedCurrency} size={'24px'}
                                               style={{ marginRight: '0.5rem' }} />
                                 <TYPE.main>{feeValueLower ? formatCurrencyAmount(feeValueLower, 4) : '-'}</TYPE.main>
                             </RowFixed>
@@ -528,7 +528,7 @@ export default function PositionPage({
                                             <RowBetween>
                                                 <RowFixed>
                                                     <CurrencyLogo
-                                                        currency={feeValueUpper?.currency}
+                                                        currency={feeValueUpper?.currency as WrappedCurrency}
                                                         size={'24px'}
                                                         style={{ marginRight: '0.5rem' }}
                                                     />
@@ -541,7 +541,7 @@ export default function PositionPage({
                                             <RowBetween>
                                                 <RowFixed>
                                                     <CurrencyLogo
-                                                        currency={feeValueLower?.currency}
+                                                        currency={feeValueLower?.currency as WrappedCurrency}
                                                         size={'24px'}
                                                         style={{ marginRight: '0.5rem' }}
                                                     />
@@ -650,6 +650,7 @@ export default function PositionPage({
                             </PriceRow>
                             <CurrentPriceCard
                                 inverted={inverted}
+                                //@ts-ignore
                                 pool={_pool}
                                 currencyQuote={currencyQuote}
                                 currencyBase={currencyBase}

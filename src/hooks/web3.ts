@@ -36,6 +36,7 @@ export function useEagerConnect() {
     }, [activate, setTriedSafe, triedSafe])
 
     // then, if that fails, try connecting to an injected connector
+    //@ts-ignore
     useEffect(async () => {
         if (!active && triedSafe) {
 

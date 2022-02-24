@@ -35,9 +35,9 @@ export function useFeeTierDistribution(
     )
 
     // fetch all pool states to determine pool state
-    const [poolStateLow] = usePool(currencyA, currencyB, FeeAmount.LOW)
-    const [poolStateMedium] = usePool(currencyA, currencyB, FeeAmount.MEDIUM)
-    const [poolStateHigh] = usePool(currencyA, currencyB, FeeAmount.HIGH)
+    const [poolStateLow] = usePool(currencyA, currencyB)
+    const [poolStateMedium] = usePool(currencyA, currencyB)
+    const [poolStateHigh] = usePool(currencyA, currencyB)
 
     return useMemo(() => {
         if (isLoading || isFetching || isUninitialized || isError || !distributions) {

@@ -18,7 +18,7 @@ export function usePoolDynamicFee(
 
     const dispatch = useAppDispatch()
 
-    const swapEventCallback = (e) => {
+    const swapEventCallback = (e: any) => {
         dispatch(updateDynamicFee({ dynamicFee: e }))
     }
 

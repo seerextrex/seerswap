@@ -72,6 +72,7 @@ import {
 //TODO test merge without failed polygon
 import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
 import { EthereumWindow, WrappedCurrency } from '../../models/types'
+import { GAS_PRICE_MULTIPLIER } from '../../hooks/useGasPrice'
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
@@ -88,7 +89,10 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
     const _window = window as unknown as EthereumWindow
     const provider = _window.ethereum ? new providers.Web3Provider(_window.ethereum) : undefined
 
-    const gasPrice = useAppSelector((state) => state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched)
+    const gasPrice = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 70
+        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+    })
     const allTransactions = useAllTransactions()
 
     const sortedRecentTransactions = useMemo(() => {
@@ -182,7 +186,6 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
         noLiquidity,
         currencies,
         errorMessage,
-        invalidPool,
         invalidRange,
         outOfRange,
         depositADisabled,
@@ -296,7 +299,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                     const newTxn = {
                         ...txn,
                         gasLimit: calculateGasMargin(chainId, estimate),
-                        gasPrice: gasPrice ? gasPrice * 1000000000 : 10 * 1000000000
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                     }
 
                     return library

@@ -14,7 +14,7 @@ export const MenuListItem = styled.li`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20%;
+    width: 25%;
     padding: 10px 0;
     font-weight: 600;
     position: relative;

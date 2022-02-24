@@ -39,7 +39,7 @@ import {
     TokenSubgraph
 } from '../models/interfaces'
 import { EthereumWindow } from '../models/types'
-import { Aprs, FutureFarmingEvent } from '../models/interfaces/farming'
+import { Aprs, FutureFarmingEvent } from '../models/interfaces'
 
 
 export function useIncentiveSubgraph() {
@@ -173,7 +173,7 @@ export function useIncentiveSubgraph() {
 
             const { data: { eternalFarmings }, error } = (await farmingClient.query<SubgraphResponse<DetachedEternalFarming[]>>({
                 query: FETCH_ETERNAL_FARM(),
-                variables: {farmId}
+                variables: { farmId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -330,7 +330,7 @@ export function useIncentiveSubgraph() {
 
             setTransferredPositionsLoading(true)
 
-            const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
+            const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Deposit[]>>({
                 query: TRANSFERED_POSITIONS(),
                 fetchPolicy: reload ? 'network-only' : 'cache-first',
                 variables: { account }
@@ -368,7 +368,7 @@ export function useIncentiveSubgraph() {
                 if (!position.incentive && !position.eternalFarming && typeof position.pool === 'string') {
 
                     const _pool = await fetchPool(position.pool)
-
+//@ts-ignore
                     _position = { ..._position, pool: _pool }
                 }
 
@@ -393,20 +393,22 @@ export function useIncentiveSubgraph() {
 
                     _position = {
                         ..._position,
+                        //@ts-ignore
                         pool: _pool,
                         incentiveRewardToken: _rewardToken,
                         incentiveBonusRewardToken: _bonusRewardToken,
-                        incentiveStartTime: startTime,
-                        incentiveEndTime: endTime,
+                        incentiveStartTime: +startTime,
+                        incentiveEndTime: +endTime,
                         started: +startTime * 1000 < Date.now(),
                         ended: +endTime * 1000 < Date.now(),
-                        createdAtTimestamp,
+                        createdAtTimestamp: +createdAtTimestamp,
                         incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
                         incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
                     }
 
                 } else {
                     const { data: { incentives }, error } = await farmingClient.query({
+                        //@ts-ignore
                         query: FETCH_FINITE_FARM_FROM_POOL([position.pool]),
                         fetchPolicy: 'network-only'
                     })
@@ -449,6 +451,7 @@ export function useIncentiveSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
+                        //@ts-ignore
                         pool: _pool,
                         eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
                         eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
@@ -457,6 +460,7 @@ export function useIncentiveSubgraph() {
                 } else {
 
                     const { data: { eternalFarmings }, error } = await farmingClient.query({
+                        //@ts-ignore
                         query: FETCH_ETERNAL_FARM_FROM_POOL([position.pool]),
                         fetchPolicy: 'network-only'
                     })
@@ -644,11 +648,13 @@ export function useIncentiveSubgraph() {
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
 
                 _eternalFarmings = [
+                    //@ts-ignore
                     ..._eternalFarmings,
                     {
                         ...farming,
                         rewardToken,
                         bonusRewardToken,
+                        //@ts-ignore
                         pool,
                         apr
                     }

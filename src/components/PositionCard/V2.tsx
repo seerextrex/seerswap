@@ -11,7 +11,6 @@ import { useActiveWeb3React } from '../../hooks/web3'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { unwrappedToken } from '../../utils/unwrappedToken'
 import { ButtonEmpty, ButtonPrimary } from '../Button'
-import { CardNoise } from '../earn/styled'
 
 import { useColor } from '../../hooks/useColor'
 
@@ -25,6 +24,7 @@ import { AutoColumnInfo, FixedHeightRow, RowFixedMigrate, StyledV2PositionCard }
 
 import Badge, { BadgeVariant } from '../Badge'
 import { Pair } from '../../utils/computePairAddress'
+import { WrappedCurrency } from '../../models/types'
 
 interface PositionCardProps {
     pair: Pair | null
@@ -39,14 +39,14 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
 
     console.log(sushi)
 
-    const currency0 = unwrappedToken(pair.token0)
-    const currency1 = unwrappedToken(pair.token1)
+    const currency0 = unwrappedToken(pair?.token0 as WrappedCurrency)
+    const currency1 = unwrappedToken(pair?.token1 as WrappedCurrency)
 
     const [showMore, setShowMore] = useState(false)
 
-    const userDefaultPoolBalance = useTokenBalance(account ?? undefined, pair.liquidityToken)
+    const userDefaultPoolBalance = useTokenBalance(account ?? undefined, pair?.liquidityToken)
 
-    const totalPoolTokens = useTotalSupply(pair.liquidityToken)
+    const totalPoolTokens = useTotalSupply(pair?.liquidityToken)
 
     // if staked balance balance provided, add to standard liquidity amount
     const userPoolBalance = stakedBalance ? userDefaultPoolBalance?.add(stakedBalance) : userDefaultPoolBalance
@@ -74,7 +74,6 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
 
     return (
         <StyledV2PositionCard border={border} bgColor={backgroundColor}>
-            <CardNoise />
             <AutoColumn gap='12px'>
                 <FixedHeightRow>
                     <AutoRow gap='8px'>
@@ -158,8 +157,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                                     <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                         {token0Deposited?.toSignificant(6)}
                                     </Text>
-                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }}
-                                                  currency={currency0} />
+                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }} currency={currency0 as WrappedCurrency} />
                                 </RowFixed>
                             ) : (
                                 '-'
@@ -177,8 +175,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                                     <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                         {token1Deposited?.toSignificant(6)}
                                     </Text>
-                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }}
-                                                  currency={currency1} />
+                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }} currency={currency1 as WrappedCurrency} />
                                 </RowFixed>
                             ) : (
                                 '-'
@@ -202,7 +199,7 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
                                     padding='8px'
                                     $borderRadius='8px'
                                     as={Link}
-                                    to={`/migrate/${pair.liquidityToken.address}`}
+                                    to={`/migrate/${pair?.liquidityToken.address}`}
                                     width='100%'
                                 >
                                     <Trans>Migrate</Trans>

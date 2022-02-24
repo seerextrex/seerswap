@@ -19,6 +19,7 @@ import { Trans } from '@lingui/macro'
 import { AdvancedSwapDetails } from './AdvancedSwapDetails'
 import { LightCard } from '../Card'
 import TradePrice from '../swap/TradePrice'
+import { WrappedCurrency } from '../../models/types'
 
 export default function SwapModalHeader({
     trade,
@@ -52,7 +53,7 @@ export default function SwapModalHeader({
                     </RowBetween>
                     <RowBetween align='center'>
                         <RowFixed gap={'0px'}>
-                            <CurrencyLogo currency={trade.inputAmount.currency} size={'24px'}
+                            <CurrencyLogo currency={trade.inputAmount.currency as WrappedCurrency} size={'24px'}
                                           style={{ marginRight: '12px' }} />
                             <Text fontSize={20} fontWeight={500}>
                                 {trade.inputAmount.currency.symbol}
@@ -99,7 +100,7 @@ export default function SwapModalHeader({
                     </RowBetween>
                     <RowBetween align='flex-end'>
                         <RowFixed gap={'0px'}>
-                            <CurrencyLogo currency={trade.outputAmount.currency} size={'24px'}
+                            <CurrencyLogo currency={trade.outputAmount.currency as WrappedCurrency} size={'24px'}
                                           style={{ marginRight: '12px' }} />
                             <Text fontSize={20} fontWeight={500}>
                                 {trade.outputAmount.currency.symbol}

@@ -1,6 +1,5 @@
 import { Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
 import { encodeRouteToPath, Route, Trade } from 'lib/src'
-import { SupportedChainId } from 'constants/chains'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useSingleContractMultipleData } from '../state/multicall/hooks'
@@ -14,11 +13,6 @@ export enum V3TradeState {
     NO_ROUTE_FOUND,
     VALID,
     SYNCING,
-}
-
-const QUOTE_GAS_OVERRIDES: { [chainId: number]: number } = {
-    [SupportedChainId.OPTIMISM]: 6_000_000,
-    [SupportedChainId.OPTIMISTIC_KOVAN]: 6_000_000
 }
 
 const DEFAULT_GAS_QUOTE = 2_000_000
@@ -45,7 +39,7 @@ export function useBestV3TradeExactIn(
     }, [amountIn, routes])
 
     const quotesResults = useSingleContractMultipleData(quoter, 'quoteExactInput', quoteExactInInputs, {
-        gasRequired: chainId ? QUOTE_GAS_OVERRIDES[chainId] ?? DEFAULT_GAS_QUOTE : undefined
+        gasRequired: chainId ? DEFAULT_GAS_QUOTE : undefined
     })
 
     return useMemo(() => {
@@ -130,7 +124,7 @@ export function useBestV3TradeExactOut(
     }, [amountOut, routes])
 
     const quotesResults = useSingleContractMultipleData(quoter, 'quoteExactOutput', quoteExactOutInputs, {
-        gasRequired: chainId ? QUOTE_GAS_OVERRIDES[chainId] ?? DEFAULT_GAS_QUOTE : undefined
+        gasRequired: chainId ? DEFAULT_GAS_QUOTE : undefined
     })
 
     return useMemo(() => {

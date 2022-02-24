@@ -9,13 +9,7 @@ interface StakerInputRangeProps {
     fiatValue: CurrencyAmount<Token> | null
 }
 
-export default function RealStakerInputRange({
-    baseCurrency,
-    amountValue,
-    setAmountValue,
-    fiatValue
-}: StakerInputRangeProps) {
-
+export default function RealStakerInputRange({ baseCurrency, amountValue, setAmountValue, fiatValue }: StakerInputRangeProps) {
     return (
         <CurrencyInputPanelWrapper>
             <CurrencyTop
@@ -27,10 +21,11 @@ export default function RealStakerInputRange({
                 disabled={false}
                 shallow={true}
                 id={''}
-                onUserInput={() => {}}
+                onUserInput={() => {
+                }}
                 showMaxButton={false}
                 swap={false}
-                value={''}/>
+                value={''} />
             <CurrencyBottom
                 style={{ width: '100%' }}
                 onUserInput={(e) => {

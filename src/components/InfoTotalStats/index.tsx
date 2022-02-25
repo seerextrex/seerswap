@@ -1,39 +1,17 @@
 import { useEffect, useMemo } from 'react'
-import { formatDollarAmount } from 'utils/numbers'
-import Loader from '../Loader'
 import { useLocation } from 'react-router-dom'
-import { StatsCard, StatsCardTitle, StatsCardValue, TotalStatsWrapper } from './styled'
+import { TotalStatsWrapper } from './styled'
+import { StatCard } from './StatCard'
 
-function StatCard({ isLoading, title, data }: { isLoading: boolean; title: string; data: number }) {
-    return (
-        <StatsCard>
-            <StatsCardTitle>{title}</StatsCardTitle>
-            <StatsCardValue>
-                {isLoading ? (
-                    <span>
-            <Loader size={'30px'} stroke='white' />
-          </span>
-                ) : (
-                    formatDollarAmount(data)
-                )}
-            </StatsCardValue>
-        </StatsCard>
-    )
-}
-
-export function InfoTotalStats({
-    data,
-    isLoading,
-    refreshHandler,
-    blocksFetched,
-    poolsStat
-}: {
+interface InfoTotalStatsProps {
     data: any
     isLoading: boolean
     refreshHandler: any
     blocksFetched: boolean
     poolsStat: any
-}) {
+}
+
+export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched, poolsStat }: InfoTotalStatsProps) {
     const { pathname } = useLocation()
 
     useEffect(() => {
@@ -42,9 +20,7 @@ export function InfoTotalStats({
         }
     }, [blocksFetched])
 
-    const pool = useMemo(() => {
-        return pathname.split('pools/')[1]
-    }, [pathname])
+    const pool = useMemo(() => pathname.split('pools/')[1], [pathname])
 
     const _data = useMemo(() => {
         if (pool) {

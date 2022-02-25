@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useActiveWeb3React } from '../web3'
 import { useClients } from './useClients'
 import {
@@ -41,7 +41,7 @@ import {
     TokenInSubgraph,
     TotalStatSubgraph
 } from '../../models/interfaces'
-import { EternalFarmingByPool } from '../../models/interfaces/responseSubgraph'
+import { EternalFarmingByPool } from '../../models/interfaces'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
@@ -84,7 +84,7 @@ export function useInfoSubgraph() {
     const [chartPoolDataLoading, setChartPoolDataLoading] = useState<boolean>(false)
 
     const [totalStats, setTotalStats] = useState<null | string | FormattedTotalStats>(null)
-    const [totalStatsLoading, setTotalStatsLoading] = useState<boolean>(false)
+    const [totalStatsLoading, setTotalStatsLoading] = useState<boolean>(true)
 
     const [stakesResult, setStakes] = useState<null | string | SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>(null)
     const [stakesLoading, setStakesLoading] = useState<boolean>(false)

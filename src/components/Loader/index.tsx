@@ -1,36 +1,12 @@
-import styled, { keyframes } from 'styled-components/macro'
+import { StyledSVG } from './styled'
 
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`
-
-const StyledSVG = styled.svg<{ size: string; stroke?: string }>`
-  animation: 2s ${rotate} linear infinite;
-  height: ${({ size }) => size};
-  width: ${({ size }) => size};
-  path {
-    stroke: ${({ stroke, theme }) => stroke ?? theme.winterMainButton};
-  }
-`
-
-/**
- * Takes in custom size and stroke for circle color, default to primary color as fill,
- * need ...rest for layered styles on top
- */
-export default function Loader({
-    size = '16px',
-    stroke,
-    ...rest
-}: {
+interface LoaderProps {
     size?: string
     stroke?: string
     [k: string]: any
-}) {
+}
+
+export default function Loader({ size = '16px', stroke, ...rest }: LoaderProps) {
     return (
         <StyledSVG
             style={{ display: 'block' }}
@@ -50,42 +26,3 @@ export default function Loader({
         </StyledSVG>
     )
 }
-
-const loadingAnimation = keyframes`
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-`
-
-export const LoadingRows = styled.div`
-  display: grid;
-  min-width: 75%;
-  max-width: 100%;
-  grid-column-gap: 0.5em;
-  grid-row-gap: 0.8em;
-  grid-template-columns: repeat(3, 1fr);
-  & > div {
-    animation: ${loadingAnimation} 1.5s infinite;
-    animation-fill-mode: both;
-    background: linear-gradient(
-      to left,
-      ${({ theme }) => theme.bg1} 25%,
-      ${({ theme }) => theme.bg2} 50%,
-      ${({ theme }) => theme.bg1} 75%
-    );
-    background-size: 400%;
-    border-radius: 12px;
-    height: 2.4em;
-    will-change: background-position;
-  }
-  & > div:nth-child(4n + 1) {
-    grid-column: 1 / 3;
-  }
-  & > div:nth-child(4n) {
-    grid-column: 3 / 4;
-    margin-bottom: 2em;
-  }
-`

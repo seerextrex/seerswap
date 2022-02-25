@@ -8,14 +8,13 @@ import { PageTitle } from '../../components/PageTitle'
 import PoolInfoPage from '../PoolInfoPage'
 import { InfoTotalStats } from '../../components/InfoTotalStats'
 import { BodyWrapper, InnerWrapper, MainContentWrapper, MenuWrapper, PageWrapper } from './styled'
-import { useEffect } from 'react'
 
 function InfoPage() {
     const { path } = useRouteMatch()
     const {
-        fetchInfoPools: {poolsLoading, fetchInfoPoolsFn, poolsResult},
-        fetchInfoTokens: {tokensLoading, fetchInfoTokensFn, tokensResult},
-        fetchTotalStats: {totalStats, fetchTotalStatsFn, totalStatsLoading},
+        fetchInfoPools: { poolsLoading, fetchInfoPoolsFn, poolsResult },
+        fetchInfoTokens: { tokensLoading, fetchInfoTokensFn, tokensResult },
+        fetchTotalStats: { totalStats, fetchTotalStatsFn, totalStatsLoading },
         blocksFetched
     } = useInfoSubgraph() || {}
 

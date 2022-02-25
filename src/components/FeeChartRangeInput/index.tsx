@@ -92,8 +92,8 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                 previousData: fetchedData.previousData.map((el) => {
                     if ('volumeUSD' in el) {
                         return {
-                            timestamp: new Date(),
-                            value: 0
+                            timestamp: new Date(el.periodStartUnix * 1000),
+                            value: +el[field]
                         }
                     }
                     return {

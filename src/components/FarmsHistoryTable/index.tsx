@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { TYPE } from 'theme'
-import Loader, { LoadingRows } from 'components/Loader'
+import Loader from 'components/Loader'
+import {LoadingRows} from '../Loader/styled'
 import { AutoColumn } from 'components/Column'
 import { Label } from 'components/Text'
 import { Arrow, ClickableTextStyled, PageButtons, ResponsiveGrid, Wrapper } from './styled'

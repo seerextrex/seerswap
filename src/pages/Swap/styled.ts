@@ -62,6 +62,6 @@ export const ContestArrow = styled.span`
 
 export const WrappedAppBody = styled(AppBody)`
     ${({ theme }) => theme.mediaWidth.upToSmall`
-        margin-top: 6rem;
+        margin-top: 2rem;
     `}
 `

@@ -334,6 +334,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 onDismiss={handleDismissTokenWarning}
             />
             <WrappedAppBody>
+<<<<<<< HEAD
                 <ContestBanner href='https://medium.com/@crypto_algebra/the-algebra-swapping-competition-win-an-iphone-13-on-the-algebra-dex-5c48d05fc4a' target='_blank' rel='noreferrer noopener'>
                     <div style={{ width: '100%' }}>
                         <ContestBannerTitle>
@@ -348,6 +349,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         </ContestBannerTitle>
                     </div>
                 </ContestBanner>
+=======
+>>>>>>> b076eab (rm banner)
                 <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
                 <Wrapper id='swap-page'>
                     <ConfirmSwapModal

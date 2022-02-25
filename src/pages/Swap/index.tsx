@@ -339,6 +339,20 @@ export default function Swap({ history }: RouteComponentProps) {
                 onDismiss={handleDismissTokenWarning}
             />
             <WrappedAppBody>
+                <ContestBanner href="https://medium.com/@crypto_algebra/the-algebra-swapping-competition-win-an-iphone-13-on-the-algebra-dex-5c48d05fc4a" target="_blank" rel="noreferrer noopener">
+                    <div style={{ width: "100%" }}>
+                        <ContestBannerTitle>
+                            Swap now & win an <ContestBannerTitleIphone>&nbsp;IPHONE 13</ContestBannerTitleIphone>{" "}
+                            <ContestArrow style={{ marginLeft: "1rem" }}>
+                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="30" height="30" rx="12" fill="#72B5FA" />
+                                    <path d="M20.5 9L15 13.5L10 9.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                    <path d="M20.5 15.5L15 20L10 16" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                </svg>
+                            </ContestArrow>
+                        </ContestBannerTitle>
+                    </div>
+                </ContestBanner>
                 <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
                 <Wrapper id="swap-page">
                     <ConfirmSwapModal

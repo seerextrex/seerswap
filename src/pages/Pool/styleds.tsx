@@ -174,7 +174,7 @@ export const MainContentWrapper = styled.main`
     color: white;
     padding: 0 40px 30px;
 
-    ${({theme}) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
         padding: 1rem;
     `}
 `
@@ -186,10 +186,12 @@ export const FilterPanelWrapper = styled.div`
     text-align: start;
     padding-left: 2rem;
     margin-bottom: .5rem;
+
     label {
         margin-bottom: .5rem;
     }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-content: center;
     padding-left: unset;
   `}
@@ -323,8 +325,8 @@ export const LoadingMock = styled.div`
     margin-top: 5rem;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-  width: 100%;
-  margin-top: 1rem;
+        width: 100%;
+        margin-top: 1rem;
   `}
 `
 
@@ -332,4 +334,10 @@ export const LoadingMock = styled.div`
 export const FilterPanelItemWrapper = styled.div`
     display: flex;
     flex-direction: column;
+
+    label {
+        ${({ theme }) => theme.mediaWidth.upToSmall`
+           text-align: center;
+        `}
+    }
 `

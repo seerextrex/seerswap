@@ -13,7 +13,6 @@ import { useUserHideClosedPositions } from 'state/user/hooks'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from 'theme'
 import { Helmet } from 'react-helmet'
-import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 import Loader from '../../components/Loader'
 import { ButtonRow, FilterPanelWrapper, MainContentWrapper, MigrateButtonPrimary, NoLiquidity, PageWrapper, ResponsiveButtonPrimary, TitleRow } from './styleds'
 import FilterPanelItem from './FilterPanelItem'
@@ -50,23 +49,14 @@ export default function Pool() {
         }
     ]
 
-    const farmingPositions = useMemo(() => positions?.filter(el => el.onFarming), [positions])
+    const farmingPositions = useMemo(() => positions?.filter(el => el.onFarming), [positions, account])
     const inRangeWithOutFarmingPositions = useMemo(() => openPositions.filter(el => !el.onFarming), [openPositions])
 
-    const filteredPositions = [
+    const filteredPositions = useMemo(() => [
+        ...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions),
         ...inRangeWithOutFarmingPositions,
-        ...(userHideClosedPositions ? [] : closedPositions),
-        ...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions)
-    ]
-
-    const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
-
-    const _filteredPositions = useMemo(() => {
-        if (filteredPositions.length === 0 && prevFilteredPositions && !hideFarmingPositions && !userHideClosedPositions) {
-            return prevFilteredPositions
-        }
-        return filteredPositions
-    }, [filteredPositions])
+        ...(userHideClosedPositions ? [] : closedPositions)
+    ], [inRangeWithOutFarmingPositions, userHideClosedPositions, hideFarmingPositions])
 
     const showConnectAWallet = Boolean(!account)
 
@@ -125,8 +115,8 @@ export default function Pool() {
                         <MainContentWrapper>
                             {positionsLoading ? (
                                 <Loader style={{ margin: 'auto' }} stroke='white' size={'30px'} />
-                            ) : _filteredPositions && _filteredPositions.length > 0 ? (
-                                <PositionList positions={_filteredPositions} />
+                            ) : filteredPositions && filteredPositions.length > 0 ? (
+                                <PositionList positions={filteredPositions} />
                             ) : (
                                 <NoLiquidity>
                                     <TYPE.body color={'white'} textAlign='center'>

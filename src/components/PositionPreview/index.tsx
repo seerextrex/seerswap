@@ -16,6 +16,7 @@ import JSBI from 'jsbi'
 import { Bound } from 'state/mint/v3/actions'
 import { formatTickPrice } from 'utils/formatTickPrice'
 import { RowBetweenHeader, RowFixedStyled } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 export const PositionPreview = ({
     position,
@@ -82,7 +83,7 @@ export const PositionPreview = ({
                 <AutoColumn gap='md'>
                     <RowBetween>
                         <RowFixed>
-                            <CurrencyLogo currency={currency0} />
+                            <CurrencyLogo currency={currency0 as WrappedCurrency} />
                             <TYPE.label ml='8px'>{currency0?.symbol}</TYPE.label>
                         </RowFixed>
                         <RowFixed>
@@ -91,7 +92,7 @@ export const PositionPreview = ({
                     </RowBetween>
                     <RowBetween>
                         <RowFixed>
-                            <CurrencyLogo currency={currency1} />
+                            <CurrencyLogo currency={currency1 as WrappedCurrency} />
                             <TYPE.label ml='8px'>{currency1?.symbol}</TYPE.label>
                         </RowFixed>
                         <RowFixed>

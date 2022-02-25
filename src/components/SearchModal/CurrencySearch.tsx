@@ -93,14 +93,21 @@ export function CurrencySearch({
 
     const ether = useMemo(() => chainId && ExtendedEther.onChain(chainId), [chainId])
 
-    let chainSymbol
+    //TODO
 
-    if (chainId === 137) {
-        chainSymbol = 'MATIC'
-    }
-
-    ether.name = chainSymbol
-    ether.symbol = chainSymbol
+    // let chainSymbol
+    //
+    // if (chainId === 137) {
+    //     chainSymbol = 'MATIC'
+    // }
+    //
+    // if (ether) {
+    //
+    //     // @ts-ignore
+    //     ether.name = chainSymbol
+    //     // @ts-ignore
+    //     ether.symbol = chainSymbol
+    // }
 
     const filteredSortedTokensWithETH: Currency[] = useMemo(() => {
         const s = debouncedQuery.toLowerCase().trim()

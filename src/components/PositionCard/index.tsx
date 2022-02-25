@@ -24,6 +24,8 @@ import Badge, { BadgeVariant } from '../Badge'
 import { Pair } from '../../utils/computePairAddress'
 import { ButtonPrimaryStyled, FixedHeightRow, FixedHeightRowCurrency, MigrateShortcut, RowFixedLogo, RowFixedPrice, StyledPositionCard } from './styled'
 import { isMobile } from 'react-device-detect'
+import { WrappedCurrency } from '../../models/types'
+import { SupportedChainId } from '../../constants/chains'
 
 interface PositionCardProps {
     pair: Pair
@@ -294,8 +296,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                                     <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                         {token0Deposited?.toSignificant(6)}
                                     </Text>
-                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }}
-                                                  currency={currency0} />
+                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }} currency={currency0 as WrappedCurrency} />
                                 </RowFixed>
                             ) : (
                                 '-'
@@ -313,8 +314,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                                     <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                                         {token1Deposited?.toSignificant(6)}
                                     </Text>
-                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }}
-                                                  currency={currency1} />
+                                    <CurrencyLogo size='24px' style={{ marginLeft: '8px' }} currency={currency1 as WrappedCurrency} />
                                 </RowFixed>
                             ) : (
                                 '-'
@@ -350,7 +350,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                                     padding='8px'
                                     $borderRadius='8px'
                                     as={Link}
-                                    to={`/add/${currencyId(currency0, chainId)}/${currencyId(currency1, chainId)}`}
+                                    to={`/add/${currencyId(currency0, chainId || SupportedChainId.POLYGON)}/${currencyId(currency1, chainId || SupportedChainId.POLYGON)}`}
                                     width='32%'
                                 >
                                     <Trans>Add</Trans>
@@ -362,7 +362,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                                 padding='8px'
                                 $borderRadius='8px'
                                 as={Link}
-                                to={`/uni/${currencyId(currency0, chainId)}/${currencyId(currency1, chainId)}`}
+                                to={`/uni/${currencyId(currency0, chainId || SupportedChainId.POLYGON)}/${currencyId(currency1, chainId || SupportedChainId.POLYGON)}`}
                                 width='100%'
                             >
                                 <Trans>Manage Liquidity in Rewards Pool</Trans>

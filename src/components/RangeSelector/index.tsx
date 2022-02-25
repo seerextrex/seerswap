@@ -5,6 +5,24 @@ import { AutoColumn } from 'components/Column'
 import { Bound } from 'state/mint/v3/actions'
 import { RowBetweenSrtyled } from './styled'
 
+
+interface RangeSelectorProps {
+    priceLower?: Price<Token, Token>
+    priceUpper?: Price<Token, Token>
+    getDecrementLower: () => string
+    getIncrementLower: () => string
+    getDecrementUpper: () => string
+    getIncrementUpper: () => string
+    onLeftRangeInput: (typedValue: string) => void
+    onRightRangeInput: (typedValue: string) => void
+    currencyA?: Currency | null
+    currencyB?: Currency | null
+    feeAmount?: number
+    ticksAtLimit: { [bound in Bound]?: boolean | undefined }
+    initial: boolean
+    disabled: boolean
+}
+
 // currencyA is the base token
 export default function RangeSelector({
     priceLower,
@@ -21,22 +39,7 @@ export default function RangeSelector({
     ticksAtLimit,
     initial,
     disabled
-}: {
-    priceLower?: Price<Token, Token>
-    priceUpper?: Price<Token, Token>
-    getDecrementLower: () => string
-    getIncrementLower: () => string
-    getDecrementUpper: () => string
-    getIncrementUpper: () => string
-    onLeftRangeInput: (typedValue: string) => void
-    onRightRangeInput: (typedValue: string) => void
-    currencyA?: Currency | null
-    currencyB?: Currency | null
-    feeAmount?: number
-    ticksAtLimit: { [bound in Bound]?: boolean | undefined }
-    initial: boolean
-    disabled: boolean
-}) {
+}: RangeSelectorProps) {
     const tokenA = (currencyA ?? undefined)?.wrapped
     const tokenB = (currencyB ?? undefined)?.wrapped
     const isSorted = tokenA && tokenB && tokenA.sortsBefore(tokenB)
@@ -51,7 +54,6 @@ export default function RangeSelector({
                     value={ticksAtLimit[Bound.LOWER] ? '0' : leftPrice?.toSignificant(5) ?? ''}
                     onUserInput={onLeftRangeInput}
                     width='100%'
-                    style={{ marginTop: '1rem' }}
                     decrement={isSorted ? getDecrementLower : getIncrementUpper}
                     increment={isSorted ? getIncrementLower : getDecrementUpper}
                     decrementDisabled={ticksAtLimit[Bound.LOWER]}
@@ -63,6 +65,7 @@ export default function RangeSelector({
                     tokenB={currencyB?.symbol}
                     initial={initial}
                     disabled={disabled}
+                    style={{ marginTop: '1rem' }}
                 />
                 <StepCounter
                     value={ticksAtLimit[Bound.UPPER] ? '∞' : rightPrice?.toSignificant(5) ?? ''}

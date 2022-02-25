@@ -7,7 +7,7 @@ export interface ApplicationState {
     // used by RTK-Query to build dynamic subgraph urls
     readonly chainId: number | null
     readonly blockNumber: { readonly [chainId: number]: number }
-    readonly gasPrice: { fetched: number, override: boolean }
+    readonly gasPrice: { fetched: number | null, override: boolean }
     readonly popupList: PopupList
     readonly openModal: ApplicationModal | null
 }

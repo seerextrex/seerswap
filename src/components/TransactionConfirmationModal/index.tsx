@@ -16,7 +16,6 @@ import MetaMaskLogo from '../../assets/svg/metamask-logo.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { Trans } from '@lingui/macro'
-import { L2_CHAIN_IDS } from 'constants/chains'
 import { BottomSection, ConfirmedIcon, Section, StyledLogo, Wrapper } from './styled'
 
 function ConfirmationPendingContent({
@@ -221,7 +220,7 @@ export default function TransactionConfirmationModal({
 
     // if on L2 and txn is submitted, close automatically (if open)
     useEffect(() => {
-        if (isOpen && chainId && L2_CHAIN_IDS.includes(chainId) && hash) {
+        if (isOpen && chainId && hash) {
             onDismiss()
         }
     }, [chainId, hash, isOpen, onDismiss])
@@ -233,18 +232,15 @@ export default function TransactionConfirmationModal({
     // need this to skip submitted view during state update ^^
     return (
         <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
-            {L2_CHAIN_IDS.includes(chainId) && hash ? null : attemptingTxn ? (
-                <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
-            ) : hash ? (
-                <TransactionSubmittedContent
-                    chainId={chainId}
-                    hash={hash}
-                    onDismiss={onDismiss}
-                    currencyToAdd={currencyToAdd}
-                />
-            ) : (
-                content()
-            )}
+            {attemptingTxn ? <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
+                : hash ? <TransactionSubmittedContent
+                        chainId={chainId}
+                        hash={hash}
+                        onDismiss={onDismiss}
+                        currencyToAdd={currencyToAdd}
+                    />
+                    : content()
+            }
         </Modal>
     )
 }

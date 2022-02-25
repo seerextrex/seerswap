@@ -9,6 +9,7 @@ import { ButtonPrimary } from 'components/Button'
 import { useIsTokenActive, useIsUserAddedToken } from 'hooks/Tokens'
 import { Trans } from '@lingui/macro'
 import { CheckIcon, NameOverflow, TokenSection } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 export default function ImportRow({
     token,
@@ -31,7 +32,7 @@ export default function ImportRow({
 
     return (
         <TokenSection style={style}>
-            <CurrencyLogo currency={token} size={'24px'} style={{ opacity: dim ? '0.6' : '1' }} />
+            <CurrencyLogo currency={token as WrappedCurrency} size={'24px'} style={{ opacity: dim ? '0.6' : '1' }} />
             <AutoColumn gap='4px' style={{ opacity: dim ? '0.6' : '1' }}>
                 <AutoRow>
                     <TYPE.body style={{ color: '#080064' }} fontWeight={500}>

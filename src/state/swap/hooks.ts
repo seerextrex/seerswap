@@ -11,14 +11,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useCurrency } from '../../hooks/Tokens'
 import useSwapSlippageTolerance from '../../hooks/useSwapSlippageTolerance'
-import { Version } from '../../hooks/useToggledVersion'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
 import { AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { SwapState } from './reducer'
-import { useUserSingleHopOnly } from 'state/user/hooks'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export function useSwapState(): AppState['swap'] {
@@ -35,7 +33,7 @@ export function useSwapActionHandlers(): {
 
     const { chainId } = useActiveWeb3React()
 
-    let symbol
+    let symbol: string
 
     if (chainId === 137) {
         symbol = 'MATIC'
@@ -103,26 +101,8 @@ const BAD_RECIPIENT_ADDRESSES: { [address: string]: true } = {
     '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D': true // v2 router 02
 }
 
-/**
- * Returns true if any of the pairs or tokens in a trade have the given checksummed address
- * @param trade to check for the given address
- * @param checksummedAddress address to check in the pairs and tokens
- */
-function involvesAddress(
-    trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType>,
-    checksummedAddress: string
-): boolean {
-    const path = trade instanceof V2Trade ? trade.route.path : trade.route.tokenPath
-    return (
-        path.some((token) => token.address === checksummedAddress) ||
-        (trade instanceof V2Trade
-            ? trade.route.pairs.some((pair) => pair.liquidityToken.address === checksummedAddress)
-            : false)
-    )
-}
-
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(toggledVersion: Version): {
+export function useDerivedSwapInfo(): {
     currencies: { [field in Field]?: Currency }
     currencyBalances: { [field in Field]?: CurrencyAmount<Currency> }
     parsedAmount: CurrencyAmount<Currency> | undefined
@@ -133,8 +113,6 @@ export function useDerivedSwapInfo(toggledVersion: Version): {
     allowedSlippage: Percent
 } {
     const { account } = useActiveWeb3React()
-
-    const [singleHopOnly] = useUserSingleHopOnly()
 
     const {
         independentField,

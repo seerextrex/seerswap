@@ -9,7 +9,7 @@ import { AppState } from '../index'
 import { errorFetchingMulticallResults, fetchingMulticallResults, updateMulticallResults } from './actions'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { Call, parseCallKey } from './utils'
-import { UniswapInterfaceMulticall } from 'types/v3'
+import { UniswapInterfaceMulticall } from '@uniswap/v3-periphery/typechain/UniswapInterfaceMulticall'
 
 const DEFAULT_GAS_REQUIRED = 1_000_000
 
@@ -36,7 +36,7 @@ async function fetchChunk(
         )
 
         if (process.env.NODE_ENV === 'development') {
-            returnData.forEach(({ gasUsed, returnData, success }, i) => {
+            returnData.forEach(({ gasUsed, returnData, success }, i: number) => {
                 if (
                     !success &&
                     returnData.length === 2 &&
@@ -53,7 +53,7 @@ async function fetchChunk(
         }
 
         return returnData
-    } catch (error) {
+    } catch (error: any) {
         if (error.code === -32000 || error.message?.indexOf('header not found') !== -1) {
             throw new RetryableError(`header not found for block number ${blockNumber}`)
         }

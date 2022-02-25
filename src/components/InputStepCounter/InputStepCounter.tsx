@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react'
 import { AutoColumn } from 'components/Column'
 import { FeeAmount } from 'lib/src'
 import { Minus, Plus } from 'react-feather'
@@ -21,6 +21,7 @@ interface StepCounterProps {
     tokenB: string | undefined
     initial: boolean
     disabled: boolean
+    style?: CSSProperties
 }
 
 const StepCounter = ({
@@ -34,7 +35,7 @@ const StepCounter = ({
     onUserInput,
     title,
     initial,
-    disabled
+    disabled,
 }: StepCounterProps) => {
     //  for focus state, styled components doesnt let you select input parent container
     const [active, setActive] = useState(false)

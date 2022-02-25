@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Check, ChevronLeft } from 'react-feather'
-import { useActiveWeb3React } from '../../hooks/web3'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleModal } from '../../state/application/hooks'
-import { useDarkModeManager } from 'state/user/hooks'
-import { CHAIN_INFO, L2_CHAIN_IDS, SupportedChainId } from 'constants/chains'
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from 'constants/locales'
 import { useLocationLinkProps } from 'hooks/useLocationLinkProps'
 import { useActiveLocale } from 'hooks/useActiveLocale'
@@ -15,7 +12,6 @@ export enum FlyoutAlignment {
     LEFT = 'LEFT',
     RIGHT = 'RIGHT',
 }
-
 
 function LanguageMenuItem({
     locale,
@@ -50,17 +46,11 @@ function LanguageMenu({ close }: { close: () => void }) {
 }
 
 export default function Menu() {
-    const { account, chainId } = useActiveWeb3React()
 
     const node = useRef<HTMLDivElement>()
     const open = useModalOpen(ApplicationModal.MENU)
     const toggle = useToggleModal(ApplicationModal.MENU)
     useOnClickOutside(node, open ? toggle : undefined)
-    const openClaimModal = useToggleModal(ApplicationModal.ADDRESS_CLAIM)
-    const showUNIClaimOption = Boolean(!!account && !!chainId && !L2_CHAIN_IDS.includes(chainId))
-    const { infoLink } = CHAIN_INFO[chainId ? chainId : SupportedChainId.POLYGON]
-
-    const [darkMode, toggleDarkMode] = useDarkModeManager()
 
     const [menu, setMenu] = useState<'main' | 'lang'>('main')
 

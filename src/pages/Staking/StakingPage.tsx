@@ -14,6 +14,7 @@ import EternalFarmsPage from '../EternalFarmsPage'
 import EventsHistory from '../EventsHistory'
 import { StakerMyRewards } from '../../components/StakerMyRewards'
 import { BodyWrapper, ConnectWalletButton, InnerWrapper, MainContentWrapper, MenuWrapper, MockScreen, PageWrapper } from './styled'
+import { FormattedRewardInterface, Reward } from '../../models/interfaces'
 
 export default function StakingPage() {
     const { account } = useActiveWeb3React()
@@ -76,7 +77,7 @@ export default function StakingPage() {
                                         {account ? (
                                             <>
                                                 <StakerMyRewards
-                                                    data={formattedData}
+                                                    data={formattedData as Reward[] & FormattedRewardInterface[]}
                                                     refreshing={rewardsLoading}
                                                     fetchHandler={() => fetchRewardsFn(true)}
                                                 />
@@ -93,8 +94,9 @@ export default function StakingPage() {
                                             <MockScreen>
                                                 <AlignJustify size={40} stroke={'white'} />
                                                 <p>Connect your account to view farms</p>
-                                                <ConnectWalletButton onClick={toggleWalletModal}>Connect
-                                                    Wallet</ConnectWalletButton>
+                                                <ConnectWalletButton onClick={toggleWalletModal}>
+                                                    Connect Wallet
+                                                </ConnectWalletButton>
                                             </MockScreen>
                                         )}
                                     </Route>

@@ -1,8 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { TradeType } from '@uniswap/sdk-core'
 
-import { VoteOption } from '../governance/types'
-
 export interface SerializableTransactionReceipt {
     to: string
     from: string
@@ -38,14 +36,6 @@ export enum TransactionType {
 
 export interface BaseTransactionInfo {
     type: TransactionType
-}
-
-export interface VoteTransactionInfo extends BaseTransactionInfo {
-    type: TransactionType.VOTE
-    governorAddress: string
-    proposalId: number
-    decision: VoteOption
-    reason: string
 }
 
 export interface DelegateTransactionInfo extends BaseTransactionInfo {
@@ -158,7 +148,6 @@ export type TransactionInfo =
     | ExactOutputSwapTransactionInfo
     | ExactInputSwapTransactionInfo
     | ClaimTransactionInfo
-    | VoteTransactionInfo
     | DelegateTransactionInfo
     | DepositLiquidityStakingTransactionInfo
     | WithdrawLiquidityStakingTransactionInfo
@@ -171,21 +160,8 @@ export type TransactionInfo =
     | RemoveLiquidityV3TransactionInfo
     | SubmitProposalTransactionInfo
 
-export const addTransaction = createAction<{
-    chainId: number
-    hash: string
-    from: string
-    info: TransactionInfo
-}>('transactions/addTransaction')
+export const addTransaction = createAction<{ chainId: number; hash: string; approval: any, summary: any, claim: any, from: string; info?: TransactionInfo }>('transactions/addTransaction')
 export const clearAllTransactions = createAction<{ chainId: number }>('transactions/clearAllTransactions')
 export const clearOneTransaction = createAction<{ chainId: number; hash: string }>('transactions/clearOneTransaction')
-export const finalizeTransaction = createAction<{
-    chainId: number
-    hash: string
-    receipt: SerializableTransactionReceipt
-}>('transactions/finalizeTransaction')
-export const checkedTransaction = createAction<{
-    chainId: number
-    hash: string
-    blockNumber: number
-}>('transactions/checkedTransaction')
+export const finalizeTransaction = createAction<{ chainId: number; hash: string; receipt: SerializableTransactionReceipt }>('transactions/finalizeTransaction')
+export const checkedTransaction = createAction<{ chainId: number; hash: string; blockNumber: number }>('transactions/checkedTransaction')

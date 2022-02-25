@@ -12,12 +12,11 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useUserHideClosedPositions } from 'state/user/hooks'
 import { ThemeContext } from 'styled-components/macro'
 import { TYPE } from 'theme'
-import { PositionDetails } from 'types/position'
 import { Helmet } from 'react-helmet'
-import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 import Loader from '../../components/Loader'
 import { ButtonRow, FilterPanelWrapper, MainContentWrapper, MigrateButtonPrimary, NoLiquidity, PageWrapper, ResponsiveButtonPrimary, TitleRow } from './styleds'
 import FilterPanelItem from './FilterPanelItem'
+import { PositionPool } from '../../models/interfaces'
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React()
@@ -29,7 +28,7 @@ export default function Pool() {
 
     const { positions, loading: positionsLoading } = useV3Positions(account)
 
-    const [openPositions, closedPositions] = positions?.reduce<[PositionDetails[], PositionDetails[]]>(
+    const [openPositions, closedPositions] = positions?.reduce<[PositionPool[], PositionPool[]]>(
         (acc, p) => {
             acc[p.liquidity?.isZero() ? 1 : 0].push(p)
             return acc
@@ -50,26 +49,18 @@ export default function Pool() {
         }
     ]
 
-    const farmingPositions = useMemo(() => positions?.filter(el => el.onFarming), [positions])
+    const farmingPositions = useMemo(() => positions?.filter(el => el.onFarming), [positions, account])
     const inRangeWithOutFarmingPositions = useMemo(() => openPositions.filter(el => !el.onFarming), [openPositions])
 
-    const filteredPositions = [
+    const filteredPositions = useMemo(() => [
+        ...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions),
         ...inRangeWithOutFarmingPositions,
-        ...(userHideClosedPositions ? [] : closedPositions),
-        ...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions)
-    ]
-    const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
-
-    const _filteredPositions = useMemo(() => {
-        if (filteredPositions.length === 0 && prevFilteredPositions) {
-            return prevFilteredPositions
-        }
-        return filteredPositions
-    }, [filteredPositions])
+        ...(userHideClosedPositions ? [] : closedPositions)
+    ], [inRangeWithOutFarmingPositions, userHideClosedPositions, hideFarmingPositions])
 
     const showConnectAWallet = Boolean(!account)
 
-    let chainSymbol: string
+    let chainSymbol
 
     if (chainId === 137) {
         chainSymbol = 'MATIC'
@@ -91,7 +82,7 @@ export default function Pool() {
                     }}
                 >
                     <AutoColumn gap='lg' style={{ width: '100%', gridRowGap: '0' }}>
-                        <TitleRow style={{ marginTop: '1rem', padding: '1rem 40px' }} padding={'0'}>
+                        <TitleRow padding={'0px'}>
                             <TYPE.body fontSize={'20px'}>
                                 <Trans>Pools Overview</Trans>
                             </TYPE.body>
@@ -114,20 +105,18 @@ export default function Pool() {
                                 </ResponsiveButtonPrimary>
                             </ButtonRow>
                         </TitleRow>
+                        <FilterPanelWrapper>
+                            {filters.map((item, key) =>
+                                <FilterPanelItem
+                                    item={item}
+                                    key={key}
+                                />)}
+                        </FilterPanelWrapper>
                         <MainContentWrapper>
                             {positionsLoading ? (
                                 <Loader style={{ margin: 'auto' }} stroke='white' size={'30px'} />
-                            ) : _filteredPositions && _filteredPositions.length > 0 ? (
-                                <>
-                                    <FilterPanelWrapper>
-                                        {filters.map((item, key) =>
-                                            <FilterPanelItem
-                                                item={item}
-                                                key={key}
-                                            />)}
-                                    </FilterPanelWrapper>
-                                    <PositionList positions={_filteredPositions} />
-                                </>
+                            ) : filteredPositions && filteredPositions.length > 0 ? (
+                                <PositionList positions={filteredPositions} />
                             ) : (
                                 <NoLiquidity>
                                     <TYPE.body color={'white'} textAlign='center'>
@@ -139,13 +128,11 @@ export default function Pool() {
                                         <ButtonPrimary
                                             style={{
                                                 marginTop: '2em',
-                                                padding: '8px 16px',
-                                                background: theme.winterMainButton,
-                                                color: 'white'
+                                                padding: '8px 16px'
                                             }}
                                             onClick={toggleWalletModal}
                                         >
-                                            <Trans>Connect a wallet</Trans>
+                                            <Trans>Connect Wallet</Trans>
                                         </ButtonPrimary>
                                     )}
                                 </NoLiquidity>

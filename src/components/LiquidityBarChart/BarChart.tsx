@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { axisBottom, create, max, scaleBand, scaleLinear, select } from 'd3'
 import { ChartSvg } from './styled'
+import { ProcessedData } from '../../models/interfaces'
 
-interface BarChartInterface {
-    data
+interface BarChartProps {
+    data: ProcessedData[] | undefined
     dimensions: {
         width: number
         height: number
         margin: { top: number; right: number; bottom: number; left: number }
     }
-    activeTickIdx: number
+    activeTickIdx: number | undefined
     isMobile: boolean
 }
 
-export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: BarChartInterface) {
+export default function BarChart({ data, activeTickIdx, dimensions }: BarChartProps) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -23,7 +24,6 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
         if (!data) return
         return data[0].token0
     }, [data])
-
     const token1 = useMemo(() => {
         if (!data) return
         return data[0].token1
@@ -32,7 +32,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
     const activeTickIdxInRange = useMemo(() => {
         if (!activeTickIdx || !data || data.length === 0) return
 
-        return data.findIndex((v) => v.index === activeTickIdx)
+        return data.findIndex((v: any) => v.index === activeTickIdx)
     }, [activeTickIdx, data])
 
     useEffect(() => {
@@ -42,6 +42,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
         const yDomain = [0, max(data, (v) => v.activeLiquidity)]
 
         const xScale = scaleBand(xDomain, [0, width])
+        // @ts-ignore
         const yScale = scaleLinear(yDomain, [height, 0])
 
         const svgEl = select(svgRef.current)
@@ -83,11 +84,17 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
             .attr('cy', '21px')
             .attr('display', 'none')
 
-        InfoRectGroup.node().append(InfoRect.node())
-        InfoRectGroup.node().append(InfoRectPrice0.node())
-        InfoRectGroup.node().append(InfoRectPrice1.node())
-        InfoRectGroup.node().append(InfoRectPriceLocked.node())
-        InfoRectGroup.node().append(InfoCurrentCircle.node())
+           //TODO rewrite to div
+           // @ts-ignore
+           InfoRectGroup.node().append(InfoRect.node())
+           // @ts-ignore
+           InfoRectGroup.node().append(InfoRectPrice0.node())
+           // @ts-ignore
+           InfoRectGroup.node().append(InfoRectPrice1.node())
+           // @ts-ignore
+           InfoRectGroup.node().append(InfoRectPriceLocked.node())
+           // @ts-ignore
+           InfoRectGroup.node().append(InfoCurrentCircle.node())
 
         const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 
@@ -130,24 +137,24 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
                 .append('circle')
                 .attr('fill', 'yellow')
                 .attr('r', '5px')
-                .attr('cx', xScale(data[activeTickIdxInRange].price0) + 2)
+                .attr('cx', (xScale(data[activeTickIdxInRange]?.price0) ?? 0) + 2)
                 .attr('cy', -9)
 
             svg
                 .append('text')
-                .attr('transform', `translate(${xScale(data[activeTickIdxInRange].price0) + 15}, ${-5})`)
+                .attr('transform', `translate(${(xScale(data[activeTickIdxInRange].price0) ?? 0) + 15}, ${-5})`)
                 .attr('fill', 'yellow')
                 .attr('font-size', '12px')
                 .property('innerHTML', 'Current price')
         }
 
-        const bar = svg
+        svg
             .append('g')
             .selectAll('rect')
             .data(data)
             .join('rect')
             .attr('fill', '#63c0f8')
-            .attr('x', (i) => xScale(i.price0))
+            .attr('x', (i) => xScale(i.price0) || 0)
             .attr('y', (i) => yScale(i.activeLiquidity))
             .attr('height', (i) => yScale(0) - yScale(i.activeLiquidity))
             .attr('width', xScale.bandwidth())
@@ -157,7 +164,7 @@ export default function BarChart({ data, activeTickIdx, dimensions, isMobile }: 
             .selectAll('rect')
             .data(data)
             .join('rect')
-            .attr('x', (i) => xScale(i.price0))
+            .attr('x', (i) => xScale(i.price0) || 0)
             .attr('y', 0)
             .attr('height', height)
             .attr('width', xScale.bandwidth())

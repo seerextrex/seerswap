@@ -1,13 +1,15 @@
 import { ChartBadge, FarmingLink, LabelStyled, LinkWrapper, ResponsiveGrid } from './styled'
 import { BarChart2, ExternalLink } from 'react-feather'
 import { formatDollarAmount, formatPercent } from '../../utils/numbers'
-import React from 'react'
+import React, { useMemo } from 'react'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { GreyBadge } from 'components/Card'
 import { TYPE } from 'theme'
 import { feeTierPercent } from 'utils'
 import { RowFixed } from 'components/Row'
 import { FormattedPool } from '../../models/interfaces'
+import { Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from '../../constants/chains'
 
 interface DataRowProps {
     poolData: FormattedPool;
@@ -15,6 +17,14 @@ interface DataRowProps {
 }
 
 export const DataRow = ({ poolData, index }: DataRowProps) => {
+
+    const poolTitle = useMemo(() => {
+        if (!poolData.token1 || !poolData.token0) return []
+        if (poolData.token0.symbol === 'USDC') {
+            return [poolData.token1.symbol, poolData.token0.symbol]
+        }
+        return [poolData.token0.symbol, poolData.token1.symbol]
+    }, [poolData.token0, poolData.token1])
 
     return (
         <div>
@@ -25,21 +35,16 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                 <LabelStyled fontWeight={400}>{index + 1}</LabelStyled>
                 <LabelStyled fontWeight={400}>
                     <RowFixed>
-                        <DoubleCurrencyLogo address0={poolData.token0.address}
-                                            address1={poolData.token1.address} />
-                        <LinkWrapper href={`https://polygonscan.com/address/${poolData.address}`}
-                                     rel='noopener noreferrer'
-                                     target='_blank'>
+                        <LinkWrapper href={`https://polygonscan.com/address/${poolData.address}`} rel='noopener noreferrer' target='_blank'>
                             <TYPE.label ml='8px'>
-                                {poolData.token0.symbol}/{poolData.token1.symbol}
+                                {poolTitle[0]}/{poolTitle[1]}
                             </TYPE.label>
                             <ExternalLink size={16} color={'white'} />
                         </LinkWrapper>
                         <GreyBadge ml='10px' fontSize='14px' style={{ backgroundColor: '#02365e' }}>
                             {feeTierPercent(+poolData.fee)}
                         </GreyBadge>
-                        <ChartBadge to={`/info/pools/${poolData.address}`}
-                                    style={{ textDecoration: 'none' }}>
+                        <ChartBadge to={`/info/pools/${poolData.address}`}>
                             <BarChart2 size={18} stroke={'white'} />
                         </ChartBadge>
                     </RowFixed>

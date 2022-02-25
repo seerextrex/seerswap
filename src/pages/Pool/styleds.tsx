@@ -114,10 +114,13 @@ export const PageWrapper = styled(AutoColumn)`
 `
 export const TitleRow = styled(RowBetween)`
     color: ${({ theme }) => theme.text2};
+    margin-top: 1rem;
+    padding: 1rem 2rem;
     ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-wrap: wrap;
     gap: 12px;
     width: 100%;
+    padding: 1rem;
   `};
 `
 export const ButtonRow = styled(RowFixed)`
@@ -170,19 +173,27 @@ export const MainContentWrapper = styled.main`
     flex-direction: column;
     color: white;
     padding: 0 40px 30px;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        padding: 1rem;
+    `}
 `
 export const FilterPanelWrapper = styled.div`
     width: 100%;
     display: flex;
     justify-content: start;
-    gap: .8rem;
+    gap: 2rem;
     text-align: start;
+    padding-left: 2rem;
     margin-bottom: .5rem;
+
     label {
         margin-bottom: .5rem;
     }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-content: center;
+    padding-left: unset;
   `}
 `
 
@@ -314,8 +325,8 @@ export const LoadingMock = styled.div`
     margin-top: 5rem;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-  width: 100%;
-  margin-top: 1rem;
+        width: 100%;
+        margin-top: 1rem;
   `}
 `
 
@@ -323,4 +334,10 @@ export const LoadingMock = styled.div`
 export const FilterPanelItemWrapper = styled.div`
     display: flex;
     flex-direction: column;
+
+    label {
+        ${({ theme }) => theme.mediaWidth.upToSmall`
+           text-align: center;
+        `}
+    }
 `

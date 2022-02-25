@@ -2,8 +2,9 @@ overrideExisting: true
 schema:
   [
       'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
-      'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming-v-0-1',
+      'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming-t',
       'https://api.thegraph.com/subgraphs/name/iliaazhel/staker',
+      'https://api.thegraph.com/subgraphs/name/iliaazhel/ethereum-blocks'
   ]
 documents: 'src/**/!(*.d).{ts,tsx}'
 generates:

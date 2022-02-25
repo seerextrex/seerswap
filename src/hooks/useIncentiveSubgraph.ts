@@ -39,7 +39,7 @@ import {
     TokenSubgraph
 } from '../models/interfaces'
 import { EthereumWindow } from '../models/types'
-import { Aprs, FutureFarmingEvent } from '../models/interfaces/farming'
+import { Aprs, FutureFarmingEvent } from '../models/interfaces'
 
 
 export function useIncentiveSubgraph() {
@@ -119,7 +119,8 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { tokens }, error } = (await dataClient.query<SubgraphResponse<TokenSubgraph[]>>({
-                query: FETCH_TOKEN(tokenId)
+                query: FETCH_TOKEN(),
+                variables: { tokenId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -134,7 +135,8 @@ export function useIncentiveSubgraph() {
     async function fetchPool(poolId: string) {
         try {
             const { data: { pools }, error } = (await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
-                query: FETCH_POOL(poolId)
+                query: FETCH_POOL(),
+                variables: { poolId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -151,7 +153,8 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { incentives }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
-                query: FETCH_INCENTIVE(incentiveId)
+                query: FETCH_INCENTIVE(),
+                variables: { incentiveId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -169,7 +172,8 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { eternalFarmings }, error } = (await farmingClient.query<SubgraphResponse<DetachedEternalFarming[]>>({
-                query: FETCH_ETERNAL_FARM(farmId)
+                query: FETCH_ETERNAL_FARM(),
+                variables: { farmId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -190,8 +194,9 @@ export function useIncentiveSubgraph() {
             setRewardsLoading(true)
 
             const { data: { rewards }, error } = (await farmingClient.query({
-                query: FETCH_REWARDS(account),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                query: FETCH_REWARDS(),
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -243,7 +248,8 @@ export function useIncentiveSubgraph() {
 
             const { data: { incentives: futureEvents }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
                 query: FUTURE_EVENTS(),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { timestamp: Math.round(Date.now() / 1000) }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -271,14 +277,19 @@ export function useIncentiveSubgraph() {
 
             const { data: { incentives: currentEvents }, error } = (await farmingClient.query<SubgraphResponse<FarmingEvent[]>>({
                 query: CURRENT_EVENTS(),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: {
+                    startTime: Math.round(Date.now() / 1000),
+                    endTime: Math.round(Date.now() / 1000)
+                }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
             const { data: { incentives: futureEvents }, error: _error } = await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
                 query: FUTURE_EVENTS(),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { timestamp: Math.round(Date.now() / 1000) }
             })
 
             if (_error) throw new Error(`${_error.name} ${_error.message}`)
@@ -319,9 +330,10 @@ export function useIncentiveSubgraph() {
 
             setTransferredPositionsLoading(true)
 
-            const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: TRANSFERED_POSITIONS(account),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+            const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Deposit[]>>({
+                query: TRANSFERED_POSITIONS(),
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -356,7 +368,7 @@ export function useIncentiveSubgraph() {
                 if (!position.incentive && !position.eternalFarming && typeof position.pool === 'string') {
 
                     const _pool = await fetchPool(position.pool)
-
+//@ts-ignore
                     _position = { ..._position, pool: _pool }
                 }
 
@@ -381,20 +393,22 @@ export function useIncentiveSubgraph() {
 
                     _position = {
                         ..._position,
+                        //@ts-ignore
                         pool: _pool,
                         incentiveRewardToken: _rewardToken,
                         incentiveBonusRewardToken: _bonusRewardToken,
-                        incentiveStartTime: startTime,
-                        incentiveEndTime: endTime,
+                        incentiveStartTime: +startTime,
+                        incentiveEndTime: +endTime,
                         started: +startTime * 1000 < Date.now(),
                         ended: +endTime * 1000 < Date.now(),
-                        createdAtTimestamp,
+                        createdAtTimestamp: +createdAtTimestamp,
                         incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
                         incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
                     }
 
                 } else {
                     const { data: { incentives }, error } = await farmingClient.query({
+                        //@ts-ignore
                         query: FETCH_FINITE_FARM_FROM_POOL([position.pool]),
                         fetchPolicy: 'network-only'
                     })
@@ -412,6 +426,8 @@ export function useIncentiveSubgraph() {
                 if (position.eternalFarming) {
 
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(position.eternalFarming)
+
+                    // console.log(rewardToken, 'sdsada')
 
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],
@@ -435,6 +451,7 @@ export function useIncentiveSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
+                        //@ts-ignore
                         pool: _pool,
                         eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
                         eternalBonusEarned: formatUnits(BigNumber.from(bonusReward), _bonusRewardToken.decimals)
@@ -443,6 +460,7 @@ export function useIncentiveSubgraph() {
                 } else {
 
                     const { data: { eternalFarmings }, error } = await farmingClient.query({
+                        //@ts-ignore
                         query: FETCH_ETERNAL_FARM_FROM_POOL([position.pool]),
                         fetchPolicy: 'network-only'
                     })
@@ -462,7 +480,7 @@ export function useIncentiveSubgraph() {
             setTransferredPositions(_positions)
 
         } catch (err: any) {
-            throw new Error('Transferred positions' + err.code + err.message)
+            throw new Error('Transferred positions ' + err.code + ' ' + err.message)
         } finally {
             setTransferredPositionsLoading(false)
         }
@@ -479,8 +497,9 @@ export function useIncentiveSubgraph() {
         try {
 
             const { data: { deposits: eternalPositions }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: POSITIONS_ON_ETERNAL_FARMING(account),
-                fetchPolicy: reload ? 'network-only' : 'cache-first'
+                query: POSITIONS_ON_ETERNAL_FARMING(),
+                fetchPolicy: reload ? 'network-only' : 'cache-first',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -540,8 +559,9 @@ export function useIncentiveSubgraph() {
             setPositionsForPoolLoading(true)
 
             const { data: { deposits: positionsTransferred }, error: errorTransferred } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: TRANSFERED_POSITIONS_FOR_POOL(account, pool.id),
-                fetchPolicy: 'network-only'
+                query: TRANSFERED_POSITIONS_FOR_POOL(),
+                fetchPolicy: 'network-only',
+                variables: { account, pool: pool.id }
             }))
 
             if (errorTransferred) throw new Error(`${errorTransferred.name} ${errorTransferred.message}`)
@@ -574,8 +594,9 @@ export function useIncentiveSubgraph() {
             setPositionsOnFarmerLoading(true)
 
             const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: TRANSFERED_POSITIONS(account),
-                fetchPolicy: 'network-only'
+                query: TRANSFERED_POSITIONS(),
+                fetchPolicy: 'network-only',
+                variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
@@ -627,11 +648,13 @@ export function useIncentiveSubgraph() {
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
 
                 _eternalFarmings = [
+                    //@ts-ignore
                     ..._eternalFarmings,
                     {
                         ...farming,
                         rewardToken,
                         bonusRewardToken,
+                        //@ts-ignore
                         pool,
                         apr
                     }

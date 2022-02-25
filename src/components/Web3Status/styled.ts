@@ -28,32 +28,19 @@ export const Web3StatusError = styled(Web3StatusGeneric)`
     }
 `
 export const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
-    background-color: ${({ theme }) => theme.primary4};
-    border: none;
+    background-color: ${({ theme }) => theme.winterMainButton};
+    border: 1px solid ${({ theme }) => theme.winterMainButton};
     padding: 10px 36px;
 
-    color: ${({ theme }) => theme.primaryText1};
+    color: white;
     font-weight: 500;
 
     :hover,
     :focus {
-            // border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-        color: ${({ theme }) => theme.primaryText1};
+        border: 1px solid ${({ theme }) => darken(0.05, theme.winterMainButton)};
+        background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
+        color: white;
     }
-
-    ${({ faded }) =>
-        faded &&
-        css`
-            background-color: ${({ theme }) => theme.primary5};
-                // border: 1px solid ${({ theme }) => theme.primary5};
-            color: ${({ theme }) => theme.primaryText1};
-
-            :hover,
-            :focus {
-                    // border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-                color: ${({ theme }) => darken(0.05, theme.primaryText1)};
-            }
-        `}
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       padding: 10px 16px;

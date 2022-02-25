@@ -8,7 +8,6 @@ import { AutoColumn } from '../Column'
 import { RowBetween, RowFixed } from '../Row'
 import { DEFAULT_DEADLINE_FROM_NOW } from 'constants/misc'
 import { useSetUserSlippageTolerance, useUserSlippageTolerance, useUserTransactionTTL } from 'state/user/hooks'
-import { L2_CHAIN_IDS } from 'constants/chains'
 import { useActiveWeb3React } from 'hooks/web3'
 import { Input, Option, OptionCustom, SlippageEmojiContainer } from './styled'
 
@@ -85,7 +84,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
         }
     }
 
-    const showCustomDeadlineRow = Boolean(chainId && !L2_CHAIN_IDS.includes(chainId))
+    const showCustomDeadlineRow = Boolean(chainId)
 
     return (
         <AutoColumn gap='md'>

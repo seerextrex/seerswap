@@ -1,13 +1,13 @@
 import { Result, useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { useEffect, useMemo } from 'react'
-import { PositionDetails } from 'types/position'
 import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useIncentiveSubgraph } from './useIncentiveSubgraph'
+import { PositionPool } from '../models/interfaces'
 
 interface UseV3PositionsResults {
     loading: boolean
-    positions: PositionDetails[] | undefined
+    positions: PositionPool[] | undefined
 }
 
 function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3PositionsResults {
@@ -51,7 +51,7 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
 
 interface UseV3PositionResults {
     loading: boolean
-    position: PositionDetails | undefined
+    position: PositionPool | undefined
 }
 
 export function useV3PositionFromTokenId(tokenId: BigNumber | undefined): UseV3PositionResults {
@@ -65,20 +65,9 @@ export function useV3PositionFromTokenId(tokenId: BigNumber | undefined): UseV3P
 export function useV3Positions(account: string | null | undefined): UseV3PositionsResults {
     const positionManager = useV3NFTPositionManagerContract()
 
-    const {
-        loading: balanceLoading,
-        result: balanceResult
-    } = useSingleCallResult(positionManager, 'balanceOf', [
-        account ?? undefined
-    ])
+    const { loading: balanceLoading, result: balanceResult } = useSingleCallResult(positionManager, 'balanceOf', [account ?? undefined])
 
-    const {
-        fetchPositionsOnFarmer: {
-            positionsOnFarmer,
-            positionsOnFarmerLoading,
-            fetchPositionsOnFarmerFn
-        }
-    } = useIncentiveSubgraph()
+    const { fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn } } = useIncentiveSubgraph()
 
     // we don't expect any account balance to ever exceed the bounds of max safe int
     const accountBalance: number | undefined = balanceResult?.[0]?.toNumber()
@@ -87,7 +76,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         if (account) {
             fetchPositionsOnFarmerFn(account)
         }
-    }, [])
+    }, [account])
 
 
     const tokenIdsArgs = useMemo(() => {
@@ -126,10 +115,8 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
     }, [positionsOnFarmer])
 
-    const {
-        positions: _positionsOnFarmer,
-        loading: _positionsOnFarmerLoading
-    } = useV3PositionsFromTokenIds(transferredTokenIds)
+    //@ts-ignore
+    const { positions: _positionsOnFarmer, loading: _positionsOnFarmerLoading } = useV3PositionsFromTokenIds(transferredTokenIds)
 
     const combinedPositions = useMemo(() => {
 

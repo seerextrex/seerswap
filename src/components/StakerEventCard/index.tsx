@@ -25,9 +25,12 @@ import {
 } from './styled'
 import { useMemo } from 'react'
 import { convertLocalDate } from '../../utils/convertDate'
+import { Token } from '@uniswap/sdk-core'
+import { SupportedChainId } from '../../constants/chains'
+import { WrappedCurrency } from '../../models/types'
 
 interface StakerEventCardProps {
-    active: boolean
+    active?: boolean
     skeleton?: any
     now?: number
     refreshing?: boolean
@@ -159,11 +162,11 @@ export function StakerEventCard({
             <CardHeader>
                 <TokensIcons>
                     <CurrencyLogo
-                        currency={{ address: pool.token0.id, symbol: pool.token0.symbol }}
+                        currency={new Token(SupportedChainId.POLYGON, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency}
                         size={'35px'}
                     />
                     <CurrencyLogo
-                        currency={{ address: pool.token1.id, symbol: pool.token1.symbol }}
+                        currency={new Token(SupportedChainId.POLYGON, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency}
                         size={'35px'}
                     />
                 </TokensIcons>
@@ -174,7 +177,7 @@ export function StakerEventCard({
             </CardHeader>
             <RewardWrapper style={{ marginBottom: '6px' }}>
                 <CurrencyLogo
-                    currency={{ address: rewardToken.id, symbol: rewardToken.symbol }}
+                    currency={new Token(SupportedChainId.POLYGON, rewardToken.id, 18, rewardToken.symbol) as WrappedCurrency}
                     size={'35px'}
                 />
                 <div style={{ marginLeft: '1rem' }}>
@@ -185,15 +188,15 @@ export function StakerEventCard({
                 </div>
                 {reward && (
                     <RewardAmount title={reward.toString()}>
-                        {eternal ? (
-                            <span></span>
-                        ) : (
-                            <span>{`${
-                                ('' + reward).length <= 8
-                                    ? reward
-                                    : ('' + reward).slice(0, 6) + '..'
-                            }`}</span>
-                        )}
+                        {eternal ? <span /> :
+                            <span>
+                                {`${
+                                    ('' + reward).length <= 8
+                                        ? reward
+                                        : ('' + reward).slice(0, 6) + '..'
+                                }`}
+                            </span>
+                        }
                     </RewardAmount>
                 )}
             </RewardWrapper>
@@ -211,10 +214,10 @@ export function StakerEventCard({
                     <Plus style={{ display: 'block' }} size={18} />
                 </div>
             </div>
-            {bonusReward > 0 && (
+            {bonusReward && bonusReward > 0 && (
                 <RewardWrapper>
                     <CurrencyLogo
-                        currency={{ address: bonusRewardToken.id, symbol: bonusRewardToken.symbol }}
+                        currency={new Token(SupportedChainId.POLYGON, bonusRewardToken.id, 18, bonusRewardToken.symbol) as WrappedCurrency}
                         size={'35px'}
                     />
                     <div style={{ marginLeft: '1rem' }}>
@@ -225,15 +228,16 @@ export function StakerEventCard({
                     </div>
                     {bonusReward && (
                         <RewardAmount title={bonusReward.toString()}>
-                            {eternal ? (
-                                <span></span>
-                            ) : (
-                                <span>{`${
-                                    ('' + bonusReward).length <= 8
-                                        ? bonusReward
-                                        : ('' + bonusReward).slice(0, 6) + '..'
-                                }`}</span>
-                            )}
+                            {eternal ?
+                                <span /> :
+                                <span>
+                                    {`${
+                                        ('' + bonusReward).length <= 8
+                                            ? bonusReward
+                                            : ('' + bonusReward).slice(0, 6) + '..'
+                                    }`}
+                                </span>
+                            }
                         </RewardAmount>
                     )}
                 </RewardWrapper>
@@ -264,9 +268,9 @@ export function StakerEventCard({
             {!eternal && (
                 <EventEndTime>
                     {active ? (
-                        <span>{`ends in ${getCountdownTime(endTime, now)}`}</span>
+                        <span>{`ends in ${getCountdownTime(endTime ?? 0, now ?? Date.now())}`}</span>
                     ) : (
-                        <span>{`starts in ${getCountdownTime(startTime, now)}`}</span>
+                        <span>{`starts in ${getCountdownTime(startTime ?? 0, now ?? Date.now())}`}</span>
                     )}
                 </EventEndTime>
             )}
@@ -284,7 +288,7 @@ export function StakerEventCard({
                     <Subtitle style={{ fontSize: '14px', color: 'white', textTransform: 'none', lineHeight: '19px' }}>
                         {'Overall APR:'}
                     </Subtitle>
-                    <RewardSymbol>{`${apr.toFixed(2)}%`}</RewardSymbol>
+                    <RewardSymbol>{`${apr?.toFixed(2)}%`}</RewardSymbol>
                 </RewardWrapper>
             )}
             {account && !active ?

@@ -4,21 +4,13 @@ import { GET_BLOCKS } from '../../utils/graphql-queries'
 import { splitQuery } from '../../utils/queries'
 import { useClients } from '../subgraph/useClients'
 import { useActiveWeb3React } from '../web3'
+import { SupportedChainId } from '../../constants/chains'
 
-/**
- * for a given array of timestamps, returns block entities
- * @param timestamps
- */
-export function useBlocksFromTimestamps(
-    timestamps: number[],
-    blockClientOverride?: ApolloClient<NormalizedCacheObject>
-): {
-    blocks:
-        | {
+export function useBlocksFromTimestamps(timestamps: number[], blockClientOverride?: ApolloClient<NormalizedCacheObject>): {
+    blocks: | {
         timestamp: string
         number: any
-    }[]
-        | undefined
+    }[] | undefined
     error: boolean
 } {
     const { chainId } = useActiveWeb3React()
@@ -29,13 +21,13 @@ export function useBlocksFromTimestamps(
     const activeBlockClient = blockClientOverride ?? blockClient
 
     // derive blocks based on active network
-    const networkBlocks = blocks?.[chainId]
+    const networkBlocks = blocks?.[chainId ?? SupportedChainId.POLYGON]
 
     useEffect(() => {
         async function fetchData() {
             const results = await splitQuery(GET_BLOCKS, activeBlockClient, [], timestamps)
             if (results) {
-                setBlocks({ ...(blocks ?? {}), [chainId]: results })
+                setBlocks({ ...(blocks ?? {}), [chainId ?? SupportedChainId.POLYGON]: results })
             } else {
                 setError(true)
             }
@@ -47,8 +39,8 @@ export function useBlocksFromTimestamps(
     })
 
     const blocksFormatted = useMemo(() => {
-        if (blocks?.[chainId]) {
-            const networkBlocks = blocks?.[chainId]
+        if (blocks?.[chainId ?? SupportedChainId.POLYGON]) {
+            const networkBlocks = blocks?.[chainId ?? SupportedChainId.POLYGON]
             const formatted = []
             for (const t in networkBlocks) {
                 if (networkBlocks[t].length > 0) {
@@ -69,13 +61,6 @@ export function useBlocksFromTimestamps(
     }
 }
 
-/**
- * @notice Fetches block objects for an array of timestamps.
- * @dev blocks are returned in chronological order (ASC) regardless of input.
- * @dev blocks are returned at string representations of Int
- * @dev timestamps are returns as they were provided; not the block time.
- * @param {Array} timestamps
- */
 export async function getBlocksFromTimestamps(
     timestamps: number[],
     blockClient: ApolloClient<NormalizedCacheObject>,

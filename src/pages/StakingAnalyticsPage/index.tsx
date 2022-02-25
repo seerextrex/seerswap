@@ -4,28 +4,37 @@ import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import Loader from '../../components/Loader'
 import { ArrowLeft } from 'react-feather'
 import { BackButton, ChartCard, ChartHint, ChartTitle, ChartTitleLeft, ChartTitleRight, ChartTitleWrapper, ColorRect, ColorTextWrapper, LoaderWrapper, StakingAnalyticsPageWrapper } from './styled'
+import { chartTypes } from '../../models/enums'
 
 const chartsInfo = [
     {
         title: 'APR',
-        type: 'apr',
+        type: chartTypes.APR,
         hint: 'Yearly percentage of profits at the current rate of rewards'
     },
-    { title: 'ALGB Balance', type: 'ALGBbalance', hint: 'Total amount of staked ALGB' },
+    {
+        title: 'ALGB Balance',
+        type: chartTypes.ALGB_BALANCE,
+        hint: 'Total amount of staked ALGB'
+    },
     {
         title: 'Staked ALGB',
-        type: 'currentStakedAmount',
+        type: chartTypes.CURRENCY_STAKED_AMOUNT,
         hint: 'Amount of newly-staked ALGB per day'
     },
-    { title: 'xALGB Total Supply', type: 'xALGBtotalSupply', hint: 'Total amount of minted xALGB' },
+    {
+        title: 'xALGB Total Supply',
+        type: chartTypes.XALGB_TOTAL_SUPPLY,
+        hint: 'Total amount of minted xALGB'
+    },
     {
         title: 'ALGB from the Vault',
-        type: 'ALGBfromVault',
+        type: chartTypes.ALGB_FROM_VAULT,
         hint: 'Amount of ALGB fees sent as rewards'
     },
     {
         title: ['xALGB Minted', 'xALGB Burned'],
-        type: 'xALGBminted',
+        type: chartTypes.XALGB_MINTED,
         hint: ['Amount of newly-minted xALGB per day', 'Amount of newly-burned xALGB per day ']
     }
 ]

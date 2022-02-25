@@ -26,7 +26,12 @@ export type {
     Liquidity,
     ActiveTick,
     FormattedTick,
-    FormattedFeeChart
+    FormattedFeeChart,
+    ProcessedData,
+    TokenTick,
+    LiquidityChartData,
+    FormattedProcessedData,
+    FeeChart
 } from './info'
 export type { StakingData, StakeHash, Frozen } from './staking'
 export type {
@@ -52,5 +57,7 @@ export type {
     FutureFarmingEvent,
     Reward,
     FarmingEventString,
-    Aprs
+    Aprs,
+    NTFInterface
 } from './farming'
+export type { PositionPool } from './pool'

@@ -32,9 +32,12 @@ export function PoolInfoHeader({
                     {poolTitle[0] || '...'} / {poolTitle[1] || '...'}
                 </PoolTitle>
                 <PoolFee>{`${+fee / 10000}%`}</PoolFee>
-                <PoolCollectedFees>
-                    Total Collected Fees: ${Math.round(+collectedFees) || '...'}
-                </PoolCollectedFees>
+                {
+                    +collectedFees !== 0 &&
+                    <PoolCollectedFees>
+                        Total Collected Fees: ${Math.round(+collectedFees) || ' <0.001'}
+                    </PoolCollectedFees>
+                }
             </PoolInfoWrapper>
             <span />
         </Header>

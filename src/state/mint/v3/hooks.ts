@@ -22,8 +22,6 @@ export function useV3MintState(): AppState['mintV3'] {
 export function useV3MintActionHandlers(noLiquidity: boolean | undefined): {
     onFieldAInput: (typedValue: string) => void
     onFieldBInput: (typedValue: string) => void
-    onRewardTokenInput: (typedValue: string) => void
-    onBonusRewardTokenInput: (typedValue: string) => void
     onLeftRangeInput: (typedValue: string) => void
     onRightRangeInput: (typedValue: string) => void
     onStartPriceInput: (typedValue: string) => void
@@ -45,28 +43,6 @@ export function useV3MintActionHandlers(noLiquidity: boolean | undefined): {
         (typedValue: string) => {
             dispatch(typeInput({
                 field: Field.CURRENCY_B,
-                typedValue,
-                noLiquidity: noLiquidity === true
-            }))
-        },
-        [dispatch, noLiquidity]
-    )
-
-    const onRewardTokenInput = useCallback(
-        (typedValue: string) => {
-            dispatch(typeInput({
-                field: Field.REWARD_TOKEN,
-                typedValue,
-                noLiquidity: noLiquidity === true
-            }))
-        },
-        [dispatch, noLiquidity]
-    )
-
-    const onBonusRewardTokenInput = useCallback(
-        (typedValue: string) => {
-            dispatch(typeInput({
-                field: Field.BONUS_REWARD_TOKEN,
                 typedValue,
                 noLiquidity: noLiquidity === true
             }))
@@ -98,8 +74,6 @@ export function useV3MintActionHandlers(noLiquidity: boolean | undefined): {
     return {
         onFieldAInput,
         onFieldBInput,
-        onBonusRewardTokenInput,
-        onRewardTokenInput,
         onLeftRangeInput,
         onRightRangeInput,
         onStartPriceInput
@@ -112,11 +86,7 @@ export function useV3DerivedMintInfo(
     feeAmount?: FeeAmount,
     baseCurrency?: Currency,
     // override for existing position
-    existingPosition?: Position,
-    rewardToken?: Currency,
-    reward?: string,
-    bonusRewardToken?: Currency,
-    bonusReward?: string
+    existingPosition?: Position
 ): {
     pool?: Pool | null
     poolState: PoolState
@@ -140,36 +110,25 @@ export function useV3DerivedMintInfo(
     depositBDisabled: boolean
     invertPrice: boolean
     ticksAtLimit: { [bound in Bound]?: boolean | undefined },
-    dynamicFee: number
-    lowerPirce,
-    upperPrice
+    dynamicFee: number,
+    lowerPrice: any,
+    upperPrice: any
 } {
     const { account } = useActiveWeb3React()
 
-    const {
-        independentField,
-        typedValue,
-        leftRangeTypedValue,
-        rightRangeTypedValue,
-        startPriceTypedValue
-    } =
-        useV3MintState()
+    const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } = useV3MintState()
 
     const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
 
     // currencies
     const currencies: { [field in Field]?: Currency } = useMemo(
-        () => rewardToken || bonusRewardToken ? ({
-            [Field.CURRENCY_A]: currencyA,
-            [Field.CURRENCY_B]: currencyB,
-            [Field.REWARD_TOKEN]: rewardToken,
-            [Field.BONUS_REWARD_TOKEN]: bonusRewardToken
-        }) : ({
-            [Field.CURRENCY_A]: currencyA,
-            [Field.CURRENCY_B]: currencyB
-        }),
-        [currencyA, currencyB, rewardToken, bonusRewardToken]
-    )
+        () => (
+            {
+                [Field.CURRENCY_A]: currencyA,
+                [Field.CURRENCY_B]: currencyB
+            }
+        )
+        ,[currencyA, currencyB])
 
     // formatted with tokens
     const [tokenA, tokenB, baseToken] = useMemo(
@@ -186,20 +145,16 @@ export function useV3DerivedMintInfo(
     // balances
     const balances = useCurrencyBalances(account ?? undefined, [
         currencies[Field.CURRENCY_A],
-        currencies[Field.CURRENCY_B],
-        currencies[Field.REWARD_TOKEN],
-        currencies[Field.BONUS_REWARD_TOKEN]
+        currencies[Field.CURRENCY_B]
     ])
     const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = {
         [Field.CURRENCY_A]: balances[0],
-        [Field.CURRENCY_B]: balances[1],
-        [Field.REWARD_TOKEN]: balances[2],
-        [Field.BONUS_REWARD_TOKEN]: balances[3]
+        [Field.CURRENCY_B]: balances[1]
     }
 
     // pool
     //TODO
-    const [poolState, pool] = usePool(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B], 500)
+    const [poolState, pool] = usePool(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B])
     const noLiquidity = poolState === PoolState.NOT_EXISTS
 
     const dynamicFee = pool ? pool.fee : 100
@@ -334,18 +289,6 @@ export function useV3DerivedMintInfo(
         !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
     )
 
-    // amounts
-
-    const rewardAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
-        reward,
-        currencies[Field.REWARD_TOKEN]
-    )
-
-    const bonusRewardAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
-        bonusReward,
-        currencies[Field.BONUS_REWARD_TOKEN]
-    )
-
     const independentAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
         typedValue,
         currencies[independentField]
@@ -404,10 +347,9 @@ export function useV3DerivedMintInfo(
     const parsedAmounts: { [field in Field]: CurrencyAmount<Currency> | undefined } = useMemo(() => {
         return {
             [Field.CURRENCY_A]: independentField === Field.CURRENCY_A ? independentAmount : dependentAmount,
-            [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount,
-            [Field.REWARD_TOKEN]: rewardAmount
+            [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount
         }
-    }, [dependentAmount, independentAmount, rewardAmount, independentField])
+    }, [dependentAmount, independentAmount, independentField])
 
     // single deposit only if price is out of range
     const deposit0Disabled = Boolean(
@@ -495,18 +437,14 @@ export function useV3DerivedMintInfo(
     }
 
     if (
-        (!parsedAmounts[Field.CURRENCY_A] && !depositADisabled) && !rewardAmount ||
-        (!parsedAmounts[Field.CURRENCY_B] && !depositBDisabled) && !rewardAmount
+        (!parsedAmounts[Field.CURRENCY_A] && !depositADisabled) ||
+        (!parsedAmounts[Field.CURRENCY_B] && !depositBDisabled)
     ) {
         errorMessage = errorMessage ?? t`Enter an amount`
         errorCode = errorCode ?? 3
     }
 
-    const {
-        [Field.CURRENCY_A]: currencyAAmount,
-        [Field.CURRENCY_B]: currencyBAmount,
-        [Field.REWARD_TOKEN]: _rewardAmount
-    } = parsedAmounts
+    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount, } = parsedAmounts
 
 
     if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
@@ -517,11 +455,6 @@ export function useV3DerivedMintInfo(
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
         errorMessage = t`Insufficient ${currencies[Field.CURRENCY_B]?.symbol} balance`
         errorCode = errorCode ?? 5
-    }
-
-    if (reward && _rewardAmount && currencyBalances?.[Field.REWARD_TOKEN]?.lessThan(_rewardAmount)) {
-        errorMessage = t`Insufficient ${currencies[Field.REWARD_TOKEN]?.symbol} balance`
-        errorCode = errorCode ?? 6
     }
 
     const invalidPool = poolState === PoolState.INVALID

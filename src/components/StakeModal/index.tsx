@@ -25,6 +25,7 @@ import {
     StakeButtonLoader
 } from './styled'
 import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
+import { NTFInterface } from '../../models/interfaces'
 
 interface StakeModalProps {
     event: {
@@ -39,9 +40,9 @@ interface StakeModalProps {
     farmingType: FarmingType
 }
 
-export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken, bonusRewardToken }, closeHandler, farmingType }: StakeModalProps) {
+export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bonusRewardToken }, closeHandler, farmingType }: StakeModalProps) {
 
-    const [selectedNFT, setSelectedNFT] = useState(null)
+    const [selectedNFT, setSelectedNFT] = useState<null | NTFInterface>(null)
     const { fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn } } = useIncentiveSubgraph() || {}
 
     const { approveHandler, approvedHash, stakeHandler, stakedHash } = useStakerHandlers() || {}
@@ -86,9 +87,9 @@ export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken,
         return _filtered.length > 0 ? _filtered[0] : null
     }, [selectedNFT])
 
-    const NFTsForApprove = useMemo(() => filterNFTs((v) => !v.onFarmingCenter), [selectedNFT, submitState])
+    const NFTsForApprove = useMemo(() => filterNFTs((v: NTFInterface) => !v.onFarmingCenter), [selectedNFT, submitState])
 
-    const NFTsForStake = useMemo(() => filterNFTs((v) => v.onFarmingCenter), [selectedNFT, submitState])
+    const NFTsForStake = useMemo(() => filterNFTs((v: NTFInterface) => v.onFarmingCenter), [selectedNFT, submitState])
 
     useEffect(() => {
         if (!approvedHash || (approvedHash && submitState !== 0)) return
@@ -189,7 +190,7 @@ export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken,
                     </ModalHeader>
                     <ModalBody style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <CheckCircle size={55} stroke={'#24ae2c'} />
-                        <p>{`NFT #${selectedNFT.id} deposited succesfully!`}</p>
+                        <p>{`NFT #${selectedNFT?.id} deposited succesfully!`}</p>
                     </ModalBody>
                 </ModalWrapper>
             ) : positionsForPoolLoading ? (
@@ -223,8 +224,8 @@ export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken,
                                     {row.map((el, j) => (
                                         <NFTPosition
                                             key={j}
-                                            selected={selectedNFT && selectedNFT.id === el.id}
-                                            onClick={(e) => {
+                                            selected={!!selectedNFT && selectedNFT.id === el.id}
+                                            onClick={(e: any) => {
                                                 if (e.target.tagName !== 'A' && !submitLoader) {
                                                     setSelectedNFT((old) =>
                                                         old && old.id === el.id
@@ -249,7 +250,7 @@ export function StakeModal({ event: { pool, startTime, endTime, id, rewardToken,
                                                 </NFTPositionLink>
                                             </NFTPositionDescription>
                                             <NFTPositionSelectCircle
-                                                selected={selectedNFT && selectedNFT.id === el.id}>
+                                                selected={!!selectedNFT && selectedNFT.id === el.id}>
                                                 <Check
                                                     style={{
                                                         transitionDuration: '.2s',

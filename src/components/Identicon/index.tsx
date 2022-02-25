@@ -1,16 +1,7 @@
 import { useEffect, useRef } from 'react'
-
-import styled from 'styled-components/macro'
-
 import { useActiveWeb3React } from '../../hooks/web3'
 import Jazzicon from '@metamask/jazzicon'
-
-const StyledIdenticonContainer = styled.div`
-  height: 1rem;
-  width: 1rem;
-  border-radius: 1.125rem;
-  background-color: ${({ theme }) => theme.bg4};
-`
+import { StyledIdenticonContainer } from './styled'
 
 export default function Identicon() {
     const ref = useRef<HTMLDivElement>()

@@ -79,23 +79,23 @@ export const ButtonPrimary = styled(Base)`
 `
 
 export const ButtonLight = styled(Base)`
-    background-color: ${({}) => '#6ec2eb'};
+    background-color: ${({theme}) => theme.winterMainButton};
     color: ${({}) => 'white'};
     font-size: 16px;
     font-weight: 500;
 
     &:focus {
-        box-shadow: 0 0 0 1pt ${({ disabled }) => !disabled && darken(0.03, '#6ec2eb')};
-        background-color: ${({ disabled }) => !disabled && darken(0.03, '#6ec2eb')};
+        box-shadow: 0 0 0 1pt ${({ disabled, theme }) => !disabled && darken(0.03, theme.winterMainButton)};
+        background-color: ${({ disabled, theme }) => !disabled && darken(0.03, theme.winterMainButton)};
     }
 
     &:hover {
-        background-color: ${({ disabled }) => !disabled && darken(0.03, '#6ec2eb')};
+        background-color: ${({ disabled, theme }) => !disabled && darken(0.03, theme.winterMainButton)};
     }
 
     &:active {
-        box-shadow: 0 0 0 1pt ${({ disabled }) => !disabled && darken(0.05, '#6ec2eb')};
-        background-color: ${({ disabled }) => !disabled && darken(0.05, '#6ec2eb')};
+        box-shadow: 0 0 0 1pt ${({ disabled, theme }) => !disabled && darken(0.05, theme.winterMainButton)};
+        background-color: ${({ disabled, theme }) => !disabled && darken(0.05, theme.winterMainButton)};
     }
 
     :disabled {

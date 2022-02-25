@@ -109,7 +109,7 @@ export const LabelRow = styled.div`
         color: ${({ theme }) => darken(0.2, theme.text2)};
     }
 `
-export const FiatRow = styled(LabelRow)<{ shallow?: boolean; page: string }>`
+export const FiatRow = styled(LabelRow)<{ shallow?: boolean; page: string | undefined }>`
     justify-content: flex-end;
     padding: ${({ shallow, page }) => (page === 'addLiq' ? '0 1rem' : shallow ? '0' : '0 1rem 1rem')};
     margin-top: ${({ page }) => (page === 'pool' ? '.3rem' : '0')};
@@ -152,7 +152,7 @@ export const StyledTokenName = styled.span<{ active?: boolean }>`
     ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.25rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
     font-size: ${({ active }) => (active ? '16px' : '16px')};
 `
-export const MaxButton = styled.button<{ page: string }>`
+export const MaxButton = styled.button<{ page: string | undefined }>`
     background-color: ${({ page, theme }) => page === 'addLiq' ? theme.winterMainButton : '#245376'};
     border-radius: 6px;
     color: white;

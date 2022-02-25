@@ -1,20 +1,17 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
-import { AlertTriangle } from 'react-feather'
 import { ZERO_PERCENT } from '../../constants/misc'
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants/addresses'
-import { WMATIC_EXTENDED } from '../../constants/tokens'
 import { useV3NFTPositionManagerContract } from '../../hooks/useContract'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'
-import { ButtonError, ButtonLight, ButtonPrimary, ButtonYellow } from '../../components/Button'
-import { BlueCard, OutlineCard, YellowCard } from '../../components/Card'
+import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import Row, { AutoRow, RowBetween, RowFixed } from '../../components/Row'
+import { RowBetween } from '../../components/Row'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
 import { Review } from './Review'
@@ -26,33 +23,30 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { Bound, Field } from '../../state/mint/v3/actions'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageToleranceWithDefault } from '../../state/user/hooks'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { Dots } from '../Pool/styleds'
-import { currencyId } from '../../utils/currencyId'
-import { DynamicSection, HideMedium, MediumOnly, PageWrapper, ResponsiveTwoColumns, RightContainer, ScrollablePage, StackedContainer, StackedItem, StyledInput, Wrapper } from './styled'
+import { DynamicSection, HideMedium, MediumOnly, PageWrapper, ResponsiveTwoColumns, RightContainer, ScrollablePage, Wrapper } from './styled'
 import { t, Trans } from '@lingui/macro'
-import { useRangeHopCallbacks, useV3DerivedMintInfo, useV3MintActionHandlers, useV3MintState } from 'state/mint/v3/hooks'
+import { useV3DerivedMintInfo, useV3MintActionHandlers, useV3MintState } from 'state/mint/v3/hooks'
 import { useV3PositionFromTokenId } from 'hooks/useV3Positions'
 import { useDerivedPositionInfo } from 'hooks/useDerivedPositionInfo'
 import { PositionPreview } from 'components/PositionPreview'
-import RangeSelector from 'components/RangeSelector'
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddRemoveTabs } from 'components/NavigationTabs'
-import HoverInlineText from 'components/HoverInlineText'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
-import { CHAIN_INFO } from '../../constants/chains'
 import { NonfungiblePositionManager as NonFunPosMan } from './nft-manager'
 
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
 
 import ReactGA from 'react-ga'
+import { WrappedCurrency } from '../../models/types'
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
 export default function AddLiquidity({
     match: {
-        params: { currencyIdA, currencyIdB, feeAmount: feeAmountFromUrl, tokenId }
+        params: { currencyIdA, currencyIdB, tokenId }
     },
     history
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
@@ -64,12 +58,7 @@ export default function AddLiquidity({
     const positionManager = useV3NFTPositionManagerContract()
 
     // check for existing position if tokenId in url
-    const {
-        position: existingPositionDetails,
-        loading: positionLoading
-    } = useV3PositionFromTokenId(
-        tokenId ? BigNumber.from(tokenId) : undefined
-    )
+    const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(tokenId ? BigNumber.from(tokenId) : undefined)
 
     const networkFailed = useIsNetworkFailed()
 
@@ -81,17 +70,14 @@ export default function AddLiquidity({
     const currencyB = useCurrency(currencyIdB)
     // prevent an error if they input ETH/WETH
     //TODO
-    const quoteCurrency =
-        baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
+    const quoteCurrency = baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
 
     // mint state
-    const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
+    const { independentField, typedValue } = useV3MintState()
 
     const {
-        pool,
         ticks,
         dependentField,
-        price,
         pricesAtTicks,
         parsedAmounts,
         currencyBalances,
@@ -104,7 +90,6 @@ export default function AddLiquidity({
         outOfRange,
         depositADisabled,
         depositBDisabled,
-        invertPrice,
         ticksAtLimit,
         dynamicFee
     } = useV3DerivedMintInfo(
@@ -115,19 +100,13 @@ export default function AddLiquidity({
         existingPosition
     )
 
-    const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } =
-        useV3MintActionHandlers(noLiquidity)
+    const { onFieldAInput, onFieldBInput } = useV3MintActionHandlers(noLiquidity)
 
     const isValid = !errorMessage && !invalidRange
 
     // modal and loading
     const [showConfirm, setShowConfirm] = useState<boolean>(false)
     const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirm
-
-    // capital efficiency warning
-    const [showCapitalEfficiencyWarning, setShowCapitalEfficiencyWarning] = useState(false)
-
-    useEffect(() => setShowCapitalEfficiencyWarning(false), [baseCurrency, quoteCurrency, dynamicFee])
 
     // txn values
     const deadline = useTransactionDeadline() // custom from users settings
@@ -152,8 +131,7 @@ export default function AddLiquidity({
                 ...accumulator,
                 [field]: maxAmountSpend(currencyBalances[field])
             }
-        },
-        {}
+        }, {}
     )
 
     const atMaxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
@@ -162,8 +140,7 @@ export default function AddLiquidity({
                 ...accumulator,
                 [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
             }
-        },
-        {}
+        }, {}
     )
 
     // check whether the user has approved the router on the tokens
@@ -176,9 +153,7 @@ export default function AddLiquidity({
         chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined
     )
 
-    const allowedSlippage = useUserSlippageToleranceWithDefault(
-        outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE
-    )
+    const allowedSlippage = useUserSlippageToleranceWithDefault(outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE)
 
     async function onAdd() {
         if (!chainId || !library || !account) return
@@ -206,11 +181,7 @@ export default function AddLiquidity({
                         createPool: noLiquidity
                     })
 
-            const txn: { to: string; data: string; value: string } = {
-                to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
-                data: calldata,
-                value
-            }
+            const txn: { to: string; data: string; value: string } = { to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId], data: calldata, value }
 
             setAttemptingTxn(true)
 
@@ -254,39 +225,6 @@ export default function AddLiquidity({
         }
     }
 
-    const handleCurrencySelect = useCallback(
-        (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-            const currencyIdNew = currencyId(currencyNew, chainId)
-
-            let chainSymbol
-
-            if (chainId === 137) {
-                chainSymbol = 'MATIC'
-            }
-
-            if (currencyIdNew === currencyIdOther) {
-                // not ideal, but for now clobber the other if the currency ids are equal
-                return [currencyIdNew, undefined]
-            } else {
-                // prevent weth + eth
-                const isETHOrWETHNew =
-                    currencyIdNew === chainSymbol ||
-                    (chainId !== undefined && currencyIdNew === WMATIC_EXTENDED[chainId]?.address)
-                const isETHOrWETHOther =
-                    currencyIdOther !== undefined &&
-                    (currencyIdOther === chainSymbol ||
-                        (chainId !== undefined && currencyIdOther === WMATIC_EXTENDED[chainId]?.address))
-
-                if (isETHOrWETHNew && isETHOrWETHOther) {
-                    return [currencyIdNew, undefined]
-                } else {
-                    return [currencyIdNew, currencyIdOther]
-                }
-            }
-        },
-        [chainId]
-    )
-
     // flag for whether pool creation must be a separate tx
     const mustCreateSeparately = noLiquidity
 
@@ -320,15 +258,6 @@ export default function AddLiquidity({
         } ${!outOfRange ? 'and' : ''} ${!depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ''} ${
             !depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ''
         }`
-
-    const {
-        getDecrementLower,
-        getIncrementLower,
-        getDecrementUpper,
-        getIncrementUpper,
-        getSetFullRange
-    } =
-        useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, dynamicFee, tickLower, tickUpper, pool)
 
     const Buttons = () =>
         !account ? (
@@ -491,7 +420,7 @@ export default function AddLiquidity({
                                                 onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
                                             }}
                                             showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-                                            currency={currencies[Field.CURRENCY_A]}
+                                            currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
                                             id='add-liquidity-input-tokena'
                                             fiatValue={usdcValues[Field.CURRENCY_A]}
                                             showCommonBases
@@ -500,7 +429,8 @@ export default function AddLiquidity({
                                             shallow={true}
                                             showBalance={!depositADisabled}
                                             page={'addLiq'}
-                                        />
+                                            disabled={false}
+                                            swap={false} />
 
                                         <CurrencyInputPanel
                                             value={formattedAmounts[Field.CURRENCY_B]}
@@ -510,7 +440,7 @@ export default function AddLiquidity({
                                             }}
                                             showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                                             fiatValue={usdcValues[Field.CURRENCY_B]}
-                                            currency={currencies[Field.CURRENCY_B]}
+                                            currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
                                             id='add-liquidity-input-tokenb'
                                             showCommonBases
                                             locked={depositBDisabled}
@@ -518,7 +448,8 @@ export default function AddLiquidity({
                                             showBalance={!depositBDisabled}
                                             shallow={true}
                                             page={'addLiq'}
-                                        />
+                                            disabled={false}
+                                            swap={false} />
                                     </AutoColumn>
                                 </DynamicSection>
                             </div>
@@ -528,256 +459,6 @@ export default function AddLiquidity({
                                         <Buttons />
                                     </HideMedium>
                                     <RightContainer gap='lg'>
-                                        <DynamicSection gap='md' disabled={invalidPool}>
-                                            {!noLiquidity ? (
-                                                <>
-                                                    <RowBetween>
-                                                        <TYPE.label>
-                                                            <Trans>Set Price Range</Trans>
-                                                        </TYPE.label>
-                                                    </RowBetween>
-
-                                                    {price && baseCurrency && quoteCurrency && !noLiquidity && (
-                                                        <AutoRow gap='4px' justify='center'
-                                                                 style={{ marginTop: '0.5rem' }}>
-                                                            <Trans>
-                                                                <TYPE.main fontWeight={500}
-                                                                           textAlign='center'
-                                                                           fontSize={12}
-                                                                           color='text1'>
-                                                                    Current Price:
-                                                                </TYPE.main>
-                                                                <TYPE.body fontWeight={500}
-                                                                           textAlign='center'
-                                                                           fontSize={12}
-                                                                           color='text1'>
-                                                                    <HoverInlineText
-                                                                        maxCharacters={20}
-                                                                        text={invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}
-                                                                    />
-                                                                </TYPE.body>
-                                                                <TYPE.body color='text2'
-                                                                           fontSize={12}>
-                                                                    {quoteCurrency?.symbol} per {baseCurrency.symbol}
-                                                                </TYPE.body>
-                                                            </Trans>
-                                                        </AutoRow>
-                                                    )}
-
-                                                </>
-                                            ) : (
-                                                <AutoColumn gap='md'>
-                                                    <RowBetween>
-                                                        <TYPE.label>
-                                                            <Trans>Set Starting Price</Trans>
-                                                        </TYPE.label>
-                                                    </RowBetween>
-                                                    {noLiquidity && (
-                                                        <BlueCard
-                                                            style={{
-                                                                display: 'flex',
-                                                                flexDirection: 'row',
-                                                                alignItems: 'center',
-                                                                padding: '1rem 1rem'
-                                                            }}
-                                                        >
-                                                            <TYPE.body
-                                                                fontSize={14}
-                                                                style={{ fontWeight: 500 }}
-                                                                textAlign='left'
-                                                                color={theme.primaryText1}
-                                                            >
-                                                                {mustCreateSeparately ? (
-                                                                    <Trans>
-                                                                        {`This pool must be initialized on ${
-                                                                            chainId && CHAIN_INFO ? CHAIN_INFO[chainId].label : ''
-                                                                        } before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount.`}
-                                                                    </Trans>
-                                                                ) : (
-                                                                    <Trans>
-                                                                        This pool must be
-                                                                        initialized before you can
-                                                                        add liquidity. To
-                                                                        initialize, select a
-                                                                        starting price for the pool.
-                                                                        Then, enter your liquidity
-                                                                        price range and deposit
-                                                                        amount. Gas fees will be
-                                                                        higher than usual due to the
-                                                                        initialization transaction.
-                                                                    </Trans>
-                                                                )}
-                                                            </TYPE.body>
-                                                        </BlueCard>
-                                                    )}
-                                                    <OutlineCard padding='12px'>
-                                                        <StyledInput
-                                                            className='start-price-input'
-                                                            value={startPriceTypedValue}
-                                                            onUserInput={onStartPriceInput}
-                                                        />
-                                                    </OutlineCard>
-                                                    <RowBetween style={{
-                                                        backgroundColor: theme.bg0,
-                                                        padding: '12px',
-                                                        borderRadius: '12px'
-                                                    }}>
-                                                        <TYPE.main>
-                                                            <Trans>Current {baseCurrency?.symbol} Price:</Trans>
-                                                        </TYPE.main>
-                                                        <TYPE.main>
-                                                            {price ? (
-                                                                <TYPE.main>
-                                                                    <RowFixed>
-                                                                        <HoverInlineText
-                                                                            maxCharacters={20}
-                                                                            text={invertPrice ? price?.invert()?.toSignificant(5) : price?.toSignificant(5)}
-                                                                        />{' '}
-                                                                        <span
-                                                                            style={{ marginLeft: '4px' }}>{quoteCurrency?.symbol}</span>
-                                                                    </RowFixed>
-                                                                </TYPE.main>
-                                                            ) : (
-                                                                '-'
-                                                            )}
-                                                        </TYPE.main>
-                                                    </RowBetween>
-                                                </AutoColumn>
-                                            )}
-                                        </DynamicSection>
-
-                                        <DynamicSection gap='md'
-                                                        disabled={invalidPool || (noLiquidity && !startPriceTypedValue)}>
-                                            <StackedContainer>
-                                                <StackedItem
-                                                    style={{ opacity: showCapitalEfficiencyWarning ? '0.05' : 1 }}>
-                                                    <AutoColumn gap='md'>
-                                                        {noLiquidity && (
-                                                            <RowBetween>
-                                                                <TYPE.label>
-                                                                    <Trans>Set Price Range</Trans>
-                                                                </TYPE.label>
-                                                            </RowBetween>
-                                                        )}
-                                                        <RangeSelector
-                                                            priceLower={priceLower}
-                                                            priceUpper={priceUpper}
-                                                            getDecrementLower={getDecrementLower}
-                                                            getIncrementLower={getIncrementLower}
-                                                            getDecrementUpper={getDecrementUpper}
-                                                            getIncrementUpper={getIncrementUpper}
-                                                            onLeftRangeInput={onLeftRangeInput}
-                                                            onRightRangeInput={onRightRangeInput}
-                                                            currencyA={baseCurrency}
-                                                            currencyB={quoteCurrency}
-                                                            feeAmount={dynamicFee}
-                                                            ticksAtLimit={ticksAtLimit}
-                                                        />
-                                                    </AutoColumn>
-                                                </StackedItem>
-
-                                                {showCapitalEfficiencyWarning && (
-                                                    <StackedItem zIndex={1}>
-                                                        <YellowCard
-                                                            padding='15px'
-                                                            $borderRadius='12px'
-                                                            height='100%'
-                                                            style={{
-                                                                borderColor: theme.yellow3,
-                                                                border: '1px solid'
-                                                            }}
-                                                        >
-                                                            <AutoColumn gap='8px'
-                                                                        style={{ height: '100%' }}>
-                                                                <RowFixed>
-                                                                    <AlertTriangle
-                                                                        stroke={theme.yellow3}
-                                                                        size='16px' />
-                                                                    <TYPE.yellow ml='12px'
-                                                                                 fontSize='15px'>
-                                                                        <Trans>Efficiency
-                                                                            Comparison</Trans>
-                                                                    </TYPE.yellow>
-                                                                </RowFixed>
-                                                                <RowFixed>
-                                                                    <TYPE.yellow ml='12px'
-                                                                                 fontSize='13px'
-                                                                                 margin={0}
-                                                                                 fontWeight={400}>
-                                                                        <Trans>
-                                                                            Full range positions may
-                                                                            earn less fees than
-                                                                            concentrated positions.
-                                                                            Learn more{' '}
-                                                                            <ExternalLink
-                                                                                style={{
-                                                                                    color: theme.yellow3,
-                                                                                    textDecoration: 'underline'
-                                                                                }}
-                                                                                href={''}
-                                                                            >
-                                                                                here
-                                                                            </ExternalLink>
-                                                                            .
-                                                                        </Trans>
-                                                                    </TYPE.yellow>
-                                                                </RowFixed>
-                                                                <Row>
-                                                                    <ButtonYellow
-                                                                        padding='8px'
-                                                                        marginRight='8px'
-                                                                        $borderRadius='8px'
-                                                                        width='auto'
-                                                                        onClick={() => {
-                                                                            setShowCapitalEfficiencyWarning(false)
-                                                                            getSetFullRange()
-                                                                        }}
-                                                                    >
-                                                                        <TYPE.black fontSize={13}
-                                                                                    color='black'>
-                                                                            <Trans>I
-                                                                                Understand</Trans>
-                                                                        </TYPE.black>
-                                                                    </ButtonYellow>
-                                                                </Row>
-                                                            </AutoColumn>
-                                                        </YellowCard>
-                                                    </StackedItem>
-                                                )}
-                                            </StackedContainer>
-
-                                            {outOfRange ? (
-                                                <YellowCard padding='8px 12px' $borderRadius='12px'>
-                                                    <RowBetween>
-                                                        <AlertTriangle stroke={theme.yellow3}
-                                                                       size='16px' />
-                                                        <TYPE.yellow ml='12px' fontSize='12px'>
-                                                            <Trans>
-                                                                Your position will not earn fees or
-                                                                be used in trades until the market
-                                                                price moves into
-                                                                your range.
-                                                            </Trans>
-                                                        </TYPE.yellow>
-                                                    </RowBetween>
-                                                </YellowCard>
-                                            ) : null}
-
-                                            {invalidRange ? (
-                                                <YellowCard padding='8px 12px' $borderRadius='12px'>
-                                                    <RowBetween>
-                                                        <AlertTriangle stroke={theme.yellow3}
-                                                                       size='16px' />
-                                                        <TYPE.yellow ml='12px' fontSize='12px'>
-                                                            <Trans>Invalid range selected. The min
-                                                                price must be lower than the max
-                                                                price.</Trans>
-                                                        </TYPE.yellow>
-                                                    </RowBetween>
-                                                </YellowCard>
-                                            ) : null}
-                                        </DynamicSection>
-
                                         <MediumOnly>
                                             <Buttons />
                                         </MediumOnly>

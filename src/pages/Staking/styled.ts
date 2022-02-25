@@ -6,6 +6,7 @@ import WoodenSlob from '../../assets/svg/wooden-slob.svg'
 import WoodenRope from '../../assets/svg/wooden-rope.svg'
 import { RowBetween, RowFixed } from '../../components/Row'
 import { ButtonPrimary } from '../../components/Button'
+import { darken } from 'polished'
 
 
 //All
@@ -92,6 +93,7 @@ export const BodyWrapper = styled.div`
   margin-bottom: 5rem;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 1rem;
   `}
 `
 export const MockScreen = styled.div`
@@ -113,6 +115,9 @@ export const ConnectWalletButton = styled.button`
   font-size: 16px;
     font-weight: 600;
   border-radius: 10px;
+    &:hover {
+        background-color:  ${({ theme }) => darken(0.05, theme.winterMainButton)};
+    }
 `
 
 //StakingPoolPage

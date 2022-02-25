@@ -2,9 +2,7 @@ import { createAction } from '@reduxjs/toolkit'
 
 export enum Field {
     CURRENCY_A = 'CURRENCY_A',
-    CURRENCY_B = 'CURRENCY_B',
-    REWARD_TOKEN = 'REWARD_TOKEN',
-    BONUS_REWARD_TOKEN = 'BONUS_REWARD_TOKEN'
+    CURRENCY_B = 'CURRENCY_B'
 }
 
 export enum Bound {

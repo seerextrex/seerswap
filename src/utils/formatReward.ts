@@ -3,8 +3,8 @@ export function formatReward(earned: number) {
         return '0'
     }
 
-    if (earned < 0.001 && earned > 0) {
-        return '< 0.001'
+    if (earned < 0.01 && earned > 0) {
+        return '< 0.01'
     }
 
     const _earned = String(earned).split('.')

@@ -18,7 +18,10 @@ export function useFarmingActionsHandlers(): {
         try {
             const { data: { incentives }, error } = await farmingClient.query({
                 query: ONE_FARMING_EVENT(),
-                fetchPolicy: 'network-only'
+                fetchPolicy: 'network-only',
+                variables: {
+                    time: Math.round(Date.now() / 1000)
+                }
             })
 
             if (error) {

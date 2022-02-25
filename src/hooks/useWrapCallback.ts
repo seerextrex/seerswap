@@ -32,7 +32,7 @@ export default function useWrapCallback(
     const inputAmount = useMemo(() => tryParseAmount(typedValue, inputCurrency), [inputCurrency, typedValue])
     const addTransaction = useTransactionAdder()
 
-    let chainSymbol
+    let chainSymbol: string
 
     if (chainId === 137) {
         chainSymbol = 'MATIC'

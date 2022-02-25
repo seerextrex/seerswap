@@ -1,5 +1,5 @@
 import { Percent, Token } from '@uniswap/sdk-core'
-import { L2_CHAIN_IDS } from 'constants/chains'
+import { L2_CHAIN_IDS, SupportedChainId } from 'constants/chains'
 import { SupportedLocale } from 'constants/locales'
 import { L2_DEADLINE_FROM_NOW } from 'constants/misc'
 import JSBI from 'jsbi'
@@ -11,7 +11,7 @@ import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants/routing'
 import { useAllTokens } from '../../hooks/Tokens'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { computePairAddress } from '../../utils/computePairAddress'
+import { computePairAddress, Pair } from '../../utils/computePairAddress'
 import { AppState } from '../index'
 import {
     addSerializedPair,
@@ -207,11 +207,9 @@ export function useUserSlippageToleranceWithDefault(defaultSlippageTolerance: Pe
 }
 
 export function useUserTransactionTTL(): [number, (slippage: number) => void] {
-    const { chainId } = useActiveWeb3React()
+
     const dispatch = useAppDispatch()
-    const userDeadline = useAppSelector((state) => state.user.userDeadline)
-    const onL2 = Boolean(chainId && L2_CHAIN_IDS.includes(chainId))
-    const deadline = onL2 ? L2_DEADLINE_FROM_NOW : userDeadline
+    const deadline =  useAppSelector((state) => state.user.userDeadline)
 
     const setUserDeadline = useCallback(
         (userDeadline: number) => {
@@ -356,14 +354,4 @@ export function useTrackedTokenPairs(): [Token, Token][] {
 
         return Object.keys(keyed).map((key) => keyed[key])
     }, [combinedList])
-}
-
-export function useArbitrumAlphaAlert(): [boolean, (arbitrumAlphaAcknowledged: boolean) => void] {
-    const dispatch = useAppDispatch()
-    const arbitrumAlphaAcknowledged = useAppSelector(({ user }) => user.arbitrumAlphaAcknowledged)
-    const setArbitrumAlphaAcknowledged = (arbitrumAlphaAcknowledged: boolean) => {
-        dispatch(updateArbitrumAlphaAcknowledged({ arbitrumAlphaAcknowledged }))
-    }
-
-    return [arbitrumAlphaAcknowledged, setArbitrumAlphaAcknowledged]
 }

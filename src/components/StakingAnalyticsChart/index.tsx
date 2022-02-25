@@ -11,14 +11,7 @@ import { HistoryStakingSubgraph } from '../../models/interfaces'
 import { useGetDaysArray } from '../../hooks/useGetDaysArray'
 import { convertDate } from '../../utils/convertDate'
 import { useStartTimestamp } from '../../hooks/useStartTimestamp'
-
-export type chartTypes =
-    'apr'
-    | 'ALGBbalance'
-    | 'currentStakedAmount'
-    | 'xALGBtotalSupply'
-    | 'ALGBfromVault'
-    | 'xALGBminted'
+import { chartTypes } from '../../models/enums'
 
 interface StakingAnalyticsChartProps {
     stakeHistoriesResult: HistoryStakingSubgraph[] | null | string
@@ -31,16 +24,12 @@ export interface ChardDataInterface {
     date: string
 }
 
-export default function StakingAnalyticsChart({
-    stakeHistoriesResult,
-    type,
-    colors
-}: StakingAnalyticsChartProps) {
+export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colors }: StakingAnalyticsChartProps) {
     const [chartData, setChartData] = useState<ChardDataInterface[]>([])
     const [chart2Data, setChart2Data] = useState<ChardDataInterface[]>([])
     const [chartBorder, setChartBorder] = useState<string[]>([])
     const focusHeight = 70
-    const wrapper = useRef(null)
+    const wrapper = useRef<HTMLDivElement | null>(null)
     const margin = isMobile ? { left: 45, top: 30, right: 10, bottom: 50 } : {
         left: 50,
         top: 30,
@@ -133,7 +122,7 @@ export default function StakingAnalyticsChart({
                 data2={borderedData2}
                 margin={margin}
                 dimensions={{
-                    width: isMobile ? wrapper?.current?.offsetWidth - 20 : 900,
+                    width: isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 20 : 900,
                     height: isMobile ? 300 : 400
                 }}
                 type={type}
@@ -143,7 +132,7 @@ export default function StakingAnalyticsChart({
                 data={fullDateData}
                 data2={fullDateData2}
                 colors={colors}
-                width={isMobile ? wrapper?.current?.offsetWidth - 80 : 900}
+                width={isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 80 : 900}
                 margin={margin}
                 focusHeight={focusHeight}
                 X={X}

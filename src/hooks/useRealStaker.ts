@@ -92,17 +92,15 @@ export function useRealStakerHandlers() {
     const frozenStakedHandler = useCallback(async (account: string) => {
         try {
 
-            const {
-                data: { stakeTxes },
-                error: error
-            } = await stakerClient.query<SubgraphResponse<Frozen[]>>({
-                query: FROZEN_STAKED(account.toLowerCase()),
-                fetchPolicy: 'network-only'
+            const { data: { stakeTxes }, error: error } = await stakerClient.query<SubgraphResponse<Frozen[]>>({
+                query: FROZEN_STAKED(),
+                fetchPolicy: 'network-only',
+                variables: {account: account.toLowerCase(), timestamp: Math.round(Date.now() / 1000)}
             })
 
             setFrozen(stakeTxes)
 
-        } catch (e) {
+        } catch (e: any) {
             setFrozen(`Error: ${e.message}`)
             return
         }

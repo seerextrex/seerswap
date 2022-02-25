@@ -31,6 +31,7 @@ export interface PoolChartSubgraph {
     liquidity: string
     tick: string
     feesUSD: string
+    untrackedFeesUSD: string
 }
 
 export interface SubgraphResponse<T> {
@@ -91,6 +92,8 @@ export interface LastPoolSubgraph {
 
 export interface PoolHourData extends LastPoolSubgraph {
     untrackedVolumeUSD: string
+    token0Price: string
+    token1Price: string
 }
 
 export interface FactorySubgraph {

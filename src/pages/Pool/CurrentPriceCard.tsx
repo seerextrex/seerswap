@@ -8,7 +8,7 @@ import { TYPE } from 'theme'
 
 interface CurrentPriceCardProps {
     inverted?: boolean
-    pool?: Pool | null
+    pool: Pool | null
     currencyQuote?: Currency
     currencyBase?: Currency
 }

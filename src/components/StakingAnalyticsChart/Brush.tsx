@@ -29,45 +29,54 @@ export default function Brush({
         focusEl.selectAll('*').remove()
 
         const focus = focusEl
-            .attr('viewBox', [0, 0, width, focusHeight])
+            .attr('viewBox',`0, 0, ${width}, ${focusHeight}`)
             .style('display', 'block')
 
-        const focusLine = (x, y) => line()
-            .defined(d => !isNaN(d.value))
+        const focusLine = (x: any, y: any) => line()
+            .defined(d => {
+            // @ts-ignore
+                return !isNaN(d.value)})
             .curve(curveBumpX)
+            // @ts-ignore
             .x(d => x(new Date(d.date)))
+            // @ts-ignore
             .y(d => y(d.value))
 
         const focusX = scaleUtc()
-            .domain([min(data, d => new Date(d.date)), Date.now()])
+            .domain([min(data, d => new Date(d.date)) ?? 0, Date.now()])
             .range([margin.left, width])
 
         const focusY = scaleLinear()
-            .domain([0, max(data, d => +d.value)])
+            .domain([0, max(data, d => +d.value) ?? 0])
             .range([focusHeight - margin.bottom, margin.top])
 
-        const focusLine2 = (x, y) => line()
+
+        const focusLine2 = (x: any, y: any) => line()
+            // @ts-ignore
             .defined(d => !isNaN(d.value))
             .curve(curveBumpX)
+            // @ts-ignore
             .x(d => x(new Date(d.date)))
+            // @ts-ignore
             .y(d => y(d.value))
 
         const focusX2 = scaleUtc()
-            .domain([min(data, d => new Date(d.date)), Date.now()])
+            .domain([min(data, d => new Date(d.date)) ?? 0, Date.now()])
             .range([margin.left, width])
 
         const focusY2 = scaleLinear()
-            .domain([0, max(data, d => +d.value)])
+            .domain([0, max(data, d => +d.value) ?? 0])
             .range([focusHeight - margin.bottom, margin.top])
 
+        // @ts-ignore
         const focusXAxis = (g, x, height) => g
             .attr('transform', `translate(0,${height - margin.bottom})`)
-
+        // @ts-ignore
         const focusYAxis = (g, y, title) => g
             .attr('transform', `translate(${margin.left},0)`)
             .call(axisLeft(y))
-            .call(g => g.select('.domain').remove())
-            .call(g => g.selectAll('.title').data([title]).join('text')
+            .call((g: any) => g.select('.domain').remove())
+            .call((g: any) => g.selectAll('.title').data([title]).join('text')
                 .attr('class', 'title')
                 .attr('x', -margin.left)
                 .attr('y', 10)
@@ -114,14 +123,14 @@ export default function Brush({
             .attr('rx', '5')
             .attr('ry', '5')
 
-        function brushed({ selection }) {
+        function brushed({ selection} : any) {
             if (selection) {
                 focus.property('value', selection.map(focusX.invert, focusX).map(utcDay.round))
                 focus.dispatch('input')
             }
         }
 
-        function brushended({ selection }) {
+        function brushended({ selection }: any) {
             if (!selection) {
                 gb.call(brush.move, defaultSelection)
                 return

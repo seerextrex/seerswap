@@ -1,8 +1,9 @@
 import { axisBottom, axisLeft, create, curveBumpX, easeCircle, interpolate, line, map, max, min, range, scaleLinear, scaleUtc, select } from 'd3'
 import { useEffect, useMemo, useRef } from 'react'
-import { ChardDataInterface, chartTypes } from './index'
+import { ChardDataInterface } from './index'
 import { isMobile } from 'react-device-detect'
 import { ChartWrapper } from './styled'
+import { chartTypes } from '../../models/enums'
 
 interface ChartProps {
     fData: ChardDataInterface[]
@@ -36,10 +37,12 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
             .append('g')
             .attr('width', dimensions.width)
             .attr('height', dimensions.height)
-            .attr('viewBox', [0, 0, dimensions.width, dimensions.height])
+            .attr('viewBox', `0, 0, ${dimensions.width}, ${dimensions.height}`)
 
         // Construct scales and axes.
+        // @ts-ignore
         const xScale = scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
+        // @ts-ignore
         const yScale = scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
         const xAxis = axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
         const yAxis = axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => val >= 1000_000 ? `${+val / 1000000}m` : `${val >= 1000 ? `${+val / 1000}k` : val}`)
@@ -58,12 +61,16 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
         // Construct a chart line.
         const line1 = line()
             .curve(curveBumpX)
+            // @ts-ignore
             .x(i => xScale(X[i]))
+            // @ts-ignore
             .y(i => yScale(Y[i]))
 
         const line2 = line()
             .curve(curveBumpX)
+            // @ts-ignore
             .x(i => xScale(X[i]))
+            // @ts-ignore
             .y(i => yScale(Y2[i]))
 
         //Construct infoLabel
@@ -108,12 +115,19 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
             .attr('font-size', '12px')
             .attr('fill', '#b0b0b0')
 
+        // @ts-ignore
         InfoRectGroup.node().append(InfoRect.node())
+        // @ts-ignore
         InfoRectGroup.node().append(InfoRectFeeText.node())
+        // @ts-ignore
         InfoRectGroup.node().append(InfoRectDateText.node())
+        // @ts-ignore
         InfoRectGroup.node().append(InfoRectColor.node())
+        // @ts-ignore
         if (data2?.length !== 0) {
+            // @ts-ignore
             InfoRectGroup.node().append(InfoRectFeeText2.node())
+            // @ts-ignore
             InfoRectGroup.node().append(InfoRectColor2.node())
         }
 
@@ -153,6 +167,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
 
         svg.append('path')
             .attr('fill', 'none')
+            // @ts-ignore
             .attr('d', line1(I))
             .attr('stroke-width', 2)
             .attr('stroke', colors[0])
@@ -167,6 +182,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
         if (data2?.length !== 0) {
             svg.append('path')
                 .attr('fill', 'none')
+                // @ts-ignore
                 .attr('d', line2(I))
                 .attr('stroke-width', 2)
                 .attr('stroke', colors[1])
@@ -197,13 +213,14 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
                         select(el).attr('display', 'none')
                     }
                 }
+                // @ts-ignore
                 const xTranslate = select(el)
                     .attr('transform')
                     .match(/\((.*?)\)/)[1]
                     .split(',')[0]
 
                 const rect = create('svg:rect')
-                    .attr('x', `${xTranslate - tickWidth / 2}px`)
+                    .attr('x', `${+xTranslate - tickWidth / 2}px`)
                     .attr('y', `-${0}px`)
                     .attr('width', `${tickWidth}px`)
                     .attr('height', `${dimensions.height}px`)
@@ -218,6 +235,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
                             `translate(${isOverflowing ? Number(xTranslate) - (isMobile ? 145 : 160) : Number(xTranslate) + (isMobile ? -5 : 10)},10)`
                         )
                         const val1 = +parseFloat(data[i]?.value).toFixed(3)
+                        // @ts-ignore
                         const val2 = +parseFloat(data2[i]?.value.toString()).toFixed(3)
                         const textVal = data2?.length !== 0 ? (val2 < val1 ? val1 : val2) : val1
                         const textVal2 = val1 < val2 ? val1 : val2
@@ -230,9 +248,11 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
 
                         Focus.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(+data[i]?.value)})`)
                         if (data2?.length !== 0) {
+                            // @ts-ignore
                             Focus2.attr('transform', `translate(${xScale(new Date(data[i]?.date))},${yScale(data2[i]?.value)})`)
                         }
                     })
+                // @ts-ignore
                 svg.node().append(rect.node())
             })
 

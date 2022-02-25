@@ -13,6 +13,7 @@ import { FiatValue } from './FiatValue'
 import Loader from '../Loader'
 import useUSDCPrice from '../../hooks/useUSDCPrice'
 import { Aligner, AutoColumnStyled, Container, CurrencySelect, FiatRow, FixedContainer, InputPanel, InputRow, MaxButton, NumericalInputStyled, StyledTokenName } from './styled'
+import { WrappedCurrency } from '../../models/types'
 
 interface CurrencyInputPanelProps {
     value: string
@@ -21,7 +22,7 @@ interface CurrencyInputPanelProps {
     showMaxButton: boolean
     label?: ReactNode
     onCurrencySelect?: (currency: Currency) => void
-    currency?: Currency | null
+    currency?: WrappedCurrency | null
     hideBalance?: boolean
     pair?: Pair | null
     hideInput?: boolean
@@ -40,7 +41,7 @@ interface CurrencyInputPanelProps {
     disabled: boolean
     shallow: boolean
     swap: boolean
-    page: string
+    page?: string
 }
 
 export default function CurrencyInputPanel({
@@ -70,13 +71,12 @@ export default function CurrencyInputPanel({
     page,
     ...rest
 }: CurrencyInputPanelProps) {
-    const { chainId } = useActiveWeb3React()
     const [modalOpen, setModalOpen] = useState(false)
     const { account } = useActiveWeb3React()
 
-    const balance = useCurrencyBalance(account ?? undefined, currency)
+    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
 
-    const currentPrice = useUSDCPrice(currency)
+    const currentPrice = useUSDCPrice(currency ?? undefined)
 
     const handleDismissSearch = useCallback(() => {
         setModalOpen(false)
@@ -102,12 +102,12 @@ export default function CurrencyInputPanel({
 
     }, [balance])
 
-    if (currency && currency.symbol === 'MATIC') {
-        if (chainId === 137) {
-            currency.symbol = 'MATIC'
-            currency.name = 'Matic'
-        }
-    }
+    // if (currency && currency.symbol === 'MATIC') {
+    //     if (chainId === 137) {
+    //         currency.symbol = 'MATIC'
+    //         currency.name = 'Matic'
+    //     }
+    // }
 
     return (
         <InputPanel id={id} hideInput={hideInput} {...rest}>
@@ -184,12 +184,7 @@ export default function CurrencyInputPanel({
                                                 '...' +
                                                 currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
                                             ) : currency ? (
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center'
-                                                    }}
-                                                >
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
                           <span>
                             {
                                 shallow && showBalance && balance && page === 'addLiq' && +(balance.toSignificant(4)) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
@@ -198,25 +193,12 @@ export default function CurrencyInputPanel({
                                         : currency.symbol}
                           </span>
                                                     {showBalance && balance && !shallow ? (
-                                                        <span
-                                                            style={{
-                                                                position: 'absolute',
-                                                                right: 0,
-                                                                fontSize: '13px'
-                                                            }}
-                                                            title={balance.toExact()}
-                                                        >
+                                                        <span style={{ position: 'absolute', right: 0, fontSize: '13px' }} title={balance.toExact()}>
                               {balanceString}
                             </span>
                                                     ) : (
-                                                        showBalance &&
-                                                        !balance && (
-                                                            <span
-                                                                style={{
-                                                                    position: 'absolute',
-                                                                    right: 0
-                                                                }}
-                                                            >
+                                                        showBalance && !balance && (
+                                                            <span style={{ position: 'absolute', right: 0 }}>
                                 <Loader />
                               </span>
                                                         )

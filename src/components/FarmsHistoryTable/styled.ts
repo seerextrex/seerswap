@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled from 'styled-components/macro'
 import { NavLink } from 'react-router-dom'
 import { DarkGreyCard } from 'components/Card'
 import { ClickableText, Label } from 'components/Text'
@@ -54,19 +54,6 @@ export const ResponsiveGrid = styled.div`
   @media screen and (max-width: 1000px) {
     grid-template-columns: 20px repeat(3, 1.1fr) repeat(2, .9fr) 1.1fr;
   }
-  //@media screen and (max-width: 500px) {
-  //  grid-template-columns: 20px 1.5fr repeat(1, 1fr);
-  //  & :nth-child(5) {
-  //    display: none;
-  //  }
-  //}
-  //
-  //@media screen and (max-width: 480px) {
-  //  grid-template-columns: 2.5fr repeat(1, 1fr);
-  //  > *:nth-child(1) {
-  //    display: none;
-  //  }
-  //}
 `
 
 export const ChartBadge = styled(NavLink)`
@@ -115,12 +102,6 @@ export const HelperDropdown = styled.span`
   color: black;
   z-index: 30;
 `
-export const HelperDropdownPart = styled.span`
-  padding: 2px 6px;
-  background-color: #d6d6d6;
-  border-radius: 4px;
-  color: #2d2d2d;
-`
 
 export const APRWrapper = styled.span`
   position: relative;
@@ -129,21 +110,4 @@ export const APRWrapper = styled.span`
       display: block;
     }
   }
-`
-
-export const FarmingLink = styled(NavLink)<{ apr: boolean }>`
-  color: white;
-  text-decoration: none;
-  ${({ apr }) =>
-    apr &&
-    css`
-      padding: 4px;
-      border-radius: 3px;
-      color: white;
-      background-color: #36f;
-      text-decoration: underline;
-      &:hover {
-        color: #01ffff;
-      }
-    `}
 `

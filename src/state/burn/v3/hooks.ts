@@ -5,20 +5,19 @@ import { useActiveWeb3React } from 'hooks/web3'
 import { useToken } from 'hooks/Tokens'
 import { useV3PositionFees } from 'hooks/useV3PositionFees'
 import { useCallback, useMemo } from 'react'
-import { PositionDetails } from 'types/position'
-
 import { AppState } from '../../index'
 import { selectPercent } from './actions'
 import { unwrappedToken } from 'utils/unwrappedToken'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { t } from '@lingui/macro'
+import { PositionPool } from '../../../models/interfaces'
 
 export function useBurnV3State(): AppState['burnV3'] {
     return useAppSelector((state) => state.burnV3)
 }
 
 export function useDerivedV3BurnInfo(
-    position?: PositionDetails,
+    position?: PositionPool,
     asWETH = false
 ): {
     position?: Position
@@ -37,7 +36,7 @@ export function useDerivedV3BurnInfo(
     const token0 = useToken(position?.token0)
     const token1 = useToken(position?.token1)
 
-    const [, pool] = usePool(token0 ?? undefined, token1 ?? undefined, position?.fee)
+    const [, pool] = usePool(token0 ?? undefined, token1 ?? undefined)
 
     const positionSDK = useMemo(
         () =>

@@ -22,15 +22,16 @@ import {
     V3_MIGRATOR_ADDRESSES
 } from 'constants/addresses'
 import { useMemo } from 'react'
-import { NonfungiblePositionManager, Quoter, UniswapInterfaceMulticall } from 'types/v3'
-import { V3Migrator } from 'types/v3/V3Migrator'
 import { getContract } from 'utils'
 import { EnsPublicResolver, EnsRegistrar, Erc20, Weth } from '../abis/types'
 import { WMATIC_EXTENDED } from '../constants/tokens'
 import { useActiveWeb3React } from './web3'
-
+import { V3Migrator } from '@uniswap/v3-periphery/typechain/V3Migrator'
 import NewQuoterABI from '../abis/quoter.json'
 import { FINITE_FARMING } from '../constants/addresses'
+import { UniswapInterfaceMulticall } from '@uniswap/v3-periphery/typechain/UniswapInterfaceMulticall'
+import { NonfungiblePositionManager } from '@uniswap/v3-periphery/typechain/NonfungiblePositionManager'
+import { Quoter } from '@uniswap/v3-periphery/typechain/Quoter'
 
 // returns null on errors
 export function useContract<T extends Contract = Contract>(
@@ -103,18 +104,15 @@ export function useMulticall2Contract() {
 export function useV3NFTPositionManagerContract(withSignerIfPossible?: boolean): NonfungiblePositionManager | null {
     return useContract<NonfungiblePositionManager>(
         NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
-        // NFTPositionManagerABI,
         NFTPosMan,
         withSignerIfPossible
     )
 }
 
 export function useStaker() {
-    const { chainId } = useActiveWeb3React()
     return useContract(FINITE_FARMING, STAKER_ABI)
 }
 
 export function useV3Quoter() {
-    // return useContract<Quoter>(QUOTER_ADDRESSES, QuoterABI)
     return useContract<Quoter>(QUOTER_ADDRESSES, NewQuoterABI)
 }

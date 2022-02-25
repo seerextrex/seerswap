@@ -49,13 +49,7 @@ export default function RealStakerPage({}) {
     const { chainId, account } = useActiveWeb3React()
     const { percent } = useBurnV3State()
     const { onPercentSelect } = useBurnV3ActionHandlers()
-    const {
-        stakerHandler,
-        stakerClaimHandler,
-        stakerUnstakeHandler,
-        frozenStakedHandler,
-        frozenStaked
-    } = useRealStakerHandlers()
+    const { stakerHandler, stakerClaimHandler, stakerUnstakeHandler, frozenStakedHandler, frozenStaked } = useRealStakerHandlers()
     const { getStakes: { stakesResult, fetchStakingFn } } = useInfoSubgraph()
     const toggleWalletModal = useWalletModalToggle()
     const baseCurrency = useCurrency(currencyId)
@@ -182,9 +176,10 @@ export default function RealStakerPage({}) {
     }, [account])
 
     useEffect(() => {
+        fetchStakingFn(account ?? undefined)
+
         if (!account) return
 
-        fetchStakingFn(account.toLowerCase())
         frozenStakedHandler(account.toLowerCase())
 
         if (+_balance === 0) {
@@ -234,10 +229,7 @@ export default function RealStakerPage({}) {
 
         if (+stakesResult?.factories[0].xALGBtotalSupply !== 0) {
             setAlbgCourseShow(+stakesResult.factories[0].ALGBbalance / +stakesResult.factories[0].xALGBtotalSupply)
-            setAlbgCourse(
-                BigNumber.from(stakesResult.factories[0].ALGBbalance)
-                    .div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply))
-            )
+            setAlbgCourse(BigNumber.from(stakesResult.factories[0].ALGBbalance).div(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply)))
         }
 
         if (!stakesResult?.stakes[0]) {
@@ -260,55 +252,46 @@ export default function RealStakerPage({}) {
             </Helmet>
             <PageWrapper onKeyPress={(e) => enterHandler(e)}>
                 <StakeTitle>Stake ALGB</StakeTitle>
-                <RealStakerInputRange
-                    amountValue={amountValue}
-                    setAmountValue={setAmountValue}
-                    baseCurrency={baseCurrency}
-                    fiatValue={fiatValue}
-                />
-                {numBalance == 0 && balance ? (
+                <RealStakerInputRange amountValue={amountValue} setAmountValue={setAmountValue} baseCurrency={baseCurrency} fiatValue={fiatValue} />
+                {numBalance == 0 && balance ?
                     <NavLink to={''} style={{ textDecoration: 'none' }}>
                         <StakeButton>BUY ALGB</StakeButton>
                     </NavLink>
-                ) : (
-                    <>
-                        <SilderWrapper>
-                            <StakerSlider value={percentForSlider}
-                                          onChange={onPercentSelectForSlider} size={22}
-                                          disabled={+_balance === 0} />
-                        </SilderWrapper>
-                        <RealStakerRangeButtons onPercentSelect={onPercentSelect}
-                                                showCalculate={false}
-                                                balance={_balance} />
-                        {approval === ApprovalState.NOT_APPROVED ? (
-                            <StakeButton onClick={approveCallback}>Approve token</StakeButton>
-                        ) : approval === ApprovalState.UNKNOWN && account === null ? (
-                            <StakeButton onClick={toggleWalletModal}>Connect to a
-                                wallet</StakeButton>
-                        ) : approval === ApprovalState.UNKNOWN ? (
-                            <StakeButton>
-                                <Loader stroke={'white'} size={'19px'} />
-                            </StakeButton>
-                        ) : approval === ApprovalState.APPROVED ? (
-                            <StakeButton
-                                onClick={() => {
-                                    stakerHandler(amountValue)
-                                        .then(() => {
-                                            onPercentSelectForSlider(0)
-                                            if (percentForSlider === 0) {
-                                                setAmountValue('')
-                                            }
-                                        })
-                                }}
-                                disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
-                            >
-                                {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
-                            </StakeButton>
-                        ) : <StakeButton>
-                            <Loader stroke={'white'} size={'19px'} />
-                        </StakeButton>}
-                    </>
-                )}
+                    : (
+                        <>
+                            <SilderWrapper>
+                                <StakerSlider value={percentForSlider} onChange={onPercentSelectForSlider} size={22} disabled={+_balance === 0} />
+                            </SilderWrapper>
+                            <RealStakerRangeButtons onPercentSelect={onPercentSelect} balance={_balance} />
+                            {approval === ApprovalState.NOT_APPROVED ?
+                                <StakeButton onClick={approveCallback}>Approve token</StakeButton>
+                                : approval === ApprovalState.UNKNOWN && account === null ?
+                                    <StakeButton onClick={toggleWalletModal}>Connect Wallet</StakeButton>
+                                    : approval === ApprovalState.UNKNOWN ?
+                                        <StakeButton>
+                                            <Loader stroke={'white'} size={'19px'} />
+                                        </StakeButton>
+                                        : approval === ApprovalState.APPROVED ?
+                                            <StakeButton
+                                                onClick={() => {
+                                                    stakerHandler(amountValue)
+                                                        .then(() => {
+                                                            onPercentSelectForSlider(0)
+                                                            if (percentForSlider === 0) {
+                                                                setAmountValue('')
+                                                            }
+                                                        })
+                                                }}
+                                                disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
+                                            >
+                                                {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
+                                            </StakeButton>
+                                            :
+                                            <StakeButton>
+                                                <Loader stroke={'white'} size={'19px'} />
+                                            </StakeButton>}
+                        </>
+                    )}
             </PageWrapper>
             <EarnedStakedWrapper>
                 <ResBlocksTitle>
@@ -322,21 +305,17 @@ export default function RealStakerPage({}) {
                                 setFrozen(!showFrozen)
                             }}>
                                 {!allFreeze ? <Loader size={'16px'} stroke={'white'} /> :
-
                                     `${+(+formatEther(allFreeze || BigNumber.from('0'))).toFixed(2) < 0.01 ? '<' : ''} ${(+formatEther(allFreeze)).toFixed(2)}`} ALGB
-
                                 Frozen {showFrozen ? <ArrowUp size={'16px'} /> :
                                 <ArrowDown size={'16px'} />}
                             </FrozenDropDown>
                         }
-                        <ReloadButton disabled={loadingClaim} onClick={reloadClaim}
-                                      refreshing={loadingClaim}>
+                        <ReloadButton disabled={loadingClaim} onClick={reloadClaim} refreshing={loadingClaim}>
                             <RefreshCw style={{ display: 'block' }} size={18} stroke={'white'} />
                         </ReloadButton>
                     </RightBlock>
                     {showFrozen && frozenStaked.length !== 0 && typeof frozenStaked !== 'string' && frozenStaked.some(el => +Math.floor(+el.timestamp * 1000) > now()) ?
-                        <FrozenModal data={frozenStaked} earnedFreeze={earnedFreezeArr}
-                                     now={now} /> : null}
+                        <FrozenModal data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now} /> : null}
                 </ResBlocksTitle>
                 <ResBlocksWrapper>
                     <RealStakerResBlocks

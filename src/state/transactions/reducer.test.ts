@@ -18,7 +18,8 @@ describe('transaction reducer', () => {
                     summary: 'hello world',
                     hash: '0x0',
                     approval: { tokenAddress: 'abc', spender: 'def' },
-                    from: 'abc'
+                    from: 'abc',
+                    claim: ''
                 })
             )
             const txs = store.getState()
@@ -61,7 +62,8 @@ describe('transaction reducer', () => {
                     chainId: 4,
                     approval: { spender: '0x0', tokenAddress: '0x0' },
                     summary: 'hello world',
-                    from: '0x0'
+                    from: '0x0',
+                    claim: ''
                 })
             )
             const beforeTime = new Date().getTime()
@@ -115,7 +117,8 @@ describe('transaction reducer', () => {
                     chainId: 4,
                     approval: { spender: '0x0', tokenAddress: '0x0' },
                     summary: 'hello world',
-                    from: '0x0'
+                    from: '0x0',
+                    claim: ''
                 })
             )
             store.dispatch(
@@ -135,7 +138,8 @@ describe('transaction reducer', () => {
                     chainId: 4,
                     approval: { spender: '0x0', tokenAddress: '0x0' },
                     summary: 'hello world',
-                    from: '0x0'
+                    from: '0x0',
+                    claim: ''
                 })
             )
             store.dispatch(
@@ -165,7 +169,8 @@ describe('transaction reducer', () => {
                     summary: 'hello world',
                     hash: '0x0',
                     approval: { tokenAddress: 'abc', spender: 'def' },
-                    from: 'abc'
+                    from: 'abc',
+                    claim: ''
                 })
             )
             store.dispatch(
@@ -174,7 +179,8 @@ describe('transaction reducer', () => {
                     summary: 'hello world',
                     hash: '0x1',
                     approval: { tokenAddress: 'abc', spender: 'def' },
-                    from: 'abc'
+                    from: 'abc',
+                    claim: ''
                 })
             )
             expect(Object.keys(store.getState())).toHaveLength(2)

@@ -4,6 +4,8 @@ import useENSName from "../../hooks/useENSName";
 import WalletModal from "../WalletModal";
 import { useSortedRecentTransactions } from "../../hooks/useSortedRecentTransactions";
 import { Web3StatusInner } from "./Web3StatusInner";
+import { Text, Web3StatusConnect } from "./styled";
+import { Trans } from "@lingui/macro";
 
 export default function Web3Status() {
     const { active, account } = useWeb3React();
@@ -16,7 +18,15 @@ export default function Web3Status() {
     const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash);
 
     if (!contextNetwork.active && !active) {
-        return <div>Connecting to MetaMask...</div>;
+        return <Web3StatusConnect
+        id="connect-wallet"
+        faded={!account}
+        disabled
+    >
+        <Text>
+            <Trans>Loading...</Trans>
+        </Text>
+    </Web3StatusConnect>;
     }
 
     return (

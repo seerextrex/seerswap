@@ -247,7 +247,7 @@ export default function CurrencyInputPanel({
                     currency &&
                     swap && (
                         <FiatRow page={page}>
-                            <RowBetween>Estimating...</RowBetween>
+                            <RowBetween>Updating...</RowBetween>
                         </FiatRow>
                     )
                 )}

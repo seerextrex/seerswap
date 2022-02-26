@@ -1,0 +1,12 @@
+.container {
+    max-width: var(--container_width);
+    margin: 0 auto;
+    position: relative;
+}
+
+@media (max-width: 1100px) {
+    .container {
+        max-width: unset;
+        padding: 0 1rem;
+    }
+}

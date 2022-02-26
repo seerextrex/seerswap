@@ -5,6 +5,8 @@ import Loader from '../../components/Loader'
 import { ArrowLeft } from 'react-feather'
 import { BackButton, ChartCard, ChartHint, ChartTitle, ChartTitleLeft, ChartTitleRight, ChartTitleWrapper, ColorRect, ColorTextWrapper, LoaderWrapper, StakingAnalyticsPageWrapper } from './styled'
 import { chartTypes } from '../../models/enums'
+import Card from '../../shared/components/Card/Card'
+import '../../assets/styles/index.scss'
 
 const chartsInfo = [
     {
@@ -96,6 +98,7 @@ export default function StakingAnalyticsPage() {
                     }
                 </ChartCard>)
             }
+            <Card classes={'pa-2'} />
         </StakingAnalyticsPageWrapper>
     )
 }

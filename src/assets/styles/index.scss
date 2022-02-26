@@ -1,0 +1,39 @@
+@import './colors';
+@import './dimensions';
+@import './helpers';
+@import './normalize';
+@import './reset';
+@import './common';
+@import './typography';
+
+body {
+    overflow-x: hidden !important;
+}
+
+.mobile-total-stats-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999999;
+}
+
+@media (max-width: 950px) {
+    .mobile-total-stats-wrapper {
+        display: block;
+    }    
+}
+
+.pa-1 {
+   padding: 1rem;
+}
+.pa-2 {
+    padding: 2rem;
+}
+.pa-3 {
+    padding: 3rem;
+}
+.mr-4 {
+    padding: 4rem;
+}

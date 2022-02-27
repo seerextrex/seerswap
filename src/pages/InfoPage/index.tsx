@@ -8,6 +8,7 @@ import { PageTitle } from '../../components/PageTitle'
 import PoolInfoPage from '../PoolInfoPage'
 import { InfoTotalStats } from '../../components/InfoTotalStats'
 import { BodyWrapper, InnerWrapper, MainContentWrapper, MenuWrapper, PageWrapper } from './styled'
+import Card from '../../shared/components/Card/Card'
 
 function InfoPage() {
     const { path } = useRouteMatch()
@@ -27,19 +28,21 @@ function InfoPage() {
                 <InnerWrapper gap='lg' justify='center'>
                     <InnerWrapper gap='lg' style={{ width: '100%', gridRowGap: '0' }}>
                         <MainContentWrapper>
-                            <MenuWrapper>
-                                <InfoMenu />
-                            </MenuWrapper>
-                            <InfoTotalStats
-                                data={totalStats}
-                                refreshHandler={() => {
-                                    fetchTotalStatsFn()
-                                    fetchInfoPoolsFn()
-                                }}
-                                isLoading={Boolean(totalStatsLoading)}
-                                blocksFetched={blocksFetched}
-                                poolsStat={poolsResult}
-                            />
+                            <Card isDark classes={'br-24 pa-2 mb-1'}>
+                                <MenuWrapper>
+                                    <InfoMenu />
+                                </MenuWrapper>
+                                <InfoTotalStats
+                                    data={totalStats}
+                                    refreshHandler={() => {
+                                        fetchTotalStatsFn()
+                                        fetchInfoPoolsFn()
+                                    }}
+                                    isLoading={Boolean(totalStatsLoading)}
+                                    blocksFetched={blocksFetched}
+                                    poolsStat={poolsResult}
+                                />
+                            </Card>
                             <BodyWrapper>
                                 <Switch>
                                     <Route exact path={`${path}`}>

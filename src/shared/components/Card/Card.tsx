@@ -1,15 +1,17 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import './index.scss'
 
 interface CardProps {
-    classes: string
+    classes?: string
     children?: any
+    isDark: boolean
 }
 
-const Card = ({ classes }: CardProps) => {
+const Card = ({ classes, children, isDark }: CardProps) => {
+    const theme = useMemo(() => isDark ? 'dark' : 'light', [isDark])
     return (
-        <div className={`card-wrapper ${classes}`}>
-
+        <div className={`card-wrapper ${theme} ${classes}`}>
+            {children}
         </div>
     )
 }

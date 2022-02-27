@@ -5,6 +5,8 @@
 @import './reset';
 @import './common';
 @import './typography';
+@import './padding';
+@import "width";
 
 body {
     overflow-x: hidden !important;
@@ -25,15 +27,30 @@ body {
     }    
 }
 
-.pa-1 {
-   padding: 1rem;
+.br-12 {
+    border-radius: 12px;
 }
-.pa-2 {
-    padding: 2rem;
+
+.br-24 {
+    border-radius: 24px;
 }
-.pa-3 {
-    padding: 3rem;
+
+.mr-f-05 {
+    &:first-child {
+        margin-right: .5rem;
+    }
 }
-.mr-4 {
-    padding: 4rem;
+
+.ml-l-05 {
+    &:last-child {
+        margin-left: .5rem;
+    }
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.w-100 {
+    width: 100%;
 }

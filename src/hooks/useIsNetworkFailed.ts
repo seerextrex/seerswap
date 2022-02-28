@@ -6,7 +6,7 @@ import { useState } from 'react'
 import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
 import ms from 'ms.macro'
 
-const DEFAULT_MS_BEFORE_WARNING = ms`30s`
+// const DEFAULT_MS_BEFORE_WARNING = ms`1s`
 const NETWORK_HEALTH_CHECK_MS = ms`10s`
 
 const useMachineTimeMs = (updateInterval: number): number => {
@@ -28,7 +28,8 @@ export function useIsNetworkFailed() {
     // const waitMsBeforeWarning =
     //   (chainId ? CHAIN_INFO[chainId]?.blockWaitMsBeforeWarning : DEFAULT_MS_BEFORE_WARNING) ?? DEFAULT_MS_BEFORE_WARNING
 
-    const warning = Boolean(!!blockTime && machineTime - blockTime.mul(1000).toNumber() > DEFAULT_MS_BEFORE_WARNING)
+    // const warning = Boolean(!!blockTime && machineTime - blockTime.mul(1000).toNumber() > DEFAULT_MS_BEFORE_WARNING)
+    const warning = Boolean(!!blockTime && machineTime - blockTime.mul(1000).toNumber())
 
-    return warning
+    return !warning
 }

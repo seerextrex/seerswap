@@ -10,6 +10,7 @@ import abi from '../abis/pool.json'
 import { computePoolAddress } from './computePoolAddress'
 import { useInternet } from './useInternet'
 import { useToken } from './Tokens'
+import { usePreviousNonEmptyArray } from './usePrevious'
 
 const POOL_STATE_INTERFACE = new Interface(abi)
 
@@ -51,7 +52,31 @@ export function usePools(
     }, [chainId, transformed])
 
     const globalState0s = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, 'globalState')
+    const prevGlobalState0s = usePreviousNonEmptyArray(globalState0s)
+
+    const _globalState0s = useMemo(() => {
+
+        if (!prevGlobalState0s) return globalState0s
+
+        if ((!globalState0s || globalState0s.length === 0) && (prevGlobalState0s && prevGlobalState0s.length !== 0)) return prevGlobalState0s
+
+        return globalState0s
+
+    }, [])
+
     const liquidities = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, 'liquidity')
+    const prevLiquidities = usePreviousNonEmptyArray(liquidities)
+
+    const _liquidities = useMemo(() => {
+
+        if (!prevLiquidities) return liquidities
+
+        if ((!liquidities || liquidities.length === 0) && (prevLiquidities && prevLiquidities.length !== 0)) return prevLiquidities
+
+        return liquidities
+
+    }, [])
+
 
     return useMemo(() => {
         return poolKeys.map((_key, index) => {
@@ -62,12 +87,12 @@ export function usePools(
                 result: globalState,
                 loading: globalStateLoading,
                 valid: globalStateValid
-            } = globalState0s[index]
+            } = _globalState0s[index]
             const {
                 result: liquidity,
                 loading: liquidityLoading,
                 valid: liquidityValid
-            } = liquidities[index]
+            } = _liquidities[index]
 
             if (!globalStateValid || !liquidityValid) return [PoolState.INVALID, null]
             if (globalStateLoading || liquidityLoading) return [PoolState.LOADING, null]

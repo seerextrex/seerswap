@@ -1,0 +1,21 @@
+.btn {
+  border: none;
+
+  &.primary {
+    background-color: var(--primary);
+    color: var(--white);
+    border: 1px solid var(--primary);
+    &:disabled {
+      background-color: var(--primary-disabled);
+      border-color: var(--primary-disabled);
+    }
+    &:hover {
+
+    }
+  }
+
+  &.secondary {
+    background-color: transparent;
+    color: var(--primary);
+  }
+}

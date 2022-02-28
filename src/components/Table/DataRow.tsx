@@ -1,4 +1,4 @@
-import { ChartBadge, FarmingLink, LabelStyled, LinkWrapper, ResponsiveGrid } from './styled'
+import { ChartBadge, FarmingLink, LabelStyled, LinkWrapper, ResponsiveGrid } from '../InfoPoolsTable/styled'
 import { BarChart2, ExternalLink } from 'react-feather'
 import { formatDollarAmount, formatPercent } from '../../utils/numbers'
 import React, { useMemo } from 'react'
@@ -11,6 +11,7 @@ import { FormattedPool } from '../../models/interfaces'
 import { Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from '../../constants/chains'
 import { WrappedCurrency } from '../../models/types'
+import './index.scss'
 
 interface DataRowProps {
     poolData: FormattedPool;
@@ -28,7 +29,7 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
     }, [poolData.token0, poolData.token1])
 
     return (
-        <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
+        <div className={'data-row pb-1'}>
             <LabelStyled fontWeight={400}>{index + 1}</LabelStyled>
             <LabelStyled fontWeight={400}>
                 <RowFixed>
@@ -75,6 +76,6 @@ export const DataRow = ({ poolData, index }: DataRowProps) => {
                         : <span>-</span>
                 }
             </LabelStyled>
-        </ResponsiveGrid>
+        </div>
     )
 }

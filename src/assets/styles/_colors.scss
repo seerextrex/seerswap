@@ -1,6 +1,43 @@
 :root {
-    --white: #fff;
-    --black: #000;
-    --ebony-clay: #26343F;
-    --dark-ebony-clay: #1C2A35;
+  --white: #fff;
+  --black: #000;
+  --ebony-clay: #26343F;
+  --dark-ebony-clay: #1C2A35;
+  --primary: #2797FF;
+  --primary-disabled: #1F4B72;
+  --light-gray: #838693;
+  --dark-gray: #171E24;
+  --red: #F55755;
+}
+
+.c-lg {
+  color: var(--light-gray);
+}
+
+.c-w {
+  color: var(--white);
+}
+
+.c-b {
+  color: var(--black);
+}
+
+.c-ec {
+  color: var(--ebony-clay);
+}
+
+.c-dec {
+  color: var(--dark-ebony-clay);
+}
+
+.c-lb {
+  color: var(--light-blue);
+}
+
+.c-dg {
+  color: var(--dark-gray);
+}
+
+.c-r {
+  color: var(--red);
 }

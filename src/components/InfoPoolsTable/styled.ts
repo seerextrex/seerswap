@@ -34,20 +34,12 @@ export const ClickableTextStyled = styled(ClickableText)<{ center?: boolean }>`
 `
 export const Wrapper = styled(DarkGreyCard)`
     width: 100%;
-    background-color: rgba(60, 97, 126, 0.5);
     ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 900px;
   `};
 `
 export const ResponsiveGrid = styled.div`
-    display: grid;
-    position: relative;
-    grid-gap: 1em;
-    align-items: center;
-    grid-template-columns: 20px 2.3fr repeat(5, 1fr);
-    @media screen and (max-width: 1000px) {
-        grid-template-columns: 20px 2.3fr repeat(5, 1fr);
-    }
+
 `
 export const ChartBadge = styled(NavLink)`
     background: #36f;

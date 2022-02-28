@@ -1,0 +1,17 @@
+.menu-wrapper {
+  display: flex;
+  padding: 0;
+
+  &__item {
+    display: flex;
+    color: var(--light-gray);
+
+    svg {
+      margin-right: 7px;
+    }
+
+    &--active {
+      color: var(--primary);
+    }
+  }
+}

@@ -43,6 +43,8 @@ import {
     XALGBCourse,
     XALGBCousreWrapper
 } from './styled'
+import './index.scss'
+import Slider from '../../components/Slider'
 
 export default function RealStakerPage({}) {
     const currencyId = '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'
@@ -246,33 +248,33 @@ export default function RealStakerPage({}) {
     }, [staked, earned])
 
     return (
-        <RealStakerPageWrapper>
+        <div className={'real-staker-page maw-765'}>
             <Helmet>
                 <title>Algebra — Staking</title>
             </Helmet>
-            <PageWrapper onKeyPress={(e) => enterHandler(e)}>
-                <StakeTitle>Stake ALGB</StakeTitle>
+            <div className={'stake-wrapper pa-2 br-24'} onKeyPress={(e) => enterHandler(e)}>
+                <h1 className={'stake-wrapper__title'}>Stake ALGB</h1>
                 <RealStakerInputRange amountValue={amountValue} setAmountValue={setAmountValue} baseCurrency={baseCurrency} fiatValue={fiatValue} />
                 {numBalance == 0 && balance ?
                     <NavLink to={''} style={{ textDecoration: 'none' }}>
-                        <StakeButton>BUY ALGB</StakeButton>
+                        <button>BUY ALGB</button>
                     </NavLink>
                     : (
                         <>
-                            <SilderWrapper>
-                                <StakerSlider value={percentForSlider} onChange={onPercentSelectForSlider} size={22} disabled={+_balance === 0} />
-                            </SilderWrapper>
+                            <div className={'slider-wrapper'}>
+                                <Slider value={percentForSlider} onChange={onPercentSelectForSlider} size={22} disabled={+_balance === 0} />
+                            </div>
                             <RealStakerRangeButtons onPercentSelect={onPercentSelect} balance={_balance} />
                             {approval === ApprovalState.NOT_APPROVED ?
-                                <StakeButton onClick={approveCallback}>Approve token</StakeButton>
+                                <button className={'btn primary w-100 pa-1 mt-1'} onClick={approveCallback}>Approve token</button>
                                 : approval === ApprovalState.UNKNOWN && account === null ?
-                                    <StakeButton onClick={toggleWalletModal}>Connect Wallet</StakeButton>
+                                    <button className={'btn primary w-100 pa-1 mt-1'} onClick={toggleWalletModal}>Connect Wallet</button>
                                     : approval === ApprovalState.UNKNOWN ?
-                                        <StakeButton>
-                                            <Loader stroke={'white'} size={'19px'} />
-                                        </StakeButton>
+                                        <button className={'btn primary w-100 pa-1 mt-1'}>
+                                            <Loader stroke={'white'} size={'1rem'} />
+                                        </button>
                                         : approval === ApprovalState.APPROVED ?
-                                            <StakeButton
+                                            <button className={'btn primary w-100 pa-1 mt-1'}
                                                 onClick={() => {
                                                     stakerHandler(amountValue)
                                                         .then(() => {
@@ -285,16 +287,16 @@ export default function RealStakerPage({}) {
                                                 disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
                                             >
                                                 {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
-                                            </StakeButton>
+                                            </button>
                                             :
-                                            <StakeButton>
-                                                <Loader stroke={'white'} size={'19px'} />
-                                            </StakeButton>}
+                                            <button className={'btn primary w-100 pa-1 mt-1'}>
+                                                <Loader stroke={'white'} size={'1rem'} />
+                                            </button>}
                         </>
                     )}
-            </PageWrapper>
-            <EarnedStakedWrapper>
-                <ResBlocksTitle>
+            </div>
+            <div className={'earned-wrapper br-24'}>
+                <h2 className={'earned-wrapper__title mb-1'}>
                     <LeftBlock>
                         <h3>Balance</h3>
                     </LeftBlock>
@@ -316,8 +318,8 @@ export default function RealStakerPage({}) {
                     </RightBlock>
                     {showFrozen && frozenStaked.length !== 0 && typeof frozenStaked !== 'string' && frozenStaked.some(el => +Math.floor(+el.timestamp * 1000) > now()) ?
                         <FrozenModal data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now} /> : null}
-                </ResBlocksTitle>
-                <ResBlocksWrapper>
+                </h2>
+                <div className={'flex-s-between'}>
                     <RealStakerResBlocks
                         action={'Claim'}
                         currency={fiatValueEarned}
@@ -338,18 +340,18 @@ export default function RealStakerPage({}) {
                         }}
                         algbCourse={algbCourse}
                     />
-                </ResBlocksWrapper>
-                <XALGBCousreWrapper>
-                    <XALGBBalance>{!account ? '' : `You have ${xALGBBalance} xALGB`}</XALGBBalance>
-                    <XALGBCourse>1 xALGB = {algbCourseShow.toFixed(2)} ALGB</XALGBCourse>
-                </XALGBCousreWrapper>
-            </EarnedStakedWrapper>
-            <StakerStatisticWrapper to={'staking/analytics'}>
-                <div>
-                    <h2>Statistics</h2>
-                    <p>Minted / Staked Amount / Total Supply →</p>
                 </div>
-            </StakerStatisticWrapper>
+                <div className={'xalgb-wrapper flex-s-between br-8 mt-1'}>
+                    <span className={'pv-05 ph-1'}>{!account ? '' : `You have ${xALGBBalance} xALGB`}</span>
+                    <span className={'pv-05 ph-1'}>1 xALGB = {algbCourseShow.toFixed(2)} ALGB</span>
+                </div>
+            </div>
+            <NavLink className={'statistic-wrapper'} to={'staking/analytics'}>
+                <div>
+                    <h2 className={'ml-05'}>Statistics</h2>
+                    <p className={'mt-05 ml-05'}>Minted / Staked Amount / Total Supply →</p>
+                </div>
+            </NavLink>
             <RealStakerUnstakeModal
                 openModal={openModal}
                 setOpenModal={setOpenModal}
@@ -364,6 +366,6 @@ export default function RealStakerPage({}) {
                 fiatValue={fiatUnstakedAmount}
                 allXALGBFreeze={allXALGBFreeze}
             />
-        </RealStakerPageWrapper>
+        </div>
     )
 }

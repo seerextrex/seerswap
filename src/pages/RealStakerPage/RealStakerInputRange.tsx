@@ -1,6 +1,7 @@
-import { CurrencyBottom, CurrencyInputPanelWrapper, CurrencyTop } from './styled'
+import { CurrencyBottom, CurrencyTop } from './styled'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { WrappedCurrency } from '../../models/types'
+import './index.scss'
 
 interface StakerInputRangeProps {
     baseCurrency?: Currency | null
@@ -11,7 +12,7 @@ interface StakerInputRangeProps {
 
 export default function RealStakerInputRange({ baseCurrency, amountValue, setAmountValue, fiatValue }: StakerInputRangeProps) {
     return (
-        <CurrencyInputPanelWrapper>
+        <div className={'currency-input mv-15 br-12 ph-15 pv-1'}>
             <CurrencyTop
                 style={{ width: '100%' }}
                 currency={baseCurrency as WrappedCurrency}
@@ -44,6 +45,6 @@ export default function RealStakerInputRange({ baseCurrency, amountValue, setAmo
                 id={''}
                 showMaxButton={false}
                 swap={false} />
-        </CurrencyInputPanelWrapper>
+        </div>
     )
 }

@@ -3,31 +3,29 @@
   position: relative;
   grid-gap: 1em;
   align-items: center;
-  grid-template-columns: 20px 2.3fr repeat(5, 1fr);
-  @media screen and (max-width: 1000px) {
-    grid-template-columns: 20px 2.3fr repeat(5, 1fr);
-  }
+
 
   &__item {
     font-size: 14px;
-    text-align: center;
+    text-align: start;
     cursor: pointer;
     align-items: center;
     display: flex;
-    justify-content: center;
+    justify-content: start;
 
-    &[data-center=true] {
-      text-align: left;
-      align-items: center;
-      display: flex;
-      justify-content: start;
-    }
+   &--center {
+     text-align: center;
+     cursor: pointer;
+     align-items: center;
+     justify-content: center;
+   }
   }
 
   &__apr {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
 
     &:hover {
       & > .helper {
@@ -84,10 +82,21 @@
   position: relative;
   grid-gap: 1em;
   align-items: center;
-  grid-template-columns: 20px 2.3fr repeat(5, 1fr);
   border-bottom: 1px solid rgba(225, 229, 239, 0.18);
 
-  @media screen and (max-width: 1000px) {
-    grid-template-columns: 20px 2.3fr repeat(5, 1fr);
+    &__item {
+      font-size: 14px;
+      text-align: center;
+      cursor: pointer;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+
+      &[data-center=true] {
+        text-align: left;
+        align-items: center;
+        display: flex;
+        justify-content: start;
+      }
   }
 }

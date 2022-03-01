@@ -36,7 +36,7 @@ export default function FarmsHistoryTable({ eventDatas, maxItems = MAX_ITEMS }: 
     const [maxPage, setMaxPage] = useState(1)
 
     //sort
-    const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField)
+    // const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField)
 
 
     const sortedPools = useMemo(() => {
@@ -73,73 +73,73 @@ export default function FarmsHistoryTable({ eventDatas, maxItems = MAX_ITEMS }: 
 
     return (
         <Wrapper style={{ borderRadius: '8px' }}>
-            {sortedPools.length > 0 ? (
-                <AutoColumn gap='16px'>
-                    <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>
-                        <Label color={'#dedede'}>#</Label>
-                        <ClickableTextStyled color={'#dedede'} onClick={() => handleSort(SORT_FIELD.pool)}>
-                            Pool {arrow(SORT_FIELD.pool)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.reward)}>
-                            Reward {arrow(SORT_FIELD.reward)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.bonusReward)}>
-                            Bonus {arrow(SORT_FIELD.bonusReward)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.participants)}>
-                            Participants {arrow(SORT_FIELD.participants)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.bestApr)}>
-                            Best APR {arrow(SORT_FIELD.bestApr)}
-                        </ClickableTextStyled>
-                        <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.start)}>
-                            Dates {arrow(SORT_FIELD.start)}
-                        </ClickableTextStyled>
-                    </ResponsiveGrid>
-                    {sortedPools.map((eventData, i) => {
-                        if (eventData) {
-                            return (
-                                <React.Fragment key={i}>
-                                    <DataRow index={(page - 1) * MAX_ITEMS + i} eventData={eventData} />
-                                </React.Fragment>
-                            )
-                        }
-                        return null
-                    })}
-                    <PageButtons>
-                        <div
-                            onClick={() => {
-                                setPage(page === 1 ? page : page - 1)
-                            }}
-                        >
-                            <Arrow faded={page === 1}>←</Arrow>
-                        </div>
-                        <TYPE.body>{'Page ' + page + ' of ' + maxPage}</TYPE.body>
-                        <div
-                            onClick={() => {
-                                setPage(page === maxPage ? page : page + 1)
-                            }}
-                        >
-                            <Arrow faded={page === maxPage}>→</Arrow>
-                        </div>
-                    </PageButtons>
-                </AutoColumn>
-            ) : (
-                <LoadingRows>
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                    <div />
-                </LoadingRows>
-            )}
+            {/*{sortedPools.length > 0 ? (*/}
+            {/*    <AutoColumn gap='16px'>*/}
+            {/*        <ResponsiveGrid style={{ borderBottom: '1px solid rgba(225, 229, 239, 0.18)', paddingBottom: '1rem' }}>*/}
+            {/*            <Label color={'#dedede'}>#</Label>*/}
+            {/*            <ClickableTextStyled color={'#dedede'} onClick={() => handleSort(SORT_FIELD.pool)}>*/}
+            {/*                Pool {arrow(SORT_FIELD.pool)}*/}
+            {/*            </ClickableTextStyled>*/}
+            {/*            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.reward)}>*/}
+            {/*                Reward {arrow(SORT_FIELD.reward)}*/}
+            {/*            </ClickableTextStyled>*/}
+            {/*            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.bonusReward)}>*/}
+            {/*                Bonus {arrow(SORT_FIELD.bonusReward)}*/}
+            {/*            </ClickableTextStyled>*/}
+            {/*            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.participants)}>*/}
+            {/*                Participants {arrow(SORT_FIELD.participants)}*/}
+            {/*            </ClickableTextStyled>*/}
+            {/*            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.bestApr)}>*/}
+            {/*                Best APR {arrow(SORT_FIELD.bestApr)}*/}
+            {/*            </ClickableTextStyled>*/}
+            {/*            <ClickableTextStyled color={'#dedede'} end={1} onClick={() => handleSort(SORT_FIELD.start)}>*/}
+            {/*                Dates {arrow(SORT_FIELD.start)}*/}
+            {/*            </ClickableTextStyled>*/}
+            {/*        </ResponsiveGrid>*/}
+            {/*        {sortedPools.map((eventData, i) => {*/}
+            {/*            if (eventData) {*/}
+            {/*                return (*/}
+            {/*                    <React.Fragment key={i}>*/}
+            {/*                        <DataRow index={(page - 1) * MAX_ITEMS + i} eventData={eventData} />*/}
+            {/*                    </React.Fragment>*/}
+            {/*                )*/}
+            {/*            }*/}
+            {/*            return null*/}
+            {/*        })}*/}
+            {/*        <PageButtons>*/}
+            {/*            <div*/}
+            {/*                onClick={() => {*/}
+            {/*                    setPage(page === 1 ? page : page - 1)*/}
+            {/*                }}*/}
+            {/*            >*/}
+            {/*                <Arrow faded={page === 1}>←</Arrow>*/}
+            {/*            </div>*/}
+            {/*            <TYPE.body>{'Page ' + page + ' of ' + maxPage}</TYPE.body>*/}
+            {/*            <div*/}
+            {/*                onClick={() => {*/}
+            {/*                    setPage(page === maxPage ? page : page + 1)*/}
+            {/*                }}*/}
+            {/*            >*/}
+            {/*                <Arrow faded={page === maxPage}>→</Arrow>*/}
+            {/*            </div>*/}
+            {/*        </PageButtons>*/}
+            {/*    </AutoColumn>*/}
+            {/*) : (*/}
+            {/*    <LoadingRows>*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*        <div />*/}
+            {/*    </LoadingRows>*/}
+            {/*)}*/}
         </Wrapper>
     )
 }

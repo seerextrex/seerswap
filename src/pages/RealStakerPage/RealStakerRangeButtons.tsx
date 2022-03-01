@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro'
-import { ButtonsWrapper, StakerSmallMaxButton } from './styled'
+import { ButtonsWrapper } from './styled'
 
 interface RealStakerRangeButtonsProps {
     onPercentSelect: any
@@ -10,18 +10,18 @@ export default function RealStakerRangeButtons({ onPercentSelect, balance }: Rea
     return (
         <ButtonsWrapper>
             <div>
-                <StakerSmallMaxButton onClick={() => onPercentSelect(25)} style={{ marginLeft: 0 }} disabled={+balance === 0}>
+                <button className={'btn primary button-percent pv-05 ph-1 br-8 mh-025'} onClick={() => onPercentSelect(25)} style={{ marginLeft: 0 }} disabled={+balance === 0}>
                     <Trans>25%</Trans>
-                </StakerSmallMaxButton>
-                <StakerSmallMaxButton onClick={() => onPercentSelect(50)} disabled={+balance === 0}>
+                </button>
+                <button className={'btn primary button-percent pv-05 ph-1 br-8 mh-025'} onClick={() => onPercentSelect(50)} disabled={+balance === 0}>
                     <Trans>50%</Trans>
-                </StakerSmallMaxButton>
-                <StakerSmallMaxButton onClick={() => onPercentSelect(75)} disabled={+balance === 0}>
+                </button>
+                <button className={'btn primary button-percent pv-05 ph-1 br-8 mh-025'} onClick={() => onPercentSelect(75)} disabled={+balance === 0}>
                     <Trans>75%</Trans>
-                </StakerSmallMaxButton>
-                <StakerSmallMaxButton onClick={() => onPercentSelect(100)} disabled={+balance === 0}>
+                </button>
+                <button className={'btn primary button-percent pv-05 ph-1 br-8 mh-025'} onClick={() => onPercentSelect(100)} disabled={+balance === 0}>
                     <Trans>MAX</Trans>
-                </StakerSmallMaxButton>
+                </button>
             </div>
         </ButtonsWrapper>
     )

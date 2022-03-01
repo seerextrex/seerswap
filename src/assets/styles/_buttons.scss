@@ -1,16 +1,19 @@
 .btn {
   border: none;
+  border-radius: 12px;
 
   &.primary {
     background-color: var(--primary);
     color: var(--white);
     border: 1px solid var(--primary);
+    &:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
     &:disabled {
       background-color: var(--primary-disabled);
       border-color: var(--primary-disabled);
-    }
-    &:hover {
-
     }
   }
 

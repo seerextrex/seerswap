@@ -1,17 +1,14 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Loader from '../Loader'
-import './index.scss'
 import Table from '../Table'
-import DoubleCurrencyLogo from '../DoubleLogo'
-import { Token } from '@uniswap/sdk-core'
-import { SupportedChainId } from '../../constants/chains'
-import { WrappedCurrency } from '../../models/types'
-import { ChartBadge, FarmingLink, LinkWrapper } from '../InfoPoolsTable/styled'
-import { TYPE } from '../../theme'
-import { BarChart2, ExternalLink } from 'react-feather'
-import { GreyBadge } from '../Card'
-import { feeTierPercent } from '../../utils'
 import { formatDollarAmount, formatPercent } from '../../utils/numbers'
+import '../Table/index.scss'
+import './index.scss'
+import { NavLink } from 'react-router-dom'
+import { Pool } from './PoolRow'
+import { Apr } from './AprHeader'
+import { useHandleSort } from '../../hooks/useHandleSort'
+import { useHandleArrow } from '../../hooks/useHandleArrow'
 
 interface InfoPoolsProps {
     data: any
@@ -22,8 +19,12 @@ interface InfoPoolsProps {
 
 const sortFields = [
     {
+        title: '#',
+        value: 'index'
+    },
+    {
         title: 'Pool',
-        value: 'feeTier'
+        value: 'pool'
     },
     {
         title: 'Volume 24H',
@@ -31,11 +32,11 @@ const sortFields = [
     },
     {
         title: 'Volume 7D',
-        value: 'tvlUSD'
+        value: 'volumeUSDWeek'
     },
     {
         title: 'TVL',
-        value: 'volumeUSDWeek'
+        value: 'tvlUSD'
     },
     {
         title: '🚀 APR',
@@ -47,32 +48,13 @@ const sortFields = [
     }
 ]
 
-export const POOL_HIDE = [
-    '0x86d257cdb7bc9c0df10e84c8709697f92770b335',
-    '0xf8dbd52488978a79dfe6ffbd81a01fc5948bf9ee',
-    '0x8fe8d9bb8eeba3ed688069c3d6b556c9ca258248'
-]
-
-const Pool = ({ token0, token1, fee, address } : any) => <div className={'f jc ac'}>
-    <DoubleCurrencyLogo
-        currency0={new Token(SupportedChainId.POLYGON, token0?.id, 18, token0.symbol) as WrappedCurrency}
-        currency1={new Token(SupportedChainId.POLYGON, token1?.id, 18, token1.symbol) as WrappedCurrency}
-        size={20} />
-    <LinkWrapper href={`https://polygonscan.com/address/${address}`} rel='noopener noreferrer' target='_blank'>
-        <TYPE.label ml='8px'>
-            {/*{poolTitle[0]}/{poolTitle[1]}*/}
-        </TYPE.label>
-        <ExternalLink size={16} color={'white'} />
-    </LinkWrapper>
-    <GreyBadge ml='10px' fontSize='14px' style={{ backgroundColor: '#02365e' }}>
-        {feeTierPercent(+fee)}
-    </GreyBadge>
-    <ChartBadge to={`/info/pools/${address}`}>
-        <BarChart2 size={18} stroke={'white'} />
-    </ChartBadge>
-</div>
-
 export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
+
+    const [sortField, setSortField] = useState('volumeUSD')
+    const [sortIndex, setSortIndex] = useState(2)
+    const [sortDirection, setSortDirection] = useState<boolean>(true)
+    const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex)
+    const arrow = useHandleArrow(sortField, sortIndex, sortDirection)
 
     useEffect(() => {
         if (blocksFetched) {
@@ -83,19 +65,63 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
     const _data = useMemo(() => {
         return data && data.map((el: any, i: any) => {
 
-            const pool = Pool({token0: el.token0, token1: el.token1, fee: el.fee, address: el.address })
+            const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address })
             const apr = el.apr > 0 ? <span style={{ color: '#33FF89' }}>{formatPercent(el.apr)}</span> : <span>-</span>
             const farming = el.farmingApr > 0 ?
-                <FarmingLink to={'/farming/infinite-farms'} apr={el.farmingApr > 0}>
+                <NavLink to={'/farming/infinite-farms'} className={'farming-link'} data-apr={el.farmingApr > 0}>
                     {formatPercent(el.farmingApr)}
-                </FarmingLink>
+                </NavLink>
                 : <span>-</span>
 
-            return [i+1, pool, formatDollarAmount(el.volumeUSD), formatDollarAmount(el.volumeUSDWeek), formatDollarAmount(el.totalValueLockedUSD), apr, farming]
+            return [
+                {
+                    title: i + 1,
+                    value: i + 1
+                },
+                {
+                    title: pool,
+                    value: el.address
+                },
+                {
+                    title: formatDollarAmount(el.volumeUSD),
+                    value: el.volumeUSD
+                },
+                {
+                    title: formatDollarAmount(el.volumeUSDWeek),
+                    value: el.volumeUSDWeek
+                },
+                {
+                    title: formatDollarAmount(el.totalValueLockedUSD),
+                    value: el.totalValueLockedUSD
+                },
+                {
+                    title: apr,
+                    value: el.apr
+                },
+                {
+                    title: farming,
+                    value: el.farmingApr
+                }]
         })
     }, [data])
 
-    console.log(_data)
+    const _header = useMemo(() => {
+
+        const header =
+            <>
+                <span className={'table-header__item'}>#</span>
+                <span className={'table-header__item'}>Pool</span>
+                <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
+                <span className={'table-header__item table-header__item--center'}>Volume 7D</span>
+                <span className={'table-header__item table-header__item--center'}>TVL</span>
+                <span className={'table-header__item table-header__item--center'}><Apr /></span>
+                <span className={'table-header__item table-header__item--center'}>🔥 Farming</span>
+            </>
+        return <>
+            {header.props.children.map((el: any, i: any) => <span className={el.props.className} key={i} onClick={() => handleSort(sortFields[i].value, i)}>{el}{arrow(sortFields[i].value)}</span>)}
+        </>
+
+    }, [arrow, handleSort, sortField, sortIndex])
 
     if (!data)
         return (
@@ -104,6 +130,5 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             </div>
         )
 
-
-    return <Table poolDatas={_data} sortFields={sortFields} />
+    return <Table data={_data} header={_header} sortDirection={sortDirection} sortField={sortField} sortIndex={sortIndex} gridClass={'grid-pools-table'} />
 }

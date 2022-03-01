@@ -24,11 +24,6 @@ export default function CommonBases({
 
     return bases.length > 0 ? (
         <MobileWrapper gap='md'>
-            <AutoRow>
-                <Text fontWeight={500} fontSize={14}>
-                    <Trans>Common bases</Trans>
-                </Text>
-            </AutoRow>
             <AutoRow gap='4px'>
                 {bases.map((currency) => {
                     const isSelected = selectedCurrency?.equals(currency)

@@ -67,6 +67,14 @@ export const IRIS_POLYGON = new Token(
     'Iris'
 )
 
+export const HSM_POLYGON = new Token(
+    SupportedChainId.POLYGON,
+    '0x77ec58f36f3d1a9cf8694fc5c544b04b8c9639dd',
+    18,
+    'HSM',
+    'HoneySium'
+)
+
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WMATIC

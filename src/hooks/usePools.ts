@@ -10,7 +10,7 @@ import abi from '../abis/pool.json'
 import { computePoolAddress } from './computePoolAddress'
 import { useInternet } from './useInternet'
 import { useToken } from './Tokens'
-import { usePreviousNonEmptyArray } from './usePrevious'
+import { usePreviousNonEmptyArray, usePreviousNonErroredArray } from './usePrevious'
 
 const POOL_STATE_INTERFACE = new Interface(abi)
 
@@ -52,30 +52,30 @@ export function usePools(
     }, [chainId, transformed])
 
     const globalState0s = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, 'globalState')
-    const prevGlobalState0s = usePreviousNonEmptyArray(globalState0s)
+    const prevGlobalState0s = usePreviousNonErroredArray(globalState0s)
 
     const _globalState0s = useMemo(() => {
 
-        if (!prevGlobalState0s) return globalState0s
+        if (!prevGlobalState0s || prevGlobalState0s.some(el => el.error)) return globalState0s
 
-        if ((!globalState0s || globalState0s.length === 0) && (prevGlobalState0s && prevGlobalState0s.length !== 0)) return prevGlobalState0s
+        if ((!globalState0s || globalState0s.length === 0 || globalState0s.some(el => el.error)) && (prevGlobalState0s && prevGlobalState0s.length !== 0 && !prevGlobalState0s.some(el => el.error))) return prevGlobalState0s
 
         return globalState0s
 
-    }, [])
+    }, [globalState0s])
 
     const liquidities = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, 'liquidity')
-    const prevLiquidities = usePreviousNonEmptyArray(liquidities)
+    const prevLiquidities = usePreviousNonErroredArray(liquidities)
 
     const _liquidities = useMemo(() => {
 
-        if (!prevLiquidities) return liquidities
+        if (!prevLiquidities || prevLiquidities?.some(el => el.error)) return liquidities
 
-        if ((!liquidities || liquidities.length === 0) && (prevLiquidities && prevLiquidities.length !== 0)) return prevLiquidities
+        if ((!liquidities || liquidities.length === 0 || liquidities.some(el => el.error)) && (prevLiquidities && prevLiquidities.length !== 0 && !prevLiquidities.some(el => el.error))) return prevLiquidities
 
         return liquidities
 
-    }, [])
+    }, [liquidities])
 
 
     return useMemo(() => {
@@ -107,7 +107,7 @@ export function usePools(
                 return [PoolState.NOT_EXISTS, null]
             }
         })
-    }, [liquidities, poolKeys, globalState0s, transformed])
+    }, [_liquidities, poolKeys, _globalState0s, transformed])
 }
 
 export function usePool(

@@ -18,6 +18,7 @@ import PendingView from "./PendingView";
 import { Frown } from "react-feather";
 import ReactGA from "react-ga";
 import { CloseColor, CloseIcon, ContentWrapper, ConnectNetwork, HeaderRow, HoverText, OptionGrid, UpperSection, Wrapper } from "./styled";
+import { addPolygonNetwork } from "components/Web3Status/Web3StatusInner";
 
 const WALLET_VIEWS = {
     OPTIONS: "options",

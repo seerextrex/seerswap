@@ -12,10 +12,13 @@ import Loader from "../Loader";
 import { Sock } from "./Sock";
 import { shortenAddress } from "../../utils";
 import { StatusIcon } from "./StatusIcon";
+import { EthereumWindow } from "models/types";
 
 export async function addPolygonNetwork() {
+    const _window = window as EthereumWindow;
+
     try {
-        await window.ethereum.request({
+        await _window.ethereum.request({
             method: "wallet_switchEthereumChain",
             params: [
                 {
@@ -27,7 +30,7 @@ export async function addPolygonNetwork() {
         // This error code indicates that the chain has not been added to MetaMask.
         if (switchError.code === 4902) {
             try {
-                await window?.ethereum?.request({
+                await _window?.ethereum?.request({
                     method: "wallet_addEthereumChain",
                     params: [
                         {

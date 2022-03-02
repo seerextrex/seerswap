@@ -6,6 +6,7 @@ import { useSingleContractMultipleData } from '../state/multicall/hooks'
 import { useAllV3Routes } from './useAllV3Routes'
 import { useV3Quoter } from './useContract'
 import { useActiveWeb3React } from './web3'
+import usePrevious from './usePrevious'
 
 export enum V3TradeState {
     LOADING,
@@ -42,7 +43,7 @@ export function useBestV3TradeExactIn(
         gasRequired: chainId ? DEFAULT_GAS_QUOTE : undefined
     })
 
-    return useMemo(() => {
+    const trade = useMemo(() => {
         if (!amountIn || !currencyOut) {
             return {
                 state: V3TradeState.INVALID,
@@ -100,6 +101,17 @@ export function useBestV3TradeExactIn(
             })
         }
     }, [amountIn, currencyOut, quotesResults, routes, routesLoading])
+
+    const prevTrade = usePrevious(trade.trade ? trade : undefined)
+
+    return useMemo(() => {
+        if (!prevTrade) return trade
+
+        if (!trade.trade && prevTrade.trade) return prevTrade
+  
+        return trade
+    }, [trade])
+
 }
 
 /**
@@ -127,7 +139,7 @@ export function useBestV3TradeExactOut(
         gasRequired: chainId ? DEFAULT_GAS_QUOTE : undefined
     })
 
-    return useMemo(() => {
+    const trade = useMemo(() => {
         if (!amountOut || !currencyIn || quotesResults.some(({ valid }) => !valid)) {
             return {
                 state: V3TradeState.INVALID,
@@ -186,4 +198,16 @@ export function useBestV3TradeExactOut(
             })
         }
     }, [amountOut, currencyIn, quotesResults, routes, routesLoading])
+
+    const prevTrade = usePrevious(trade.trade ? trade : undefined)
+
+    return useMemo(() => {
+
+        if (!prevTrade) return trade
+
+        if (!trade.trade && prevTrade.trade) return prevTrade
+
+        return trade
+
+    }, [trade])
 }

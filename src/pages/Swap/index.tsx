@@ -162,12 +162,11 @@ export default function Swap({ history }: RouteComponentProps) {
     const routeNotFound = !trade?.route;
     const isLoadingRoute = toggledVersion === Version.v3 && V3TradeState.LOADING === v3TradeState;
 
-    let dynamicFee;
-    //@ts-ignore
-    if (trade?.swaps[0]?.route?.pools[0]) {
-        //@ts-ignore
-        dynamicFee = trade?.swaps[0]?.route?.pools[0].fee;
-    }
+    const dynamicFee = useMemo(() => {
+        const _trade = trade as any
+        if (!_trade) return 
+        return _trade.swaps[0]?.route?.pools[0].fee;
+    }, [trade])
 
     // check whether the user has approved the router on the input token
     const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage);

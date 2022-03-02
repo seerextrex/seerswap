@@ -9,6 +9,7 @@ import { useMultipleContractSingleData, useSingleContractMultipleData } from '..
 import { Interface } from '@ethersproject/abi'
 import ERC20ABI from 'abis/erc20.json'
 import { Erc20Interface } from 'abis/types/Erc20'
+import usePrevious, { usePreviousNonEmptyObject } from 'hooks/usePrevious'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -36,7 +37,7 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
         addresses.map((address) => [address])
     )
 
-    return useMemo(
+    const balances = useMemo(
         () =>
             addresses.reduce<{ [address: string]: CurrencyAmount<Currency> }>((memo, address, i) => {
                 const value = results?.[i]?.result?.[0]
@@ -46,6 +47,20 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
             }, {}),
         [addresses, chainId, results]
     )
+
+    const prevBalances = usePreviousNonEmptyObject(balances)
+
+    return useMemo(() => {
+
+        if (!prevBalances) return {}
+
+        if (Object.keys(balances).length === 0 && Object.keys(prevBalances).length !== 0) return prevBalances
+
+        return balances
+
+    }, [balances])
+
+
 }
 
 /**
@@ -68,8 +83,7 @@ export function useTokenBalancesWithLoadingIndicator(
 
     const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [balances])
 
-    return [
-        useMemo(
+    const _balances = useMemo(
             () =>
                 address && validatedTokens.length > 0
                     ? validatedTokens.reduce<{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }>((memo, token, i) => {
@@ -82,9 +96,20 @@ export function useTokenBalancesWithLoadingIndicator(
                     }, {})
                     : {},
             [address, validatedTokens, balances]
-        ),
-        anyLoading
-    ]
+        )
+
+    const prevBalances = usePreviousNonEmptyObject(_balances)
+
+    return useMemo(() => {
+
+        if (!prevBalances) return [_balances, anyLoading]
+
+        if (Object.keys(_balances).length === 0 && Object.keys(_balances).length !== 0) return [prevBalances, anyLoading]
+
+        return [_balances, anyLoading]
+
+    }, [anyLoading, balances])
+
 }
 
 export function useTokenBalances(

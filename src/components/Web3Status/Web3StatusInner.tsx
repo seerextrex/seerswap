@@ -13,6 +13,44 @@ import { Sock } from "./Sock";
 import { shortenAddress } from "../../utils";
 import { StatusIcon } from "./StatusIcon";
 
+export async function addPolygonNetwork() {
+    try {
+        await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+                {
+                    chainId: "137",
+                },
+            ],
+        });
+    } catch (switchError: any) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+            try {
+                await window?.ethereum?.request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                        {
+                            chainId: "137",
+                            chainName: "Polygon Mainnet",
+                            nativeCurrency: {
+                                name: "MATIC",
+                                symbol: "MATIC",
+                                decimals: 18,
+                            },
+                            blockExplorerUrls: ["https://polygonscan.com/"],
+                            rpcUrls: ["https://polygon-mainnet.infura.io/v3/a4f8e4693b7a465da0848c3f82732f23"],
+                        },
+                    ],
+                });
+            } catch (addError) {
+                // handle "add" error
+            }
+        }
+        // handle other "switch" errors
+    }
+}
+
 export function Web3StatusInner() {
     const { account, connector, error } = useWeb3React();
     const { ENSName } = useENSName(account ?? undefined);
@@ -47,18 +85,14 @@ export function Web3StatusInner() {
         );
     } else if (error) {
         return (
-            <Web3StatusError onClick={toggleWalletModal}>
+            <Web3StatusError onClick={addPolygonNetwork}>
                 <NetworkIcon />
-                <Text>{error instanceof UnsupportedChainIdError ? <Trans>Wrong Network</Trans> : <Trans>Error</Trans>}</Text>
+                <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Polygon</Trans> : <Trans>Error</Trans>}</Text>
             </Web3StatusError>
         );
     } else {
         return (
-            <Web3StatusConnect
-                id="connect-wallet"
-                onClick={toggleWalletModal}
-                faded={!account}
-            >
+            <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
                 <Text>
                     <Trans>Connect Wallet</Trans>
                 </Text>

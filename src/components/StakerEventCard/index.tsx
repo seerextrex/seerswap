@@ -28,6 +28,7 @@ import { convertLocalDate } from '../../utils/convertDate'
 import { Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from '../../constants/chains'
 import { WrappedCurrency } from '../../models/types'
+import { formatAmount, formatAmountTokens } from 'utils/numbers'
 
 interface StakerEventCardProps {
     active?: boolean
@@ -190,11 +191,7 @@ export function StakerEventCard({
                     <RewardAmount title={reward.toString()}>
                         {eternal ? <span /> :
                             <span>
-                                {`${
-                                    ('' + reward).length <= 8
-                                        ? reward
-                                        : ('' + reward).slice(0, 6) + '..'
-                                }`}
+                                {formatAmountTokens(reward)}
                             </span>
                         }
                     </RewardAmount>
@@ -231,11 +228,7 @@ export function StakerEventCard({
                             {eternal ?
                                 <span /> :
                                 <span>
-                                    {`${
-                                        ('' + bonusReward).length <= 8
-                                            ? bonusReward
-                                            : ('' + bonusReward).slice(0, 6) + '..'
-                                    }`}
+                                   {formatAmountTokens(bonusReward, 1)}
                                 </span>
                             }
                         </RewardAmount>

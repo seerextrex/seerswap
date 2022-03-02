@@ -10,13 +10,11 @@ import Loader from "../../components/Loader";
 export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { data: { currentEvents: any[]; futureEvents: any[] } | null; now: number; refreshing: boolean; fetchHandler: () => any }) {
     const [modalForPool, setModalForPool] = useState(null);
 
-    // const formattedData = useMemo(() => {
-    //     if (!data || typeof data === 'string') return []
+    const formattedData = useMemo(() => {
+        if (!data || typeof data === 'string') return []
 
-    //     return [...data?.futureEvents, ...data?.currentEvents]
-    // }, [data])
-
-    const formattedData: any[] = [];
+        return [...data?.futureEvents, ...data?.currentEvents]
+    }, [data])
 
     useEffect(() => {
         fetchHandler();

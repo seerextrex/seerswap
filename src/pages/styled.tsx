@@ -79,10 +79,9 @@ export const NetworkFailedCard = styled.div`
     position: fixed;
     bottom: 3rem;
     right: 1rem;
-    padding: 1rem;
+    padding: 8px;
     border-radius: 8px;
-    background-color: #f65c5c;
-    border: 1px solid #852020;
+    background-color: #2f567b;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
     position: unset;

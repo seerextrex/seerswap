@@ -4,6 +4,7 @@ import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useIncentiveSubgraph } from './useIncentiveSubgraph'
 import { PositionPool } from '../models/interfaces'
+import usePrevious, { usePreviousNonEmptyArray } from './usePrevious'
 
 interface UseV3PositionsResults {
     loading: boolean
@@ -43,10 +44,27 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
         return undefined
     }, [loading, error, results, tokenIds])
 
-    return {
-        loading,
-        positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
-    }
+    const prevPositions = usePreviousNonEmptyArray(positions || [])
+
+    return useMemo(() => {
+
+        if (!prevPositions && positions) return {
+            loading,
+            positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
+        }
+
+        if ( (!positions || positions.length === 0) && prevPositions && prevPositions.length !== 0) return {
+            loading: false,
+            positions: prevPositions.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
+        }
+
+        return {
+            loading,
+            positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
+        }
+    
+    }, [positions, inputs])
+
 }
 
 interface UseV3PositionResults {
@@ -103,7 +121,19 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         return []
     }, [account, tokenIdResults])
 
-    const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(tokenIds)
+    const prevTokenIds = usePreviousNonEmptyArray(tokenIds)
+
+    const _tokenIds = useMemo(() => {
+
+        if (!prevTokenIds) return tokenIds
+
+        if (tokenIds.length === 0 && prevTokenIds.length !== 0) return prevTokenIds
+
+        return tokenIds
+
+    }, [tokenIds])
+
+    const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(_tokenIds)
 
     const transferredTokenIds = useMemo(() => {
 
@@ -130,6 +160,8 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         return undefined
 
     }, [positions, _positionsOnFarmer])
+
+    console.log('COMBINED POSITIONS]', positions, _positionsOnFarmer)
 
     return {
         loading: someTokenIdsLoading || balanceLoading || positionsLoading || _positionsOnFarmerLoading,

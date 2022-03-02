@@ -81,19 +81,15 @@ export default function App() {
                     <AppBodyWrapper style={{ zIndex: 2 }}>
                         {networkFailed && (
                             <NetworkFailedCard>
-                                <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon
-                                    network failed
-                                </div>
                                 <div style={{ display: 'flex' }}>
-                                    <span>Reconnecting...</span>
                                     <Loader
                                         style={{
                                             display: 'inline-block',
-                                            marginLeft: 'auto',
-                                            marginRight: 'auto'
+                                            margin: 'auto 8px auto 0',
                                         }}
                                         stroke={'white'}
                                     />
+                                    <span>Connecting to Polygon</span>
                                 </div>
                             </NetworkFailedCard>
                         )}

@@ -12,6 +12,48 @@ import Loader from "../Loader";
 import { Sock } from "./Sock";
 import { shortenAddress } from "../../utils";
 import { StatusIcon } from "./StatusIcon";
+import { EthereumWindow } from "models/types";
+
+export async function addPolygonNetwork() {
+
+    const _window = window as EthereumWindow;
+
+    try {
+        await _window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+                {
+                    chainId: "0x89",
+                },
+            ],
+        });
+    } catch (switchError: any) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+            try {
+                await _window?.ethereum?.request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                        {
+                            chainId: "0x89",
+                            chainName: "Polygon Mainnet",
+                            nativeCurrency: {
+                                name: "MATIC",
+                                symbol: "MATIC",
+                                decimals: 18,
+                            },
+                            blockExplorerUrls: ["https://polygonscan.com/"],
+                            rpcUrls: ["https://polygon-rpc.com"],
+                        },
+                    ],
+                });
+            } catch (addError) {
+                // handle "add" error
+            }
+        }
+        // handle other "switch" errors
+    }
+}
 
 export function Web3StatusInner() {
     const { account, connector, error } = useWeb3React();
@@ -47,10 +89,10 @@ export function Web3StatusInner() {
         );
     } else if (error) {
         return (
-            <Web3StatusError onClick={toggleWalletModal}>
-                <NetworkIcon />
-                <Text>{error instanceof UnsupportedChainIdError ? <Trans>Wrong Network</Trans> : <Trans>Error</Trans>}</Text>
-            </Web3StatusError>
+            <Web3StatusError onClick={addPolygonNetwork}>
+            <NetworkIcon />
+            <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Polygon</Trans> : <Trans>Error</Trans>}</Text>
+        </Web3StatusError>
         );
     } else {
         return (

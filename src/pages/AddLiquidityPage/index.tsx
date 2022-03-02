@@ -73,6 +73,8 @@ import {
 import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
 import { EthereumWindow, WrappedCurrency } from '../../models/types'
 import { GAS_PRICE_MULTIPLIER } from '../../hooks/useGasPrice'
+import { useIsNetworkFailedImmediate } from 'hooks/useIsNetworkFailed'
+import Loader from 'components/Loader'
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000)
 
@@ -163,6 +165,9 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
     // mint state
     const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
 
+    // modal and loading
+    const [showConfirm, setShowConfirm] = useState<boolean>(false)
+    const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirm
 
     const derivedMintInfo = useV3DerivedMintInfo(
         baseCurrency ?? undefined,
@@ -173,6 +178,8 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
         _existingPosition
     )
     const prevDerivedMintInfo = usePrevious({ ...derivedMintInfo })
+
+    const isNetworkFailed = useIsNetworkFailedImmediate()
 
     const {
         pool,
@@ -484,7 +491,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                     } Fee:`}</PoolInfoItemTitle>
                                     <span style={{ display: 'flex' }}>
                                         <PoolInfoItemValue>
-                                            {noLiquidity ? '0.05' : dynamicFee / 10000}%
+                                            {noLiquidity ? '0.01' : dynamicFee / 10000}%
                                         </PoolInfoItemValue>
                                         <HelperCirlce>
                                             <span style={{ userSelect: 'none' }}>?</span>
@@ -893,10 +900,16 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                         !isValid ||
                                         (approvalA !== ApprovalState.APPROVED &&
                                             !depositADisabled) ||
-                                        (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
+                                        (approvalB !== ApprovalState.APPROVED && !depositBDisabled) || !!txHash || isNetworkFailed
                                     }
                                 >
-                                    Add Liquidity
+                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                    { isNetworkFailed ? <>
+                                        <Loader stroke={'#9ca1a5'}/>
+                                        <span style={{marginLeft: '8px'}}>Updating...</span>
+                                        </> : txHash ? <>  <Loader stroke={'#9ca1a5'}/>
+                                        <span style={{marginLeft: '8px'}}>Adding Liquidity...</span></> : 'Add Liquidity'}
+                                    </div>
                                 </AddLiquidityButton>
                             </ButtonsWrapper>
                         </>

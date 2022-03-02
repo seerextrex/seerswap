@@ -214,3 +214,15 @@ export const LoadingWrapper = styled.div`
   align-items: center;
   justify-content: center;
 `
+
+export const ConnectNetwork = styled.div`
+  padding: 1rem;
+  background: #36f;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  &:hover {
+    background-color: ${darken(0.08, '#36f')};
+  }`

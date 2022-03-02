@@ -44,7 +44,7 @@ export function useSwapActionHandlers(): {
             dispatch(
                 selectCurrency({
                     field,
-                    currencyId: currency.isToken ? currency.address : currency.isNative ? symbol : ''
+                    currencyId: currency.isToken ? currency.address : currency.isNative ? 'MATIC' : ''
                 })
             )
         },

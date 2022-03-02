@@ -170,7 +170,7 @@ export const TechPaperHint = styled.div`
   right: 1rem;
   top: 100%;
   margin-top: -8px;
-  box-shadow: 0 0 10px rgba(156, 126, 220, 0.18);
+  box-shadow: 0 0 10px rgba(156, 126, 220);
   opacity: 0;
   transition-duration: 0.2s;
   cursor: default;
@@ -288,6 +288,8 @@ export const ButtonsWrapper = styled.div`
   `}
 `
 export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
+  display; flex;
+  align-items: center;
   padding: 8px 16px;
   height: 2.8rem;
   background: ${({ theme }) => theme.winterMainButton};
@@ -301,6 +303,8 @@ export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
   white-space: nowrap;
 
   &:disabled {
+    display; flex;
+    align-items: center;
     background-color: ${({ theme }) => darken(0.2, theme.winterMainButton)};
     color: ${darken(0.35, 'white')};
     font-weight: 600;

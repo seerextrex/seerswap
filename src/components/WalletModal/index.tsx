@@ -17,7 +17,8 @@ import Option from "./Option";
 import PendingView from "./PendingView";
 import { Frown } from "react-feather";
 import ReactGA from "react-ga";
-import { CloseColor, CloseIcon, ContentWrapper, HeaderRow, HoverText, OptionGrid, UpperSection, Wrapper } from "./styled";
+import { CloseColor, CloseIcon, ContentWrapper, ConnectNetwork, HeaderRow, HoverText, OptionGrid, UpperSection, Wrapper } from "./styled";
+import { addPolygonNetwork } from "components/Web3Status/Web3StatusInner";
 
 const WALLET_VIEWS = {
     OPTIONS: "options",
@@ -197,9 +198,12 @@ export default function WalletModal({
                     <HeaderRow>{error instanceof UnsupportedChainIdError ? <Trans>Wrong Network</Trans> : <Trans>Error connecting</Trans>}</HeaderRow>
                     <ContentWrapper>
                         {error instanceof UnsupportedChainIdError ? (
-                            <h5>
-                                <Trans>Please connect to the Polygon network.</Trans>
-                            </h5>
+                           <>
+                           <h5>
+                               <Trans>Please connect to the Polygon network.</Trans>
+                           </h5>
+                           {isMobile ? <p>Add Polygon network to your metamask app.</p> : <ConnectNetwork onClick={addPolygonNetwork}>Connect to Polygon</ConnectNetwork>}
+                       </>
                         ) : (
                             <Trans>Error connecting. Try refreshing the page.</Trans>
                         )}

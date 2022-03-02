@@ -60,7 +60,6 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
 
     }, [balances])
 
-
 }
 
 /**
@@ -81,8 +80,6 @@ export function useTokenBalancesWithLoadingIndicator(
         gasRequired:  100_000
     })
 
-    const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [balances])
-
     const _balances = useMemo(
             () =>
                 address && validatedTokens.length > 0
@@ -100,6 +97,8 @@ export function useTokenBalancesWithLoadingIndicator(
 
     const prevBalances = usePreviousNonEmptyObject(_balances)
 
+    const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [_balances])
+
     return useMemo(() => {
 
         if (!prevBalances) return [_balances, anyLoading]
@@ -108,7 +107,7 @@ export function useTokenBalancesWithLoadingIndicator(
 
         return [_balances, anyLoading]
 
-    }, [anyLoading, balances])
+    }, [anyLoading, _balances])
 
 }
 

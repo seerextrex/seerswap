@@ -22,7 +22,7 @@ export async function addPolygonNetwork() {
             method: "wallet_switchEthereumChain",
             params: [
                 {
-                    chainId: "137",
+                    chainId: "0x89",
                 },
             ],
         });
@@ -34,7 +34,7 @@ export async function addPolygonNetwork() {
                     method: "wallet_addEthereumChain",
                     params: [
                         {
-                            chainId: "137",
+                            chainId: "0x89",
                             chainName: "Polygon Mainnet",
                             nativeCurrency: {
                                 name: "MATIC",

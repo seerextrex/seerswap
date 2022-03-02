@@ -1,47 +1,47 @@
-import { Pair } from '@uniswap/v2-sdk'
-import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
-import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
-import CurrencyLogo from '../CurrencyLogo'
-import DoubleCurrencyLogo from '../DoubleLogo'
-import { RowBetween, RowFixed } from '../Row'
-import { TYPE } from '../../theme'
-import { useActiveWeb3React } from '../../hooks/web3'
-import { Trans } from '@lingui/macro'
-import { FiatValue } from './FiatValue'
-import Loader from '../Loader'
-import useUSDCPrice from '../../hooks/useUSDCPrice'
-import { Aligner, AutoColumnStyled, Container, CurrencySelect, FiatRow, FixedContainer, InputPanel, InputRow, MaxButton, NumericalInputStyled, StyledTokenName } from './styled'
-import { WrappedCurrency } from '../../models/types'
+import { Pair } from "@uniswap/v2-sdk";
+import { Currency, CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
+import { ReactNode, useCallback, useMemo, useState } from "react";
+import { useCurrencyBalance } from "../../state/wallet/hooks";
+import CurrencySearchModal from "../SearchModal/CurrencySearchModal";
+import CurrencyLogo from "../CurrencyLogo";
+import DoubleCurrencyLogo from "../DoubleLogo";
+import { RowBetween, RowFixed } from "../Row";
+import { TYPE } from "../../theme";
+import { useActiveWeb3React } from "../../hooks/web3";
+import { Trans } from "@lingui/macro";
+import { FiatValue } from "./FiatValue";
+import Loader from "../Loader";
+import useUSDCPrice from "../../hooks/useUSDCPrice";
+import { Aligner, AutoColumnStyled, Container, CurrencySelect, FiatRow, FixedContainer, InputPanel, InputRow, MaxButton, NumericalInputStyled, StyledTokenName } from "./styled";
+import { WrappedCurrency } from "../../models/types";
 
 interface CurrencyInputPanelProps {
-    value: string
-    onUserInput: (value: string) => void
-    onMax?: () => void
-    showMaxButton: boolean
-    label?: ReactNode
-    onCurrencySelect?: (currency: Currency) => void
-    currency?: WrappedCurrency | null
-    hideBalance?: boolean
-    pair?: Pair | null
-    hideInput?: boolean
-    otherCurrency?: Currency | null
-    fiatValue?: CurrencyAmount<Token> | null
-    priceImpact?: Percent
-    id: string
-    showCommonBases?: boolean
-    showCurrencyAmount?: boolean
-    disableNonToken?: boolean
-    showBalance?: boolean
-    renderBalance?: (amount: CurrencyAmount<Currency>) => ReactNode
-    locked?: boolean
-    hideCurrency?: boolean
-    centered?: boolean
-    disabled: boolean
-    shallow: boolean
-    swap: boolean
-    page?: string
+    value: string;
+    onUserInput: (value: string) => void;
+    onMax?: () => void;
+    showMaxButton: boolean;
+    label?: ReactNode;
+    onCurrencySelect?: (currency: Currency) => void;
+    currency?: WrappedCurrency | null;
+    hideBalance?: boolean;
+    pair?: Pair | null;
+    hideInput?: boolean;
+    otherCurrency?: Currency | null;
+    fiatValue?: CurrencyAmount<Token> | null;
+    priceImpact?: Percent;
+    id: string;
+    showCommonBases?: boolean;
+    showCurrencyAmount?: boolean;
+    disableNonToken?: boolean;
+    showBalance?: boolean;
+    renderBalance?: (amount: CurrencyAmount<Currency>) => ReactNode;
+    locked?: boolean;
+    hideCurrency?: boolean;
+    centered?: boolean;
+    disabled: boolean;
+    shallow: boolean;
+    swap: boolean;
+    page?: string;
 }
 
 export default function CurrencyInputPanel({
@@ -71,64 +71,62 @@ export default function CurrencyInputPanel({
     page,
     ...rest
 }: CurrencyInputPanelProps) {
-    const [modalOpen, setModalOpen] = useState(false)
-    const { account } = useActiveWeb3React()
+    const [modalOpen, setModalOpen] = useState(false);
+    const { account } = useActiveWeb3React();
 
-    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
 
-    const currentPrice = useUSDCPrice(currency ?? undefined)
+    const currentPrice = useUSDCPrice(currency ?? undefined);
 
     const handleDismissSearch = useCallback(() => {
-        setModalOpen(false)
-    }, [setModalOpen])
+        setModalOpen(false);
+    }, [setModalOpen]);
 
     const balanceString = useMemo(() => {
-        if (!balance) return 'Loading...'
+        if (!balance) return "Loading...";
 
-        const _balance = balance.toFixed()
+        const _balance = balance.toFixed();
 
-        if (_balance.split('.')[0].length > 10) {
-            return _balance.slice(0, 7) + '...'
+        if (_balance.split(".")[0].length > 10) {
+            return _balance.slice(0, 7) + "...";
         }
 
         if (+balance.toFixed() === 0) {
-            return '0'
+            return "0";
         }
         if (+balance.toFixed() < 0.0001) {
-            return '< 0.0001'
+            return "< 0.0001";
         }
 
-        return +balance.toFixed(3)
+        return +balance.toFixed(3);
+    }, [balance]);
 
-    }, [balance])
-
-    // if (currency && currency.symbol === 'MATIC') {
+    // if (currency && currency.symbol === "MATIC") {
     //     if (chainId === 137) {
-    //         currency.symbol = 'MATIC'
-    //         currency.name = 'Matic'
+    //         currency.symbol = "MATIC";
+    //         currency.name = "Matic";
     //     }
     // }
 
     return (
         <InputPanel id={id} hideInput={hideInput} {...rest}>
             {locked && (
-                <FixedContainer style={{ height: `${page === 'pool' ? '40px' : '80px'}` }}>
+                <FixedContainer style={{ height: `${page === "pool" ? "40px" : "80px"}` }}>
                     <AutoColumnStyled
-                        gap='sm'
-                        justify='center'
+                        gap="sm"
+                        justify="center"
                         style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            width: '100%',
-                            marginTop: '18px',
-                            position: 'absolute',
-                            bottom: '10%'
+                            display: "flex",
+                            alignItems: "center",
+                            width: "100%",
+                            marginTop: "18px",
+                            position: "absolute",
+                            bottom: "10%",
                         }}
                     >
                         {/* <Lock /> */}
-                        <TYPE.label fontSize='14px'>
-                            <Trans>Price is outside specified price range. Single-asset deposit
-                                only.</Trans>
+                        <TYPE.label fontSize="14px">
+                            <Trans>Price is outside specified price range. Single-asset deposit only.</Trans>
                         </TYPE.label>
                     </AutoColumnStyled>
                 </FixedContainer>
@@ -137,11 +135,7 @@ export default function CurrencyInputPanel({
             <Container hideInput={hideInput}>
                 <InputRow
                     hideCurrency={hideCurrency}
-                    style={
-                        hideInput
-                            ? { borderRadius: '8px', padding: `${page === 'pool' ? '0' : ''}` }
-                            : { padding: `${page === 'pool' ? '0' : ''}` }
-                    }
+                    style={hideInput ? { borderRadius: "8px", padding: `${page === "pool" ? "0" : ""}` } : { padding: `${page === "pool" ? "0" : ""}` }}
                     selected={!onCurrencySelect}
                 >
                     {!hideCurrency && (
@@ -149,58 +143,53 @@ export default function CurrencyInputPanel({
                             page={page}
                             selected={!!currency}
                             hideInput={hideInput}
-                            className='open-currency-select-button'
+                            className="open-currency-select-button"
                             // style={{ backgroundColor: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
                             shallow={shallow}
                             swap={swap}
-                            disabled={shallow && page !== 'addLiq'}
+                            disabled={shallow && page !== "addLiq"}
                             onClick={() => {
                                 if (onCurrencySelect) {
-                                    setModalOpen(true)
+                                    setModalOpen(true);
                                 }
                             }}
                         >
-                            <Aligner centered={centered}
-                                     title={balance ? balance.toSignificant(4) : ''}>
+                            <Aligner centered={centered} title={balance ? balance.toSignificant(4) : ""}>
                                 <RowFixed>
                                     {pair ? (
-                                        <span style={{ marginRight: '0.5rem' }}>
-                      <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24}
-                                          margin={true} />
-                    </span>
+                                        <span style={{ marginRight: "0.5rem" }}>
+                                            <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+                                        </span>
                                     ) : currency ? (
-                                        <CurrencyLogo style={{ marginRight: '0.5rem' }}
-                                                      currency={currency} size={'24px'} />
+                                        <CurrencyLogo style={{ marginRight: "0.5rem" }} currency={currency} size={"24px"} />
                                     ) : null}
                                     {pair ? (
-                                        <StyledTokenName className='pair-name-container'>
+                                        <StyledTokenName className="pair-name-container">
                                             {pair?.token0.symbol}:{pair?.token1.symbol}
                                         </StyledTokenName>
                                     ) : (
-                                        <StyledTokenName className='token-symbol-container'
-                                                         active={Boolean(currency && currency.symbol)}>
+                                        <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                                             {(currency && currency.symbol && currency.symbol.length > 20 ? (
-                                                currency.symbol.slice(0, 4) +
-                                                '...' +
-                                                currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                                                currency.symbol.slice(0, 4) + "..." + currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
                                             ) : currency ? (
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <span>
-                            {
-                                shallow && showBalance && balance && page === 'addLiq' && +(balance.toSignificant(4)) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
-                                    shallow && showBalance && balance
-                                        ? `Balance: ${balanceString} ${currency.symbol}`
-                                        : currency.symbol}
-                          </span>
+                                                <div style={{ display: "flex", alignItems: "center" }}>
+                                                    <span>
+                                                        {shallow && showBalance && balance && page === "addLiq" && +balance.toSignificant(4) < 0.0001
+                                                            ? `Balance: < 0.0001 ${currency.symbol}`
+                                                            : shallow && showBalance && balance
+                                                            ? `Balance: ${balanceString} ${currency.symbol}`
+                                                            : currency.symbol}
+                                                    </span>
                                                     {showBalance && balance && !shallow ? (
-                                                        <span style={{ position: 'absolute', right: 0, fontSize: '13px' }} title={balance.toExact()}>
-                              {balanceString}
-                            </span>
+                                                        <span style={{ position: "absolute", right: 0, fontSize: "13px" }} title={balance.toExact()}>
+                                                            {balanceString}
+                                                        </span>
                                                     ) : (
-                                                        showBalance && !balance && (
-                                                            <span style={{ position: 'absolute', right: 0 }}>
-                                <Loader />
-                              </span>
+                                                        showBalance &&
+                                                        !balance && (
+                                                            <span style={{ position: "absolute", right: 0 }}>
+                                                                <Loader />
+                                                            </span>
                                                         )
                                                     )}
                                                 </div>
@@ -211,23 +200,26 @@ export default function CurrencyInputPanel({
                             </Aligner>
                         </CurrencySelect>
                     )}
-                    {(swap || page === 'addLiq') && !locked && currency && showMaxButton &&
-                        <MaxButton page={page} onClick={onMax}>Max</MaxButton>}
+                    {(swap || page === "addLiq") && !locked && currency && showMaxButton && (
+                        <MaxButton page={page} onClick={onMax}>
+                            Max
+                        </MaxButton>
+                    )}
                     {!hideInput && (
                         <>
                             <NumericalInputStyled
                                 style={{
-                                    backgroundColor: 'transparent',
-                                    textAlign: hideCurrency ? 'left' : 'right',
-                                    fontSize: '20px',
-                                    marginTop: page === 'pool' ? '1rem' : '0'
+                                    backgroundColor: "transparent",
+                                    textAlign: hideCurrency ? "left" : "right",
+                                    fontSize: "20px",
+                                    marginTop: page === "pool" ? "1rem" : "0",
                                 }}
-                                className='token-amount-input'
+                                className="token-amount-input"
                                 value={value}
                                 disabled={disabled}
                                 onUserInput={(val) => {
-                                    if (val === '.') val = '0.'
-                                    onUserInput(val)
+                                    if (val === ".") val = "0.";
+                                    onUserInput(val);
                                 }}
                             />
                         </>
@@ -265,5 +257,5 @@ export default function CurrencyInputPanel({
                 />
             )}
         </InputPanel>
-    )
+    );
 }

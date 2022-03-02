@@ -163,10 +163,10 @@ export default function Swap({ history }: RouteComponentProps) {
     const isLoadingRoute = toggledVersion === Version.v3 && V3TradeState.LOADING === v3TradeState;
 
     const dynamicFee = useMemo(() => {
-        const _trade = trade as any
-        if (!_trade) return 
+        const _trade = trade as any;
+        if (!_trade) return;
         return _trade.swaps[0]?.route?.pools[0].fee;
-    }, [trade])
+    }, [trade]);
 
     // check whether the user has approved the router on the input token
     const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage);

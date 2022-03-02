@@ -56,27 +56,26 @@ export function usePools(
 
     const _globalState0s = useMemo(() => {
 
-        if (!prevGlobalState0s || prevGlobalState0s.some(el => el.error)) return globalState0s
+        if (!prevGlobalState0s || !globalState0s) return globalState0s
 
-        if ((!globalState0s || globalState0s.length === 0 || globalState0s.some(el => el.error)) && (prevGlobalState0s && prevGlobalState0s.length !== 0 && !prevGlobalState0s.some(el => el.error))) return prevGlobalState0s
+        if (globalState0s.every(el => el.error) && !prevGlobalState0s.every(el => el.error)) return prevGlobalState0s
 
         return globalState0s
 
-    }, [globalState0s])
+    }, [poolAddresses, globalState0s])
 
     const liquidities = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, 'liquidity')
     const prevLiquidities = usePreviousNonErroredArray(liquidities)
 
     const _liquidities = useMemo(() => {
 
-        if (!prevLiquidities || prevLiquidities?.some(el => el.error)) return liquidities
+        if (!prevLiquidities || !liquidities) return liquidities
 
-        if ((!liquidities || liquidities.length === 0 || liquidities.some(el => el.error)) && (prevLiquidities && prevLiquidities.length !== 0 && !prevLiquidities.some(el => el.error))) return prevLiquidities
+        if (liquidities.every(el => el.error) && !prevLiquidities.every(el => el.error)) return prevLiquidities
 
         return liquidities
 
-    }, [liquidities])
-
+    }, [poolAddresses, liquidities])
 
     return useMemo(() => {
         return poolKeys.map((_key, index) => {

@@ -7,6 +7,7 @@ import Loader from '../Loader'
 import CurrencyLogo from '../CurrencyLogo'
 import {
     Card,
+    FutureCard,
     CardHeader,
     EventEndTime,
     EventProgress,
@@ -48,6 +49,7 @@ interface StakerEventCardProps {
         apr?: number
     };
     eternal?: boolean
+    secret?: boolean
 }
 
 export function StakerEventCard({
@@ -67,8 +69,11 @@ export function StakerEventCard({
         endTime,
         apr
     } = {},
-    eternal
+    eternal,
+    secret
 }: StakerEventCardProps) {
+
+
     const { account } = useActiveWeb3React()
     const toggleWalletModal = useWalletModalToggle()
 
@@ -87,6 +92,33 @@ export function StakerEventCard({
 
         return [convertLocalDate(date), convertDateTime(date)]
     }, [endTime])
+
+    if (secret) {
+        return <FutureCard>
+            <span>Next farm for</span>
+            <span style={{display: 'flex'}}>  
+                <span>
+                
+                <CurrencyLogo
+                    currency={new Token(SupportedChainId.POLYGON, '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', 18, 'WETH') as WrappedCurrency}
+                    size={'35px'}/>
+                </span>
+                <span>WETH</span>
+            
+                <span>
+                <span>
+                <CurrencyLogo
+                    currency={new Token(SupportedChainId.POLYGON, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', 18, 'USDC') as WrappedCurrency}
+                    size={'35px'}/>
+                </span>
+                <span>USDC</span>
+                </span>
+                 
+            
+            </span>
+
+    </FutureCard>
+    }
 
     return skeleton ? (
         <Card skeleton>
@@ -270,9 +302,9 @@ export function StakerEventCard({
             {!eternal && (
                 <EventProgress>
                     {active ?
-                        <EventProgressInner progress={getProgress(startTime, endTime, now)} /> :
+                        <EventProgressInner progress={Math.round(getProgress(startTime, endTime, now))} /> :
                         <EventProgressInner
-                            progress={getProgress(Number(createdAtTimestamp), startTime, now)} />
+                            progress={Math.round(getProgress(Number(createdAtTimestamp), startTime, now))} />
                     }
                 </EventProgress>
             )}

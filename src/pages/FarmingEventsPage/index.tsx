@@ -57,6 +57,9 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { dat
                                 />
                             );
                         })}
+                        {/* {
+                            <StakerEventCard secret />
+                        } */}
                     </EventsCardsRow>
                 ) : formattedData && formattedData.length === 0 ? (
                     <EmptyMock>

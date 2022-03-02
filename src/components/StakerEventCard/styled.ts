@@ -42,6 +42,10 @@ export const Card = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
             background-color: #89c4ef;
           `}
 `
+export const FutureCard = styled(Card)`
+
+`
+
 export const CardHeader = styled.div`
   display: flex;
   margin-bottom: 1rem;

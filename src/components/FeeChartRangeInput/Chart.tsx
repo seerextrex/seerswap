@@ -4,6 +4,8 @@ import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
 import { FeeChart } from '../../models/interfaces'
 import { ChartToken } from '../../models/enums/poolInfoPage'
+import { convertLocalDate } from '../../utils/convertDate'
+import { convertDateTime } from '../../utils/time'
 
 interface ChartInterface {
     feeData: FeeChart
@@ -230,11 +232,23 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const Line = create('svg:line')
         .attr('id', 'pointer2')
         .attr('x1', '0px')
-        .attr('y1', 0)
+        .attr('y1', '0px')
         .attr('x2', '0px')
         .attr('y2', height)
         .style('stroke-width', 1)
-        .style('stroke', '#595f6e')
+        .style('stroke-dasharray', '5, 5')
+        .style('stroke', 'var(--primary)')
+        .style('display', 'none')
+
+    const LineHorizontal = create('svg:line')
+        .attr('id', 'pointer3')
+        .attr('x1', '0px')
+        .attr('y1', 0)
+        .attr('x2', width)
+        .attr('y2', 0)
+        .style('stroke-width', 1)
+        .style('stroke-dasharray', '5, 5')
+        .style('stroke', 'var(--primary)')
         .style('display', 'none')
 
     const InfoRectGroup = create('svg:g')
@@ -245,22 +259,23 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .append('rect')
         .attr('id', 'info-label')
         .attr('width', `${type === ChartType.PRICE ? '190px' : '160px'}`)
-        .attr('height', '60px')
-        .attr('rx', '6')
-        .style('fill', '#12151d')
+        .attr('height', '68px')
+        .attr('rx', '12')
+        .style('fill', 'var(--primary)')
 
     const InfoRectFeeText = create('svg:text')
-        .attr('transform', 'translate(16, 25)')
+        .attr('transform', `translate(${type === ChartType.PRICE ? '95' : '80'}, 25)`)
         .attr('fill', 'white')
-        .attr('font-weight', '600')
-        .attr('font-size', '14px')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'central')
+        .attr('font-size', '22px')
 
     const InfoRectDateText = create('svg:text')
-        .attr('transform', 'translate(16, 45)')
+        .attr('transform', 'translate(80, 50)')
         .attr('fill', 'white')
-        .attr('font-weight', '500')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'central')
         .attr('font-size', '12px')
-        .attr('fill', '#b0b0b0')
 
     if (InfoRectGroup) {
         // @ts-ignore
@@ -273,7 +288,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
     const Focus = create('svg:circle')
         .style('fill', 'white')
-        .attr('stroke', '#63c0f8')
+        .attr('stroke', 'var(--primary)')
         .attr('stroke-width', '2')
         .attr('r', 5.5)
         .style('opacity', 1)
@@ -292,6 +307,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         svg
             .on('mouseenter', () => {
                 Line.style('display', 'block')
+                LineHorizontal.style('display', 'block')
                 InfoRectGroup.style('display', 'block')
                 Focus.style('display', 'block')
             })
@@ -299,6 +315,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         svg
             .on('mouseleave', () => {
                 Line.style('display', 'none')
+                LineHorizontal.style('display', 'none')
                 InfoRectGroup.style('display', 'none')
                 Focus.style('display', 'none')
             })
@@ -306,6 +323,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         svg
             .on('tap', () => {
                 Line.style('display', 'block')
+                LineHorizontal.style('display', 'block')
                 InfoRectGroup.style('display', 'block')
                 Focus.style('display', 'block')
             })
@@ -334,7 +352,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 .tickSize(-width)
         )
 
-        yAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0.1)').attr('id', 'xline')
+        yAxisGroup.selectAll('line').attr('stroke', 'var(--mirage)').attr('id', 'xline')
         yAxisGroup.select('.domain').remove()
         yAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
 
@@ -350,11 +368,11 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .data([
                 {
                     offset: '0%',
-                    color: 'rgba(99, 192, 248, 0.75)'
+                    color: 'var(--primary-hover)'
                 },
                 {
                     offset: '100%',
-                    color: 'rgba(99, 192, 248, 0)'
+                    color: 'transparent'
                 }
             ])
             .enter()
@@ -367,7 +385,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .append('path')
             .datum(_chartData)
             .attr('fill', 'none')
-            .attr('stroke', '#63c0f8')
+            .attr('stroke', 'var(--primary)')
             .attr('stroke-width', 2)
             // @ts-ignore
             .attr('d', line()
@@ -439,22 +457,16 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
                     const date = new Date(_chartData[i]?.timestamp)
                     Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
-                    InfoRectGroup.attr(
-                        'transform',
-                        `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) + 16},10)`
-                    )
-                    InfoRectFeeText.property('innerHTML',
-                        `${type === ChartType.FEES ? 'Fee:' : type === ChartType.PRICE ? 'Price' : type === ChartType.TVL ? 'TVL:' : 'Volume:'}
+                    //@ts-ignore
+                    LineHorizontal.attr('y1', `${y(_chartData[i]?.value)}px`).attr('y2', `${y(_chartData[i]?.value)}px`)
+                    //@ts-ignore
+                    InfoRectGroup.attr('transform', `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) - (type === ChartType.PRICE ? 95 : 80)},${y(_chartData[i]?.value) - 68})`)
+                    InfoRectFeeText.property('innerHTML', `
                         ${type === ChartType.PRICE || type === ChartType.FEES ? '' : '$'}
                         ${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? 5 : 2)}
                         ${type === ChartType.FEES ? '%' : type === ChartType.PRICE ? `${token === ChartToken.TOKEN0 ? token0 : token1}` : ''}`
                     )
-                    InfoRectDateText.property('innerHTML', span === ChartSpan.DAY ? `${date.getHours() < 10 ? `0${date.getHours()}`
-                            : date.getHours()}:${date.getMinutes() < 10 ? `0${date.getMinutes()}`
-                            : date.getMinutes()}:${date.getSeconds() < 10 ? `0${date.getSeconds()}`
-                            : date.getSeconds()}`
-                        : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
-                    )
+                    InfoRectDateText.property('innerHTML', `${convertLocalDate(date)} ${span === ChartSpan.DAY ? convertDateTime(date) : ''}`)
                     // @ts-ignore
                     Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
                 }
@@ -472,8 +484,9 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 svg.node().append(rect.node())
             })
 
-        svg.append(() => InfoRectGroup.node())
         svg.append(() => Line.node())
+        svg.append(() => LineHorizontal.node())
+        svg.append(() => InfoRectGroup.node())
         svg.append(() => Focus.node())
     }, [data])
 

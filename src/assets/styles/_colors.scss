@@ -10,6 +10,7 @@
   --light-gray: #838693;
   --dark-gray: #171E24;
   --red: #F55755;
+  --mirage: #192732;
 }
 
 .c {
@@ -55,5 +56,8 @@
 
   &-r {
     color: var(--red);
+  }
+  &-m {
+    color: var(--mirage);
   }
 }

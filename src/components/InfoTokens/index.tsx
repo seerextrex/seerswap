@@ -98,7 +98,7 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                 <Loader stroke={'white'} size={'25px'} />
             </div>
         )
-    return <Table gridClass={'grid-tokens-table'}>
+    return <Table gridClass={'grid-tokens-table'} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data}>
         <TableHeader
             gridClass={'grid-tokens-table'}
             sortFields={sortFields}
@@ -112,13 +112,5 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
             <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
             <span className={'table-header__item table-header__item--center'}>TVL</span>
         </TableHeader>
-        <TableBody
-            data={_data}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            sortIndex={sortIndex}
-            maxItems={10}
-            gridClass={'grid-tokens-table'}
-        />
     </Table>
 }

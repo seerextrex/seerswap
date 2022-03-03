@@ -114,7 +114,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             </div>
         )
 
-    return <Table gridClass={'grid-pools-table'}>
+    return <Table gridClass={'grid-pools-table'} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
         <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={'grid-pools-table'}>
             <span className={'table-header__item'}>#</span>
             <span className={'table-header__item'}>Pool</span>
@@ -124,6 +124,5 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             <span className={'table-header__item table-header__item--center'}><Apr /></span>
             <span className={'table-header__item table-header__item--center'}>🔥 Farming</span>
         </TableHeader>
-        <TableBody data={_data} gridClass={'grid-pools-table'} sortDirection={sortDirection} sortIndex={sortIndex} sortField={sortField} maxItems={10} />
     </Table>
 }

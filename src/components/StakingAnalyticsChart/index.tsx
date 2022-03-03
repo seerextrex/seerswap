@@ -6,12 +6,12 @@ import { BigNumber } from 'ethers'
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
 import { isMobile } from 'react-device-detect'
 import RangeButtons from './RangeButtons'
-import { StakingAnalyticsChartWrapper } from './styled'
 import { HistoryStakingSubgraph } from '../../models/interfaces'
 import { useGetDaysArray } from '../../hooks/useGetDaysArray'
 import { convertDate } from '../../utils/convertDate'
 import { useStartTimestamp } from '../../hooks/useStartTimestamp'
 import { chartTypes } from '../../models/enums'
+import './index.scss'
 
 interface StakingAnalyticsChartProps {
     stakeHistoriesResult: HistoryStakingSubgraph[] | null | string
@@ -33,7 +33,7 @@ export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colo
     const margin = isMobile ? { left: 45, top: 30, right: 10, bottom: 50 } : {
         left: 50,
         top: 30,
-        right: 30,
+        right: 10,
         bottom: 30
     }
     const [span, setSpan] = useState<string>('Day')
@@ -115,15 +115,19 @@ export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colo
     const X = useMemo(() => map(fullDateData, d => new Date(d.date)), [fullDateData])
 
     return (
-        <StakingAnalyticsChartWrapper ref={wrapper}>
-            {isMobile && <RangeButtons setSpan={setSpan} span={span} />}
+        <div className={'w-100 stacking-chart mt-1 br-12 pt-1'} ref={wrapper}>
+            {
+                isMobile && <RangeButtons
+                    setSpan={setSpan}
+                    span={span} />
+            }
             <Chart
                 fData={borderedData}
                 data2={borderedData2}
                 margin={margin}
                 dimensions={{
-                    width: isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 20 : 900,
-                    height: isMobile ? 300 : 400
+                    width: isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 20 : 1100,
+                    height: isMobile ? 400 : 500
                 }}
                 type={type}
                 colors={colors}
@@ -132,11 +136,11 @@ export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colo
                 data={fullDateData}
                 data2={fullDateData2}
                 colors={colors}
-                width={isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 80 : 900}
+                width={isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 80 : 1100}
                 margin={margin}
                 focusHeight={focusHeight}
                 X={X}
                 updateChartData={setChartBorder} />}
-        </StakingAnalyticsChartWrapper>
+        </div>
     )
 }

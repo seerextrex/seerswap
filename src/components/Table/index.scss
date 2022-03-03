@@ -3,6 +3,7 @@
   position: relative;
   grid-gap: 1em;
   align-items: center;
+  border-bottom: 1px solid var(--mirage);
 
 
   &__item {
@@ -82,7 +83,7 @@
   position: relative;
   grid-gap: 1em;
   align-items: center;
-  border-bottom: 1px solid rgba(225, 229, 239, 0.18);
+  border-bottom: 1px solid var(--mirage);
 
     &__item {
       font-size: 14px;

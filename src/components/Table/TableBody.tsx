@@ -12,9 +12,10 @@ interface TableBodyProps {
     sortIndex: number
     sortDirection: boolean
     gridClass: string
+    header: any
 }
 
-const TableBody = ({ data, maxItems = MAX_ITEMS, sortField, sortIndex, sortDirection, gridClass }: TableBodyProps) => {
+const TableBody = ({ data, maxItems = MAX_ITEMS, sortField, sortIndex, sortDirection, gridClass, header }: TableBodyProps) => {
 
     const [page, setPage] = useState(1)
     const [maxPage, setMaxPage] = useState(1)

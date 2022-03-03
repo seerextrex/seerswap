@@ -9,7 +9,7 @@ interface TableHeaderProps {
 }
 
 const TableHeader = ({ children, handleSort, sortFields, arrow, gridClass }: TableHeaderProps) => {
-    return <div className={`mb-1 table-header ${gridClass}`}>
+    return <div className={`pb-1 table-header ${gridClass}`}>
         {children.map((el: any, i: any) =>
             <span className={el.props.className} key={i} onClick={() => handleSort(sortFields[i].value, i)}>
                 {el}{arrow(sortFields[i].value)}

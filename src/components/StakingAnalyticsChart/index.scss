@@ -1,0 +1,11 @@
+.stacking-chart {
+  background-color: var(--ebony-clay);
+
+  &__brush {
+    &:before {
+      content: '';
+      height: 10px;
+      border: 1px solid salmon;
+    }
+  }
+}

@@ -22,14 +22,14 @@ export const Card = styled.div<{ refreshing?: boolean; skeleton?: boolean }>`
 
   ${({ refreshing }) =>
     refreshing
-        ? css`
+      ? css`
                     & > * {
                       &:not(${LoadingShim}) {
                         opacity: 0.4;
                       }
                     }
                   `
-        : null}
+      : null}
 
   ${({ theme }) => theme.mediaWidth.upToSmall`{
     width: 100%;
@@ -83,7 +83,7 @@ export const Subtitle = styled.div<{ skeleton?: boolean }>`
 
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     width: 50px;
                     height: 15.2px;
                     background-color: #5aa7df;
@@ -92,19 +92,19 @@ export const Subtitle = styled.div<{ skeleton?: boolean }>`
 
                     ${skeletonGradient}
                   `
-        : null}
+      : null}
 `
 export const PoolsSymbols = styled.div<{ skeleton?: boolean }>`
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     background: #5aa7df;
                     border-radius: 6px;
                     height: 16.2px;
 
                     ${skeletonGradient}
                   `
-        : null}
+      : null}
 `
 export const RewardWrapper = styled.div<{ skeleton?: boolean }>`
   display: flex;
@@ -119,13 +119,13 @@ export const RewardWrapper = styled.div<{ skeleton?: boolean }>`
 
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     background-color: #5aa7df;
                     border: 1px solid #5aa7df;
 
                     ${skeletonAnimation}
                   `
-        : null}
+      : null}
 `
 export const RewardAmount = styled.div<{ skeleton?: boolean; title?: number | string }>`
   margin: auto 0 auto auto;
@@ -133,7 +133,7 @@ export const RewardAmount = styled.div<{ skeleton?: boolean; title?: number | st
 
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     background-color: #5aa7df;
                     width: 70px;
                     height: 19.2px;
@@ -141,19 +141,19 @@ export const RewardAmount = styled.div<{ skeleton?: boolean; title?: number | st
 
                     ${skeletonGradient}
                   `
-        : null}
+      : null}
 `
 export const RewardSymbol = styled.div<{ skeleton?: boolean }>`
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     background-color: #5aa7df;
                     height: 16.2px;
                     width: 50px;
                     border-radius: 6px;
                     ${skeletonGradient}
                   `
-        : null}
+      : null}
 `
 export const StakeInfo = styled.div<{ active: boolean }>`
   display: flex;
@@ -164,7 +164,7 @@ export const StakeInfo = styled.div<{ active: boolean }>`
 export const StakeDate = styled.div<{ skeleton?: boolean }>`
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     width: 100px;
                     height: 16.2px;
                     background-color: #5aa7df;
@@ -176,7 +176,7 @@ export const StakeDate = styled.div<{ skeleton?: boolean }>`
 
                     ${skeletonGradient}
                   `
-        : null}
+      : null}
 `
 export const EventProgress = styled.div<{ skeleton?: boolean }>`
   width: 100%;
@@ -189,12 +189,12 @@ export const EventProgress = styled.div<{ skeleton?: boolean }>`
 
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     background-color: #5aa7df;
                     margin-top: 3px;
                     ${skeletonGradient}
                   `
-        : null}
+      : null}
 `
 export const EventEndTime = styled.div<{ skeleton?: boolean }>`
   line-height: 16px;
@@ -205,7 +205,7 @@ export const EventEndTime = styled.div<{ skeleton?: boolean }>`
 
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     & > span {
                       display: inline-block;
                       border-radius: 6px;
@@ -215,7 +215,7 @@ export const EventEndTime = styled.div<{ skeleton?: boolean }>`
                       ${skeletonGradient}
                     }
                   `
-        : null}
+      : null}
 `
 export const EventProgressInner = styled.div<{ progress: number }>`
   width: ${({ progress }) => progress}%;
@@ -242,10 +242,10 @@ export const StakeButton = styled.button<{ skeleton: boolean }>`
 
   ${({ skeleton }) =>
     skeleton
-        ? css`
+      ? css`
                     background-color: #5aa7df;
                     height: 32px;
                     ${skeletonGradient};
                   `
-        : null}
+      : null}
 `

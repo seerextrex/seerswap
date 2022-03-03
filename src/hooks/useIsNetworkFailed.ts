@@ -29,7 +29,7 @@ export function useIsNetworkFailed() {
 }
 
 export function useIsNetworkFailedImmediate() {
-    const machineTime = useMachineTimeMs(NETWORK_HEALTH_CHECK_MS)
+    const machineTime = useMachineTimeMs(ms`1s`)
     const blockTime = useCurrentBlockTimestamp()
 
     const warning = Boolean(!!blockTime && machineTime - blockTime.mul(1000).toNumber())

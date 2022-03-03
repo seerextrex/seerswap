@@ -45,7 +45,7 @@ import { maxAmountSpend } from "../../utils/maxAmountSpend";
 import { warningSeverity } from "../../utils/prices";
 import { Helmet } from "react-helmet";
 import ReactGA from "react-ga";
-import { ContestArrow, ContestBanner, ContestBannerTitle, ContestBannerTitleIphone, StyledInfo, WrappedAppBody } from "./styled";
+import { ContestButton, ContestBanner, ContestBannerTitle, ContestBannerTitleIphone, ContestIMG, StyledInfo, WrappedAppBody } from "./styled";
 import { WrappedCurrency } from "../../models/types";
 
 export default function Swap({ history }: RouteComponentProps) {
@@ -163,10 +163,10 @@ export default function Swap({ history }: RouteComponentProps) {
     const isLoadingRoute = toggledVersion === Version.v3 && V3TradeState.LOADING === v3TradeState;
 
     const dynamicFee = useMemo(() => {
-        const _trade = trade as any
-        if (!_trade) return 
+        const _trade = trade as any;
+        if (!_trade) return;
         return _trade.swaps[0]?.route?.pools[0].fee;
-    }, [trade])
+    }, [trade]);
 
     // check whether the user has approved the router on the input token
     const [approvalState, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage);
@@ -338,17 +338,13 @@ export default function Swap({ history }: RouteComponentProps) {
                 onDismiss={handleDismissTokenWarning}
             />
             <WrappedAppBody>
-                <ContestBanner href="https://medium.com/@crypto_algebra/the-algebra-swapping-competition-win-an-iphone-13-on-the-algebra-dex-5c48d05fc4a" target="_blank" rel="noreferrer noopener">
+                <ContestBanner to={"/farming/limit-farms"}>
                     <div style={{ width: "100%" }}>
+                        <ContestIMG></ContestIMG>
                         <ContestBannerTitle>
-                            Swap now & win an <ContestBannerTitleIphone>&nbsp;IPHONE 13</ContestBannerTitleIphone>{" "}
-                            <ContestArrow style={{ marginLeft: "1rem" }}>
-                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect width="30" height="30" rx="12" fill="#72B5FA" />
-                                    <path d="M20.5 9L15 13.5L10 9.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                                    <path d="M20.5 15.5L15 20L10 16" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                                </svg>
-                            </ContestArrow>
+                            <ContestBannerTitleIphone>300% APR</ContestBannerTitleIphone>
+                            <span>&nbsp; only for 1 week</span>
+                            <ContestButton to={"/farming/limit-farms"}>Farm Now</ContestButton>
                         </ContestBannerTitle>
                     </div>
                 </ContestBanner>

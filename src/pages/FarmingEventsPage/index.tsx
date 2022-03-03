@@ -11,10 +11,10 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { dat
     const [modalForPool, setModalForPool] = useState(null);
 
     const formattedData = useMemo(() => {
-        if (!data || typeof data === 'string') return []
+        if (!data || typeof data === "string") return [];
 
-        return [...data?.futureEvents, ...data?.currentEvents]
-    }, [data])
+        return [...data?.futureEvents, ...data?.currentEvents];
+    }, [data]);
 
     useEffect(() => {
         fetchHandler();
@@ -57,9 +57,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { dat
                                 />
                             );
                         })}
-                        {/* {
-                            <StakerEventCard secret />
-                        } */}
+                        {<StakerEventCard secret />}
                     </EventsCardsRow>
                 ) : formattedData && formattedData.length === 0 ? (
                     <EmptyMock>

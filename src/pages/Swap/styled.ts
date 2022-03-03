@@ -2,7 +2,10 @@ import styled from 'styled-components/macro'
 import { Info } from 'react-feather'
 import IphoneBanner from '../../assets/images/iphone-contest.png'
 import IphoneBannerMobile from '../../assets/images/iphone-contest-mobile.png'
+import BannerIMG from '../../assets/images/coins.png'
 import AppBody from '../AppBody'
+import { Link } from "react-router-dom"
+import { darken } from "polished"
 
 export const StyledInfo = styled(Info)`
     opacity: 0.6;
@@ -15,34 +18,45 @@ export const StyledInfo = styled(Info)`
     }
 `
 
-export const ContestBanner = styled.a`
+export const ContestBanner = styled(Link)`
     position: absolute;
     display: flex;
-    top: -6rem;
+    top: -5.5rem;
     color: white;
     background-image: url(${IphoneBanner});
     width: 100%;
-    height: 110px;
+    height: 64px;
     text-decoration: none;
     background-size: cover;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-        top: -5.5rem;
+        top: -5rem;
         background-image: url(${IphoneBannerMobile});
         background-size: contain;
         background-repeat: no-repeat;
   `}
 
 `
+export const ContestIMG = styled.div`
+    position: absolute;
+    top: -14px;
+    background-image: url(${BannerIMG});
+    width: 114px;
+    height: 89px;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+`}
+`
+
 export const ContestBannerTitle = styled.div`
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     font-size: 20px;
     text-transform: uppercase;
     font-weight: 600;
-    margin-left: auto;
-    margin-top: 1.3rem;
+    margin-left: 10rem;
+    margin-top: 1rem;
     margin-right: 2rem;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -54,7 +68,23 @@ export const ContestBannerTitleIphone = styled.span`
     color: #F4BE32;
 `
 
-export const ContestArrow = styled.span`
+export const ContestButton = styled(Link)`
+    
+    background: #3D8DF8;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    font-weight: 600;
+    margin-left: auto;
+    font-size: 14px;
+    text-decoration: none;
+    text-transform: none;
+
+    &:hover {
+        background: ${darken(0.08, '#3D8DF8')}
+    }
+
     ${({ theme }) => theme.mediaWidth.upToSmall`
         display: none;
     `}

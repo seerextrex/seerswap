@@ -307,7 +307,7 @@ export function StakerEventCard({
                 </StakeButton>
             ) : (
                 !active && (
-                    <StakeButton onClick={toggleWalletModal} skeleton={skeleton}>
+                    <StakeButton style={{ marginTop: eternal ? "0" : "17px" }} onClick={toggleWalletModal} skeleton={skeleton}>
                         Connect Wallet
                     </StakeButton>
                 )

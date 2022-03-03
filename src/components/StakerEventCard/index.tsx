@@ -84,7 +84,6 @@ export function StakerEventCard({
     if (secret) {
         return (
             <FutureCard>
-                <span style={{ marginBottom: "1rem", padding: "6px 8px", borderRadius: "6px", textAlign: "center", backgroundColor: "#333aa0" }}>⚡Upcoming farm</span>
                 <CardHeader style={{ opacity: ".6" }}>
                     <TokensIcons>
                         <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619", 18, "WETH") as WrappedCurrency} size={"35px"} />
@@ -147,6 +146,9 @@ export function StakerEventCard({
                 <EventProgress>
                     <EventProgressInner progress={Math.round((100 * 1647356400) / Date.now())} />
                 </EventProgress>
+                <span style={{ marginTop: "1rem", fontSize: "14px", lineHeight: "21px", padding: "6px 8px", borderRadius: "6px", textAlign: "center", backgroundColor: "#333aa0" }}>
+                    ⚡Upcoming farm
+                </span>
             </FutureCard>
         );
     }

@@ -141,7 +141,7 @@ export function StakerEventCard({
                     </div>
                 </StakeInfo>
                 <EventEndTime>
-                    <span>{`Will be available in ${getCountdownTime(1647356400, Date.now())}`}</span>
+                    <span>{`will be available in ${getCountdownTime(1647356400, Date.now())}`}</span>
                 </EventEndTime>
                 <EventProgress>
                     <EventProgressInner progress={Math.round((100 * 1647356400) / Date.now())} />

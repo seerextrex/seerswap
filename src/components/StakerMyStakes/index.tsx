@@ -7,21 +7,12 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import Loader from '../Loader'
 import Modal from '../Modal'
 import {
-    EmptyMock,
     EventEndTime,
     EventProgress,
     EventProgressInner,
-    ModalTitle,
-    MoreButton,
-    NFTPositionDescription,
     NFTPositionIcon,
-    NFTPositionIndex,
-    NFTPositionLink,
-    PositionCard,
-    PositionCardBody,
     PositionCardEvent,
     PositionCardEventTitle,
-    PositionCardHeader,
     PositionCardMock,
     PositionCardStats,
     PositionCardStatsItem,
@@ -29,19 +20,12 @@ import {
     PositionCardStatsItemValue,
     PositionCardStatsItemWrapper,
     PositionNotDepositedText,
-    RecipientInput,
-    SendModal,
-    SendNFTButton,
-    SendNFTWarning,
     StakeActions,
     StakeBottomWrapper,
     StakeButton,
     StakeCountdownProgress,
     StakeCountdownWrapper,
-    StakePool,
-    Stakes,
-    TimeWrapper,
-    TokensNames
+    TimeWrapper
 } from './styled'
 import { Deposit, RewardInterface, UnstakingInterface } from '../../models/interfaces'
 import { FarmingType } from '../../models/enums'
@@ -55,6 +39,7 @@ import { CheckOut } from './CheckOut'
 import { useLocation } from 'react-router-dom'
 import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
 import { WrappedCurrency } from '../../models/types'
+import './index.scss'
 
 interface StakerMyStakesProps {
     data: Deposit[] | null
@@ -202,16 +187,13 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
         }
     }, [getRewardsHash, confirmed])
 
-    const sendNFTHandler = useCallback(
-        (v) => {
-            if (!isAddress(recipient) || recipient === account) {
-                return
-            }
+    const sendNFTHandler = useCallback((v) => {
+        if (!isAddress(recipient) || recipient === account) {
+            return
+        }
 
-            sendNFTL2Handler(recipient, v)
-        },
-        [recipient]
-    )
+        sendNFTL2Handler(recipient, v)
+    }, [recipient])
 
     const stakedNFTs = useMemo(() => {
         if (!shallowPositions) return
@@ -237,18 +219,20 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                     }
                 }}
             >
-                <SendModal style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
+                <div className={'p-2'} style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
                     {sending.state === 'done' ? (
                         <>
                             <CheckCircle size={'35px'} stroke={'#27AE60'} />
-                            <div style={{ marginTop: '1rem' }}>{`NFT was sent!`}</div>
+                            <div className={'mt-1'}>{`NFT was sent!`}</div>
                         </>
                     ) : (
-                        <>
-                            <ModalTitle>Send NFT to another account</ModalTitle>
-                            <SendNFTWarning>{'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'}</SendNFTWarning>
-                            <div style={{ marginBottom: '1rem' }}>
-                                <RecipientInput
+                        <div className={'my-stakes__nft-send'}>
+                            <div className={'mb-1 c-p fs-125 b'}>Send NFT to another account</div>
+                            <div
+                                className={'my-stakes__nft-send__warning br-12 p-05 mb-1 c-dec'}>{'If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.'}</div>
+                            <div className={'mb-1'}>
+                                <input
+                                    className={'w-100 p-05 br-8'}
                                     placeholder='Enter a recipient'
                                     value={recipient}
                                     onChange={(v) => {
@@ -256,108 +240,103 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                     }}
                                 />
                             </div>
-                            <div>
-                                <SendNFTButton
+                            <button className={'btn primary w-100 pv-075 ph-1 c-w br-8 '}
                                     disabled={!isAddress(recipient) || recipient === account}
                                     onClick={() => {
                                         setSending({ id: sendModal, state: 'pending' })
                                         sendNFTHandler(sendModal)
                                     }}
-                                >
-                                    {sending && sending.id === sendModal && sending.state !== 'done' ? (
-                                        <span
-                                            style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto 10px auto' }} />
-                                            <span>Sending</span>
-                                        </span>
-                                    ) : (
-                                        <span>{`Send NFT`}</span>
-                                    )}
-                                </SendNFTButton>
-                            </div>
-                        </>
+                            >
+                                {sending && sending.id === sendModal && sending.state !== 'done' ? (
+                                    <span className={'f f-ac f-jc'}>
+                                        <Loader size={'1rem'} stroke={'white'} />
+                                        <span className={'ml-05'}>Sending</span>
+                                    </span>
+                                ) : (
+                                    <span>{`Send NFT`}</span>
+                                )}
+                            </button>
+                        </div>
                     )}
-                </SendModal>
+                </div>
             </Modal>
             {refreshing || !shallowPositions ? (
-                <EmptyMock>
-                    <Loader stroke={'white'} size={'20px'} />
-                </EmptyMock>
+                <div className={'my-stakes__loader flex-s-between f-jc'}>
+                    <Loader stroke={'white'} size={'1.5rem'} />
+                </div>
             ) : shallowPositions && shallowPositions.length === 0 ? (
-                <EmptyMock>
+                <div className={'my-stakes__loader flex-s-between f-jc'}>
                     <div>No farms</div>
                     <Frown size={35} stroke={'white'} />
-                </EmptyMock>
+                </div>
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>
                     {stakedNFTs && (
-                        <Stakes>
+                        <div>
                             {stakedNFTs.map((el, i) => {
                                 const date = new Date(+el.enteredInEternalFarming * 1000).toLocaleString()
                                 return (
-                                    <PositionCard key={i} navigatedTo={hash == `#${el.id}`}>
-                                        <PositionCardHeader>
-                                            <div style={{ display: 'flex' }}>
-                                                <NFTPositionIcon name={el.id}>
-                                                    <span>{el.id}</span>
-                                                </NFTPositionIcon>
-                                                <NFTPositionDescription>
-                                                    <NFTPositionIndex>
+                                    <div className={'my-stakes__position-card p-1 br-12 mb-1'} key={i} data-navigatedTo={hash == `#${el.id}`}>
+                                        <div className={'my-stakes__position-card__header flex-s-between mb-1 br-8 p-1'}>
+                                            <div className={'f'}>
+                                                <div className={'f f-ac'}>
+                                                    <NFTPositionIcon name={el.id}>
+                                                        <span>{el.id}</span>
+                                                    </NFTPositionIcon>
+                                                    <div className={'ml-05'}>
                                                         <IsActive el={el} />
-                                                    </NFTPositionIndex>
-                                                    <NFTPositionLink href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`} rel='noopener noreferrer' target='_blank'>
-                                                        View position
-                                                    </NFTPositionLink>
-                                                </NFTPositionDescription>
-                                            </div>
-                                            <StakePool>
-                                                <>
+                                                        <a className={'c-w fs-075'} href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`} rel='noopener noreferrer' target='_blank'>
+                                                            View position
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div className={'f f-ac ml-2'}>
                                                     <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={'35px'} />
                                                     <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={'35px'} style={{ marginLeft: '-1rem' }} />
-                                                    <TokensNames>
-                                                        <PositionCardStatsItemTitle style={{ lineHeight: '20px' }}>Pool</PositionCardStatsItemTitle>
+                                                    <div className={'ml-05'}>
+                                                        <div className={'b'}>Pool</div>
                                                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
-                                                    </TokensNames>
-                                                </>
-                                            </StakePool>
-                                            {!el.incentive && !el.eternalFarming && (
-                                                <MoreButton
-                                                    disabled={unstaking.id === el.id && unstaking.state !== 'done'}
-                                                    onClick={() => {
-                                                        setUnstaking({ id: el.id, state: 'pending' })
-                                                        withdrawHandler(el.id)
-                                                    }}
-                                                >
-                                                    {unstaking && unstaking.id === el.id && unstaking.state !== 'done' ? (
-                                                        <>
-                                                            <Loader size={'15px'} stroke={'#36f'} style={{ margin: 'auto' }} />
-                                                            <span style={{ marginLeft: '5px' }}>Withdrawing</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <ChevronsUp color={'#36f'} size={18} />
-                                                            <span style={{ marginLeft: '5px' }}>{`Withdraw`}</span>
-                                                        </>
-                                                    )}
-                                                </MoreButton>
-                                            )}
-                                            <MoreButton single={!!el.incentive || !!el.eternalFarming} onClick={() => setSendModal(el.L2tokenId)}>
-                                                <Send color={'#36f'} size={15} />
-                                                <span style={{ marginLeft: '6px' }}>Send</span>
-                                            </MoreButton>
-                                        </PositionCardHeader>
-                                        <PositionCardBody>
-                                            <PositionCardEvent>
-                                                <PositionCardEventTitle>Limit Farming</PositionCardEventTitle>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={'f'}>
+                                                {!el.incentive && !el.eternalFarming && (
+                                                    <button
+                                                        className={'btn f f-ac c-p b pv-025'}
+                                                        disabled={unstaking.id === el.id && unstaking.state !== 'done'}
+                                                        onClick={() => {
+                                                            setUnstaking({ id: el.id, state: 'pending' })
+                                                            withdrawHandler(el.id)
+                                                        }}
+                                                    >
+                                                        {unstaking && unstaking.id === el.id && unstaking.state !== 'done' ? (
+                                                            <>
+                                                                <Loader size={'1rem'} stroke={'var(--primary)'} style={{ margin: 'auto' }} />
+                                                                <span className={'ml-05'}>Withdrawing</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <ChevronsUp color={'var(--primary)'} size={'1rem'} />
+                                                                <span className={'ml-05'}>{`Withdraw`}</span>
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                )}
+                                                <button className={'btn f f-ac c-p b pv-025 ml-05'} onClick={() => setSendModal(el.L2tokenId)}>
+                                                    <Send color={'var(--primary)'} size={'1rem'} />
+                                                    <span className={'ml-05 c-p'}>Send</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className={'f cg-1'}>
+                                            <div className={'my-stakes__position-card__body w-100 p-1 br-8'}>
+                                                <div className={'b fs-125'}>Limit Farming</div>
                                                 {el.incentive ? (
                                                     <>
                                                         <PositionCardStats>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.incentiveRewardToken?.id, 18, el.incentiveRewardToken?.symbol) as WrappedCurrency} />
+                                                                <CurrencyLogo size={'35px'}
+                                                                              currency={new Token(137, el.incentiveRewardToken?.id, 18, el.incentiveRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
                                                                     <PositionCardStatsItemValue title={el.incentiveEarned}>{`${formatReward(+el.incentiveEarned)} ${
@@ -366,7 +345,8 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 </PositionCardStatsItem>
                                                             </PositionCardStatsItemWrapper>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.incentiveBonusRewardToken?.id, 18, el.incentiveBonusRewardToken?.symbol) as WrappedCurrency} />
+                                                                <CurrencyLogo size={'35px'}
+                                                                              currency={new Token(137, el.incentiveBonusRewardToken?.id, 18, el.incentiveBonusRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Bonus reward</PositionCardStatsItemTitle>
                                                                     <PositionCardStatsItemValue title={el.incentiveBonusEarned}>{`${formatReward(+el.incentiveBonusEarned)} ${
@@ -449,11 +429,11 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </StakeBottomWrapper>
                                                     </>
                                                 ) : (
-                                                    <PositionCardMock>
-                                                        {el.finiteAvailable ? <CheckOut link={'limit-farms'} /> : <PositionNotDepositedText>{'No limit farms for now'}</PositionNotDepositedText>}
-                                                    </PositionCardMock>
+                                                    <div className={'full-wh f f-ac f-jc'}>
+                                                        {el.finiteAvailable ? <CheckOut link={'limit-farms'} /> : <div>{'No limit farms for now'}</div>}
+                                                    </div>
                                                 )}
-                                            </PositionCardEvent>
+                                            </div>
                                             <PositionCardEvent>
                                                 <PositionCardEventTitle>
                                                     <span>Infinite Farming</span>
@@ -468,7 +448,8 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     <>
                                                         <PositionCardStats>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.eternalRewardToken?.id, 18, el.eternalRewardToken?.symbol) as WrappedCurrency} />
+                                                                <CurrencyLogo size={'35px'}
+                                                                              currency={new Token(137, el.eternalRewardToken?.id, 18, el.eternalRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Reward</PositionCardStatsItemTitle>
                                                                     <PositionCardStatsItemValue title={el.eternalEarned}>{`${formatReward(+el.eternalEarned)} ${
@@ -477,7 +458,8 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 </PositionCardStatsItem>
                                                             </PositionCardStatsItemWrapper>
                                                             <PositionCardStatsItemWrapper>
-                                                                <CurrencyLogo size={'35px'} currency={new Token(137, el.eternalBonusRewardToken?.id, 18, el.eternalBonusRewardToken?.symbol) as WrappedCurrency} />
+                                                                <CurrencyLogo size={'35px'}
+                                                                              currency={new Token(137, el.eternalBonusRewardToken?.id, 18, el.eternalBonusRewardToken?.symbol) as WrappedCurrency} />
                                                                 <PositionCardStatsItem>
                                                                     <PositionCardStatsItemTitle>Bonus Reward</PositionCardStatsItemTitle>
                                                                     <PositionCardStatsItemValue title={el.eternalBonusEarned}>
@@ -539,11 +521,11 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     </PositionCardMock>
                                                 )}
                                             </PositionCardEvent>
-                                        </PositionCardBody>
-                                    </PositionCard>
+                                        </div>
+                                    </div>
                                 )
                             })}
-                        </Stakes>
+                        </div>
                     )}
                 </>
             ) : null}

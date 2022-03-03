@@ -133,9 +133,15 @@
       padding-top: .25rem;
       padding-bottom: .25rem;
     }
+
     &-05 {
       padding-top: .5rem;
       padding-bottom: .5rem;
+    }
+
+    &-075 {
+      padding-top: .75rem;
+      padding-bottom: .75rem;
     }
 
     &-1 {
@@ -159,6 +165,7 @@
       padding-right: .25rem;
       padding-left: .25rem;
     }
+
     &-05 {
       padding-right: .5rem;
       padding-left: .5rem;
@@ -219,6 +226,7 @@
       margin-left: auto;
       margin-right: auto;
     }
+
     &-025 {
       margin-left: .25rem;
       margin-right: .25rem;
@@ -351,15 +359,15 @@
     flex-direction: column;
   }
 
-  &.ac {
+  &-ac {
     align-items: center;
   }
 
-  &.jc {
+  &-jc {
     justify-content: center;
   }
 
-  &.jb {
+  &-jb {
     justify-content: space-between;
   }
 }

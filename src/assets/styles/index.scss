@@ -14,16 +14,19 @@ body {
   overflow-x: hidden !important;
 }
 
-.br-8 {
-  border-radius: 8px;
-}
 
-.br-12 {
-  border-radius: 12px;
-}
+.br {
+  &-8 {
+    border-radius: 8px;
+  }
 
-.br-24 {
-  border-radius: 24px;
+  &-12 {
+    border-radius: 12px;
+  }
+
+  &-24 {
+    border-radius: 24px;
+  }
 }
 
 .mr-f-05 {
@@ -38,27 +41,40 @@ body {
   }
 }
 
-.fs-1 {
-  font-size: 1rem;
-}
-
-.fs-2 {
-  font-size: 2rem;
-}
-
 .w-100 {
   width: 100%;
 }
 
+.rg {
+  &-1 {
+    row-gap: 1rem;
+  }
 
-.rg-1 {
-  row-gap: 1rem;
+  &-2 {
+    row-gap: 2rem;
+  }
+
+  &-3 {
+    row-gap: 3rem;
+  }
 }
 
-.rg-2 {
-  row-gap: 2rem;
+.cg {
+  &-1 {
+    column-gap: 1rem;
+  }
+
+  &-2 {
+    column-gap: 2rem;
+  }
+
+  &-3 {
+    column-gap: 3rem;
+  }
 }
 
-.rg-3 {
-  row-gap: 3rem;
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }

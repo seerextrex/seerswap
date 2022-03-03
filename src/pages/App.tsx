@@ -68,7 +68,7 @@ export default function App() {
             <Route component={ApeModeQueryParamReader} />
             <Route component={GoogleAnalyticsReporter} />
             <Web3ReactManager>
-                <div className={'w-100 maw-1180 mh-a'} style={{zIndex: 3}}>
+                <div className={'w-100 maw-1180 ph-1 mh-a'} style={{zIndex: 3}}>
                     <CautionModal />
                     <Header />
                     {!internet && (

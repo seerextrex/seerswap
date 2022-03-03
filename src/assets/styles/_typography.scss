@@ -70,22 +70,33 @@
   font-weight: 600;
 }
 
-.fs{
-  &-1{
+.fs {
+  &-075 {
+    font-size: .75rem;
+  }
+
+  &-1 {
     font-size: 1rem;
   }
-  &-15{
+
+  &-125 {
+    font-size: 1.25rem;
+  }
+
+  &-15 {
     font-size: 1.5rem;
   }
-  &-175{
+
+  &-175 {
     font-size: 1.75rem;
   }
-  &-2{
+
+  &-2 {
     font-size: 2rem;
   }
 }
 
-@media (max-width:560px) {
+@media (max-width: 560px) {
   .title {
     text-align: center;
   }

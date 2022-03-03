@@ -1,0 +1,41 @@
+.my-stakes {
+
+  &__nft-send {
+
+    input {
+      border: none;
+    }
+
+    &__warning {
+      background-color: var(--red);
+    }
+  }
+
+  &__loader {
+    height: 400px;
+  }
+
+  &__position-card {
+    background-color: var(--ebony-clay);
+
+
+    &__header {
+      background-color: var(--dark-ebony-clay);
+
+      a {
+        &:hover {
+          color: var(--primary);
+        }
+      }
+
+      button {
+        background-color: var(--white);
+        border-radius: 4px;
+      }
+    }
+
+    &__body {
+      background-color: var(--dark-ebony-clay);
+    }
+  }
+}

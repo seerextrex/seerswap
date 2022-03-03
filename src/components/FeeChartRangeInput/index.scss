@@ -1,0 +1,13 @@
+.fee-chart {
+  position: relative;
+
+
+  &__mock-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 460px;
+    padding: 0 1rem;
+    max-width: 1000px;
+  }
+}

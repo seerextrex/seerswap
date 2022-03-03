@@ -127,8 +127,7 @@ export default function CurrencyInputPanel({
                     >
                         {/* <Lock /> */}
                         <TYPE.label fontSize='14px'>
-                            <Trans>Price is outside specified price range. Single-asset deposit
-                                only.</Trans>
+                            <Trans>Price is outside specified price range. Single-asset deposit only.</Trans>
                         </TYPE.label>
                     </AutoColumnStyled>
                 </FixedContainer>
@@ -150,7 +149,6 @@ export default function CurrencyInputPanel({
                             selected={!!currency}
                             hideInput={hideInput}
                             className='open-currency-select-button'
-                            // style={{ backgroundColor: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
                             shallow={shallow}
                             swap={swap}
                             disabled={shallow && page !== 'addLiq'}
@@ -160,47 +158,43 @@ export default function CurrencyInputPanel({
                                 }
                             }}
                         >
-                            <Aligner centered={centered}
-                                     title={balance ? balance.toSignificant(4) : ''}>
+                            <Aligner centered={centered} title={balance ? balance.toSignificant(4) : ''}>
                                 <RowFixed>
                                     {pair ? (
                                         <span style={{ marginRight: '0.5rem' }}>
-                      <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24}
-                                          margin={true} />
-                    </span>
+                                            <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+                                        </span>
                                     ) : currency ? (
-                                        <CurrencyLogo style={{ marginRight: '0.5rem' }}
-                                                      currency={currency} size={'24px'} />
+                                        <CurrencyLogo style={{ marginRight: '0.5rem' }} currency={currency} size={'24px'} />
                                     ) : null}
                                     {pair ? (
                                         <StyledTokenName className='pair-name-container'>
                                             {pair?.token0.symbol}:{pair?.token1.symbol}
                                         </StyledTokenName>
                                     ) : (
-                                        <StyledTokenName className='token-symbol-container'
-                                                         active={Boolean(currency && currency.symbol)}>
+                                        <StyledTokenName className='token-symbol-container' active={Boolean(currency && currency.symbol)}>
                                             {(currency && currency.symbol && currency.symbol.length > 20 ? (
                                                 currency.symbol.slice(0, 4) +
                                                 '...' +
                                                 currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
                                             ) : currency ? (
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <span>
-                            {
-                                shallow && showBalance && balance && page === 'addLiq' && +(balance.toSignificant(4)) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
-                                    shallow && showBalance && balance
-                                        ? `Balance: ${balanceString} ${currency.symbol}`
-                                        : currency.symbol}
-                          </span>
+                                                  <span>
+                                                    {
+                                                        shallow && showBalance && balance && page === 'addLiq' && +(balance.toSignificant(4)) < 0.0001 ? `Balance: < 0.0001 ${currency.symbol}` :
+                                                            shallow && showBalance && balance
+                                                                ? `Balance: ${balanceString} ${currency.symbol}`
+                                                                : currency.symbol}
+                                                  </span>
                                                     {showBalance && balance && !shallow ? (
                                                         <span style={{ position: 'absolute', right: 0, fontSize: '13px' }} title={balance.toExact()}>
-                              {balanceString}
-                            </span>
+                                                          {balanceString}
+                                                        </span>
                                                     ) : (
                                                         showBalance && !balance && (
                                                             <span style={{ position: 'absolute', right: 0 }}>
-                                <Loader />
-                              </span>
+                                                                <Loader />
+                                                            </span>
                                                         )
                                                     )}
                                                 </div>

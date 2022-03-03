@@ -15,7 +15,7 @@ export function StatCard({ isLoading, title, data, style }: StatCardProps) {
         <Card classes={`w-100 pa-1 br-12 ${style}`} isDark={false}>
             <div className={'c-lg mb-1'}>{title}</div>
             <div className={'fs-2 b'}>
-                {isLoading || !data ?
+                {!data ?
                     <span>
                         <Loader size={'2rem'} stroke='white' />
                     </span>

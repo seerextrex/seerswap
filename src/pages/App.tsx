@@ -68,17 +68,15 @@ export default function App() {
             <Route component={ApeModeQueryParamReader} />
             <Route component={GoogleAnalyticsReporter} />
             <Web3ReactManager>
-                <AppWrapper>
+                <div className={'w-100 maw-1180 mh-a'} style={{zIndex: 3}}>
                     <CautionModal />
-                    <HeaderWrapper style={{ zIndex: 3 }}>
-                        <Header />
-                    </HeaderWrapper>
+                    <Header />
                     {!internet && (
                         <InternetError>
                             <h2>Network ERROR</h2>
                         </InternetError>
                     )}
-                    <AppBodyWrapper style={{ zIndex: 2 }}>
+                    <div style={{ zIndex: 2 }}>
                         {networkFailed && (
                             <NetworkFailedCard>
                                 <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon
@@ -138,8 +136,8 @@ export default function App() {
                             </Switch>
                         </React.Suspense>
                         <Marginer />
-                    </AppBodyWrapper>
-                </AppWrapper>
+                    </div>
+                </div>
             </Web3ReactManager>
         </ErrorBoundary>
     )

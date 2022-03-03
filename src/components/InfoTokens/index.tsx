@@ -9,6 +9,8 @@ import { TokenRow } from './TokenRow'
 import Table from '../Table'
 import { Label } from '../Text'
 import { Apr } from '../InfoPools/AprHeader'
+import TableHeader from '../Table/TableHeader'
+import TableBody from '../Table/TableBody'
 
 interface InfoTokensProps {
     data: any
@@ -58,17 +60,6 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
         }
     }, [blocksFetched])
 
-
-    const header = useMemo(() => <>
-        <span className={'table-header__item'}>#</span>
-        <span className={'table-header__item'}>Name</span>
-        <span className={'table-header__item table-header__item--center'}>Price</span>
-        <span className={'table-header__item table-header__item--center'}>Price Change</span>
-        <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
-        <span className={'table-header__item table-header__item--center'}>TVL</span>
-    </>, [])
-
-
     const _data = useMemo(() => {
         return data && data.map((el: any, i: number) => {
             const token = TokenRow({ address: el.address, symbol: el.symbol, name: el.name })
@@ -107,11 +98,27 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                 <Loader stroke={'white'} size={'25px'} />
             </div>
         )
-    return <Table
-        data={_data}
-        sortField={sortField}
-        sortDirection={sortDirection}
-        header={header}
-        gridClass={'grid-tokens-table'}
-        sortIndex={sortIndex}/>
+    return <Table gridClass={'grid-tokens-table'}>
+        <TableHeader
+            gridClass={'grid-tokens-table'}
+            sortFields={sortFields}
+            handleSort={handleSort}
+            arrow={arrow}
+        >
+            <span className={'table-header__item'}>#</span>
+            <span className={'table-header__item'}>Name</span>
+            <span className={'table-header__item table-header__item--center'}>Price</span>
+            <span className={'table-header__item table-header__item--center'}>Price Change</span>
+            <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
+            <span className={'table-header__item table-header__item--center'}>TVL</span>
+        </TableHeader>
+        <TableBody
+            data={_data}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            sortIndex={sortIndex}
+            maxItems={10}
+            gridClass={'grid-tokens-table'}
+        />
+    </Table>
 }

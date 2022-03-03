@@ -248,7 +248,7 @@ export default function RealStakerPage({}) {
     }, [staked, earned])
 
     return (
-        <div className={'real-staker-page maw-765'}>
+        <div className={'real-staker-page maw-765 mh-a'}>
             <Helmet>
                 <title>Algebra — Staking</title>
             </Helmet>

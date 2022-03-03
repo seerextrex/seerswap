@@ -129,6 +129,10 @@
   }
 
   &v {
+    &-025 {
+      padding-top: .25rem;
+      padding-bottom: .25rem;
+    }
     &-05 {
       padding-top: .5rem;
       padding-bottom: .5rem;
@@ -151,6 +155,10 @@
   }
 
   &h {
+    &-025 {
+      padding-right: .25rem;
+      padding-left: .25rem;
+    }
     &-05 {
       padding-right: .5rem;
       padding-left: .5rem;
@@ -207,6 +215,10 @@
   }
 
   &h {
+    &-a {
+      margin-left: auto;
+      margin-right: auto;
+    }
     &-025 {
       margin-left: .25rem;
       margin-right: .25rem;
@@ -239,6 +251,10 @@
 
     &-1 {
       margin-left: 1rem;
+    }
+
+    &-15 {
+      margin-left: 1.5rem;
     }
 
     &-2 {
@@ -346,4 +362,10 @@
 
 .fl-r {
   float: right;
+}
+
+.fw {
+  &-b {
+    font-weight: 600;
+  }
 }

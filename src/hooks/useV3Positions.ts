@@ -161,8 +161,6 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
     }, [positions, _positionsOnFarmer])
 
-    console.log('COMBINED POSITIONS]', positions, _positionsOnFarmer)
-
     return {
         loading: someTokenIdsLoading || balanceLoading || positionsLoading || _positionsOnFarmerLoading,
         positions: combinedPositions

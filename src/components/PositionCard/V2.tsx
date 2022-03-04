@@ -37,8 +37,6 @@ interface PositionCardProps {
 export default function V2PositionCard({ pair, border, stakedBalance, sushi }: PositionCardProps) {
     const { account } = useActiveWeb3React()
 
-    console.log(sushi)
-
     const currency0 = unwrappedToken(pair?.token0 as WrappedCurrency)
     const currency1 = unwrappedToken(pair?.token1 as WrappedCurrency)
 

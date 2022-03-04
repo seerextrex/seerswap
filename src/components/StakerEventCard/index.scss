@@ -1,0 +1,34 @@
+@import "src/assets/styles/index";
+.staker-event-card {
+  background-color: var(--ebony-clay);
+
+  &__reward-wrapper {
+    background-color: var(--dark-ebony-clay);
+  }
+
+  &__plus {
+    position: relative;
+
+    div {
+      position: absolute;
+      left: calc(50% - 11px);
+      top: -15px;
+      background-color: var(--dark-gray);
+      padding: 3px;
+      border-radius: 50%;
+    }
+  }
+
+  &__progress {
+    margin-top: 3px;
+    height: 16px;
+    background-color: var(--white);
+
+    div {
+      height: 100%;
+      background-color: var(--primary);
+      transition-duration: 0.5s;
+      @include skeleton-gradient()
+    }
+  }
+}

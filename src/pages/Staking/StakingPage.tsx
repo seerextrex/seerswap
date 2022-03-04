@@ -104,13 +104,13 @@ export default function StakingPage() {
                                 />
                             </>
                         ) : (
-                            <MockScreen>
+                            <div className={'f f-ac f-jc f c h-400'}>
                                 <AlignJustify size={40} stroke={'white'} />
-                                <p>Connect your account to view farms</p>
-                                <ConnectWalletButton onClick={toggleWalletModal}>
+                                <p className={'mb-1'}>Connect your account to view farms</p>
+                                <button className={'btn primary pv-05 ph-2 br-8 b'} onClick={toggleWalletModal}>
                                     Connect Wallet
-                                </ConnectWalletButton>
-                            </MockScreen>
+                                </button>
+                            </div>
                         )}
                     </Route>
                     <Route exact path={`${path}/limit-farms`}>

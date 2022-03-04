@@ -4,20 +4,17 @@ import { StakerEventCard } from '../../components/StakerEventCard'
 import { StakeModal } from '../../components/StakeModal'
 import { FarmingType } from '../../models/enums'
 import Modal from '../../components/Modal'
-import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
+import { EmptyMock, EventsCardsRow } from './styled'
 import Loader from '../../components/Loader'
 
-export function FarmingEventsPage({
-    data,
-    now,
-    refreshing,
-    fetchHandler
-}: {
+interface FarmingEventsPageProps {
     data: { currentEvents: any[]; futureEvents: any[] } | null
     now: number
     refreshing: boolean
     fetchHandler: () => any
-}) {
+}
+
+export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: FarmingEventsPageProps) {
     const [modalForPool, setModalForPool] = useState(null)
 
     const formattedData = useMemo(() => {
@@ -31,7 +28,7 @@ export function FarmingEventsPage({
     }, [])
 
     return (
-        <PageWrapper>
+        <div className={'w-100'}>
             <Modal isOpen={Boolean(modalForPool)} onHide={() => setModalForPool(null)}
                    onDismiss={() => console.log()}>
                 {modalForPool && (
@@ -44,38 +41,37 @@ export function FarmingEventsPage({
                     </>
                 )}
             </Modal>
-            <EventsCards>
-                {refreshing ? (
+            {refreshing ? (
+                <EmptyMock>
+                    <Loader stroke={'white'} size={'20px'} />
+                </EmptyMock>
+            ) : formattedData.length !== 0 ?
+                <EventsCardsRow>
+                    {formattedData.map(
+                        (event, j) => {
+
+                            const isStarted = event.startTime <= Math.round(Date.now() / 1000)
+                            const isEnded = event.endTime <= Math.round(Date.now() / 1000)
+
+                            if (isEnded) return
+
+                            const active = isStarted && !isEnded
+
+                            return <StakerEventCard
+                                refreshing={refreshing} active={active}
+                                key={j} now={now} event={event}
+                                stakeHandler={() => {
+                                    setModalForPool(event)
+                                }} />
+                        }
+                    )}
+                </EventsCardsRow>
+                : formattedData && formattedData.length === 0 ? (
                     <EmptyMock>
-                        <Loader stroke={'white'} size={'20px'} />
+                        <div>No limit farms</div>
+                        <Frown size={35} stroke={'white'} />
                     </EmptyMock>
-                ) : formattedData.length !== 0 ?
-                    <EventsCardsRow>
-                        {formattedData.map(
-                            (event, j) => {
-
-                                const isStarted = event.startTime <= Math.round(Date.now() / 1000)
-                                const isEnded = event.endTime <= Math.round(Date.now() / 1000)
-
-                                if (isEnded) return
-
-                                const active = isStarted && !isEnded
-
-                                return <StakerEventCard refreshing={refreshing} active={active}
-                                                        key={j} now={now} event={event}
-                                                        stakeHandler={() => {
-                                                            setModalForPool(event)
-                                                        }} />
-                            }
-                        )}
-                    </EventsCardsRow>
-                    : formattedData && formattedData.length === 0 ? (
-                        <EmptyMock>
-                            <div>No limit farms</div>
-                            <Frown size={35} stroke={'white'} />
-                        </EmptyMock>
-                    ) : <EmptyMock />}
-            </EventsCards>
-        </PageWrapper>
+                ) : <EmptyMock />}
+        </div>
     )
 }

@@ -70,10 +70,19 @@
   font-weight: 600;
 }
 
+.l {
+  font-weight: 400;
+}
+
 .fs {
   &-075 {
     font-size: .75rem;
   }
+
+  &-085 {
+    font-size: .85rem;
+  }
+
 
   &-1 {
     font-size: 1rem;
@@ -93,6 +102,20 @@
 
   &-2 {
     font-size: 2rem;
+  }
+}
+
+.ta {
+  &-c {
+    text-align: center;
+  }
+
+  &-l {
+    text-align: left;
+  }
+
+  &-r {
+    text-align: right;
   }
 }
 

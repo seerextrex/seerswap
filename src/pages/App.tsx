@@ -24,7 +24,7 @@ import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsRepo
 import { GasPrice } from '../components/Header/GasPrice'
 import { useFarmingActionsHandlers } from '../state/farming/hooks'
 import { useActiveWeb3React } from '../hooks/web3'
-import { AppBodyWrapper, AppWrapper, BugReportLink, GlobalStyle, HeaderWrapper, InternetError, Marginer, NetworkFailedCard } from './styled'
+import { BugReportLink, GlobalStyle, InternetError, Marginer, NetworkFailedCard } from './styled'
 
 const RealStakerPage = React.lazy(() => import('./RealStakerPage'))
 const StakingAnalyticsPage = React.lazy(() => import('./StakingAnalyticsPage'))
@@ -68,7 +68,7 @@ export default function App() {
             <Route component={ApeModeQueryParamReader} />
             <Route component={GoogleAnalyticsReporter} />
             <Web3ReactManager>
-                <div className={'w-100 maw-1180 ph-1 mh-a'} style={{zIndex: 3}}>
+                <div className={'w-100 maw-1180 ph-1 mh-a'} style={{ zIndex: 3 }}>
                     <CautionModal />
                     <Header />
                     {!internet && (

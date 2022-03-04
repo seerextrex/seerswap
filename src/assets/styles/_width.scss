@@ -1,7 +1,16 @@
-.maw-1180 {
-  max-width: var(--container_width);
+.maw {
+  &-765 {
+    max-width: 765px;
+  }
+
+  &-1180 {
+    max-width: var(--container_width);
+  }
 }
 
-.maw-765 {
-  max-width: 765px;
+.h {
+
+  &-400{
+    height: 400px;
+  }
 }

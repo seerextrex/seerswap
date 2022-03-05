@@ -240,6 +240,11 @@ export const StakeButton = styled.button<{ skeleton: boolean }>`
     background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)};
   }
 
+  &:disabled {
+    background-color: ${({theme}) => theme.winterDisabledButton};
+    cursor: default;
+  }
+
   ${({ skeleton }) =>
     skeleton
       ? css`

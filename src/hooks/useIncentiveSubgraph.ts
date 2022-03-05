@@ -40,13 +40,16 @@ import {
 } from '../models/interfaces'
 import { EthereumWindow } from '../models/types'
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
-
+import { fetchEternalFarmAPR, fetchLimitFarmTVL } from 'utils/api'
+import { useEthPrices } from './useEthPrices'
 
 export function useIncentiveSubgraph() {
 
     const { chainId, account } = useActiveWeb3React()
 
     const { dataClient, farmingClient } = useClients()
+
+    const ethPrices = useEthPrices()
 
     const [positionsForPool, setPositionsForPool] = useState<Position[] | null>(null)
     const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
@@ -303,13 +306,21 @@ export function useIncentiveSubgraph() {
                 return
             }
 
+            const eventTVL = await fetchLimitFarmTVL()
+
+            const price = 1.5
+
+            const EVENT_LOCK = 300_000
 
             setAllEvents({
                 currentEvents: await getEvents(currentEvents.map(el => ({
                     ...el,
                     active: true
                 }))),
-                futureEvents: await getEvents((futureEvents))
+                futureEvents: await getEvents(futureEvents.map(el => ({
+                    ...el,
+                    locked: eventTVL[el.id] === undefined ? false : eventTVL[el.id] * price >= EVENT_LOCK
+                })))
             })
             setAllEventsLoading(false)
 

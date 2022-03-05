@@ -198,7 +198,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
                     </RangeText>
                 </RangeLineItem>
             ) : (
-                <Loader />
+                <Loader stoke={'white'} />
             )}
         </LinkRow>
     )

@@ -42,6 +42,7 @@ import {
     TotalStatSubgraph
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces'
+import { fetchEternalFarmAPR, fetchPoolsAPR } from 'utils/api'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
@@ -92,31 +93,6 @@ export function useInfoSubgraph() {
     const [stakeHistoriesResult, setHistories] = useState<null | HistoryStakingSubgraph[] | string>(null)
     const [historiesLoading, setHistoriesLoading] = useState<boolean>(false)
 
-    async function fetchPoolsAPR() {
-
-        const apiURL = 'https://api.algebra.finance/api/APR/pools/'
-
-        try {
-            return await fetch(apiURL).then(v => v.json())
-
-        } catch (error: any) {
-            return {}
-        }
-
-    }
-
-    async function fetchEternalFarmAPR() {
-
-        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
-
-        try {
-            return await fetch(apiURL).then(v => v.json())
-
-        } catch (error: any) {
-            return {}
-        }
-
-    }
 
     async function fetchInfoPools() {
 

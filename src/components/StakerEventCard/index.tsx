@@ -47,6 +47,7 @@ interface StakerEventCardProps {
         startTime?: number;
         endTime?: number;
         apr?: number;
+        locked?: boolean;
     };
     eternal?: boolean;
     secret?: boolean;
@@ -58,7 +59,7 @@ export function StakerEventCard({
     refreshing,
     stakeHandler,
     now,
-    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr } = {},
+    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked } = {},
     eternal,
     secret,
 }: StakerEventCardProps) {
@@ -302,8 +303,8 @@ export function StakerEventCard({
                 </RewardWrapper>
             )}
             {account && !active ? (
-                <StakeButton style={{ marginTop: eternal ? "0" : "17px" }} onClick={stakeHandler} skeleton={skeleton}>
-                    Farm
+                <StakeButton style={{ marginTop: eternal ? "0" : "17px" }} onClick={stakeHandler} skeleton={skeleton} disabled={locked}>
+                    {locked ? 'Fulled' : 'Farm'}
                 </StakeButton>
             ) : (
                 !active && (

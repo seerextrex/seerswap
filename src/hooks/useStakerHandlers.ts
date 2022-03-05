@@ -13,6 +13,7 @@ import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
 import { TransactionResponse } from '@ethersproject/providers'
 import { DefaultFarming, DefaultFarmingWithError, GetRewardsHashInterface, GetRewardsHashInterfaceWithError } from '../models/interfaces'
 import { FarmingType } from '../models/enums'
+import { fetchLimitFarmTVL } from 'utils/api'
 
 export function useStakerHandlers() {
 
@@ -284,6 +285,7 @@ export function useStakerHandlers() {
     }, [account, chainId])
 
     const stakeHandler = useCallback(async (selectedNFT, {
+        id,
         rewardToken,
         bonusRewardToken,
         pool,
@@ -292,6 +294,10 @@ export function useStakerHandlers() {
     }, eventType) => {
 
         if (!account || !provider || !chainId) return
+
+        // const tvls = await fetchLimitFarmTVL()
+
+        // if (tvls[id] >= 300) return
 
         setStaked({ hash: null, id: null })
 

@@ -11,7 +11,6 @@ import { Helmet } from 'react-helmet'
 import EternalFarmsPage from '../EternalFarmsPage'
 import EventsHistory from '../EventsHistory'
 import { StakerMyRewards } from '../../components/StakerMyRewards'
-import { ConnectWalletButton, MockScreen } from './styled'
 import { FormattedRewardInterface, Reward } from '../../models/interfaces'
 import Card from '../../shared/components/Card/Card'
 import Menu from '../../components/Menu'
@@ -137,8 +136,7 @@ export default function StakingPage() {
                     </Route>
                     <Route exact strict path={`${path}/farms-history`}>
                         <Helmet>
-                            <title>Algebra — Farming • Farms History
-                                history</title>
+                            <title>Algebra — Farming • Farms History history</title>
                         </Helmet>
                         <EventsHistory />
                     </Route>

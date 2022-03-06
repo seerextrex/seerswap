@@ -8,15 +8,11 @@ import Loader from '../Loader'
 import Modal from '../Modal'
 import { Deposit, RewardInterface, UnstakingInterface } from '../../models/interfaces'
 import { FarmingType } from '../../models/enums'
-import CurrencyLogo from '../CurrencyLogo'
-import { Token } from '@uniswap/sdk-core'
-import { formatReward } from '../../utils/formatReward'
 import { getCountdownTime } from '../../utils/time'
 import { getProgress } from '../../utils/getProgress'
 import { CheckOut } from './CheckOut'
 import { useLocation } from 'react-router-dom'
 import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
-import { WrappedCurrency } from '../../models/types'
 import './index.scss'
 import ModalBody from './ModalBody'
 import PositionHeader from './PositionHeader'
@@ -244,7 +240,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                             rewardToken={el.incentiveRewardToken}
                                                             earned={el.incentiveEarned}
                                                             bonusEarned={el.incentiveBonusEarned}
-                                                            bonusRewardToken={el.incentiveBonusRewardToken}/>
+                                                            bonusRewardToken={el.incentiveBonusRewardToken} />
                                                         <div className={'f'}>
                                                             {!el.ended && el.incentiveEndTime * 1000 > Date.now() && (
                                                                 <div className={'f w-100'}>
@@ -339,7 +335,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                             rewardToken={el.eternalRewardToken}
                                                             earned={el.eternalEarned}
                                                             bonusEarned={el.eternalBonusEarned}
-                                                            bonusRewardToken={el.eternalBonusRewardToken}/>
+                                                            bonusRewardToken={el.eternalBonusRewardToken} />
                                                         <div className={'f w-100'}>
                                                             <button
                                                                 className={'btn primary w-100 b br-8 pv-075'}

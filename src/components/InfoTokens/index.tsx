@@ -7,10 +7,7 @@ import './index.scss'
 import { useHandleArrow } from '../../hooks/useHandleArrow'
 import { TokenRow } from './TokenRow'
 import Table from '../Table'
-import { Label } from '../Text'
-import { Apr } from '../InfoPools/AprHeader'
 import TableHeader from '../Table/TableHeader'
-import TableBody from '../Table/TableBody'
 
 interface InfoTokensProps {
     data: any

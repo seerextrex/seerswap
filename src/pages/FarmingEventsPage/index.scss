@@ -1,0 +1,10 @@
+.farmings-page {
+  &__loader {
+    height: 400px;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

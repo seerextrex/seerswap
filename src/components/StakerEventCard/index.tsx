@@ -5,23 +5,7 @@ import { convertDateTime, getCountdownTime } from '../../utils/time'
 import { getProgress } from '../../utils/getProgress'
 import Loader from '../Loader'
 import CurrencyLogo from '../CurrencyLogo'
-import {
-    Card,
-    CardHeader,
-    EventEndTime,
-    EventProgress,
-    LoadingShim,
-    PoolsSymbols,
-    RewardAmount,
-    RewardSymbol,
-    RewardWrapper,
-    StakeButton,
-    StakeDate,
-    StakeInfo,
-    Subtitle,
-    TokenIcon,
-    TokensIcons
-} from './styled'
+import { LoadingShim } from './styled'
 import { useMemo } from 'react'
 import { convertLocalDate } from '../../utils/convertDate'
 import { Token } from '@uniswap/sdk-core'
@@ -31,7 +15,6 @@ import './index.scss'
 
 interface StakerEventCardProps {
     active?: boolean
-    skeleton?: any
     now?: number
     refreshing?: boolean
     stakeHandler?: () => void
@@ -50,7 +33,7 @@ interface StakerEventCardProps {
 }
 
 export function StakerEventCard({
-    active, skeleton, refreshing, stakeHandler, now, event: {
+    active, refreshing, stakeHandler, now, event: {
         pool,
         createdAtTimestamp,
         rewardToken,
@@ -82,72 +65,7 @@ export function StakerEventCard({
         return [convertLocalDate(date), convertDateTime(date)]
     }, [endTime])
 
-    return skeleton ? (
-        <Card skeleton>
-            <CardHeader>
-                <TokensIcons>
-                    <TokenIcon skeleton />
-                    <TokenIcon skeleton />
-                </TokensIcons>
-                <div>
-                    <Subtitle skeleton />
-                    <PoolsSymbols skeleton />
-                </div>
-            </CardHeader>
-            <RewardWrapper skeleton style={{ marginBottom: '6px' }}>
-                <TokenIcon skeleton />
-                <div style={{ marginLeft: '1rem' }}>
-                    <Subtitle skeleton />
-                    <RewardSymbol skeleton />
-                </div>
-                <RewardAmount skeleton />
-            </RewardWrapper>
-            <div style={{ position: 'relative' }}>
-                <div
-                    style={{
-                        position: 'absolute',
-                        left: 'calc(50% - 11px)',
-                        top: '-15px',
-                        backgroundColor: '#5aa7df',
-                        borderRadius: '50%',
-                        padding: '3px'
-                    }}
-                >
-                    <Plus style={{ display: 'block' }} size={18} />
-                </div>
-            </div>
-            <RewardWrapper skeleton>
-                <TokenIcon skeleton />
-                <div style={{ marginLeft: '1rem' }}>
-                    <Subtitle skeleton />
-                    <RewardSymbol skeleton />
-                </div>
-                <RewardAmount skeleton />
-            </RewardWrapper>
-            <StakeInfo active>
-                <div>
-                    <Subtitle skeleton />
-                    <StakeDate skeleton />
-                    <StakeDate skeleton />
-                </div>
-                <div>
-                    <Subtitle skeleton />
-                    <StakeDate skeleton />
-                    <StakeDate skeleton />
-                </div>
-            </StakeInfo>
-            {active ? (
-                <>
-                    <EventEndTime skeleton>
-                        <span />
-                    </EventEndTime>
-                    <EventProgress skeleton />
-                </>
-            ) : (
-                <StakeButton skeleton />
-            )}
-        </Card>
-    ) : (
+    return (
         <div className={'staker-event-card p-1 br-12'} data-refreshing={refreshing}>
             {refreshing && (
                 <LoadingShim>
@@ -213,7 +131,7 @@ export function StakerEventCard({
                 </div>
             )}
             {!eternal && (
-                <div className={'flex-s-between mb-05'} data-active>
+                <div className={'flex-s-between mb-05'}>
                     <div className={'f c'}>
                         <span className={'fs-075 b'}>START</span>
                         <span>
@@ -253,23 +171,22 @@ export function StakerEventCard({
             )}
             {eternal && (
                 <div className={'staker-event-card__reward-wrapper mb-1 flex-s-between p-05 br-8'}>
-                    <span style={{ fontSize: '14px', color: 'white', textTransform: 'none', lineHeight: '19px' }}>
-                        {'Overall APR:'}
-                    </snap>
-                    <RewardSymbol>{`${apr?.toFixed(2)}%`}</RewardSymbol>
+                    <span className={'fs-085'}>Overall APR</span>
+                    <span>{apr?.toFixed(2)}%</span>
                 </div>
             )}
             {account && !active ?
-                <StakeButton
-                    style={{ marginTop: eternal ? '0' : '10px' }}
+                <button
+                    className={`btn primary w-100 b pv-05 ${!eternal ? 'mt-05' : ''}`}
                     onClick={stakeHandler}
-                    skeleton={skeleton}
-                > Farm </StakeButton>
-                : !active &&
-                <StakeButton
+                > Farm
+                </button> :
+                !active &&
+                <button
+                    className={`btn primary w-100 b pv-05 ${!eternal ? 'mt-05' : ''}`}
                     onClick={toggleWalletModal}
-                    skeleton={skeleton}
-                > Connect Wallet </StakeButton>
+                > Connect Wallet
+                </button>
             }
         </div>
     )

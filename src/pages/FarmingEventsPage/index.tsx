@@ -4,8 +4,8 @@ import { StakerEventCard } from '../../components/StakerEventCard'
 import { StakeModal } from '../../components/StakeModal'
 import { FarmingType } from '../../models/enums'
 import Modal from '../../components/Modal'
-import { EmptyMock, EventsCardsRow } from './styled'
 import Loader from '../../components/Loader'
+import './index.scss'
 
 interface FarmingEventsPageProps {
     data: { currentEvents: any[]; futureEvents: any[] } | null
@@ -29,8 +29,10 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
 
     return (
         <div className={'w-100'}>
-            <Modal isOpen={Boolean(modalForPool)} onHide={() => setModalForPool(null)}
-                   onDismiss={() => console.log()}>
+            <Modal
+                isOpen={Boolean(modalForPool)}
+                onHide={() => setModalForPool(null)}
+                onDismiss={() => console.log()}>
                 {modalForPool && (
                     <>
                         <StakeModal
@@ -42,11 +44,11 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
                 )}
             </Modal>
             {refreshing ? (
-                <EmptyMock>
-                    <Loader stroke={'white'} size={'20px'} />
-                </EmptyMock>
+                <div className={'farmings-page__loader f f-ac f-jc'}>
+                    <Loader stroke={'white'} size={'1.5rem'} />
+                </div>
             ) : formattedData.length !== 0 ?
-                <EventsCardsRow>
+                <div className={'farmings-page__row mb-1 rg-1 cg-1 '}>
                     {formattedData.map(
                         (event, j) => {
 
@@ -65,13 +67,13 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
                                 }} />
                         }
                     )}
-                </EventsCardsRow>
+                </div>
                 : formattedData && formattedData.length === 0 ? (
-                    <EmptyMock>
+                    <div className={'farmings-page__loader f f-ac f-jc'}>
                         <div>No limit farms</div>
                         <Frown size={35} stroke={'white'} />
-                    </EmptyMock>
-                ) : <EmptyMock />}
+                    </div>
+                ) : <div className={'farmings-page__loader f f-ac f-jc'} />}
         </div>
     )
 }

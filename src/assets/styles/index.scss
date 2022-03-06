@@ -16,6 +16,10 @@ body {
 
 
 .br {
+  &-0 {
+    border: none;
+  }
+
   &-8 {
     border-radius: 8px;
   }
@@ -82,7 +86,8 @@ body {
 @keyframes skeleton-animation {
   100% {
     transform: translateX(100%);
-  }}
+  }
+}
 
 @mixin skeleton-gradient {
   position: relative;

@@ -57,7 +57,20 @@
   &-r {
     color: var(--red);
   }
+
   &-m {
     color: var(--mirage);
+  }
+}
+
+.bg {
+  &-t {
+    background: transparent;
+  }
+
+  &-l {
+    &-pl {
+      background: linear-gradient(90deg, var(--primary-weak) 0%, var(--primary) 100%)
+    }
   }
 }

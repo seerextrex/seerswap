@@ -36,6 +36,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { dat
                     </EmptyMock>
                 ) : formattedData.length !== 0 ? (
                     <EventsCardsRow>
+                          {<StakerEventCard secret />}
                         {formattedData.map((event, j) => {
                             const isStarted = event.startTime <= Math.round(Date.now() / 1000);
                             const isEnded = event.endTime <= Math.round(Date.now() / 1000);
@@ -57,7 +58,6 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { dat
                                 />
                             );
                         })}
-                        {<StakerEventCard secret />}
                     </EventsCardsRow>
                 ) : formattedData && formattedData.length === 0 ? (
                     <EmptyMock>

@@ -145,10 +145,10 @@ export function StakerEventCard({
                     <span>{`will be available in ${getCountdownTime(1647356400, Date.now())}`}</span>
                 </EventEndTime>
                 <EventProgress>
-                    <EventProgressInner progress={Math.round((100 * 1647356400) / Date.now())} />
+                    <EventProgressInner progress={Number(getProgress(1647356400, Math.round(Date.now() / 1000), now).toPrecision(1))} />
                 </EventProgress>
                 <span style={{ marginTop: "1rem", fontSize: "14px", lineHeight: "21px", padding: "6px 8px", borderRadius: "6px", textAlign: "center", backgroundColor: "#333aa0" }}>
-                    ⚡Upcoming farm
+                    ⚡ Upcoming farm
                 </span>
             </FutureCard>
         );
@@ -290,9 +290,9 @@ export function StakerEventCard({
             {!eternal && (
                 <EventProgress>
                     {active ? (
-                        <EventProgressInner progress={Math.round(getProgress(startTime, endTime, now))} />
+                        <EventProgressInner progress={Number(getProgress(startTime, endTime, now).toPrecision(1))} />
                     ) : (
-                        <EventProgressInner progress={Math.round(getProgress(Number(createdAtTimestamp), startTime, now))} />
+                        <EventProgressInner progress={Number(getProgress(Number(createdAtTimestamp), startTime, now).toPrecision(1))} />
                     )}
                 </EventProgress>
             )}
@@ -304,15 +304,18 @@ export function StakerEventCard({
             )}
             {account && !active ? (
                 <StakeButton style={{ marginTop: eternal ? "0" : "17px" }} onClick={stakeHandler} skeleton={skeleton} disabled={locked}>
-                    {locked ? 'Fulled' : 'Farm'}
+                    {locked ? 'Filled' : 'Farm'}
                 </StakeButton>
-            ) : (
-                !active && (
+            ) : active ?
+            <span style={{ marginTop: "1rem", fontSize: "14px", lineHeight: "21px", padding: "6px 8px", borderRadius: "6px", textAlign: "center", backgroundColor: "#17517c" }}>
+            Started!
+        </span>
+             : 
                     <StakeButton style={{ marginTop: eternal ? "0" : "17px" }} onClick={toggleWalletModal} skeleton={skeleton}>
                         Connect Wallet
                     </StakeButton>
-                )
-            )}
+                
+            }
         </Card>
     );
 }

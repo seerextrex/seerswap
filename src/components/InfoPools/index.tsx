@@ -10,7 +10,6 @@ import { Apr } from './AprHeader'
 import { useHandleSort } from '../../hooks/useHandleSort'
 import { useHandleArrow } from '../../hooks/useHandleArrow'
 import TableHeader from '../Table/TableHeader'
-import TableBody from '../Table/TableBody'
 
 interface InfoPoolsProps {
     data: any
@@ -20,10 +19,6 @@ interface InfoPoolsProps {
 }
 
 const sortFields = [
-    {
-        title: '#',
-        value: 'index'
-    },
     {
         title: 'Pool',
         value: 'pool'
@@ -68,7 +63,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
         return data && data.map((el: any, i: any) => {
 
             const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address })
-            const apr = el.apr > 0 ? <span style={{ color: '#33FF89' }}>{formatPercent(el.apr)}</span> : <span>-</span>
+            const apr = el.apr > 0 ? <span style={{ color: 'var(--green)' }}>{formatPercent(el.apr)}</span> : <span>-</span>
             const farming = el.farmingApr > 0 ?
                 <NavLink to={'/farming/infinite-farms'} className={'farming-link'} data-apr={el.farmingApr > 0}>
                     {formatPercent(el.farmingApr)}
@@ -76,10 +71,6 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                 : <span>-</span>
 
             return [
-                {
-                    title: i + 1,
-                    value: i + 1
-                },
                 {
                     title: pool,
                     value: el.address
@@ -116,7 +107,6 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
 
     return <Table gridClass={'grid-pools-table'} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
         <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={'grid-pools-table'}>
-            <span className={'table-header__item'}>#</span>
             <span className={'table-header__item'}>Pool</span>
             <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
             <span className={'table-header__item table-header__item--center'}>Volume 7D</span>

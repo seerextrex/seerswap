@@ -1,10 +1,8 @@
 import { Currency } from '@uniswap/sdk-core'
-import { ExtentsText } from './styleds'
 import { Trans } from '@lingui/macro'
 import { Pool } from '@uniswap/v3-sdk'
-import { LightCard } from '../../components/Card'
-import { AutoColumn } from '../../components/Column'
-import { TYPE } from 'theme'
+import Card from '../../shared/components/Card/Card'
+import AutoColumn from '../../shared/components/AutoColumn'
 
 interface CurrentPriceCardProps {
     inverted?: boolean
@@ -13,29 +11,22 @@ interface CurrentPriceCardProps {
     currencyBase?: Currency
 }
 
-export function CurrentPriceCard({
-    inverted,
-    pool,
-    currencyQuote,
-    currencyBase
-}: CurrentPriceCardProps) {
+export function CurrentPriceCard({ inverted, pool, currencyQuote, currencyBase }: CurrentPriceCardProps) {
     if (!pool || !currencyQuote || !currencyBase) return null
 
     return (
-        <LightCard padding='12px '>
-            <AutoColumn gap='8px' justify='center'>
-                <ExtentsText>
+        <Card isDark classes={'p-1 br-12'}>
+            <AutoColumn gap='1'>
+                <span className={'c-lg fs-095 ta-c'}>
                     <Trans>Current price</Trans>
-                </ExtentsText>
-                <TYPE.mediumHeader textAlign='center'>
+                </span>
+                <span className={'fs-125 ta-c'}>
                     {(inverted ? pool.token1Price : pool.token0Price).toSignificant(6)}{' '}
-                </TYPE.mediumHeader>
-                <ExtentsText>
-                    <Trans>
-                        {currencyQuote?.symbol} per {currencyBase?.symbol}
-                    </Trans>
-                </ExtentsText>
+                </span>
+                <span className={'c-lg fs-085 ta-c'}>
+                    <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
+                </span>
             </AutoColumn>
-        </LightCard>
+        </Card>
     )
 }

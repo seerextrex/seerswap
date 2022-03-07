@@ -164,8 +164,8 @@ export function StakerEventCard({
             {!eternal && (
                 <div className={'staker-event-card__progress w-100 br-8 p-025'}>
                     {active ?
-                        <div className={'br-8'} style={{ width: getProgress(startTime, endTime, now) }} /> :
-                        <div className={'br-8'} style={{ width: getProgress(Number(createdAtTimestamp), startTime, now) }} />
+                        <div className={'br-8'} style={{ width: `${getProgress(startTime, endTime, now)}%` }} /> :
+                        <div className={'br-8'} style={{ width: `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }} />
                     }
                 </div>
             )}

@@ -18,10 +18,6 @@ interface InfoTokensProps {
 
 const sortFields = [
     {
-        title: '#',
-        value: 'index'
-    },
-    {
         title: 'Name',
         value: 'name'
     },
@@ -63,10 +59,6 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
 
             return [
                 {
-                    title: i + 1,
-                    value: i + 1
-                },
-                {
                     title: token,
                     value: el.address
                 },
@@ -102,7 +94,6 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
             handleSort={handleSort}
             arrow={arrow}
         >
-            <span className={'table-header__item'}>#</span>
             <span className={'table-header__item'}>Name</span>
             <span className={'table-header__item table-header__item--center'}>Price</span>
             <span className={'table-header__item table-header__item--center'}>Price Change</span>

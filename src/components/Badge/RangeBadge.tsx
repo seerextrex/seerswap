@@ -26,13 +26,12 @@ const ActiveDot = styled.span`
   margin-right: 4px;
 `
 
-export default function RangeBadge({
-    removed,
-    inRange
-}: {
+interface RangeBadgeProps {
     removed: boolean | undefined
     inRange: boolean | undefined
-}) {
+}
+
+export default function RangeBadge({ removed, inRange }: RangeBadgeProps) {
     return (
         <BadgeWrapper>
             {removed ? (

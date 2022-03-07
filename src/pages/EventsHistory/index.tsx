@@ -4,6 +4,8 @@ import React, { useMemo, useState } from 'react'
 import { useHandleSort } from '../../hooks/useHandleSort'
 import { useHandleArrow } from '../../hooks/useHandleArrow'
 import './index.scss'
+import TokenReward from './TokenReward'
+import PoolReward from './PoolReward'
 
 const eventsHistory = [
     {
@@ -95,10 +97,6 @@ const eventsHistory = [
 
 const sortFields = [
     {
-        title: '#',
-        value: 'index'
-    },
-    {
         title: 'Pool',
         value: 'pool'
     },
@@ -126,9 +124,9 @@ const sortFields = [
 
 export default function EventsHistory() {
 
-    const [sortField, setSortField] = useState<string>('tvlUSD')
+    const [sortField, setSortField] = useState<string>('start')
     const [sortDirection, setSortDirection] = useState<boolean>(true)
-    const [sortIndex, setSortIndex] = useState<number>(4)
+    const [sortIndex, setSortIndex] = useState<number>(5)
 
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex)
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection)
@@ -137,19 +135,15 @@ export default function EventsHistory() {
         return eventsHistory.map((el, i) => {
             return [
                 {
-                    title: i + 1,
-                    value: i + 1
-                },
-                {
-                    title: el.pool.token1.symbol + '/' + el.pool.token0.symbol,
+                    title: <PoolReward pool={el.pool}/>,
                     value: el.pool.token1.address
                 },
                 {
-                    title: el.rewardToken.symbol,
+                    title: <TokenReward token={el.rewardToken} reward={el.reward}/>,
                     value: el.reward
                 },
                 {
-                    title: el.bonusRewardToken.symbol,
+                    title: <TokenReward token={el.bonusRewardToken} reward={el.bonusReward}/>,
                     value: el.bonusReward
                 },
                 {
@@ -157,11 +151,11 @@ export default function EventsHistory() {
                     value: el.participants
                 },
                 {
-                    title: el.apr,
+                    title: <span className={'c-g'}>{el.apr + '%'}</span>,
                     value: el.apr
                 },
                 {
-                    title: el.startStr + el.end,
+                    title: el.startStr + ' - ' + el.end,
                     value: el.start
                 }
             ]
@@ -172,7 +166,6 @@ export default function EventsHistory() {
         <div className={'w-100'}>
             <Table gridClass={'event-table'} sortDirection={sortDirection} sortField={sortField} sortIndex={sortIndex} data={data}>
                 <TableHeader gridClass={'event-table'} arrow={arrow} handleSort={handleSort} sortFields={sortFields}>
-                    <span className={'table-header__item'}>#</span>
                     <span className={'table-header__item'}>Pool</span>
                     <span className={'table-header__item table-header__item'}>Reward</span>
                     <span className={'table-header__item table-header__item'}>Bonus</span>

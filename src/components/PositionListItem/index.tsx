@@ -3,20 +3,20 @@ import { Position } from 'lib/src'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { usePool } from 'hooks/usePools'
 import { useToken } from 'hooks/Tokens'
-import { HideSmall, SmallOnly } from 'theme'
 import { Price, Token } from '@uniswap/sdk-core'
 import { formatTickPrice } from 'utils/formatTickPrice'
 import Loader from 'components/Loader'
 import { unwrappedToken } from 'utils/unwrappedToken'
-import HoverInlineText from 'components/HoverInlineText'
 import { USDC_POLYGON, USDT_POLYGON, WMATIC_EXTENDED } from '../../constants/tokens'
 import { Trans } from '@lingui/macro'
 import useIsTickAtLimit from 'hooks/useIsTickAtLimit'
 import { Bound } from 'state/mint/v3/actions'
 import { ArrowRight } from 'react-feather'
 import usePrevious from '../../hooks/usePrevious'
-import { DataText, DoubleArrow, ExtentsText, LinkRow, OnFarmingBadge, PositionHeader, PrimaryPositionIdData, RangeLineItem, RangeText, StatusBadge, StatusRow } from './styled'
 import { PositionPool } from '../../models/interfaces'
+import { NavLink } from 'react-router-dom'
+import Card from '../../shared/components/Card/Card'
+import RangeBadge from '../Badge/RangeBadge'
 
 interface PositionListItemProps {
     positionDetails: PositionPool;
@@ -140,66 +140,66 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     const removed = _liquidity?.eq(0)
 
     return (
-        <LinkRow to={positionSummaryLink}>
-            <PositionHeader>
-                <PrimaryPositionIdData>
-                    <DoubleCurrencyLogo
-                        currency0={currencyBase}
-                        currency1={currencyQuote}
-                        size={24}
-                        margin
-                    />
-                    <DataText>
-                        &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
-                    </DataText>
-                    &nbsp;
-                    {/* <Badge>
-            <BadgeText><Trans>{new Percent(feeAmount, 1_000_000).toSignificant()}%</Trans></BadgeText>
-          </Badge> */}
-                </PrimaryPositionIdData>
-                <StatusRow>
-                    {_onFarming && (
-                        <OnFarmingBadge to={farmingLink}>
-                            <span>Farming</span>
-                            <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
-                        </OnFarmingBadge>
-                    )}
-                    <StatusBadge removed={removed} inRange={!outOfRange} />
-                </StatusRow>
-            </PositionHeader>
+        <NavLink
+            className={'w-100'}
+            to={positionSummaryLink}>
+            <Card isDark={false} classes={'br-24 p-1 mv-05'}>
+                <div className={'f f-ac'}>
+                    <div className={'f f-ac'}>
+                        <DoubleCurrencyLogo
+                            currency0={currencyBase}
+                            currency1={currencyQuote}
+                            size={24}
+                            margin
+                        />
+                        <div className={'b fs-125 mh-05 c-w'}>
+                            &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
+                        </div>
+                        &nbsp;
+                    </div>
+                    <div className={'flex-s-between w-100'}>
+                        {_onFarming && (
+                            <NavLink className={'flex-s-between c-w bg-p fs-085 p-025 br-8'} to={farmingLink}>
+                                <span>Farming</span>
+                                <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
+                            </NavLink>
+                        )}
+                        <RangeBadge removed={removed} inRange={!outOfRange} />
+                    </div>
+                </div>
 
-            {priceLower && priceUpper ? (
-                <RangeLineItem>
-                    <RangeText>
-                        <ExtentsText>
-                            <Trans>Min: </Trans>
-                        </ExtentsText>
-                        <Trans>
-                            {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)}{' '}
-                            <HoverInlineText text={currencyQuote?.symbol} /> per{' '}
-                            <HoverInlineText text={currencyBase?.symbol ?? ''} />
-                        </Trans>
-                    </RangeText>{' '}
-                    <HideSmall>
-                        <DoubleArrow>⟷</DoubleArrow>{' '}
-                    </HideSmall>
-                    <SmallOnly>
-                        <DoubleArrow>⟷</DoubleArrow>{' '}
-                    </SmallOnly>
-                    <RangeText>
-                        <ExtentsText>
-                            <Trans>Max:</Trans>
-                        </ExtentsText>
-                        <Trans>
-                            {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}{' '}
-                            <HoverInlineText text={currencyQuote?.symbol} /> per{' '}
-                            <HoverInlineText maxCharacters={10} text={currencyBase?.symbol} />
-                        </Trans>
-                    </RangeText>
-                </RangeLineItem>
-            ) : (
-                <Loader />
-            )}
-        </LinkRow>
+                {priceLower && priceUpper ? (
+                    <div className={'f f-ac fs-085 mt-025 c-w mt-05'}>
+                        <div className={'f'}>
+                            <div className={'mr-025'}>
+                                <Trans>Min:</Trans>
+                            </div>
+                            <Trans>
+                                {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)}
+                                <span className={'ml-025 mr-025'}>{currencyQuote?.symbol}</span>
+                                <span>per</span>
+                                <span className={'ml-025 mr-025'}>{currencyBase?.symbol}</span>
+                            </Trans>
+                        </div>
+                        <div className={'mh-025'}>⟷</div>
+                        <div className={'f'}>
+                            <span className={'mh-025'}>
+                                <Trans>Max:</Trans>
+                            </span>
+                            <Trans>
+                                {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}
+                                <span className={'ml-025 mr-025'}>{currencyQuote?.symbol}</span>
+                                <span>per</span>
+                                <span className={'ml-025 mr-025'}>{currencyBase?.symbol}</span>
+                            </Trans>
+                        </div>
+                    </div>
+                ) : (
+                   <div className={'f c f-ac f-jc w-100'}>
+                       <Loader size={'1rem'} stroke={'var(--white)'}/>
+                   </div>
+                )}
+            </Card>
+        </NavLink>
     )
 }

@@ -253,9 +253,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                         )}
                                                                         <div className={'my-stakes__position-card__body__event-progress w-100 br-8 p-025 mt-05'}>
                                                                             {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
-                                                                                <div className={'br-8'} style={{ width: getProgress(el.createdAtTimestamp, el.incentiveStartTime, now) }} />
+                                                                                <div className={'br-8'} style={{ width: `${getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}%` }} />
                                                                             ) : (
-                                                                                <div className={'br-8'} style={{ width: getProgress(el.incentiveStartTime, el.incentiveEndTime, now) }} />
+                                                                                <div className={'br-8'} style={{ width: `${getProgress(el.incentiveStartTime, el.incentiveEndTime, now)}%` }} />
                                                                             )}
                                                                         </div>
                                                                     </div>

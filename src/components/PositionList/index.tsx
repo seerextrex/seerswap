@@ -1,7 +1,6 @@
 import PositionListItem from 'components/PositionListItem'
 import React, { useMemo } from 'react'
 import { Trans } from '@lingui/macro'
-import { DesktopHeader, MobileHeader } from './styled'
 import { PositionPool } from '../../models/interfaces'
 
 type PositionListProps = React.PropsWithChildren<{
@@ -27,18 +26,13 @@ export default function PositionList({ positions }: PositionListProps) {
 
     return (
         <>
-            <DesktopHeader>
+            <div className={'flex-s-between w-100'}>
                 <div>
                     <Trans>Your positions</Trans>
                     {positions && ' (' + positions.length + ')'}
                 </div>
-                <div>
-                    <Trans>Status</Trans>
-                </div>
-            </DesktopHeader>
-            <MobileHeader>
-                <Trans>Your positions</Trans>
-            </MobileHeader>
+                <Trans>Status</Trans>
+            </div>
             {_positionsOnFarming.map((p) => {
                 return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />
             })}

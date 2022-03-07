@@ -300,11 +300,7 @@ const ButtonErrorStyle = styled(Base)`
     }
 `
 
-export function ButtonConfirmed({
-    confirmed,
-    altDisabledStyle,
-    ...rest
-}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
+export function ButtonConfirmed({ confirmed, altDisabledStyle, ...rest }: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
     if (confirmed) {
         return <ButtonConfirmedStyle {...rest} />
     } else {

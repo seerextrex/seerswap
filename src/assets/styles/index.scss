@@ -45,8 +45,14 @@ body {
   }
 }
 
-.w-100 {
-  width: 100%;
+.w {
+  &-fc {
+    width: fit-content;
+  }
+
+  &-100 {
+    width: 100%;
+  }
 }
 
 .rg {

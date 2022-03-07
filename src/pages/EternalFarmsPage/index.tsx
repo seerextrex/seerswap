@@ -31,12 +31,12 @@ export default function EternalFarmsPage({ data, refreshing, fetchHandler }: {
             </Modal>
             {refreshing ? (
                 <div className={'eternal-page__loader'}>
-                    <Loader stroke='white' size='20px' />
+                    <Loader stroke='white' size='1.5rem' />
                 </div>
             ) : !data || data.length === 0 ? (
                 <div className={'eternal-page__loader'}>
                     <div>No infinite farms</div>
-                    <Frown size={35} stroke={'white'} />
+                    <Frown size={'2rem'} stroke={'white'} />
                 </div>
             ) : !refreshing && data.length !== 0 ? (
                 <div className={'eternal-page__row mb-1 w-100'}>

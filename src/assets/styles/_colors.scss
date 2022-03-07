@@ -11,6 +11,7 @@
   --dark-gray: #171E24;
   --red: #F55755;
   --mirage: #192732;
+  --green: #33FF89;
 }
 
 .c {
@@ -61,11 +62,19 @@
   &-m {
     color: var(--mirage);
   }
+
+  &-g {
+    color: var(--green);
+  }
 }
 
 .bg {
   &-t {
     background: transparent;
+  }
+
+  &-p {
+    background-color: var(--primary);
   }
 
   &-l {

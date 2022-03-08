@@ -35,11 +35,9 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
     background-color: var(--ebony-clay);
     border: 1px solid var(--ebony-clay);
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
-    padding: .1rem;
     width: 60vw;
     overflow-y: auto;
     overflow-x: hidden;
-    color: #080064;
 
     align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
 

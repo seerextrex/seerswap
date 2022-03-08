@@ -8,11 +8,8 @@ import { NavLink, RouteComponentProps, useLocation } from 'react-router-dom'
 import { unwrappedToken } from 'utils/unwrappedToken'
 import { calculateGasMargin } from '../../utils/calculateGasMargin'
 import AutoColumn from 'shared/components/AutoColumn'
-import { RowBetween, RowFixed } from 'components/Row'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { TYPE } from 'theme'
 import Badge from 'components/Badge'
-import { ButtonPrimary } from 'components/Button'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Trans } from '@lingui/macro'
 import { currencyId } from 'utils/currencyId'
@@ -278,7 +275,7 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                         </div>
                         <span className={'c-w'}>{feeValueUpper?.currency?.symbol}</span>
                     </div>
-                    <div className={'flex-s-between mb-1'}>
+                    <div className={'flex-s-between'}>
                         <div className={'f f-ac'}>
                             <CurrencyLogo currency={feeValueLower?.currency as WrappedCurrency} size={'24px'} />
                             <span className={'c-w ml-05'}>{feeValueLower ? formatCurrencyAmount(feeValueLower, 4) : '-'}</span>
@@ -394,11 +391,11 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                                         <div className={'flex-s-between'}>
                                             <LinkedCurrency chainId={chainId} currency={currencyBase} />
                                             <div className={'f f-ac'}>
-                                    <span>
-                                        {inverted
-                                            ? formatCurrencyAmount(position?.amount1, 4)
-                                            : formatCurrencyAmount(position?.amount0, 4)}
-                                    </span>
+                                                <span>
+                                                    {inverted
+                                                        ? formatCurrencyAmount(position?.amount1, 4)
+                                                        : formatCurrencyAmount(position?.amount0, 4)}
+                                                </span>
                                                 {typeof ratio === 'number' && !removed ?
                                                     <Badge className={'ml-05 fs-075'}>
                                                         <Trans>{inverted ? 100 - ratio : ratio}%</Trans>
@@ -410,18 +407,18 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                                 </Card>
                                 <Card isDark={false} classes={'p-1 br-12'}>
                                     <div className={'f c mb-05'}>
-                            <span className={'b mb-05'}>
-                                <Trans>Unclaimed fees</Trans>
-                            </span>
+                                        <span className={'b mb-05'}>
+                                            <Trans>Unclaimed fees</Trans>
+                                        </span>
                                         <div className={'flex-s-between'}>
                                             {_fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
                                                 <span className={'fs-2'}>
-                                    <Trans>${_fiatValueOfFees.toFixed(2, { groupSeparator: ',' })}</Trans>
-                                </span>
+                                                    <Trans>${_fiatValueOfFees.toFixed(2, { groupSeparator: ',' })}</Trans>
+                                                </span>
                                             ) : (
                                                 <span className={'fs-2'}>
-                                    <Trans>$-</Trans>
-                                </span>
+                                                    <Trans>$-</Trans>
+                                                </span>
                                             )}
                                             {(ownsNFT || isOnFarming) &&
                                             (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0) || !!collectMigrationHash) ? (
@@ -432,16 +429,16 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                                                 >
                                                     {!!collectMigrationHash && !isCollectPending ? (
                                                         <span>
-                                            <Trans> Collected</Trans>
-                                        </span>
+                                                            <Trans> Collected</Trans>
+                                                        </span>
                                                     ) : isCollectPending || collecting ? (
                                                         <Dots>
                                                             <Trans>Collecting</Trans>
                                                         </Dots>
                                                     ) : (
                                                         <span>
-                                            <Trans>Collect fees</Trans>
-                                        </span>
+                                                            <Trans>Collect fees</Trans>
+                                                        </span>
                                                     )}
                                                 </button>
                                             ) : null}
@@ -450,38 +447,28 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                                     <Card isDark classes={'p-1 br-12'}>
                                         <div className={'flex-s-between mb-1'}>
                                             <div className={'f f-ac'}>
-                                                <CurrencyLogo
-                                                    currency={feeValueUpper?.currency as WrappedCurrency}
-                                                    size={'24px'}
-                                                />
+                                                <CurrencyLogo currency={feeValueUpper?.currency as WrappedCurrency} size={'24px'} />
                                                 <span className={'ml-05'}>{feeValueUpper?.currency?.symbol}</span>
                                             </div>
                                             <span>{feeValueUpper ? formatCurrencyAmount(feeValueUpper, 4) : '-'}</span>
                                         </div>
                                         <div className={'flex-s-between'}>
                                             <div className={'f f-ac'}>
-                                                <CurrencyLogo
-                                                    currency={feeValueLower?.currency as WrappedCurrency}
-                                                    size={'24px'}
-                                                />
+                                                <CurrencyLogo currency={feeValueLower?.currency as WrappedCurrency} size={'24px'} />
                                                 <span className={'ml-05'}>{feeValueLower?.currency?.symbol}</span>
                                             </div>
                                             <span>{feeValueLower ? formatCurrencyAmount(feeValueLower, 4) : '-'}</span>
                                         </div>
                                     </Card>
                                     {showCollectAsWeth && (
-                                        <AutoColumn gap='1'>
-                                            <RowBetween>
-                                                <TYPE.main>
-                                                    <Trans>Collect as WMATIC</Trans>
-                                                </TYPE.main>
-                                                <Toggle
-                                                    id='receive-as-weth'
-                                                    isActive={receiveWETH}
-                                                    toggle={() => setReceiveWETH((receiveWETH) => !receiveWETH)}
-                                                />
-                                            </RowBetween>
-                                        </AutoColumn>
+                                        <div className={'flex-s-between mt-075'}>
+                                            <Trans>Collect as WMATIC</Trans>
+                                            <Toggle
+                                                id='receive-as-weth'
+                                                isActive={receiveWETH}
+                                                toggle={() => setReceiveWETH((receiveWETH) => !receiveWETH)}
+                                            />
+                                        </div>
                                     )}
                                 </Card>
                                 <Card isDark={false} classes={'p-1 br-12'}>

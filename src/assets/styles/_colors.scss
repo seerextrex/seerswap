@@ -77,6 +77,14 @@
     background-color: var(--primary);
   }
 
+  &-lg {
+    background-color: var(--light-gray);
+  }
+
+  &-dg {
+    background-color: var(--dark-gray);
+  }
+
   &-l {
     &-pl {
       background: linear-gradient(90deg, var(--primary-weak) 0%, var(--primary) 100%)

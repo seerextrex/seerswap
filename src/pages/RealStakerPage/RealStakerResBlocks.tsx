@@ -35,8 +35,9 @@ export default function RealStakerResBlocks({ title, amount, currency, action, h
                     </div>}
             </div>
             {isFull && !(formatEther(amount) < formatEther(algbCourse)) ?
-                <AmountTitle
-                    title={`${formatEther(amount)}`}>{formatEther(amount)}</AmountTitle> : null}
+                <AmountTitle title={`${formatEther(amount)}`}>
+                    {formatEther(amount)}
+                </AmountTitle> : null}
             <h3 onMouseEnter={() => {
                 setIsFull(true)
             }}

@@ -324,6 +324,10 @@
       margin-top: 0.5rem;
     }
 
+    &-075 {
+      margin-top: 0.75rem;
+    }
+
     &-1 {
       margin-top: 1rem;
     }
@@ -402,5 +406,57 @@
 .fw {
   &-b {
     font-weight: 600;
+  }
+}
+
+.pos {
+  &-a {
+    position: absolute;
+  }
+  
+  &-r {
+    position: relative;
+  }
+}
+
+.t {
+  &-m1 {
+    top: -1rem;
+  }
+
+  &-m2 {
+    top: -2rem;
+  }
+
+  &-m3 {
+    top: -3rem;
+  }
+
+  &-m4 {
+    top: -4rem;
+  }
+
+  &-m5 {
+    top: -5rem;
+  }
+
+  &-m6 {
+    top: -6rem;
+  }
+}
+
+.r {
+  &-05 {
+    right: 0.5rem;
+  }
+}
+
+.z {
+  &-10 {
+    z-index: 10;
+  }
+
+  &-100 {
+    z-index: 100;
   }
 }

@@ -13,12 +13,13 @@
       color: var(--primary);
     }
   }
+
   &__refresh {
     background-color: transparent;
     border: none;
     cursor: pointer;
 
-    &[data-refreshing=true]{
+    &[data-refreshing=true] {
       animation: spin infinite 3s;
     }
 
@@ -31,6 +32,8 @@
 
 @media screen and (max-width: 500px) {
   .menu-wrapper {
-  overflow-x: auto;
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow-y: hidden;
   }
 }

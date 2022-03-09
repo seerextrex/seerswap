@@ -43,3 +43,12 @@
   border-radius: 5px;
   background-color: var(--primary-disabled);
 }
+
+
+
+@media screen and (max-width: 720px) {
+  .pools-table-wrapper {
+    overflow: scroll;
+    min-width: 800px;
+  }
+}

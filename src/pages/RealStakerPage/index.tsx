@@ -295,8 +295,8 @@ export default function RealStakerPage({}) {
                         </>
                     )}
             </div>
-            <div className={'earned-wrapper br-24'}>
-                <h2 className={'earned-wrapper__title mb-1'}>
+            <div className={'earned-wrapper p-2 mv-2 br-24 ms_p-1'}>
+                <h2 className={'earned-wrapper__title mb-1 '}>
                     <LeftBlock>
                         <h3>Balance</h3>
                     </LeftBlock>
@@ -319,7 +319,7 @@ export default function RealStakerPage({}) {
                     {showFrozen && frozenStaked.length !== 0 && typeof frozenStaked !== 'string' && frozenStaked.some(el => +Math.floor(+el.timestamp * 1000) > now()) ?
                         <FrozenModal data={frozenStaked} earnedFreeze={earnedFreezeArr} now={now} /> : null}
                 </h2>
-                <div className={'flex-s-between'}>
+                <div className={'flex-s-between rg-1 mxs_fd-c'}>
                     <RealStakerResBlocks
                         action={'Claim'}
                         currency={fiatValueEarned}
@@ -346,7 +346,7 @@ export default function RealStakerPage({}) {
                     <span className={'pv-05 ph-1'}>1 xALGB = {algbCourseShow.toFixed(2)} ALGB</span>
                 </div>
             </div>
-            <NavLink className={'statistic-wrapper'} to={'staking/analytics'}>
+            <NavLink className={'statistic-wrapper w-100'} to={'staking/analytics'}>
                 <div>
                     <h2 className={'ml-05'}>Statistics</h2>
                     <p className={'mt-05 ml-05'}>Minted / Staked Amount / Total Supply →</p>

@@ -87,18 +87,24 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                 <Loader stroke={'white'} size={'25px'} />
             </div>
         )
-    return <Table gridClass={'grid-tokens-table'} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data}>
-        <TableHeader
-            gridClass={'grid-tokens-table'}
-            sortFields={sortFields}
-            handleSort={handleSort}
-            arrow={arrow}
-        >
-            <span className={'table-header__item'}>Name</span>
-            <span className={'table-header__item table-header__item--center'}>Price</span>
-            <span className={'table-header__item table-header__item--center'}>Price Change</span>
-            <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
-            <span className={'table-header__item table-header__item--center'}>TVL</span>
-        </TableHeader>
-    </Table>
+    return (
+        <div style={{overflow: 'overlay'}}>
+            <div className={'tokens-table-wrapper'}>
+                <Table gridClass={'grid-tokens-table'} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data}>
+                    <TableHeader
+                        gridClass={'grid-tokens-table'}
+                        sortFields={sortFields}
+                        handleSort={handleSort}
+                        arrow={arrow}
+                    >
+                        <span className={'table-header__item'}>Name</span>
+                        <span className={'table-header__item table-header__item--center'}>Price</span>
+                        <span className={'table-header__item table-header__item--center'}>Price Change</span>
+                        <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
+                        <span className={'table-header__item table-header__item--center'}>TVL</span>
+                    </TableHeader>
+                </Table>
+            </div>
+        </div>
+    )
 }

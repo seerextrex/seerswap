@@ -118,6 +118,10 @@
         &-3 {
           padding-bottom: 3rem;
         }
+
+        &-4 {
+          padding-bottom: 4rem;
+        }
       }
 
       &l {
@@ -216,6 +220,7 @@
       &-a {
         margin: auto;
       }
+
       &v {
         &-025 {
           margin-top: .25rem;
@@ -482,6 +487,10 @@
         &-3 {
           padding-bottom: 3rem;
         }
+
+        &-4 {
+          padding-bottom: 4rem;
+        }
       }
 
       &l {
@@ -580,6 +589,7 @@
       &-a {
         margin: auto;
       }
+
       &v {
         &-025 {
           margin-top: .25rem;
@@ -846,6 +856,7 @@
         &-3 {
           padding-bottom: 3rem;
         }
+
         &-4 {
           padding-bottom: 4rem;
         }
@@ -944,9 +955,13 @@
     }
 
     &_m {
+      &-0 {
+        margin: 0 !important;
+      }
       &-a {
         margin: auto;
       }
+
       &v {
         &-025 {
           margin-top: .25rem;
@@ -1147,8 +1162,15 @@
       &-jb {
         justify-content: space-between;
       }
+
       &-js {
         justify-content: start;
+      }
+    }
+
+    &_w {
+      &-100 {
+        width: 100%;
       }
     }
   }

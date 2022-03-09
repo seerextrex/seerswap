@@ -71,7 +71,7 @@ export default function StakingPage() {
             <Helmet>
                 <title>Algebra — Farming</title>
             </Helmet>
-            <Card isDark classes={'br-24 p-2 mxs_p-1'}>
+            <Card isDark classes={'br-24 p-2 mm_p-1'}>
                 <Menu
                     items={stakingMenuList}
                     classes={'fs-125 mb-1'}

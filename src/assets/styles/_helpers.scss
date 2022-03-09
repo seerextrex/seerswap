@@ -23,6 +23,15 @@
   justify-content: space-between;
 }
 
+.o{
+  &-h{
+    overflow: hidden;
+  }
+  &-a{
+    overflow: auto;
+  }
+}
+
 .p {
   &-0 {
     padding: 0;

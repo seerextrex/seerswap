@@ -76,7 +76,7 @@ export default function App() {
                             <h2>Network ERROR</h2>
                         </InternetError>
                     )}
-                    <div className={'mxs_pb-4'} style={{ zIndex: 2 }}>
+                    <div className={'mm_pb-4'} style={{ zIndex: 2 }}>
                         {networkFailed && (
                             <NetworkFailedCard>
                                 <div style={{ marginBottom: '1rem', fontWeight: 600 }}>Polygon

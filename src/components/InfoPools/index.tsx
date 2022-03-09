@@ -105,14 +105,20 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             </div>
         )
 
-    return <Table gridClass={'grid-pools-table'} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
-        <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={'grid-pools-table'}>
-            <span className={'table-header__item'}>Pool</span>
-            <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
-            <span className={'table-header__item table-header__item--center'}>Volume 7D</span>
-            <span className={'table-header__item table-header__item--center'}>TVL</span>
-            <span className={'table-header__item table-header__item--center'}><Apr /></span>
-            <span className={'table-header__item table-header__item--center'}>🔥 Farming</span>
-        </TableHeader>
-    </Table>
+    return (
+        <div style={{overflow: "overlay"}}>
+            <div className={'w-100 pools-table-wrapper'}>
+                <Table gridClass={'grid-pools-table'} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
+                    <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={'grid-pools-table'}>
+                        <span className={'table-header__item'}>Pool</span>
+                        <span className={'table-header__item table-header__item--center'}>Volume 24H</span>
+                        <span className={'table-header__item table-header__item--center'}>Volume 7D</span>
+                        <span className={'table-header__item table-header__item--center'}>TVL</span>
+                        <span className={'table-header__item table-header__item--center'}><Apr /></span>
+                        <span className={'table-header__item table-header__item--center'}>🔥 Farming</span>
+                    </TableHeader>
+                </Table>
+            </div>
+        </div>
+    )
 }

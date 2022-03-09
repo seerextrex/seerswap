@@ -65,7 +65,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address })
             const apr = el.apr > 0 ? <span style={{ color: 'var(--green)' }}>{formatPercent(el.apr)}</span> : <span>-</span>
             const farming = el.farmingApr > 0 ?
-                <NavLink to={'/farming/infinite-farms'} className={'farming-link'} data-apr={el.farmingApr > 0}>
+                <NavLink to={`/farming/${el.aprType ? 'limit-farms' : 'infinite-farms'}`} className={'farming-link'} data-apr={el.farmingApr > 0}>
                     {formatPercent(el.farmingApr)}
                 </NavLink>
                 : <span>-</span>

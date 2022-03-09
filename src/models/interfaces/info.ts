@@ -6,10 +6,8 @@ import { FarmingType } from "models/enums"
 export interface FormattedPool {
     address: string
     apr: number
-    farmingApr: {
-        type: FarmingType,
-        value: number
-    }
+    farmingApr: number
+    aprType: FarmingType
     exists: boolean
     fee: string
     token0: TokenSubgraph

@@ -183,7 +183,7 @@ export function useInfoSubgraph() {
                 const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0
                 const limitApr = _limitAprs[address] ? 300 : 0
 
-                const maxApr = farmingApr > limitApr ? FarmingType.ETERNAL : FarmingType.FINITE
+                const aprType = farmingApr > limitApr ? FarmingType.ETERNAL : FarmingType.FINITE
 
                 accum[address] = {
                     token0: current.token0,
@@ -198,10 +198,8 @@ export function useInfoSubgraph() {
                     tvlUSDChange,
                     totalValueLockedUSD: current[manageUntrackedTVL],
                     apr: aprPercent,
-                    farmingApr: {
-                        type: maxApr,
-                        value: Math.max(farmingApr, limitApr)
-                    }
+                    farmingApr: Math.max(farmingApr, limitApr),
+                    aprType
                 }
                 return accum
             }, {})

@@ -67,57 +67,57 @@ function TransactionSubmittedContent({ onDismiss, chainId, hash, currencyToAdd, 
     const { addToken, success } = useAddTokenToMetamask(currencyToAdd)
 
     return (
-        <div >
-                {!inline && (
-                    <RowBetween>
-                        <div />
-                        <CloseIcon onClick={onDismiss} />
-                    </RowBetween>
-                )}
-                <ConfirmedIcon inline={inline}>
-                    <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'}
-                                   color={theme.winterMainButton} />
-                </ConfirmedIcon>
-                <AutoColumn gap='12px' justify={'center'}>
-                    <Text fontWeight={500} fontSize={20} textAlign='center'>
-                        <Trans>Transaction Submitted</Trans>
-                    </Text>
-                    {chainId && hash && (
-                        <ExternalLink
-                            href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
-                            <Text fontWeight={500} fontSize={14} color={theme.winterMainButton}>
-                                <Trans>View on Explorer</Trans>
-                            </Text>
-                        </ExternalLink>
-                    )}
-                    {currencyToAdd && library?.provider?.isMetaMask && (
-                        <ButtonLight mt='12px' padding='6px 12px' width='fit-content'
-                                     onClick={addToken}>
-                            {!success ? (
-                                <RowFixed>
-                                    <Trans>
-                                        Add {currencyToAdd.symbol} to Metamask <StyledLogo
-                                        src={MetaMaskLogo} />
-                                    </Trans>
-                                </RowFixed>
-                            ) : (
-                                <RowFixed>
-                                    <Trans>Added {currencyToAdd.symbol} </Trans>
-                                    <CheckCircle size={'16px'} stroke={theme.green1}
-                                                 style={{ marginLeft: '6px' }} />
-                                </RowFixed>
-                            )}
-                        </ButtonLight>
-                    )}
-                    <ButtonPrimary
-                        onClick={onDismiss}
-                        style={{ margin: '20px 0 0 0', color: 'white' }}
-                    >
-                        <Text fontWeight={500} fontSize={20}>
-                            {inline ? <Trans>Return</Trans> : <Trans>Close</Trans>}
+        <div>
+            {!inline && (
+                <RowBetween>
+                    <div />
+                    <CloseIcon onClick={onDismiss} />
+                </RowBetween>
+            )}
+            <ConfirmedIcon inline={inline}>
+                <ArrowUpCircle strokeWidth={0.5} size={inline ? '40px' : '90px'}
+                               color={theme.winterMainButton} />
+            </ConfirmedIcon>
+            <AutoColumn gap='12px' justify={'center'}>
+                <Text fontWeight={500} fontSize={20} textAlign='center'>
+                    <Trans>Transaction Submitted</Trans>
+                </Text>
+                {chainId && hash && (
+                    <ExternalLink
+                        href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
+                        <Text fontWeight={500} fontSize={14} color={theme.winterMainButton}>
+                            <Trans>View on Explorer</Trans>
                         </Text>
-                    </ButtonPrimary>
-                </AutoColumn>
+                    </ExternalLink>
+                )}
+                {currencyToAdd && library?.provider?.isMetaMask && (
+                    <ButtonLight mt='12px' padding='6px 12px' width='fit-content'
+                                 onClick={addToken}>
+                        {!success ? (
+                            <RowFixed>
+                                <Trans>
+                                    Add {currencyToAdd.symbol} to Metamask <StyledLogo
+                                    src={MetaMaskLogo} />
+                                </Trans>
+                            </RowFixed>
+                        ) : (
+                            <RowFixed>
+                                <Trans>Added {currencyToAdd.symbol} </Trans>
+                                <CheckCircle size={'16px'} stroke={theme.green1}
+                                             style={{ marginLeft: '6px' }} />
+                            </RowFixed>
+                        )}
+                    </ButtonLight>
+                )}
+                <ButtonPrimary
+                    onClick={onDismiss}
+                    style={{ margin: '20px 0 0 0', color: 'white' }}
+                >
+                    <Text fontWeight={500} fontSize={20}>
+                        {inline ? <Trans>Return</Trans> : <Trans>Close</Trans>}
+                    </Text>
+                </ButtonPrimary>
+            </AutoColumn>
         </div>
     )
 }
@@ -131,18 +131,14 @@ interface ConfirmationModalContentProps {
 
 export function ConfirmationModalContent({ title, bottomContent, onDismiss, topContent }: ConfirmationModalContentProps) {
     return (
-        <Wrapper>
-            <Section>
-                <RowBetween>
-                    <Text fontWeight={500} fontSize={16}>
-                        {title}
-                    </Text>
-                    <CloseIcon onClick={onDismiss} />
-                </RowBetween>
-                {topContent()}
-            </Section>
+        <div className={'w-100'}>
+            <div className={'flex-s-between'}>
+                {title}
+                <CloseIcon onClick={onDismiss} />
+            </div>
+            {topContent()}
             {bottomContent && <BottomSection gap='12px'>{bottomContent()}</BottomSection>}
-        </Wrapper>
+        </div>
     )
 }
 

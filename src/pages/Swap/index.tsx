@@ -5,18 +5,18 @@ import { AdvancedSwapDetails } from 'components/swap/AdvancedSwapDetails'
 import { MouseoverTooltip, MouseoverTooltipContent } from 'components/Tooltip'
 import JSBI from 'jsbi'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown, CheckCircle, HelpCircle } from 'react-feather'
+import { ArrowDown, CheckCircle, HelpCircle, Info } from 'react-feather'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'
 import AddressInputPanel from '../../components/AddressInputPanel'
-import { ButtonConfirmed, ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
+import { ButtonConfirmed, ButtonError } from '../../components/Button'
 import { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import Loader from '../../components/Loader'
-import Row, { AutoRow, RowFixed } from '../../components/Row'
+import Row, { AutoRow } from '../../components/Row'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import { ArrowWrapper, Dots, SwapCallbackError } from '../../components/swap/styled'
@@ -45,10 +45,9 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { warningSeverity } from '../../utils/prices'
 import { Helmet } from 'react-helmet'
 import ReactGA from 'react-ga'
-import { ContestBanner, ContestBannerTitle, ContestBannerTitleIphone, ContestIMG, StyledInfo, WrappedAppBody } from './styled'
 import { WrappedCurrency } from '../../models/types'
-import AppBody from '../AppBody'
 import Card from '../../shared/components/Card/Card'
+import './index.scss'
 
 export default function Swap({ history }: RouteComponentProps) {
     const { account } = useActiveWeb3React()
@@ -339,7 +338,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 onConfirm={handleConfirmTokenWarning}
                 onDismiss={handleDismissTokenWarning}
             />
-            <WrappedAppBody>
+            <div className={'maw-610 mh-a pos-r swap'}>
                 {/* <ContestBanner to={"/farming/limit-farms"}>
                     <div style={{ width: "100%" }}>
                         <ContestIMG></ContestIMG>
@@ -368,13 +367,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         />
 
                         <AutoColumn gap={'md'}>
-                            <div
-                                style={{
-                                    padding: '5px',
-                                    backgroundColor: 'rgba(60,97,126,0.5)',
-                                    borderRadius: '14px'
-                                }}
-                            >
+                            <Card isDark={false} classes={'p-1 br-12'}>
                                 <CurrencyInputPanel
                                     label={independentField === Field.OUTPUT && !showWrap ? <Trans>From (at most)</Trans> : <Trans>From</Trans>}
                                     value={formattedAmounts[Field.INPUT]}
@@ -434,8 +427,8 @@ export default function Swap({ history }: RouteComponentProps) {
                                     shallow={false}
                                     swap
                                 />
-                            </div>
-                            <div style={{ minHeight: '26px' }}>
+                            </Card>
+                            <div>
                                 {recipient !== null && !showWrap ? (
                                     <>
                                         <AutoRow justify='space-between' style={{ padding: '0 1rem' }}>
@@ -453,7 +446,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                 {showWrap ? null : (
                                     <Row style={{ justifyContent: !trade ? 'center' : 'space-between' }}>
                                         {trade ? (
-                                            <RowFixed>
+                                            <div className={'flex-s-between'}>
                                                 <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
                                                 <MouseoverTooltipContent
                                                     //@ts-ignore
@@ -465,22 +458,22 @@ export default function Swap({ history }: RouteComponentProps) {
                                                     }}
                                                     content={<AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />}
                                                 >
-                                                    <StyledInfo />
+                                                    <Info size={'1rem'} stroke={'var(--primary)'} />
                                                 </MouseoverTooltipContent>
-                                            </RowFixed>
+                                            </div>
                                         ) : null}
                                     </Row>
                                 )}
                             </div>
                             <div>
                                 {!account ? (
-                                    <ButtonLight onClick={toggleWalletModal}>
+                                    <button className={'btn primary w-100 pv-1 b'} onClick={toggleWalletModal}>
                                         <Trans>Connect Wallet</Trans>
-                                    </ButtonLight>
+                                    </button>
                                 ) : showWrap ? (
-                                    <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
+                                    <button className={'btn primary w-100 pv-1 b'} disabled={Boolean(wrapInputError)} onClick={onWrap}>
                                         {wrapInputError ?? (wrapType === WrapType.WRAP ? <Trans>Wrap</Trans> : wrapType === WrapType.UNWRAP ? <Trans>Unwrap</Trans> : null)}
-                                    </ButtonPrimary>
+                                    </button>
                                 ) : routeNotFound && userHasSpecifiedInputOutput ? (
                                     <GreyCard
                                         style={{
@@ -637,7 +630,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         </AutoColumn>
                     </div>
                 </Card>
-            </WrappedAppBody>
+            </div>
             <SwitchLocaleLink />
         </>
     )

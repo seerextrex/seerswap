@@ -49,3 +49,41 @@
     right: 1rem;
   }
 }
+
+@media screen and (max-width: 960px) {
+
+  .header {
+    &__links {
+      position: fixed;
+      bottom: 1rem;
+      transform: translateX(-50%);
+      left: 50%;
+      flex-direction: row;
+      justify-content: space-between;
+      justify-self: center;
+      z-index: 99;
+      margin: 0 auto;
+      background-color: var(--primary-weak);
+      padding: .4rem 1rem;
+      border-radius: 12px;
+      width: 95%;
+      overflow-x: scroll;
+
+      &__link {
+        padding: .5rem 0;
+        &--active {
+          background-color: var(--primary-disabled);
+        }
+      }
+    }
+  }
+
+}
+
+@media screen and (max-width: 720px) {
+
+}
+
+@media screen and (max-width: 500px) {
+
+}

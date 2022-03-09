@@ -62,16 +62,16 @@ export default function StakingPage() {
     useEffect(() => {
         const timeNow = setInterval(() => setNow(Date.now()), 1000);
         return () => {
-            clearInterval(timeNow);
-        };
-    }, []);
+            clearInterval(timeNow)
+        }
+    }, [])
 
     return (
         <>
             <Helmet>
                 <title>Algebra — Farming</title>
             </Helmet>
-            <Card isDark classes={'br-24 p-2'}>
+            <Card isDark classes={'br-24 p-2 mm_p-1'}>
                 <Menu
                     items={stakingMenuList}
                     classes={'fs-125 mb-1'}

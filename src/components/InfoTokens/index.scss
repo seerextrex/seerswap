@@ -28,3 +28,10 @@
   }
 
 }
+
+@media screen and (max-width: 720px) {
+  .tokens-table-wrapper {
+    overflow: scroll;
+    min-width: 700px;
+  }
+}

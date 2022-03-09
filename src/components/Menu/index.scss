@@ -18,7 +18,7 @@
     border: none;
     cursor: pointer;
 
-    &[data-refreshing=true]{
+    &[data-refreshing=true] {
       animation: spin infinite 3s;
     }
 
@@ -26,5 +26,13 @@
       opacity: 0.5;
       cursor: default;
     }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .menu-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow-y: hidden;
   }
 }

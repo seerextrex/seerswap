@@ -37,7 +37,7 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
     align-items: center;
     font-size: 24px;
     font-weight: 500;
-    background-color: ${({ selected, theme }) => (selected ? '#759FE3' : theme.winterMainButton)};
+    background-color: var(--dark-ebony-clay);
     color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     border-radius: 16px;
     box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
@@ -47,15 +47,14 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
     border: none;
     height: ${({ hideInput }) => (hideInput ? '38px' : '35px')};
     width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+    min-width: 200px;
     padding: 0 15px;
     justify-content: space-between;
     margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
 
-    :focus,
-    :hover {
-        background-color: ${({ selected, theme, page }) =>
-            page === 'addLiq' ? 'unset' : selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
-    }
+    &:focus,
+    &:hover {
+        background-color: var(--mirage);
 
     ${({ shallow }) =>
         shallow &&
@@ -67,12 +66,6 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
             &:hover {
                 background-color: transparent;
             }
-        `}
-
-    ${({ swap }) =>
-        swap &&
-        css`
-            width: 218px;
         `}
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
     width: 100%;
@@ -153,7 +146,7 @@ export const StyledTokenName = styled.span<{ active?: boolean }>`
     font-size: ${({ active }) => (active ? '16px' : '16px')};
 `
 export const MaxButton = styled.button<{ page: string | undefined }>`
-    background-color: ${({ page, theme }) => page === 'addLiq' ? theme.winterMainButton : '#245376'};
+    background-color: ${({ page, theme }) => page === 'addLiq' ? 'var(--primary)' : 'var(--primary-weak)'};
     border-radius: 6px;
     color: white;
     margin-right: 10px;

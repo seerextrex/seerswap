@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Token } from '@uniswap/sdk-core'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { SupportedChainId } from '../../constants/chains'
+import './index.scss'
 
 interface PoolInfoHeaderProps {
     token0: Token | undefined
@@ -21,8 +22,9 @@ export function PoolInfoHeader({ token0, token1, fee, collectedFees }: PoolInfoH
 
     return (
         <div className={'b mb-1'}>
-            <div className={'flex-s-between'}>
-                <span className={'fs-15 flex-s-between ml-15'}>
+            <div className={'flex-s-between info-pool-header'}>
+                <div className={'f f-ac'}>
+                    <span className={'fs-15 flex-s-between ml-15'}>
                     <span className={'mr-05'}>
                         <DoubleCurrencyLogo
                             currency0={token0 && new Token(SupportedChainId.POLYGON, token0.address, 18, token0?.symbol)}
@@ -30,12 +32,13 @@ export function PoolInfoHeader({ token0, token1, fee, collectedFees }: PoolInfoH
                             size={30}
                         />
                     </span>
-                    {poolTitle[0] || '...'} / {poolTitle[1] || '...'}
+                        {poolTitle[0] || '...'} / {poolTitle[1] || '...'}
                 </span>
-                <span className={'ml-1 br-8 fee-badge c-p'}>{`${+fee / 10000}%`}</span>
+                    <span className={'ml-1 br-8 fee-badge c-p'}>{`${+fee / 10000}%`}</span>
+                </div>
                 {
                     +collectedFees !== 0 &&
-                    <span className={'ml-a'}>
+                    <span className={'ml-a mxs_w-100 mxs_mt-05'}>
                         Total Collected Fees: <span className={'c-p'}>${Math.round(+collectedFees) || ' <0.001'}</span>
                     </span>
                 }

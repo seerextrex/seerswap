@@ -2,65 +2,72 @@ import styled from 'styled-components/macro'
 import { darken } from 'polished'
 
 const FancyButton = styled.button`
-  color: ${({ theme }) => theme.text1};
-  align-items: center;
-  height: 2rem;
-  border-radius: 36px;
-  font-size: 1rem;
-  width: auto;
-  min-width: 3.5rem;
-  border: 1px solid ${({ theme }) => theme.bg3};
-  outline: none;
-  background: #161520;
-  :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
+    color: ${({ theme }) => theme.text1};
+    align-items: center;
+    height: 2rem;
+    border-radius: 36px;
+    font-size: 1rem;
+    width: auto;
+    min-width: 3.5rem;
+    border: 1px solid ${({ theme }) => theme.bg3};
+    outline: none;
+    background: #161520;
+
+    :focus {
+        border: 1px solid ${({ theme }) => theme.primary1};
+    }
 `
 export const Option = styled(FancyButton)<{ active: boolean }>`
-  margin-right: 8px;
-  :hover {
-    cursor: pointer;
-  }
-  background-color: ${({ active, theme }) => active && theme.primary1};
-  color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
+    margin-right: 8px;
+    background-color: var(--primary);
+    border-radius: 12px;
+    border: 1px solid var(--primary);
+
+    :hover {
+        cursor: pointer;
+    }
+    color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
 `
 export const Input = styled.input`
-  background: #161520;
-  font-size: 16px;
-  width: auto;
-  outline: none;
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-  color: ${({ theme, color }) => (color === 'red' ? theme.red1 : theme.text1)};
-  text-align: right;
+    background: #161520;
+    font-size: 16px;
+    width: auto;
+    outline: none;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+
+    color: ${({ theme, color }) => (color === 'red' ? theme.red1 : theme.text1)};
+    text-align: right;
 `
 export const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
-  height: 2rem;
-  position: relative;
-  padding: 0 0.75rem;
-  flex: 1;
-  background-color: white;
-  border: ${({ theme, active, warning }) =>
-    active ? `1px solid ${warning ? theme.red1 : theme.primary1}` : warning && `1px solid ${theme.red1}`};
-  :hover {
+    height: 2rem;
+    position: relative;
+    padding: 0 0.75rem;
+    flex: 1;
+    background-color: white;
     border: ${({ theme, active, warning }) =>
-    active && `1px solid ${warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary1)}`};
-  }
+        active ? `1px solid ${warning ? theme.red1 : theme.primary1}` : warning && `1px solid ${theme.red1}`};
 
-  input {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    background: transparent;
-    color: black;
-    border-radius: 2rem;
-  }
+    :hover {
+        border: ${({ theme, active, warning }) =>
+            active && `1px solid ${warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary1)}`};
+    }
+
+    input {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: transparent;
+        color: black;
+        border-radius: 2rem;
+    }
 `
 export const SlippageEmojiContainer = styled.span`
-  color: #f3841e;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: #f3841e;
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `}
 `

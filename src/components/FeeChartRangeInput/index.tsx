@@ -106,7 +106,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
     }, [fetchedData, token])
 
     return (
-        <div className={'w-100 fee-chart pt-1'} ref={ref}>
+        <div className={'w-100 fee-chart pt-1 mxs_p-0'} ref={ref}>
             {refreshing ?
                 <div className={'fee-chart__mock-loader'}>
                     <Loader stroke={'white'} size={'25px'} />

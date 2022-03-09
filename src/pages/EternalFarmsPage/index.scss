@@ -19,3 +19,13 @@
     }
   }
 }
+
+@media screen and (max-width: 500px) {
+  .eternal-page {
+
+    &__row {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+  }
+}

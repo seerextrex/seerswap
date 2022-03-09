@@ -52,7 +52,7 @@ export default function Header() {
             <a className={'header__logo'} href='.'>
                 <img
                     width={'calc(100% - 10px)'}
-                    src={window.innerWidth < 501 ? Logo_logo : Logo}
+                    src={Logo}
                     alt='logo'
                 />
             </a>

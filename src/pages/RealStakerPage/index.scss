@@ -99,11 +99,9 @@
 }
 
 .earned-wrapper {
-  margin: 2rem 0;
   min-width: 100%;
   background-color: var(--dark-ebony-clay);
-  padding: 2rem;
-
+  
   &__title {
     display: flex;
     align-items: center;
@@ -161,7 +159,6 @@
 .statistic-wrapper {
   position: relative;
   display: inline-block;
-  min-width: 765px;
   height: 107px;
   text-decoration: none;
   background-color: var(--ebony-clay);

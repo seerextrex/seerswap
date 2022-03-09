@@ -18,10 +18,8 @@ export const StyledInfo = styled(Info)`
     }
 `
 
-export const ContestBanner = styled(Link)`
-    position: absolute;
+export const ContestBanner = styled.a`
     display: flex;
-    top: -5.5rem;
     color: white;
     background-image: url(${IphoneBanner});
     width: 100%;

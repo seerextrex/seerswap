@@ -7,3 +7,11 @@
 .info-chart-wrapper {
   background-color: var(--ebony-clay);
 }
+
+@media screen and (max-width: 500px) {
+  .info-pool-header {
+    flex-direction: column;
+    text-align: start;
+    align-items: start;
+  }
+}

@@ -163,17 +163,19 @@ export default function EventsHistory() {
     }, [])
 
     return (
-        <div className={'w-100'}>
-            <Table gridClass={'event-table'} sortDirection={sortDirection} sortField={sortField} sortIndex={sortIndex} data={data}>
-                <TableHeader gridClass={'event-table'} arrow={arrow} handleSort={handleSort} sortFields={sortFields}>
-                    <span className={'table-header__item'}>Pool</span>
-                    <span className={'table-header__item table-header__item'}>Reward</span>
-                    <span className={'table-header__item table-header__item'}>Bonus</span>
-                    <span className={'table-header__item table-header__item'}>Participants</span>
-                    <span className={'table-header__item table-header__item'}>Best APR</span>
-                    <span className={'table-header__item table-header__item'}>Dates</span>
-                </TableHeader>
-            </Table>
+        <div style={{overflow: "overlay"}}>
+            <div className={'w-100 event-table-wrapper'}>
+                <Table gridClass={'event-table'} sortDirection={sortDirection} sortField={sortField} sortIndex={sortIndex} data={data}>
+                    <TableHeader gridClass={'event-table'} arrow={arrow} handleSort={handleSort} sortFields={sortFields}>
+                        <span className={'table-header__item'}>Pool</span>
+                        <span className={'table-header__item table-header__item'}>Reward</span>
+                        <span className={'table-header__item table-header__item'}>Bonus</span>
+                        <span className={'table-header__item table-header__item'}>Participants</span>
+                        <span className={'table-header__item table-header__item'}>Best APR</span>
+                        <span className={'table-header__item table-header__item'}>Dates</span>
+                    </TableHeader>
+                </Table>
+            </div>
         </div>
     )
 }

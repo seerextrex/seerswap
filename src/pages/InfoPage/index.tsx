@@ -46,7 +46,7 @@ function InfoPage() {
                         <Helmet>
                             <title>Algebra — Info • Pools</title>
                         </Helmet>
-                        <Card isDark classes={'br-24 pa-2 mb-1'}>
+                        <Card isDark classes={'br-24 pa-2 mb-1 w-100 mxs_p-1'}>
                             <div className={'info-page-menu mb-1'}>
                                 <Menu
                                     items={infoMenuList}
@@ -66,7 +66,7 @@ function InfoPage() {
                                 poolsStat={poolsResult}
                             />
                         </Card>
-                        <Card isDark classes={'br-24 pa-2 mb-3'}>
+                        <Card isDark classes={'br-24 pa-2'}>
                             <InfoPools
                                 data={poolsResult}
                                 refreshing={Boolean(poolsLoading)}
@@ -90,7 +90,7 @@ function InfoPage() {
                         <Helmet>
                             <title>Algebra — Info • Tokens</title>
                         </Helmet>
-                        <Card isDark classes={'br-24 pa-2 mb-1'}>
+                        <Card isDark classes={'br-24 pa-2 mb-1 mxs_p-1'}>
                             <div className={'info-page-menu mb-1'}>
                                 <Menu
                                     items={infoMenuList}
@@ -98,10 +98,6 @@ function InfoPage() {
                                     isLoading={tokensLoading}
                                     classes={'fs-125'}
                                     size={'1.25rem'} />
-                                <RefreshCw
-                                    size={21}
-                                    color={'var(--primary)'}
-                                    onClick={() => (blocksFetched ? fetchInfoPoolsFn() : undefined)} />
                             </div>
                             <InfoTotalStats
                                 data={totalStats}

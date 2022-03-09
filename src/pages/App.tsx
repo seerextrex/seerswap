@@ -76,7 +76,7 @@ export default function App() {
                             <h2>Network ERROR</h2>
                         </InternetError>
                     )}
-                    <div style={{ zIndex: 2 }}>
+                    <div className={'mm_pb-4'} style={{ zIndex: 2 }}>
                         {networkFailed && (
                             <NetworkFailedCard>
                                 <div style={{ display: 'flex' }}>
@@ -98,9 +98,9 @@ export default function App() {
                         >
                             <span>Report a bug</span>
                             <span>
-                {' '}
+                                {' '}
                                 <ExternalLink size={16} stroke={'#36f'} />{' '}
-              </span>
+                            </span>
                         </BugReportLink>
                         <Popups />
                         <Polling />

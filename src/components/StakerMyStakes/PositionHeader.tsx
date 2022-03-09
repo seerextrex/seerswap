@@ -7,6 +7,7 @@ import { WrappedCurrency } from '../../models/types'
 import Loader from '../Loader'
 import { ChevronsUp, Send } from 'react-feather'
 import { Deposit, UnstakingInterface } from '../../models/interfaces'
+import { t } from '@lingui/macro'
 
 interface PositionHeaderProps {
     el: Deposit
@@ -19,8 +20,8 @@ interface PositionHeaderProps {
 export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHandler, setSendModal }: PositionHeaderProps) {
     return (
         <div className={'my-stakes__position-card__header flex-s-between mb-1 br-8 p-1'}>
-            <div className={'f'}>
-                <div className={'f f-ac'}>
+            <div className={'my-stakes__position-card__header__row'}>
+                <div className={'f f-ac '}>
                     <NFTPositionIcon name={el.id}>
                         <span>{el.id}</span>
                     </NFTPositionIcon>
@@ -31,7 +32,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                         </a>
                     </div>
                 </div>
-                <div className={'f f-ac ml-2'}>
+                <div className={'f f-ac ml-2 mxs_ml-0 mxs_mv-1'}>
                     <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={'35px'} />
                     <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={'35px'} style={{ marginLeft: '-1rem' }} />
                     <div className={'ml-05'}>
@@ -40,10 +41,10 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </div>
                 </div>
             </div>
-            <div className={'f'}>
+            <div className={'my-stakes__position-card__header__row'}>
                 {!el.incentive && !el.eternalFarming && (
                     <button
-                        className={'btn f f-ac c-p b pv-025'}
+                        className={'btn f f-ac c-p b pv-025 mxs_mv-05'}
                         disabled={unstaking.id === el.id && unstaking.state !== 'done'}
                         onClick={() => {
                             setUnstaking({ id: el.id, state: 'pending' })
@@ -58,12 +59,12 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                         ) : (
                             <>
                                 <ChevronsUp color={'var(--primary)'} size={'1rem'} />
-                                <span className={'ml-05'}>{`Withdraw`}</span>
+                                <span className={'ml-05'}>{t`Withdraw`}</span>
                             </>
                         )}
                     </button>
                 )}
-                <button className={'btn f f-ac c-p b pv-025 ml-05'} onClick={() => setSendModal(el.L2tokenId)}>
+                <button className={'btn f f-ac c-p b pv-025 ml-05 mxs_ml-0 mxs_f-jc'} onClick={() => setSendModal(el.L2tokenId)}>
                     <Send color={'var(--primary)'} size={'1rem'} />
                     <span className={'ml-05 c-p'}>Send</span>
                 </button>

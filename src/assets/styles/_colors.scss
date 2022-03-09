@@ -85,6 +85,10 @@
     background-color: var(--dark-gray);
   }
 
+  &-ec {
+    background-color: var(--ebony-clay);
+  }
+
   &-l {
     &-pl {
       background: linear-gradient(90deg, var(--primary-weak) 0%, var(--primary) 100%)

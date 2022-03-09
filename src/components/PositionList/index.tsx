@@ -31,7 +31,9 @@ export default function PositionList({ positions }: PositionListProps) {
                     <Trans>Your positions</Trans>
                     {positions && ' (' + positions.length + ')'}
                 </div>
-                <Trans>Status</Trans>
+                <span className={'hide-xs'}>
+                    <Trans>Status</Trans>
+                </span>
             </div>
             {_positionsOnFarming.map((p) => {
                 return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />

@@ -22,7 +22,7 @@ export default function RealStakerResBlocks({ title, amount, currency, action, h
     const close = useCallback(() => setShow(false), [setShow])
 
     return (
-        <div className={'res-wrapper br-12'}>
+        <div className={'res-wrapper br-12 mxs_m-0'}>
             <div className={'flex-s-between'}>
                 <h2>{title}</h2>
                 {action === 'Claim' &&

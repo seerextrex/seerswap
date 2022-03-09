@@ -12,7 +12,6 @@ import { Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from '../../constants/chains'
 import { WrappedCurrency } from '../../models/types'
 import { formatAmountTokens } from 'utils/numbers'
-
 import './index.scss'
 
 interface StakerEventCardProps {
@@ -129,7 +128,6 @@ export function StakerEventCard({
                         </div>
                 </div>
             )}
-            {!eternal && (
                 <div className={'flex-s-between mb-05'}>
                     <div className={'f c'}>
                         <span className={'fs-075 b'}>START</span>
@@ -150,7 +148,6 @@ export function StakerEventCard({
                         </span>
                     </div>
                 </div>
-            )}
                 <div className={'fs-075 ta-c'}>
                     <span>{`will be available in ${getCountdownTime(1647356400, Date.now())}`}</span>
                 </div>

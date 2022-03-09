@@ -8,20 +8,20 @@ export default function CopyHelper(props: { toCopy: string; children?: React.Rea
     const [isCopied, setCopied] = useCopyClipboard()
 
     return (
-        <CopyIcon onClick={() => setCopied(props.toCopy)}>
+        <button className={'bg-t br-0 fs-085 c-lg f f-ac'} onClick={() => setCopied(props.toCopy)}>
             {isCopied ? (
-                <TransactionStatusText>
-                    <CheckCircle size={'16'} />
-                    <TransactionStatusText>
+                <span className={'f f-ac mr-025'}>
+                    <CheckCircle size={'1rem'} stroke={'var(--primary)'}/>
+                    <span className={'ml-025'}>
                         <Trans>Copied</Trans>
-                    </TransactionStatusText>
-                </TransactionStatusText>
+                    </span>
+                </span>
             ) : (
-                <TransactionStatusText>
-                    <Copy size={'16'} stroke={'#080064'} />
-                </TransactionStatusText>
+                <span className={'mr-025'}>
+                    <Copy size={'1rem'} stroke={'var(--primary)'} />
+                </span>
             )}
             {isCopied ? '' : props.children}
-        </CopyIcon>
+        </button>
     )
 }

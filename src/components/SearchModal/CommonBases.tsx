@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { Text } from 'rebass'
 import { Currency } from '@uniswap/sdk-core'
 import { COMMON_BASES } from '../../constants/routing'
 import { currencyId } from '../../utils/currencyId'
@@ -7,40 +6,37 @@ import { AutoRow } from '../Row'
 import CurrencyLogo from '../CurrencyLogo'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { SupportedChainId } from '../../constants/chains'
-import { BaseWrapper, MobileWrapper } from './styled'
 import { WrappedCurrency } from '../../models/types'
+import './index.scss'
 
-export default function CommonBases({
-    onSelect,
-    selectedCurrency
-}: {
+interface CommonBasesProps {
     selectedCurrency?: Currency | null
     onSelect: (currency: Currency) => void
-}) {
+}
+
+export default function CommonBases({ onSelect, selectedCurrency }: CommonBasesProps) {
 
     const bases = COMMON_BASES[SupportedChainId.POLYGON] as WrappedCurrency[]
 
     const { chainId } = useActiveWeb3React()
 
     return bases.length > 0 ? (
-        <MobileWrapper gap='md'>
+        <div className={'mv-1 common-bases'}>
             <AutoRow gap='4px'>
                 {bases.map((currency) => {
                     const isSelected = selectedCurrency?.equals(currency)
                     return (
-                        <BaseWrapper
-                            onClick={() => !isSelected && onSelect(currency)}
-                            disable={isSelected}
-                            key={currencyId(currency, chainId || SupportedChainId.POLYGON)}
+                        <button className={'br-8 bg-t f f-ac c-w p-05'}
+                                onClick={() => !isSelected && onSelect(currency)}
+                                disabled={isSelected}
+                                key={currencyId(currency, chainId || SupportedChainId.POLYGON)}
                         >
                             <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
-                            <Text fontWeight={500} fontSize={16}>
-                                {currency.symbol}
-                            </Text>
-                        </BaseWrapper>
+                            <span>{currency.symbol}</span>
+                        </button>
                     )
                 })}
             </AutoRow>
-        </MobileWrapper>
+        </div>
     ) : null
 }

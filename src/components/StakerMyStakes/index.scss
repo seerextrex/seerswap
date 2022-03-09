@@ -64,3 +64,24 @@
     }
   }
 }
+
+@media screen and (max-width: 500px) {
+  .my-stakes {
+
+    &__nft-send {
+
+    }
+
+
+    &__position-card {
+
+      &__header {
+        flex-direction: column;
+      }
+
+      &__body {
+
+      }
+    }
+  }
+}

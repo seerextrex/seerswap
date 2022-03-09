@@ -26,6 +26,20 @@ function tradeMeaningfullyDiffers(
     )
 }
 
+interface ConfirmSwapModalProps {
+    isOpen: boolean
+    trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined
+    originalTrade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined
+    attemptingTxn: boolean
+    txHash: string | undefined
+    recipient: string | null
+    allowedSlippage: Percent
+    onAcceptChanges: () => void
+    onConfirm: () => void
+    swapErrorMessage: ReactNode | undefined
+    onDismiss: () => void
+}
+
 export default function ConfirmSwapModal({
     trade,
     originalTrade,
@@ -38,19 +52,7 @@ export default function ConfirmSwapModal({
     isOpen,
     attemptingTxn,
     txHash
-}: {
-    isOpen: boolean
-    trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined
-    originalTrade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined
-    attemptingTxn: boolean
-    txHash: string | undefined
-    recipient: string | null
-    allowedSlippage: Percent
-    onAcceptChanges: () => void
-    onConfirm: () => void
-    swapErrorMessage: ReactNode | undefined
-    onDismiss: () => void
-}) {
+}: ConfirmSwapModalProps) {
     const showAcceptChanges = useMemo(
         () =>
             Boolean(

@@ -96,7 +96,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
                         </Text>
                         <RowBetween>
                             <RowFixed>
-                                <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
+                                <TYPE.black fontWeight={400} fontSize={14} color={'var(--white)'}>
                                     <Trans>Expert Mode</Trans>
                                 </TYPE.black>
                                 <QuestionHelper
@@ -124,7 +124,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
                         </RowBetween>
                         <RowBetween>
                             <RowFixed>
-                                <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
+                                <TYPE.black fontWeight={400} fontSize={14} color={'var(--white)'}>
                                     <Trans>Multihops</Trans>
                                 </TYPE.black>
                                 <QuestionHelper

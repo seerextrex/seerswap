@@ -2,6 +2,11 @@
   &-300 {
     max-width: 300px;
   }
+
+  &-610 {
+    max-width: 610px;
+  }
+
   &-765 {
     max-width: 765px;
   }
@@ -12,6 +17,14 @@
 }
 
 .h {
+
+  &-1 {
+    height: 1px;
+  }
+
+  &-200{
+    height: 200px;
+  }
 
   &-400{
     height: 400px;

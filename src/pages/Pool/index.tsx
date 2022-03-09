@@ -14,6 +14,7 @@ import { PositionPool } from '../../models/interfaces'
 import Card from '../../shared/components/Card/Card'
 import AutoColumn from '../../shared/components/AutoColumn'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
+import './index.scss'
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React()
@@ -64,14 +65,14 @@ export default function Pool() {
             <Helmet>
                 <title>Algebra — Pool</title>
             </Helmet>
-            <Card isDark classes={'br-24 ph-2 pv-1'}>
+            <Card isDark classes={'br-24 ph-2 pv-1 mxs_ph-1'}>
                 <SwapPoolTabs active={'pool'} />
                 <AutoColumn gap='1'>
-                    <div className={'flex-s-between'}>
+                    <div className={'pool__header flex-s-between'}>
                         <span className={'fs-125'}>
                             <Trans>Pools Overview</Trans>
                         </span>
-                        <div className={'flex-s-between'}>
+                        <div className={'flex-s-between mxs_mv-05'}>
                             <NavLink
                                 className={'btn primary p-05 br-8 mr-1'}
                                 id='join-pool-button'
@@ -88,7 +89,7 @@ export default function Pool() {
                             </NavLink>
                         </div>
                     </div>
-                    <div className={'f mb-05 rg-2 cg-2'}>
+                    <div className={'f mb-05 rg-2 cg-2 mxs_f-jc'}>
                         {filters.map((item, key) =>
                             <FilterPanelItem
                                 item={item}

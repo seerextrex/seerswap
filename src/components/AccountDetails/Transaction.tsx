@@ -2,11 +2,11 @@ import { CheckCircle, Triangle, X } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
-import { RowFixed } from '../Row'
 import Loader from '../Loader'
 import { useAppDispatch } from '../../state/hooks'
 import { clearOneTransaction } from '../../state/transactions/actions'
-import { IconsWrapper, TransactionsStatusText, TransactionState, TransactionWrapper, TransCloseIcon, TransIconWrapper } from './styled'
+import { TransCloseIcon, TransIconWrapper } from './styled'
+import { ExternalLink } from '../../theme'
 
 
 export default function Transaction({ hash }: { hash: string }) {
@@ -22,28 +22,21 @@ export default function Transaction({ hash }: { hash: string }) {
     if (!chainId) return null
 
     return (
-        <TransactionWrapper>
-            <TransactionState
-                href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}
-                pending={pending}
-                success={success}
-            >
-                <RowFixed>
-                    <TransactionsStatusText>{summary ?? hash} ↗</TransactionsStatusText>
-                </RowFixed>
-                <IconsWrapper>
-                    <TransIconWrapper pending={pending} success={success}>
-                        {pending ? <Loader /> : success ? <CheckCircle size='16' /> :
-                            <Triangle size='16' />}
-                    </TransIconWrapper>
-                    <TransCloseIcon onClick={(e) => {
-                        e.preventDefault()
-                        dispatch(clearOneTransaction({ chainId, hash }))
-                    }}>
-                        <X size={'16'} />
-                    </TransCloseIcon>
-                </IconsWrapper>
-            </TransactionState>
-        </TransactionWrapper>
+        <ExternalLink
+            href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}
+        >
+            <span>{summary ?? hash} ↗</span>
+            <div className={'f'}>
+                <div className={`c-${pending ? 'p' : success ? 'g' : 'r'} pos-r z-10`}>
+                    {pending ? <Loader /> : success ? <CheckCircle size='1rem' /> : <Triangle size='1rem' />}
+                </div>
+                <div className={'ml-025 c-r pos-r z-10'} onClick={(e) => {
+                    e.preventDefault()
+                    dispatch(clearOneTransaction({ chainId, hash }))
+                }}>
+                    <X size={'16'} />
+                </div>
+            </div>
+        </ExternalLink>
     )
 }

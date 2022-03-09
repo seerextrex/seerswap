@@ -228,7 +228,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                             unstaking={unstaking}
                                             withdrawHandler={withdrawHandler}
                                         />
-                                        <div className={'f cg-1'}>
+                                        <div className={'f cg-1 rg-1 mxs_fd-c'}>
                                             <div className={'my-stakes__position-card__body w-100 p-1 br-8'}>
                                                 <PositionCardBodyHeader
                                                     farmingType={FarmingType.FINITE}

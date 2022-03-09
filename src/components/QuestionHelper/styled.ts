@@ -12,7 +12,7 @@ export const QuestionWrapper = styled.div`
   cursor: default;
   border-radius: 36px;
   font-size: 12px;
-  background-color: ${({ theme }) => theme.winterMainButton};
+  background-color: var(--primary-hover);
   color: white;
 
   :hover,

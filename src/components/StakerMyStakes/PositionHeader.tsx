@@ -19,8 +19,8 @@ interface PositionHeaderProps {
 export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHandler, setSendModal }: PositionHeaderProps) {
     return (
         <div className={'my-stakes__position-card__header flex-s-between mb-1 br-8 p-1'}>
-            <div className={'f'}>
-                <div className={'f f-ac'}>
+            <div className={'f mxs_fd-c mxs_f-as'}>
+                <div className={'f f-ac '}>
                     <NFTPositionIcon name={el.id}>
                         <span>{el.id}</span>
                     </NFTPositionIcon>

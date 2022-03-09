@@ -17,6 +17,7 @@ import { PositionPool } from '../../models/interfaces'
 import { NavLink } from 'react-router-dom'
 import Card from '../../shared/components/Card/Card'
 import RangeBadge from '../Badge/RangeBadge'
+import './index.scss'
 
 interface PositionListItemProps {
     positionDetails: PositionPool;
@@ -144,7 +145,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
             className={'w-100'}
             to={positionSummaryLink}>
             <Card isDark={false} classes={'br-24 p-1 mv-05'}>
-                <div className={'f f-ac'}>
+                <div className={'position-list-item__header f f-ac'}>
                     <div className={'f f-ac'}>
                         <DoubleCurrencyLogo
                             currency0={currencyBase}
@@ -157,7 +158,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
                         </div>
                         &nbsp;
                     </div>
-                    <div className={'flex-s-between w-100'}>
+                    <div className={'position-list-item__header__badges flex-s-between w-100'}>
                         {_onFarming && (
                             <NavLink className={'flex-s-between c-w bg-p fs-085 p-025 br-8'} to={farmingLink}>
                                 <span>Farming</span>
@@ -169,35 +170,33 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
                 </div>
 
                 {priceLower && priceUpper ? (
-                    <div className={'f f-ac fs-085 mt-025 c-w mt-05'}>
+                    <div className={'position-list-item__bottom f fs-085 mt-025 c-w mt-05'}>
                         <div className={'f'}>
-                            <div className={'mr-025'}>
+                            <div className={'position-list-item__prefix mr-025'}>
                                 <Trans>Min:</Trans>
                             </div>
                             <Trans>
-                                {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)}
-                                <span className={'ml-025 mr-025'}>{currencyQuote?.symbol}</span>
-                                <span>per</span>
-                                <span className={'ml-025 mr-025'}>{currencyBase?.symbol}</span>
+                                <span className={'position-list-item__amount'}>
+                                    {`${formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}
+                                </span>
                             </Trans>
                         </div>
-                        <div className={'mh-025'}>⟷</div>
+                        <div className={'mh-05'}>⟷</div>
                         <div className={'f'}>
-                            <span className={'mh-025'}>
+                            <span className={'position-list-item__prefix mh-025'}>
                                 <Trans>Max:</Trans>
                             </span>
                             <Trans>
-                                {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}
-                                <span className={'ml-025 mr-025'}>{currencyQuote?.symbol}</span>
-                                <span>per</span>
-                                <span className={'ml-025 mr-025'}>{currencyBase?.symbol}</span>
+                                <span className={'position-list-item__amount'}>
+                                    {`${formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}
+                                </span>
                             </Trans>
                         </div>
                     </div>
                 ) : (
-                   <div className={'f c f-ac f-jc w-100'}>
-                       <Loader size={'1rem'} stroke={'var(--white)'}/>
-                   </div>
+                    <div className={'f c f-ac f-jc w-100'}>
+                        <Loader size={'1rem'} stroke={'var(--white)'} />
+                    </div>
                 )}
             </Card>
         </NavLink>

@@ -4,27 +4,29 @@ import { useActiveWeb3React } from '../../hooks/web3'
 import { clearAllTransactions } from '../../state/transactions/actions'
 import { shortenAddress } from '../../utils'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
-import { AutoRow } from '../Row'
 import Copy from './Copy'
 import Transaction from './Transaction'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 import { ExternalLink as LinkIcon } from 'react-feather'
-import { LinkStyledButton, TYPE } from '../../theme'
+import { ExternalLink } from '../../theme'
 import { Trans } from '@lingui/macro'
 import { useAppDispatch } from 'state/hooks'
-import { AccountControl, AccountGroupingRow, AddressLink, IconWrapper, LowerSection, TransactionListWrapper, WalletAction } from './styled'
+import { IconWrapper, WalletAction } from './styled'
 import { EthereumWindow } from '../../models/types'
 import './index.scss'
+import Card from '../../shared/components/Card/Card'
 
 function renderTransactions(transactions: string[]) {
     return (
-        <TransactionListWrapper>
+        <div>
             {transactions.map((hash, i) => {
-                return <Transaction key={i} hash={hash} />
+                return <div className={'mb-025'} key={i}>
+                    <Transaction hash={hash} />
+                </div>
             })}
-        </TransactionListWrapper>
+        </div>
     )
 }
 
@@ -106,80 +108,58 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                             </>
                         )}
                     </div>
-                    <div>
+                    <div className={'f'}>
                         {ENSName ? (
-                            <AccountControl>
-                                <div>
-                                    {account && (
-                                        <Copy toCopy={account}>
-                                                <span>
-                                                  <Trans>Copy Address</Trans>
-                                                </span>
-                                        </Copy>
-                                    )}
-                                    {chainId && account && (
-                                        <AddressLink
-                                            hasENS={!!ENSName}
-                                            isENS={true}
-                                            href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}
-                                        >
-                                            <LinkIcon size={'1rem'} color='var(--primary)' />
-                                            <span>
-                                                    <Trans>View on Explorer</Trans>
-                                                </span>
-                                        </AddressLink>
-                                    )}
-                                </div>
-                            </AccountControl>
+                            <>
+                                {account && (
+                                    <Copy toCopy={account}>
+                                        <Trans>Copy Address</Trans>
+                                    </Copy>
+                                )}
+                                {chainId && account && (
+                                    <ExternalLink href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}>
+                                        <LinkIcon size={'1rem'} color='var(--primary)' />
+                                        <span className={'ml-025'}>
+                                            <Trans>View on Explorer</Trans>
+                                        </span>
+                                    </ExternalLink>
+                                )}
+                            </>
                         ) : (
                             <>
-                                <AccountControl>
-                                    <div>
-                                        {account && (
-                                            <Copy toCopy={account}>
-                                                <span>
-                                                  <Trans>Copy Address</Trans>
-                                                </span>
-                                            </Copy>
-                                        )}
-                                        {chainId && account && (
-                                            <AddressLink
-                                                hasENS={!!ENSName}
-                                                isENS={false}
-                                                href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}
-                                            >
-                                                <LinkIcon size={'1rem'} color='var(--primary)' />
-                                                <span>
-                                                  <Trans>View on Explorer</Trans>
-                                                </span>
-                                            </AddressLink>
-                                        )}
-                                    </div>
-                                </AccountControl>
+                                {account && (
+                                    <Copy toCopy={account}>
+                                        <Trans>Copy Address</Trans>
+                                    </Copy>
+                                )}
+                                {chainId && account && (
+                                    <ExternalLink href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}>
+                                        <LinkIcon size={'1rem'} color='var(--primary)' />
+                                        <span className={'ml-025'}>
+                                            <Trans>View on Explorer</Trans>
+                                        </span>
+                                    </ExternalLink>
+                                )}
                             </>
                         )}
                     </div>
                 </div>
             </div>
             {!!pendingTransactions.length || !!confirmedTransactions.length ? (
-                <LowerSection>
-                    <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-                        <TYPE.body style={{ color: '#080064' }}>
-                            <Trans>Recent Transactions</Trans>
-                        </TYPE.body>
-                        <LinkStyledButton onClick={clearAllTransactionsCallback}>
+                <Card isDark classes={'br-12 mt-1 p-1'}>
+                    <div className={'c-p flex-s-between mb-05'}>
+                        <Trans>Recent Transactions</Trans>
+                        <button className={'br-0 bg-t c-p p-0'} onClick={clearAllTransactionsCallback}>
                             <Trans>(clear all)</Trans>
-                        </LinkStyledButton>
-                    </AutoRow>
+                        </button>
+                    </div>
                     {renderTransactions(pendingTransactions)}
                     {renderTransactions(confirmedTransactions)}
-                </LowerSection>
+                </Card>
             ) : (
-                <LowerSection>
-                    <TYPE.body color={'#080064'}>
-                        <Trans>Your transactions will appear here...</Trans>
-                    </TYPE.body>
-                </LowerSection>
+                <Card isDark classes={'f c f-ac f-jc br-12 mt-1 h-200'}>
+                    <Trans>Your transactions will appear here...</Trans>
+                </Card>
             )}
         </>
     )

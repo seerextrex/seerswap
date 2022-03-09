@@ -379,7 +379,7 @@ export function useIncentiveSubgraph() {
                 if (!position.incentive && !position.eternalFarming && typeof position.pool === 'string') {
 
                     const _pool = await fetchPool(position.pool)
-//@ts-ignore
+                    //@ts-ignore
                     _position = { ..._position, pool: _pool }
                 }
 
@@ -426,7 +426,7 @@ export function useIncentiveSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (incentives.length !== 0) {
+                    if (incentives.filter((incentive: any) => incentive.endTime < Math.round(Date.now() / 1000)).length !== 0) {
                         _position = {
                             ..._position,
                             finiteAvailable: true
@@ -478,7 +478,7 @@ export function useIncentiveSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (eternalFarmings.length !== 0) {
+                    if (eternalFarmings.filter((farm: any) => +farm.rewardRate || +farm.bonusRewardRate).length !== 0) {
                         _position = {
                             ..._position,
                             eternalAvailable: true

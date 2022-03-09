@@ -1,11 +1,15 @@
 import { FeeSubgraph, LastPoolSubgraph, TokenSubgraph } from './responseSubgraph'
 import JSBI from 'jsbi'
 import { Token } from '@uniswap/sdk-core'
+import { FarmingType } from "models/enums"
 
 export interface FormattedPool {
     address: string
     apr: number
-    farmingApr: number
+    farmingApr: {
+        type: FarmingType,
+        value: number
+    }
     exists: boolean
     fee: string
     token0: TokenSubgraph

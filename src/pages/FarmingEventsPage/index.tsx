@@ -1,14 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
-import { Frown } from "react-feather";
-import { StakerEventCard } from "../../components/StakerEventCard";
-import { StakeModal } from "../../components/StakeModal";
-import { FarmingType } from "../../models/enums";
-import Modal from "../../components/Modal";
-import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from "./styled";
-import Loader from "../../components/Loader";
+import { useEffect, useMemo, useState } from 'react'
+import { Frown } from 'react-feather'
+import { StakerEventCard } from '../../components/StakerEventCard'
+import { StakeModal } from '../../components/StakeModal'
+import { FarmingType } from '../../models/enums'
+import Modal from '../../components/Modal'
+import Loader from '../../components/Loader'
+import './index.scss'
 
-export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { data: { currentEvents: any[]; futureEvents: any[] } | null; now: number; refreshing: boolean; fetchHandler: () => any }) {
-    const [modalForPool, setModalForPool] = useState(null);
+interface FarmingEventsPageProps {
+    data: { currentEvents: any[]; futureEvents: any[] } | null
+    now: number
+    refreshing: boolean
+    fetchHandler: () => any
+}
+
+export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: FarmingEventsPageProps) {
+    const [modalForPool, setModalForPool] = useState(null)
 
     const formattedData = useMemo(() => {
         if (!data || typeof data === "string") return [];
@@ -21,53 +28,48 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: { dat
     }, []);
 
     return (
-        <PageWrapper>
-            <Modal isOpen={Boolean(modalForPool)} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
+        <div className={'w-100'}>
+            <Modal
+                isOpen={Boolean(modalForPool)}
+                onHide={() => setModalForPool(null)}
+                onDismiss={() => console.log()}>
                 {modalForPool && (
                     <>
                         <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)} farmingType={FarmingType.FINITE} />
                     </>
                 )}
             </Modal>
-            <EventsCards>
-                {refreshing ? (
-                    <EmptyMock>
-                        <Loader stroke={"white"} size={"20px"} />
-                    </EmptyMock>
-                ) : formattedData.length !== 0 ? (
-                    <EventsCardsRow>
-                          {<StakerEventCard secret />}
-                        {formattedData.map((event, j) => {
-                            const isStarted = event.startTime <= Math.round(Date.now() / 1000);
-                            const isEnded = event.endTime <= Math.round(Date.now() / 1000);
+            {refreshing ? (
+                <div className={'farmings-page__loader f f-ac f-jc'}>
+                    <Loader stroke={'white'} size={'1.5rem'} />
+                </div>
+            ) : formattedData.length !== 0 ?
+                <div className={'farmings-page__row mb-1 rg-1 cg-1 '}>
+                    {formattedData.map(
+                        (event, j) => {
 
-                            if (isEnded) return;
+                            const isStarted = event.startTime <= Math.round(Date.now() / 1000)
+                            const isEnded = event.endTime <= Math.round(Date.now() / 1000)
 
-                            const active = isStarted && !isEnded;
+                            if (isEnded) return
 
-                            return (
-                                <StakerEventCard
-                                    refreshing={refreshing}
-                                    active={active}
-                                    key={j}
-                                    now={now}
-                                    event={event}
-                                    stakeHandler={() => {
-                                        setModalForPool(event);
-                                    }}
-                                />
-                            );
-                        })}
-                    </EventsCardsRow>
-                ) : formattedData && formattedData.length === 0 ? (
-                    <EmptyMock>
+                            const active = isStarted && !isEnded
+
+                            return <StakerEventCard
+                                refreshing={refreshing} active={active}
+                                key={j} now={now} event={event}
+                                stakeHandler={() => {
+                                    setModalForPool(event)
+                                }} />
+                        }
+                    )}
+                </div>
+                : formattedData && formattedData.length === 0 ? (
+                    <div className={'farmings-page__loader f f-ac f-jc'}>
                         <div>No limit farms</div>
-                        <Frown size={35} stroke={"white"} />
-                    </EmptyMock>
-                ) : (
-                    <EmptyMock />
-                )}
-            </EventsCards>
-        </PageWrapper>
-    );
+                        <Frown size={35} stroke={'white'} />
+                    </div>
+                ) : <div className={'farmings-page__loader f f-ac f-jc'} />}
+        </div>
+    )
 }

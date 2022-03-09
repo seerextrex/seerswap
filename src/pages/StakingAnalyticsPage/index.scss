@@ -1,0 +1,45 @@
+.stacking-chart-card {
+  background-color: var(--dark-ebony-clay);
+
+
+  &__color-text {
+    display: flex;
+    justify-content: start;
+
+  }
+
+  &__color-rect {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: var(--primary);
+
+    &[data-stroke = 'second'] {
+      background-color: var(--red);
+    }
+  }
+
+  &__loader {
+    background-color: var(--ebony-clay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 570px;
+  }
+
+  &__buttons {
+    display: inline-flex;
+    background-color: var(--primary-weak);
+    user-select: none;
+    cursor: pointer;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
+    &[data-selected=true] {
+      background-color: var(--primary);
+      cursor: default;
+    }
+  }
+}

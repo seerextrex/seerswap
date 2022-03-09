@@ -55,7 +55,30 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
             .attr('x2', '0px')
             .attr('y2', dimensions.height - margin.bottom)
             .style('stroke-width', 1)
-            .style('stroke', '#595f6e')
+            .style('stroke', 'var(--primary)')
+            .style('stroke-dasharray', '5, 5')
+            .style('display', 'none')
+
+        const LineHoryzontal = create('svg:line')
+            .attr('id', 'pointer3')
+            .attr('x1', margin.left)
+            .attr('y1', '0px')
+            .attr('x2', dimensions.width - margin.right)
+            .attr('y2', '0px')
+            .style('stroke-width', 1)
+            .style('stroke', 'var(--primary)')
+            .style('stroke-dasharray', '5, 5')
+            .style('display', 'none')
+
+        const LineHoryzontal2 = create('svg:line')
+            .attr('id', 'pointer3')
+            .attr('x1', margin.left)
+            .attr('y1', '0px')
+            .attr('x2', dimensions.width - margin.right)
+            .attr('y2', '0px')
+            .style('stroke-width', 1)
+            .style('stroke', 'var(--red)')
+            .style('stroke-dasharray', '5, 5')
             .style('display', 'none')
 
         // Construct a chart line.
@@ -82,7 +105,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
             .attr('width', '150px')
             .attr('height', `${data2?.length === 0 ? '60px' : '90px'}`)
             .attr('rx', '6')
-            .style('fill', '#12151d')
+            .style('fill', 'var(--dark-gray)')
 
         const InfoRectFeeText = create('svg:text')
             .attr('transform', 'translate(16, 25)')
@@ -113,7 +136,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
             .attr('fill', 'white')
             .attr('font-weight', '500')
             .attr('font-size', '12px')
-            .attr('fill', '#b0b0b0')
+            .attr('fill', 'var(--light-gray)')
 
         // @ts-ignore
         InfoRectGroup.node().append(InfoRect.node())
@@ -155,7 +178,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
             .call(g => g.select('.domain').remove())
             .call(g => g.selectAll('.tick line').clone()
                 .attr('x2', dimensions.width - margin.left - margin.right)
-                .attr('stroke-opacity', 0.1))
+                .attr('color', 'var(--mirage)'))
 
         const xGroup = svg.append('g')
             .attr('transform', `translate(0,${dimensions.height - margin.bottom})`)
@@ -230,6 +253,11 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
                         const isOverflowing = (Number(xTranslate) + 150 + 16) > dimensions.width
 
                         Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
+                        LineHoryzontal.attr('y1', `${yScale(+data[i]?.value)}px`).attr('y2', `${yScale(+data[i]?.value)}px`)
+                       if (data2?.length !== 0) {
+                           //@ts-ignore
+                           LineHoryzontal2.attr('y1', `${yScale(+data2[i]?.value)}px`).attr('y2', `${yScale(+data2[i]?.value)}px`)
+                       }
                         InfoRectGroup.attr(
                             'transform',
                             `translate(${isOverflowing ? Number(xTranslate) - (isMobile ? 145 : 160) : Number(xTranslate) + (isMobile ? -5 : 10)},10)`
@@ -258,6 +286,8 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
 
         svgEl.on('mouseenter', () => {
             Line.style('display', 'block')
+            LineHoryzontal.style('display', 'block')
+            LineHoryzontal2.style('display', `${data2?.length !== 0 ? 'block' : 'none'}`)
             InfoRectGroup.style('display', 'block')
             Focus.style('display', 'block')
             Focus2.style('display', `${data2?.length !== 0 ? 'block' : 'none'}`)
@@ -265,20 +295,20 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
 
         svgEl.on('mouseleave', () => {
             Line.style('display', 'none')
+            LineHoryzontal.style('display', 'none')
+            LineHoryzontal2.style('display', `${data2?.length !== 0 ? 'block' : 'none'}`)
             InfoRectGroup.style('display', 'none')
             Focus.style('display', 'none')
             Focus2.style('display', 'none')
         })
 
         svg.append(() => Line.node())
+        svg.append(() => LineHoryzontal.node())
+        svg.append(() => LineHoryzontal2.node())
         svg.append(() => Focus.node())
         svg.append(() => InfoRectGroup.node())
         svg.append(() => Focus2.node())
     }, [data, xDomain])
 
-    return (
-        <ChartWrapper>
-            <svg ref={svgRef} width={dimensions.width} height={dimensions.height} />
-        </ChartWrapper>
-    )
+    return <svg ref={svgRef} width={dimensions.width} height={dimensions.height} />
 }

@@ -423,6 +423,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                     <Slider
                                         value={percentForSlider}
                                         onChange={onPercentSelectForSlider}
+                                        disabled={false}
                                     />
                                 </AutoColumn>
                             </LightCard>

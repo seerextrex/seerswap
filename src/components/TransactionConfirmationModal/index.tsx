@@ -6,7 +6,7 @@ import Modal from '../Modal'
 import { Text } from 'rebass'
 import { CloseIcon, CustomLightSpinner, ExternalLink } from '../../theme'
 import { RowBetween, RowFixed } from '../Row'
-import { AlertTriangle, ArrowUpCircle, CheckCircle } from 'react-feather'
+import { AlertTriangle, ArrowUpCircle, CheckCircle, X } from 'react-feather'
 import { ButtonLight, ButtonPrimary } from '../Button'
 import { AutoColumn } from '../Column'
 // @ts-ignore
@@ -18,58 +18,48 @@ import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { Trans } from '@lingui/macro'
 import { BottomSection, ConfirmedIcon, Section, StyledLogo, Wrapper } from './styled'
 
-function ConfirmationPendingContent({
-    onDismiss,
-    pendingText,
-    inline
-}: {
+interface ConfirmationPendingContentProps {
     onDismiss: () => void
     pendingText: ReactNode
     inline?: boolean // not in modal
-}) {
+}
+
+function ConfirmationPendingContent({ onDismiss, pendingText, inline }: ConfirmationPendingContentProps) {
     return (
-        <Wrapper>
-            <AutoColumn gap='md'>
-                {!inline && (
-                    <RowBetween>
-                        <div />
-                        <CloseIcon onClick={onDismiss} />
-                    </RowBetween>
-                )}
-                <ConfirmedIcon inline={inline}>
-                    <CustomLightSpinner src={Circle} alt='loader' size={inline ? '40px' : '90px'} />
-                </ConfirmedIcon>
-                <AutoColumn gap='12px' justify={'center'}>
-                    <Text fontWeight={500} fontSize={20} textAlign='center'>
-                        <Trans>Waiting For Confirmation</Trans>
-                    </Text>
-                    <AutoColumn gap='12px' justify={'center'}>
-                        <Text fontWeight={600} fontSize={14} color='' textAlign='center'>
-                            {pendingText}
-                        </Text>
-                    </AutoColumn>
-                    <Text fontSize={12} color='#565A69' textAlign='center' marginBottom={12}>
-                        <Trans>Confirm this transaction in your wallet</Trans>
-                    </Text>
-                </AutoColumn>
-            </AutoColumn>
-        </Wrapper>
+        <div className={'p-1 w-100'}>
+            {!inline && (
+                <div className={'flex-s-between'}>
+                    <div />
+                    <X className={'c-p'} onClick={onDismiss} />
+                </div>
+            )}
+            <div className={'f c f-ac f-jc mb-1 p-2'}>
+                <CustomLightSpinner src={Circle} alt='loader' size={inline ? '40px' : '90px'} />
+            </div>
+            <div className={'f c f-ac ta-c'}>
+                <span className={'fs-125 c-p mb-05 i-f'}>
+                    <Trans>Waiting For Confirmation</Trans>
+                </span>
+                <span className={'b c-p i-f mb-05'}>
+                    {pendingText}
+                </span>
+                <span className={'fs-075 c-lg'}>
+                    <Trans>Confirm this transaction in your wallet</Trans>
+                </span>
+            </div>
+        </div>
     )
 }
 
-function TransactionSubmittedContent({
-    onDismiss,
-    chainId,
-    hash,
-    currencyToAdd,
-    inline
-}: {
+interface TransactionSubmittedContentProps {
     onDismiss: () => void
     hash: string | undefined
     chainId: number
     currencyToAdd?: Currency | undefined
     inline?: boolean // not in modal
-}) {
+}
+
+function TransactionSubmittedContent({ onDismiss, chainId, hash, currencyToAdd, inline }: TransactionSubmittedContentProps) {
     const theme = useContext(ThemeContext)
 
     const { library } = useActiveWeb3React()
@@ -77,8 +67,7 @@ function TransactionSubmittedContent({
     const { addToken, success } = useAddTokenToMetamask(currencyToAdd)
 
     return (
-        <Wrapper style={{ color: 'black' }}>
-            <Section inline={inline}>
+        <div >
                 {!inline && (
                     <RowBetween>
                         <div />
@@ -129,22 +118,18 @@ function TransactionSubmittedContent({
                         </Text>
                     </ButtonPrimary>
                 </AutoColumn>
-            </Section>
-        </Wrapper>
+        </div>
     )
 }
 
-export function ConfirmationModalContent({
-    title,
-    bottomContent,
-    onDismiss,
-    topContent
-}: {
+interface ConfirmationModalContentProps {
     title: ReactNode
     onDismiss: () => void
     topContent: () => ReactNode
     bottomContent?: () => ReactNode | undefined
-}) {
+}
+
+export function ConfirmationModalContent({ title, bottomContent, onDismiss, topContent }: ConfirmationModalContentProps) {
     return (
         <Wrapper>
             <Section>
@@ -161,10 +146,12 @@ export function ConfirmationModalContent({
     )
 }
 
-export function TransactionErrorContent({
-    message,
-    onDismiss
-}: { message: ReactNode; onDismiss: () => void }) {
+interface TransactionErrorContentProps {
+    message: ReactNode
+    onDismiss: () => void
+}
+
+export function TransactionErrorContent({ message, onDismiss }: TransactionErrorContentProps) {
     const theme = useContext(ThemeContext)
     return (
         <Wrapper>
@@ -207,15 +194,7 @@ interface ConfirmationModalProps {
     currencyToAdd?: Currency | undefined
 }
 
-export default function TransactionConfirmationModal({
-    isOpen,
-    onDismiss,
-    attemptingTxn,
-    hash,
-    pendingText,
-    content,
-    currencyToAdd
-}: ConfirmationModalProps) {
+export default function TransactionConfirmationModal({ isOpen, onDismiss, attemptingTxn, hash, pendingText, content, currencyToAdd }: ConfirmationModalProps) {
     const { chainId } = useActiveWeb3React()
 
     // if on L2 and txn is submitted, close automatically (if open)

@@ -23,6 +23,7 @@ import ThemeProvider, { ThemedGlobalStyle } from './theme'
 import getLibrary from './utils/getLibrary'
 import '@fontsource/montserrat'
 import GasUpdater from './state/application/gasUpdater'
+import './assets/styles/index.scss'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 type __window = Window & { ethereum: any }

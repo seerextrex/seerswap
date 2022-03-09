@@ -26,11 +26,11 @@ msgstr "${0}"
 #~ msgid "(Max)"
 #~ msgstr "(Max)"
 
-#: src/components/AddressInputPanel/index.tsx
+#: src/components/AddressInputPanel/PoolInfoHeader.tsx
 msgid "(View on Explorer)"
 msgstr "(View on Explorer)"
 
-#: src/components/AccountDetails/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
 msgid "(clear all)"
 msgstr "(clear all)"
 
@@ -62,7 +62,7 @@ msgstr "+/- {label}%"
 #~ msgid "+5 min"
 #~ msgstr "+5 min"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "- Remove send"
 #~ msgstr "- Remove send"
 
@@ -102,7 +102,7 @@ msgstr "75%"
 #~ msgid "<0>Back to </0>"
 #~ msgstr "<0>Back to </0>"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "<0>Current Price:</0><1><2/></1><3>{0} per {1}</3>"
 msgstr "<0>Current Price:</0><1><2/></1><3>{0} per {1}</3>"
 
@@ -122,7 +122,7 @@ msgstr "<0>Current Price:</0><1><2/></1><3>{0} per {1}</3>"
 msgid "Accept"
 msgstr "Accept"
 
-#: src/components/AccountDetails/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
 msgid "Account"
 msgstr "Account"
 
@@ -130,9 +130,9 @@ msgstr "Account"
 msgid "Active"
 msgstr "Active"
 
-#: src/components/PositionCard/index.tsx
-#: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidity/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Add"
 msgstr "Add"
 
@@ -150,11 +150,11 @@ msgstr "Add"
 #~ msgid "Add liquidity."
 #~ msgstr "Add liquidity."
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Add more liquidity"
 msgstr "Add more liquidity"
 
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Add {0} to Metamask <0/>"
 msgstr "Add {0} to Metamask <0/>"
 
@@ -162,12 +162,12 @@ msgstr "Add {0} to Metamask <0/>"
 #~ msgid "Add {0}/{1} V3 liquidity"
 #~ msgstr "Add {0}/{1} V3 liquidity"
 
-#: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidityPage/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
+#: src/pages/AddLiquidityPage/PoolInfoHeader.tsx
 msgid "Add {0}/{1} liquidity"
 msgstr "Add {0}/{1} liquidity"
 
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Added {0}"
 msgstr "Added {0}"
 
@@ -175,7 +175,7 @@ msgstr "Added {0}"
 msgid "Algebra on {0}"
 msgstr "Algebra on {0}"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "Allow Algebra to use your {0}"
 #~ msgstr "Allow Algebra to use your {0}"
 
@@ -183,7 +183,7 @@ msgstr "Algebra on {0}"
 #~ msgid "Allow LP token migration"
 #~ msgstr "Allow LP token migration"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Allow high price impact trades and skip the confirm screen. Use at your own risk."
 msgstr "Allow high price impact trades and skip the confirm screen. Use at your own risk."
 
@@ -212,12 +212,12 @@ msgstr "An error occurred when trying to execute this swap. You may need to incr
 #~ msgstr "Approve"
 
 #: src/components/earn/StakingModal.tsx
-#: src/components/StakingModal/index.tsx
+#: src/components/StakingModal/PoolInfoHeader.tsx
 msgid "Approve NFT"
 msgstr "Approve NFT"
 
-#: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Approve {0}"
 msgstr "Approve {0}"
 
@@ -229,12 +229,12 @@ msgstr "Approve {0}"
 #~ msgid "Approving"
 #~ msgstr "Approving"
 
-#: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Approving {0}"
 msgstr "Approving {0}"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Are you sure?"
 msgstr "Are you sure?"
 
@@ -242,7 +242,7 @@ msgstr "Are you sure?"
 #~ msgid "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
 #~ msgstr "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Auto"
 msgstr "Auto"
 
@@ -250,7 +250,7 @@ msgstr "Auto"
 #~ msgid "Available to deposit: {0}"
 #~ msgstr "Available to deposit: {0}"
 
-#: src/components/WalletModal/index.tsx
+#: src/components/WalletModal/PoolInfoHeader.tsx
 #~ msgid "Back"
 #~ msgstr "Back"
 
@@ -258,23 +258,23 @@ msgstr "Auto"
 #~ msgid "Balance: {0} {1}"
 #~ msgstr "Balance: {0} {1}"
 
-#: src/components/FeeSelector/index.tsx
+#: src/components/FeeSelector/PoolInfoHeader.tsx
 msgid "Best for exotic pairs."
 msgstr "Best for exotic pairs."
 
-#: src/components/FeeSelector/index.tsx
+#: src/components/FeeSelector/PoolInfoHeader.tsx
 msgid "Best for most pairs."
 msgstr "Best for most pairs."
 
-#: src/components/FeeSelector/index.tsx
+#: src/components/FeeSelector/PoolInfoHeader.tsx
 msgid "Best for stable pairs."
 msgstr "Best for stable pairs."
 
-#: src/components/Blocklist/index.tsx
+#: src/components/Blocklist/PoolInfoHeader.tsx
 msgid "Blocked address"
 msgstr "Blocked address"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 msgid "By adding liquidity you'll earn 0.3% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity."
 msgstr "By adding liquidity you'll earn 0.3% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity."
 
@@ -323,7 +323,7 @@ msgstr "Claiming {0} UNI"
 msgid "Clear all"
 msgstr "Clear all"
 
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Close"
 msgstr "Close"
 
@@ -373,7 +373,7 @@ msgstr "Common bases"
 #~ msgid "Confirm"
 #~ msgstr "Confirm"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Confirm Create"
 msgstr "Confirm Create"
 
@@ -382,8 +382,8 @@ msgstr "Confirm Create"
 msgid "Confirm Swap"
 msgstr "Confirm Swap"
 
-#: src/components/ModalViews/index.tsx
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/ModalViews/PoolInfoHeader.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Confirm this transaction in your wallet"
 msgstr "Confirm this transaction in your wallet"
 
@@ -401,7 +401,7 @@ msgstr "Connect Wallet"
 #~ msgstr "Connect Wwallet"
 
 #: src/components/earn/UnstakingModal.tsx
-#: src/pages/Pool/index.tsx
+#: src/pages/Pool/PoolInfoHeader.tsx
 msgid "Connect a wallet"
 msgstr "Connect a wallet"
 
@@ -409,7 +409,7 @@ msgstr "Connect a wallet"
 msgid "Connect to a wallet"
 msgstr "Connect to a wallet"
 
-#: src/pages/PoolFinder/index.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
 #~ msgid "Connect to a wallet to find pools"
 #~ msgstr "Connect to a wallet to find pools"
 
@@ -417,15 +417,15 @@ msgstr "Connect to a wallet"
 #~ msgid "Connect to a wallet to view your V2 liquidity."
 #~ msgstr "Connect to a wallet to view your V2 liquidity."
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Connect wallet"
 msgstr "Connect wallet"
 
-#: src/pages/PoolFinder/index.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
 #~ msgid "Connect wallet to find pools"
 #~ msgstr "Connect wallet to find pools"
 
-#: src/components/AccountDetails/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
 msgid "Connected with {name}"
 msgstr "Connected with {name}"
 
@@ -433,16 +433,16 @@ msgstr "Connected with {name}"
 msgid "Copied"
 msgstr "Copied"
 
-#: src/components/AccountDetails/index.tsx
-#: src/components/AccountDetails/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
 msgid "Copy Address"
 msgstr "Copy Address"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Create"
 msgstr "Create"
 
-#: src/components/NavigationTabs/index.tsx
+#: src/components/NavigationTabs/PoolInfoHeader.tsx
 msgid "Create a pair"
 msgstr "Create a pair"
 
@@ -459,8 +459,8 @@ msgstr "Create a pair"
 #~ msgid "Create pool and add {0}/{1} V3 liquidity"
 #~ msgstr "Create pool and add {0}/{1} V3 liquidity"
 
-#: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidityPage/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
+#: src/pages/AddLiquidityPage/PoolInfoHeader.tsx
 msgid "Create pool and add {0}/{1} liquidity"
 msgstr "Create pool and add {0}/{1} liquidity"
 
@@ -484,12 +484,12 @@ msgstr "Create pool and add {0}/{1} liquidity"
 msgid "Current pool fee."
 msgstr "Current pool fee."
 
-#: src/components/PositionPreview/index.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
 #: src/pages/Pool/CurrentPriceCard.tsx
 msgid "Current price"
 msgstr "Current price"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Current {0} Price:"
 msgstr "Current {0} Price:"
 
@@ -509,12 +509,12 @@ msgstr "Current {0} Price:"
 msgid "Deposit"
 msgstr "Deposit"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Deposit Amounts"
 msgstr "Deposit Amounts"
 
 #: src/components/earn/StakingModal.tsx
-#: src/components/StakingModal/index.tsx
+#: src/components/StakingModal/PoolInfoHeader.tsx
 msgid "Deposit NFT"
 msgstr "Deposit NFT"
 
@@ -544,16 +544,16 @@ msgstr "Deposited liquidity:"
 #~ msgid "Disable Multihops"
 #~ msgstr "Disable Multihops"
 
-#: src/components/AccountDetails/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
 msgid "Disconnect"
 msgstr "Disconnect"
 
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Dismiss"
 msgstr "Dismiss"
 
 #: src/components/earn/StakingModal.tsx
-#: src/components/StakingModal/index.tsx
+#: src/components/StakingModal/PoolInfoHeader.tsx
 msgid "Done!"
 msgstr "Done!"
 
@@ -569,7 +569,7 @@ msgstr "Done!"
 #~ msgid "Edit"
 #~ msgstr "Edit"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Efficiency Comparison"
 msgstr "Efficiency Comparison"
 
@@ -585,7 +585,7 @@ msgstr "Enter a percent"
 msgid "Enter a recipient"
 msgstr "Enter a recipient"
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Enter a valid slippage percentage"
 msgstr "Enter a valid slippage percentage"
 
@@ -606,7 +606,7 @@ msgstr "Enter valid list location"
 msgid "Enter valid token address"
 msgstr "Enter valid token address"
 
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 #: src/components/Web3Status/Web3StatusInner.tsx
 msgid "Error"
 msgstr "Error"
@@ -615,7 +615,7 @@ msgstr "Error"
 msgid "Error connecting"
 msgstr "Error connecting"
 
-#: src/components/WalletModal/index.tsx
+#: src/components/WalletModal/PoolInfoHeader.tsx
 #~ msgid "Error connecting. Try refreshing the page."
 #~ msgstr "Error connecting. Try refreshing the page."
 
@@ -632,11 +632,11 @@ msgstr "Expand"
 msgid "Expanded results from inactive Token Lists"
 msgstr "Expanded results from inactive Token Lists"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Expert Mode"
 msgstr "Expert Mode"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result in bad rates and lost funds."
 msgstr "Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result in bad rates and lost funds."
 
@@ -644,7 +644,7 @@ msgstr "Expert mode turns off the confirm transaction prompt and allows high sli
 #~ msgid "Farming"
 #~ msgstr "Farming"
 
-#: src/components/PositionPreview/index.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
 msgid "Fee"
 msgstr "Fee"
 
@@ -668,7 +668,7 @@ msgstr "Fee is {0}%"
 msgid "From"
 msgstr "From"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "From (at most)"
 #~ msgstr "From (at most)"
 
@@ -676,7 +676,7 @@ msgstr "From"
 msgid "Full Range"
 msgstr "Full Range"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Full range positions may earn less fees than concentrated positions. Learn more <0>here</0>."
 msgstr "Full range positions may earn less fees than concentrated positions. Learn more <0>here</0>."
 
@@ -688,11 +688,11 @@ msgstr "Full range positions may earn less fees than concentrated positions. Lea
 #~ msgid "Hide"
 #~ msgstr "Hide"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "High Price Impact"
 #~ msgstr "High Price Impact"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "I Understand"
 msgstr "I Understand"
 
@@ -735,8 +735,8 @@ msgstr "In range"
 msgid "Incentives"
 msgstr "Incentives"
 
-#: src/components/NavigationTabs/index.tsx
-#: src/pages/AddLiquidity/index.tsx
+#: src/components/NavigationTabs/PoolInfoHeader.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Increase Liquidity"
 msgstr "Increase Liquidity"
@@ -753,15 +753,15 @@ msgstr "Initializing..."
 msgid "Input is estimated. You will sell at most <0>{0} {1}</0> or the transaction will revert."
 msgstr "Input is estimated. You will sell at most <0>{0} {1}</0> or the transaction will revert."
 
-#: src/components/WalletModal/index.tsx
+#: src/components/WalletModal/PoolInfoHeader.tsx
 #~ msgid "Install Metamask"
 #~ msgstr "Install Metamask"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "Insufficient liquidity for this trade."
 #~ msgstr "Insufficient liquidity for this trade."
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "Insufficient liquidity for this trade. Try enabling multi-hop trades."
 #~ msgstr "Insufficient liquidity for this trade. Try enabling multi-hop trades."
 
@@ -774,7 +774,7 @@ msgstr "Input is estimated. You will sell at most <0>{0} {1}</0> or the transact
 msgid "Insufficient {0} balance"
 msgstr "Insufficient {0} balance"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Interface Settings"
 msgstr "Interface Settings"
 
@@ -783,7 +783,7 @@ msgstr "Interface Settings"
 msgid "Invalid pair"
 msgstr "Invalid pair"
 
-#: src/pages/PoolFinder/index.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
 msgid "Invalid pair."
 msgstr "Invalid pair."
 
@@ -791,7 +791,7 @@ msgstr "Invalid pair."
 msgid "Invalid price input"
 msgstr "Invalid price input"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Invalid range selected. The min price must be lower than the max price."
 msgstr "Invalid range selected. The min price must be lower than the max price."
 
@@ -811,7 +811,7 @@ msgstr "Liquidity"
 msgid "Liquidity Provider Fee"
 msgstr "Liquidity Provider Fee"
 
-#: src/components/LiquidityChartRangeInput/index.tsx
+#: src/components/LiquidityChartRangeInput/PoolInfoHeader.tsx
 msgid "Liquidity data not available."
 msgstr "Liquidity data not available."
 
@@ -823,10 +823,10 @@ msgstr "Lists"
 msgid "Loaded"
 msgstr "Loaded"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 #: src/components/PositionCard/Sushi.tsx
 #: src/components/PositionCard/V2.tsx
-#: src/pages/PoolFinder/index.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
 msgid "Loading"
 msgstr "Loading"
 
@@ -835,13 +835,13 @@ msgid "MAX"
 msgstr "MAX"
 
 #: src/components/earn/PoolCard.tsx
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 #: src/components/SearchModal/Manage.tsx
 msgid "Manage"
 msgstr "Manage"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 msgid "Manage Liquidity in Rewards Pool"
 msgstr "Manage Liquidity in Rewards Pool"
 
@@ -849,8 +849,8 @@ msgstr "Manage Liquidity in Rewards Pool"
 msgid "Max"
 msgstr "Max"
 
-#: src/components/PositionPreview/index.tsx
-#: src/components/RangeSelector/index.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
+#: src/components/RangeSelector/PoolInfoHeader.tsx
 msgid "Max Price"
 msgstr "Max Price"
 
@@ -858,7 +858,7 @@ msgstr "Max Price"
 msgid "Max price"
 msgstr "Max price"
 
-#: src/components/PositionListItem/index.tsx
+#: src/components/PositionListItem/PoolInfoHeader.tsx
 msgid "Max:"
 msgstr "Max:"
 
@@ -866,13 +866,13 @@ msgstr "Max:"
 msgid "Maximum sent"
 msgstr "Maximum sent"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 #: src/components/PositionCard/Sushi.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Migrate"
 msgstr "Migrate"
 
-#: src/pages/Pool/index.tsx
+#: src/pages/Pool/PoolInfoHeader.tsx
 msgid "Migrate Pool"
 msgstr "Migrate Pool"
 
@@ -881,7 +881,7 @@ msgstr "Migrate Pool"
 #~ msgid "Migrate V2 Liquidity"
 #~ msgstr "Migrate V2 Liquidity"
 
-#: src/components/NavigationTabs/index.tsx
+#: src/components/NavigationTabs/PoolInfoHeader.tsx
 msgid "Migrate from SushiSwap or QuickSwap"
 msgstr "Migrate from SushiSwap or QuickSwap"
 
@@ -897,8 +897,8 @@ msgstr "Migrate from SushiSwap or QuickSwap"
 #~ msgid "Migrating"
 #~ msgstr "Migrating"
 
-#: src/components/PositionPreview/index.tsx
-#: src/components/RangeSelector/index.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
+#: src/components/RangeSelector/PoolInfoHeader.tsx
 msgid "Min Price"
 msgstr "Min Price"
 
@@ -910,7 +910,7 @@ msgstr "Min Price"
 msgid "Min price"
 msgstr "Min price"
 
-#: src/components/PositionListItem/index.tsx
+#: src/components/PositionListItem/PoolInfoHeader.tsx
 msgid "Min:"
 msgstr "Min:"
 
@@ -918,7 +918,7 @@ msgstr "Min:"
 msgid "Minimum received"
 msgstr "Minimum received"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Multihops"
 msgstr "Multihops"
 
@@ -926,7 +926,7 @@ msgstr "Multihops"
 #~ msgid "My rewards"
 #~ msgstr "My rewards"
 
-#: src/pages/Pool/index.tsx
+#: src/pages/Pool/PoolInfoHeader.tsx
 msgid "New Position"
 msgstr "New Position"
 
@@ -954,7 +954,7 @@ msgstr "New Position"
 msgid "No results found."
 msgstr "No results found."
 
-#: src/components/FeeSelector/index.tsx
+#: src/components/FeeSelector/PoolInfoHeader.tsx
 msgid "Not created"
 msgstr "Not created"
 
@@ -970,27 +970,27 @@ msgstr "OFF"
 msgid "ON"
 msgstr "ON"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
 msgstr "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
 
-#: src/components/Toggle/index.tsx
+#: src/components/Toggle/PoolInfoHeader.tsx
 msgid "Off"
 msgstr "Off"
 
-#: src/components/Toggle/index.tsx
+#: src/components/Toggle/PoolInfoHeader.tsx
 msgid "On"
 msgstr "On"
 
-#: src/components/Web3ReactManager/index.tsx
+#: src/components/Web3ReactManager/PoolInfoHeader.tsx
 msgid "Oops! An unknown error occurred. Please refresh the page, or visit from another browser or device."
 msgstr "Oops! An unknown error occurred. Please refresh the page, or visit from another browser or device."
 
-#: src/components/OptimismDowntimeWarning/index.tsx
+#: src/components/OptimismDowntimeWarning/PoolInfoHeader.tsx
 msgid "Optimism Scheduled Downtimes"
 msgstr "Optimism Scheduled Downtimes"
 
-#: src/components/OptimismDowntimeWarning/index.tsx
+#: src/components/OptimismDowntimeWarning/PoolInfoHeader.tsx
 msgid "Optimism expects some scheduled downtime in the near future. <0>Read more.</0>"
 msgstr "Optimism expects some scheduled downtime in the near future. <0>Read more.</0>"
 
@@ -1034,7 +1034,7 @@ msgstr "Please confirm you would like to remove this list by typing REMOVE"
 #~ msgid "Please connect to the appropriate Kovan network."
 #~ msgstr "Please connect to the appropriate Kovan network."
 
-#: src/components/WalletModal/index.tsx
+#: src/components/WalletModal/PoolInfoHeader.tsx
 #~ msgid "Please connect to the appropriate Polygon network."
 #~ msgstr "Please connect to the appropriate Polygon network."
 
@@ -1042,15 +1042,15 @@ msgstr "Please confirm you would like to remove this list by typing REMOVE"
 #~ msgid "Please connect to the appropriate Ropsten network."
 #~ msgstr "Please connect to the appropriate Ropsten network."
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Please type the word \"{confirmWord}\" to enable expert mode."
 msgstr "Please type the word \"{confirmWord}\" to enable expert mode."
 
-#: src/components/NavigationTabs/index.tsx
+#: src/components/NavigationTabs/PoolInfoHeader.tsx
 msgid "Pool"
 msgstr "Pool"
 
-#: src/pages/PoolFinder/index.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
 msgid "Pool Found!"
 msgstr "Pool Found!"
 
@@ -1058,13 +1058,13 @@ msgstr "Pool Found!"
 msgid "Pool rate"
 msgstr "Pool rate"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Pool tokens in rewards pool:"
 msgstr "Pool tokens in rewards pool:"
 
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 #: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/V2.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
@@ -1074,7 +1074,7 @@ msgstr "Pool tokens in rewards pool:"
 msgid "Pooled {0}:"
 msgstr "Pooled {0}:"
 
-#: src/pages/Pool/index.tsx
+#: src/pages/Pool/PoolInfoHeader.tsx
 msgid "Pools Overview"
 msgstr "Pools Overview"
 
@@ -1082,7 +1082,7 @@ msgstr "Pools Overview"
 #~ msgid "Pools for staking"
 #~ msgstr "Pools for staking"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Preview"
 msgstr "Preview"
 
@@ -1098,7 +1098,7 @@ msgstr "Price"
 msgid "Price Impact"
 msgstr "Price Impact"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "Price Impact Too High"
 #~ msgstr "Price Impact Too High"
 
@@ -1106,7 +1106,7 @@ msgstr "Price Impact"
 msgid "Price Updated"
 msgstr "Price Updated"
 
-#: src/components/CurrencyInputPanel/index.tsx
+#: src/components/CurrencyInputPanel/PoolInfoHeader.tsx
 msgid "Price is outside specified price range. Single-asset deposit only."
 msgstr "Price is outside specified price range. Single-asset deposit only."
 
@@ -1126,11 +1126,11 @@ msgstr "Price range"
 msgid "Read more about unsupported assets"
 msgstr "Read more about unsupported assets"
 
-#: src/components/AccountDetails/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
 msgid "Recent Transactions"
 msgstr "Recent Transactions"
 
-#: src/components/AddressInputPanel/index.tsx
+#: src/components/AddressInputPanel/PoolInfoHeader.tsx
 msgid "Recipient"
 msgstr "Recipient"
 
@@ -1151,7 +1151,7 @@ msgstr "Remove"
 #~ msgid "Remove Delegate"
 #~ msgstr "Remove Delegate"
 
-#: src/components/NavigationTabs/index.tsx
+#: src/components/NavigationTabs/PoolInfoHeader.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Remove Liquidity"
@@ -1178,11 +1178,11 @@ msgstr "Remove {0}/{1} liquidity"
 #~ msgid "Removing {0} {1} and {2} {3}"
 #~ msgstr "Removing {0} {1} and {2} {3}"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Restricts swaps to direct pairs only."
 msgstr "Restricts swaps to direct pairs only."
 
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Return"
 msgstr "Return"
 
@@ -1202,15 +1202,15 @@ msgstr "Search name or paste address"
 #~ msgid "Select Pair"
 #~ msgstr "Select Pair"
 
-#: src/components/CurrencyInputPanel/index.tsx
+#: src/components/CurrencyInputPanel/PoolInfoHeader.tsx
 #: src/components/SearchModal/CurrencySearch.tsx
-#: src/pages/PoolFinder/index.tsx
-#: src/pages/PoolFinder/index.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
 #: src/state/swap/hooks.ts
 msgid "Select a token"
 msgstr "Select a token"
 
-#: src/pages/PoolFinder/index.tsx
+#: src/pages/PoolFinder/PoolInfoHeader.tsx
 msgid "Select a token to find your liquidity on SushiSwap or QuickSwap."
 msgstr "Select a token to find your liquidity on SushiSwap or QuickSwap."
 
@@ -1218,7 +1218,7 @@ msgstr "Select a token to find your liquidity on SushiSwap or QuickSwap."
 #~ msgid "Select a token to find your v2 liquidity."
 #~ msgstr "Select a token to find your v2 liquidity."
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Selected Range"
 msgstr "Selected Range"
 
@@ -1227,16 +1227,16 @@ msgstr "Selected Range"
 #~ msgstr "Self Delegate"
 
 #: src/components/earn/StakingModal.tsx
-#: src/components/StakingModal/index.tsx
+#: src/components/StakingModal/PoolInfoHeader.tsx
 msgid "Send NFT"
 msgstr "Send NFT"
 
-#: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Set Price Range"
 msgstr "Set Price Range"
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Set Starting Price"
 msgstr "Set Starting Price"
 
@@ -1249,7 +1249,7 @@ msgstr "Set Starting Price"
 #~ msgstr "Simple"
 
 #: src/components/swap/AdvancedSwapDetails.tsx
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
@@ -1257,7 +1257,7 @@ msgstr "Slippage tolerance"
 msgid "Some assets are not available through this interface because they may not work well with the smart contracts or we are unable to allow trading for legal reasons."
 msgstr "Some assets are not available through this interface because they may not work well with the smart contracts or we are unable to allow trading for legal reasons."
 
-#: src/components/ErrorBoundary/index.tsx
+#: src/components/ErrorBoundary/PoolInfoHeader.tsx
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
@@ -1278,7 +1278,7 @@ msgstr "Something went wrong"
 #~ msgid "Start time"
 #~ msgstr "Start time"
 
-#: src/components/PositionList/index.tsx
+#: src/components/PositionList/PoolInfoHeader.tsx
 msgid "Status"
 msgstr "Status"
 
@@ -1290,13 +1290,13 @@ msgstr "Status"
 #~ msgid "Submitting Vote"
 #~ msgstr "Submitting Vote"
 
-#: src/components/NavigationTabs/index.tsx
+#: src/components/NavigationTabs/PoolInfoHeader.tsx
 #: src/components/swap/SwapHeader.tsx
 msgid "Swap"
 msgstr "Swap"
 
-#: src/pages/Swap/index.tsx
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "Swap Anyway"
 #~ msgstr "Swap Anyway"
 
@@ -1356,7 +1356,7 @@ msgstr "The price of this pool is within your selected range. Your position is c
 msgid "The transaction could not be sent because the deadline has passed. Please check that your transaction deadline is not too low."
 msgstr "The transaction could not be sent because the deadline has passed. Please check that your transaction deadline is not too low."
 
-#: src/components/LiquidityChartRangeInput/index.tsx
+#: src/components/LiquidityChartRangeInput/PoolInfoHeader.tsx
 msgid "There is no liquidity data."
 msgstr "There is no liquidity data."
 
@@ -1382,11 +1382,11 @@ msgstr "This is an alpha release of Algebra on the {0} network. You must bridge 
 #~ msgid "This is an alpha release of Uniswap on the {0} network. You must bridge L1 assets to the network to swap them."
 #~ msgstr "This is an alpha release of Uniswap on the {0} network. You must bridge L1 assets to the network to swap them."
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "This pool must be initialized before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the initialization transaction."
 msgstr "This pool must be initialized before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the initialization transaction."
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "This pool must be initialized on {0} before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount."
 msgstr "This pool must be initialized on {0} before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount."
 
@@ -1422,12 +1422,12 @@ msgstr "Tip: Custom tokens are stored locally in your browser"
 msgid "To"
 msgstr "To"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "To (at least)"
 #~ msgstr "To (at least)"
 
 #: src/components/earn/StakingModal.tsx
-#: src/components/StakingModal/index.tsx
+#: src/components/StakingModal/PoolInfoHeader.tsx
 msgid "To stake your NFT you should approve Algebra to use it"
 msgstr "To stake your NFT you should approve Algebra to use it"
 
@@ -1451,17 +1451,17 @@ msgstr "Tokens from inactive lists. Import specific tokens below or click Manage
 msgid "Total deposited"
 msgstr "Total deposited"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Transaction Settings"
 msgstr "Transaction Settings"
 
 #: src/components/earn/ClaimRewardModal.tsx
 #: src/components/earn/UnstakingModal.tsx
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Transaction Submitted"
 msgstr "Transaction Submitted"
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Transaction deadline"
 msgstr "Transaction deadline"
 
@@ -1469,7 +1469,7 @@ msgstr "Transaction deadline"
 msgid "Try Again"
 msgstr "Try Again"
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "Turn On Expert Mode"
 msgstr "Turn On Expert Mode"
 
@@ -1531,7 +1531,7 @@ msgstr "Unsupported Assets"
 #~ msgid "Untitled"
 #~ msgstr "Untitled"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "Unwrap"
 #~ msgstr "Unwrap"
 
@@ -1556,9 +1556,9 @@ msgstr "Update list"
 msgid "View list"
 msgstr "View list"
 
-#: src/components/AccountDetails/index.tsx
-#: src/components/AccountDetails/index.tsx
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "View on Explorer"
 msgstr "View on Explorer"
 
@@ -1566,7 +1566,7 @@ msgstr "View on Explorer"
 msgid "View position"
 msgstr "View position"
 
-#: src/components/ModalViews/index.tsx
+#: src/components/ModalViews/PoolInfoHeader.tsx
 msgid "View transaction on Explorer"
 msgstr "View transaction on Explorer"
 
@@ -1580,11 +1580,11 @@ msgstr "View transaction on Explorer"
 #~ msgid "Vote for proposal {proposalId}"
 #~ msgstr "Vote for proposal {proposalId}"
 
-#: src/components/TransactionConfirmationModal/index.tsx
+#: src/components/TransactionConfirmationModal/PoolInfoHeader.tsx
 msgid "Waiting For Confirmation"
 msgstr "Waiting For Confirmation"
 
-#: src/components/AddressInputPanel/index.tsx
+#: src/components/AddressInputPanel/PoolInfoHeader.tsx
 msgid "Wallet Address or ENS name"
 msgstr "Wallet Address or ENS name"
 
@@ -1616,7 +1616,7 @@ msgstr "Withdrawing {0} UNI-V2"
 msgid "Withdrew UNI-V2!"
 msgstr "Withdrew UNI-V2!"
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "Wrap"
 #~ msgstr "Wrap"
 
@@ -1632,11 +1632,11 @@ msgstr "Wrong Network"
 #~ msgid "You can either vote on each proposal yourself or delegate your votes to a third party."
 #~ msgstr "You can either vote on each proposal yourself or delegate your votes to a third party."
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "You can now trade {0}"
 #~ msgstr "You can now trade {0}"
 
-#: src/pages/Pool/index.tsx
+#: src/pages/Pool/PoolInfoHeader.tsx
 msgid "You do not have any liquidity positions."
 msgstr "You do not have any liquidity positions."
 
@@ -1658,7 +1658,7 @@ msgstr "You must bridge L1 assets to the network to use them."
 #~ msgid "You must connect an account."
 #~ msgstr "You must connect an account."
 
-#: src/pages/Swap/index.tsx
+#: src/pages/Swap/PoolInfoHeader.tsx
 #~ msgid "You must give the Algebra smart contracts permission to use your {0}. You only have to do this once per token."
 #~ msgstr "You must give the Algebra smart contracts permission to use your {0}. You only have to do this once per token."
 
@@ -1682,13 +1682,13 @@ msgstr "Your Reward"
 #~ msgid "Your V3 liquidity positions will appear here."
 #~ msgstr "Your V3 liquidity positions will appear here."
 
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Your pool share:"
 msgstr "Your pool share:"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 msgid "Your position"
 msgstr "Your position"
 
@@ -1696,12 +1696,12 @@ msgstr "Your position"
 msgid "Your position has 0 liquidity, and is not earning fees."
 msgstr "Your position has 0 liquidity, and is not earning fees."
 
-#: src/components/LiquidityChartRangeInput/index.tsx
+#: src/components/LiquidityChartRangeInput/PoolInfoHeader.tsx
 msgid "Your position will appear here."
 msgstr "Your position will appear here."
 
-#: src/components/PositionPreview/index.tsx
-#: src/components/PositionPreview/index.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
 msgid "Your position will be 100% composed of {0} at this price"
 msgstr "Your position will be 100% composed of {0} at this price"
 
@@ -1710,12 +1710,12 @@ msgstr "Your position will be 100% composed of {0} at this price"
 msgid "Your position will be 100% {0} at this price."
 msgstr "Your position will be 100% {0} at this price."
 
-#: src/pages/AddLiquidity/index.tsx
+#: src/pages/AddLiquidity/PoolInfoHeader.tsx
 msgid "Your position will not earn fees or be used in trades until the market price moves into your range."
 msgstr "Your position will not earn fees or be used in trades until the market price moves into your range."
 
-#: src/components/PositionList/index.tsx
-#: src/components/PositionList/index.tsx
+#: src/components/PositionList/PoolInfoHeader.tsx
+#: src/components/PositionList/PoolInfoHeader.tsx
 msgid "Your positions"
 msgstr "Your positions"
 
@@ -1723,7 +1723,7 @@ msgstr "Your positions"
 msgid "Your rate"
 msgstr "Your rate"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Your total pool tokens:"
 msgstr "Your total pool tokens:"
@@ -1732,27 +1732,27 @@ msgstr "Your total pool tokens:"
 #~ msgid "Your transaction cost will be much higher as it includes the gas to create the pool."
 #~ msgstr "Your transaction cost will be much higher as it includes the gas to create the pool."
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Your transaction may be frontrun"
 msgstr "Your transaction may be frontrun"
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Your transaction may fail"
 msgstr "Your transaction may fail"
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Your transaction will revert if it is pending for more than this period of time."
 msgstr "Your transaction will revert if it is pending for more than this period of time."
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "Your transaction will revert if the price changes unfavorably by more than this percentage."
 msgstr "Your transaction will revert if the price changes unfavorably by more than this percentage."
 
-#: src/components/AccountDetails/index.tsx
+#: src/components/AccountDetails/PoolInfoHeader.tsx
 msgid "Your transactions will appear here..."
 msgstr "Your transactions will appear here..."
 
-#: src/components/Settings/index.tsx
+#: src/components/Settings/PoolInfoHeader.tsx
 msgid "confirm"
 msgstr "confirm"
 
@@ -1764,7 +1764,7 @@ msgstr "has socks emoji"
 msgid "https:// or ipfs:// or ENS name"
 msgstr "https:// or ipfs:// or ENS name"
 
-#: src/components/TransactionSettings/index.tsx
+#: src/components/TransactionSettings/PoolInfoHeader.tsx
 msgid "minutes"
 msgstr "minutes"
 
@@ -1780,19 +1780,19 @@ msgstr "minutes"
 msgid "{0, plural, one {Import token} other {Import tokens}}"
 msgstr "{0, plural, one {Import token} other {Import tokens}}"
 
-#: src/components/FeeSelector/index.tsx
-#: src/components/RateToggle/index.tsx
-#: src/components/RateToggle/index.tsx
+#: src/components/FeeSelector/PoolInfoHeader.tsx
+#: src/components/RateToggle/PoolInfoHeader.tsx
+#: src/components/RateToggle/PoolInfoHeader.tsx
 #: src/pages/Pool/FilterPanelItem.tsx
 msgid "{0}"
 msgstr "{0}"
 
-#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/PoolInfoHeader.tsx
 msgid "{0} %"
 msgstr "{0} %"
 
-#: src/components/PositionListItem/index.tsx
-#: src/components/PositionListItem/index.tsx
+#: src/components/PositionListItem/PoolInfoHeader.tsx
+#: src/components/PositionListItem/PoolInfoHeader.tsx
 msgid "{0} <0/> per <1/>"
 msgstr "{0} <0/> per <1/>"
 
@@ -1840,9 +1840,9 @@ msgstr "{0} UNI / week"
 #~ msgid "{0} Votes"
 #~ msgstr "{0} Votes"
 
-#: src/components/PositionPreview/index.tsx
-#: src/components/PositionPreview/index.tsx
-#: src/components/PositionPreview/index.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
 #: src/pages/Pool/CurrentPriceCard.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
@@ -1869,7 +1869,7 @@ msgid "{0} • Added by user"
 msgstr "{0} • Added by user"
 
 #: src/components/CurrencyInputPanel/FiatValue.tsx
-#: src/components/PositionPreview/index.tsx
+#: src/components/PositionPreview/PoolInfoHeader.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
@@ -1880,7 +1880,7 @@ msgstr "{0}%"
 #~ msgid "{0}% fee tier"
 #~ msgstr "{0}% fee tier"
 
-#: src/components/FeeSelector/index.tsx
+#: src/components/FeeSelector/PoolInfoHeader.tsx
 msgid "{0}% select"
 msgstr "{0}% select"
 

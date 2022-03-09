@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
-import { TotalStatsWrapper } from './styled'
 import { StatCard } from './StatCard'
+import './index.scss'
 
 interface InfoTotalStatsProps {
     data: any
@@ -45,9 +45,9 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
     }, [data, poolsStat, pool])
 
     return (
-        <TotalStatsWrapper>
-            <StatCard isLoading={isLoading} data={_data?.tvlUSD} title={'Total Value Locked'} />
-            <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={'Volume 24H'} />
-        </TotalStatsWrapper>
+        <div className={'total-stats-wrapper'}>
+            <StatCard isLoading={isLoading} data={_data?.tvlUSD} title={'Total Value Locked'} style={'mr-f-05'} />
+            <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={'Volume 24H'} style={'ml-l-05'} />
+        </div>
     )
 }

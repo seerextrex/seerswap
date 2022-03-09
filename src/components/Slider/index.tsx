@@ -8,17 +8,10 @@ interface InputSliderProps {
     min?: number
     max?: number
     size?: number
+    disabled: boolean
 }
 
-export default function Slider({
-    value,
-    onChange,
-    min = 0,
-    step = 1,
-    max = 100,
-    size = 28,
-    ...rest
-}: InputSliderProps) {
+export default function Slider({ value, onChange, min = 0, step = 1, max = 100, size = 28, disabled, ...rest }: InputSliderProps) {
     const changeCallback = useCallback(
         (e) => {
             onChange(parseInt(e.target.value))
@@ -38,6 +31,7 @@ export default function Slider({
             step={step}
             min={min}
             max={max}
+            disabled={disabled}
         />
     )
 }

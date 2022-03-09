@@ -1,0 +1,66 @@
+@import "src/assets/styles/index";
+
+.my-stakes {
+
+  &__nft-send {
+
+    input {
+      border: none;
+    }
+
+    &__warning {
+      background-color: var(--red);
+    }
+  }
+
+  &__loader {
+    height: 400px;
+  }
+
+  &__position-card {
+    background-color: var(--ebony-clay);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+
+    &__header {
+      background-color: var(--dark-ebony-clay);
+
+      a {
+        &:hover {
+          color: var(--primary);
+        }
+      }
+
+      button {
+        background-color: var(--white);
+        border-radius: 4px;
+      }
+    }
+
+    &__body {
+      background-color: var(--dark-ebony-clay);
+
+      h3 {
+        text-transform: uppercase;
+      }
+
+      &__event-progress {
+        background-color: var(--white);
+        height: 16px;
+        position: relative;
+
+        div {
+          transition-duration: .5s;
+          background-color: var(--primary);
+          height: 100%;
+
+          @include skeleton-gradient()
+
+        }
+      }
+    }
+  }
+}

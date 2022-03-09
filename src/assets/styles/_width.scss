@@ -1,0 +1,23 @@
+.maw {
+  &-300 {
+    max-width: 300px;
+  }
+  &-765 {
+    max-width: 765px;
+  }
+
+  &-1180 {
+    max-width: var(--container_width);
+  }
+}
+
+.h {
+
+  &-400{
+    height: 400px;
+  }
+
+  &-800{
+    height: 800px;
+  }
+}

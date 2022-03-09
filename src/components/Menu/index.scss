@@ -1,0 +1,30 @@
+.menu-wrapper {
+  display: flex;
+
+  &__item {
+    display: flex;
+    color: var(--light-gray);
+
+    svg {
+      margin-right: 7px;
+    }
+
+    &--active {
+      color: var(--primary);
+    }
+  }
+  &__refresh {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    &[data-refreshing=true]{
+      animation: spin infinite 3s;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+}

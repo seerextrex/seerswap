@@ -1,20 +1,43 @@
-import { SwitchLocaleLink } from "components/SwitchLocaleLink";
-import { useEffect, useMemo, useState } from "react";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import { useIncentiveSubgraph } from "../../hooks/useIncentiveSubgraph";
-import { AlignJustify } from "react-feather";
-import { useActiveWeb3React } from "../../hooks/web3";
-import { StakingMenu } from "../../components/StakingMenu";
-import { StakerMyStakes } from "../../components/StakerMyStakes";
-import { FarmingEventsPage } from "../FarmingEventsPage";
-import { PageTitle } from "../../components/PageTitle";
-import { useWalletModalToggle } from "../../state/application/hooks";
-import { Helmet } from "react-helmet";
-import EternalFarmsPage from "../EternalFarmsPage";
-import EventsHistory from "../EventsHistory";
-import { StakerMyRewards } from "../../components/StakerMyRewards";
-import { BodyWrapper, ConnectWalletButton, InnerWrapper, MainContentWrapper, MenuWrapper, MockScreen, PageWrapper } from "./styled";
-import { FormattedRewardInterface, Reward } from "../../models/interfaces";
+import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
+import { useEffect, useMemo, useState } from 'react'
+import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom'
+import { useIncentiveSubgraph } from '../../hooks/useIncentiveSubgraph'
+import { AlignJustify, Calendar, Zap } from 'react-feather'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { StakerMyStakes } from '../../components/StakerMyStakes'
+import { FarmingEventsPage } from '../FarmingEventsPage'
+import { useWalletModalToggle } from '../../state/application/hooks'
+import { Helmet } from 'react-helmet'
+import EternalFarmsPage from '../EternalFarmsPage'
+import EventsHistory from '../EventsHistory'
+import { StakerMyRewards } from '../../components/StakerMyRewards'
+import { FormattedRewardInterface, Reward } from '../../models/interfaces'
+import Card from '../../shared/components/Card/Card'
+import Menu from '../../components/Menu'
+import { InfinityIcon } from '../../components/StakingMenu/styled'
+
+const stakingMenuList = [
+    {
+        title: 'My Farms',
+        icon: <AlignJustify size={18} />,
+        link: 'farms'
+    },
+    {
+        title: 'Infinite Farms',
+        icon: <InfinityIcon size={18} />,
+        link: 'infinite-farms'
+    },
+    {
+        title: 'Limit Farms',
+        icon: <Zap size={18} />,
+        link: 'limit-farms'
+    },
+    {
+        title: 'Farms History',
+        icon: <Calendar size={18} />,
+        link: 'farms-history'
+    }
+]
 
 export default function StakingPage() {
     const { account } = useActiveWeb3React();
@@ -43,77 +66,82 @@ export default function StakingPage() {
         };
     }, []);
 
-    // useEffect(() => console.log(transferredPositions), [transferredPositions])
-
     return (
         <>
             <Helmet>
                 <title>Algebra — Farming</title>
             </Helmet>
-            <PageWrapper>
-                <InnerWrapper gap="lg" justify="center">
-                    <InnerWrapper gap="lg" style={{ width: "100%", gridRowGap: "0" }}>
-                        <MainContentWrapper>
-                            <MenuWrapper>
-                                <StakingMenu />
-                            </MenuWrapper>
-                            <BodyWrapper>
-                                <Switch>
-                                    <Route exact path={`${path}`}>
-                                        <Redirect to={`${path}/${account ? "farms" : "limit-farms"}`} />
-                                    </Route>
-                                    <Route exact path={`${path}/farms`}>
-                                        <Helmet>
-                                            <title>Algebra — Farming • My Farms</title>
-                                        </Helmet>
-                                        <PageTitle title={"My Farms"} refreshHandler={() => (account ? fetchTransferredPositionsFn(true) : undefined)} isLoading={transferredPositionsLoading} />
-                                        {account ? (
-                                            <>
-                                                <StakerMyRewards data={formattedData as Reward[] & FormattedRewardInterface[]} refreshing={rewardsLoading} fetchHandler={() => fetchRewardsFn(true)} />
-                                                <StakerMyStakes
-                                                    data={transferredPositions}
-                                                    refreshing={transferredPositionsLoading}
-                                                    fetchHandler={() => {
-                                                        fetchTransferredPositionsFn(true);
-                                                    }}
-                                                    now={now}
-                                                />
-                                            </>
-                                        ) : (
-                                            <MockScreen>
-                                                <AlignJustify size={40} stroke={"white"} />
-                                                <p>Connect your account to view farms</p>
-                                                <ConnectWalletButton onClick={toggleWalletModal}>Connect Wallet</ConnectWalletButton>
-                                            </MockScreen>
-                                        )}
-                                    </Route>
-                                    <Route exact path={`${path}/limit-farms`}>
-                                        <Helmet>
-                                            <title>Algebra — Farming • Limit Farms</title>
-                                        </Helmet>
-                                        <PageTitle title={"Limit Farms"} refreshHandler={() => fetchAllEventsFn(true)} isLoading={allEventsLoading} />
-                                        <FarmingEventsPage data={allEvents} refreshing={allEventsLoading} fetchHandler={() => fetchAllEventsFn(true)} now={now} />
-                                    </Route>
-                                    <Route exact path={`${path}/infinite-farms`}>
-                                        <Helmet>
-                                            <title>Algebra — Farming • Infinite Farms</title>
-                                        </Helmet>
-                                        <PageTitle title={"Infinite Farms"} refreshHandler={() => fetchEternalFarmsFn(true)} isLoading={eternalFarmsLoading} />
-                                        <EternalFarmsPage data={eternalFarms} refreshing={eternalFarmsLoading} fetchHandler={() => fetchEternalFarmsFn(true)} />
-                                    </Route>
-                                    <Route exact strict path={`${path}/farms-history`}>
-                                        <Helmet>
-                                            <title>Algebra — Farming • Farms History history</title>
-                                        </Helmet>
-                                        <PageTitle title={"Limit Farms History"} />
-                                        <EventsHistory />
-                                    </Route>
-                                </Switch>
-                            </BodyWrapper>
-                        </MainContentWrapper>
-                    </InnerWrapper>
-                </InnerWrapper>
-            </PageWrapper>
+            <Card isDark classes={'br-24 p-2'}>
+                <Menu
+                    items={stakingMenuList}
+                    classes={'fs-125 mb-1'}
+                    refreshHandler={() => account ? fetchTransferredPositionsFn(true) : undefined}
+                    isLoading={transferredPositionsLoading}
+                    size={'1.25rem'} />
+                <Switch>
+                    <Route exact path={`${path}`}>
+                        <Redirect to={`${path}/${account ? 'farms' : 'infinite-farms'}`} />
+                    </Route>
+                    <Route exact path={`${path}/farms`}>
+                        <Helmet>
+                            <title>Algebra — Farming • My Farms</title>
+                        </Helmet>
+                        {account ? (
+                            <>
+                                <StakerMyRewards
+                                    data={formattedData as Reward[] & FormattedRewardInterface[]}
+                                    refreshing={rewardsLoading}
+                                    fetchHandler={() => fetchRewardsFn(true)}
+                                />
+                                <StakerMyStakes
+                                    data={transferredPositions}
+                                    refreshing={transferredPositionsLoading}
+                                    fetchHandler={() => {
+                                        fetchTransferredPositionsFn(true)
+                                    }}
+                                    now={now}
+                                />
+                            </>
+                        ) : (
+                            <div className={'f f-ac f-jc f c h-400'}>
+                                <AlignJustify size={40} stroke={'white'} />
+                                <p className={'mb-1'}>Connect your account to view farms</p>
+                                <button className={'btn primary pv-05 ph-2 br-8 b'} onClick={toggleWalletModal}>
+                                    Connect Wallet
+                                </button>
+                            </div>
+                        )}
+                    </Route>
+                    <Route exact path={`${path}/limit-farms`}>
+                        <Helmet>
+                            <title>Algebra — Farming • Limit Farms</title>
+                        </Helmet>
+                        <FarmingEventsPage
+                            data={allEvents}
+                            refreshing={allEventsLoading}
+                            fetchHandler={() => fetchAllEventsFn(true)}
+                            now={now}
+                        />
+                    </Route>
+                    <Route exact path={`${path}/infinite-farms`}>
+                        <Helmet>
+                            <title>Algebra — Farming • Infinite Farms</title>
+                        </Helmet>
+
+                        <EternalFarmsPage
+                            data={eternalFarms}
+                            refreshing={eternalFarmsLoading}
+                            fetchHandler={() => fetchEternalFarmsFn(true)}
+                        />
+                    </Route>
+                    <Route exact strict path={`${path}/farms-history`}>
+                        <Helmet>
+                            <title>Algebra — Farming • Farms History history</title>
+                        </Helmet>
+                        <EventsHistory />
+                    </Route>
+                </Switch>
+            </Card>
             <SwitchLocaleLink />
         </>
     );

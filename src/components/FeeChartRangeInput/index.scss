@@ -1,0 +1,26 @@
+.fee-chart {
+  position: relative;
+
+
+  &__mock-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 460px;
+    padding: 0 1rem;
+    max-width: 1000px;
+  }
+
+  &__price-info {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    opacity: .8;
+  }
+
+  &__toggle {
+    position: absolute !important;
+    right: 1rem;
+    top: 1rem;
+  }
+}

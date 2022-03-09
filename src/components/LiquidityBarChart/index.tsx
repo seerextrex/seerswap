@@ -13,6 +13,7 @@ import { POOL_DEPLOYER_ADDRESS } from '../../constants/addresses'
 import { MockLoading, Wrapper, ZoomButton, ZoomButtonsWrapper } from './styled'
 import { SupportedChainId } from '../../constants/chains'
 import { LiquidityChartData, ProcessedData } from '../../models/interfaces'
+import './index.scss'
 
 interface LiquidityBarChartProps {
     data: LiquidityChartData
@@ -66,7 +67,6 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
                         }
                     ]
                     const pool = _token0 && _token1 ? new Pool(_token0, _token1, 500, sqrtPriceX96, t.liquidityActive, t.tickIdx, mockTicks) : undefined
-                    console.table(data.ticksProcessed[i])
                     const nextSqrtX96 = data.ticksProcessed[i - 1] ? TickMath.getSqrtRatioAtTick(data.ticksProcessed[i - 1].tickIdx) : undefined
 
                     const isBad = _token0 && _token1 &&
@@ -142,33 +142,33 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
     }, [processedData, zoom])
 
     return (
-        <Wrapper ref={ref}>
+        <div className={'w-100 liquidity-chart'} ref={ref}>
             {refreshing ? (
-                <MockLoading>
+                <div className={'liquidity-chart__mock-loader'}>
                     <Loader stroke={'white'} size={'25px'} />
-                </MockLoading>
+                </div>
             ) : (
                 <>
-                    <ZoomButtonsWrapper>
-                        <ZoomButton disabled={zoom === MAX_ZOOM} onClick={handleZoomIn}>
+                    <div className={'liquidity-chart__zoom-buttons'}>
+                        <button className={'liquidity-chart__zoom-buttons__button'} disabled={zoom === MAX_ZOOM} onClick={handleZoomIn}>
                             +
-                        </ZoomButton>
-                        <ZoomButton disabled={zoom === 2} onClick={handleZoomOut}>
+                        </button>
+                        <button className={'liquidity-chart__zoom-buttons__button'} disabled={zoom === 2} onClick={handleZoomOut}>
                             -
-                        </ZoomButton>
-                    </ZoomButtonsWrapper>
+                        </button>
+                    </div>
                     <BarChart
                         data={formattedData || undefined}
                         activeTickIdx={activeTickIdx}
                         dimensions={{
-                            width: isMobile ? ref && ref.current && ref.current.offsetWidth - 10 || 0 : 850,
-                            height: 300,
-                            margin: { top: 30, right: 0, bottom: isMobile ? 70 : 30, left: 0 }
+                            width: isMobile ? ref && ref.current && ref.current.offsetWidth - 10 || 0 : 1020,
+                            height: 400,
+                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
                         }}
                         isMobile={isMobile}
                     />
                 </>
             )}
-        </Wrapper>
+        </div>
     )
 }

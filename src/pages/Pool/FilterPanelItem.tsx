@@ -1,7 +1,5 @@
 import React from 'react'
 import { Trans } from '@lingui/macro'
-import { TYPE } from '../../theme'
-import { FilterPanelItemWrapper } from './styleds'
 import Toggle from '../../components/Toggle'
 
 interface FilterPanelProps {
@@ -15,19 +13,17 @@ interface FilterPanelProps {
 const FilterPanelItem = ({ item }: FilterPanelProps) => {
 
     return (
-        <FilterPanelItemWrapper>
-            <label>
-                <TYPE.body>
-                    <Trans>{item.title}</Trans>
-                </TYPE.body>
-            </label>
+        <div>
+            <div className={'mb-05'}>
+                <Trans>{item.title}</Trans>
+            </div>
             <Toggle
                 isActive={!item.checkValue}
                 toggle={() => item.method(!item.checkValue)}
                 checked={<Trans>Show</Trans>}
                 unchecked={<Trans>Hide</Trans>}
             />
-        </FilterPanelItemWrapper>
+        </div>
     )
 }
 

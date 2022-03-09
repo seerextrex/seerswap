@@ -7,31 +7,16 @@ import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import { AutoRow } from '../Row'
 import Copy from './Copy'
 import Transaction from './Transaction'
-
+import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 import { ExternalLink as LinkIcon } from 'react-feather'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { Trans } from '@lingui/macro'
 import { useAppDispatch } from 'state/hooks'
-import {
-    AccountControl,
-    AccountGroupingRow,
-    AccountSection,
-    AddressLink,
-    CloseColor,
-    CloseIcon,
-    HeaderRow,
-    IconWrapper,
-    InfoCard,
-    LowerSection,
-    TransactionListWrapper,
-    UpperSection,
-    WalletAction,
-    WalletName,
-    YourAccount
-} from './styled'
+import { AccountControl, AccountGroupingRow, AddressLink, IconWrapper, LowerSection, TransactionListWrapper, WalletAction } from './styled'
 import { EthereumWindow } from '../../models/types'
+import './index.scss'
 
 function renderTransactions(transactions: string[]) {
     return (
@@ -65,9 +50,9 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
             )
             .map((k) => SUPPORTED_WALLETS[k].name)[0]
         return (
-            <WalletName>
+            <div className={'fs-085 mb-05'}>
                 <Trans>Connected with {name}</Trans>
-            </WalletName>
+            </div>
         )
     }
 
@@ -88,120 +73,94 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
 
     return (
         <>
-            <UpperSection>
-                <CloseIcon onClick={toggleWalletModal}>
-                    <CloseColor />
-                </CloseIcon>
-                <HeaderRow>
+            <div className={'pos-r'}>
+                <div className={'flex-s-between w-100 c-w mb-1'}>
                     <Trans>Account</Trans>
-                </HeaderRow>
-                <AccountSection>
-                    <YourAccount>
-                        <InfoCard>
-                            <AccountGroupingRow>
-                                {formatConnectorName()}
+                    <span onClick={toggleWalletModal}>
+                        <Close />
+                    </span>
+                </div>
+                <div className={'account-details p-1 mb-15 br-12 c-w'}>
+                    {formatConnectorName()}
+                    <div>
+                        {connector !== injected && (
+                            <WalletAction
+                                onClick={() => {
+                                    (connector as any).close()
+                                }}
+                            >
+                                <Trans>Disconnect</Trans>
+                            </WalletAction>
+                        )}
+                    </div>
+                    <div className={'l f f-ac c-w mb-05'} id='web3-account-identifier-row'>
+                        {ENSName ? (
+                            <>
+                                {getStatusIcon()}
+                                <p> {ENSName}</p>
+                            </>
+                        ) : (
+                            <>
+                                {getStatusIcon()}
+                                <p> {account && shortenAddress(account)}</p>
+                            </>
+                        )}
+                    </div>
+                    <div>
+                        {ENSName ? (
+                            <AccountControl>
                                 <div>
-                                    {connector !== injected && (
-                                        <WalletAction
-                                            style={{
-                                                fontSize: '.825rem',
-                                                fontWeight: 400,
-                                                marginRight: '8px',
-                                                color: '#080064'
-                                            }}
-                                            onClick={() => {
-                                                ;(connector as any).close()
-                                            }}
+                                    {account && (
+                                        <Copy toCopy={account}>
+                                                <span>
+                                                  <Trans>Copy Address</Trans>
+                                                </span>
+                                        </Copy>
+                                    )}
+                                    {chainId && account && (
+                                        <AddressLink
+                                            hasENS={!!ENSName}
+                                            isENS={true}
+                                            href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}
                                         >
-                                            <Trans>Disconnect</Trans>
-                                        </WalletAction>
+                                            <LinkIcon size={'1rem'} color='var(--primary)' />
+                                            <span>
+                                                    <Trans>View on Explorer</Trans>
+                                                </span>
+                                        </AddressLink>
                                     )}
                                 </div>
-                            </AccountGroupingRow>
-                            <AccountGroupingRow id='web3-account-identifier-row'>
+                            </AccountControl>
+                        ) : (
+                            <>
                                 <AccountControl>
-                                    {ENSName ? (
-                                        <>
-                                            <div>
-                                                {getStatusIcon()}
-                                                <p> {ENSName}</p>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div>
-                                                {getStatusIcon()}
-                                                <p> {account && shortenAddress(account)}</p>
-                                            </div>
-                                        </>
-                                    )}
+                                    <div>
+                                        {account && (
+                                            <Copy toCopy={account}>
+                                                <span>
+                                                  <Trans>Copy Address</Trans>
+                                                </span>
+                                            </Copy>
+                                        )}
+                                        {chainId && account && (
+                                            <AddressLink
+                                                hasENS={!!ENSName}
+                                                isENS={false}
+                                                href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}
+                                            >
+                                                <LinkIcon size={'1rem'} color='var(--primary)' />
+                                                <span>
+                                                  <Trans>View on Explorer</Trans>
+                                                </span>
+                                            </AddressLink>
+                                        )}
+                                    </div>
                                 </AccountControl>
-                            </AccountGroupingRow>
-                            <AccountGroupingRow>
-                                {ENSName ? (
-                                    <>
-                                        <AccountControl>
-                                            <div>
-                                                {account && (
-                                                    <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px', color: '#080064' }}>
-                              <Trans>Copy Address</Trans>
-                            </span>
-                                                    </Copy>
-                                                )}
-                                                {chainId && account && (
-                                                    <AddressLink
-                                                        hasENS={!!ENSName}
-                                                        isENS={true}
-                                                        href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}
-                                                    >
-                                                        <LinkIcon size={16} />
-                                                        <span style={{
-                                                            marginLeft: '4px',
-                                                            color: '#080064'
-                                                        }}>
-                              <Trans>View on Explorer</Trans>
-                            </span>
-                                                    </AddressLink>
-                                                )}
-                                            </div>
-                                        </AccountControl>
-                                    </>
-                                ) : (
-                                    <>
-                                        <AccountControl>
-                                            <div>
-                                                {account && (
-                                                    <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px', color: '#080064' }}>
-                              <Trans>Copy Address</Trans>
-                            </span>
-                                                    </Copy>
-                                                )}
-                                                {chainId && account && (
-                                                    <AddressLink
-                                                        hasENS={!!ENSName}
-                                                        isENS={false}
-                                                        href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}
-                                                    >
-                                                        <LinkIcon size={16} color='#080064' />
-                                                        <span style={{
-                                                            marginLeft: '4px',
-                                                            color: '#080064'
-                                                        }}>
-                              <Trans>View on Explorer</Trans>
-                            </span>
-                                                    </AddressLink>
-                                                )}
-                                            </div>
-                                        </AccountControl>
-                                    </>
-                                )}
-                            </AccountGroupingRow>
-                        </InfoCard>
-                    </YourAccount>
-                </AccountSection>
-            </UpperSection>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
             {!!pendingTransactions.length || !!confirmedTransactions.length ? (
                 <LowerSection>
                     <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>

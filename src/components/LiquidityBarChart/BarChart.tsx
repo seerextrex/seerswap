@@ -213,5 +213,5 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
         svg.append(() => InfoRectGroup.node())
     }, [data, activeTickIdxInRange])
 
-    return <ChartSvg ref={svgRef} width={svgWidth} height={svgHeight} />
+    return <svg ref={svgRef} width={svgWidth} height={svgHeight} />
 }

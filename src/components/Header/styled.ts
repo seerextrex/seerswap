@@ -377,10 +377,6 @@ export const NetworkWrapper = styled.div`
     display: flex;
     align-items: center;
 
-        // ${({ theme }) => theme.mediaWidth.upToSmall`
-  //   display: none;
-  // `};
-
     ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};

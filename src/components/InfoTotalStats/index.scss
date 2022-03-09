@@ -1,0 +1,7 @@
+.total-stats-wrapper {
+  display: flex;
+
+  @media screen and (max-width: 720px) {
+    flex-direction: column;
+  }
+}

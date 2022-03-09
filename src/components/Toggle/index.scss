@@ -1,0 +1,18 @@
+.toggle-button {
+  background-color: var(--primary-weak);
+  width: fit-content;
+  cursor: pointer;
+  outline: none;
+  padding: 2px;
+  border: none;
+
+  span {
+    padding: 0.25rem 0.6rem;
+    transition-duration: .2s;
+
+    &[data-isActive=true] {
+      color: var(--primary-weak);
+      background-color: var(--primary);
+    }
+  }
+}

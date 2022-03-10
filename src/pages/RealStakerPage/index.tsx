@@ -298,7 +298,7 @@ export default function RealStakerPage({}) {
             <div className={'earned-wrapper p-2 mv-2 br-24 ms_p-1'}>
                 <h2 className={'earned-wrapper__title mb-1 '}>
                     <LeftBlock>
-                        <h3>Balance</h3>
+                        <h3 className={'fs-125'}>Balance</h3>
                     </LeftBlock>
                     <RightBlock>
                         {

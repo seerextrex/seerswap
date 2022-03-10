@@ -11,6 +11,10 @@
 
     &--active {
       color: var(--primary);
+      cursor: default;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
   &__refresh {

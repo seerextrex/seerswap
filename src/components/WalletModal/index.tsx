@@ -17,9 +17,11 @@ import Option from './Option'
 import PendingView from './PendingView'
 import { Frown } from 'react-feather'
 import ReactGA from 'react-ga'
-import { addPolygonNetwork } from "components/Web3Status/Web3StatusInner";
+import { addPolygonNetwork } from 'components/Web3Status/Web3StatusInner'
 
-import { CloseColor, CloseIcon, ContentWrapper, HeaderRow, HoverText, OptionGrid, UpperSection, Wrapper, ConnectNetwork } from './styled'
+import { CloseColor, CloseIcon, ConnectNetwork, ContentWrapper, HeaderRow, OptionGrid, UpperSection, Wrapper } from './styled'
+import Card from '../../shared/components/Card/Card'
+import { ReactComponent as Close } from '../../assets/images/x.svg'
 
 const WALLET_VIEWS = {
     OPTIONS: 'options',
@@ -114,7 +116,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
         if (!isMetamask && isMobile) {
             return (
                 <div>
-                    <Frown stroke={'#080064'} />
+                    <Frown stroke={'var(--primary)'} />
                     <p>Mobile devices are not currently supported. Please use your desktop.</p>
                 </div>
             )
@@ -197,12 +199,12 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                     <HeaderRow>{error instanceof UnsupportedChainIdError ? <Trans>Wrong Network</Trans> : <Trans>Error connecting</Trans>}</HeaderRow>
                     <ContentWrapper>
                         {error instanceof UnsupportedChainIdError ? (
-                           <>
-                           <h5>
-                               <Trans>Please connect to the Polygon network.</Trans>
-                           </h5>
-                           {isMobile ? <p>Add Polygon network to your metamask app.</p> : <ConnectNetwork onClick={addPolygonNetwork}>Connect to Polygon</ConnectNetwork>}
-                       </>
+                            <>
+                                <h5>
+                                    <Trans>Please connect to the Polygon network.</Trans>
+                                </h5>
+                                {isMobile ? <p>Add Polygon network to your metamask app.</p> : <ConnectNetwork onClick={addPolygonNetwork}>Connect to Polygon</ConnectNetwork>}
+                            </>
                         ) : (
                             <Trans>Error connecting. Try refreshing the page.</Trans>
                         )}
@@ -222,39 +224,36 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
             )
         }
         return (
-            <UpperSection>
-                <CloseIcon onClick={toggleWalletModal}>
-                    <CloseColor />
-                </CloseIcon>
-                {walletView !== WALLET_VIEWS.ACCOUNT ? (
-                    <HeaderRow color='#080064'>
-                        <HoverText
-                            style={{ color: '#080064' }}
+            <div className={'pos-r'}>
+
+                <div className={'flex-s-between'}>
+                    {walletView !== WALLET_VIEWS.ACCOUNT ? (
+                        <span
                             onClick={() => {
                                 setPendingError(false)
                                 setWalletView(WALLET_VIEWS.ACCOUNT)
                             }}
                         >
                             <Trans>Back</Trans>
-                        </HoverText>
-                    </HeaderRow>
-                ) : (
-
-                    <HeaderRow color='#080064'>
-                        <HoverText style={{ color: '#080064' }}>
+                        </span>
+                    ) : (
+                        <span className={'c-w'}>
                             <Trans>Connect Wallet</Trans>
-                        </HoverText>
-                    </HeaderRow>
-                )}
+                        </span>
+                    )}
+                    <div onClick={toggleWalletModal}>
+                        <Close />
+                    </div>
+                </div>
 
-                <ContentWrapper>
+                <Card isDark classes={'p-1 br-12 mt-1'}>
                     {walletView === WALLET_VIEWS.PENDING ? (
                         <PendingView connector={pendingWallet} error={pendingError} setPendingError={setPendingError} tryActivation={tryActivation} />
                     ) : (
                         <OptionGrid>{getOptions()}</OptionGrid>
                     )}
-                </ContentWrapper>
-            </UpperSection>
+                </Card>
+            </div>
         )
     }
 

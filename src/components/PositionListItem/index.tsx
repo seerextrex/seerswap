@@ -159,12 +159,12 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
                         &nbsp;
                     </div>
                     <div className={'position-list-item__header__badges flex-s-between w-100'}>
-                        {_onFarming && (
+                        {_onFarming ? (
                             <NavLink className={'flex-s-between c-w bg-p fs-085 p-025 br-8'} to={farmingLink}>
                                 <span>Farming</span>
                                 <ArrowRight size={14} color={'white'} style={{ marginLeft: '5px' }} />
                             </NavLink>
-                        )}
+                        ) : <div />}
                         <RangeBadge removed={removed} inRange={!outOfRange} />
                     </div>
                 </div>

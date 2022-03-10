@@ -16,7 +16,7 @@ export const StyledLogo = styled.div<{ size: string }>`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 12px;
     font-family: Montserrat, serif;
     font-weight: 600;
 `

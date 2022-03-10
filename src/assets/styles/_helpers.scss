@@ -478,3 +478,14 @@
     z-index: 100;
   }
 }
+
+.c {
+  &-d {
+    cursor: default;
+  }
+
+  &-p {
+    cursor: pointer;
+  }
+
+}

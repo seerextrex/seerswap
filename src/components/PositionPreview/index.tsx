@@ -1,6 +1,5 @@
 import { ReactNode, useCallback, useContext, useState } from 'react'
 import { Position } from 'lib/src'
-import { LightCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import { TYPE } from 'theme'
 import { RowBetween, RowFixed } from 'components/Row'
@@ -15,22 +14,19 @@ import { ThemeContext } from 'styled-components/macro'
 import JSBI from 'jsbi'
 import { Bound } from 'state/mint/v3/actions'
 import { formatTickPrice } from 'utils/formatTickPrice'
-import { RowBetweenHeader, RowFixedStyled } from './styled'
+import { RowFixedStyled } from './styled'
 import { WrappedCurrency } from '../../models/types'
+import Card from '../../shared/components/Card/Card'
 
-export const PositionPreview = ({
-    position,
-    title,
-    inRange,
-    baseCurrencyDefault,
-    ticksAtLimit
-}: {
+interface PositionPreviewProps {
     position: Position
     title?: ReactNode
     inRange: boolean
     baseCurrencyDefault?: Currency | undefined
     ticksAtLimit: { [bound: string]: boolean | undefined }
-}) => {
+}
+
+export const PositionPreview = ({ position, title, inRange, baseCurrencyDefault, ticksAtLimit }: PositionPreviewProps) => {
     const theme = useContext(ThemeContext)
 
     const currency0 = unwrappedToken(position.pool.token0)
@@ -63,23 +59,24 @@ export const PositionPreview = ({
 
     return (
         <AutoColumn gap='md' style={{ marginTop: '0.5rem' }}>
-            <RowBetweenHeader style={{ marginBottom: '0.5rem' }}>
-                <RowFixedStyled>
+            <div className={'flex-s-between mb-05 mxs_fd-c'}>
+                <div className={'f f-ac mb-05 mxs_w-100 mxs_ml-2'}>
                     <DoubleCurrencyLogo
                         currency0={currency0 ?? undefined}
                         currency1={currency1 ?? undefined}
                         size={24}
                         margin={true}
                     />
-                    <TYPE.label ml='10px' fontSize='24px'
-                                color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>
+                    <TYPE.label ml='10px' fontSize='24px' color={'white'}>
                         {currency0?.symbol} / {currency1?.symbol}
                     </TYPE.label>
-                </RowFixedStyled>
-                <RangeBadge removed={removed} inRange={inRange} />
-            </RowBetweenHeader>
+                </div>
+                <div className={'f mxs_w-100'}>
+                    <RangeBadge removed={removed} inRange={inRange} />
+                </div>
+            </div>
 
-            <LightCard>
+            <Card isDark={title === 'Selected Range'} classes={'p-1 br-12'}>
                 <AutoColumn gap='md'>
                     <RowBetween>
                         <RowFixed>
@@ -108,14 +105,14 @@ export const PositionPreview = ({
                         </TYPE.label>
                     </RowBetween>
                 </AutoColumn>
-            </LightCard>
+            </Card>
 
             <AutoColumn gap='md'>
                 <RowBetween>
                     {title ?
-                        <TYPE.main
-                            color={title === 'Selected Range' ? theme.winterDisabledButton : 'white'}>{title}</TYPE.main> :
-                        <div />}
+                        <TYPE.main color={'white'}>{title}</TYPE.main> :
+                        <div />
+                    }
                     <RateToggle
                         currencyA={sorted ? currency0 : currency1}
                         currencyB={sorted ? currency1 : currency0}
@@ -123,8 +120,8 @@ export const PositionPreview = ({
                     />
                 </RowBetween>
 
-                <RowBetween>
-                    <LightCard width='48%' padding='8px'>
+                <div className={'flex-s-between cg-2 rg-1 mxs_fd-c'}>
+                    <Card isDark={title === 'Selected Range'} classes={'p-1 br-12 w-100'}>
                         <AutoColumn gap='4px' justify='center'>
                             <TYPE.main fontSize='12px'>
                                 <Trans>Min Price</Trans>
@@ -145,9 +142,9 @@ export const PositionPreview = ({
                                     of {baseCurrency?.symbol} at this price</Trans>
                             </TYPE.small>
                         </AutoColumn>
-                    </LightCard>
+                    </Card>
 
-                    <LightCard width='48%' padding='8px'>
+                    <Card isDark={title === 'Selected Range'} classes={'p-1 br-12 w-100'}>
                         <AutoColumn gap='4px' justify='center'>
                             <TYPE.main fontSize='12px'>
                                 <Trans>Max Price</Trans>
@@ -168,9 +165,9 @@ export const PositionPreview = ({
                                     of {quoteCurrency?.symbol} at this price</Trans>
                             </TYPE.small>
                         </AutoColumn>
-                    </LightCard>
-                </RowBetween>
-                <LightCard padding='12px '>
+                    </Card>
+                </div>
+                <Card isDark={title === 'Selected Range'} classes={'p-1 br-12'}>
                     <AutoColumn gap='4px' justify='center'>
                         <TYPE.main fontSize='12px'>
                             <Trans>Current price</Trans>
@@ -182,7 +179,7 @@ export const PositionPreview = ({
                             </Trans>
                         </TYPE.main>
                     </AutoColumn>
-                </LightCard>
+                </Card>
             </AutoColumn>
         </AutoColumn>
     )

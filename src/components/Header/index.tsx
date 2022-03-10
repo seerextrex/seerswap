@@ -57,11 +57,11 @@ export default function Header() {
                 />
             </a>
             <div className={'header__links flex-s-between'}>
-                <NavLink className={'header__links__link pv-05 ph-2 br-8'} activeClassName={'header__links__link--active'} id={`swap-nav-link`} to={'/swap'}>
+                <NavLink className={'header__links__link pv-05 ph-2 br-8 hover-op'} activeClassName={'header__links__link--active'} id={`swap-nav-link`} to={'/swap'}>
                     Swap
                 </NavLink>
                 <NavLink
-                    className={'header__links__link pv-05 ph-2 br-8'}
+                    className={'header__links__link pv-05 ph-2 br-8 hover-op'}
                     id={`pool-nav-link`}
                     to={'/pool'}
                     isActive={(match, { pathname }) =>
@@ -75,14 +75,14 @@ export default function Header() {
                 >
                     Pool
                 </NavLink>
-                <NavLink className={'header__links__link pv-05 ph-2 br-8'} activeClassName={'header__links__link--active'} id={`farming-nav-link`} to={'/farming'}>
+                <NavLink className={'header__links__link pv-05 ph-2 br-8 hover-op'} activeClassName={'header__links__link--active'} id={`farming-nav-link`} to={'/farming'}>
                     <span>Farming</span>
                     <span className={'header__farming-circle'} />
                 </NavLink>
-                <NavLink className={'header__links__link pv-05 ph-2 br-8'} activeClassName={'header__links__link--active'} id={`staking-nav-link`} to={'/staking'}>
+                <NavLink className={'header__links__link pv-05 ph-2 br-8 hover-op'} activeClassName={'header__links__link--active'} id={`staking-nav-link`} to={'/staking'}>
                     Staking
                 </NavLink>
-                <NavLink className={'header__links__link pv-05 ph-2 br-8'} activeClassName={'header__links__link--active'} id={`info-nav-link`} to={'/info'}>
+                <NavLink className={'header__links__link pv-05 ph-2 br-8 hover-op'} activeClassName={'header__links__link--active'} id={`info-nav-link`} to={'/info'}>
                     Info
                 </NavLink>
             </div>
@@ -95,9 +95,6 @@ export default function Header() {
                             <BalanceText
                                 style={{ flexShrink: 0 }}
                                 pl='0.75rem'
-                                pt='0.75rem'
-                                pb='0.75rem'
-                                pr='0.5rem'
                                 fontWeight={500}
                             >
                                 {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}

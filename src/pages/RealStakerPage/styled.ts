@@ -211,6 +211,10 @@ export const ReloadButton = styled.button<{ refreshing: boolean }>`
     animation: ${({ refreshing }) => refreshing ? spinAnimation : ''} infinite 3s;
     cursor: pointer;
 
+    &:hover {
+        opacity: .8;
+    }
+
     &:disabled {
         opacity: 0.5;
         cursor: default;

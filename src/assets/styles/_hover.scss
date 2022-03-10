@@ -1,0 +1,19 @@
+.hover {
+  &-line {
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &-op {
+    &:hover {
+      opacity: 80%;
+    }
+  }
+
+  &-c {
+    &-lg {
+    }
+
+  }
+}

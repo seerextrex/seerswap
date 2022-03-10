@@ -24,7 +24,6 @@ import TransactionConfirmationModal, { ConfirmationModalContent } from 'componen
 import { TransactionResponse } from '@ethersproject/providers'
 import { Dots } from 'components/swap/styled'
 import { getPriceOrderingFromPositionForUI } from '../../components/PositionListItem'
-import useTheme from '../../hooks/useTheme'
 import RateToggle from '../../components/RateToggle'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import RangeBadge from '../../components/Badge/RangeBadge'
@@ -60,7 +59,6 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
 
     const isOnFarming = useMemo(() => query.get('onFarming'), [tokenIdFromUrl, query])
 
-    const theme = useTheme()
 
     const parsedTokenId = tokenIdFromUrl ? BigNumber.from(tokenIdFromUrl) : undefined
     const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
@@ -313,7 +311,7 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                         <NavLink className={'c-p mb-1 f w-fc'} to='/pool'>
                             <Trans>← Back to Pools Overview</Trans>
                         </NavLink>
-                        <Card isDark classes={'br-24 p-2'}>
+                        <Card isDark classes={'br-24 p-2 mxs_p-1'}>
                             <TransactionConfirmationModal
                                 isOpen={showConfirm}
                                 onDismiss={() => setShowConfirm(false)}
@@ -329,19 +327,23 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                                 pendingText={<Trans>Collecting fees</Trans>}
                             />
                             <AutoColumn gap='1'>
-                                <div className={'flex-s-between'}>
-                                    <div className={'f f-ac'}>
-                                        <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={true} />
-                                        <span className={'mr-05 fs-125 b'}>&nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}</span>
-                                        <MouseoverTooltip text={<Trans>Current pool fee.</Trans>}>
-                                            <Badge className={'mr-05 fs-085'}>
-                                                <Trans>{new Percent(existingPosition?.pool?.fee || 100, 1_000_000).toSignificant()}%</Trans>
-                                            </Badge>
-                                        </MouseoverTooltip>
-                                        <RangeBadge removed={removed} inRange={inRange} />
+                                <div className={'flex-s-between ms_fd-c'}>
+                                    <div className={'f f-ac ms_w-100 ms_mb-1 mxs_fd-c'}>
+                                        <div className={'f f-ac ml-1 mxs_ml-2 mxs_w-100 mxs_mb-05'}>
+                                            <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={false} />
+                                            <span className={'mr-05 fs-125 b'}>&nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}</span>
+                                        </div>
+                                        <div className={'f f-ac mxs_w-100'}>
+                                            <MouseoverTooltip text={<Trans>Current pool fee.</Trans>}>
+                                                <Badge className={'mr-05 fs-085'}>
+                                                    <Trans>{new Percent(existingPosition?.pool?.fee || 100, 1_000_000).toSignificant()}%</Trans>
+                                                </Badge>
+                                            </MouseoverTooltip>
+                                            <RangeBadge removed={removed} inRange={inRange} />
+                                        </div>
                                     </div>
                                     {ownsNFT && (
-                                        <div className={'f'}>
+                                        <div className={'f ms_w-100'}>
                                             {currency0 && currency1 && tokenId ? (
                                                 <NavLink
                                                     to={`/increase/${currencyId(currency0, chainId || 137)}/${currencyId(currency1, chainId || 137)}/${tokenId}`}
@@ -493,42 +495,42 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                                         </div>
                                     </div>
 
-                                    <div className={'f f-ac mb-1'}>
+                                    <div className={'f f-ac mb-1 ms_fd-c'}>
                                         <Card isDark classes={'w-100 p-1 br-12'}>
                                             <AutoColumn gap='1' justify='center'>
-                                    <span className={'c-lg fs-095 ta-c'}>
-                                        <Trans>Min price</Trans>
-                                    </span>
-                                                <span className={'fs-125 ta-c'}>
-                                        {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)}
-                                    </span>
                                                 <span className={'c-lg fs-095 ta-c'}>
-                                        <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
-                                    </span>
+                                                    <Trans>Min price</Trans>
+                                                </span>
+                                                <span className={'fs-125 ta-c'}>
+                                                    {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)}
+                                                </span>
+                                                <span className={'c-lg fs-095 ta-c'}>
+                                                    <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
+                                                </span>
                                                 {inRange && (
                                                     <span className={'c-lg fs-075 ta-c'}>
-                                            <Trans>Your position will be 100% {currencyBase?.symbol} at this price.</Trans>
-                                        </span>
+                                                        <Trans>Your position will be 100% {currencyBase?.symbol} at this price.</Trans>
+                                                    </span>
                                                 )}
                                             </AutoColumn>
                                         </Card>
-                                        <span className={'mh-1 c-lg'}>⟷</span>
+                                        <span className={'mh-1 c-lg hide-s'}>⟷</span>
+                                        <span className={'show-s c-lg mv-05 fs-125'}>↕</span>
                                         <Card isDark classes={'w-100 p-1 br-12'}>
                                             <AutoColumn gap='1' justify='center'>
-                                    <span className={'c-lg fs-095 ta-c'}>
-                                        <Trans>Max price</Trans>
-                                    </span>
-                                                <span className={'fs-125 ta-c'}>
-                                        {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}
-                                    </span>
                                                 <span className={'c-lg fs-095 ta-c'}>
-                                        <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
-                                    </span>
-
+                                                    <Trans>Max price</Trans>
+                                                </span>
+                                                <span className={'fs-125 ta-c'}>
+                                                    {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}
+                                                </span>
+                                                <span className={'c-lg fs-095 ta-c'}>
+                                                    <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
+                                                </span>
                                                 {inRange && (
                                                     <span className={'c-lg fs-075 ta-c'}>
-                                            <Trans>Your position will be 100% {currencyQuote?.symbol} at this price.</Trans>
-                                        </span>
+                                                        <Trans>Your position will be 100% {currencyQuote?.symbol} at this price.</Trans>
+                                                    </span>
                                                 )}
                                             </AutoColumn>
                                         </Card>

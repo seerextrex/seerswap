@@ -126,7 +126,7 @@ export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colo
                 data2={borderedData2}
                 margin={margin}
                 dimensions={{
-                    width: isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 20 : 1100,
+                    width: isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 20 : 1070,
                     height: isMobile ? 400 : 500
                 }}
                 type={type}
@@ -136,7 +136,7 @@ export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colo
                 data={fullDateData}
                 data2={fullDateData2}
                 colors={colors}
-                width={isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 80 : 1100}
+                width={isMobile && wrapper && wrapper.current ? wrapper?.current?.offsetWidth - 80 : 1070}
                 margin={margin}
                 focusHeight={focusHeight}
                 X={X}

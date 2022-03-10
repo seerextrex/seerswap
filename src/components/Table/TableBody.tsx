@@ -50,7 +50,7 @@ const TableBody = ({ data, maxItems = MAX_ITEMS, sortField, sortIndex, sortDirec
             {sortedPools.length > 0 ? (
                 <AutoColumn gap={'1'}>
                     {sortedPools.map((poolData, i) => poolData &&
-                        <DataRow data={poolData} key={i} grid={gridClass} header={header.props.children} rowId={i}/>)
+                        <DataRow data={poolData} key={i} grid={gridClass} header={header.props.children} rowId={(page - 1) * MAX_ITEMS + (i + 1)} />)
                     }
                     <PageButtons
                         page={page}

@@ -29,7 +29,14 @@
 
 }
 
+@media screen and (max-width: 960px) {
+  .grid-tokens-table {
+    grid-template-columns: 20px 1fr repeat(4, 1fr);
+  }
+}
+
 @media screen and (max-width: 720px) {
+
   .tokens-table-wrapper {
     overflow: scroll;
     min-width: 700px;

@@ -246,10 +246,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 <div className={'f w-100'}>
                                                                     <div className={'w-100 mr-1'} data-started={el.started || el.incentiveStartTime * 1000 < Date.now()}>
                                                                         {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
-                                                                            <div className={'mb-3 p-r fs-075'}>{`Starts in ${getCountdownTime(el.incentiveStartTime, now)}`}</div>
+                                                                            <div className={'mb-05 p-r fs-075'}>{`Starts in ${getCountdownTime(el.incentiveStartTime, now)}`}</div>
                                                                         )}
                                                                         {(el.started || el.incentiveStartTime * 1000 < Date.now()) && (
-                                                                            <div className={'mb-3 p-r fs-075'}>{`Ends in ${getCountdownTime(el.incentiveEndTime, now)}`}</div>
+                                                                            <div className={'mb-05 p-r fs-075'}>{`Ends in ${getCountdownTime(el.incentiveEndTime, now)}`}</div>
                                                                         )}
                                                                         <div className={'my-stakes__position-card__body__event-progress w-100 br-8 p-025 mt-05'}>
                                                                             {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
@@ -317,8 +317,8 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={'full-wh f f-ac f-jc'}>
-                                                        {el.finiteAvailable ? <CheckOut link={'limit-farms'} /> : <div>No limit farms for now</div>}
+                                                    <div className={'f c f-ac f-jc mih-70'}>
+                                                        {el.finiteAvailable ? <CheckOut link={'limit-farms'} /> : <span>No limit farms for now</span>}
                                                     </div>
                                                 )}
                                             </div>
@@ -382,7 +382,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={'full-wh f f-ac f-jc'}>
+                                                    <div className={'f c f-ac f-jc mih-70'}>
                                                         {el.finiteAvailable ? <CheckOut link={'infinite-farms'} /> : <div>No infinite farms for now</div>}
                                                     </div>
                                                 )}

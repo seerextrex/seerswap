@@ -55,7 +55,7 @@ export default function CurrencyLogo({
                 color: stringToColour(currency.symbol).text,
                 border: stringToColour(currency.symbol).border,
 
-                fontSize: size === '18px' ? '8px' : size === '24px' ? '12px' : '14px'
+                fontSize: size === '18px' ? '8px' : size === '24px' ? '12px' : '10px'
             }}
             {...rest}
         >

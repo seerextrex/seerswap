@@ -1,15 +1,13 @@
 import { Percent } from '@uniswap/sdk-core'
 import { ReactNode } from 'react'
 import { useAppDispatch } from '../../state/hooks'
-import { useLocation } from 'react-router-dom'
-import { StyledArrowLeft, StyledHistoryLink, Tabs } from './styled'
-import { RowBetween } from '../Row'
+import { Link as HistoryLink, useLocation } from 'react-router-dom'
 import { resetMintState } from '../../state/mint/actions'
 import { resetMintState as resetMintV3State } from '../../state/mint/v3/actions'
-import { TYPE } from '../../theme'
 import { Trans } from '@lingui/macro'
 import { Box } from 'rebass'
 import SettingsTab from '../Settings'
+import { ArrowLeft } from 'react-feather'
 
 interface AddRemoveTabsProps {
     adding: boolean
@@ -31,42 +29,30 @@ export function AddRemoveTabs({ adding, creating, defaultSlippage, positionID, c
         : '/pool' + (!!positionID ? `/${positionID.toString()}` : '')
 
     return (
-        <Tabs>
-            <RowBetween style={{ padding: '1rem 40px 0 40px' }}>
-                <StyledHistoryLink
-                    to={poolLink}
-                    onClick={() => {
-                        if (adding) {
-                            // not 100% sure both of these are needed
-                            dispatch(resetMintState())
-                            dispatch(resetMintV3State())
-                        }
-                    }}
-                    flex={children ? '1' : undefined}
-                >
-                    <StyledArrowLeft stroke={'white'} />
-                </StyledHistoryLink>
-                <TYPE.mediumHeader
-                    fontWeight={500}
-                    fontSize={20}
-                    style={{
-                        flex: '1',
-                        padding: '1rem 0',
-                        margin: 'auto',
-                        textAlign: children ? 'start' : 'center'
-                    }}
-                >
-                    {creating ? (
-                        <Trans>Create a pair</Trans>
-                    ) : adding ? (
-                        <Trans>Increase Liquidity</Trans>
-                    ) : (
-                        <Trans>Remove Liquidity</Trans>
-                    )}
-                </TYPE.mediumHeader>
-                <Box style={{ marginRight: '.5rem' }}>{children}</Box>
-                <SettingsTab placeholderSlippage={defaultSlippage} />
-            </RowBetween>
-        </Tabs>
+        <div className={'flex-s-between'}>
+            <HistoryLink
+                to={poolLink}
+                onClick={() => {
+                    if (adding) {
+                        // not 100% sure both of these are needed
+                        dispatch(resetMintState())
+                        dispatch(resetMintV3State())
+                    }
+                }}
+            >
+                <ArrowLeft stroke={'white'} />
+            </HistoryLink>
+            <span className={'fs-125 w-100 ta-c'}>
+                {creating ? (
+                    <Trans>Create a pair</Trans>
+                ) : adding ? (
+                    <Trans>Increase Liquidity</Trans>
+                ) : (
+                    <Trans>Remove Liquidity</Trans>
+                )}
+            </span>
+            <Box style={{ marginRight: '.5rem' }}>{children}</Box>
+            <SettingsTab placeholderSlippage={defaultSlippage} />
+        </div>
     )
 }

@@ -23,5 +23,9 @@
     color: var(--primary);
     border: 1px solid var(--primary);
     border-radius: 8px;
+
+    &:hover {
+     opacity: 1;
+    }
   }
 }

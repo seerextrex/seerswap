@@ -11,7 +11,7 @@ interface DataRowProps {
 export const DataRow = ({ data, grid, header, rowId}: DataRowProps) => {
     return (
         <div className={`data-row pb-05 pt-05 ${grid}`}>
-            <span>{rowId + 1}</span>
+            <span>{rowId}</span>
             {data.map((el, i) => {
                     return <span  key={i} className={header[i].props.className}>{el.title}</span>
                 }

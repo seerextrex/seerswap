@@ -5,7 +5,6 @@ import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import Loader from '../Loader'
 import { useAppDispatch } from '../../state/hooks'
 import { clearOneTransaction } from '../../state/transactions/actions'
-import { TransCloseIcon, TransIconWrapper } from './styled'
 import { ExternalLink } from '../../theme'
 
 
@@ -25,7 +24,7 @@ export default function Transaction({ hash }: { hash: string }) {
         <ExternalLink
             href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}
         >
-            <span>{summary ?? hash} ↗</span>
+            <span className={'hover-line'}>{summary ?? hash} ↗</span>
             <div className={'f'}>
                 <div className={`c-${pending ? 'p' : success ? 'g' : 'r'} pos-r z-10`}>
                     {pending ? <Loader /> : success ? <CheckCircle size='1rem' /> : <Triangle size='1rem' />}

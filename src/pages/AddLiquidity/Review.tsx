@@ -1,25 +1,17 @@
-import { Bound, Field } from '../../state/mint/v3/actions'
+import { Bound } from '../../state/mint/v3/actions'
 import { AutoColumn } from 'components/Column'
-import { Currency, CurrencyAmount, Price } from '@uniswap/sdk-core'
 import { Position } from 'lib/src'
 import { PositionPreview } from 'components/PositionPreview'
-import { ReviewWrapper } from './styled'
 
-export function Review({
-    position,
-    outOfRange,
-    ticksAtLimit
-}: {
+interface ReviewProps {
     position?: Position
-    existingPosition?: Position
-    parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> }
-    priceLower?: Price<Currency, Currency>
-    priceUpper?: Price<Currency, Currency>
     outOfRange: boolean
     ticksAtLimit: { [bound in Bound]?: boolean | undefined }
-}) {
+}
+
+export function Review({ position, outOfRange, ticksAtLimit }: ReviewProps) {
     return (
-        <ReviewWrapper>
+        <div className={'pt-05'}>
             <AutoColumn gap='lg'>
                 {position ? (
                     <PositionPreview
@@ -30,6 +22,6 @@ export function Review({
                     />
                 ) : null}
             </AutoColumn>
-        </ReviewWrapper>
+        </div>
     )
 }

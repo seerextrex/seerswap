@@ -67,6 +67,7 @@ export const Marginer = styled.div``;
 export const BugReportLink = styled.a`
     position: fixed;
     bottom: 1rem;
+    display: flex;
     left: 1rem;
     color: #36f;
     text-decoration: none;

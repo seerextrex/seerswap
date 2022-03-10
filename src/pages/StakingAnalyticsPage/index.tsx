@@ -57,20 +57,20 @@ export default function StakingAnalyticsPage() {
 
     return (
         <div className={'w-100 maw-1180 mb-3'}>
-            <NavLink className={'c-p f'} to={'/staking'}><ArrowLeft size={'16px'} /><p className={'ml-05'}>Staking</p></NavLink>
+            <NavLink className={'c-p f hover-op w-fc'} to={'/staking'}><ArrowLeft size={'16px'} /><p className={'ml-05'}>Staking</p></NavLink>
             {chartsInfo.map((item, i) =>
-                <div className={'stacking-chart-card br-24 pv-1 ph-2 mv-1'} key={i}>
+                <div className={'stacking-chart-card br-24 pv-1 ph-2 mv-1 mxs_ph-1'} key={i}>
                     {item.type === 'xALGBminted' ?
                         <div className={'stacking-chart-card__color-text'}>
                             <div>
-                                <div className={'f'}>
+                                <div className={'f f-ac'}>
                                     <div className={'stacking-chart-card__color-rect'} data-stroke={'first'} />
                                     <h2 className={'ml-05 fs-15'}>{item.title[0]}</h2>
                                 </div>
                                 <p className={'mt-025'}>{item.hint[0]}</p>
                             </div>
                             <div className={'ml-2'}>
-                                <div className={'f'}>
+                                <div className={'f f-ac'}>
                                     <div className={'stacking-chart-card__color-rect'} data-stroke={'second'} />
                                     <h2 className={'ml-05 fs-15'}>{item.title[1]}</h2>
                                 </div>

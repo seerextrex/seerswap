@@ -4,10 +4,11 @@ import { darken } from 'polished'
 export const CautionModalInner = styled.div`
   padding: 2rem;
   line-height: 26px;
-  color: #080064;
+    color: white;
 `
 export const CautionList = styled.ul`
   list-style: decimal;
+    color: white;
 `
 export const CautionListItem = styled.li`
   margin-bottom: 1rem;

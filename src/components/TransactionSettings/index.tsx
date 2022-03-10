@@ -1,7 +1,6 @@
 import { t, Trans } from '@lingui/macro'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Percent } from '@uniswap/sdk-core'
-import { ThemeContext } from 'styled-components/macro'
 import QuestionHelper from '../QuestionHelper'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
@@ -25,7 +24,6 @@ interface TransactionSettingsProps {
 
 export default function TransactionSettings({ placeholderSlippage }: TransactionSettingsProps) {
     const { chainId } = useActiveWeb3React()
-    const theme = useContext(ThemeContext)
 
     const userSlippageTolerance = useUserSlippageTolerance()
     const setUserSlippageTolerance = useSetUserSlippageTolerance()
@@ -111,12 +109,12 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
                     </Option>
                     <OptionCustom active={userSlippageTolerance !== 'auto'}
                                   warning={!!slippageError} tabIndex={-1}>
-                        <RowBetween>
+                        <div className={'flex-s-between c-p'}>
                             {tooLow || tooHigh ? (
                                 <SlippageEmojiContainer>
-                  <span role='img' aria-label='warning'>
-                    ⚠️
-                  </span>
+                              <span role='img' aria-label='warning'>
+                                ⚠️
+                              </span>
                                 </SlippageEmojiContainer>
                             ) : null}
                             <Input
@@ -136,7 +134,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
                                 color={slippageError ? 'red' : ''}
                             />
                             %
-                        </RowBetween>
+                        </div>
                     </OptionCustom>
                 </RowBetween>
                 {slippageError || tooLow || tooHigh ? (

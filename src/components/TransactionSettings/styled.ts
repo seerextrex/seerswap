@@ -2,19 +2,18 @@ import styled from 'styled-components/macro'
 import { darken } from 'polished'
 
 const FancyButton = styled.button`
-    color: ${({ theme }) => theme.text1};
     align-items: center;
+    color: white;
     height: 2rem;
     border-radius: 36px;
     font-size: 1rem;
     width: auto;
     min-width: 3.5rem;
-    border: 1px solid ${({ theme }) => theme.bg3};
+    border: 1px solid var(--primary);
     outline: none;
-    background: #161520;
-
+    background: transparent;
     :focus {
-        border: 1px solid ${({ theme }) => theme.primary1};
+        border: 1px solid var(--primary);
     }
 `
 export const Option = styled(FancyButton)<{ active: boolean }>`
@@ -24,12 +23,14 @@ export const Option = styled(FancyButton)<{ active: boolean }>`
     border: 1px solid var(--primary);
 
     :hover {
+        background-color: var(--primary-hover);
+        border: 1px solid var(--primary-hover);
         cursor: pointer;
     }
-    color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
+   color: white;
 `
 export const Input = styled.input`
-    background: #161520;
+    background: transparent;
     font-size: 16px;
     width: auto;
     outline: none;
@@ -39,7 +40,7 @@ export const Input = styled.input`
         -webkit-appearance: none;
     }
 
-    color: ${({ theme, color }) => (color === 'red' ? theme.red1 : theme.text1)};
+    color: ${({ theme, color }) => (color === 'red' ? theme.red1 : theme.white)};
     text-align: right;
 `
 export const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
@@ -47,21 +48,14 @@ export const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: bo
     position: relative;
     padding: 0 0.75rem;
     flex: 1;
-    background-color: white;
     border: ${({ theme, active, warning }) =>
-        active ? `1px solid ${warning ? theme.red1 : theme.primary1}` : warning && `1px solid ${theme.red1}`};
-
-    :hover {
-        border: ${({ theme, active, warning }) =>
-            active && `1px solid ${warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary1)}`};
-    }
+        active ? `1px solid ${warning ? theme.red1 : 'var(--primary)'}` : warning && `1px solid ${theme.red1}`};
 
     input {
         width: 100%;
         height: 100%;
         border: 0;
         background: transparent;
-        color: black;
         border-radius: 2rem;
     }
 `

@@ -205,7 +205,7 @@ export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bon
                                 <div key={i}>
                                     {row.map((el, j) => (
                                         <div
-                                            className={'stake-modal__nft-position p-05 br-8 mr-05'}
+                                            className={'stake-modal__nft-position p-05 br-8 mr-05 c-w'}
                                             key={j}
                                             data-selected={!!selectedNFT && selectedNFT.id === el.id}
                                             onClick={(e: any) => {

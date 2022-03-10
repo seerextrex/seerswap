@@ -132,7 +132,7 @@ interface ConfirmationModalContentProps {
 export function ConfirmationModalContent({ title, bottomContent, onDismiss, topContent }: ConfirmationModalContentProps) {
     return (
         <div className={'w-100'}>
-            <div className={'flex-s-between'}>
+            <div className={'flex-s-between mb-1'}>
                 {title}
                 <CloseIcon onClick={onDismiss} />
             </div>

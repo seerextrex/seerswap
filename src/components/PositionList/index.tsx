@@ -26,7 +26,7 @@ export default function PositionList({ positions }: PositionListProps) {
 
     return (
         <>
-            <div className={'flex-s-between w-100'}>
+            <div className={'flex-s-between w-100 pr-2'}>
                 <div>
                     <Trans>Your positions</Trans>
                     {positions && ' (' + positions.length + ')'}

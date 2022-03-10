@@ -36,7 +36,7 @@ export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colo
         right: 10,
         bottom: 30
     }
-    const [span, setSpan] = useState<string>('Day')
+    const [span, setSpan] = useState<string>('Month')
     const getArrayDays = useGetDaysArray()
     const startTimestamp = useStartTimestamp(span, type)
 

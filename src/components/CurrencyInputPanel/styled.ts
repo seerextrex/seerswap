@@ -47,7 +47,7 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
     border: none;
     height: ${({ hideInput }) => (hideInput ? '38px' : '35px')};
     width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
-    min-width: 200px;
+    min-width: 214px;
     padding: 0 15px;
     justify-content: space-between;
     margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
@@ -63,8 +63,9 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
             background-color: transparent;
             box-shadow: none;
 
-            &:hover {
+            &:hover, &:focus {
                 background-color: transparent;
+                cursor: default;
             }
         `}
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`{

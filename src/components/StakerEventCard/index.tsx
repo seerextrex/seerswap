@@ -51,83 +51,83 @@ export function StakerEventCard({
     eternal,
     secret
 }: StakerEventCardProps) {
-    const { account } = useActiveWeb3React();
-    const toggleWalletModal = useWalletModalToggle();
+    const { account } = useActiveWeb3React()
+    const toggleWalletModal = useWalletModalToggle()
 
     const _startTime = useMemo(() => {
-        if (!startTime) return [];
+        if (!startTime) return []
 
-        const date = new Date(+startTime * 1000);
+        const date = new Date(+startTime * 1000)
 
-        return [convertLocalDate(date), convertDateTime(date)];
-    }, [startTime]);
+        return [convertLocalDate(date), convertDateTime(date)]
+    }, [startTime])
 
     const _endTime = useMemo(() => {
-        if (!endTime) return [];
+        if (!endTime) return []
 
-        const date = new Date(+endTime * 1000);
+        const date = new Date(+endTime * 1000)
 
-        return [convertLocalDate(date), convertDateTime(date)];
-    }, [endTime]);
+        return [convertLocalDate(date), convertDateTime(date)]
+    }, [endTime])
 
     if (secret) {
 
         return (
             <div className={'staker-event-card p-1 br-12'} data-refreshing={refreshing}>
-            {refreshing && (
-                <LoadingShim>
-                    <Loader size={"18px"} stroke={"white"} style={{ margin: "auto" }} />
-                </LoadingShim>
-            )}
-            <div className={'f mb-1'}>
-                <div className={'f mr-1'}>
-                    <CurrencyLogo
-                        currency={new Token(SupportedChainId.POLYGON, "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619", 18, "WETH") as WrappedCurrency}
-                        size={'35px'}
-                    />
-                    <CurrencyLogo
-                        currency={new Token(SupportedChainId.POLYGON, "0x2791bca1f2de4661ed88a30c99a7a9449aa84174", 18, "USDC") as WrappedCurrency}
-                        size={'35px'}
-                    />
-                </div>
-                <div>
-                    <h3 className={'fs-075 b'}>POOL</h3>
-                    <div>{'WETH / USDC'}</div>
-                </div>
-            </div>
-            <div className={'staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8'}>
-                <CurrencyLogo
-                    currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency}
-                    size={'35px'}
-                />
-                <div className={'ml-1 f c'}>
-                    <span className={'c-ph fs-075 b'}>REWARD</span>
-                    <span>{'ALGB'}</span>
-                </div>
-                    <div className={'m-a mr-0 fs-125'} title={'1000000'}>
-                            <span>{formatAmountTokens(1000000)}</span>
+                {refreshing && (
+                    <LoadingShim>
+                        <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto' }} />
+                    </LoadingShim>
+                )}
+                <div className={'f mb-1'}>
+                    <div className={'f mr-1'}>
+                        <CurrencyLogo
+                            currency={new Token(SupportedChainId.POLYGON, '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', 18, 'WETH') as WrappedCurrency}
+                            size={'35px'}
+                        />
+                        <CurrencyLogo
+                            currency={new Token(SupportedChainId.POLYGON, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', 18, 'USDC') as WrappedCurrency}
+                            size={'35px'}
+                        />
                     </div>
-            </div>
-            <div className={'staker-event-card__plus'}>
-                <div>
-                    <Plus style={{ display: 'block' }} size={18} />
+                    <div>
+                        <h3 className={'fs-075 b'}>POOL</h3>
+                        <div>{'WETH / USDC'}</div>
+                    </div>
                 </div>
-            </div>
-            {bonusReward && bonusReward > 0 && (
                 <div className={'staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8'}>
                     <CurrencyLogo
-                        currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency}
+                        currency={new Token(SupportedChainId.POLYGON, '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', 18, 'ALGB') as WrappedCurrency}
                         size={'35px'}
                     />
                     <div className={'ml-1 f c'}>
-                        <span className={'c-ph fs-075 b'}>BONUS</span>
+                        <span className={'c-ph fs-075 b'}>REWARD</span>
                         <span>{'ALGB'}</span>
                     </div>
+                    <div className={'m-a mr-0 fs-125'} title={'1000000'}>
+                        <span>{formatAmountTokens(1000000)}</span>
+                    </div>
+                </div>
+                <div className={'staker-event-card__plus'}>
+                    <div>
+                        <Plus style={{ display: 'block' }} size={18} />
+                    </div>
+                </div>
+                {bonusReward && bonusReward > 0 && (
+                    <div className={'staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8'}>
+                        <CurrencyLogo
+                            currency={new Token(SupportedChainId.POLYGON, '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', 18, 'ALGB') as WrappedCurrency}
+                            size={'35px'}
+                        />
+                        <div className={'ml-1 f c'}>
+                            <span className={'c-ph fs-075 b'}>BONUS</span>
+                            <span>{'ALGB'}</span>
+                        </div>
                         <div className={'m-a mr-0 fs-125'} title={'400000'}>
                             <span>{formatAmountTokens(400000)}</span>
                         </div>
-                </div>
-            )}
+                    </div>
+                )}
                 <div className={'flex-s-between mb-05'}>
                     <div className={'f c'}>
                         <span className={'fs-075 b'}>START</span>
@@ -152,12 +152,10 @@ export function StakerEventCard({
                     <span>{`will be available in ${getCountdownTime(1647356400, Date.now())}`}</span>
                 </div>
                 <div className={'staker-event-card__progress w-100 br-8 p-025'}>
-                        <div className={'br-8'} style={{ width: `${Number(getProgress(1647356400, Math.round(Date.now() / 1000), now).toPrecision(1))}%` }} />
+                    <div className={'br-8'} style={{ width: `${Number(getProgress(1647356400, Math.round(Date.now() / 1000), now).toPrecision(1))}%` }} />
                 </div>
-              <span style={{ marginTop: "1rem", fontSize: "14px", lineHeight: "21px", padding: "6px 8px", borderRadius: "6px", textAlign: "center", backgroundColor: "#333aa0" }}>
-                    ⚡ Upcoming farm
-                </span>
-        </div>
+                <span className={'mt-1 fs-085 p-05 br-8 ta-c bg-v'}>⚡ Upcoming farm</span>
+            </div>
         )
 
     }
@@ -166,7 +164,7 @@ export function StakerEventCard({
         <div className={'staker-event-card p-1 br-12'} data-refreshing={refreshing}>
             {refreshing && (
                 <LoadingShim>
-                    <Loader size={"18px"} stroke={"white"} style={{ margin: "auto" }} />
+                    <Loader size={'18px'} stroke={'white'} style={{ margin: 'auto' }} />
                 </LoadingShim>
             )}
             <div className={'f mb-1'}>
@@ -276,15 +274,15 @@ export function StakerEventCard({
                 <button
                     className={`btn primary w-100 b pv-05 ${!eternal ? 'mt-05' : ''}`}
                     onClick={stakeHandler}
-                > { locked ? 'Filled' : 'Farm'}
-                </button> : active ? <span style={{ marginTop: "1rem", fontSize: "14px", lineHeight: "21px", padding: "6px 8px", borderRadius: "6px", textAlign: "center", backgroundColor: "#17517c" }}>
-            Started!
-        </span> :
-                <button
-                    className={`btn primary w-100 b pv-05 ${!eternal ? 'mt-05' : ''}`}
-                    onClick={toggleWalletModal}
-                > Connect Wallet
-                </button>
+                > {locked ? 'Filled' : 'Farm'}
+                </button> : active ?
+                    <span className={'mt-1 fs-085 p-05 br-8 ta-c bg-pw'}>Started!</span>
+                    :
+                    <button
+                        className={`btn primary w-100 b pv-05 ${!eternal ? 'mt-05' : ''}`}
+                        onClick={toggleWalletModal}
+                    > Connect Wallet
+                    </button>
             }
         </div>
     )

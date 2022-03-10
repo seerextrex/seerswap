@@ -396,7 +396,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
 
     return (
         <>
-            <NavLink className={'f f-ac c-p mb-1'} to={'/pool'}>
+            <NavLink className={'f f-ac c-p mb-1 w-fc hover-op'} to={'/pool'}>
                 <ArrowLeft size={16} />
                 <span className={'ml-05'}>Back to pools</span>
             </NavLink>
@@ -461,7 +461,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                 <span className={''} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>
                                     <Info size={'0.85rem'} stroke={'var(--light-gray)'} />
                                     {showTech ?
-                                        <Card isDark classes={'pos-a z-10 p-1 br-8 f c bg-dg t-m6'}>
+                                        <Card isDark classes={'pos-a z-10 p-1 br-8 f c bg-dg r-0 w-100 maw-300'}>
                                             <span className={'b'}>📄 Tech paper</span>
                                             <div className={'fs-085 mt-05'}>Check out how dynamic fee is calculated</div>
                                             <a className={'btn primary w-100 f f-jc pv-025 mt-05 br-8'} download='Algebra-Tech-Paper.pdf' href={PDFAlgebra}>

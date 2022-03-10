@@ -43,3 +43,16 @@
     }
   }
 }
+
+@media screen and (max-width: 500px) {
+  .stacking-chart-card {
+
+    h2 {
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+}

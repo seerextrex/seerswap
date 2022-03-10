@@ -281,10 +281,10 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                         <span className={'c-w'}>{feeValueLower?.currency?.symbol}</span>
                     </div>
                 </Card>
-                <span className={'c-p mv-05 fs-075'}>
+                <div className={'c-p mv-05 fs-075'}>
                     <Trans>Collecting fees will withdraw currently available fees for you.</Trans>
-                </span>
-                <button className={'btn primary pv-05 br-8 b'} onClick={collect}>
+                </div>
+                <button className={'btn primary pv-05 br-8 b w-100'} onClick={collect}>
                     <Trans>Collect</Trans>
                 </button>
             </>
@@ -308,7 +308,7 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                         </Card>
                     ) :
                     <>
-                        <NavLink className={'c-p mb-1 f w-fc'} to='/pool'>
+                        <NavLink className={'c-p mb-1 f w-fc hover-op'} to='/pool'>
                             <Trans>← Back to Pools Overview</Trans>
                         </NavLink>
                         <Card isDark classes={'br-24 p-2 mxs_p-1'}>
@@ -475,11 +475,11 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                                 </Card>
                                 <Card isDark={false} classes={'p-1 br-12'}>
                                     <div className={'flex-s-between mb-1 fs-085'}>
-                                        <div className={'f f-ac'}>
-                                            <div className={'mr-05 fs-1'}>
+                                        <div className={'f f-ac mxs_fd-c'}>
+                                            <div className={'mr-05 fs-1 mxs_w-100 mxs_mr-0'}>
                                                 <Trans>Price range</Trans>
                                             </div>
-                                            <div>
+                                            <div className={'mxs_w-100 mxs_mt-05'}>
                                                 <RangeBadge removed={removed} inRange={inRange} />
                                                 <span style={{ width: '8px' }} />
                                             </div>

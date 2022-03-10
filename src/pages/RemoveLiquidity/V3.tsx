@@ -358,7 +358,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 )}
                 pendingText={pendingText}
             />
-            <Card isDark classes={'p-2 br-24'}>
+            <Card isDark classes={'p-2 br-24 mxs_p-1'}>
                 <AddRemoveTabs
                     creating={false}
                     adding={false}
@@ -367,7 +367,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 />
                 {_position ? (
                     <AutoColumn gap='lg'>
-                        <div className={'flex-s-between mt-1'}>
+                        <div className={'flex-s-between mt-1 mxs_ml-1'}>
                             <RowFixed>
                                 <DoubleCurrencyLogo
                                     currency0={feeValue0?.currency}
@@ -393,25 +393,25 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                     </div>
                                     <AutoRow gap='4px' justify={'flex-end'}>
                                         <button
-                                            className={'btn secondary pv-05 ph-1 fs-085'}
+                                            className={'btn secondary pv-05 ph-1 fs-085 hover-b'}
                                             onClick={() => onPercentSelect(25)}
                                         >
                                             <Trans>25%</Trans>
                                         </button>
                                         <button
-                                            className={'btn secondary pv-05 ph-1 fs-085'}
+                                            className={'btn secondary pv-05 ph-1 fs-085 hover-b'}
                                             onClick={() => onPercentSelect(50)}
                                         >
                                             <Trans>50%</Trans>
                                         </button>
                                         <button
-                                            className={'btn secondary pv-05 ph-1 fs-085'}
+                                            className={'btn secondary pv-05 ph-1 fs-085 hover-b'}
                                             onClick={() => onPercentSelect(75)}
                                         >
                                             <Trans>75%</Trans>
                                         </button>
                                         <button
-                                            className={'btn secondary pv-05 ph-1 fs-085'}
+                                            className={'btn secondary pv-05 ph-1 fs-085 hover-b'}
                                             onClick={() => onPercentSelect(100)}
                                         >
                                             <Trans>Max</Trans>

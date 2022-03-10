@@ -49,7 +49,7 @@ export default function Header() {
 
     return (
         <div className={'header__wrapper flex-s-between w-100 maw-1180 mv-2'}>
-            <a className={'header__logo'} href='.'>
+            <a className={'header__logo hover-op'} href='.'>
                 <img
                     width={'calc(100% - 10px)'}
                     src={Logo}

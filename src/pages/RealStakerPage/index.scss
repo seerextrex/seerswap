@@ -184,3 +184,11 @@
 .unstake-wrapper {
   width: 100%;
 }
+
+@media screen and (max-width: 500px){
+  .stake-wrapper {
+    span {
+      font-size: 1rem !important;
+    }
+  }
+}

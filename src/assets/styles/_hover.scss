@@ -11,8 +11,15 @@
     }
   }
 
+  &-b {
+    &:hover {
+      border-color: var(--primary-hover);
+    }
+  }
+
   &-c {
-    &-lg {
+    &-ph {
+      background-color: var(--primary-hover);
     }
 
   }

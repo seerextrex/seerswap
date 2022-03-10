@@ -12,6 +12,7 @@
   --red: #F55755;
   --mirage: #192732;
   --green: #33FF89;
+  --violet: #333aa0
 }
 
 .c {
@@ -87,6 +88,14 @@
 
   &-ec {
     background-color: var(--ebony-clay);
+  }
+
+  &-pw {
+    background-color: var(--primary-weak);
+  }
+
+  &-v {
+    background-color: var(--violet);
   }
 
   &-l {

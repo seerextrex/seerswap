@@ -1,8 +1,8 @@
 overrideExisting: true
 schema:
   [
-      'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb',
-      'https://api.thegraph.com/subgraphs/name/iliaazhel/karasb-farming',
+      'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
+      'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming-t',
       'https://api.thegraph.com/subgraphs/name/iliaazhel/staker',
       'https://api.thegraph.com/subgraphs/name/iliaazhel/ethereum-blocks'
   ]

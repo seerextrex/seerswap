@@ -31,6 +31,7 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
 
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   margin-top: -15px;
+  margin-bottom: 5px;
   `}
 
     ${({ clickable }) =>

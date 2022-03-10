@@ -12,7 +12,7 @@ import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens, useSortedTokensByQuery } from './filtering'
 import { useTokenComparator } from './sorting'
-import { SearchInput, Separator } from './styled'
+import { SearchInput } from './styled'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import useToggle from 'hooks/useToggle'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
@@ -181,9 +181,9 @@ export function CurrencySearch({
                     <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
                 )}
             </div>
-            <div className={'w-100 h-1 bg-p'}/>
+            <div className={'w-100 h-1 bg-p'} />
             {searchToken && !searchTokenIsAdded ? (
-                <div >
+                <div>
                     <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
                 </div>
             ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (

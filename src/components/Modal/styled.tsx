@@ -38,6 +38,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
     width: 60vw;
     overflow-y: auto;
     overflow-x: hidden;
+      padding: 1rem;
 
     align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
 

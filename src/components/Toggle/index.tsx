@@ -13,10 +13,10 @@ interface ToggleProps {
 export default function Toggle({ id, isActive, toggle, checked = <Trans>On</Trans>, unchecked = <Trans>Off</Trans> }: ToggleProps) {
     return (
         <button className={'toggle-button f br-12'} id={id} onClick={toggle}>
-            <span className={'br-8 c-w '} data-isActive={isActive}>
+            <span className={'br-8 c-w hover-op'} data-isActive={isActive}>
                 {checked}
             </span>
-            <span className={'br-8 c-w '} data-isActive={!isActive}>
+            <span className={'br-8 c-w hover-op'} data-isActive={!isActive}>
                 {unchecked}
             </span>
         </button>

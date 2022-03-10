@@ -79,7 +79,7 @@ export const MenuFlyout = styled.span`
 export const Break = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${({ theme }) => theme.bg3};
+  background: var(--primary);
 `
 export const ModalContentWrapper = styled.div`
   display: flex;

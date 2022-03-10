@@ -10,9 +10,10 @@ export const ChartWrapper = styled.div`
 
 //Area
 export const Path = styled.path<{ fill: string | undefined }>`
-  opacity: 0.5;
-  stroke: ${({ fill }) => fill ?? '#4B4B4B'};
-  fill: ${({ fill }) => fill ?? '#4B4B4B'};
+  opacity: 1;
+  stroke: ${({ fill }) => fill ? '#2797FF' : '#192732'};
+  stroke-width: 2px;
+  fill: ${({ fill }) => fill ? 'url(#liquidity-chart-gradient)' : 'transparent'};
 `
 
 //AxisBottom
@@ -34,7 +35,7 @@ export const LabelGroup = styled.g<{ visible: boolean }>`
   transition: opacity 300ms;
 `
 export const TooltipBackground = styled.rect`
-  fill: ${({ theme }) => '#3f3f40'};
+  fill: ${({ theme }) => '#2797FF'};
 `
 export const Tooltip = styled.text`
   text-anchor: middle;
@@ -47,7 +48,8 @@ export const Tooltip = styled.text`
 export const StyledLine = styled.line`
   opacity: 0.5;
   stroke-width: 1;
-  stroke: white;
+  stroke: #2797FF;
+  stroke-dasharray: 3;
   fill: none;
 `
 
@@ -57,7 +59,6 @@ export const Wrapper = styled.div<{ count: number }>`
   grid-template-columns: repeat(${({ count }) => count.toString()}, 1fr);
   grid-gap: 6px;
   position: absolute;
-  background-color: #2026356b;
   border-radius: 4px;
   top: 0;
   right: 0;

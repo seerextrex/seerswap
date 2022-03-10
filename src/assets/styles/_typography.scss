@@ -122,6 +122,10 @@
   }
 }
 
+.ws-no-wrap {
+  white-space: nowrap;
+}
+
 @media (max-width: 560px) {
   .title {
     text-align: center;

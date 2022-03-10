@@ -46,15 +46,15 @@ import {
     FullRangeButton,
     MaxButton,
     PairNotSelectedMock,
-    PriceRangeChart,
     PriceRangeInputs,
-    PriceRangeWrapper,
     Title,
     TokenItem,
     TokenItemBottomInputWrapper,
     TokenPair,
     Warning
 } from './styled'
+
+import './index.scss'
 
 //TODO test merge without failed polygon
 import NON_FUN_POS_MAN from '../../abis/non-fun-pos-man.json'
@@ -406,7 +406,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                     <SettingsTab placeholderSlippage={allowedSlippage} />
                 </div>
                 <div className={'flex-s-between'}>
-                    <Card isDark={false} classes={'p-1 br-12 w-100 mr-1'}>
+                    <Card isDark={false} classes={'p-1 br-12 w-100 mr-05'}>
                         <CurrencyDropdown
                             centered={true}
                             value={formattedAmounts[Field.CURRENCY_A]}
@@ -426,28 +426,8 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                             swap={false}
                             shallow={false}
                         />
-                        <div className={'f f-ac fs-085 pos-r'}>
-                            <span className={'b mr-05'}>{`${noLiquidity ? 'Initial' : 'Current'} Fee:`}</span>
-                            <span className={'f f-ac'}>
-                                <span className={'mr-05 c-p'}>{noLiquidity ? '0.05' : dynamicFee / 10000}%</span>
-                                <span className={''} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>
-                                    <Info size={'0.85rem'} stroke={'var(--light-gray)'} />
-                                    {showTech ?
-                                        <Card isDark classes={'pos-a z-10 p-1 br-8 f c bg-dg t-m6'}>
-                                            <span className={'b'}>📄 Tech paper</span>
-                                            <div className={'fs-085 mt-05'}>Check out how dynamic fee is calculated</div>
-                                            <a className={'btn primary w-100 f f-jc pv-025 mt-05 br-8'} download='Algebra-Tech-Paper.pdf' href={PDFAlgebra}>
-                                                <Download size={16} color={'white'} />
-                                                <span className={'ml-05'}>Download .PDF</span>
-                                            </a>
-                                        </Card>
-                                        : null
-                                    }
-                                </span>
-                            </span>
-                        </div>
                     </Card>
-                    <Card isDark={false} classes={'p-1 br-12 w-100 ml-1'}>
+                    <Card isDark={false} classes={'p-1 br-12 w-100 ml-05'}>
                         <CurrencyDropdown
                             centered={true}
                             value={formattedAmounts[Field.CURRENCY_B]}
@@ -466,19 +446,50 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                             swap={false}
                             shallow={false}
                             disabled={false} />
+                    </Card>
+                </div>
+                {baseCurrency && quoteCurrency && account ? (
+                    <>
+                        {account && (
+                            <>
+                            <div className={'flex-s-between'}>
+                <Card isDark={false} classes={'p-1 br-12 w-100 mr-05 mt-1'}>
+                <div className={'f f-ac fs-1 pos-r'}>
+                            <span className={'b mr-05'}>{`${noLiquidity ? 'Initial' : 'Current'} Fee:`}</span>
+                            <span className={'f f-ac ml-a'}>
+                                <span className={'mr-05 c-p'}>{noLiquidity ? '0.05' : dynamicFee / 10000}%</span>
+                                <span className={''} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>
+                                    <Info size={'0.85rem'} stroke={'var(--light-gray)'} />
+                                    {showTech ?
+                                        <Card isDark classes={'pos-a z-10 p-1 br-8 f c bg-dg t-m6'}>
+                                            <span className={'b'}>📄 Tech paper</span>
+                                            <div className={'fs-085 mt-05'}>Check out how dynamic fee is calculated</div>
+                                            <a className={'btn primary w-100 f f-jc pv-025 mt-05 br-8'} download='Algebra-Tech-Paper.pdf' href={PDFAlgebra}>
+                                                <Download size={16} color={'white'} />
+                                                <span className={'ml-05'}>Download .PDF</span>
+                                            </a>
+                                        </Card>
+                                        : null
+                                    }
+                                </span>
+                            </span>
+                        </div>
+
+</Card>
+<Card isDark={false} classes={'p-1 br-12 w-100 ml-05 mt-1'}>
                         {price && baseCurrency && quoteCurrency && !noLiquidity ? (
-                            <div className={'f f-ac fs-085'}>
-                                <span className={'b mr-05'}>Current Price:</span>
-                                <div className={'f f-ac'}>
-                                    <span className={'mr-025 c-p'}>
+                            <div className={'f f-ac fs-1'}>
+                                <span className={'b mr-05 ws-no-wrap fs-1'}>Current Price:</span>
+                                <div className={'f f-ac ml-a fs-1'}>
+                                    <span className={'mr-05 c-p'}>
                                         {invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}
                                     </span>
-                                    <span>{quoteCurrency?.symbol} per {baseCurrency.symbol}</span>
+                                    <span className={'ws-no-wrap fs-07  5'}>{quoteCurrency?.symbol} per {baseCurrency.symbol}</span>
                                 </div>
                             </div>
                         ) : (
-                            <div className={'f f-ac fs-085'}>
-                                <span className={'b mr-05'}>Starting Price</span>
+                            <div className={'f f-ac'}>
+                                <span className={'b mr-05 ws-no-wrap fs-125'}>Starting Price</span>
                                 <div className={'f'}>
                                     <span className={'mr-05'}>
                                         <StyledInput
@@ -494,16 +505,12 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                             onUserInput={onStartPriceInput}
                                         />
                                     </span>
-                                    <span>{quoteCurrency?.symbol} per {baseCurrency?.symbol}</span>
+                                    <span className={'ws-no-wrap fs-085'}>{quoteCurrency?.symbol} per {baseCurrency?.symbol}</span>
                                 </div>
                             </div>
                         )}
-                    </Card>
+                        </Card>
                 </div>
-                {baseCurrency && quoteCurrency && account ? (
-                    <>
-                        {account && (
-                            <>
                                 <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: 'none', userSelect: 'none' } : {}}>
                                     <Title>
                                         {outOfRange && (
@@ -519,12 +526,12 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                         )}
                                         Price Range
                                     </Title>
-                                    <PriceRangeWrapper>
+                                    <div className={'f w-100 mxs_fd-c'}>
                                         {price &&
                                             baseCurrency &&
                                             quoteCurrency &&
                                             !noLiquidity && (
-                                                <PriceRangeChart>
+                                                <div className={'price-range-chart h-100 br-12'}>
                                                     <LiquidityChartRangeInput
                                                         currencyA={baseCurrency ?? undefined}
                                                         currencyB={quoteCurrency ?? undefined}
@@ -546,9 +553,9 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                                         onRightRangeInput={onRightRangeInput}
                                                         interactive={!hasExistingPosition}
                                                     />
-                                                </PriceRangeChart>
+                                                </div>
                                             )}
-                                        <PriceRangeInputs initial={!!noLiquidity}>
+                                        <div className={'price-range-inputs h-100 ml-1 mxs_mt-1'} data-initial={!!noLiquidity}>
                                             <RangeSelector
                                                 priceLower={priceLower}
                                                 priceUpper={priceUpper}
@@ -566,7 +573,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                                 disabled={!startPriceTypedValue && !price}
                                             />
                                             {!noLiquidity && (
-                                                <FullRangeButton
+                                                <button className={'btn secondary full-range-btn w-100 p-1'}
                                                     onClick={() => {
                                                         getSetFullRange()
 
@@ -577,10 +584,10 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                                     }}
                                                 >
                                                     Full Range
-                                                </FullRangeButton>
+                                                </button>
                                             )}
-                                        </PriceRangeInputs>
-                                    </PriceRangeWrapper>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div
@@ -833,23 +840,29 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                         {errorMessage}
                                     </Error>
                                 )}
-                            <AddLiquidityButton
-                                onClick={() => {
-                                    onAdd()
-                                }}
-                                disabled={
-                                    (!isValid &&
-                                        !!parsedAmounts[Field.CURRENCY_A] &&
-                                        !!parsedAmounts[Field.CURRENCY_B]) ||
-                                    mustCreateSeparately ||
-                                    !isValid ||
-                                    (approvalA !== ApprovalState.APPROVED &&
-                                        !depositADisabled) ||
-                                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
-                                }
-                            >
-                                Add Liquidity
-                            </AddLiquidityButton>
+                              <AddLiquidityButton
+                                    onClick={() => {
+                                        onAdd()
+                                    }}
+                                    disabled={
+                                        (!isValid &&
+                                            !!parsedAmounts[Field.CURRENCY_A] &&
+                                            !!parsedAmounts[Field.CURRENCY_B]) ||
+                                        mustCreateSeparately ||
+                                        !isValid ||
+                                        (approvalA !== ApprovalState.APPROVED &&
+                                            !depositADisabled) ||
+                                        (approvalB !== ApprovalState.APPROVED && !depositBDisabled) || !!txHash || isNetworkFailed
+                                    }
+                                >
+                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                    { isNetworkFailed ? <>
+                                        <Loader stroke={'#9ca1a5'}/>
+                                        <span style={{marginLeft: '8px'}}>Updating...</span>
+                                        </> : txHash ? <>  <Loader stroke={'#9ca1a5'}/>
+                                        <span style={{marginLeft: '8px'}}>Adding Liquidity...</span></> : 'Add Liquidity'}
+                                    </div>
+                                </AddLiquidityButton>
                         </ButtonsWrapper>
                     </>
                 ) : account ? (

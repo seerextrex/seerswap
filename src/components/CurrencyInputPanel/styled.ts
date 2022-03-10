@@ -55,7 +55,7 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
     &:focus,
     &:hover {
         background-color: var(--mirage);
-
+    }
     ${({ shallow }) =>
         shallow &&
         css`

@@ -1,0 +1,17 @@
+.price-range {
+    &-chart {
+    flex: 2;
+    background-color: var(--ebony-clay);
+    }
+
+    &-inputs {
+        flex: 1;
+        &[data-initial=true] {
+            margin-left: 0;
+        }
+    }
+}
+
+.full-range-btn {
+    
+}

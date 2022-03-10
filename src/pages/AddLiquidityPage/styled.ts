@@ -54,7 +54,7 @@ export const TokenItem = styled.div<{ noPadding?: boolean; highPrice?: boolean }
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: rgba(60, 97, 126, 0.5);
+  background-color: var(--ebony-clay);
   ${({ noPadding }) =>
     !noPadding &&
     css`
@@ -254,8 +254,9 @@ export const Warning = styled.div`
   `}
 `
 export const Error = styled(Warning)`
-  color: white;
-  background-color: #be4d4d;
+  color: #F55755;
+  background-color: transparent;
+  border: 1px solid #F55755;
   width: 100%;
   text-align: center;
 `
@@ -265,12 +266,6 @@ export const PriceRangeWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
-`
-export const PriceRangeChart = styled.div`
-  height: 100%;
-  flex: 2;
-  border-radius: 6px;
-  background: rgba(60, 97, 126, 0.5);
 `
 export const PriceRangeInputs = styled.div<{ initial: boolean }>`
   height: 100%;

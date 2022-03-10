@@ -1,7 +1,13 @@
-.menu-wrapper {
+.menu {
+
+  &-wrapper {
+    border-bottom: 1px solid var(--ebony-clay-light);
+  }
+
+  &-list {
   display: flex;
 
-  &__item {
+  &-item {
     display: flex;
     color: var(--light-gray);
 
@@ -15,9 +21,10 @@
       &:hover {
         opacity: 1;
       }
+      border-bottom: 1px solid var(--primary);
     }
   }
-  &__refresh {
+  &-refresh {
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -32,9 +39,10 @@
     }
   }
 }
+}
 
 @media screen and (max-width: 500px) {
-  .menu-wrapper {
+  .menu-list {
     overflow-x: auto;
     white-space: nowrap;
     overflow-y: hidden;

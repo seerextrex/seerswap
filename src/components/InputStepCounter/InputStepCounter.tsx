@@ -81,7 +81,7 @@ const StepCounter = ({
             <AutoColumn gap='6px'>
                 <div style={{ display: 'flex', position: 'absolute', right: '1rem' }}>
                     {!locked && (
-                        <button className={'btn secondary mr-05'} onClick={handleDecrement}
+                        <button className={'btn secondary mr-05 hover-b'} onClick={handleDecrement}
                                      disabled={decrementDisabled || disabled}>
                             <ButtonLabel disabled={decrementDisabled || disabled} fontSize='12px'>
                                 <Minus size={18} />
@@ -90,7 +90,7 @@ const StepCounter = ({
                     )}
 
                     {!locked && (
-                        <button className={'btn secondary'} onClick={handleIncrement}
+                        <button className={'btn secondary hover-b'} onClick={handleIncrement}
                                      disabled={incrementDisabled || disabled}>
                             <ButtonLabel disabled={incrementDisabled || disabled} fontSize='12px'>
                                 <Plus size={18} />

@@ -1,5 +1,5 @@
 .toggle-button {
-  background-color: var(--primary-weak);
+  background-color: var(--dark-gray);
   width: fit-content;
   cursor: pointer;
   outline: none;
@@ -11,7 +11,6 @@
     transition-duration: .2s;
 
     &[data-isActive=true] {
-      color: var(--primary-weak);
       background-color: var(--primary);
     }
   }

@@ -283,7 +283,7 @@ export const ButtonsWrapper = styled.div`
   `}
 `
 export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
-  display; flex;
+  display: flex;
   align-items: center;
   padding: 8px 16px;
   height: 2.8rem;
@@ -298,7 +298,7 @@ export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
   white-space: nowrap;
 
   &:disabled {
-    display; flex;
+    display: flex;
     align-items: center;
     background-color: ${({ theme }) => darken(0.2, theme.winterMainButton)};
     color: ${darken(0.35, 'white')};

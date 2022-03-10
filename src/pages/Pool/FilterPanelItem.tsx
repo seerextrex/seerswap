@@ -14,7 +14,7 @@ const FilterPanelItem = ({ item }: FilterPanelProps) => {
 
     return (
         <div>
-            <div className={'mb-05'}>
+            <div className={'mb-05 mxs_ta-c'}>
                 <Trans>{item.title}</Trans>
             </div>
             <Toggle

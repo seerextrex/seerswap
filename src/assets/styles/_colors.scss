@@ -98,10 +98,4 @@
   &-v {
     background-color: var(--violet);
   }
-
-  &-l {
-    &-pl {
-      background: linear-gradient(90deg, var(--primary-weak) 0%, var(--primary) 100%)
-    }
-  }
 }

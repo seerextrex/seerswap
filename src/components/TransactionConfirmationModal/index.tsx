@@ -30,7 +30,7 @@ function ConfirmationPendingContent({ onDismiss, pendingText, inline }: Confirma
             {!inline && (
                 <div className={'flex-s-between'}>
                     <div />
-                    <X className={'c-p'} onClick={onDismiss} />
+                    <X className={'c-w'} onClick={onDismiss} />
                 </div>
             )}
             <div className={'f c f-ac f-jc mb-1 p-2'}>
@@ -103,7 +103,7 @@ function TransactionSubmittedContent({ onDismiss, chainId, hash, currencyToAdd, 
                         ) : (
                             <RowFixed>
                                 <Trans>Added {currencyToAdd.symbol} </Trans>
-                                <CheckCircle size={'16px'} stroke={theme.green1}
+                                <CheckCircle size={'16px'} stroke={'var(--green)'}
                                              style={{ marginLeft: '6px' }} />
                             </RowFixed>
                         )}

@@ -11,9 +11,14 @@
     }
   }
 
+  &-cp {
+    color: var(--primary);
+  }
+
   &-b {
     &:hover {
       border-color: var(--primary-hover);
+      color: var(--primary-hover);
     }
   }
 

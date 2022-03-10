@@ -44,7 +44,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
             <div className={'my-stakes__position-card__header__row'}>
                 {!el.incentive && !el.eternalFarming && (
                     <button
-                        className={'btn f f-ac c-p b pv-025 mxs_mv-05 hover-op'}
+                        className={'btn c-w f f-ac b pv-025 mxs_mv-05 mxs_f-jc'}
                         disabled={unstaking.id === el.id && unstaking.state !== 'done'}
                         onClick={() => {
                             setUnstaking({ id: el.id, state: 'pending' })
@@ -53,20 +53,20 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     >
                         {unstaking && unstaking.id === el.id && unstaking.state !== 'done' ? (
                             <>
-                                <Loader size={'1rem'} stroke={'var(--primary)'} style={{ margin: 'auto' }} />
+                                <Loader size={'1rem'} stroke={'var(--white)'} style={{ margin: 'auto' }} />
                                 <span className={'ml-05'}>Withdrawing</span>
                             </>
                         ) : (
                             <>
-                                <ChevronsUp color={'var(--primary)'} size={'1rem'} />
+                                <ChevronsUp size={'1rem'} />
                                 <span className={'ml-05'}>{t`Withdraw`}</span>
                             </>
                         )}
                     </button>
                 )}
-                <button className={'btn f f-ac c-p b pv-025 ml-05 mxs_ml-0 mxs_f-jc hover-op'} onClick={() => setSendModal(el.L2tokenId)}>
-                    <Send color={'var(--primary)'} size={'1rem'} />
-                    <span className={'ml-05 c-p'}>Send</span>
+                <button className={'btn c-w f f-ac b pv-025 ml-05 mxs_ml-0 mxs_f-jc'} onClick={() => setSendModal(el.L2tokenId)}>
+                    <Send size={'1rem'} />
+                    <span className={'ml-05'}>Send</span>
                 </button>
             </div>
         </div>

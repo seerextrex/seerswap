@@ -18,6 +18,7 @@ import { BodyWrapper } from '../styled'
 import usePrevious from '../../hooks/usePrevious'
 import { EmptyState } from './EmptyState'
 import { V2PairMigration } from './V2PairMigration'
+import Card from '../../shared/components/Card/Card'
 
 
 const DEFAULT_MIGRATE_SLIPPAGE_TOLERANCE = new Percent(75, 10_000)
@@ -137,12 +138,13 @@ export default function MigrateV2Pair({ match: { params: { address } } }: RouteC
     }
 
     return (
-        <BodyWrapper style={{ padding: 24 }}>
+        <Card isDark classes={'p-2 br-24 w-100 maw-765 mh-a'}>
             <AutoColumn gap='16px'>
-                <AutoRow style={{ alignItems: 'center', justifyContent: 'center' }} gap='8px'>
+                <div className={'flex-s-between mb-1'}>
+                    <div/>
                     <TYPE.mediumHeader>Migrate Liquidity</TYPE.mediumHeader>
                     <SettingsTab placeholderSlippage={DEFAULT_MIGRATE_SLIPPAGE_TOLERANCE} />
-                </AutoRow>
+                </div>
 
                 {!account ? <TYPE.largeHeader>You must connect an account.</TYPE.largeHeader>
                     : _pairBalance && _totalSupply && _reserve0 && _reserve1 && _token0 && _token1 ? (
@@ -159,6 +161,6 @@ export default function MigrateV2Pair({ match: { params: { address } } }: RouteC
                     <EmptyState message={'Loading'} />
                 )}
             </AutoColumn>
-        </BodyWrapper>
+        </Card>
     )
 }

@@ -573,7 +573,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                                 disabled={!startPriceTypedValue && !price}
                                             />
                                             {!noLiquidity && (
-                                                <button className={'btn secondary full-range-btn w-100 p-1'}
+                                                <button className={'btn secondary full-range-btn w-100 p-1 hover-b'}
                                                     onClick={() => {
                                                         getSetFullRange()
 
@@ -855,7 +855,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                                         (approvalB !== ApprovalState.APPROVED && !depositBDisabled) || !!txHash || isNetworkFailed
                                     }
                                 >
-                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                    <div className={'b f f-ac'}>
                                     { isNetworkFailed ? <>
                                         <Loader stroke={'#9ca1a5'}/>
                                         <span style={{marginLeft: '8px'}}>Updating...</span>

@@ -66,8 +66,7 @@ export const Wrapper = styled.div<{ count: number }>`
 export const Button = styled(ButtonGray)`
     &:hover {
         background-color: transparent;
-        opacity: .8;
-        color: var(--dark-gray);
+        color: var(--white);
     }
 
     width: 32px;

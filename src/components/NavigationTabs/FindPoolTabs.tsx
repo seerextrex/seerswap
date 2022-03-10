@@ -9,16 +9,14 @@ interface FindPoolTabsProps {
 
 export function FindPoolTabs({ origin }: FindPoolTabsProps) {
     return (
-        <Tabs>
-            <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
-                <HistoryLink to={origin}>
-                    <StyledArrowLeft />
-                </HistoryLink>
-                <ActiveText>
-                    <Trans>Migrate from SushiSwap or QuickSwap</Trans>
-                </ActiveText>
-                <div />
-            </RowBetween>
-        </Tabs>
+        <div className={'flex-s-between mb-1'}>
+            <HistoryLink to={origin}>
+                <StyledArrowLeft />
+            </HistoryLink>
+            <ActiveText>
+                <Trans>Migrate from SushiSwap or QuickSwap</Trans>
+            </ActiveText>
+            <div />
+        </div>
     )
 }

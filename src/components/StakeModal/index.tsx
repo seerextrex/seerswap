@@ -166,36 +166,36 @@ export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bon
     return (
         <>
             {submitState === 3 ? (
-                <div className={'w-100 p-1 c-p'}>
+                <div className={'w-100 p-1 c-w cur-d'}>
                     <div className={'f f-je mb-1 w-100'}>
                         <button className={'bg-t br-0'} onClick={closeHandler}>
-                            <X size={18} stroke={'var(--primary)'} />
+                            <X size={18} stroke={'var(--white)'} />
                         </button>
                     </div>
                     <div className={'h-400 f c f-ac f-jc'}>
-                        <CheckCircle size={55} stroke={'var(--primary)'} />
+                        <CheckCircle size={55} stroke={'var(--green)'} />
                         <p className={'mt-05'}>{`NFT #${selectedNFT?.id} deposited succesfully!`}</p>
                     </div>
                 </div>
             ) : positionsForPoolLoading ? (
-                <div className={'w-100 p-1 c-p h-400 f c f-ac f-jc'}>
-                    <Loader stroke={'var(--primary)'} size={'25px'} />
+                <div className={'w-100 p-1 c-w h-400 f c f-ac f-jc cur-p'}>
+                    <Loader stroke={'var(--white)'} size={'25px'} />
                 </div>
             ) : (
-                <div className={'w-100 c-p p-1'}>
+                <div className={'w-100 c-w'}>
                     <div className={'mb-1 flex-s-between'}>
                         <div>Select NFT for farming</div>
                         <button className={'bg-t br-0'} onClick={closeHandler}>
-                            <X size={18} stroke={'var(--primary)'} />
+                            <X size={18} stroke={'var(--white)'} />
                         </button>
                     </div>
                     <div className={'h-400'}>
                         {chunkedPositions && chunkedPositions.length === 0 ? (
                             <div className={'h-400 f c f-ac f-jc'}>
-                                <Frown size={30} stroke={'var(--primary)'} />
-                                <p className={'mt-05 mb-05'}>No NFT-s for this pool</p>
+                                <Frown size={30} stroke={'var(--white)'} />
+                                <p className={'mt-1 mb-05'}>No NFT-s for this pool</p>
                                 <p>To take part in this farming event, you need to</p>
-                                <NavLink className={'flex-s-between c-w ph-1 pv-05 bg-l-pl br-8 mt-05'} to={linkToProviding}>
+                                <NavLink className={'flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1'} to={linkToProviding}>
                                     <span>{`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
                                     <ArrowRight className={'ml-05'} size={16} />
                                 </NavLink>

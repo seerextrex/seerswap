@@ -503,6 +503,7 @@ export const ContentModal = styled.div`
 
 //UnstakeInputRange
 export const UnstakeCurrencyInputPanelWrapper = styled(CurrencyInputPanelWrapper)`
+    background-color: var(--dark-ebony-clay);
     span {
         color: #C3C5CB;
         cursor: default;

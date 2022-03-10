@@ -40,6 +40,7 @@ import { ButtonConfirmed } from '../../components/Button'
 import { Dots } from '../../components/swap/styled'
 import { Link } from 'react-router-dom'
 import { SupportedChainId } from '../../constants/chains'
+import Card from '../../shared/components/Card/Card'
 
 interface V2PairMigrationProps {
     pair: Contract | null
@@ -323,7 +324,7 @@ export function V2PairMigration({ pair, pairBalance, totalSupply, reserve0, rese
 
     return (
         <AutoColumn gap='20px'>
-            <LightCard>
+            <Card isDark={false} classes={'p-1 br-12'}>
                 <AutoColumn gap='lg'>
                     <RowBetween>
                         <RowFixed style={{ marginLeft: '8px' }}>
@@ -347,13 +348,13 @@ export function V2PairMigration({ pair, pairBalance, totalSupply, reserve0, rese
                     </RowBetween>
                     <LiquidityInfo token0Amount={token0Value} token1Amount={token1Value} />
                 </AutoColumn>
-            </LightCard>
+            </Card>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <ArrowDown size={24} />
             </div>
 
-            <LightCard>
+            <Card isDark={false} classes={'p-1 br-12'}>
                 <AutoColumn gap='lg'>
                     <RowBetween>
                         <RowFixed style={{ marginLeft: '8px' }}>
@@ -594,7 +595,7 @@ export function V2PairMigration({ pair, pairBalance, totalSupply, reserve0, rese
                         </AutoColumn>
                     </AutoColumn>
                 </AutoColumn>
-            </LightCard>
+            </Card>
         </AutoColumn>
     )
 }

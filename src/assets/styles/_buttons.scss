@@ -18,6 +18,24 @@
     }
   }
 
+  &.primary-weak {
+    background-color: var(--primary-weak);
+    color: var(--white);
+    border: 1px solid var(--primary-weak);
+    &:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    &:disabled {
+      background-color: var(--primary-disabled);
+      border-color: var(--primary-disabled);
+      cursor: default;
+    }
+  }
+
+
+
   &.secondary {
     background-color: transparent;
     color: var(--primary);

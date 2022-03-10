@@ -20,6 +20,7 @@ interface StakerEventCardProps {
     refreshing?: boolean;
     stakeHandler?: () => void;
     event?: {
+        id?: any;
         pool?: any;
         createdAtTimestamp?: string;
         rewardToken?: any;
@@ -40,7 +41,7 @@ export function StakerEventCard({
     refreshing,
     stakeHandler,
     now,
-    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked } = {},
+    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, id } = {},
     eternal,
     secret,
 }: StakerEventCardProps) {
@@ -156,7 +157,7 @@ export function StakerEventCard({
                 </div>
                 {reward && (
                     <div className={"m-a mr-0 fs-125"} title={reward.toString()}>
-                        {eternal ? <span /> : <span>{("" + reward).length <= 10 ? reward : ("" + reward).slice(0, 8) + ".."}</span>}
+                        {id === "0x1d07f1ccb2974c0e75430bd62e9f6986071a353ff26b7df5500b1f6a918f87ae" ? eternal ? <span /> : <span>{formatAmountTokens(reward)}</span> : formatAmountTokens(1000000)}
                     </div>
                 )}
             </div>
@@ -174,7 +175,15 @@ export function StakerEventCard({
                     </div>
                     {bonusReward && (
                         <div className={"m-a mr-0 fs-125"} title={bonusReward.toString()}>
-                            {eternal ? <span /> : <span>{("" + bonusReward).length <= 10 ? bonusReward : ("" + bonusReward).slice(0, 8) + ".."}</span>}
+                            {id === "0x1d07f1ccb2974c0e75430bd62e9f6986071a353ff26b7df5500b1f6a918f87ae" ? (
+                                eternal ? (
+                                    <span />
+                                ) : (
+                                    <span>{formatAmountTokens(bonusReward)}</span>
+                                )
+                            ) : (
+                                formatAmountTokens(400000)
+                            )}
                         </div>
                     )}
                 </div>
@@ -219,7 +228,9 @@ export function StakerEventCard({
                     {locked ? "Filled" : "Farm"}
                 </button>
             ) : active ? (
-                <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-pw"}>Started!</div>
+                <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-pw"} style={{ height: "35px", marginTop: "9px" }}>
+                    Started!
+                </div>
             ) : (
                 <button className={`btn primary w-100 b pv-05 ${!eternal ? "mt-05" : ""}`} onClick={toggleWalletModal}>
                     {" "}

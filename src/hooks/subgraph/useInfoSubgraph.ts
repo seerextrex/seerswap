@@ -126,6 +126,8 @@ export function useInfoSubgraph() {
                 return
             }
 
+            console.log('BLOCKS' ,block24, block48, blockWeek)
+
             const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
 
             const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses)
@@ -207,6 +209,7 @@ export function useInfoSubgraph() {
             setPools(Object.values(formatted))
 
         } catch (err) {
+            console.log('ERROR', err)
             setPools('failed')
             throw new Error('Info pools fetch ' + err)
         } finally {

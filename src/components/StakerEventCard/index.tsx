@@ -97,7 +97,6 @@ export function StakerEventCard({
                         <Plus style={{ display: "block" }} size={18} />
                     </div>
                 </div>
-                {bonusReward && bonusReward > 0 && (
                     <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                         <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
                         <div className={"ml-1 f c"}>
@@ -108,7 +107,6 @@ export function StakerEventCard({
                             <span>{formatAmountTokens(400000)}</span>
                         </div>
                     </div>
-                )}
                 <div className={"flex-s-between mb-05"}>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>START</span>
@@ -121,13 +119,13 @@ export function StakerEventCard({
                         <span>{convertDateTime(new Date(1648148400 * 1000))}</span>
                     </div>
                 </div>
-                <div className={"fs-075 ta-c"}>
+                <div className={"fs-075 mb-05 ta-c"}>
                     <span>{`will be available in ${getCountdownTime(1647356400, Date.now())}`}</span>
                 </div>
                 <div className={"staker-event-card__progress w-100 br-8 p-025"}>
                     <div className={"br-8"} style={{ width: `${Number(getProgress(1647356400, Math.round(Date.now() / 1000), now).toPrecision(1))}%` }} />
                 </div>
-                <span className={"mt-1 fs-085 p-05 br-8 ta-c bg-v"}>⚡ Upcoming farm</span>
+                <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-v"}>⚡ Upcoming farm</div>
             </div>
         );
     }
@@ -203,7 +201,7 @@ export function StakerEventCard({
                 </div>
             )}
             {!eternal && (
-                <div className={"fs-075 ta-c"}>
+                <div className={"fs-075 mb-05 ta-c"}>
                     {active ? <span>{`ends in ${getCountdownTime(endTime ?? 0, now ?? Date.now())}`}</span> : <span>{`starts in ${getCountdownTime(startTime ?? 0, now ?? Date.now())}`}</span>}
                 </div>
             )}
@@ -228,7 +226,7 @@ export function StakerEventCard({
                     {locked ? "Filled" : "Farm"}
                 </button>
             ) : active ? (
-                <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-pw"} style={{ height: "35px", marginTop: "9px" }}>
+                <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ height: "30px" }}>
                     Started!
                 </div>
             ) : (

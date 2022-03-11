@@ -42,7 +42,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
                 </div>
             ) : formattedData.length !== 0 ? (
                 <div className={"farmings-page__row mb-1 rg-1 cg-1 "}>
-                    {/* {<StakerEventCard secret />} */}
+                    {<StakerEventCard secret />}
                     {formattedData.map((event, j) => {
                         const isStarted = event.startTime <= Math.round(Date.now() / 1000);
                         const isEnded = event.endTime <= Math.round(Date.now() / 1000);

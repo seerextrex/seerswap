@@ -33,7 +33,7 @@ export const Container = styled.div<{ hideInput: boolean }>`
     background-color: transparent;
     width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
 `
-export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean; page?: string; shallow: boolean; swap: boolean }>`
+export const CurrencySelect = styled(ButtonGray) <{ selected: boolean; hideInput?: boolean; page?: string; shallow: boolean; swap: boolean }>`
     align-items: center;
     font-size: 24px;
     font-weight: 500;
@@ -70,7 +70,7 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
         `}
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
     width: 100%;
-    margin: 10px 0 0 0;
+    margin: 0;
   }`}
 `
 export const InputRow = styled.div<{ selected: boolean; hideCurrency: boolean }>`
@@ -82,7 +82,7 @@ export const InputRow = styled.div<{ selected: boolean; hideCurrency: boolean }>
     align-items: stretch;
   }`}
 `
-export const AutoColumnStyled = styled(AutoColumn)<{ page?: string }>`
+export const AutoColumnStyled = styled(AutoColumn) <{ page?: string }>`
     left: 1rem;
     bottom: -13% !important;
     ${({ theme, page }) => theme.mediaWidth.upToExtraSmall`
@@ -103,7 +103,7 @@ export const LabelRow = styled.div`
         color: ${({ theme }) => darken(0.2, theme.text2)};
     }
 `
-export const FiatRow = styled(LabelRow)<{ shallow?: boolean; page: string | undefined }>`
+export const FiatRow = styled(LabelRow) <{ shallow?: boolean; page: string | undefined }>`
     justify-content: flex-end;
     padding: ${({ shallow, page }) => (page === 'addLiq' ? '0 1rem' : shallow ? '0' : '0 1rem 1rem')};
     margin-top: ${({ page }) => (page === 'pool' ? '.3rem' : '0')};
@@ -133,7 +133,7 @@ export const NumericalInputStyled = styled(NumericalInput)`
     margin: 15px 0 10px!important;
   }`}
 `
-export const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
+export const StyledDropDown = styled(DropDown) <{ selected: boolean }>`
     margin: 0 0.25rem 0 0.35rem;
     height: 35%;
 
@@ -159,9 +159,9 @@ export const MaxButton = styled.button<{ page: string | undefined }>`
   `}
     &:hover {
         background-color: ${({
-            page,
-            theme
-        }) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
+    page,
+    theme
+}) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
     }
 
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`

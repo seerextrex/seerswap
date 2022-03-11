@@ -48,7 +48,7 @@ function InfoPage() {
                         </Helmet>
                         <Card classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>
-                                <Menu items={infoMenuList} refreshHandler={() => (blocksFetched ? fetchInfoPoolsFn() : undefined)} isLoading={poolsLoading} classes={"fs-125"} size={"1.25rem"} />
+                                <Menu items={infoMenuList} refreshHandler={() => (blocksFetched ? fetchInfoPoolsFn() : undefined)} isLoading={poolsLoading} classes={"fs-125"} size={"17px"} />
                             </div>
                             <InfoTotalStats
                                 data={totalStats}
@@ -86,7 +86,7 @@ function InfoPage() {
                         </Helmet>
                         <Card classes={"br-24 pa-2 mb-1 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>
-                                <Menu items={infoMenuList} refreshHandler={() => (blocksFetched ? fetchInfoTokensFn() : undefined)} isLoading={tokensLoading} classes={"fs-125"} size={"1.25rem"} />
+                                <Menu items={infoMenuList} refreshHandler={() => (blocksFetched ? fetchInfoTokensFn() : undefined)} isLoading={tokensLoading} classes={"fs-125"} size={"17px"} />
                             </div>
                             <InfoTotalStats
                                 data={totalStats}

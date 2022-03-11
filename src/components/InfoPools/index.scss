@@ -13,6 +13,14 @@
   display: flex;
   text-decoration: none;
 
+  &:hover {
+
+    & > * {
+      color: var(--light-gray);
+      stroke: var(--light-gray);
+    }
+  }
+
   svg {
     margin-left: .5rem;
   }

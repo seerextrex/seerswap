@@ -452,6 +452,9 @@
     }
 
     .fs {
+      &-05 {
+        font-size: .5rem;
+      }
       &-075 {
         font-size: .75rem;
       }
@@ -915,6 +918,10 @@
     }
 
     .fs {
+      &-05 {
+        font-size: .5rem;
+      }
+
       &-075 {
         font-size: .75rem;
       }
@@ -1426,6 +1433,12 @@
     }
 
     &_fs {
+      &-05 {
+        font-size: .5rem;
+      }
+      &-075 {
+        font-size: .75rem;
+      }
       &-1 {
         font-size: 1rem!important;
       }

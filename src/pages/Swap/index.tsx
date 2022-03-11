@@ -338,7 +338,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 onConfirm={handleConfirmTokenWarning}
                 onDismiss={handleDismissTokenWarning}
             />
-            <div className={"maw-610 mt-4 mh-a pos-r swap"}>
+            <div className={"maw-610 mh-a pos-r swap"}>
                 {/* <ContestBanner to={"/farming/limit-farms"}>
                     <div style={{ width: "100%" }}>
                         <ContestIMG></ContestIMG>

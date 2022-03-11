@@ -65,15 +65,17 @@ export const HeaderWrapper = styled.div`
 `;
 export const Marginer = styled.div``;
 export const BugReportLink = styled.a`
-    position: fixed;
-    bottom: 1rem;
     display: flex;
-    left: 1rem;
-    color: #36f;
+    color: var(--white);
     text-decoration: none;
+    font-size: 14px;
+
+    &:hover {
+        box-shadow: inset 0 -1px white;
+    }
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
+     display: none;
   `}
 `;
 export const NetworkFailedCard = styled.div`
@@ -82,7 +84,8 @@ export const NetworkFailedCard = styled.div`
     right: 1rem;
     padding: 8px;
     border-radius: 8px;
-    background-color: #2f567b;
+    background-color: var(--dark-blue);
+    z-index: 5;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
     position: unset;

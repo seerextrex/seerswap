@@ -77,7 +77,7 @@ export default function StakingPage() {
                     classes={"fs-125 mb-2"}
                     refreshHandler={() => (account ? fetchTransferredPositionsFn(true) : undefined)}
                     isLoading={transferredPositionsLoading}
-                    size={"1.25rem"}
+                    size={"17px"}
                 />
                 <Switch>
                     <Route exact path={`${path}`}>

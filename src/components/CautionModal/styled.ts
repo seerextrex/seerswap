@@ -14,7 +14,7 @@ export const CautionListItem = styled.li`
   margin-bottom: 1rem;
 `
 export const AgreeButton = styled.button`
-  background-color: #36f;
+  background-color: var(--primary);
   color: white;
   padding: 12px 16px;
   width: 100%;
@@ -26,6 +26,6 @@ export const AgreeButton = styled.button`
   border: none;
 
   &:hover {
-    background-color: ${darken(0.1, '#36f')};
+    background-color: ${darken(0.1, '#2797ff')};
   }
 `

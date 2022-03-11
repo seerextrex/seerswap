@@ -15,7 +15,7 @@ export const SmallButton = styled(ButtonGray)`
     background-color: ${darken(0.05, '#759fe3')};
   }
 `
-export const FocusedOutlineCard = styled(OutlineCard)<{ active?: boolean; pulsing?: boolean; initial: boolean }>`
+export const FocusedOutlineCard = styled(OutlineCard) <{ active?: boolean; pulsing?: boolean; initial: boolean }>`
   background-color: var(--ebony-clay);
   position: relative;
   padding: 2rem;
@@ -28,8 +28,12 @@ export const FocusedOutlineCard = styled(OutlineCard)<{ active?: boolean; pulsin
     margin: 0 0 1rem 0;
   `}
   }
+  
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 1rem;
+  `}
 `
-export const StyledInput = styled(NumericalInput)<{ usePercent?: boolean }>`
+export const StyledInput = styled(NumericalInput) <{ usePercent?: boolean }>`
   background-color: transparent;
   text-align: left;
   width: 100%;
@@ -50,7 +54,7 @@ export const InputTitle = styled(TYPE.small)`
   font-weight: 600;
   font-family: Montserrat, sans-serif;
 `
-export const ButtonLabel = styled(TYPE.white)<{ disabled: boolean }>`
+export const ButtonLabel = styled(TYPE.white) <{ disabled: boolean }>`
   display: flex;
   color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.text1)} !important;
 `

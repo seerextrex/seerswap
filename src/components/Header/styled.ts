@@ -27,9 +27,9 @@ export const HeaderFrame = styled.div<{ showBackground: boolean }>`
     background-position: ${({ showBackground }) => (showBackground ? '0 -100%' : '0 0')};
     background-size: 100% 200%;
     box-shadow: 0 0 0 1px ${({
-        theme,
-        showBackground
-    }) => (showBackground ? theme.bg2 : 'transparent;')};
+  theme,
+  showBackground
+}) => (showBackground ? theme.bg2 : 'transparent;')};
     transition: background-position 0.1s, box-shadow 0.1s;
     background-blend-mode: hard-light;
     padding: 50px 1rem 1rem;
@@ -298,7 +298,7 @@ export const AlgIcon = styled.div`
   }`}
 `
 export const StyledNavLink = styled(NavLink).attrs({
-    activeClassName
+  activeClassName
 })`
     ${({ theme }) => theme.flexRowNoWrap}
     align-items: left;
@@ -391,10 +391,7 @@ export const ChainWrapper = styled.span`
 
 //GasPrice
 export const GasPriceWrapper = styled.div`
-    position: fixed;
-    bottom: 1rem;
-    right: 6rem;
-    color: #2f567b;
+    color: var(--white);
     font-size: 11px;
     opacity: 0.7;
 
@@ -405,21 +402,17 @@ export const GasPriceWrapper = styled.div`
 
 //Pooling
 export const StyledPolling = styled.div`
-    position: fixed;
     display: flex;
     align-items: center;
-    right: 0;
-    bottom: 0;
-    padding: 1rem;
-    color: rgb(91, 183, 255);
+    color: var(--white);
 
     ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `}
 `
-export const StyledPollingNumber = styled(TYPE.small)<{ breathe: boolean; hovering: boolean }>`
+export const StyledPollingNumber = styled(TYPE.small) <{ breathe: boolean; hovering: boolean }>`
     transition: opacity 0.25s ease;
-    color: #2f567b;
+    color: var(--white);
     opacity: ${({ breathe, hovering }) => (hovering ? 0.7 : breathe ? 1 : 0.5)};
 
     :hover {

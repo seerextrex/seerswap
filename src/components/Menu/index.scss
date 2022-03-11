@@ -10,16 +10,29 @@
   &-item {
     display: flex;
     color: var(--light-gray);
-
+    padding-bottom: 19px;
+    
     svg {
       margin-right: 7px;
+    }
+    
+    &:hover {
+      color: white;
+      opacity: 1;
     }
 
     &--active {
       color: var(--primary);
       cursor: default;
+      opacity: 1;
       border-bottom: 1px solid var(--primary);
+
+      &:hover {
+        color: var(--primary);
+        opacity: 1;
+      }
     }
+
   }
   &-refresh {
     background-color: transparent;

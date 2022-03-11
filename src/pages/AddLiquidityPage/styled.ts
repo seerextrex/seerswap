@@ -285,6 +285,7 @@ export const ButtonsWrapper = styled.div`
 export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 8px 16px;
   height: 2.8rem;
   background: ${({ theme }) => theme.winterMainButton};

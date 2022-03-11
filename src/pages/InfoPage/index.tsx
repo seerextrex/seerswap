@@ -46,7 +46,7 @@ function InfoPage() {
                         <Helmet>
                             <title>Algebra — Info • Pools</title>
                         </Helmet>
-                        <Card isDark classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
+                        <Card classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>
                                 <Menu items={infoMenuList} refreshHandler={() => (blocksFetched ? fetchInfoPoolsFn() : undefined)} isLoading={poolsLoading} classes={"fs-125"} size={"1.25rem"} />
                             </div>
@@ -61,7 +61,7 @@ function InfoPage() {
                                 poolsStat={poolsResult}
                             />
                         </Card>
-                        <Card isDark classes={"br-24 pa-2"}>
+                        <Card classes={"br-24 pa-2"}>
                             <InfoPools data={poolsResult} refreshing={Boolean(poolsLoading)} fetchHandler={() => fetchInfoPoolsFn()} blocksFetched={blocksFetched} />
                         </Card>
                     </Route>
@@ -79,12 +79,12 @@ function InfoPage() {
                                 totalStats={totalStats}
                             />
                         )}
-                    ></Route>
+                    />
                     <Route exact path={`${path}/tokens`}>
                         <Helmet>
                             <title>Algebra — Info • Tokens</title>
                         </Helmet>
-                        <Card isDark classes={"br-24 pa-2 mb-1 mxs_p-1"}>
+                        <Card classes={"br-24 pa-2 mb-1 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>
                                 <Menu items={infoMenuList} refreshHandler={() => (blocksFetched ? fetchInfoTokensFn() : undefined)} isLoading={tokensLoading} classes={"fs-125"} size={"1.25rem"} />
                             </div>
@@ -99,7 +99,7 @@ function InfoPage() {
                                 poolsStat={poolsResult}
                             />
                         </Card>
-                        <Card isDark classes={"br-24 pa-2 mb-3"}>
+                        <Card classes={"br-24 pa-2 mb-3"}>
                             <InfoTokens data={tokensResult} refreshing={Boolean(tokensLoading)} fetchHandler={() => fetchInfoTokensFn()} blocksFetched={blocksFetched} />
                         </Card>
                     </Route>

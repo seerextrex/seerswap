@@ -65,7 +65,7 @@ export default function Pool() {
             <Helmet>
                 <title>Algebra — Pool</title>
             </Helmet>
-            <Card isDark classes={'br-24 ph-2 pv-1 mxs_ph-1'}>
+            <Card classes={'br-24 ph-2 pv-1 mxs_ph-1'}>
                 <SwapPoolTabs active={'pool'} />
                 <AutoColumn gap='1'>
                     <div className={'pool__header flex-s-between'}>

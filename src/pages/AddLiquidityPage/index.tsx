@@ -400,7 +400,7 @@ export default function AddLiquidityPage({ match: { params: { currencyIdA, curre
                 <ArrowLeft size={16} />
                 <span className={'ml-05'}>Back to pools</span>
             </NavLink>
-            <Card isDark classes={'p-2 br-24'}>
+            <Card classes={'p-2 br-24'}>
                 <div className={'flex-s-between mb-1 fs-15'}>
                     <span className={'b'}>Add Liquidity</span>
                     <SettingsTab placeholderSlippage={allowedSlippage} />

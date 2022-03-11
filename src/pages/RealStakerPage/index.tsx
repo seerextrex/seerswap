@@ -306,10 +306,10 @@ export default function RealStakerPage({}) {
                             <FrozenDropDown onClick={() => {
                                 setFrozen(!showFrozen)
                             }}>
-                                {!allFreeze ? <Loader size={'16px'} stroke={'white'} /> :
+                                {!allFreeze ? <Loader size={'1rem'} stroke={'white'} /> :
                                     `${+(+formatEther(allFreeze || BigNumber.from('0'))).toFixed(2) < 0.01 ? '<' : ''} ${(+formatEther(allFreeze)).toFixed(2)}`} ALGB
-                                Frozen {showFrozen ? <ArrowUp size={'16px'} /> :
-                                <ArrowDown size={'16px'} />}
+                                Frozen {showFrozen ? <ArrowUp size={'1rem'} /> :
+                                <ArrowDown size={'1rem'} />}
                             </FrozenDropDown>
                         }
                         <ReloadButton disabled={loadingClaim} onClick={reloadClaim} refreshing={loadingClaim}>

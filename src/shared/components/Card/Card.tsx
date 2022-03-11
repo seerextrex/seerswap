@@ -4,11 +4,11 @@ import './index.scss'
 interface CardProps {
     classes?: string
     children?: any
-    isDark: boolean
+    isDark?: boolean
 }
 
 const Card = ({ classes, children, isDark }: CardProps) => {
-    const theme = useMemo(() => isDark ? 'dark' : 'light', [isDark])
+    const theme = useMemo(() => isDark ? 'dark' : isDark === undefined ? '' : 'light', [isDark])
     return (
         <div className={`card-wrapper ${theme} ${classes}`}>
             {children}

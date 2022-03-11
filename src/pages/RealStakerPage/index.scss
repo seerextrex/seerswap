@@ -16,7 +16,8 @@
 
 .stake-wrapper {
   min-width: 100%;
-  background-color: var(--dark-ebony-clay);
+  background-color: #1c2a359e;
+  backdrop-filter: blur(6px);
 
   button {
     font-weight: 600;
@@ -100,7 +101,8 @@
 
 .earned-wrapper {
   min-width: 100%;
-  background-color: var(--dark-ebony-clay);
+  background-color: #1c2a359e;
+  backdrop-filter: blur(6px);
   
   &__title {
     display: flex;
@@ -161,7 +163,8 @@
   display: inline-block;
   height: 107px;
   text-decoration: none;
-  background-color: var(--ebony-clay);
+  background-color: #1c2a359e;
+  backdrop-filter: blur(6px);
   background-image: url('../../assets/images/StakerStatisticBackground.svg');
   background-repeat: no-repeat;
   background-position-y: 80%;

@@ -303,7 +303,7 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
     return (<div className={'maw-765 mh-a'}>
             {
                 loading || _poolState === PoolState.LOADING ? (
-                        <Card isDark classes={'br-24 f c f-ac f-jc h-800'}>
+                        <Card classes={'br-24 f c f-ac f-jc h-800'}>
                             <Loader stroke={'white'} size={'2rem'} />
                         </Card>
                     ) :
@@ -311,7 +311,7 @@ export default function PositionPage({ match: { params: { tokenId: tokenIdFromUr
                         <NavLink className={'c-p mb-1 f w-fc hover-op'} to='/pool'>
                             <Trans>← Back to Pools Overview</Trans>
                         </NavLink>
-                        <Card isDark classes={'br-24 p-2 mxs_p-1'}>
+                        <Card classes={'br-24 p-2 mxs_p-1'}>
                             <TransactionConfirmationModal
                                 isOpen={showConfirm}
                                 onDismiss={() => setShowConfirm(false)}

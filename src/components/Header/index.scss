@@ -37,7 +37,9 @@
   }
 
   &__account {
-    background-color: var(--primary-weak);
+    background-color: #1c2a359e;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
   &__farming-circle {
@@ -63,7 +65,9 @@
       justify-self: center;
       z-index: 99;
       margin: 0 auto;
-      background-color: var(--primary-weak);
+      background-color: #1c2a359e;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
       padding: .4rem 1rem;
       border-radius: 12px;
       width: 95%;

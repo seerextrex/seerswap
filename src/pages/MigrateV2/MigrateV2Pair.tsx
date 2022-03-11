@@ -138,7 +138,7 @@ export default function MigrateV2Pair({ match: { params: { address } } }: RouteC
     }
 
     return (
-        <Card isDark classes={'p-2 br-24 w-100 maw-765 mh-a'}>
+        <Card classes={'p-2 br-24 w-100 maw-765 mh-a'}>
             <AutoColumn gap='16px'>
                 <div className={'flex-s-between mb-1'}>
                     <div/>

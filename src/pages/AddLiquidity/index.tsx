@@ -368,7 +368,7 @@ export default function AddLiquidity({
                 )}
                 pendingText={pendingText}
             />
-            <Card isDark classes={'p-2 br-24'}>
+            <Card classes={'p-2 br-24'}>
                 <AddRemoveTabs
                     creating={false}
                     adding={true}

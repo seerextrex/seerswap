@@ -13,9 +13,9 @@ export function FindPoolTabs({ origin }: FindPoolTabsProps) {
             <HistoryLink to={origin}>
                 <StyledArrowLeft />
             </HistoryLink>
-            <ActiveText>
+            <div className={'fs-125 mxs_fs-1'}>
                 <Trans>Migrate from SushiSwap or QuickSwap</Trans>
-            </ActiveText>
+            </div>
             <div />
         </div>
     )

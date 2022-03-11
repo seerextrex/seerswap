@@ -358,7 +358,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 )}
                 pendingText={pendingText}
             />
-            <Card isDark classes={'p-2 br-24 mxs_p-1'}>
+            <Card classes={'p-2 br-24 mxs_p-1'}>
                 <AddRemoveTabs
                     creating={false}
                     adding={false}

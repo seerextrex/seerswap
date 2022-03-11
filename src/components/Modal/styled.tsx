@@ -28,46 +28,47 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
 )).attrs({
     'aria-label': 'dialog'
 })`
-  overflow-y: auto;
-
-  &[data-reach-dialog-content] {
-    margin: 0 0 2rem 0;
-    background-color: var(--ebony-clay);
-    border: 1px solid var(--ebony-clay);
-    box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
-    width: 60vw;
     overflow-y: auto;
-    overflow-x: hidden;
-      padding: 1rem;
 
-    align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
+    &[data-reach-dialog-content] {
+        margin: 0 0 2rem 0;
+        background-color: #1c2a359e;
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
+        width: 60vw;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 1rem;
 
-    max-width: 700px;
-    ${({ maxHeight }) =>
-    maxHeight &&
-    css`
-        max-height: ${maxHeight}vh;
-      `}
-    ${({ minHeight }) =>
-    minHeight &&
-    css`
-        min-height: ${minHeight}vh;
-      `}
-    display: flex;
-    border-radius: 20px;
-    ${({ theme }) => theme.mediaWidth.upToMedium`
+        align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
+
+        max-width: 700px;
+        ${({ maxHeight }) =>
+            maxHeight &&
+            css`
+                max-height: ${maxHeight}vh;
+            `}
+        ${({ minHeight }) =>
+            minHeight &&
+            css`
+                min-height: ${minHeight}vh;
+            `}
+        display: flex;
+        border-radius: 20px;
+        ${({ theme }) => theme.mediaWidth.upToMedium`
       width: 65vw;
       margin: 0;
     `}
-    ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
+        ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
       width:  85vw;
       ${
-    mobile &&
-    css`
-        width: 100vw;
-        border-radius: 20px 20px 0 0;
-    `
-}
+            mobile &&
+            css`
+                width: 100vw;
+                border-radius: 20px 20px 0 0;
+            `
+        }
     `}
-  }
+    }
 `

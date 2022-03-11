@@ -112,7 +112,7 @@ export default function MigrateV2() {
             <Helmet>
                 <title>Algebra — Migrate Liquidity</title>
             </Helmet>
-            <Card isDark classes={'p-2 br-24 w-100 maw-765 mh-a'}>
+            <Card classes={'p-2 br-24 w-100 maw-765 mh-a mxs_p-1'}>
                 <AutoColumn gap='16px'>
                     <h3 className={'fs-125'}>Migrate Liquidity</h3>
                     <span>

@@ -133,7 +133,7 @@ export default function PoolFinder() {
             <Helmet>
                 <title>Algebra — Find Pool</title>
             </Helmet>
-            <Card isDark classes={'p-2 br-24 w-100 maw-765 mh-a'}>
+            <Card classes={'p-2 br-24 w-100 maw-765 mh-a mxs_p-1'}>
                 <FindPoolTabs origin={query.get('origin') ?? '/migrate'} />
                 <AutoColumn gap='md'>
                     <Card isDark={false} classes={'p-1 br-12'}>

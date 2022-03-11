@@ -181,7 +181,6 @@ export function CurrencySearch({
                     <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
                 )}
             </div>
-            <div className={'w-100 h-1 bg-p'} />
             {searchToken && !searchTokenIsAdded ? (
                 <div>
                     <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />

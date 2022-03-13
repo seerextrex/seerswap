@@ -11,7 +11,7 @@ import { FarmingType } from '../../models/enums'
 import { getCountdownTime } from '../../utils/time'
 import { getProgress } from '../../utils/getProgress'
 import { CheckOut } from './CheckOut'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
 import './index.scss'
 import ModalBody from './ModalBody'
@@ -215,6 +215,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                 </div>
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>
+                    <div className={'p-05 br-6 f f-ac f-jc mb-1'} style={{background: '#285aecc4', color: 'white', borderRadius: '6px', border: '1px solid #36f' }}>
+                        <div className={'mr-1'}>✨ Earn even more ALGB</div>
+                            <Link className={'p-05'} style={{background: 'white', borderRadius: '6px', color: 'black'}} to={'/staking'}>Stake Rewards</Link> 
+                    </div>
                     {stakedNFTs && (
                         <div>
                             {stakedNFTs.map((el, i) => {
@@ -288,7 +292,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                             )}
                                                             {(el.ended || el.incentiveEndTime * 1000 < Date.now()) && (
                                                                 <button
-                                                                    className={'btn primary b pv-075'}
+                                                                    className={'btn primary b w-100 pv-075 ph-1'}
                                                                     disabled={
                                                                         (gettingReward.id === el.id && gettingReward.farmingType === FarmingType.FINITE && gettingReward.state !== 'done') ||
                                                                         +el.incentiveReward == 0

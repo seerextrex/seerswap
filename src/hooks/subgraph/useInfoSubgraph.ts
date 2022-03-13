@@ -154,7 +154,7 @@ export function useInfoSubgraph() {
             const limitFarms = await fetchLimitFarmTVL()
             const limitAprs = await fetchLimitFarmingsAPRByPool(poolsAddresses)
 
-            const _limitAprs: { [type: string]: number } = limitAprs.reduce((acc, el) => ({
+            const _limitAprs: { [type: string]: number } = limitAprs.filter( v => v.pool !== '0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed').reduce((acc, el) => ({
                 ...acc,
                 [el.pool]: limitFarms[el.id]
             }), {})

@@ -215,9 +215,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                 </div>
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>
-                    <div className={'p-05 br-6 f f-ac f-jc mb-1'} style={{background: '#285aecc4', color: 'white', borderRadius: '6px', border: '1px solid #36f' }}>
+                    <div className={'my-stakes__ad p-05 br-12 f f-ac f-jc mb-1'}>
                         <div className={'mr-1'}>✨ Earn even more ALGB</div>
-                            <Link className={'p-05'} style={{background: 'white', borderRadius: '6px', color: 'black'}} to={'/staking'}>Stake Rewards</Link> 
+                        <Link className={'my-stakes__ad-link p-05 br-8'} to={'/staking'}>Stake Rewards</Link> 
                     </div>
                     {stakedNFTs && (
                         <div>

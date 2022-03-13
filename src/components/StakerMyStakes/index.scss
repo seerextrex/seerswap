@@ -70,6 +70,17 @@
       }
     }
   }
+
+  &__ad {
+    background-color: #285aecc4;
+    color: var(--white);
+    border: '1px solid #36f';
+
+    &-link {
+      background: var(--white);
+    }
+  }
+
 }
 
 @media screen and (max-width: 500px) {

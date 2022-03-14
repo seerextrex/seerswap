@@ -217,7 +217,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                 <>
                     <div className={'my-stakes__ad p-05 br-12 f f-ac f-jc mb-1'}>
                         <div className={'mr-1'}>✨ Earn even more ALGB</div>
-                        <Link className={'my-stakes__ad-link p-05 br-8'} to={'/staking'}>Stake Rewards</Link> 
+                        <Link className={'my-stakes__ad-link p-05 br-8 hover-cp'} to={'/staking'}>Stake Rewards</Link>
                     </div>
                     {stakedNFTs && (
                         <div>

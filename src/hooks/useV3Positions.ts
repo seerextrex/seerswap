@@ -4,7 +4,8 @@ import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useIncentiveSubgraph } from './useIncentiveSubgraph'
 import { PositionPool } from '../models/interfaces'
-import usePrevious, { usePreviousNonEmptyArray } from './usePrevious'
+import { usePreviousNonEmptyArray } from './usePrevious'
+import { useActiveWeb3React } from './web3'
 
 interface UseV3PositionsResults {
     loading: boolean
@@ -18,6 +19,8 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
 
     const loading = useMemo(() => results.some(({ loading }) => loading), [results])
     const error = useMemo(() => results.some(({ error }) => error), [results])
+
+    const { account } = useActiveWeb3React()
 
     const positions = useMemo(() => {
         if (!loading && !error && tokenIds) {
@@ -42,7 +45,7 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
             })
         }
         return undefined
-    }, [loading, error, results, tokenIds])
+    }, [loading, error, results, tokenIds, account])
 
     const prevPositions = usePreviousNonEmptyArray(positions || [])
 
@@ -53,7 +56,7 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
             positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
         }
 
-        if ( (!positions || positions.length === 0) && prevPositions && prevPositions.length !== 0) return {
+        if ((!positions || positions.length === 0) && prevPositions && prevPositions.length !== 0) return {
             loading: false,
             positions: prevPositions.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
         }
@@ -62,8 +65,8 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
             loading,
             positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
         }
-    
-    }, [positions, inputs])
+
+    }, [prevPositions, positions, inputs, account])
 
 }
 
@@ -131,7 +134,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
         return tokenIds
 
-    }, [tokenIds])
+    }, [tokenIds, account])
 
     const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(_tokenIds)
 
@@ -143,7 +146,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
         return []
 
-    }, [positionsOnFarmer])
+    }, [positionsOnFarmer, account])
 
     //@ts-ignore
     const { positions: _positionsOnFarmer, loading: _positionsOnFarmerLoading } = useV3PositionsFromTokenIds(transferredTokenIds)
@@ -159,7 +162,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
         return undefined
 
-    }, [positions, _positionsOnFarmer])
+    }, [positions, _positionsOnFarmer, account])
 
     return {
         loading: someTokenIdsLoading || balanceLoading || positionsLoading || _positionsOnFarmerLoading,

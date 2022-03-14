@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import Chart from './Chart'
 import Loader from '../Loader'
 import { ChartType } from '../../models/enums'
@@ -105,6 +105,10 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
         }
     }, [fetchedData, token])
 
+    useEffect(() => {
+       console.log( isTablet || isMobile)
+    }, [isTablet, isMobile])
+
     return (
         <div className={'w-100 fee-chart pt-1 mxs_p-0'} ref={ref}>
             {refreshing ?
@@ -132,9 +136,9 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                     <Chart
                         feeData={formattedData}
                         dimensions={{
-                            width: isTablet || isMobile ? ref && ref.current && ref.current.offsetWidth - 80 || 0 : 1000,
+                            width: isTablet || isMobile ? ref && ref.current && ref.current.offsetWidth - 40 || 0 : 1000,
                             height: isTablet || isMobile ? 200 : 400,
-                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
+                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 30 : 50 }
                         }}
                         tokens={{ token0: token0?.symbol, token1: token1?.symbol }}
                         isMobile={isMobile}

@@ -308,7 +308,7 @@ export function useIncentiveSubgraph() {
 
             const eventTVL = await fetchLimitFarmTVL()
 
-            const price = 1.5
+            const price = 1.38
 
             const EVENT_LOCK = 300_000
 

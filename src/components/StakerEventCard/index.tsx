@@ -97,16 +97,16 @@ export function StakerEventCard({
                         <Plus style={{ display: "block" }} size={18} />
                     </div>
                 </div>
-                    <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
-                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
-                        <div className={"ml-1 f c"}>
-                            <span className={"c-ph fs-075 b"}>BONUS</span>
-                            <span>{"ALGB"}</span>
-                        </div>
-                        <div className={"m-a mr-0 fs-125"} title={"400000"}>
-                            <span>{formatAmountTokens(400000)}</span>
-                        </div>
+                <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
+                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
+                    <div className={"ml-1 f c"}>
+                        <span className={"c-ph fs-075 b"}>BONUS</span>
+                        <span>{"ALGB"}</span>
                     </div>
+                    <div className={"m-a mr-0 fs-125"} title={"400000"}>
+                        <span>{formatAmountTokens(400000)}</span>
+                    </div>
+                </div>
                 <div className={"flex-s-between mb-05"}>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>START</span>

@@ -317,11 +317,12 @@ export function useIncentiveSubgraph() {
                     ...el,
                     active: true
                 }))),
-                futureEvents: await getEvents(futureEvents.map(el => ({
+                futureEvents: Date.now() < 1647356400000 ? [] : await getEvents(futureEvents.map(el => ({
                     ...el,
                     locked: eventTVL[el.id] === undefined ? false : eventTVL[el.id] * price >= EVENT_LOCK
                 })))
             })
+
             setAllEventsLoading(false)
 
         } catch (err) {

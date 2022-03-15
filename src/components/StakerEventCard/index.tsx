@@ -221,7 +221,7 @@ export function StakerEventCard({
                 </div>
             )}
             {account && !active ? (
-                <button className={`btn primary w-100 b pv-05 ${!eternal ? "mt-05" : ""}`} onClick={stakeHandler}>
+                <button disabled={true} className={`btn primary w-100 b pv-05 ${!eternal ? "mt-05" : ""}`} onClick={stakeHandler}>
                     {" "}
                     {locked ? "Filled" : "Farm"}
                 </button>

@@ -160,7 +160,7 @@ export function StakerEventCard({
                                 className={"staker-event-card__infinite-farming-available"}
                                 style={{ padding: "6px 10px", borderRadius: "8px", color: "var(--white)", background: "var(--primary)" }}
                             >
-                                ⭐ Infinite farm is available →
+                                Infinite WETH farm is available →
                             </Link>
                         </div>
                     </div>

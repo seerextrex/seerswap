@@ -223,6 +223,7 @@ export const HelperCirlce = styled.span`
 `
 export const Title = styled.div`
   position: relative;
+  white-space: nowrap;
   font-size: 18px;
   font-family: Montserrat, sans-serif;
   font-weight: 600;
@@ -233,11 +234,10 @@ export const Title = styled.div`
   `}
 `
 export const Warning = styled.div`
-  position: absolute;
-  right: 0;
+  margin-left: auto;
   padding: 8px 16px;
-  top: 10px;
   font-size: 13px;
+  max-width: fit-content;
   background: #69270d;
   color: #e55d47;
   border-radius: 6px;
@@ -255,7 +255,7 @@ export const Warning = styled.div`
 `
 export const Error = styled(Warning)`
   color: #F55755;
-  background-color: transparent;
+  background-color: #2e0909;
   border: 1px solid #F55755;
   width: 100%;
   text-align: center;
@@ -297,6 +297,12 @@ export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
   font-family: Montserrat, sans-serif;
   margin-left: auto;
   white-space: nowrap;
+
+  &:hover {
+    &:not(&:disabled) {
+      background-color: var(--primary-hover);
+    }
+  }
 
   &:disabled {
     display: flex;

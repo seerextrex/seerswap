@@ -17,7 +17,6 @@ export const SmallButton = styled(ButtonGray)`
 `
 export const FocusedOutlineCard = styled(OutlineCard) <{ active?: boolean; pulsing?: boolean; initial: boolean }>`
   background-color: var(--ebony-clay);
-  position: relative;
   padding: 2rem;
   border-radius: 10px;
   margin-bottom: ${({ initial }) => (initial ? '' : '1rem')};

@@ -56,7 +56,7 @@ export function usePreviousNonErroredArray<T>(value: T[]) {
 
     // Store current value in ref
     useEffect(() => {
-        if (value.length > 0 && !value.some((el: any) => el.error)) [
+        if (value.length > 0 && !value.every((el: any) => el.error)) [
             ref.current = value
         ]
     }, [value]) // Only re-run if value changes

@@ -14,6 +14,8 @@ import { useAppSelector } from "../../state/hooks";
 import { BalanceText } from "./styled";
 import "./index.scss";
 import { NavLink } from "react-router-dom";
+import { Sliders } from "react-feather";
+import HeaderMenu from "components/HeaderMenu";
 
 export default function Header() {
     const { startTime, eternalFarmings } = useAppSelector((state) => state.farming);
@@ -79,7 +81,7 @@ export default function Header() {
                 </NavLink>
             </div>
 
-            <div className={"header__account flex-s-between"}>
+            <div className={"header__account pos-r flex-s-between"}>
                 {account && (
                     <>
                         <NetworkCard />
@@ -91,6 +93,12 @@ export default function Header() {
                     </>
                 )}
                 <Web3Status />
+                <button className="preferences-menu__toggler f ml-1 br-8">
+                    <Sliders />
+                    <div className="preferences-menu__inner pos-a w-100">
+                        <HeaderMenu />
+                    </div>
+                </button>
             </div>
         </div>
     );

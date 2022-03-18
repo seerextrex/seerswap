@@ -106,10 +106,11 @@ export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
     return (poolString += `"${address}",`)
   })
   poolString += ']'
+  const now = Math.round(Date.now() / 1000)
   const queryString =
     `
     query limitFarmingsFromPools {
-      incentives(where: {pool_in: ${poolString}, isDetached: false}) {
+      incentives(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${now}}) {
         id
         createdAtTimestamp
         rewardToken
@@ -558,7 +559,7 @@ query stake {
 export const GET_BLOCKS = (timestamps: string[]) => {
   let queryString = 'query blocks {'
   queryString += timestamps.map((timestamp) => {
-    return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 13366
+    return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
       } }) {
           number
         }`

@@ -43,7 +43,7 @@ import {
     TotalStatSubgraph
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces'
-import { fetchEternalFarmAPR, fetchLimitFarmTVL, fetchPoolsAPR } from 'utils/api'
+import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL, fetchPoolsAPR } from 'utils/api'
 import { LimitFarmingByPool } from "models/interfaces/responseSubgraph"
 import { FarmingType } from "models/enums"
 
@@ -126,7 +126,7 @@ export function useInfoSubgraph() {
                 return
             }
 
-            console.log('BLOCKS' ,block24, block48, blockWeek)
+            console.log('BLOCKS', block24, block48, blockWeek)
 
             const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
 
@@ -140,6 +140,7 @@ export function useInfoSubgraph() {
             const parsedPoolsWeek = parsePoolsData(poolsWeek)
 
             const aprs = await fetchPoolsAPR()
+
             const farmAprs = await fetchEternalFarmAPR()
 
             const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
@@ -150,13 +151,17 @@ export function useInfoSubgraph() {
                 }
             ), {})
 
+            const limitFarms: { [key: string]: number } = await fetchLimitFarmAPR()
 
-            const limitFarms = await fetchLimitFarmTVL()
-            const limitAprs = await fetchLimitFarmingsAPRByPool(poolsAddresses)
-
-            const _limitAprs: { [type: string]: number } = limitAprs.filter( v => v.pool !== '0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed').reduce((acc, el) => ({
+            const filteredFarms: { [key: string]: number } = Object.entries(limitFarms).filter((el) => el[1] >= 0).reduce((acc, el) => ({
                 ...acc,
-                [el.pool]: limitFarms[el.id]
+                [el[0]]: el[1]
+            }), {})
+
+            const limitAprs = await fetchLimitFarmingsAPRByPool(poolsAddresses)
+            const _limitAprs: { [type: string]: number } = limitAprs.reduce((acc, el) => ({
+                ...acc,
+                [el.pool]: filteredFarms[el.id]
             }), {})
 
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool }, address) => {
@@ -183,7 +188,7 @@ export function useInfoSubgraph() {
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
                 const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0
-                const limitApr = _limitAprs[address] ? 300 : 0
+                const limitApr = _limitAprs[address] ? +_limitAprs[address] : 0
 
                 const aprType = farmingApr > limitApr ? FarmingType.ETERNAL : FarmingType.FINITE
 

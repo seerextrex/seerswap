@@ -26,7 +26,7 @@ export function useStakerHandlers() {
 
     const gasPrice = useAppSelector((state) => {
         if (!state.application.gasPrice.fetched) return 70
-            return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
     })
 
     const addTransaction = useTransactionAdder()
@@ -295,10 +295,6 @@ export function useStakerHandlers() {
 
         if (!account || !provider || !chainId) return
 
-        // const tvls = await fetchLimitFarmTVL()
-
-        // if (tvls[id] >= 300) return
-
         setStaked({ hash: null, id: null })
 
         let current
@@ -474,9 +470,9 @@ export function useStakerHandlers() {
             ])
 
             const result = await farmingCenterContract.multicall([
-                    approveData,
-                    sendData
-                ],
+                approveData,
+                sendData
+            ],
                 {
                     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                 })

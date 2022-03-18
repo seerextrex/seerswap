@@ -251,7 +251,7 @@ export function StakerEventCard({
                     <span>{locked ? "Filled" : "Farm"}</span>
                 </button>
             ) : active ? (
-                <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ height: "30px" }}>
+                <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}>
                     Started!
                 </div>
             ) : (

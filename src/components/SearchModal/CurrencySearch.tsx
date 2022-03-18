@@ -187,22 +187,18 @@ export function CurrencySearch({
                 </div>
             ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
                 <div className={'h-200'}>
-                    <AutoSizer disableWidth>
-                        {({ height }) => (
-                            <CurrencyList
-                                height={height}
-                                currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
-                                otherListTokens={filteredInactiveTokens}
-                                onCurrencySelect={handleCurrencySelect}
-                                otherCurrency={otherSelectedCurrency}
-                                selectedCurrency={selectedCurrency}
-                                fixedListRef={fixedList}
-                                showImportView={showImportView}
-                                setImportToken={setImportToken}
-                                showCurrencyAmount={showCurrencyAmount}
-                            />
-                        )}
-                    </AutoSizer>
+                    <CurrencyList
+                        height={200}
+                        currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
+                        otherListTokens={filteredInactiveTokens}
+                        onCurrencySelect={handleCurrencySelect}
+                        otherCurrency={otherSelectedCurrency}
+                        selectedCurrency={selectedCurrency}
+                        fixedListRef={fixedList}
+                        showImportView={showImportView}
+                        setImportToken={setImportToken}
+                        showCurrencyAmount={showCurrencyAmount}
+                    />
                 </div>
             ) : (
                 <Column style={{ padding: '20px', height: '100%' }}>

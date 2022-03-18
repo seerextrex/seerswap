@@ -195,7 +195,7 @@ export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bon
                                 <Frown size={30} stroke={'var(--white)'} />
                                 <p className={'mt-1 mb-05'}>No NFT-s for this pool</p>
                                 <p>To take part in this farming event, you need to</p>
-                                <NavLink className={'flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1'} to={linkToProviding}>
+                                <NavLink className={'flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1 hover-c-ph'} to={linkToProviding}>
                                     <span>{`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
                                     <ArrowRight className={'ml-05'} size={16} />
                                 </NavLink>

@@ -8,7 +8,7 @@ export default function CopyHelper(props: { toCopy: string; children?: React.Rea
     const [isCopied, setCopied] = useCopyClipboard()
 
     return (
-        <button className={'bg-t br-0 fs-085 c-lg f f-ac'} onClick={() => setCopied(props.toCopy)}>
+        <button className={'bg-t br-0 fs-085 c-p f f-ac p-0 mr-05'} onClick={() => setCopied(props.toCopy)}>
             {isCopied ? (
                 <span className={'f f-ac mr-025'}>
                     <CheckCircle size={'1rem'} stroke={'var(--primary)'}/>
@@ -21,7 +21,9 @@ export default function CopyHelper(props: { toCopy: string; children?: React.Rea
                     <Copy size={'1rem'} stroke={'var(--primary)'} />
                 </span>
             )}
-            {isCopied ? '' : props.children}
+            <span className={'hover-line'}>
+                {isCopied ? '' : props.children}
+            </span>
         </button>
     )
 }

@@ -78,7 +78,7 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
             <div className={'pos-r'}>
                 <div className={'flex-s-between w-100 c-w mb-1'}>
                     <Trans>Account</Trans>
-                    <span onClick={toggleWalletModal}>
+                    <span className={'cur-p hover-op'} onClick={toggleWalletModal}>
                         <Close />
                     </span>
                 </div>
@@ -119,7 +119,7 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                                 {chainId && account && (
                                     <ExternalLink href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}>
                                         <LinkIcon size={'1rem'} color='var(--primary)' />
-                                        <span className={'ml-025'}>
+                                        <span className={'ml-025 c-p hover-line'}>
                                             <Trans>View on Explorer</Trans>
                                         </span>
                                     </ExternalLink>
@@ -135,7 +135,7 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                                 {chainId && account && (
                                     <ExternalLink href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}>
                                         <LinkIcon size={'1rem'} color='var(--primary)' />
-                                        <span className={'ml-025'}>
+                                        <span className={'ml-025 c-p hover-line'}>
                                             <Trans>View on Explorer</Trans>
                                         </span>
                                     </ExternalLink>
@@ -149,7 +149,7 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                 <Card isDark classes={'br-12 mt-1 p-1'}>
                     <div className={'c-p flex-s-between mb-05'}>
                         <Trans>Recent Transactions</Trans>
-                        <button className={'br-0 bg-t c-p p-0'} onClick={clearAllTransactionsCallback}>
+                        <button className={'br-0 bg-t c-p p-0 hover-line'} onClick={clearAllTransactionsCallback}>
                             <Trans>(clear all)</Trans>
                         </button>
                     </div>

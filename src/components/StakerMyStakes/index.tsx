@@ -18,6 +18,8 @@ import ModalBody from './ModalBody'
 import PositionHeader from './PositionHeader'
 import PositionCardBodyHeader from './PositionCardBodyHeader'
 import PositionCardBodyStat from './PositionCardBodyStat'
+import { Dots } from '../swap/styled'
+import { Trans } from '@lingui/macro'
 
 interface StakerMyStakesProps {
     data: Deposit[] | null
@@ -310,9 +312,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                     gettingReward.farmingType === FarmingType.FINITE &&
                                                                     gettingReward.id === el.id &&
                                                                     gettingReward.state !== 'done' ? (
-                                                                        <span>
-                                                                            <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
-                                                                        </span>
+                                                                        <div className={'f f-jc f-ac cg-05'}>
+                                                                            <Loader size={'18px'} stroke={'var(--white)'}/>
+                                                                            <Trans>Collecting</Trans>
+                                                                        </div>
                                                                     ) : (
                                                                         <span>Collect rewards & Undeposit</span>
                                                                     )}
@@ -356,9 +359,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 }}
                                                             >
                                                                 {eternalCollectReward && eternalCollectReward.id === el.id && eternalCollectReward.state !== 'done' ? (
-                                                                    <span>
-                                                                        <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
-                                                                    </span>
+                                                                    <div className={'f f-jc f-ac cg-05'}>
+                                                                        <Loader size={'18px'} stroke={'var(--white)'}/>
+                                                                        <Trans>Collecting</Trans>
+                                                                    </div>
                                                                 ) : (
                                                                     <span>Collect rewards</span>
                                                                 )}
@@ -376,9 +380,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 }}
                                                             >
                                                                 {gettingReward && gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== 'done' ? (
-                                                                    <span>
-                                                                        <Loader size={'13px'} stroke={'white'} style={{ margin: 'auto' }} />
-                                                                    </span>
+                                                                    <div className={'f f-jc f-ac cg-05'}>
+                                                                        <Loader size={'18px'} stroke={'var(--white)'}/>
+                                                                        <Trans>Undepositing</Trans>
+                                                                    </div>
                                                                 ) : (
                                                                     <span>Undeposit</span>
                                                                 )}

@@ -24,25 +24,7 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { isArray } from 'util'
 import { ArrowDown, ArrowUp, RefreshCw } from 'react-feather'
 import FrozenModal from './Frozen'
-import {
-    EarnedStakedWrapper,
-    FrozenDropDown,
-    LeftBlock,
-    PageWrapper,
-    RealStakerPageWrapper,
-    ReloadButton,
-    ResBlocksTitle,
-    ResBlocksWrapper,
-    RightBlock,
-    SilderWrapper,
-    StakeButton,
-    StakerSlider,
-    StakerStatisticWrapper,
-    StakeTitle,
-    XALGBBalance,
-    XALGBCourse,
-    XALGBCousreWrapper
-} from './styled'
+import { FrozenDropDown, LeftBlock, ReloadButton, RightBlock } from './styled'
 import './index.scss'
 import Slider from '../../components/Slider'
 
@@ -51,7 +33,7 @@ export default function RealStakerPage({}) {
     const { chainId, account } = useActiveWeb3React()
     const { percent } = useBurnV3State()
     const { onPercentSelect } = useBurnV3ActionHandlers()
-    const { stakerHandler, stakerClaimHandler, stakerUnstakeHandler, frozenStakedHandler, frozenStaked } = useRealStakerHandlers()
+    const { stakerHandler, stakerClaimHandler, stakerUnstakeHandler, frozenStakedHandler, frozenStaked, claimLoading, unstakeLoading, stakeLoading } = useRealStakerHandlers()
     const { getStakes: { stakesResult, fetchStakingFn } } = useInfoSubgraph()
     const toggleWalletModal = useWalletModalToggle()
     const baseCurrency = useCurrency(currencyId)
@@ -74,6 +56,7 @@ export default function RealStakerPage({}) {
     const [xALGBBalance, setXALGB] = useState<string>('')
     const [showFrozen, setFrozen] = useState<boolean>(false)
     const [loadingClaim, setLoadingClaim] = useState<boolean>(false)
+    // const [sending, setSending] = useState(false)
 
     const now = Date.now
 
@@ -275,18 +258,18 @@ export default function RealStakerPage({}) {
                                         </button>
                                         : approval === ApprovalState.APPROVED ?
                                             <button className={'btn primary w-100 pa-1 mt-1'}
-                                                onClick={() => {
-                                                    stakerHandler(amountValue)
-                                                        .then(() => {
-                                                            onPercentSelectForSlider(0)
-                                                            if (percentForSlider === 0) {
-                                                                setAmountValue('')
-                                                            }
-                                                        })
-                                                }}
-                                                disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === ''}
+                                                    onClick={() => {
+                                                        stakerHandler(amountValue)
+                                                            .then(() => {
+                                                                onPercentSelectForSlider(0)
+                                                                if (percentForSlider === 0) {
+                                                                    setAmountValue('')
+                                                                }
+                                                            })
+                                                    }}
+                                                    disabled={balance && (+amountValue > +balance.toSignificant(30)) || amountValue === '' || stakeLoading}
                                             >
-                                                {balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
+                                                {stakeLoading ? <div className={'f f-jc f-ac'}><Loader stroke={'var(--white)'} size={'1rem'}/> <span className={'ml-05'}>Staking</span></div>: balance && (+amountValue > +balance.toSignificant(30)) ? 'Insufficient ALGB balance' : 'Stake'}
                                             </button>
                                             :
                                             <button className={'btn primary w-100 pa-1 mt-1'}>
@@ -329,6 +312,7 @@ export default function RealStakerPage({}) {
                             stakerClaimHandler(earned, stakesResult)
                         }}
                         algbCourse={algbCourse}
+                        loading={claimLoading}
                     />
                     <RealStakerResBlocks
                         action={'Unstake'}
@@ -339,6 +323,7 @@ export default function RealStakerPage({}) {
                             setOpenModal(true)
                         }}
                         algbCourse={algbCourse}
+                        loading={unstakeLoading}
                     />
                 </div>
                 <div className={'xalgb-wrapper flex-s-between br-8 mt-1'}>

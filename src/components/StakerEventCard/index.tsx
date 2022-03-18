@@ -1,4 +1,4 @@
-import { Plus } from "react-feather";
+import { Lock, Plus } from "react-feather";
 import { useActiveWeb3React } from "../../hooks/web3";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import { convertDateTime, getCountdownTime } from "../../utils/time";
@@ -13,6 +13,7 @@ import { SupportedChainId } from "../../constants/chains";
 import { WrappedCurrency } from "../../models/types";
 import { formatAmountTokens } from "utils/numbers";
 import "./index.scss";
+import { Link } from "react-router-dom";
 
 interface StakerEventCardProps {
     active?: boolean;
@@ -72,60 +73,67 @@ export function StakerEventCard({
                         <Loader size={"18px"} stroke={"white"} style={{ margin: "auto" }} />
                     </LoadingShim>
                 )}
-                <div className={"f mb-1"}>
+                <div style={{ opacity: 0.6 }} className={"f mb-1"}>
                     <div className={"f mr-1"}>
-                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619", 18, "WETH") as WrappedCurrency} size={"35px"} />
                         <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x2791bca1f2de4661ed88a30c99a7a9449aa84174", 18, "USDC") as WrappedCurrency} size={"35px"} />
+                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619", 18, "WETH") as WrappedCurrency} size={"35px"} />
                     </div>
                     <div>
                         <h3 className={"fs-075 b"}>POOL</h3>
-                        <div>{"WETH / USDC"}</div>
+                        <div>{"USDC / WETH"}</div>
                     </div>
                 </div>
-                <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
+                <div style={{ opacity: 0.6 }} className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>
                         <span className={"c-ph fs-075 b"}>REWARD</span>
                         <span>{"ALGB"}</span>
                     </div>
-                    <div className={"m-a mr-0 fs-125"} title={"1000000"}>
-                        <span>{formatAmountTokens(1000000)}</span>
+                    <div className={"m-a mr-0 fs-125"} title={"800000"}>
+                        <span>{formatAmountTokens(800000)}</span>
                     </div>
                 </div>
-                <div className={"staker-event-card__plus"}>
+                <div style={{ opacity: 0.6 }} className={"staker-event-card__plus"}>
                     <div>
                         <Plus style={{ display: "block" }} size={18} />
                     </div>
                 </div>
-                    <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
-                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
-                        <div className={"ml-1 f c"}>
-                            <span className={"c-ph fs-075 b"}>BONUS</span>
-                            <span>{"ALGB"}</span>
-                        </div>
-                        <div className={"m-a mr-0 fs-125"} title={"400000"}>
-                            <span>{formatAmountTokens(400000)}</span>
-                        </div>
+                <div style={{ opacity: 0.6 }} className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
+                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
+                    <div className={"ml-1 f c"}>
+                        <span className={"c-ph fs-075 b"}>BONUS</span>
+                        <span>{"ALGB"}</span>
                     </div>
-                <div className={"flex-s-between mb-05"}>
+                    <div className={"m-a mr-0 fs-125"} title={"200000"}>
+                        <span>{formatAmountTokens(200000)}</span>
+                    </div>
+                </div>
+                <div style={{ opacity: 0.6 }} className={"flex-s-between mb-05"}>
+                    <div className={"f c"}>
+                        <span className={"fs-075 b"}>ENTRY</span>
+                        <span>{convertLocalDate(new Date(1648220400 * 1000))}</span>
+                        <span>{convertDateTime(new Date(1648220400 * 1000))}</span>
+                    </div>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>START</span>
-                        <span>{convertLocalDate(new Date(1647543600 * 1000))}</span>
-                        <span>{convertDateTime(new Date(1647543600 * 1000))}</span>
+                        <span>{convertLocalDate(new Date(1648407600 * 1000))}</span>
+                        <span>{convertDateTime(new Date(1648407600 * 1000))}</span>
                     </div>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>END</span>
-                        <span>{convertLocalDate(new Date(1648148400 * 1000))}</span>
-                        <span>{convertDateTime(new Date(1648148400 * 1000))}</span>
+                        <span>{convertLocalDate(new Date(1649012400 * 1000))}</span>
+                        <span>{convertDateTime(new Date(1649012400 * 1000))}</span>
                     </div>
                 </div>
                 <div className={"fs-075 mb-05 ta-c"}>
-                    <span>{`will be available in ${getCountdownTime(1647356400, Date.now())}`}</span>
+                    <span>{`will be available in ${getCountdownTime(1648220400, Date.now())}`}</span>
                 </div>
                 <div className={"staker-event-card__progress w-100 br-8 p-025"}>
-                    <div className={"br-8"} style={{ width: `${Number(getProgress(1647356400, Math.round(Date.now() / 1000), now).toPrecision(1))}%` }} />
+                    <div className={"br-8"} style={{ width: `${Number(getProgress(1648220400, Math.round(Date.now() / 1000), now).toPrecision(1))}%` }} />
                 </div>
-                <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-v"}>⚡ Upcoming farm</div>
+                <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-v"} style={{ marginTop: "9px", height: "36px", lineHeight: "19px" }}>
+                    ⚡ Upcoming farm
+                </div>
             </div>
         );
     }
@@ -135,6 +143,27 @@ export function StakerEventCard({
             {refreshing && (
                 <LoadingShim>
                     <Loader size={"18px"} stroke={"white"} style={{ margin: "auto" }} />
+                </LoadingShim>
+            )}
+            {locked && (
+                <LoadingShim>
+                    <div style={{ padding: "1rem", background: "#fff", borderRadius: "8px", color: "black" }}>
+                        <div className="mb-1 f f-ac f-jc">
+                            <span className="mr-05">
+                                <Lock size={"16px"} stroke={"black"} />
+                            </span>
+                            <span>This farm is filled</span>
+                        </div>
+                        <div>
+                            <Link
+                                to={"/farming/infinite-farms"}
+                                className={"staker-event-card__infinite-farming-available"}
+                                style={{ padding: "6px 10px", borderRadius: "8px", color: "var(--white)", background: "var(--primary)" }}
+                            >
+                                Infinite WETH farm is available →
+                            </Link>
+                        </div>
+                    </div>
                 </LoadingShim>
             )}
             <div className={"f mb-1"}>
@@ -155,7 +184,7 @@ export function StakerEventCard({
                 </div>
                 {reward && (
                     <div className={"m-a mr-0 fs-125"} title={reward.toString()}>
-                        {id === "0x1d07f1ccb2974c0e75430bd62e9f6986071a353ff26b7df5500b1f6a918f87ae" ? eternal ? <span /> : <span>{formatAmountTokens(reward)}</span> : formatAmountTokens(1000000)}
+                        {eternal ? <span /> : <span>{formatAmountTokens(reward)}</span>}
                     </div>
                 )}
             </div>
@@ -173,15 +202,7 @@ export function StakerEventCard({
                     </div>
                     {bonusReward && (
                         <div className={"m-a mr-0 fs-125"} title={bonusReward.toString()}>
-                            {id === "0x1d07f1ccb2974c0e75430bd62e9f6986071a353ff26b7df5500b1f6a918f87ae" ? (
-                                eternal ? (
-                                    <span />
-                                ) : (
-                                    <span>{formatAmountTokens(bonusReward)}</span>
-                                )
-                            ) : (
-                                formatAmountTokens(400000)
-                            )}
+                            {eternal ? <span /> : <span>{formatAmountTokens(bonusReward)}</span>}
                         </div>
                     )}
                 </div>
@@ -221,9 +242,13 @@ export function StakerEventCard({
                 </div>
             )}
             {account && !active ? (
-                <button className={`btn primary w-100 b pv-05 ${!eternal ? "mt-05" : ""}`} onClick={stakeHandler}>
-                    {" "}
-                    {locked ? "Filled" : "Farm"}
+                <button
+                    style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
+                    disabled={locked}
+                    className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
+                    onClick={stakeHandler}
+                >
+                    <span>{locked ? "Filled" : "Farm"}</span>
                 </button>
             ) : active ? (
                 <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ height: "30px" }}>

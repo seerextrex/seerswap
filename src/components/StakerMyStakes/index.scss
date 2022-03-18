@@ -41,6 +41,7 @@
       button {
         background-color: var(--dark-gray);
         border-radius: 4px;
+
         &:hover {
           color: var(--primary);
         }
@@ -84,7 +85,19 @@
 }
 
 @media screen and (max-width: 500px) {
+
   .my-stakes {
+
+    &__ad {
+      flex-direction: column;
+      row-gap: .5rem;
+      padding: .75rem;
+
+      &-link {
+        width: 100%;
+        text-align: center;
+      }
+    }
 
     &__nft-send {
 

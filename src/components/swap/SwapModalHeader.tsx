@@ -2,7 +2,7 @@ import { Currency, Percent, TradeType } from '@uniswap/sdk-core'
 import { Trade as V2Trade } from '@uniswap/v2-sdk'
 import { Trade as V3Trade } from 'lib/src'
 import { useContext, useState } from 'react'
-import { AlertTriangle } from 'react-feather'
+import { AlertTriangle, ArrowDown } from 'react-feather'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
@@ -67,18 +67,7 @@ export default function SwapModalHeader({ trade, allowedSlippage, recipient, sho
                 </div>
             </Card>
             <SwapModalHeaderArrowWrapper>
-                {/* <ArrowDown size="16" color={theme.text2} /> */}
-                <svg width='11' height='21' viewBox='0 0 11 21' fill='none'
-                     xmlns='http://www.w3.org/2000/svg'>
-                    <path
-                        d='M10.0287 6.01207C10.2509 6.2384 10.6112 6.2384 10.8334 6.01207C11.0555 5.78575 11.0555 5.4188 10.8334 5.19247L5.90232 0.169745C5.68012 -0.0565819 5.31988 -0.0565819 5.09768 0.169745L0.166647 5.19247C-0.055548 5.4188 -0.055548 5.78575 0.166647 6.01207C0.388841 6.2384 0.749091 6.2384 0.971286 6.01207L5.5 1.39915L10.0287 6.01207Z'
-                        fill='#70796D'
-                    />
-                    <path
-                        d='M10.0287 14.9879C10.2509 14.7616 10.6112 14.7616 10.8334 14.9879C11.0555 15.2143 11.0555 15.5812 10.8334 15.8075L5.90232 20.8303C5.68012 21.0566 5.31988 21.0566 5.09768 20.8303L0.166646 15.8075C-0.0555484 15.5812 -0.0555484 15.2143 0.166646 14.9879C0.388841 14.7616 0.749091 14.7616 0.971285 14.9879L5.5 19.6009L10.0287 14.9879Z'
-                        fill='#70796D'
-                    />
-                </svg>
+                 <ArrowDown size="1rem" color={theme.text2} />
             </SwapModalHeaderArrowWrapper>
             <Card isDark classes={'p-1 br-12 mv-05'}>
                 <div className={'flex-s-between fs-085 mb-05'}>
@@ -137,8 +126,7 @@ export default function SwapModalHeader({ trade, allowedSlippage, recipient, sho
 
             <div>
                 {trade.tradeType === TradeType.EXACT_INPUT ? (
-                    <TYPE.italic color={'var(--primary)'} fontWeight={400}
-                                 textAlign='left' style={{ width: '100%' }}>
+                    <div className={'c-p fs-085 i l mt-1'}>
                         <Trans>
                             Output is estimated. You will receive at least{' '}
                             <b>
@@ -146,10 +134,9 @@ export default function SwapModalHeader({ trade, allowedSlippage, recipient, sho
                             </b>{' '}
                             or the transaction will revert.
                         </Trans>
-                    </TYPE.italic>
+                    </div>
                 ) : (
-                    <TYPE.italic color={'var(--primary)'} fontWeight={400}
-                                 textAlign='left' style={{ width: '100%' }}>
+                    <div className={'c-p fs-085 i l mt-1'}>
                         <Trans>
                             Input is estimated. You will sell at most{' '}
                             <b>
@@ -157,17 +144,15 @@ export default function SwapModalHeader({ trade, allowedSlippage, recipient, sho
                             </b>{' '}
                             or the transaction will revert.
                         </Trans>
-                    </TYPE.italic>
+                    </div>
                 )}
             </div>
             {recipient !== null ? (
-                <div>
-                    <TYPE.main color={'var(--primary)'}>
-                        <Trans>
-                            Output will be sent to{' '}
-                            <b title={recipient}>{isAddress(recipient) ? shortenAddress(recipient) : recipient}</b>
-                        </Trans>
-                    </TYPE.main>
+                <div className={'c-p'}>
+                    <Trans>
+                        Output will be sent to{' '}
+                        <b title={recipient}>{isAddress(recipient) ? shortenAddress(recipient) : recipient}</b>
+                    </Trans>
                 </div>
             ) : null}
         </div>

@@ -15,6 +15,7 @@ import Card from '../../shared/components/Card/Card'
 import AutoColumn from '../../shared/components/AutoColumn'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import './index.scss'
+import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React()
@@ -51,6 +52,17 @@ export default function Pool() {
         ...inRangeWithOutFarmingPositions,
         ...(userHideClosedPositions ? [] : closedPositions)
     ], [inRangeWithOutFarmingPositions, userHideClosedPositions, hideFarmingPositions])
+
+    //TODO LIVNUL
+
+    const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
+
+    const _filteredPositions = useMemo(() => {
+        if (filteredPositions.length === 0 && prevFilteredPositions) {
+            return prevFilteredPositions
+        }
+        return filteredPositions
+    }, [filteredPositions])
 
     const showConnectAWallet = Boolean(!account)
 
@@ -99,8 +111,8 @@ export default function Pool() {
                     <main className={'f c f-ac'}>
                         {positionsLoading ? (
                             <Loader style={{ margin: 'auto' }} stroke='white' size={'2rem'} />
-                        ) : filteredPositions && filteredPositions.length > 0 ? (
-                            <PositionList positions={filteredPositions} />
+                        ) : _filteredPositions && _filteredPositions.length > 0 ? (
+                            <PositionList positions={_filteredPositions} />
                         ) : (
                             <div className={'f c f-ac f-jc h-400 w-100 maw-300'}>
                                 <Trans>You do not have any liquidity positions.</Trans>

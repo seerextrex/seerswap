@@ -1,6 +1,7 @@
 @import "src/assets/styles/index";
 .staker-event-card {
   background-color: var(--ebony-clay);
+  position: relative;
 
   &__reward-wrapper {
     background-color: var(--dark-ebony-clay);
@@ -29,6 +30,12 @@
       background-color: var(--primary);
       transition-duration: 0.5s;
       @include skeleton-gradient()
+    }
+  }
+
+  &__infinite-farming-available {
+    &:hover {
+      background-color: #51a6f6 !important;
     }
   }
 }

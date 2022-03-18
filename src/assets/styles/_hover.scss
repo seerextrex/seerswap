@@ -12,7 +12,9 @@
   }
 
   &-cp {
-    color: var(--primary);
+    &:hover {
+      color: var(--primary);
+    }
   }
 
   &-b {

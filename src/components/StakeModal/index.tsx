@@ -225,7 +225,7 @@ export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bon
                                             <div className={'stake-modal__nft-position__description ml-05'}>
                                                 <div>#{el.id}</div>
                                                 <a
-                                                    className={'fs-085 c-w'}
+                                                    className={'fs-085 c-w hover-cp'}
                                                     href={`https://app.algebra.finance/#/pool/${+el.id}`}
                                                     rel='noopener noreferrer'
                                                     target='_blank'

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { axisBottom, create, max, scaleBand, scaleLinear, select } from 'd3'
-import { ChartSvg } from './styled'
 import { ProcessedData } from '../../models/interfaces'
 
 interface BarChartProps {
@@ -84,17 +83,17 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
             .attr('cy', '21px')
             .attr('display', 'none')
 
-           //TODO rewrite to div
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRect.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRectPrice0.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRectPrice1.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRectPriceLocked.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoCurrentCircle.node())
+        //TODO rewrite to div
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRect.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRectPrice0.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRectPrice1.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRectPriceLocked.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoCurrentCircle.node())
 
         const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 

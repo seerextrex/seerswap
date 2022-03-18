@@ -387,8 +387,8 @@ export default function PositionPage({
                                     </span>
                                     <div className={"flex-s-between"}>
                                         {_fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
-                                            <span className={"fs-2"}>
-                                                <Trans>${_fiatValueOfFees.toFixed(2, { groupSeparator: "," })}</Trans>
+                                            <span className={"fs-2 c-g"}>
+                                                <Trans>${+_fiatValueOfFees.toFixed(2, { groupSeparator: "," }) < 0.01 ? '<0.01' : _fiatValueOfFees?.toFixed(2, { groupSeparator: "," })}</Trans>
                                             </span>
                                         ) : (
                                             <span className={"fs-2"}>

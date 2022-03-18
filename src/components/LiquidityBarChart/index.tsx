@@ -163,7 +163,7 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
                         dimensions={{
                             width: isMobile ? ref && ref.current && ref.current.offsetWidth - 10 || 0 : 1020,
                             height: 400,
-                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
+                            margin: { top: isMobile ? 80 :30, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 0 :50 }
                         }}
                         isMobile={isMobile}
                     />

@@ -466,7 +466,7 @@ export default function AddLiquidityPage({
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className={"f f-ac f-jc"}>
+                                            <div className={"flex-s-between"}>
                                                 <span className={"b mr-05 ws-no-wrap fs-1"}>Starting Price</span>
                                                 <div className={"f"}>
                                                     <span className={"mr-05"}>
@@ -488,7 +488,7 @@ export default function AddLiquidityPage({
                                         )}
                                     </Card>
                                 </div>
-                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none" } : {}}>
+                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: 'relative' } : {}}>
                                     <div className={"f"}>
                                         <Title style={{ margin: 0, position: "static" }}>Price Range</Title>
                                         <div className="f f-ac w-100">

@@ -39,3 +39,11 @@
     }
 
 }
+
+@media screen and (max-width: 500px){
+    .fee-helper {
+        &__inner {
+            top: -130px;
+        }
+    }
+}

@@ -173,6 +173,12 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
     const tokens = useAllTokens()
 
     const address = isAddress(tokenAddress)
+    const _lowkeyAddress = useMemo(() => {
+        if (!address) return
+
+        return address.toLowerCase()
+
+    }, [tokenAddress, address])
 
     const tokenContract = useTokenContract(address ? address : undefined, false)
     const tokenContractBytes32 = useBytes32TokenContract(address ? address : undefined, false)
@@ -193,13 +199,13 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 
     return useMemo(() => {
         if (token) return token
-        if (!chainId || !address) return undefined
-        if (address in DEFAULT_TOKEN_LIST) return new Token(
+        if (!chainId || !address || !_lowkeyAddress) return undefined
+        if (_lowkeyAddress in DEFAULT_TOKEN_LIST) return new Token(
             chainId,
             address,
-            DEFAULT_TOKEN_LIST[address].decimals,
-            DEFAULT_TOKEN_LIST[address].symbol,
-            DEFAULT_TOKEN_LIST[address].name
+            DEFAULT_TOKEN_LIST[_lowkeyAddress].decimals,
+            DEFAULT_TOKEN_LIST[_lowkeyAddress].symbol,
+            DEFAULT_TOKEN_LIST[_lowkeyAddress].name
         )
         if (decimals.loading || symbol.loading || tokenName.loading) return null
         if (decimals.result) {

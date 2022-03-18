@@ -440,19 +440,17 @@ export default function AddLiquidityPage({
                                             <span className={"b mr-05"}>{`${noLiquidity ? "Initial" : "Current"} Fee:`}</span>
                                             <span className={"f f-ac ml-a"}>
                                                 <span className={"mr-05 c-p"}>{noLiquidity ? "0.05" : dynamicFee / 10000}%</span>
-                                                <span className={""} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>
+                                                <div className={"fee-helper"} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>
                                                     <Info size={"0.85rem"} stroke={"var(--light-gray)"} />
-                                                    {showTech ? (
-                                                        <Card isDark classes={"pos-a z-10 p-1 br-8 f c bg-dg r-0 w-100 maw-300"}>
-                                                            <span className={"b"}>📄 Tech paper</span>
-                                                            <div className={"fs-085 mt-05"}>Check out how dynamic fee is calculated</div>
-                                                            <a className={"btn primary w-100 f f-jc pv-025 mt-05 br-8"} download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
-                                                                <Download size={16} color={"white"} />
-                                                                <span className={"ml-05"}>Download .PDF</span>
-                                                            </a>
-                                                        </Card>
-                                                    ) : null}
-                                                </span>
+                                                    <Card isDark classes={"fee-helper__inner pos-a z-10 p-1 br-8 f c bg-dg r-0 w-100 maw-300"}>
+                                                        <span className={"b"}>📄 Tech paper</span>
+                                                        <div className={"fs-085 mt-05"}>Check out how dynamic fee is calculated</div>
+                                                        <a className={"btn primary w-100 f f-jc pv-025 mt-05 br-8"} download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
+                                                            <Download size={16} color={"white"} />
+                                                            <span className={"ml-05"}>Download .PDF</span>
+                                                        </a>
+                                                    </Card>
+                                                </div>
                                             </span>
                                         </div>
                                     </Card>
@@ -468,8 +466,8 @@ export default function AddLiquidityPage({
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className={"f f-ac"}>
-                                                <span className={"b mr-05 ws-no-wrap fs-125"}>Starting Price</span>
+                                            <div className={"f f-ac f-jc"}>
+                                                <span className={"b mr-05 ws-no-wrap fs-1"}>Starting Price</span>
                                                 <div className={"f"}>
                                                     <span className={"mr-05"}>
                                                         <StyledInput
@@ -482,7 +480,7 @@ export default function AddLiquidityPage({
                                                             onUserInput={onStartPriceInput}
                                                         />
                                                     </span>
-                                                    <span className={"ws-no-wrap fs-085 mxs_fs-075"}>
+                                                    <span className={"ws-no-wrap fs-085 mxs_fs-075"} style={{ lineHeight: "21px" }}>
                                                         {quoteCurrency?.symbol} per {baseCurrency?.symbol}
                                                     </span>
                                                 </div>
@@ -491,15 +489,17 @@ export default function AddLiquidityPage({
                                     </Card>
                                 </div>
                                 <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none" } : {}}>
-                                    <Title>
-                                        {outOfRange && (
-                                            <Warning>
-                                                <span>Warning: Price is out of range</span>
-                                            </Warning>
-                                        )}
-                                        {invalidRange && <Error>Error: The Min price must be lower than the Max price</Error>}
-                                        Price Range
-                                    </Title>
+                                    <div className={"f"}>
+                                        <Title style={{ margin: 0, position: "static" }}>Price Range</Title>
+                                        <div className="f f-ac w-100">
+                                            {outOfRange && (
+                                                <Warning>
+                                                    <span>Warning: Price is out of range</span>
+                                                </Warning>
+                                            )}
+                                            {invalidRange && <Error>Error: The Min price must be lower than the Max price</Error>}
+                                        </div>
+                                    </div>
                                     <div className={"f w-100 mxs_fd-c"}>
                                         {price && baseCurrency && quoteCurrency && !noLiquidity && (
                                             <div className={"price-range-chart h-100 br-12"}>
@@ -704,49 +704,53 @@ export default function AddLiquidityPage({
                             </>
                         )}
                         <ButtonsWrapper>
-                            {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (
-                                <Error
-                                    style={{
-                                        position: "relative",
-                                        padding: "14px 16px",
-                                        marginRight: "1rem",
-                                        top: 0,
+                            <div className="mr-1 w-100">
+                                {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (
+                                    <Error
+                                        style={{
+                                            padding: "14px 16px",
+                                            marginRight: "1rem",
+                                            maxWidth: "unset",
+                                        }}
+                                    >
+                                        {errorMessage}
+                                    </Error>
+                                )}
+                            </div>
+                            <div className="w-100">
+                                <AddLiquidityButton
+                                    className="ml-0 w-100"
+                                    onClick={() => {
+                                        onAdd();
                                     }}
+                                    disabled={
+                                        (!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]) ||
+                                        mustCreateSeparately ||
+                                        !isValid ||
+                                        (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
+                                        (approvalB !== ApprovalState.APPROVED && !depositBDisabled) ||
+                                        !!txHash ||
+                                        isNetworkFailed
+                                    }
                                 >
-                                    {errorMessage}
-                                </Error>
-                            )}
-                            <AddLiquidityButton
-                                onClick={() => {
-                                    onAdd();
-                                }}
-                                disabled={
-                                    (!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]) ||
-                                    mustCreateSeparately ||
-                                    !isValid ||
-                                    (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                                    (approvalB !== ApprovalState.APPROVED && !depositBDisabled) ||
-                                    !!txHash ||
-                                    isNetworkFailed
-                                }
-                            >
-                                <div className={"b f f-ac"}>
-                                    {isNetworkFailed ? (
-                                        <>
-                                            <Loader stroke={"#9ca1a5"} />
-                                            <span style={{ marginLeft: "8px" }}>Updating...</span>
-                                        </>
-                                    ) : txHash ? (
-                                        <>
-                                            {" "}
-                                            <Loader stroke={"#9ca1a5"} />
-                                            <span style={{ marginLeft: "8px" }}>Adding Liquidity...</span>
-                                        </>
-                                    ) : (
-                                        "Add Liquidity"
-                                    )}
-                                </div>
-                            </AddLiquidityButton>
+                                    <div className={"b f f-ac"}>
+                                        {isNetworkFailed ? (
+                                            <>
+                                                <Loader stroke={"#9ca1a5"} />
+                                                <span style={{ marginLeft: "8px" }}>Updating...</span>
+                                            </>
+                                        ) : txHash ? (
+                                            <>
+                                                {" "}
+                                                <Loader stroke={"#9ca1a5"} />
+                                                <span style={{ marginLeft: "8px" }}>Adding Liquidity...</span>
+                                            </>
+                                        ) : (
+                                            "Add Liquidity"
+                                        )}
+                                    </div>
+                                </AddLiquidityButton>
+                            </div>
                         </ButtonsWrapper>
                     </>
                 ) : account ? (

@@ -15,3 +15,27 @@
 .full-range-btn {
     
 }
+
+.fee-helper {
+    
+    &:hover {
+        .fee-helper__inner {
+            display: flex !important;
+        }
+    }
+
+    &__inner {
+        display: none !important;
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            height: 1rem;
+            margin-top: -2rem;
+            margin-left: -1rem;
+            width: 100%;
+        }
+    }
+
+}

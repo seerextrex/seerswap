@@ -37,8 +37,7 @@ const HoverInlineText = ({ text, maxCharacters = 20, margin = false, adjustSize 
     }
 
     return (
-        <TextWrapper margin={margin} adjustSize={adjustSize} link={link}
-                     fontSize={fontSize} {...rest}>
+        <TextWrapper margin={margin} adjustSize={adjustSize} link={link} fontSize={fontSize} {...rest}>
             {text}
         </TextWrapper>
     )

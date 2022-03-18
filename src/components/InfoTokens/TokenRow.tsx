@@ -11,7 +11,7 @@ import React from "react";
 
 export const TokenRow = ({ address, symbol, name }: any) => (
     <a className={"link"} href={`https://polygonscan.com/address/${address}`} rel="noopener noreferrer" target="_blank">
-        <span className={"currency-wrapper"}>
+        <span className={"currency-wrapper hover-op"}>
             <span className={"currency-wrapper__row"}>
                 <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, address, 18, symbol) as WrappedCurrency} size={"20px"} />
             </span>

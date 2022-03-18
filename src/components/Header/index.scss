@@ -70,7 +70,7 @@
 
   &__inner {
     position: absolute;
-    display: block;
+    display: none;
     z-index: 999999;
     top: calc(100% + 1rem);
     right: -1rem;

@@ -466,7 +466,7 @@ export default function AddLiquidityPage({
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className={"f f-ac"}>
+                                            <div className={"f f-ac f-jc"}>
                                                 <span className={"b mr-05 ws-no-wrap fs-1"}>Starting Price</span>
                                                 <div className={"f"}>
                                                     <span className={"mr-05"}>

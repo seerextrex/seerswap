@@ -38,7 +38,7 @@ export default function ModalBody({ sending, recipient, setRecipient, setSending
                         />
                     </div>
                     <button className={'btn primary w-100 pv-075 ph-1 c-w br-8 '}
-                            disabled={!isAddress(recipient) || recipient === account}
+                            disabled={!isAddress(recipient) || recipient === account || sending && sending.id === sendModal && sending.state !== 'done'}
                             onClick={() => {
                                 setSending({ id: sendModal, state: 'pending' })
                                 sendNFTHandler(sendModal)
@@ -46,9 +46,9 @@ export default function ModalBody({ sending, recipient, setRecipient, setSending
                     >
                         {sending && sending.id === sendModal && sending.state !== 'done' ? (
                             <span className={'f f-ac f-jc'}>
-                                        <Loader size={'1rem'} stroke={'white'} />
-                                        <span className={'ml-05'}>Sending</span>
-                                    </span>
+                                <Loader size={'1rem'} stroke={'white'} />
+                                <span className={'ml-05'}>Sending</span>
+                            </span>
                         ) : (
                             <span>{`Send NFT`}</span>
                         )}

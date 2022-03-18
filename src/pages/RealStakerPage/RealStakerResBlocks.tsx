@@ -5,6 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import './index.scss'
 import { Info } from 'react-feather'
+import Loader from '../../components/Loader'
 
 interface ResBloksProps {
     title: string
@@ -13,9 +14,10 @@ interface ResBloksProps {
     action: string
     handler?: any
     algbCourse: BigNumber
+    loading: boolean
 }
 
-export default function RealStakerResBlocks({ title, amount, currency, action, handler, algbCourse }: ResBloksProps) {
+export default function RealStakerResBlocks({ title, amount, currency, action, handler, algbCourse, loading }: ResBloksProps) {
     const [isFull, setIsFull] = useState(false)
     const [show, setShow] = useState(false)
     const open = useCallback(() => setShow(true), [setShow])
@@ -38,21 +40,19 @@ export default function RealStakerResBlocks({ title, amount, currency, action, h
                 <AmountTitle title={`${formatEther(amount)}`}>
                     {formatEther(amount)}
                 </AmountTitle> : null}
-            <h3 onMouseEnter={() => {
-                setIsFull(true)
-            }}
-                onMouseLeave={() => {
-                    setIsFull(false)
-                }}>
+            <h3 onMouseEnter={() => setIsFull(true)} onMouseLeave={() => setIsFull(false)}>
                 {(formatEther(amount) < formatEther(algbCourse)) ? '0.00' : parseFloat(formatEther(amount)).toFixed(2)} ALGB
             </h3>
             <p className={'c-lg'}>
                 $ {currency === null || formatEther(amount) < formatEther(algbCourse) ? '0' : currency?.toSignificant(6, { groupSeparator: ',' })}
             </p>
             <button className={'btn primary w-100 p-05 mt-1 br-8'}
-                    disabled={+formatEther(amount) === 0 || (formatEther(amount) < formatEther(algbCourse))}
+                    disabled={+formatEther(amount) === 0 || (formatEther(amount) < formatEther(algbCourse)) || loading}
                     onClick={handler}>
-                {action}
+                {loading ?
+                    <div className={'f f-ac f-jc'}>
+                        <Loader stroke={'var(--white)'} size={'1rem'} /><span className={'ml-05'}>{action === 'Claim' ? 'Claiming' : 'Unstaking'}</span>
+                    </div> : action}
             </button>
         </div>
     )

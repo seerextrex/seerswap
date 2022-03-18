@@ -18,6 +18,9 @@ export function useRealStakerHandlers() {
 
     const [stakerHash, setStaked] = useState<null | StakeHash>(null)
     const [frozenStaked, setFrozen] = useState<string | Frozen[]>([])
+    const [stakeLoading, setStakeLoading] = useState<boolean>(false)
+    const [claimLoading, setClaimLoading] = useState<boolean>(false)
+    const [unstakeLoading, setUnstakeLoading] = useState<boolean>(false)
 
     const stakerHandler = useCallback(async (stakedCount: string) => {
         if (!account || !provider || !chainId) return
@@ -28,6 +31,8 @@ export function useRealStakerHandlers() {
                 REAL_STAKER_ABI,
                 provider.getSigner()
             )
+            setStakeLoading(true)
+
             const bigNumStakerCount = parseUnits(stakedCount, 18)
             const result: TransactionResponse = await realStaker.enter(bigNumStakerCount._hex)
 
@@ -38,6 +43,8 @@ export function useRealStakerHandlers() {
 
         } catch (e) {
             console.log(e)
+        } finally {
+            setStakeLoading(false)
         }
     }, [account, chainId])
 
@@ -50,6 +57,8 @@ export function useRealStakerHandlers() {
                 provider.getSigner()
             )
 
+            setClaimLoading(true)
+
             const claimSum: BigNumber = claimCount.mul(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply)).div(BigNumber.from(stakesResult.factories[0].ALGBbalance))
 
             const result: TransactionResponse = await realStaker.leave(claimSum._hex)
@@ -61,6 +70,8 @@ export function useRealStakerHandlers() {
 
         } catch (e) {
             console.log(e)
+        } finally {
+            setClaimLoading(false)
         }
     }, [account, chainId])
 
@@ -75,6 +86,8 @@ export function useRealStakerHandlers() {
                 provider.getSigner()
             )
 
+            setUnstakeLoading(true)
+
             const bigNumUnstakeAmount = (parseUnits(unstakeCount.toString(), 18).mul(BigNumber.from(stakesResult.stakes[0].xALGBAmount).sub(allXALGBFreeze))).div(maxALGBAccount)
 
             const result: TransactionResponse = await realStaker.leave(bigNumUnstakeAmount._hex)
@@ -86,6 +99,8 @@ export function useRealStakerHandlers() {
 
         } catch (e) {
             console.log(e)
+        } finally {
+            setUnstakeLoading(false)
         }
     }, [account, chainId])
 
@@ -108,9 +123,12 @@ export function useRealStakerHandlers() {
 
     return {
         stakerHandler,
+        stakeLoading,
         stakerHash,
         stakerClaimHandler,
+        claimLoading,
         stakerUnstakeHandler,
+        unstakeLoading,
         frozenStakedHandler,
         frozenStaked
     }

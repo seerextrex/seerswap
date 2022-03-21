@@ -4,7 +4,7 @@ import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useIncentiveSubgraph } from './useIncentiveSubgraph'
 import { PositionPool } from '../models/interfaces'
-import { usePreviousNonEmptyArray } from './usePrevious'
+import usePrevious, { usePreviousNonEmptyArray } from './usePrevious'
 import { useActiveWeb3React } from './web3'
 
 interface UseV3PositionsResults {
@@ -21,6 +21,8 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
     const error = useMemo(() => results.some(({ error }) => error), [results])
 
     const { account } = useActiveWeb3React()
+
+    const prevAccount = usePrevious(account)
 
     const positions = useMemo(() => {
         if (!loading && !error && tokenIds) {
@@ -50,6 +52,11 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
     const prevPositions = usePreviousNonEmptyArray(positions || [])
 
     return useMemo(() => {
+
+        if (prevAccount !== account) return {
+            loading,
+            positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
+        }
 
         if (!prevPositions && positions) return {
             loading,

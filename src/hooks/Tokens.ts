@@ -36,7 +36,7 @@ const DEFAULT_TOKEN_LIST: any = {
     },
     ['0xc2132d05d31c914a87c6611c10748aeb04b58e8f']: {
         name: 'USDT',
-        decimals: 18,
+        decimals: 6,
         symbol: 'USDT'
     },
     ['0xc3cffdaf8f3fdf07da6d5e3a89b8723d5e385ff8']: {

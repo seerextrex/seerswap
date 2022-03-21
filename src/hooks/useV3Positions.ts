@@ -56,6 +56,11 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
             positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
         }
 
+        if (tokenIds && prevPositions && tokenIds.length !== prevPositions.length) return {
+            loading: false,
+            positions: []
+        }
+
         if ((!positions || positions.length === 0) && prevPositions && prevPositions.length !== 0) return {
             loading: false,
             positions: prevPositions.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
@@ -124,19 +129,19 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         return []
     }, [account, tokenIdResults])
 
-    const prevTokenIds = usePreviousNonEmptyArray(tokenIds)
+    // const prevTokenIds = usePreviousNonEmptyArray(tokenIds)
 
-    const _tokenIds = useMemo(() => {
+    // const _tokenIds = useMemo(() => {
 
-        if (!prevTokenIds) return tokenIds
+    //     if (!prevTokenIds) return tokenIds
 
-        if (tokenIds.length === 0 && prevTokenIds.length !== 0) return prevTokenIds
+    //     if (tokenIds.length === 0 && prevTokenIds.length !== 0) return prevTokenIds
 
-        return tokenIds
+    //     return tokenIds
 
-    }, [tokenIds, account])
+    // }, [tokenIds, account])
 
-    const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(_tokenIds)
+    const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(tokenIds)
 
     const transferredTokenIds = useMemo(() => {
 

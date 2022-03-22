@@ -48,7 +48,6 @@ export function useActiveLocale(): SupportedLocale {
     const userLocale = useUserLocale()
 
     return useMemo(() => {
-        // return userLocale ?? navigatorLocale() ?? DEFAULT_LOCALE
-        return 'ru-RU'
+        return userLocale ?? navigatorLocale() ?? DEFAULT_LOCALE
     }, [userLocale])
 }

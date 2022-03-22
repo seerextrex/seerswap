@@ -10,9 +10,9 @@ type LocalePlural = {
 };
 
 const plurals: LocalePlural = {
-    // "en-US": en,
+    "en-US": en,
     "ru-RU": ru,
-    // "es-ES": es,
+    "es-ES": es,
 };
 
 async function dynamicActivate(locale: SupportedLocale) {

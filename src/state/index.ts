@@ -35,9 +35,9 @@ const store = configureStore({
         multicall,
         lists,
         logs,
+        farming,
         [dataApi.reducerPath]: dataApi.reducer,
         [routingApi.reducerPath]: routingApi.reducer,
-        farming
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ thunk: true })

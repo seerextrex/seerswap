@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ExternalLink } from "react-feather";
+import { useUserLocaleManager } from "../../state/user/hooks";
 import "./index.scss";
 
 enum MenuState {
@@ -27,6 +28,7 @@ enum ItemType {
 
 export default function HeaderMenu() {
     const [menuState, setMenuState] = useState(MenuState.PRIMARY);
+    const [userLocale, setUserLocale] = useUserLocaleManager();
 
     const headers = {
         [MenuState.PRIMARY]: "More",
@@ -40,19 +42,20 @@ export default function HeaderMenu() {
             { title: "Help center", type: ItemType.LINK, link: "https://help.algebra.finance" },
         ],
         [MenuState.LANGUAGE]: [
-            { title: Languages.RUSSIAN, type: ItemType.ACTION },
-            { title: Languages.ENGLISH, type: ItemType.ACTION },
-            { title: Languages.SPANISH, type: ItemType.ACTION },
+            { title: Languages.RUSSIAN, type: ItemType.ACTION, locale: "ru-RU" },
+            { title: Languages.ENGLISH, type: ItemType.ACTION, locale: "en-US" },
+            { title: Languages.SPANISH, type: ItemType.ACTION, locale: "es-ES" },
         ],
     };
 
     const historyStack: MenuState[] = [MenuState.PRIMARY];
 
     const handleSelect = useCallback((item) => {
-        if (item in headers) {
-            historyStack.push(item);
-            setMenuState(item);
-        } else {
+        if (item.title in headers) {
+            historyStack.push(item.title);
+            setMenuState(item.title);
+        } else if (item.locale) {
+            setUserLocale(item.locale);
         }
     }, []);
 
@@ -73,7 +76,7 @@ export default function HeaderMenu() {
             </div>
             <ul className="header-menu__list">
                 {items[menuState].map((item: any, i) => (
-                    <li className="header-menu__list-item" key={i} onClick={() => handleSelect(item.title)}>
+                    <li className="header-menu__list-item" key={i} onClick={() => handleSelect(item)}>
                         <a href={item.link || null} rel={"noreferrer noopener"} target={"_blank"} className="ph-1 pv-1 mxs_pv-1 ms_pv-1 w-100 f f-jb">
                             <span className="header-menu__list-item__title f">
                                 <span>{item.title}</span>

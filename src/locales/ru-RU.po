@@ -176,7 +176,7 @@ msgstr "Algebra — Обменять"
 
 #: src/pages/Swap/index.tsx
 msgid "Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
-msgstr "Algebra.Finance — первая децентрализованная биржа с концентрированной ликвидностью в сети Полигон: лучшие курсы для трейдеров и поставщиков ликвидности в сети Полигон, со встроенным фармингом и динамическими комиссиями."
+msgstr "Algebra.Finance — первая децентрализованная биржа с концентрированной ликвидностью в сети Полигон: лучшие курсы для поставщиков ликвидности и трейдеров в сети Полигон, со встроенным фармингом и динамическими комиссиями."
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 msgid "All"
@@ -381,7 +381,7 @@ msgstr "Очистить всё"
 
 #: src/pages/MigrateV2/index.tsx
 msgid "Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra."
-msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или QuickSwap и в Algebra."
+msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или QuickSwap в Algebra."
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Close"
@@ -391,7 +391,7 @@ msgstr "Закрыть"
 #: src/pages/Pool/index.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Closed"
-msgstr "Закрыто"
+msgstr "Закрытая"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect"
@@ -400,11 +400,11 @@ msgstr "Получить"
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Collect as WMATIC"
-msgstr "Получить в виде WMATIC"
+msgstr "Забрать как WMATIC"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect fees"
-msgstr "Получить комиссии"
+msgstr "Забрать"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Collect rewards"
@@ -777,7 +777,7 @@ msgstr "В диапазоне"
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Increase Liquidity"
-msgstr "Увеличить Ликвидность"
+msgstr "Увеличить ликвидность"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Infinite Farming"
@@ -823,7 +823,7 @@ msgstr "Недостаточно ликвидности для данной сд
 
 #: src/pages/Swap/index.tsx
 msgid "Insufficient liquidity for this trade. Try enabling multi-hop trades."
-msgstr "Недостаточно ликвидности для данной сделки. Try enabling multi-hop trades."
+msgstr "Недостаточно ликвидности для данной сделки. Попробуйте включить сложные маршруты."
 
 #: src/state/mint/v3/hooks.ts
 #: src/state/mint/v3/hooks.ts
@@ -992,7 +992,7 @@ msgstr "Минимум к получению"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "Minted / Staked Amount / Total Supply →"
-msgstr "Сколько сминчено / Застейкано/ Всего токенов →"
+msgstr "Сколько сминчено / Застейкано / Всего токенов →"
 
 #: src/components/WalletModal/index.tsx
 msgid "Mobile devices are not currently supported. Please use your desktop."
@@ -1005,7 +1005,7 @@ msgstr "Месяц"
 
 #: src/components/Settings/index.tsx
 msgid "Multihops"
-msgstr "Multihops"
+msgstr "Сложные маршруты"
 
 #: src/components/StakingMenu/index.tsx
 #: src/pages/Staking/StakingPage.tsx
@@ -1042,11 +1042,11 @@ msgstr "NFT #{l2TokenId} отправлен!"
 
 #: src/hooks/useStakerHandlers.ts
 msgid "NFT #{token} was withdrawn!"
-msgstr "NFT #{token} выведен!"
+msgstr "NFT #{token} забран!"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "NFT was sent!"
-msgstr "NFT был отправлен!"
+msgstr "NFT отправлен!"
 
 #: src/components/InfoTokensTable/index.tsx
 msgid "Name"
@@ -1058,7 +1058,7 @@ msgstr "Новая позиция"
 
 #: src/components/StakeModal/index.tsx
 msgid "No NFT-s for this pool"
-msgstr "Нет NFT-s для данной позиции"
+msgstr "Нет NFT для данной позиции"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "No farms"
@@ -1290,7 +1290,7 @@ msgstr "Сообщить об ошибке"
 
 #: src/components/Settings/index.tsx
 msgid "Restricts swaps to direct pairs only."
-msgstr "Ограничивает обмен в пределах пула."
+msgstr "Ограничивает обмен в пределах выбранного пула."
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Return"
@@ -1318,7 +1318,7 @@ msgstr "ЗАСТЕЙКАНО"
 
 #: src/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or paste address"
-msgstr "Найдите по имени или вставьте адрес"
+msgstr "Найдите по названию или вставьте адрес"
 
 #: src/components/StakeModal/index.tsx
 msgid "Select NFT"
@@ -1504,7 +1504,7 @@ msgstr "На (минимум)"
 
 #: src/components/StakingModal/index.tsx
 msgid "To stake your NFT you should approve Algebra to use it"
-msgstr "Чтобы застейкать NFT вы должны одобрить Алгебре его использование"
+msgstr "Чтобы застейкать NFT вы должны одобрить Algebra его использование"
 
 #: src/components/StakeModal/index.tsx
 msgid "To take part in this farming event, you need to"
@@ -1553,7 +1553,7 @@ msgstr "Включить экспертный режим"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Unclaimed fees"
-msgstr "Невостребованные комиссии"
+msgstr "Комиссии"
 
 #: src/components/StakerMyStakes/index.tsx
 #: src/components/StakerMyStakes/index.tsx
@@ -1567,11 +1567,11 @@ msgstr "Неизвестная ошибка{0}. Попробуйте увели�
 #: src/pages/RealStakerPage/index.tsx
 #: src/pages/RealStakerPage/RealStakerUnstakeModal.tsx
 msgid "Unstake"
-msgstr "Анстейкнуть"
+msgstr "Забрать"
 
 #: src/hooks/useRealStaker.ts
 msgid "Unstaked {unstakeCount} ALGB"
-msgstr "Анстейкнуто {unstakeCount} ALGB"
+msgstr "Забрано {unstakeCount} ALGB"
 
 #: src/components/swap/UnsupportedCurrencyFooter.tsx
 msgid "Unsupported Assets"
@@ -1596,7 +1596,7 @@ msgstr "Обновление..."
 
 #: src/components/CautionModal/index.tsx
 msgid "Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
-msgstr "Ипользование Алгебры включает различные риски, включая потери цифровых активов во время добавления их на Алгебру и потери из-за изменения цен токенов."
+msgstr "Ипользование Algebra включает различные риски, включая потери цифровых активов во время добавления их на Algebra и потери из-за изменения цен токенов."
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "View list"
@@ -1642,19 +1642,19 @@ msgstr "Внимание: цена находится вне диапазона"
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Week"
-msgstr "Week"
+msgstr "Неделя"
 
 #: src/components/CautionModal/index.tsx
 msgid "Welcome to Algebra, the first concentrated liquidity DEX on Polygon!"
-msgstr "Добро пожаловать на Алгебру, первую децентрализованную биржу с концентрированной ликвидностью в сети Полигон!"
+msgstr "Добро пожаловать на Algebra, первую децентрализованную биржу с концентрированной ликвидностью в сети Полигон!"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Withdraw"
-msgstr "Вывести"
+msgstr "Забрать"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Withdrawing"
-msgstr "Вывод"
+msgstr "Забирается"
 
 #: src/pages/Swap/index.tsx
 msgid "Wrap"
@@ -1706,7 +1706,7 @@ msgstr "Вносить ликвидность в Algebra следует толь
 
 #: src/components/CautionModal/index.tsx
 msgid "You use Algebra at your own risk and without warranties of any kind. Algebra is not liable for potential losses."
-msgstr "Вы используете Algebra на свой страх и риск и без каких-либо гарантий. Алгебра не несет ответственности за возможные убытки".
+msgstr "Вы используете Algebra на свой страх и риск и без каких-либо гарантий. Algebra не несет ответственности за возможные убытки".
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "You will also collect fees earned from this position."
@@ -1752,7 +1752,7 @@ msgstr "Ваши позиции"
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Your total pool tokens:"
-msgstr "Всего токенов пула у вас:"
+msgstr "Всего токенов ликвидности:"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Your transaction cost will be much higher as it includes the gas to create the pool."
@@ -1764,15 +1764,15 @@ msgstr "Ваша транзакция может быть подвержена �
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Your transaction may fail"
-msgstr "Ваша транзакция может быть неудачной"
+msgstr "Ваша транзакция может отмениться"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Your transaction will revert if it is pending for more than this period of time."
-msgstr "Ваша транзакция откатится, если она будет находиться в ожидании более указанного периода времени."
+msgstr "Ваша транзакция отменится, если она будет находиться в ожидании более указанного периода времени."
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Your transaction will revert if the price changes unfavorably by more than this percentage."
-msgstr "Ваша транзакция откатится, если цена изменится не в вашу пользу более, чем на этот процент."
+msgstr "Ваша транзакция отменится, если цена изменится не в вашу пользу более, чем на этот процент."
 
 #: src/components/AccountDetails/index.tsx
 msgid "Your transactions will appear here..."
@@ -1788,7 +1788,7 @@ msgstr "подтверждаю"
 
 #: src/components/StakerEventCard/index.tsx
 msgid "ends in {0}"
-msgstr "Заканчивается в {0}"
+msgstr "Заканчивается через {0}"
 
 #: src/components/Web3Status/Sock.tsx
 msgid "has socks emoji"
@@ -1809,15 +1809,15 @@ msgstr "только в течение 1 недели"
 #: src/pages/AddLiquidityPage/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "per"
-msgstr "на"
+msgstr "за"
 
 #: src/components/StakerEventCard/index.tsx
 msgid "starts in {0}"
-msgstr "начнётся в {0}"
+msgstr "начнётся через {0}"
 
 #: src/components/StakerEventCard/index.tsx
 msgid "will be available in {0}"
-msgstr "будет доступно в {0}"
+msgstr "Будет доступно через {0}"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "xALGB Burned"

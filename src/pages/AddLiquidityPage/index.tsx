@@ -27,7 +27,7 @@ import LiquidityChartRangeInput from "../../components/LiquidityChartRangeInput"
 import { NonfungiblePositionManager as NonFunPosMan } from "./nft-manager";
 import { calculateGasMargin } from "../../utils/calculateGasMargin";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { SupportedChainId } from "../../constants/chains";
 import { ArrowLeft, Download, Info } from "react-feather";
 // @ts-ignore
@@ -379,11 +379,15 @@ export default function AddLiquidityPage({
         <>
             <NavLink className={"f f-ac c-p mb-1 w-fc hover-op"} to={"/pool"}>
                 <ArrowLeft size={16} />
-                <span className={"ml-05"}>Back to pools</span>
+                <span className={"ml-05"}>
+                    <Trans>Back to pools</Trans>
+                </span>
             </NavLink>
             <Card classes={"p-2 br-24"}>
                 <div className={"flex-s-between mb-1 fs-15"}>
-                    <span className={"b"}>Add Liquidity</span>
+                    <span className={"b"}>
+                        <Trans>Add Liquidity</Trans>
+                    </span>
                     <SettingsTab placeholderSlippage={allowedSlippage} />
                 </div>
                 <div className={"flex-s-between mxs_fd-c"}>
@@ -437,17 +441,23 @@ export default function AddLiquidityPage({
                                 <div className={"flex-s-between mxs_fd-c"}>
                                     <Card isDark={false} classes={"p-1 br-12 w-100 mr-05 mt-1 mxs_mr-0"}>
                                         <div className={"f f-ac fs-1 pos-r"}>
-                                            <span className={"b mr-05"}>{`${noLiquidity ? "Initial" : "Current"} Fee:`}</span>
+                                            <span className={"b mr-05"}>{t`${noLiquidity ? t`Initial` : t`Current`} Fee:`}</span>
                                             <span className={"f f-ac ml-a"}>
                                                 <span className={"mr-05 c-p"}>{noLiquidity ? "0.05" : dynamicFee / 10000}%</span>
                                                 <div className={"fee-helper"} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>
                                                     <Info size={"0.85rem"} stroke={"var(--light-gray)"} />
                                                     <Card isDark classes={"fee-helper__inner pos-a z-10 p-1 br-8 f c bg-dg r-0 w-100 maw-300"}>
-                                                        <span className={"b"}>📄 Tech paper</span>
-                                                        <div className={"fs-085 mt-05"}>Check out how dynamic fee is calculated</div>
+                                                        <span className={"b"}>
+                                                            <Trans>📄 Tech paper</Trans>
+                                                        </span>
+                                                        <div className={"fs-085 mt-05"}>
+                                                            <Trans>Check out how dynamic fee is calculated</Trans>
+                                                        </div>
                                                         <a className={"btn primary w-100 f f-jc pv-025 mt-05 br-8"} download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
                                                             <Download size={16} color={"white"} />
-                                                            <span className={"ml-05"}>Download .PDF</span>
+                                                            <span className={"ml-05"}>
+                                                                <Trans>Download .PDF</Trans>
+                                                            </span>
                                                         </a>
                                                     </Card>
                                                 </div>
@@ -457,17 +467,23 @@ export default function AddLiquidityPage({
                                     <Card isDark={false} classes={"p-1 br-12 w-100 ml-05 mt-1 mxs_ml-0"}>
                                         {price && baseCurrency && quoteCurrency && !noLiquidity ? (
                                             <div className={"f f-ac fs-1"}>
-                                                <span className={"b mr-05 ws-no-wrap fs-1"}>Current Price:</span>
+                                                <span className={"b mr-05 ws-no-wrap fs-1"}>
+                                                    <Trans>Current Price:</Trans>
+                                                </span>
                                                 <div className={"f f-ac ml-a fs-1"}>
                                                     <span className={"mr-05 c-p"}>{invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}</span>
                                                     <span className={"ws-no-wrap fs-075"}>
-                                                        {quoteCurrency?.symbol} per {baseCurrency.symbol}
+                                                        <Trans>
+                                                            {quoteCurrency?.symbol} per {baseCurrency.symbol}
+                                                        </Trans>
                                                     </span>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className={"flex-s-between"}>
-                                                <span className={"b mr-05 ws-no-wrap fs-1"}>Starting Price</span>
+                                                <span className={"b mr-05 ws-no-wrap fs-1"}>
+                                                    <Trans>Starting Price</Trans>
+                                                </span>
                                                 <div className={"f"}>
                                                     <span className={"mr-05"}>
                                                         <StyledInput
@@ -481,23 +497,33 @@ export default function AddLiquidityPage({
                                                         />
                                                     </span>
                                                     <span className={"ws-no-wrap fs-085 mxs_fs-075"} style={{ lineHeight: "21px" }}>
-                                                        {quoteCurrency?.symbol} per {baseCurrency?.symbol}
+                                                        <Trans>
+                                                            {quoteCurrency?.symbol} per {baseCurrency?.symbol}
+                                                        </Trans>
                                                     </span>
                                                 </div>
                                             </div>
                                         )}
                                     </Card>
                                 </div>
-                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: 'relative' } : {}}>
+                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: "relative" } : {}}>
                                     <div className={"f"}>
-                                        <Title style={{ margin: 0, position: "static" }}>Price Range</Title>
+                                        <Title style={{ margin: 0, position: "static" }}>
+                                            <Trans>Price Range</Trans>
+                                        </Title>
                                         <div className="f f-ac w-100">
                                             {outOfRange && (
                                                 <Warning>
-                                                    <span>Warning: Price is out of range</span>
+                                                    <span>
+                                                        <Trans>Warning: Price is out of range</Trans>
+                                                    </span>
                                                 </Warning>
                                             )}
-                                            {invalidRange && <Error>Error: The Min price must be lower than the Max price</Error>}
+                                            {invalidRange && (
+                                                <Error>
+                                                    <Trans>Error: The Min price must be lower than the Max price</Trans>
+                                                </Error>
+                                            )}
                                         </div>
                                     </div>
                                     <div className={"f w-100 mxs_fd-c"}>
@@ -546,7 +572,7 @@ export default function AddLiquidityPage({
                                                         });
                                                     }}
                                                 >
-                                                    Full Range
+                                                    <Trans>Full Range</Trans>
                                                 </button>
                                             )}
                                         </div>
@@ -564,7 +590,9 @@ export default function AddLiquidityPage({
                                             : {}
                                     }
                                 >
-                                    <Title>Deposit Amounts</Title>
+                                    <Title>
+                                        <Trans>Deposit Amounts</Trans>
+                                    </Title>
                                     <TokenPair
                                         style={{
                                             height: `${window.innerWidth < 500 ? "" : "145px"}`,
@@ -577,7 +605,7 @@ export default function AddLiquidityPage({
                                                     disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
                                                     onClick={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toFixed() ?? "")}
                                                 >
-                                                    Max
+                                                    <Trans>Max</Trans>
                                                 </MaxButton>
                                             )}
                                             <CurrencyDropdown
@@ -629,8 +657,8 @@ export default function AddLiquidityPage({
                                                     >
                                                         <ApproveButton onClick={approveACallback} disabled={approvalA === ApprovalState.PENDING}>
                                                             {approvalA === ApprovalState.PENDING
-                                                                ? `Approving ${currencies[Field.CURRENCY_A]?.symbol}`
-                                                                : `Approve ${currencies[Field.CURRENCY_A]?.symbol}`}
+                                                                ? t`Approving ${currencies[Field.CURRENCY_A]?.symbol}`
+                                                                : t`Approve ${currencies[Field.CURRENCY_A]?.symbol}`}
                                                         </ApproveButton>
                                                     </ApproveButtonContainer>
                                                 )}
@@ -642,7 +670,7 @@ export default function AddLiquidityPage({
                                                     disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
                                                     onClick={() => onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "")}
                                                 >
-                                                    Max
+                                                    <Trans>Max</Trans>
                                                 </MaxButton>
                                             )}
                                             <CurrencyDropdown
@@ -692,8 +720,8 @@ export default function AddLiquidityPage({
                                                     >
                                                         <ApproveButton onClick={approveBCallback} disabled={approvalB === ApprovalState.PENDING}>
                                                             {approvalB === ApprovalState.PENDING
-                                                                ? `Approving ${currencies[Field.CURRENCY_B]?.symbol}`
-                                                                : `Approve ${currencies[Field.CURRENCY_B]?.symbol}`}
+                                                                ? t`Approving ${currencies[Field.CURRENCY_B]?.symbol}`
+                                                                : t`Approve ${currencies[Field.CURRENCY_B]?.symbol}`}
                                                         </ApproveButton>
                                                     </ApproveButtonContainer>
                                                 )}
@@ -737,16 +765,19 @@ export default function AddLiquidityPage({
                                         {isNetworkFailed ? (
                                             <>
                                                 <Loader stroke={"#9ca1a5"} />
-                                                <span style={{ marginLeft: "8px" }}>Updating...</span>
+                                                <span style={{ marginLeft: "8px" }}>
+                                                    <Trans>Updating...</Trans>
+                                                </span>
                                             </>
                                         ) : txHash ? (
                                             <>
-                                                {" "}
                                                 <Loader stroke={"#9ca1a5"} />
-                                                <span style={{ marginLeft: "8px" }}>Adding Liquidity...</span>
+                                                <span style={{ marginLeft: "8px" }}>
+                                                    <Trans>Adding Liquidity...</Trans>
+                                                </span>
                                             </>
                                         ) : (
-                                            "Add Liquidity"
+                                            t`Add Liquidity`
                                         )}
                                     </div>
                                 </AddLiquidityButton>
@@ -754,11 +785,13 @@ export default function AddLiquidityPage({
                         </ButtonsWrapper>
                     </>
                 ) : account ? (
-                    <PairNotSelectedMock>Please select a token pair</PairNotSelectedMock>
+                    <PairNotSelectedMock>
+                        <Trans>Please select a token pair</Trans>
+                    </PairNotSelectedMock>
                 ) : (
                     <PairNotSelectedMock>
                         <AddLiquidityButton onClick={toggleWalletModal} style={{ margin: "auto" }}>
-                            Connect Wallet
+                            <Trans>Connect Wallet</Trans>
                         </AddLiquidityButton>
                     </PairNotSelectedMock>
                 )}

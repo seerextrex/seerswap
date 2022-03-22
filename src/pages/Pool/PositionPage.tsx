@@ -11,7 +11,7 @@ import AutoColumn from "shared/components/AutoColumn";
 import DoubleCurrencyLogo from "components/DoubleLogo";
 import Badge from "components/Badge";
 import CurrencyLogo from "components/CurrencyLogo";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { currencyId } from "utils/currencyId";
 import { formatCurrencyAmount } from "utils/formatCurrencyAmount";
 import { useV3PositionFees } from "hooks/useV3PositionFees";
@@ -238,7 +238,7 @@ export default function PositionPage({
                         });
 
                         addTransaction(response, {
-                            summary: `Collect ${feeValue0.currency.symbol}/${feeValue1.currency.symbol} fees`,
+                            summary: t`Collect ${feeValue0.currency.symbol}/${feeValue1.currency.symbol} fees`,
                         });
                     });
             })
@@ -388,7 +388,7 @@ export default function PositionPage({
                                     <div className={"flex-s-between"}>
                                         {_fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
                                             <span className={"fs-2 c-g"}>
-                                                <Trans>${+_fiatValueOfFees.toFixed(2, { groupSeparator: "," }) < 0.01 ? '<0.01' : _fiatValueOfFees?.toFixed(2, { groupSeparator: "," })}</Trans>
+                                                <Trans>${+_fiatValueOfFees.toFixed(2, { groupSeparator: "," }) < 0.01 ? "<0.01" : _fiatValueOfFees?.toFixed(2, { groupSeparator: "," })}</Trans>
                                             </span>
                                         ) : (
                                             <span className={"fs-2"}>
@@ -399,7 +399,7 @@ export default function PositionPage({
                                             <button className={"btn primary pv-025 ph-05 br-8"} disabled={collecting || !!collectMigrationHash} onClick={collect}>
                                                 {!!collectMigrationHash && !isCollectPending ? (
                                                     <span>
-                                                        <Trans> Collected</Trans>
+                                                        <Trans>Collected</Trans>
                                                     </span>
                                                 ) : isCollectPending || collecting ? (
                                                     <Dots>

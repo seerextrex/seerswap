@@ -15,25 +15,26 @@ import { FormattedRewardInterface, Reward } from "../../models/interfaces";
 import Card from "../../shared/components/Card/Card";
 import Menu from "../../components/Menu";
 import { InfinityIcon } from "../../components/StakingMenu/styled";
+import { t, Trans } from "@lingui/macro";
 
 const stakingMenuList = [
     {
-        title: "My Farms",
+        title: t`My Farms`,
         icon: <AlignJustify size={18} />,
         link: "farms",
     },
     {
-        title: "Infinite Farms",
+        title: t`Infinite Farms`,
         icon: <InfinityIcon size={18} />,
         link: "infinite-farms",
     },
     {
-        title: "Limit Farms",
+        title: t`Limit Farms`,
         icon: <Zap size={18} />,
         link: "limit-farms",
     },
     {
-        title: "Farms History",
+        title: t`Farms History`,
         icon: <Calendar size={18} />,
         link: "farms-history",
     },
@@ -69,7 +70,9 @@ export default function StakingPage() {
     return (
         <>
             <Helmet>
-                <title>Algebra — Farming</title>
+                <title>
+                    <Trans>Algebra — Farming</Trans>
+                </title>
             </Helmet>
             <Card classes={"br-24 p-2 mm_p-1"}>
                 <Menu
@@ -85,7 +88,9 @@ export default function StakingPage() {
                     </Route>
                     <Route exact path={`${path}/farms`}>
                         <Helmet>
-                            <title>Algebra — Farming • My Farms</title>
+                            <title>
+                                <Trans>Algebra — Farming • My Farms</Trans>
+                            </title>
                         </Helmet>
                         {account ? (
                             <>
@@ -102,29 +107,37 @@ export default function StakingPage() {
                         ) : (
                             <div className={"f f-ac f-jc f c h-400"}>
                                 <AlignJustify size={40} stroke={"white"} />
-                                <p className={"mb-1"}>Connect your account to view farms</p>
+                                <p className={"mb-1"}>
+                                    <Trans>Connect your account to view farms</Trans>
+                                </p>
                                 <button className={"btn primary pv-05 ph-2 br-8 b"} onClick={toggleWalletModal}>
-                                    Connect Wallet
+                                    <Trans>Connect Wallet</Trans>
                                 </button>
                             </div>
                         )}
                     </Route>
                     <Route exact path={`${path}/limit-farms`}>
                         <Helmet>
-                            <title>Algebra — Farming • Limit Farms</title>
+                            <title>
+                                <Trans>Algebra — Farming • Limit Farms</Trans>
+                            </title>
                         </Helmet>
                         <FarmingEventsPage data={allEvents} refreshing={allEventsLoading} fetchHandler={() => fetchAllEventsFn(true)} now={now} />
                     </Route>
                     <Route exact path={`${path}/infinite-farms`}>
                         <Helmet>
-                            <title>Algebra — Farming • Infinite Farms</title>
+                            <title>
+                                <Trans>Algebra — Farming • Infinite Farms</Trans>
+                            </title>
                         </Helmet>
 
                         <EternalFarmsPage data={eternalFarms} refreshing={eternalFarmsLoading} fetchHandler={() => fetchEternalFarmsFn(true)} />
                     </Route>
                     <Route exact strict path={`${path}/farms-history`}>
                         <Helmet>
-                            <title>Algebra — Farming • Farms History history</title>
+                            <title>
+                                <Trans>Algebra — Farming • Farms History history</Trans>
+                            </title>
                         </Helmet>
                         <EventsHistory />
                     </Route>

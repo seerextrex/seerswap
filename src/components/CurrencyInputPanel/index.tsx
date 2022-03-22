@@ -166,11 +166,13 @@ export default function CurrencyInputPanel({
                                             ) : currency ? (
                                                 <div style={{ display: "flex", alignItems: "center" }}>
                                                     <span>
-                                                        {shallow && showBalance && balance && page === "addLiq" && +balance.toSignificant(4) < 0.0001
-                                                            ? `Balance: < 0.0001 ${currency.symbol}`
-                                                            : shallow && showBalance && balance
-                                                            ? `Balance: ${balanceString} ${currency.symbol}`
-                                                            : currency.symbol}
+                                                        {shallow && showBalance && balance && page === "addLiq" && +balance.toSignificant(4) < 0.0001 ? (
+                                                            <Trans>{`Balance: < 0.0001 ${currency.symbol}`}</Trans>
+                                                        ) : shallow && showBalance && balance ? (
+                                                            <Trans>{`Balance: ${balanceString} ${currency.symbol}`}</Trans>
+                                                        ) : (
+                                                            currency.symbol
+                                                        )}
                                                     </span>
                                                     {showBalance && balance && !shallow ? (
                                                         <span style={{ position: "absolute", right: 0, fontSize: "13px" }} title={balance.toExact()}>
@@ -232,7 +234,9 @@ export default function CurrencyInputPanel({
                     currency &&
                     swap && (
                         <FiatRow page={page}>
-                            <RowBetween>Updating...</RowBetween>
+                            <RowBetween>
+                                <Trans>Updating...</Trans>
+                            </RowBetween>
                         </FiatRow>
                     )
                 )}

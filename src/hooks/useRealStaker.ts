@@ -9,6 +9,7 @@ import { stakerClient } from '../apollo/client'
 import { FROZEN_STAKED } from '../utils/graphql-queries'
 import { TransactionResponse } from '@ethersproject/providers'
 import { FactorySubgraph, Frozen, StakeHash, StakeSubgraph, SubgraphResponse, SubgraphResponseStaking } from '../models/interfaces'
+import { t } from "@lingui/macro"
 
 export function useRealStakerHandlers() {
     const addTransaction = useTransactionAdder()
@@ -37,7 +38,7 @@ export function useRealStakerHandlers() {
             const result: TransactionResponse = await realStaker.enter(bigNumStakerCount._hex)
 
             addTransaction(result, {
-                summary: `Staked ${stakedCount} ALGB`
+                summary: t`Staked ${stakedCount} ALGB`
             })
             setStaked({ hash: result.hash })
 
@@ -64,7 +65,7 @@ export function useRealStakerHandlers() {
             const result: TransactionResponse = await realStaker.leave(claimSum._hex)
 
             addTransaction(result, {
-                summary: `Claimed ${formatEther(claimCount)} ALGB`
+                summary: t`Claimed ${formatEther(claimCount)} ALGB`
             })
             setStaked({ hash: result.hash })
 
@@ -93,7 +94,7 @@ export function useRealStakerHandlers() {
             const result: TransactionResponse = await realStaker.leave(bigNumUnstakeAmount._hex)
 
             addTransaction(result, {
-                summary: `Unstaked ${unstakeCount} ALGB`
+                summary: t`Unstaked ${unstakeCount} ALGB`
             })
             setStaked({ hash: result.hash })
 
@@ -110,7 +111,7 @@ export function useRealStakerHandlers() {
             const { data: { stakeTxes }, error: error } = await stakerClient.query<SubgraphResponse<Frozen[]>>({
                 query: FROZEN_STAKED(),
                 fetchPolicy: 'network-only',
-                variables: {account: account.toLowerCase(), timestamp: Math.round(Date.now() / 1000)}
+                variables: { account: account.toLowerCase(), timestamp: Math.round(Date.now() / 1000) }
             })
 
             setFrozen(stakeTxes)

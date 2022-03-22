@@ -10,6 +10,8 @@ import Menu from "../../components/Menu";
 import { Grid, RefreshCw, StopCircle } from "react-feather";
 import "./index.scss";
 
+import { t, Trans } from "@lingui/macro";
+
 function InfoPage() {
     const { path } = useRouteMatch();
     const {
@@ -21,12 +23,12 @@ function InfoPage() {
 
     const infoMenuList = [
         {
-            title: "Pools",
+            title: t`Pools`,
             icon: <Grid size={18} />,
             link: "/info/pools",
         },
         {
-            title: "Tokens",
+            title: t`Tokens`,
             icon: <StopCircle size={18} />,
             link: "/info/tokens",
         },
@@ -35,7 +37,9 @@ function InfoPage() {
     return (
         <>
             <Helmet>
-                <title>Algebra — Info</title>
+                <title>
+                    <Trans>Algebra — Info</Trans>
+                </title>
             </Helmet>
             <div className={"w-100 maw-1180"}>
                 <Switch>
@@ -44,7 +48,9 @@ function InfoPage() {
                     </Route>
                     <Route exact path={`${path}/pools`}>
                         <Helmet>
-                            <title>Algebra — Info • Pools</title>
+                            <title>
+                                <Trans>Algebra — Info • Pools</Trans>
+                            </title>
                         </Helmet>
                         <Card classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>
@@ -82,7 +88,9 @@ function InfoPage() {
                     />
                     <Route exact path={`${path}/tokens`}>
                         <Helmet>
-                            <title>Algebra — Info • Tokens</title>
+                            <title>
+                                <Trans>Algebra — Info • Tokens</Trans>
+                            </title>
                         </Helmet>
                         <Card classes={"br-24 pa-2 mb-1 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>

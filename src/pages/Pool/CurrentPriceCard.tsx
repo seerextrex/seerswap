@@ -23,7 +23,7 @@ export function CurrentPriceCard({ inverted, pool, currencyQuote, currencyBase }
                 <span className={"fs-125 ta-c"}>{(inverted ? pool.token1Price : pool.token0Price).toSignificant(6)} </span>
                 <span className={"c-lg fs-085 ta-c"} style={{ color: "var(--white)" }}>
                     <Trans>
-                        {currencyQuote?.symbol} per {currencyBase?.symbol}
+                        {currencyQuote?.symbol} <Trans>per</Trans> {currencyBase?.symbol}
                     </Trans>
                 </span>
             </AutoColumn>

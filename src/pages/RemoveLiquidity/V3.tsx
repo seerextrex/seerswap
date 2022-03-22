@@ -188,7 +188,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         setTxnHash("");
     }, [onPercentSelectForSlider, txnHash]);
 
-    const pendingText = `Removing ${liquidityValue0?.toSignificant(6)} ${liquidityValue0?.currency?.symbol} and ${liquidityValue1?.toSignificant(6)} ${liquidityValue1?.currency?.symbol}`;
+    const pendingText = t`Removing ${liquidityValue0?.toSignificant(6)} ${liquidityValue0?.currency?.symbol} and ${liquidityValue1?.toSignificant(6)} ${liquidityValue1?.currency?.symbol}`;
 
     function modalHeader() {
         return (

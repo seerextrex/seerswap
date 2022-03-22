@@ -11,6 +11,7 @@ import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './web3'
 import { useTokenAllowance } from './useTokenAllowance'
 
+import { t } from '@lingui/macro'
 export enum ApprovalState {
     UNKNOWN = 'UNKNOWN',
     NOT_APPROVED = 'NOT_APPROVED',
@@ -89,7 +90,7 @@ export function useApproveCallback(
             })
             .then((response: TransactionResponse) => {
                 addTransaction(response, {
-                    summary: 'Approved ' + (amountToApprove.currency.symbol || 'LP-tokens'),
+                    summary: t`Approved ` + (amountToApprove.currency.symbol || t`LP-tokens`),
                     approval: { tokenAddress: token.address, spender: spender }
                 })
             })

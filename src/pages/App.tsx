@@ -26,6 +26,7 @@ import { useFarmingActionsHandlers } from "../state/farming/hooks";
 import { useActiveWeb3React } from "../hooks/web3";
 import { BugReportLink, GlobalStyle, InternetError, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
+import { Trans } from "@lingui/macro";
 
 const RealStakerPage = React.lazy(() => import("./RealStakerPage"));
 const StakingAnalyticsPage = React.lazy(() => import("./StakingAnalyticsPage"));
@@ -88,13 +89,21 @@ export default function App() {
                                         }}
                                         stroke={"white"}
                                     />
-                                    <span>Connecting to Polygon</span>
+                                    <span>
+                                        <Trans>Connecting to Polygon</Trans>
+                                    </span>
                                 </div>
                             </NetworkFailedCard>
                         )}
                         <div className={"pb-2 mm_pb-2 mxs_pb-2"} style={{ zIndex: 2 }}>
                             <Popups />
-                            <React.Suspense fallback={<p>Loading....</p>}>
+                            <React.Suspense
+                                fallback={
+                                    <p>
+                                        <Trans>Loading...</Trans>
+                                    </p>
+                                }
+                            >
                                 <Switch>
                                     <Route strict path="/farming" component={StakingPage} />
 

@@ -15,6 +15,8 @@ import { DefaultFarming, DefaultFarmingWithError, GetRewardsHashInterface, GetRe
 import { FarmingType } from '../models/enums'
 import { fetchLimitFarmTVL } from 'utils/api'
 
+import { t } from "@lingui/macro"
+
 export function useStakerHandlers() {
 
     const { chainId, account } = useActiveWeb3React()
@@ -110,7 +112,7 @@ export function useStakerHandlers() {
             }
 
             addTransaction(result, {
-                summary: `Claiming reward`
+                summary: t`Claiming reward`
             })
 
             setClaimReward({ hash: result.hash, id: token, error: null, farmingType: farmingType === FarmingType.ETERNAL ? 0 : 1 })
@@ -160,7 +162,7 @@ export function useStakerHandlers() {
             }
 
             addTransaction(result, {
-                summary: 'Claiming reward'
+                summary: t`Claiming reward`
             })
 
             setEternalCollectReward({ hash: result.hash, id: token })
@@ -190,7 +192,7 @@ export function useStakerHandlers() {
 
             setClaimHash({ hash: result.hash, id: tokenReward })
             addTransaction(result, {
-                summary: 'Claiming reward'
+                summary: t`Claiming reward`
             })
         } catch (e) {
             setClaimHash('failed')
@@ -231,7 +233,7 @@ export function useStakerHandlers() {
             )
 
             addTransaction(result, {
-                summary: `Rewards were claimed!`
+                summary: t`Rewards were claimed!`
             })
 
             setGetRewards({ hash: result.hash, id: token, farmingType: eventType })
@@ -271,7 +273,7 @@ export function useStakerHandlers() {
             )
 
             addTransaction(result, {
-                summary: `NFT #${token} was withdrawn!`
+                summary: t`NFT #${token} was withdrawn!`
             })
 
             setWithdrawn({ hash: result.hash, id: token })
@@ -333,7 +335,7 @@ export function useStakerHandlers() {
                 }
 
                 addTransaction(result, {
-                    summary: `NFT #${selectedNFT.id} was deposited!`
+                    summary: t`NFT #${selectedNFT.id} was deposited!`
                 })
 
                 setStaked({ hash: result.hash, id: selectedNFT.id })
@@ -376,7 +378,7 @@ export function useStakerHandlers() {
                 )
 
                 addTransaction(result, {
-                    summary: `NFT #${selectedNFT.id} was transferred!`
+                    summary: t`NFT #${selectedNFT.id} was transferred!`
                 })
 
                 setTransfered({ hash: result.hash, id: selectedNFT.id })
@@ -401,7 +403,6 @@ export function useStakerHandlers() {
         let current
 
         try {
-
 
             const nonFunPosManInterface = new Interface(NON_FUN_POS_MAN)
 
@@ -428,7 +429,7 @@ export function useStakerHandlers() {
                 const result = await nonFunPosManContract.multicall([approveData, transferData], { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
 
                 addTransaction(result, {
-                    summary: `NFT #${selectedNFT.id} was approved!`
+                    summary: t`NFT #${selectedNFT.id} was approved!`
                 })
 
                 setApproved({ hash: result.hash, id: selectedNFT.id })
@@ -478,7 +479,7 @@ export function useStakerHandlers() {
                 })
 
             addTransaction(result, {
-                summary: `NFT #${l2TokenId} was sent!`
+                summary: t`NFT #${l2TokenId} was sent!`
             })
 
             setSendNFTL2({ hash: result.hash, id: l2TokenId })

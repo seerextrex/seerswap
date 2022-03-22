@@ -1,29 +1,29 @@
-import { Trans } from '@lingui/macro'
-import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import JSBI from 'jsbi'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Plus } from 'react-feather'
-import { useLocation } from 'react-router'
-import { Text } from 'rebass'
-import { ButtonDropdownLight } from '../../components/Button'
-import { LightCard } from '../../components/Card'
-import { AutoColumn, ColumnCenter } from '../../components/Column'
-import CurrencyLogo from '../../components/CurrencyLogo'
-import { FindPoolTabs } from '../../components/NavigationTabs'
-import { MinimalPositionCard } from '../../components/PositionCard'
-import Row from '../../components/Row'
-import CurrencySearchModal from '../../components/SearchModal/CurrencySearchModal'
-import { SwitchLocaleLink } from '../../components/SwitchLocaleLink'
-import { ExtendedEther } from '../../constants/tokens'
-import usePrevious from '../../hooks/usePrevious'
-import { PairState, useV2Pair } from '../../hooks/useV2Pairs'
-import { useActiveWeb3React } from '../../hooks/web3'
-import { usePairAdder } from '../../state/user/hooks'
-import { useTokenBalance } from '../../state/wallet/hooks'
-import { Dots } from '../Pool/styleds'
-import { Helmet } from 'react-helmet'
-import { WrappedCurrency } from '../../models/types'
-import Card from 'shared/components/Card/Card'
+import { Trans } from "@lingui/macro";
+import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import JSBI from "jsbi";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Plus } from "react-feather";
+import { useLocation } from "react-router";
+import { Text } from "rebass";
+import { ButtonDropdownLight } from "../../components/Button";
+import { LightCard } from "../../components/Card";
+import { AutoColumn, ColumnCenter } from "../../components/Column";
+import CurrencyLogo from "../../components/CurrencyLogo";
+import { FindPoolTabs } from "../../components/NavigationTabs";
+import { MinimalPositionCard } from "../../components/PositionCard";
+import Row from "../../components/Row";
+import CurrencySearchModal from "../../components/SearchModal/CurrencySearchModal";
+import { SwitchLocaleLink } from "../../components/SwitchLocaleLink";
+import { ExtendedEther } from "../../constants/tokens";
+import usePrevious from "../../hooks/usePrevious";
+import { PairState, useV2Pair } from "../../hooks/useV2Pairs";
+import { useActiveWeb3React } from "../../hooks/web3";
+import { usePairAdder } from "../../state/user/hooks";
+import { useTokenBalance } from "../../state/wallet/hooks";
+import { Dots } from "../Pool/styleds";
+import { Helmet } from "react-helmet";
+import { WrappedCurrency } from "../../models/types";
+import Card from "shared/components/Card/Card";
 
 enum Fields {
     TOKEN0 = 0,
@@ -31,155 +31,154 @@ enum Fields {
 }
 
 function useQuery() {
-    return new URLSearchParams(useLocation().search)
+    return new URLSearchParams(useLocation().search);
 }
 
 export default function PoolFinder() {
-    const query = useQuery()
+    const query = useQuery();
 
-    const { account, chainId } = useActiveWeb3React()
+    const { account, chainId } = useActiveWeb3React();
 
-    const [showSearch, setShowSearch] = useState<boolean>(false)
-    const [activeField, setActiveField] = useState<number>(Fields.TOKEN1)
+    const [showSearch, setShowSearch] = useState<boolean>(false);
+    const [activeField, setActiveField] = useState<number>(Fields.TOKEN1);
 
-    const [currency0, setCurrency0] = useState<Currency | null>(() => (chainId ? ExtendedEther.onChain(chainId) : null))
-    const [currency1, setCurrency1] = useState<Currency | null>(null)
+    const [currency0, setCurrency0] = useState<Currency | null>(() => (chainId ? ExtendedEther.onChain(chainId) : null));
+    const [currency1, setCurrency1] = useState<Currency | null>(null);
 
-    const [pairState, pair] = useV2Pair(currency0 ?? undefined, currency1 ?? undefined)
-    const [sushiPairState, sushiPair] = useV2Pair(currency0 ?? undefined, currency1 ?? undefined, true)
+    const [pairState, pair] = useV2Pair(currency0 ?? undefined, currency1 ?? undefined);
+    const [sushiPairState, sushiPair] = useV2Pair(currency0 ?? undefined, currency1 ?? undefined, true);
 
-    const [prevPairState, prevPair] = usePrevious([pairState, pair]) || []
+    const [prevPairState, prevPair] = usePrevious([pairState, pair]) || [];
     const [_pairState, _pair] = useMemo(() => {
         if (!pairState && !pair && prevPairState && prevPair) {
-            return [prevPairState, prevPair]
+            return [prevPairState, prevPair];
         }
-        return [pairState, pair]
-    }, [pairState, pair])
+        return [pairState, pair];
+    }, [pairState, pair]);
 
-    const [prevSushiPairState, prevSushiPair] = usePrevious([sushiPairState, sushiPair]) || []
+    const [prevSushiPairState, prevSushiPair] = usePrevious([sushiPairState, sushiPair]) || [];
     const [_sushiPairState, _sushiPair] = useMemo(() => {
         if (!sushiPairState && !sushiPair && prevSushiPairState && prevSushiPair) {
-            return [prevSushiPairState, prevSushiPair]
+            return [prevSushiPairState, prevSushiPair];
         }
-        return [sushiPairState, sushiPair]
-    }, [sushiPairState, sushiPair])
+        return [sushiPairState, sushiPair];
+    }, [sushiPairState, sushiPair]);
 
-    const addPair = usePairAdder()
+    const addPair = usePairAdder();
     useEffect(() => {
         if (pair) {
-            addPair(pair)
+            addPair(pair);
         }
         if (sushiPair) {
-            addPair(sushiPair)
+            addPair(sushiPair);
         }
-    }, [pair, sushiPair, addPair])
+    }, [pair, sushiPair, addPair]);
 
-    const position: CurrencyAmount<Token> | undefined = useTokenBalance(account ?? undefined, pair?.liquidityToken)
-    const prevPosition = usePrevious(position)
+    const position: CurrencyAmount<Token> | undefined = useTokenBalance(account ?? undefined, pair?.liquidityToken);
+    const prevPosition = usePrevious(position);
     const _position = useMemo(() => {
         if (!position && prevPosition) {
-            return prevPosition
+            return prevPosition;
         }
-        return position
-    }, [position])
+        return position;
+    }, [position]);
 
-    const hasPosition = Boolean(_position && JSBI.greaterThan(_position.quotient, JSBI.BigInt(0)))
-    const prevHasPosition = usePrevious(hasPosition)
+    const hasPosition = Boolean(_position && JSBI.greaterThan(_position.quotient, JSBI.BigInt(0)));
+    const prevHasPosition = usePrevious(hasPosition);
     const _hasPosition = useMemo(() => {
         if (!hasPosition && prevHasPosition) {
-            return prevHasPosition
+            return prevHasPosition;
         }
-        return hasPosition
-    }, [hasPosition])
+        return hasPosition;
+    }, [hasPosition]);
 
-    const sushiPosition: CurrencyAmount<Token> | undefined = useTokenBalance(
-        account ?? undefined,
-        sushiPair?.liquidityToken
-    )
-    const prevSushiPosition = usePrevious(sushiPosition)
+    const sushiPosition: CurrencyAmount<Token> | undefined = useTokenBalance(account ?? undefined, sushiPair?.liquidityToken);
+    const prevSushiPosition = usePrevious(sushiPosition);
     const _sushiPosition = useMemo(() => {
         if (!sushiPosition && prevSushiPosition) {
-            return prevSushiPosition
+            return prevSushiPosition;
         }
-        return sushiPosition
-    }, [sushiPosition])
+        return sushiPosition;
+    }, [sushiPosition]);
 
-    const hasSushiPosition = Boolean(_sushiPosition && JSBI.greaterThan(_sushiPosition.quotient, JSBI.BigInt(0)))
-    const prevHasSushiPosition = usePrevious(hasSushiPosition)
+    const hasSushiPosition = Boolean(_sushiPosition && JSBI.greaterThan(_sushiPosition.quotient, JSBI.BigInt(0)));
+    const prevHasSushiPosition = usePrevious(hasSushiPosition);
     const _hasSushiPosition = useMemo(() => {
         if (!hasSushiPosition && prevHasSushiPosition) {
-            return prevHasSushiPosition
+            return prevHasSushiPosition;
         }
-        return hasSushiPosition
-    }, [hasSushiPosition])
+        return hasSushiPosition;
+    }, [hasSushiPosition]);
 
     const handleCurrencySelect = useCallback(
         (currency: Currency) => {
             if (activeField === Fields.TOKEN0) {
-                setCurrency0(currency)
+                setCurrency0(currency);
             } else {
-                setCurrency1(currency)
+                setCurrency1(currency);
             }
         },
         [activeField]
-    )
+    );
 
     const handleSearchDismiss = useCallback(() => {
-        setShowSearch(false)
-    }, [setShowSearch])
+        setShowSearch(false);
+    }, [setShowSearch]);
 
     return (
         <>
             <Helmet>
-                <title>Algebra — Find Pool</title>
+                <title>
+                    <Trans>Algebra — Find Pool</Trans>
+                </title>
             </Helmet>
-            <Card classes={'p-2 br-24 w-100 maw-765 mh-a mxs_p-1'}>
-                <FindPoolTabs origin={query.get('origin') ?? '/migrate'} />
-                <AutoColumn gap='md'>
-                    <Card isDark={false} classes={'p-1 br-12'}>
-                        <div className={'l ta-c w-100'}>
+            <Card classes={"p-2 br-24 w-100 maw-765 mh-a mxs_p-1"}>
+                <FindPoolTabs origin={query.get("origin") ?? "/migrate"} />
+                <AutoColumn gap="md">
+                    <Card isDark={false} classes={"p-1 br-12"}>
+                        <div className={"l ta-c w-100"}>
                             <Trans>Select a token to find your liquidity on SushiSwap or QuickSwap.</Trans>
                         </div>
                     </Card>
                     <ButtonDropdownLight
                         onClick={() => {
-                            setShowSearch(true)
-                            setActiveField(Fields.TOKEN0)
+                            setShowSearch(true);
+                            setActiveField(Fields.TOKEN0);
                         }}
                     >
                         {currency0 ? (
                             <Row>
                                 <CurrencyLogo currency={currency0 as WrappedCurrency} />
-                                <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+                                <Text fontWeight={500} fontSize={20} marginLeft={"12px"}>
                                     {currency0.symbol}
                                 </Text>
                             </Row>
                         ) : (
-                            <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+                            <Text fontWeight={500} fontSize={20} marginLeft={"12px"}>
                                 <Trans>Select a token</Trans>
                             </Text>
                         )}
                     </ButtonDropdownLight>
 
                     <ColumnCenter>
-                        <Plus size='16' color='white' />
+                        <Plus size="16" color="white" />
                     </ColumnCenter>
 
                     <ButtonDropdownLight
                         onClick={() => {
-                            setShowSearch(true)
-                            setActiveField(Fields.TOKEN1)
+                            setShowSearch(true);
+                            setActiveField(Fields.TOKEN1);
                         }}
                     >
                         {currency1 ? (
                             <Row>
                                 <CurrencyLogo currency={currency1 as WrappedCurrency} />
-                                <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+                                <Text fontWeight={500} fontSize={20} marginLeft={"12px"}>
                                     {currency1.symbol}
                                 </Text>
                             </Row>
                         ) : (
-                            <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+                            <Text fontWeight={500} fontSize={20} marginLeft={"12px"}>
                                 <Trans>Select a token</Trans>
                             </Text>
                         )}
@@ -189,13 +188,13 @@ export default function PoolFinder() {
                         (_hasSushiPosition && (
                             <ColumnCenter
                                 style={{
-                                    justifyItems: 'center',
-                                    backgroundColor: '',
-                                    padding: '12px 0px',
-                                    borderRadius: '12px'
+                                    justifyItems: "center",
+                                    backgroundColor: "",
+                                    padding: "12px 0px",
+                                    borderRadius: "12px",
                                 }}
                             >
-                                <Text textAlign='center' fontWeight={500}>
+                                <Text textAlign="center" fontWeight={500}>
                                     <Trans>Pool Found!</Trans>
                                 </Text>
                             </ColumnCenter>
@@ -203,33 +202,21 @@ export default function PoolFinder() {
                     {currency0 && currency1 ? (
                         _pairState === PairState.EXISTS || _sushiPairState === PairState.EXISTS ? (
                             <>
-                                {_sushiPairState === PairState.EXISTS ? (
-                                    _hasSushiPosition &&
-                                    _sushiPair &&
-                                    <MinimalPositionCard sushi={true} pair={_sushiPair}
-                                                         border='1px solid #CED0D9' />
-                                ) : (
-                                    <></>
-                                )}
-                                {_pairState === PairState.EXISTS ? (
-                                    _hasPosition && _pair &&
-                                    <MinimalPositionCard pair={_pair} border='1px solid #CED0D9' />
-                                ) : (
-                                    <></>
-                                )}
+                                {_sushiPairState === PairState.EXISTS ? _hasSushiPosition && _sushiPair && <MinimalPositionCard sushi={true} pair={_sushiPair} border="1px solid #CED0D9" /> : <></>}
+                                {_pairState === PairState.EXISTS ? _hasPosition && _pair && <MinimalPositionCard pair={_pair} border="1px solid #CED0D9" /> : <></>}
                             </>
                         ) : _pairState === PairState.INVALID && _sushiPairState === PairState.INVALID ? (
-                            <LightCard padding='45px 10px'>
-                                <AutoColumn gap='sm' justify='center'>
-                                    <Text textAlign='center' fontWeight={500}>
+                            <LightCard padding="45px 10px">
+                                <AutoColumn gap="sm" justify="center">
+                                    <Text textAlign="center" fontWeight={500}>
                                         <Trans>Invalid pair.</Trans>
                                     </Text>
                                 </AutoColumn>
                             </LightCard>
                         ) : _pairState === PairState.LOADING || _sushiPairState === PairState.LOADING ? (
-                            <LightCard padding='45px 10px'>
-                                <AutoColumn gap='sm' justify='center'>
-                                    <Text textAlign='center'>
+                            <LightCard padding="45px 10px">
+                                <AutoColumn gap="sm" justify="center">
+                                    <Text textAlign="center">
                                         <Trans>Loading</Trans>
                                         <Dots />
                                     </Text>
@@ -249,5 +236,5 @@ export default function PoolFinder() {
             </Card>
             <SwitchLocaleLink />
         </>
-    )
+    );
 }

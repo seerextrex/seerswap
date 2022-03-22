@@ -7,6 +7,8 @@ import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
 import "./index.scss";
 
+import { Trans } from "@lingui/macro";
+
 interface FarmingEventsPageProps {
     data: { currentEvents: any[]; futureEvents: any[] } | null;
     now: number;
@@ -71,7 +73,9 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
                 ) : (
                     <div className={"farmings-page__loader f c f-ac f-jc"}>
                         <Frown size={35} stroke={"white"} className={"mb-1"} />
-                        <div>No limit farms</div>
+                        <div>
+                            <Trans>No limit farms</Trans>
+                        </div>
                     </div>
                 )
             ) : (

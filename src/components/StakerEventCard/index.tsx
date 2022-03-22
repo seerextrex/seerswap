@@ -15,6 +15,8 @@ import { formatAmountTokens } from "utils/numbers";
 import "./index.scss";
 import { Link } from "react-router-dom";
 
+import { Trans, t } from "@lingui/macro";
+
 interface StakerEventCardProps {
     active?: boolean;
     now?: number;
@@ -79,14 +81,18 @@ export function StakerEventCard({
                         <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619", 18, "WETH") as WrappedCurrency} size={"35px"} />
                     </div>
                     <div>
-                        <h3 className={"fs-075 b"}>POOL</h3>
+                        <h3 className={"fs-075 b"}>
+                            <Trans>POOL</Trans>
+                        </h3>
                         <div>{"USDC / WETH"}</div>
                     </div>
                 </div>
                 <div style={{ opacity: 0.6 }} className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>
-                        <span className={"c-ph fs-075 b"}>REWARD</span>
+                        <span className={"c-ph fs-075 b"}>
+                            <Trans>REWARD</Trans>
+                        </span>
                         <span>{"ALGB"}</span>
                     </div>
                     <div className={"m-a mr-0 fs-125"} title={"800000"}>
@@ -101,7 +107,9 @@ export function StakerEventCard({
                 <div style={{ opacity: 0.6 }} className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>
-                        <span className={"c-ph fs-075 b"}>BONUS</span>
+                        <span className={"c-ph fs-075 b"}>
+                            <Trans>BONUS</Trans>
+                        </span>
                         <span>{"ALGB"}</span>
                     </div>
                     <div className={"m-a mr-0 fs-125"} title={"200000"}>
@@ -110,29 +118,35 @@ export function StakerEventCard({
                 </div>
                 <div style={{ opacity: 0.6 }} className={"flex-s-between mb-05"}>
                     <div className={"f c"}>
-                        <span className={"fs-075 b"}>ENTRY</span>
+                        <span className={"fs-075 b"}>
+                            <Trans>ENTRY</Trans>
+                        </span>
                         <span>{convertLocalDate(new Date(1648220400 * 1000))}</span>
                         <span>{convertDateTime(new Date(1648220400 * 1000))}</span>
                     </div>
                     <div className={"f c"}>
-                        <span className={"fs-075 b"}>START</span>
+                        <span className={"fs-075 b"}>
+                            <Trans>START</Trans>
+                        </span>
                         <span>{convertLocalDate(new Date(1648407600 * 1000))}</span>
                         <span>{convertDateTime(new Date(1648407600 * 1000))}</span>
                     </div>
                     <div className={"f c"}>
-                        <span className={"fs-075 b"}>END</span>
+                        <span className={"fs-075 b"}>
+                            <Trans>END</Trans>
+                        </span>
                         <span>{convertLocalDate(new Date(1649012400 * 1000))}</span>
                         <span>{convertDateTime(new Date(1649012400 * 1000))}</span>
                     </div>
                 </div>
                 <div className={"fs-075 mb-05 ta-c"}>
-                    <span>{`will be available in ${getCountdownTime(1648220400, Date.now())}`}</span>
+                    <span>{t`will be available in ${getCountdownTime(1648220400, Date.now())}`}</span>
                 </div>
                 <div className={"staker-event-card__progress w-100 br-8 p-025"}>
                     <div className={"br-8"} style={{ width: `${Number(getProgress(1648220400, Math.round(Date.now() / 1000), now).toPrecision(1))}%` }} />
                 </div>
                 <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-v"} style={{ marginTop: "9px", height: "36px", lineHeight: "19px" }}>
-                    ⚡ Upcoming farm
+                    <Trans>⚡ Upcoming farm</Trans>
                 </div>
             </div>
         );
@@ -152,7 +166,9 @@ export function StakerEventCard({
                             <span className="mr-05">
                                 <Lock size={"16px"} stroke={"black"} />
                             </span>
-                            <span>This farm is filled</span>
+                            <span>
+                                <Trans>This farm is filled</Trans>
+                            </span>
                         </div>
                         <div>
                             <Link
@@ -160,7 +176,7 @@ export function StakerEventCard({
                                 className={"staker-event-card__infinite-farming-available"}
                                 style={{ padding: "6px 10px", borderRadius: "8px", color: "var(--white)", background: "var(--primary)" }}
                             >
-                                Infinite WETH farm is available →
+                                <Trans>Infinite WETH farm is available →</Trans>
                             </Link>
                         </div>
                     </div>
@@ -172,14 +188,18 @@ export function StakerEventCard({
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"35px"} />
                 </div>
                 <div>
-                    <h3 className={"fs-075 b"}>POOL</h3>
+                    <h3 className={"fs-075 b"}>
+                        <Trans>POOL</Trans>
+                    </h3>
                     <div>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
             </div>
             <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                 <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, rewardToken.id, 18, rewardToken.symbol) as WrappedCurrency} size={"35px"} />
                 <div className={"ml-1 f c"}>
-                    <span className={"c-ph fs-075 b"}>REWARD</span>
+                    <span className={"c-ph fs-075 b"}>
+                        <Trans>REWARD</Trans>
+                    </span>
                     <span>{rewardToken.symbol}</span>
                 </div>
                 {reward && (
@@ -197,7 +217,9 @@ export function StakerEventCard({
                 <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, bonusRewardToken.id, 18, bonusRewardToken.symbol) as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>
-                        <span className={"c-ph fs-075 b"}>BONUS</span>
+                        <span className={"c-ph fs-075 b"}>
+                            <Trans>BONUS</Trans>
+                        </span>
                         <span>{bonusRewardToken.symbol}</span>
                     </div>
                     {bonusReward && (
@@ -210,12 +232,16 @@ export function StakerEventCard({
             {!eternal && (
                 <div className={"flex-s-between mb-05"}>
                     <div className={"f c"}>
-                        <span className={"fs-075 b"}>START</span>
+                        <span className={"fs-075 b"}>
+                            <Trans>START</Trans>
+                        </span>
                         <span>{startTime && _startTime[0]}</span>
                         <span>{startTime && _startTime[1]}</span>
                     </div>
                     <div className={"f c"}>
-                        <span className={"fs-075 b"}>END</span>
+                        <span className={"fs-075 b"}>
+                            <Trans>END</Trans>
+                        </span>
                         <span>{endTime && _endTime[0]}</span>
                         <span>{endTime && _endTime[1]}</span>
                     </div>
@@ -223,7 +249,7 @@ export function StakerEventCard({
             )}
             {!eternal && (
                 <div className={"fs-075 mb-05 ta-c"}>
-                    {active ? <span>{`ends in ${getCountdownTime(endTime ?? 0, now ?? Date.now())}`}</span> : <span>{`starts in ${getCountdownTime(startTime ?? 0, now ?? Date.now())}`}</span>}
+                    {active ? <span>{t`ends in ${getCountdownTime(endTime ?? 0, now ?? Date.now())}`}</span> : <span>{t`starts in ${getCountdownTime(startTime ?? 0, now ?? Date.now())}`}</span>}
                 </div>
             )}
             {!eternal && (
@@ -237,7 +263,9 @@ export function StakerEventCard({
             )}
             {eternal && (
                 <div className={"staker-event-card__reward-wrapper mb-1 flex-s-between p-05 br-8"}>
-                    <span className={"fs-085"}>Overall APR</span>
+                    <span className={"fs-085"}>
+                        <Trans>Overall APR</Trans>
+                    </span>
                     <span>{apr?.toFixed(2)}%</span>
                 </div>
             )}
@@ -248,16 +276,15 @@ export function StakerEventCard({
                     className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
                     onClick={stakeHandler}
                 >
-                    <span>{locked ? "Filled" : "Farm"}</span>
+                    <span>{locked ? t`Filled` : t`Farm`}</span>
                 </button>
             ) : active ? (
                 <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}>
-                    Started!
+                    <Trans>Started!</Trans>
                 </div>
             ) : (
                 <button className={`btn primary w-100 b pv-05 ${!eternal ? "mt-05" : ""}`} onClick={toggleWalletModal}>
-                    {" "}
-                    Connect Wallet
+                    <Trans>Connect Wallet</Trans>
                 </button>
             )}
         </div>

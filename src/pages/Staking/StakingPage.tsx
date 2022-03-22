@@ -70,9 +70,7 @@ export default function StakingPage() {
     return (
         <>
             <Helmet>
-                <title>
-                    <Trans>Algebra — Farming</Trans>
-                </title>
+                <title>{t`Algebra — Farming`}</title>
             </Helmet>
             <Card classes={"br-24 p-2 mm_p-1"}>
                 <Menu
@@ -88,9 +86,7 @@ export default function StakingPage() {
                     </Route>
                     <Route exact path={`${path}/farms`}>
                         <Helmet>
-                            <title>
-                                <Trans>Algebra — Farming • My Farms</Trans>
-                            </title>
+                            <title>{t`Algebra — Farming • My Farms`}</title>
                         </Helmet>
                         {account ? (
                             <>
@@ -118,26 +114,20 @@ export default function StakingPage() {
                     </Route>
                     <Route exact path={`${path}/limit-farms`}>
                         <Helmet>
-                            <title>
-                                <Trans>Algebra — Farming • Limit Farms</Trans>
-                            </title>
+                            <title>{t`Algebra — Farming • Limit Farms`}</title>
                         </Helmet>
                         <FarmingEventsPage data={allEvents} refreshing={allEventsLoading} fetchHandler={() => fetchAllEventsFn(true)} now={now} />
                     </Route>
                     <Route exact path={`${path}/infinite-farms`}>
                         <Helmet>
-                            <title>
-                                <Trans>Algebra — Farming • Infinite Farms</Trans>
-                            </title>
+                            <title>{t`Algebra — Farming • Infinite Farms`}</title>
                         </Helmet>
 
                         <EternalFarmsPage data={eternalFarms} refreshing={eternalFarmsLoading} fetchHandler={() => fetchEternalFarmsFn(true)} />
                     </Route>
                     <Route exact strict path={`${path}/farms-history`}>
                         <Helmet>
-                            <title>
-                                <Trans>Algebra — Farming • Farms History history</Trans>
-                            </title>
+                            <title>{t`Algebra — Farming • Farms History history`}</title>
                         </Helmet>
                         <EventsHistory />
                     </Route>

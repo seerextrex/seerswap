@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -128,9 +128,7 @@ export default function PoolFinder() {
     return (
         <>
             <Helmet>
-                <title>
-                    <Trans>Algebra — Find Pool</Trans>
-                </title>
+                <title>{t`Algebra — Find Pool`}</title>
             </Helmet>
             <Card classes={"p-2 br-24 w-100 maw-765 mh-a mxs_p-1"}>
                 <FindPoolTabs origin={query.get("origin") ?? "/migrate"} />

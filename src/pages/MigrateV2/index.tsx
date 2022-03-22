@@ -101,9 +101,7 @@ export default function MigrateV2() {
     return (
         <>
             <Helmet>
-                <title>
-                    <Trans>Algebra — Migrate Liquidity</Trans>
-                </title>
+                <title>{t`Algebra — Migrate Liquidity`}</title>
             </Helmet>
             <Card classes={"p-2 br-24 w-100 maw-765 mh-a mxs_p-1"}>
                 <AutoColumn gap="16px">

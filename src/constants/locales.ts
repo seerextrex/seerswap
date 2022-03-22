@@ -1,6 +1,6 @@
 export const SUPPORTED_LOCALES = [
     // order as they appear in the language dropdown
-    'en-US'
+    // 'en-US',
     // 'af-ZA',
     // 'ar-SA',
     // 'ca-ES',
@@ -23,7 +23,7 @@ export const SUPPORTED_LOCALES = [
     // 'pt-BR',
     // 'pt-PT',
     // 'ro-RO',
-    // 'ru-RU',
+    'ru-RU',
     // 'sr-SP',
     // 'sv-SE',
     // 'tr-TR',
@@ -34,7 +34,7 @@ export const SUPPORTED_LOCALES = [
 ] as const
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number]
 
-export const DEFAULT_LOCALE: SupportedLocale = 'en-US'
+export const DEFAULT_LOCALE: SupportedLocale = 'ru-RU'
 
 export const LOCALE_LABEL: { [locale in SupportedLocale]: string } = {
     // 'af-ZA': 'Afrikaans',
@@ -44,7 +44,7 @@ export const LOCALE_LABEL: { [locale in SupportedLocale]: string } = {
     // 'da-DK': 'dansk',
     // 'de-DE': 'Deutsch',
     // 'el-GR': 'ελληνικά',
-    'en-US': 'English'
+    // 'en-US': 'English',
     // 'es-ES': 'Español',
     // 'fi-FI': 'Suomalainen',
     // 'fr-FR': 'français',
@@ -60,7 +60,7 @@ export const LOCALE_LABEL: { [locale in SupportedLocale]: string } = {
     // 'pt-BR': 'português',
     // 'pt-PT': 'português',
     // 'ro-RO': 'Română',
-    // 'ru-RU': 'русский',
+    'ru-RU': 'Русский',
     // 'sr-SP': 'Српски',
     // 'sv-SE': 'svenska',
     // 'tr-TR': 'Türkçe',

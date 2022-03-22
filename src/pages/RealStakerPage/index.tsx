@@ -237,9 +237,7 @@ export default function RealStakerPage({}) {
     return (
         <div className={"real-staker-page maw-765 mh-a"}>
             <Helmet>
-                <title>
-                    <Trans>Algebra — Staking</Trans>
-                </title>
+                <title>{t`Algebra — Staking`}</title>
             </Helmet>
             <div className={"stake-wrapper p-2 br-24 mxs_p-1"} onKeyPress={(e) => enterHandler(e)}>
                 <h1 className={"stake-wrapper__title"}>

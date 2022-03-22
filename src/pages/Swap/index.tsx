@@ -329,9 +329,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 />
                 <meta name={"keywords"} content={t`best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange`} />
 
-                <title>
-                    <Trans>Algebra — Swap</Trans>
-                </title>
+                <title>{t`Algebra — Swap`}</title>
             </Helmet>
             <TokenWarningModal
                 isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}

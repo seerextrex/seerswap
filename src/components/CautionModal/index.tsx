@@ -1,16 +1,13 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { useCallback, useState } from "react";
 import Modal from "../Modal";
 import { AgreeButton, CautionList, CautionListItem, CautionModalInner } from "./styled";
 
 const agreementItems = [
-    <Trans>
-        Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra, and losses due to the fluctuation of prices of tokens in a
-        trading pair or liquidity pool.
-    </Trans>,
-    <Trans>You use Algebra at your own risk and without warranties of any kind. Algebra is not liable for potential losses.</Trans>,
-    <Trans>Before using Algebra, you should review the relevant documentation to make sure you understand how Algebra works.</Trans>,
-    <Trans>You are responsible for completing your own due diligence to understand the risks of trading crypto.</Trans>,
+    t`Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool.`,
+    t`You use Algebra at your own risk and without warranties of any kind. Algebra is not liable for potential losses.`,
+    t`Before using Algebra, you should review the relevant documentation to make sure you understand how Algebra works.`,
+    t`You are responsible for completing your own due diligence to understand the risks of trading crypto.`,
 ];
 
 export default function CautionModal() {

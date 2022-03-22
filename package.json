@@ -145,7 +145,8 @@
     "postinstall": "yarn compile-contract-types",
     "start": "yarn graphql:generate && react-scripts start --host 0.0.0.0",
     "test": "react-scripts test --env=./custom-test-env.js",
-    "analyze": "webpack-bundle-analyzer build/bundle-stats.json"
+    "analyze": "webpack-bundle-analyzer build/bundle-stats.json",
+    "prestart": "touch src/locales/en-US.po"
   },
   "eslintConfig": {
     "extends": "react-app",

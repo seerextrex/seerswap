@@ -58,11 +58,16 @@ export default function PoolInfoPage(
             case ChartSpan.DAY:
                 return day.subtract(1, 'day').unix()
             case ChartSpan.WEEK:
-                return day.subtract(7, 'day').unix()
+                return day.subtract(168 + day.hour(), 'hour').unix()
             case ChartSpan.MONTH:
+                if (day.month() === 2) {
+                    return day.subtract(31, 'day').unix()
+                }
                 return day.subtract(1, 'month').unix()
         }
     }, [span])
+
+    // useEffect(() => console.log(startTimestamp), [startTimestamp])
 
     const chartTypes = [
         {

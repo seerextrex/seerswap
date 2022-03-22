@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpolate, line, max, min, scaleLinear, scaleTime, select } from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
-import { FeeChart } from '../../models/interfaces'
+import { FeeChart, FormattedFeeChart } from '../../models/interfaces'
 import { ChartToken } from '../../models/enums/poolInfoPage'
 import { convertLocalDate } from '../../utils/convertDate'
 import { convertDateTime } from '../../utils/time'
@@ -70,7 +70,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
         const _span = span !== ChartSpan.DAY ? 'day' : 'hour'
 
-        let sameDays = []
+        let sameDays: (FormattedFeeChart | undefined)[] = []
         let res = []
 
         if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0]?.timestamp))) {
@@ -79,8 +79,9 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 timestamp: data[0]?.timestamp
             })
         }
+        // console.log(data)
 
-        for (let i = 1; i < data.length; i++) {
+        for (let i = span === ChartSpan.DAY ? 0 : 1; i < data.length; i++) {
             if (dayjs(data[i]?.timestamp).startOf(span !== ChartSpan.DAY ? 'day' : _span).isSame(dayjs(data[i - 1]?.timestamp).startOf(_span))) {
                 sameDays.push(data[i])
             } else {
@@ -110,6 +111,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             }
         }
 
+        // console.log(sameDays)
+
         if (sameDays.length !== 0) {
             res.push(sameDays.reduce(
                 (prev, cur) => {
@@ -136,6 +139,9 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         if (res.length === 0) {
             res = res.concat([...data])
         }
+
+        // console.log(res)
+        // console.log(res, data)
 
         res = res.map((date) => ({
             timestamp: new Date(dayjs(date?.timestamp).startOf(_span).unix() * 1000),
@@ -221,7 +227,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         return [..._data]
     }, [data, previousData])
 
-    // useEffect(() => console.log(_chartData, previousData, xTicks), [_chartData])
+    // useEffect(() => console.log(_chartData, 'chart'), [_chartData])
 
     const xScale = useMemo(() => scaleTime()
             // @ts-ignore

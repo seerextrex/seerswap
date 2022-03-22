@@ -126,8 +126,6 @@ export function useInfoSubgraph() {
                 return
             }
 
-            console.log('BLOCKS', block24, block48, blockWeek)
-
             const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
 
             const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses)
@@ -556,6 +554,11 @@ export function useInfoSubgraph() {
                 fetchPolicy: 'network-only',
                 variables: { pool, startTimestamp, endTimestamp }
             })
+
+            // console.log(startTimestamp, endTimestamp)
+            //
+            // console.log(poolHourDatas)
+            // console.log(poolHourDatas.map(el => el.volumeUSD).reduce((prev, cur) => +prev + +cur, 0)/ poolHourDatas.length)
 
             if (error) return
 

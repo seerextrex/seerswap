@@ -185,7 +185,7 @@ function swapErrorToUserReadableMessage(error: any): string {
                 return t`An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Algebra.`
             }
             return t`Unknown error${reason ? `: "${reason}"` : ''
-            }. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra.`
+                }. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra.`
     }
 }
 
@@ -321,14 +321,14 @@ export function useSwapCallback(
                         const outputAmount = trade.outputAmount.toSignificant(4)
 
 
-                        const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+                        const base = t`Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
                         const withRecipient =
                             recipient === account
                                 ? base
-                                : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
+                                : t`${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
                                     ? shortenAddress(recipientAddressOrName)
                                     : recipientAddressOrName
-                                }`
+                                    }`
 
                         const tradeVersion = getTradeVersion(trade)
 

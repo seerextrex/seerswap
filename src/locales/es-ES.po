@@ -1390,8 +1390,8 @@ msgid "Staked ALGB"
 msgstr "Staked ALGB"
 
 #: src/hooks/useRealStaker.ts
-msgid "Staked {stakedCount} ALGB"
-msgstr "Staked {stakedCount} ALGB"
+msgid "Staked {0} ALGB"
+msgstr "Staked {0} ALGB"
 
 #: src/components/Header/index.tsx
 #: src/pages/StakingAnalyticsPage/index.tsx

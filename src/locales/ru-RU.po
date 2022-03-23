@@ -1397,8 +1397,8 @@ msgid "Staked ALGB"
 msgstr "Застейкано ALGB"
 
 #: src/hooks/useRealStaker.ts
-msgid "Staked {stakedCount} ALGB"
-msgstr "Застейкано {stakedCount} ALGB"
+msgid "Staked {0} ALGB"
+msgstr "Застейкано {0} ALGB"
 
 #: src/components/Header/index.tsx
 #: src/pages/StakingAnalyticsPage/index.tsx

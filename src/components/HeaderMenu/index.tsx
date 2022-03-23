@@ -11,9 +11,9 @@ const MenuState = {
 };
 
 const Languages = {
-    RUSSIAN: t`🇷🇺⠀ Russian`,
-    ENGLISH: t`🇬🇧⠀ English`,
-    SPANISH: t`🇪🇸⠀ Spanish`,
+    RUSSIAN: t`🇷🇺  Русский`,
+    ENGLISH: t`🇬🇧  English`,
+    SPANISH: t`🇪🇸  Español`,
 };
 
 const Items = {

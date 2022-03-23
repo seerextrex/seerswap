@@ -2043,16 +2043,28 @@ msgid "✨ New farm is available →"
 msgstr "✨ New farm is available →"
 
 #: src/components/HeaderMenu/index.tsx
-msgid "🇪🇸⠀ Spanish"
-msgstr "🇪🇸⠀ Spanish"
+msgid "🇪🇸  Español"
+msgstr "🇪🇸  Español"
 
 #: src/components/HeaderMenu/index.tsx
-msgid "🇬🇧⠀ English"
-msgstr "🇬🇧⠀ English"
+#~ msgid "🇪🇸⠀ Spanish"
+#~ msgstr "🇪🇸⠀ Spanish"
 
 #: src/components/HeaderMenu/index.tsx
-msgid "🇷🇺⠀ Russian"
-msgstr "🇷🇺⠀ Russian"
+msgid "🇬🇧  English"
+msgstr "🇬🇧  English"
+
+#: src/components/HeaderMenu/index.tsx
+#~ msgid "🇬🇧⠀ English"
+#~ msgstr "🇬🇧⠀ English"
+
+#: src/components/HeaderMenu/index.tsx
+msgid "🇷🇺  Русский"
+msgstr "🇷🇺  Русский"
+
+#: src/components/HeaderMenu/index.tsx
+#~ msgid "🇷🇺⠀ Russian"
+#~ msgstr "🇷🇺⠀ Russian"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "📄 Tech paper"

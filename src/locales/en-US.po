@@ -1703,6 +1703,7 @@ msgid "View on Explorer"
 msgstr "View on Explorer"
 
 #: src/components/StakeModal/index.tsx
+#: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "View position"
 msgstr "View position"
 

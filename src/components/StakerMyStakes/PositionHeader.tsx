@@ -7,7 +7,7 @@ import { WrappedCurrency } from "../../models/types";
 import Loader from "../Loader";
 import { ChevronsUp, Send } from "react-feather";
 import { Deposit, UnstakingInterface } from "../../models/interfaces";
-import { t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 
 interface PositionHeaderProps {
     el: Deposit;
@@ -28,7 +28,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     <div className={"ml-05"}>
                         <IsActive el={el} />
                         <a className={"c-w fs-075"} href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`} rel="noopener noreferrer" target="_blank">
-                            View position
+                            <Trans>View position</Trans>
                         </a>
                     </div>
                 </div>

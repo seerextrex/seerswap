@@ -295,6 +295,10 @@ msgstr "Back"
 msgid "Back to pools"
 msgstr "Back to pools"
 
+#: src/pages/PoolInfoPage/index.tsx
+msgid "Back to pools table"
+msgstr "Back to pools table"
+
 #: src/pages/RealStakerPage/index.tsx
 msgid "Balance"
 msgstr "Balance"
@@ -637,6 +641,10 @@ msgstr "Enter valid token address"
 msgid "Enter {chainSymbol} amount"
 msgstr "Enter {chainSymbol} amount"
 
+#: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
+msgid "Entered at:"
+msgstr "Entered at:"
+
 #: src/components/StakerEventCard/index.tsx
 msgid "Entry"
 msgstr "Entry"
@@ -686,6 +694,7 @@ msgstr "Farm"
 
 #: src/components/Header/index.tsx
 #: src/components/PositionListItem/index.tsx
+#: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
 #: src/pages/Pool/index.tsx
 msgid "Farming"
 msgstr "Farming"
@@ -787,6 +796,10 @@ msgstr "In range"
 msgid "Increase Liquidity"
 msgstr "Increase Liquidity"
 
+#: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
+msgid "Infinite"
+msgstr "Infinite"
+
 #: src/components/StakingMenu/index.tsx
 #: src/pages/Staking/StakingPage.tsx
 msgid "Infinite Farms"
@@ -871,6 +884,10 @@ msgstr "Invalid recipient"
 #: src/hooks/useApproveCallback.ts
 msgid "LP-tokens"
 msgstr "LP-tokens"
+
+#: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
+msgid "Limit"
+msgstr "Limit"
 
 #: src/components/StakingMenu/index.tsx
 #: src/pages/Staking/StakingPage.tsx
@@ -1400,8 +1417,12 @@ msgid "Staked ALGB"
 msgstr "Staked ALGB"
 
 #: src/hooks/useRealStaker.ts
-msgid "Staked {0} ALGB"
-msgstr "Staked {0} ALGB"
+#~ msgid "Staked {0} ALGB"
+#~ msgstr "Staked {0} ALGB"
+
+#: src/hooks/useRealStaker.ts
+msgid "Staked {stakedCount} ALGB"
+msgstr "Staked {stakedCount} ALGB"
 
 #: src/components/Header/index.tsx
 #: src/pages/RealStakerPage/index.tsx
@@ -1454,6 +1475,11 @@ msgstr "Swap"
 #: src/pages/Swap/index.tsx
 msgid "Swap Anyway"
 msgstr "Swap Anyway"
+
+#: src/hooks/useSwapCallback.ts
+#: src/hooks/useSwapCallback.ts
+msgid "Swap {inputAmount} {inputSymbol} for {outputAmount} {outputSymbol}"
+msgstr "Swap {inputAmount} {inputSymbol} for {outputAmount} {outputSymbol}"
 
 #: src/components/swap/ConfirmSwapModal.tsx
 msgid "Swapping {0} {1} for {2} {3}"
@@ -1541,6 +1567,10 @@ msgstr "Tokens"
 #: src/components/SearchModal/CurrencyList.tsx
 msgid "Tokens from inactive lists. Import specific tokens below or click Manage to activate more lists."
 msgstr "Tokens from inactive lists. Import specific tokens below or click Manage to activate more lists."
+
+#: src/pages/PoolInfoPage/PoolInfoHeader.tsx
+msgid "Total Collected Fees: <0>${0}</0>"
+msgstr "Total Collected Fees: <0>${0}</0>"
 
 #: src/components/InfoTotalStats/index.tsx
 msgid "Total Value Locked"
@@ -1950,6 +1980,11 @@ msgstr "{0}{1} ALGB"
 #: src/components/SearchModal/ManageLists.tsx
 msgid "{activeTokensOnThisChain} tokens"
 msgstr "{activeTokensOnThisChain} tokens"
+
+#: src/hooks/useSwapCallback.ts
+#: src/hooks/useSwapCallback.ts
+msgid "{base} to {0}"
+msgstr "{base} to {0}"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "{percentForSlider}%"

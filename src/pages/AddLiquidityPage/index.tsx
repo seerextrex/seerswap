@@ -441,7 +441,9 @@ export default function AddLiquidityPage({
                                 <div className={"flex-s-between mxs_fd-c"}>
                                     <Card isDark={false} classes={"p-1 br-12 w-100 mr-05 mt-1 mxs_mr-0"}>
                                         <div className={"f f-ac fs-1 pos-r"}>
-                                            <span className={"b mr-05"}>{t`${noLiquidity ? t`Initial` : t`Current`} Fee:`}</span>
+                                            <span className={"b mr-05"}>
+                                                {noLiquidity ? t`Initial` : t`Current`} {t`Fee:`}
+                                            </span>
                                             <span className={"f f-ac ml-a"}>
                                                 <span className={"mr-05 c-p"}>{noLiquidity ? "0.05" : dynamicFee / 10000}%</span>
                                                 <div className={"fee-helper"} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>

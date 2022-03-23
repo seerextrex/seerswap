@@ -71,6 +71,14 @@ msgstr "ALGB from the Vault"
 msgid "APR"
 msgstr "APR"
 
+#: src/components/HeaderMenu/index.tsx
+msgid "About Us"
+msgstr "About Us"
+
+#: src/components/HeaderMenu/index.tsx
+msgid "About us"
+msgstr "About us"
+
 #: src/components/swap/SwapModalHeader.tsx
 msgid "Accept"
 msgstr "Accept"
@@ -750,6 +758,14 @@ msgstr "Gas price: {0}"
 msgid "Hash:"
 msgstr "Hash:"
 
+#: src/components/HeaderMenu/index.tsx
+msgid "Help Center"
+msgstr "Help Center"
+
+#: src/components/HeaderMenu/index.tsx
+msgid "Help center"
+msgstr "Help center"
+
 #: src/pages/Pool/FilterPanelItem.tsx
 msgid "Hide"
 msgstr "Hide"
@@ -885,6 +901,13 @@ msgstr "Invalid recipient"
 msgid "LP-tokens"
 msgstr "LP-tokens"
 
+#: src/components/HeaderMenu/index.tsx
+#: src/components/HeaderMenu/index.tsx
+#: src/components/HeaderMenu/index.tsx
+#: src/components/HeaderMenu/index.tsx
+msgid "Language"
+msgstr "Language"
+
 #: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
 msgid "Limit"
 msgstr "Limit"
@@ -1019,6 +1042,11 @@ msgstr "Mobile devices are not currently supported. Please use your desktop."
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Month"
 msgstr "Month"
+
+#: src/components/HeaderMenu/index.tsx
+#: src/components/HeaderMenu/index.tsx
+msgid "More"
+msgstr "More"
 
 #: src/components/Settings/index.tsx
 msgid "Multihops"
@@ -1308,6 +1336,10 @@ msgstr "Remove {0}/{1} liquidity"
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Removing {0} {1} and {2} {3}"
 msgstr "Removing {0} {1} and {2} {3}"
+
+#: src/components/Footer/index.tsx
+msgid "Report a bug"
+msgstr "Report a bug"
 
 #: src/components/Settings/index.tsx
 msgid "Restricts swaps to direct pairs only."
@@ -2009,6 +2041,18 @@ msgstr "✨ Earn even more ALGB"
 #: src/components/StakerMyStakes/CheckOut.tsx
 msgid "✨ New farm is available →"
 msgstr "✨ New farm is available →"
+
+#: src/components/HeaderMenu/index.tsx
+msgid "🇪🇸⠀ Spanish"
+msgstr "🇪🇸⠀ Spanish"
+
+#: src/components/HeaderMenu/index.tsx
+msgid "🇬🇧⠀ English"
+msgstr "🇬🇧⠀ English"
+
+#: src/components/HeaderMenu/index.tsx
+msgid "🇷🇺⠀ Russian"
+msgstr "🇷🇺⠀ Russian"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "📄 Tech paper"

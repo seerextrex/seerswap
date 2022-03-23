@@ -3,22 +3,24 @@ import { ArrowLeft, ExternalLink } from "react-feather";
 import { useUserLocaleManager } from "../../state/user/hooks";
 import "./index.scss";
 
-enum MenuState {
-    PRIMARY = "More",
-    LANGUAGE = "Language",
-}
+import { t } from "@lingui/macro";
 
-enum Languages {
-    RUSSIAN = "🇷🇺⠀ Russian",
-    ENGLISH = "🇬🇧⠀ English",
-    SPANISH = "🇪🇸⠀ Spanish",
-}
+const MenuState = {
+    PRIMARY: t`More`,
+    LANGUAGE: t`Language`,
+};
 
-enum Items {
-    LANGUAGE = "Language",
-    ABOUT = "About Us",
-    HELP_CENTER = "Help Center",
-}
+const Languages = {
+    RUSSIAN: t`🇷🇺⠀ Russian`,
+    ENGLISH: t`🇬🇧⠀ English`,
+    SPANISH: t`🇪🇸⠀ Spanish`,
+};
+
+const Items = {
+    LANGUAGE: t`Language`,
+    ABOUT: t`About Us`,
+    HELP_CENTER: t`Help Center`,
+};
 
 enum ItemType {
     LINK,
@@ -31,15 +33,15 @@ export default function HeaderMenu() {
     const [userLocale, setUserLocale] = useUserLocaleManager();
 
     const headers = {
-        [MenuState.PRIMARY]: "More",
-        [MenuState.LANGUAGE]: "Language",
+        [MenuState.PRIMARY]: t`More`,
+        [MenuState.LANGUAGE]: t`Language`,
     };
 
     const items = {
         [MenuState.PRIMARY]: [
-            { title: "Language", type: ItemType.SUB_MENU },
-            { title: "About us", type: ItemType.LINK, link: "https://algebra.finance" },
-            { title: "Help center", type: ItemType.LINK, link: "https://help.algebra.finance" },
+            { title: t`Language`, type: ItemType.SUB_MENU },
+            { title: t`About us`, type: ItemType.LINK, link: "https://algebra.finance" },
+            { title: t`Help center`, type: ItemType.LINK, link: "https://help.algebra.finance" },
         ],
         [MenuState.LANGUAGE]: [
             { title: Languages.RUSSIAN, type: ItemType.ACTION, locale: "ru-RU" },
@@ -48,7 +50,7 @@ export default function HeaderMenu() {
         ],
     };
 
-    const historyStack: MenuState[] = [MenuState.PRIMARY];
+    const historyStack: any = [MenuState.PRIMARY];
 
     const handleSelect = useCallback((item) => {
         if (item.title in headers) {

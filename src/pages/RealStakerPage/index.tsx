@@ -29,6 +29,11 @@ import "./index.scss";
 import Slider from "../../components/Slider";
 import { t, Trans } from "@lingui/macro";
 
+export enum Action {
+    CLAIM,
+    UNSTAKE,
+}
+
 export default function RealStakerPage({}) {
     const currencyId = "0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6";
     const { chainId, account } = useActiveWeb3React();
@@ -334,7 +339,7 @@ export default function RealStakerPage({}) {
                 </h2>
                 <div className={"flex-s-between rg-1 mxs_fd-c"}>
                     <RealStakerResBlocks
-                        action={t`Claim`}
+                        action={Action.CLAIM}
                         currency={fiatValueEarned}
                         amount={earned}
                         title={t`EARNED`}
@@ -345,7 +350,7 @@ export default function RealStakerPage({}) {
                         loading={claimLoading}
                     />
                     <RealStakerResBlocks
-                        action={t`Unstake`}
+                        action={Action.UNSTAKE}
                         currency={fiatValueStaked}
                         amount={staked}
                         title={t`STAKED`}

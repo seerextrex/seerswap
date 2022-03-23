@@ -10,6 +10,7 @@ import { Apr } from "./AprHeader";
 import { useHandleSort } from "../../hooks/useHandleSort";
 import { useHandleArrow } from "../../hooks/useHandleArrow";
 import TableHeader from "../Table/TableHeader";
+import { t, Trans } from "@lingui/macro";
 
 interface InfoPoolsProps {
     data: any;
@@ -20,27 +21,27 @@ interface InfoPoolsProps {
 
 const sortFields = [
     {
-        title: "Pool",
+        title: t`Pool`,
         value: "pool",
     },
     {
-        title: "Volume 24H",
+        title: t`Volume 24H`,
         value: "volumeUSD",
     },
     {
-        title: "Volume 7D",
+        title: t`Volume 7D`,
         value: "volumeUSDWeek",
     },
     {
-        title: "TVL",
+        title: t`TVL`,
         value: "tvlUSD",
     },
     {
-        title: "🚀 APR",
+        title: t`🚀 APR`,
         value: "apr",
     },
     {
-        title: "🔥 Farming",
+        title: t`🔥 Farming`,
         value: "farmingApr",
     },
 ];
@@ -115,14 +116,24 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             <div className={"w-100 pools-table-wrapper"}>
                 <Table gridClass={"grid-pools-table"} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
                     <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={"grid-pools-table"}>
-                        <span className={"table-header__item"}>Pool</span>
-                        <span className={"table-header__item table-header__item--center"}>Volume 24H</span>
-                        <span className={"table-header__item table-header__item--center"}>Volume 7D</span>
-                        <span className={"table-header__item table-header__item--center"}>TVL</span>
+                        <span className={"table-header__item"}>
+                            <Trans>Pool</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item--center"}>
+                            <Trans>Volume 24H</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item--center"}>
+                            <Trans>Volume 7D</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item--center"}>
+                            <Trans>TVL</Trans>
+                        </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Apr />
                         </span>
-                        <span className={"table-header__item table-header__item--center"}>🔥 Farming</span>
+                        <span className={"table-header__item table-header__item--center"}>
+                            <Trans>🔥 Farming</Trans>
+                        </span>
                     </TableHeader>
                 </Table>
             </div>

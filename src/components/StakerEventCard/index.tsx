@@ -82,7 +82,7 @@ export function StakerEventCard({
                     </div>
                     <div>
                         <h3 className={"fs-075 b"}>
-                            <Trans>POOL</Trans>
+                            <Trans>Pool</Trans>
                         </h3>
                         <div>{"USDC / WETH"}</div>
                     </div>
@@ -91,7 +91,7 @@ export function StakerEventCard({
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>
                         <span className={"c-ph fs-075 b"}>
-                            <Trans>REWARD</Trans>
+                            <Trans>Reward</Trans>
                         </span>
                         <span>{"ALGB"}</span>
                     </div>
@@ -108,7 +108,7 @@ export function StakerEventCard({
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6", 18, "ALGB") as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>
                         <span className={"c-ph fs-075 b"}>
-                            <Trans>BONUS</Trans>
+                            <Trans>Bonus</Trans>
                         </span>
                         <span>{"ALGB"}</span>
                     </div>
@@ -119,21 +119,21 @@ export function StakerEventCard({
                 <div style={{ opacity: 0.6 }} className={"flex-s-between mb-05"}>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>
-                            <Trans>ENTRY</Trans>
+                            <Trans>Entry</Trans>
                         </span>
                         <span>{convertLocalDate(new Date(1648220400 * 1000))}</span>
                         <span>{convertDateTime(new Date(1648220400 * 1000))}</span>
                     </div>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>
-                            <Trans>START</Trans>
+                            <Trans>Start</Trans>
                         </span>
                         <span>{convertLocalDate(new Date(1648407600 * 1000))}</span>
                         <span>{convertDateTime(new Date(1648407600 * 1000))}</span>
                     </div>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>
-                            <Trans>END</Trans>
+                            <Trans>End</Trans>
                         </span>
                         <span>{convertLocalDate(new Date(1649012400 * 1000))}</span>
                         <span>{convertDateTime(new Date(1649012400 * 1000))}</span>
@@ -189,7 +189,7 @@ export function StakerEventCard({
                 </div>
                 <div>
                     <h3 className={"fs-075 b"}>
-                        <Trans>POOL</Trans>
+                        <Trans>Pool</Trans>
                     </h3>
                     <div>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
@@ -198,7 +198,7 @@ export function StakerEventCard({
                 <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, rewardToken.id, 18, rewardToken.symbol) as WrappedCurrency} size={"35px"} />
                 <div className={"ml-1 f c"}>
                     <span className={"c-ph fs-075 b"}>
-                        <Trans>REWARD</Trans>
+                        <Trans>Reward</Trans>
                     </span>
                     <span>{rewardToken.symbol}</span>
                 </div>
@@ -218,7 +218,7 @@ export function StakerEventCard({
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, bonusRewardToken.id, 18, bonusRewardToken.symbol) as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>
                         <span className={"c-ph fs-075 b"}>
-                            <Trans>BONUS</Trans>
+                            <Trans>Bonus</Trans>
                         </span>
                         <span>{bonusRewardToken.symbol}</span>
                     </div>
@@ -233,14 +233,14 @@ export function StakerEventCard({
                 <div className={"flex-s-between mb-05"}>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>
-                            <Trans>START</Trans>
+                            <Trans>Start</Trans>
                         </span>
                         <span>{startTime && _startTime[0]}</span>
                         <span>{startTime && _startTime[1]}</span>
                     </div>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>
-                            <Trans>END</Trans>
+                            <Trans>End</Trans>
                         </span>
                         <span>{endTime && _endTime[0]}</span>
                         <span>{endTime && _endTime[1]}</span>

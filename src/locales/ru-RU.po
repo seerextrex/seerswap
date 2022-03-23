@@ -1939,8 +1939,8 @@ msgid "← Back to Pools Overview"
 msgstr "← Вернуться к обзору пулов"
 
 #: src/components/StakerEventCard/index.tsx
-msgid "⚡Upcoming farm"
-msgstr "⚡Предстоящий фарминг"
+msgid "⚡ Upcoming farm"
+msgstr "⚡ Предстоящий фарминг"
 
 #: src/components/StakerMyStakes/CheckOut.tsx
 msgid "✨ New farm is available →"

@@ -36,7 +36,9 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
                     <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
                     <div className={"ml-05"}>
-                        <div className={"b"}>Pool</div>
+                        <div className={"b"}>
+                            <Trans>Pool</Trans>
+                        </div>
                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
                     </div>
                 </div>
@@ -54,7 +56,9 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                         {unstaking && unstaking.id === el.id && unstaking.state !== "done" ? (
                             <>
                                 <Loader size={"1rem"} stroke={"var(--white)"} style={{ margin: "auto" }} />
-                                <span className={"ml-05"}>Withdrawing</span>
+                                <span className={"ml-05"}>
+                                    <Trans>Withdrawing</Trans>
+                                </span>
                             </>
                         ) : (
                             <>
@@ -66,7 +70,9 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                 )}
                 <button className={"btn c-w f f-ac b pv-05 ph-1 ml-05 mxs_ml-0 mxs_f-jc"} onClick={() => setSendModal(el.L2tokenId)}>
                     <Send size={"1rem"} />
-                    <span className={"ml-05"}>Send</span>
+                    <span className={"ml-05"}>
+                        <Trans>Send</Trans>
+                    </span>
                 </button>
             </div>
         </div>

@@ -623,6 +623,7 @@ msgstr "Enter W{chainSymbol} amount"
 msgid "Enter a percent"
 msgstr "Enter a percent"
 
+#: src/components/StakerMyStakes/ModalBody.tsx
 #: src/state/swap/hooks.ts
 msgid "Enter a recipient"
 msgstr "Enter a recipient"
@@ -785,6 +786,10 @@ msgstr "I understand"
 #: src/components/SearchModal/ImportList.tsx
 msgid "If you purchase a token from this list, you may not be able to sell it back."
 msgstr "If you purchase a token from this list, you may not be able to sell it back."
+
+#: src/components/StakerMyStakes/ModalBody.tsx
+msgid "If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account."
+msgstr "If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account."
 
 #: src/components/SearchModal/ImportList.tsx
 #: src/components/SearchModal/ImportRow.tsx
@@ -1089,6 +1094,10 @@ msgstr "NFT #{l2TokenId} was sent!"
 msgid "NFT #{token} was withdrawn!"
 msgstr "NFT #{token} was withdrawn!"
 
+#: src/components/StakerMyStakes/ModalBody.tsx
+msgid "NFT was sent!"
+msgstr "NFT was sent!"
+
 #: src/components/InfoTokens/index.tsx
 #: src/components/InfoTokens/index.tsx
 msgid "Name"
@@ -1207,6 +1216,7 @@ msgstr "Please type the word \"{confirmWord}\" to enable expert mode."
 #: src/components/NavigationTabs/SwapPoolTabs.tsx
 #: src/components/StakerEventCard/index.tsx
 #: src/components/StakerEventCard/index.tsx
+#: src/components/StakerMyStakes/PositionHeader.tsx
 #: src/pages/EventsHistory/index.tsx
 #: src/pages/EventsHistory/index.tsx
 msgid "Pool"
@@ -1403,13 +1413,23 @@ msgstr "Select a token to find your liquidity on SushiSwap or QuickSwap."
 msgid "Selected Range"
 msgstr "Selected Range"
 
+#: src/components/StakerMyStakes/PositionHeader.tsx
 #: src/components/StakingModal/index.tsx
 msgid "Send"
 msgstr "Send"
 
+#: src/components/StakerMyStakes/ModalBody.tsx
 #: src/components/StakingModal/index.tsx
 msgid "Send NFT"
 msgstr "Send NFT"
+
+#: src/components/StakerMyStakes/ModalBody.tsx
+msgid "Send NFT to another account"
+msgstr "Send NFT to another account"
+
+#: src/components/StakerMyStakes/ModalBody.tsx
+msgid "Sending"
+msgstr "Sending"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Set Price Range"
@@ -1748,6 +1768,10 @@ msgstr "Welcome to Algebra, the first concentrated liquidity DEX on Polygon!"
 #: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "Withdraw"
 msgstr "Withdraw"
+
+#: src/components/StakerMyStakes/PositionHeader.tsx
+msgid "Withdrawing"
+msgstr "Withdrawing"
 
 #: src/pages/Swap/index.tsx
 msgid "Wrap"

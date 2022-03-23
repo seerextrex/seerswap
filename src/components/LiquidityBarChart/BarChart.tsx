@@ -159,14 +159,12 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
                 const isLower1 = v.price1 < 0.01;
                 const isLowerTVL = v.tvlToken0 < 0.01;
 
-                InfoRectPrice0.property("innerHTML", <Trans>{`${data[0].token0} Price: ${isLower0 ? v.price0.toFixed(4) : v.price0.toFixed(3)} ${data[0].token1}`}</Trans>);
-                InfoRectPrice1.property("innerHTML", <Trans>{`${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(3)} ${data[0].token0}`}</Trans>);
+                InfoRectPrice0.property("innerHTML", t`${data[0].token0} Price: ${isLower0 ? v.price0.toFixed(4) : v.price0.toFixed(3)} ${data[0].token1}`);
+                InfoRectPrice1.property("innerHTML", t`${data[0].token1} Price: ${isLower1 ? v.price1.toFixed(4) : v.price1.toFixed(3)} ${data[0].token0}`);
 
                 InfoRectPriceLocked.property(
                     "innerHTML",
-                    <Trans>{`${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${isLowerTVL ? v.tvlToken0.toFixed(4) : v.tvlToken0.toFixed(2)} ${
-                        v.index >= activeTickIdxInRange ? token1 : token0
-                    }`}</Trans>
+                    t`${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${isLowerTVL ? v.tvlToken0.toFixed(4) : v.tvlToken0.toFixed(2)} ${v.index >= activeTickIdxInRange ? token1 : token0}`
                 );
             })
             .on("mouseleave", (d, v) => {

@@ -1520,8 +1520,8 @@ msgid "Tokens from inactive lists. Import specific tokens below or click Manage 
 msgstr "Показаны токены из неактивных списков. Импортируйте нужные токены или нажмите «Управлять», чтобы активировать больше списков."
 
 #: src/components/PoolInfoHeader/index.tsx
-msgid "Total Collected Fees: ${0}"
-msgstr "Всего собрано комиссий: ${0}"
+msgid "Total Collected Fees: <0>${0}</0>"
+msgstr "Всего собрано комиссий: <0>${0}</0>"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Total amount of minted xALGB"

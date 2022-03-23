@@ -1512,9 +1512,9 @@ msgstr "Tokens"
 msgid "Tokens from inactive lists. Import specific tokens below or click Manage to activate more lists."
 msgstr "Tokens de listas inactivas. Importe tokens específicos a continuación o haga click en Gestionar para activar mas listas."
 
-#: src/components/PoolInfoHeader/index.tsx
-msgid "Total Collected Fees: ${0}"
-msgstr "Total Comisiones Recolectadas: ${0}"
+#: src/pages/PoolInfoPage/PoolInfoHeader.tsx
+msgid "Total Collected Fees: <0>${0}</0>"
+msgstr "Total Comisiones Recolectadas: <0>${0}</0>"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Total amount of minted xALGB"

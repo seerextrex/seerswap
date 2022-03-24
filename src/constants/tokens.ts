@@ -37,7 +37,7 @@ export const USDC_POLYGON = new Token(
 
 export const ALGEBRA_POLYGON = new Token(
     SupportedChainId.POLYGON,
-    '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6',
+    '0x101f27ad885235468b681999fea8dcc90b4176d8',
     18,
     'ALGB',
     'Algebra'

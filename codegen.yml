@@ -1,10 +1,8 @@
 overrideExisting: true
 schema:
   [
-      'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
-      'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming-t',
-      'https://api.thegraph.com/subgraphs/name/iliaazhel/staker',
-      'https://api.thegraph.com/subgraphs/name/iliaazhel/ethereum-blocks'
+      'https://api-pulsechain.algebra.finance/subgraphs/name/cryptoalgebra/algebra',
+      'https://api-pulsechain.algebra.finance/subgraphs/name/cryptoalgebra/algebra-farming',
   ]
 documents: 'src/**/!(*.d).{ts,tsx}'
 generates:

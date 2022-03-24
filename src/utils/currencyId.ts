@@ -3,7 +3,7 @@ import { Currency } from '@uniswap/sdk-core'
 export function currencyId(currency: Currency, chainId: number): string {
     let chainSymbol = 'MATIC'
 
-    if (chainId === 137) {
+    if (chainId === 940) {
         chainSymbol = 'MATIC'
     }
 

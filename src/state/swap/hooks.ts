@@ -35,7 +35,7 @@ export function useSwapActionHandlers(): {
 
     let symbol: string
 
-    if (chainId === 137) {
+    if (chainId === 940) {
         symbol = 'MATIC'
     }
 
@@ -210,7 +210,7 @@ export function useDerivedSwapInfo(): {
 function parseCurrencyFromURLParameter(urlParam: any, chainId: number): string {
     let chainSymbol
 
-    if (chainId === 137) {
+    if (chainId === 940) {
         chainSymbol = 'MATIC'
     }
 
@@ -247,7 +247,7 @@ export function queryParametersToSwapState(parsedQs: ParsedQs, chainId: number):
     let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency, chainId)
     if (inputCurrency === '' && outputCurrency === '') {
         // default to ETH input
-        if (chainId === 137) {
+        if (chainId === 940) {
             inputCurrency = 'MATIC'
         }
     } else if (inputCurrency === outputCurrency) {

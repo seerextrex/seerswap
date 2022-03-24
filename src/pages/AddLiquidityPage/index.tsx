@@ -101,7 +101,7 @@ export default function AddLiquidityPage({
     // @ts-ignore
     useEffect(async () => {
         if (confirmed.some((hash) => hash === txHash)) {
-            const nonFunPosManContract = new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId || 137], NON_FUN_POS_MAN, provider?.getSigner());
+            const nonFunPosManContract = new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId || 940], NON_FUN_POS_MAN, provider?.getSigner());
 
             try {
                 const nftNum = await nonFunPosManContract.totalSupply();
@@ -306,11 +306,11 @@ export default function AddLiquidityPage({
 
     const handleCurrencySelect = useCallback(
         (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-            const currencyIdNew = currencyId(currencyNew, chainId || 137);
+            const currencyIdNew = currencyId(currencyNew, chainId || 940);
 
             let chainSymbol;
 
-            if (chainId === 137) {
+            if (chainId === 940) {
                 chainSymbol = "MATIC";
             }
 
@@ -488,7 +488,7 @@ export default function AddLiquidityPage({
                                         )}
                                     </Card>
                                 </div>
-                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: 'relative' } : {}}>
+                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: "relative" } : {}}>
                                     <div className={"f"}>
                                         <Title style={{ margin: 0, position: "static" }}>Price Range</Title>
                                         <div className="f f-ac w-100">

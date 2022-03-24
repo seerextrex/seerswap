@@ -291,7 +291,7 @@ export function useStakerHandlers() {
         pool,
         startTime,
         endTime
-    }, eventType) => {
+    }, eventType, selectedTier) => {
 
         if (!account || !provider || !chainId) return
 
@@ -317,18 +317,23 @@ export function useStakerHandlers() {
                     result = await farmingCenterContract.enterEternalFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id,
-                        {
-                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                        }
+                        // {
+                        //     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                        // }
                     )
                 } else {
+
+                    console.log([rewardToken, bonusRewardToken, pool, startTime, endTime],
+                        +selectedNFT.id,
+                        selectedTier)
 
                     result = await farmingCenterContract.enterFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id,
-                        {
-                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                        }
+                        selectedTier,
+                        // {
+                        //     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                        // },
                     )
                 }
 
@@ -370,9 +375,9 @@ export function useStakerHandlers() {
                     account,
                     FARMING_CENTER[chainId],
                     selectedNFT.id,
-                    {
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                    }
+                    // {
+                    //     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                    // }
                 )
 
                 addTransaction(result, {
@@ -425,7 +430,11 @@ export function useStakerHandlers() {
                     selectedNFT.id
                 ])
 
-                const result = await nonFunPosManContract.multicall([approveData, transferData], { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
+                console.log(FARMING_CENTER[chainId], selectedNFT.id)
+
+                const result = await nonFunPosManContract.multicall([approveData, transferData],
+                    // { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
+                )
 
                 addTransaction(result, {
                     summary: `NFT #${selectedNFT.id} was approved!`

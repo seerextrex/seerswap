@@ -326,7 +326,7 @@ export default function PositionPage({
                                     <div className={"f ms_w-100"}>
                                         {currency0 && currency1 && tokenId ? (
                                             <NavLink
-                                                to={`/increase/${currencyId(currency0, chainId || 137)}/${currencyId(currency1, chainId || 137)}/${tokenId}`}
+                                                to={`/increase/${currencyId(currency0, chainId || 940)}/${currencyId(currency1, chainId || 940)}/${tokenId}`}
                                                 className={"btn primary pv-025 ph-05 br-8 mr-05"}
                                             >
                                                 <Trans>Increase Liquidity</Trans>
@@ -388,7 +388,7 @@ export default function PositionPage({
                                     <div className={"flex-s-between"}>
                                         {_fiatValueOfFees?.greaterThan(new Fraction(1, 100)) ? (
                                             <span className={"fs-2 c-g"}>
-                                                <Trans>${+_fiatValueOfFees.toFixed(2, { groupSeparator: "," }) < 0.01 ? '<0.01' : _fiatValueOfFees?.toFixed(2, { groupSeparator: "," })}</Trans>
+                                                <Trans>${+_fiatValueOfFees.toFixed(2, { groupSeparator: "," }) < 0.01 ? "<0.01" : _fiatValueOfFees?.toFixed(2, { groupSeparator: "," })}</Trans>
                                             </span>
                                         ) : (
                                             <span className={"fs-2"}>

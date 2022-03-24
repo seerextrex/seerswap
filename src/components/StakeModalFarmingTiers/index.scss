@@ -1,0 +1,10 @@
+.farming-tier {
+
+    background-color: transparent;
+    align-items: flex-start;
+    color: white;
+
+    &[data-selected=true] {
+        background-color: blue;
+    }
+}

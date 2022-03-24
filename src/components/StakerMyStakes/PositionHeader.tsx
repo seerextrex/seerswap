@@ -33,8 +33,8 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </div>
                 </div>
                 <div className={"f f-ac ml-2 mxs_ml-0 mxs_mv-1"}>
-                    <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
-                    <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
+                    <CurrencyLogo currency={new Token(940, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
+                    <CurrencyLogo currency={new Token(940, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
                     <div className={"ml-05"}>
                         <div className={"b"}>Pool</div>
                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>

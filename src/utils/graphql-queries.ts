@@ -279,6 +279,12 @@ query futureEvents ($timestamp: BigInt) {
         startTime
         endTime
         reward
+        level1multiplier
+        level2multiplier
+        level3multiplier
+        algbAmountForLevel1
+        algbAmountForLevel2
+        algbAmountForLevel3
     }
 }`
 
@@ -293,6 +299,12 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         startTime
         endTime
         reward
+        level1multiplier
+        level2multiplier
+        level3multiplier
+        algbAmountForLevel1
+        algbAmountForLevel2
+        algbAmountForLevel3
     }
 }`
 

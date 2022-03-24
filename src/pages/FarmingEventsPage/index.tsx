@@ -66,7 +66,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
                     <StakerEventCard secret />
                 </div>
             ) : formattedData && formattedData.length === 0 ? (
-                Date.now() < 1647356400000 ? (
+                Date.now() < 1648220400000 ? (
                     <div className={"farmings-page__row mb-1 rg-1 cg-1 "}>{<StakerEventCard secret />}</div>
                 ) : (
                     <div className={"farmings-page__loader f c f-ac f-jc"}>

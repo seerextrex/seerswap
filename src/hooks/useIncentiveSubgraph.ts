@@ -40,7 +40,7 @@ import {
 } from '../models/interfaces'
 import { EthereumWindow } from '../models/types'
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
-import { fetchEternalFarmAPR, fetchLimitFarmTVL } from 'utils/api'
+import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
 import { useEthPrices } from './useEthPrices'
 
 export function useIncentiveSubgraph() {
@@ -307,6 +307,7 @@ export function useIncentiveSubgraph() {
             }
 
             const eventTVL = await fetchLimitFarmTVL()
+            const aprs: Aprs = await fetchLimitFarmAPR()
 
             const price = 1.7
 
@@ -315,11 +316,13 @@ export function useIncentiveSubgraph() {
             setAllEvents({
                 currentEvents: await getEvents(currentEvents.map(el => ({
                     ...el,
-                    active: true
+                    active: true,
+                    apr: aprs[el.id]
                 }))),
                 futureEvents: await getEvents(futureEvents.map(el => ({
                     ...el,
-                    locked: eventTVL[el.id] === undefined ? false : eventTVL[el.id] * price >= EVENT_LOCK
+                    locked: eventTVL[el.id] === undefined ? false : eventTVL[el.id] * price >= EVENT_LOCK,
+                    apr: aprs[el.id]
                 })))
             })
 
@@ -427,7 +430,7 @@ export function useIncentiveSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (incentives.filter((incentive: any) => incentive.endTime < Math.round(Date.now() / 1000)).length !== 0) {
+                    if (incentives.filter((incentive: any) => Math.round(Date.now() / 1000) < incentive.startTime).length !== 0) {
                         _position = {
                             ..._position,
                             finiteAvailable: true
@@ -438,8 +441,6 @@ export function useIncentiveSubgraph() {
                 if (position.eternalFarming) {
 
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(position.eternalFarming)
-
-                    // console.log(rewardToken, 'sdsada')
 
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],

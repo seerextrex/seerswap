@@ -3,8 +3,36 @@
   background-color: var(--ebony-clay);
   position: relative;
 
-  &__reward-wrapper {
-    background-color: var(--dark-ebony-clay);
+  &__reward {
+
+    &-wrapper {
+      background-color: var(--dark-ebony-clay);
+      height: 164px;
+  
+      &-header {
+        padding: 12px 1rem;
+        background-color: #13222e;
+        border-radius: 8px 8px 0 0;
+      }
+    }
+
+    &-list {
+      &-item {
+        padding: 6px 1rem;
+        border-bottom: 1px solid #273e50;
+
+        &__symbol {
+          line-height: 30px;
+          font-size: 14px;
+        }
+      }
+    }
+
+    &-apr {
+      background-color: #2C4B3B;
+      color: #22dc22;
+    }
+
   }
 
   &__plus {

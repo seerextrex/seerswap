@@ -65,6 +65,24 @@ export function StakerEventCard({
         return [convertLocalDate(date), convertDateTime(date)];
     }, [endTime]);
 
+    const rewardList = useMemo(() => {
+
+        if (!reward || !bonusReward) return
+
+        if (rewardToken.id === bonusRewardToken.id) {
+            return [
+                { token: rewardToken, amount: +reward + +bonusReward }
+            ]
+        }
+
+        return [
+            { token: rewardToken, amount: reward },
+            { token: bonusRewardToken, amount: bonusReward }
+        ]
+
+
+    }, [reward, bonusReward, rewardToken, bonusRewardToken])
+
     if (secret) {
         return (
             <div className={"staker-event-card p-1 br-12"} data-refreshing={refreshing}>
@@ -168,49 +186,40 @@ export function StakerEventCard({
             )}
             <div className={"f mb-1"}>
                 <div className={"f mr-1"}>
-                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency} size={"35px"} />
-                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"35px"} />
+                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency} size={"30px"} />
+                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"30px"} />
                 </div>
                 <div>
                     <h3 className={"fs-075 b"}>POOL</h3>
-                    <div>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
+                    <div style={{marginTop: '2px'}}>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
-            </div>
-            <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"} style={{ marginBottom: rewardToken.id !== bonusRewardToken.id ? "1rem" : "6rem" }}>
-                <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, rewardToken.id, 18, rewardToken.symbol) as WrappedCurrency} size={"35px"} />
-                <div className={"ml-1 f c"}>
-                    <span className={"c-ph fs-075 b"}>REWARD</span>
-                    <span>{rewardToken.symbol}</span>
-                </div>
-                {reward && (
-                    <div className={"m-a mr-0 fs-125"} title={reward.toString()}>
-                        {eternal ? <span /> : <span>{formatAmountTokens(bonusReward && rewardToken.id === bonusRewardToken.id ? +reward + +bonusReward : reward)}</span>}
-                    </div>
-                )}
-            </div>
-            {bonusReward && bonusReward > 0 && rewardToken.id !== bonusRewardToken.id && (
-                <div className={"staker-event-card__plus"}>
-                    <div>
-                        <Plus style={{ display: "block" }} size={18} />
-                    </div>
+                {apr && (
+                <div className={"staker-event-card__reward-apr p-05 br-8 ml-a fs-085"}>
+                    <span>{apr?.toFixed(2)}%</span>
+                    <span className="ml-05">APR</span>
                 </div>
             )}
-            {bonusReward && bonusReward > 0 && rewardToken.id !== bonusRewardToken.id && (
-                <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
-                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, bonusRewardToken.id, 18, bonusRewardToken.symbol) as WrappedCurrency} size={"35px"} />
-                    <div className={"ml-1 f c"}>
-                        <span className={"c-ph fs-075 b"}>BONUS</span>
-                        <span>{bonusRewardToken.symbol}</span>
-                    </div>
-                    {bonusReward && (
-                        <div className={"m-a mr-0 fs-125"} title={bonusReward.toString()}>
-                            {eternal ? <span /> : <span>{formatAmountTokens(bonusReward)}</span>}
-                        </div>
-                    )}
-                </div>
-            )}
+            </div>
+            <div className={"staker-event-card__reward-wrapper mb-05 f c br-8"}>
+                <div className="staker-event-card__reward-wrapper-header fs-075 b">REWARDS</div>
+                <ul className="staker-event-card__reward-list">
+                    {console.log(rewardList)}
+                    {
+                        rewardList?.map( (reward: any, i) => 
+                            <li key={i} className="staker-event-card__reward-list-item f">
+                            <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
+                            <span className="staker-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
+                            <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
+                                {eternal ? <span /> : <span>{formatAmountTokens(reward.amount)}</span>}
+                            </div>
+                            </li>
+                            )
+
+                    }
+                </ul>
+            </div>
             {!eternal && (
-                <div className={"flex-s-between mb-05"}>
+                <div className={"flex-s-between mv-1"}>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>START</span>
                         <span>{startTime && _startTime[0]}</span>
@@ -235,12 +244,6 @@ export function StakerEventCard({
                     ) : (
                         <div className={"br-8"} style={{ width: `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }} />
                     )}
-                </div>
-            )}
-            {eternal && (
-                <div className={"staker-event-card__reward-wrapper mb-1 flex-s-between p-05 br-8"}>
-                    <span className={"fs-085"}>Overall APR</span>
-                    <span>{apr?.toFixed(2)}%</span>
                 </div>
             )}
             {account && !active ? (

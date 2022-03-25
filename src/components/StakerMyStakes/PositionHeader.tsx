@@ -27,7 +27,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </NFTPositionIcon>
                     <div className={"ml-05"}>
                         <IsActive el={el} />
-                        <a className={"c-w fs-075"} href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`} rel="noopener noreferrer" target="_blank">
+                        <a style={{textDecoration: 'underline'}} className={"c-w fs-075"} href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`} rel="noopener noreferrer" target="_blank">
                             View position
                         </a>
                     </div>
@@ -36,7 +36,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
                     <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
                     <div className={"ml-05"}>
-                        <div className={"b"}>Pool</div>
+                        <div className={"b fs-075"}>POOL</div>
                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
                     </div>
                 </div>

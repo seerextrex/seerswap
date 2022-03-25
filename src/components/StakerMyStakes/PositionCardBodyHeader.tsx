@@ -15,7 +15,7 @@ export default function PositionCardBodyHeader({ farmingType, date, enteredInEte
         <div className={`flex-s-between b mb-1 fs-125 ${farmingType === FarmingType.ETERNAL ? 'farming-card-header' : ''}`}>
             <span className={'w-100'}>{farmingType === FarmingType.FINITE ? 'Limit ' : 'Infinite '} Farming</span>
             {farmingType === FarmingType.ETERNAL && enteredInEternalFarming && eternalFarming && (
-                <span className={'fs-085 l w-100'}>
+                <span className={'fs-085 l w-100'} style={{textAlign: 'right'}}>
                         <span>Entered at: </span>
                         <span>{date.slice(0, -3)}</span>
                     </span>

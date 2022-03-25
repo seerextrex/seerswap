@@ -324,7 +324,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={'f c f-ac f-jc mih-70'}>
+                                                    <div className={'my-stakes__position-card__empty f c f-ac f-jc'}>
                                                         {el.finiteAvailable ? <CheckOut link={'limit-farms'} /> : <span>No limit farms for now</span>}
                                                     </div>
                                                 )}
@@ -391,8 +391,8 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={'f c f-ac f-jc mih-70'}>
-                                                        {el.finiteAvailable ? <CheckOut link={'infinite-farms'} /> : <div>No infinite farms for now</div>}
+                                                    <div className={'my-stakes__position-card__empty f c f-ac f-jc'}>
+                                                        {el.eternalAvailable ? <CheckOut link={'infinite-farms'} /> : <div>No infinite farms for now</div>}
                                                     </div>
                                                 )}
                                             </div>

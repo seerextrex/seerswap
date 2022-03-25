@@ -176,7 +176,7 @@ export function StakerEventCard({
                     <div>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
             </div>
-            <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"} style={{ marginBottom: bonusReward ? "1rem" : "5rem" }}>
+            <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"} style={{ marginBottom: rewardToken.id !== bonusRewardToken.id ? "1rem" : "6rem" }}>
                 <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, rewardToken.id, 18, rewardToken.symbol) as WrappedCurrency} size={"35px"} />
                 <div className={"ml-1 f c"}>
                     <span className={"c-ph fs-075 b"}>REWARD</span>
@@ -184,18 +184,18 @@ export function StakerEventCard({
                 </div>
                 {reward && (
                     <div className={"m-a mr-0 fs-125"} title={reward.toString()}>
-                        {eternal ? <span /> : <span>{formatAmountTokens(reward)}</span>}
+                        {eternal ? <span /> : <span>{formatAmountTokens(bonusReward && rewardToken.id === bonusRewardToken.id ? +reward + +bonusReward : reward)}</span>}
                     </div>
                 )}
             </div>
-            {bonusReward && bonusReward > 0 && (
+            {bonusReward && bonusReward > 0 && rewardToken.id !== bonusRewardToken.id && (
                 <div className={"staker-event-card__plus"}>
                     <div>
                         <Plus style={{ display: "block" }} size={18} />
                     </div>
                 </div>
             )}
-            {bonusReward && bonusReward > 0 && (
+            {bonusReward && bonusReward > 0 && rewardToken.id !== bonusRewardToken.id && (
                 <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, bonusRewardToken.id, 18, bonusRewardToken.symbol) as WrappedCurrency} size={"35px"} />
                     <div className={"ml-1 f c"}>

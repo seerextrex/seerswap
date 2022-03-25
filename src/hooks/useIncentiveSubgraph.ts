@@ -308,9 +308,9 @@ export function useIncentiveSubgraph() {
 
             const eventTVL = await fetchLimitFarmTVL()
 
-            const price = 1.38
+            const price = 1.7
 
-            const EVENT_LOCK = 300_000
+            const EVENT_LOCK = 600_000
 
             setAllEvents({
                 currentEvents: await getEvents(currentEvents.map(el => ({
@@ -414,8 +414,8 @@ export function useIncentiveSubgraph() {
                         started: +startTime * 1000 < Date.now(),
                         ended: +endTime * 1000 < Date.now(),
                         createdAtTimestamp: +createdAtTimestamp,
-                        incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
-                        incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
+                        incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
+                        incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0
                     }
 
                 } else {

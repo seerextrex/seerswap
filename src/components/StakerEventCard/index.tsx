@@ -176,7 +176,7 @@ export function StakerEventCard({
                     <div>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
             </div>
-            <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
+            <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"} style={{ marginBottom: bonusReward ? "1rem" : "5rem" }}>
                 <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, rewardToken.id, 18, rewardToken.symbol) as WrappedCurrency} size={"35px"} />
                 <div className={"ml-1 f c"}>
                     <span className={"c-ph fs-075 b"}>REWARD</span>
@@ -188,11 +188,13 @@ export function StakerEventCard({
                     </div>
                 )}
             </div>
-            <div className={"staker-event-card__plus"}>
-                <div>
-                    <Plus style={{ display: "block" }} size={18} />
+            {bonusReward && bonusReward > 0 && (
+                <div className={"staker-event-card__plus"}>
+                    <div>
+                        <Plus style={{ display: "block" }} size={18} />
+                    </div>
                 </div>
-            </div>
+            )}
             {bonusReward && bonusReward > 0 && (
                 <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, bonusRewardToken.id, 18, bonusRewardToken.symbol) as WrappedCurrency} size={"35px"} />

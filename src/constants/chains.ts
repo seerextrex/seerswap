@@ -1,5 +1,5 @@
 export enum SupportedChainId {
-    POLYGON = 940
+    POLYGON = 80001
 }
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = [

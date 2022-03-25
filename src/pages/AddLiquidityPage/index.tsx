@@ -101,7 +101,7 @@ export default function AddLiquidityPage({
     // @ts-ignore
     useEffect(async () => {
         if (confirmed.some((hash) => hash === txHash)) {
-            const nonFunPosManContract = new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId || 940], NON_FUN_POS_MAN, provider?.getSigner());
+            const nonFunPosManContract = new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId || 80001], NON_FUN_POS_MAN, provider?.getSigner());
 
             try {
                 const nftNum = await nonFunPosManContract.totalSupply();
@@ -306,11 +306,11 @@ export default function AddLiquidityPage({
 
     const handleCurrencySelect = useCallback(
         (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-            const currencyIdNew = currencyId(currencyNew, chainId || 940);
+            const currencyIdNew = currencyId(currencyNew, chainId || 80001);
 
             let chainSymbol;
 
-            if (chainId === 940) {
+            if (chainId === 80001) {
                 chainSymbol = "MATIC";
             }
 

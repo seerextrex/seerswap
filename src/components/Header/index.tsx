@@ -37,7 +37,7 @@ export default function Header() {
 
     let chainValue;
 
-    if (chainId === 940) {
+    if (chainId === 80001) {
         chainValue = "MATIC";
     }
 
@@ -83,7 +83,7 @@ export default function Header() {
                 {account && (
                     <>
                         <NetworkCard />
-                        {(chainId === 940 && account && userEthBalance) || networkFailed ? (
+                        {(chainId === 80001 && account && userEthBalance) || networkFailed ? (
                             <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
                                 {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
                             </BalanceText>

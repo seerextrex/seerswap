@@ -176,7 +176,7 @@ export function StakeModal({
                     endTime,
                 },
                 eventType,
-                selectedTier
+                selectedTier || 0
             );
         },
         [selectedNFT, submitState, selectedTier]

@@ -15,14 +15,14 @@ export default function PositionCardBodyStat({ rewardToken, earned, bonusRewardT
     return (
         <div className={"f mxs_fd-c mb-1"}>
             <div className={"f mr-1 w-100 mxs_mb-1"}>
-                <CurrencyLogo size={"35px"} currency={new Token(940, rewardToken?.id, 18, rewardToken?.symbol) as WrappedCurrency} />
+                <CurrencyLogo size={"35px"} currency={new Token(80001, rewardToken?.id, 18, rewardToken?.symbol) as WrappedCurrency} />
                 <div className={"ml-05"}>
                     <h3 className={"fs-075 mb-025"}>Reward</h3>
                     <div title={earned.toString()}>{`${formatReward(+earned)} ${rewardToken.symbol}`}</div>
                 </div>
             </div>
             <div className={"f mr-1 w-100"}>
-                <CurrencyLogo size={"35px"} currency={new Token(940, bonusRewardToken?.id, 18, bonusRewardToken?.symbol) as WrappedCurrency} />
+                <CurrencyLogo size={"35px"} currency={new Token(80001, bonusRewardToken?.id, 18, bonusRewardToken?.symbol) as WrappedCurrency} />
                 <div className={"ml-05"}>
                     <h3 className={"fs-075 mb-025"}>Bonus reward</h3>
                     <div title={bonusEarned.toString()}>{`${formatReward(+bonusEarned)} ${bonusRewardToken.symbol}`}</div>

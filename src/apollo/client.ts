@@ -6,7 +6,7 @@ export const healthClient = new ApolloClient({
 })
 
 export const blockClient = new ApolloClient({
-    uri: 'https://api-pulsechain.algebra.finance/subgraphs/name/cryptoalgebra/pulse-blocks',
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/mumbai-blocks',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -21,7 +21,7 @@ export const blockClient = new ApolloClient({
 })
 
 export const client = new ApolloClient({
-    uri: 'https://api-pulsechain.algebra.finance/subgraphs/name/cryptoalgebra/algebra',
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/mumbai-algebra',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -51,7 +51,7 @@ export const stakerClient = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-    uri: 'https://api-pulsechain.algebra.finance/subgraphs/name/cryptoalgebra/algebra-farming',
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/mumbai-algebra-farming',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

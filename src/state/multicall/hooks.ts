@@ -98,7 +98,7 @@ function useCallsData(
                 if (result?.data && result?.data !== '0x') {
                     data = result.data
                 } else {
-                    console.error(result, result?.data, call)
+                    // console.error(result, result?.data, call)
                 }
 
                 return { valid: true, data, blockNumber: result?.blockNumber }

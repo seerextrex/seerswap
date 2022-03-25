@@ -72,7 +72,7 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
                         _token1 &&
                         ["0x49c1c3ac4f301ad71f788398c0de919c35eaf565", "0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed"].includes(
                             computePoolAddress({
-                                poolDeployer: POOL_DEPLOYER_ADDRESS[940],
+                                poolDeployer: POOL_DEPLOYER_ADDRESS[80001],
                                 tokenA: _token0,
                                 tokenB: _token1,
                             }).toLowerCase()

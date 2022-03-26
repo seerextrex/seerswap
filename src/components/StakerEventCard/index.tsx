@@ -195,7 +195,7 @@ export function StakerEventCard({
                 </div>
                 {apr && (
                 <div className={"staker-event-card__reward-apr p-05 br-8 ml-a fs-085"}>
-                    <span>{apr?.toFixed(2)}%</span>
+                    <span>{Math.round(apr)}%</span>
                     <span className="ml-05">APR</span>
                 </div>
             )}
@@ -218,7 +218,51 @@ export function StakerEventCard({
                     }
                 </ul>
             </div>
-            {!eternal && (
+            {
+                !eternal && <div className="w-100">
+                    <div className="w-100 f">
+                        <div className="w-100 b fs-075" style={{textTransform: 'uppercase', textAlign: 'left'}}>Enter</div>
+                        <div className="w-100 b fs-075" style={{textTransform: 'uppercase', textAlign: 'center'}}>Start</div>
+                        <div className="w-100 b fs-075" style={{textTransform: 'uppercase', textAlign: 'right'}}>End</div>
+                    </div>
+                    <div className="w-100 f mt-05">
+                        <div className="f f-ac f-jc" style={{width: '25px', height: '25px', backgroundColor: 'white',borderRadius: '50%'}}>
+                            <div style={{width: '13px', height: '13px', background: '#36f', borderRadius: '50%'}}></div>
+                        </div>
+                        <div style={{height: '12px', padding: '4px 2px', width: '129px', marginTop: '6px', marginLeft: '-2px', marginRight: '-2px', background: 'white'}}>
+                            <div className="w-100" style={{ height: '4px', borderRadius: '4px', backgroundColor: '#36f'}}></div>
+                        </div>
+                        <div className="f f-ac f-jc" style={{width: '25px', height: '25px', backgroundColor: 'white',borderRadius: '50%'}}>
+                            <div className="blob" style={{width: '13px', height: '13px', background: '#36f', borderRadius: '50%'}}></div>
+                        </div>
+                        <div style={{height: '12px', padding: '4px 2px', width: '129px', marginTop: '6px', marginLeft: '-2px', marginRight: '-2px', background: 'white'}}>
+                            <div className="w-100" style={{ width: '45%', height: '4px', borderRadius: '4px', backgroundColor: '#36f'}}></div>
+                        </div>
+                        <div style={{width: '25px', height: '25px', backgroundColor: 'white', borderRadius: '50%'}} ></div>
+                    </div>
+                    <div className="w-100 f fs-085" style={{marginTop: '10px'}}>
+                        <div className="w-100 f f-ac">
+                            <div className="blob-qw first" style={{ textAlign: 'center', padding: '6px', borderRadius: '4px', backgroundColor: '#3b5971'}}>
+                                <div style={{lineHeight: '18px'}}>April 24</div>
+                                <div>22:00</div>
+                            </div>
+                        </div>
+                        <div className="w-100 f f-ac f-jc">
+                            <div className="blob-qw second" style={{ textAlign: 'center', padding: '6px', borderRadius: '4px', backgroundColor: '#3b5971'}}>
+                                <div style={{lineHeight: '18px'}}>April 24</div>
+                                <div>22:00</div>
+                            </div>
+                        </div>
+                        <div className="w-100 f f-jc" style={{justifyContent: 'flex-end'}}>
+                            <div className="blob-qw third" style={{ textAlign: 'center', padding: '6px', borderRadius: '4px', backgroundColor: '#3b5971'}}>
+                                <div style={{lineHeight: '18px'}}>April 24</div>
+                                <div>22:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+            }
+            {/* {!eternal && (
                 <div className={"flex-s-between mv-1"}>
                     <div className={"f c"}>
                         <span className={"fs-075 b"}>START</span>
@@ -245,7 +289,7 @@ export function StakerEventCard({
                         <div className={"br-8"} style={{ width: `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }} />
                     )}
                 </div>
-            )}
+            )} */}
             {account && !active ? (
                 <button
                     style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}

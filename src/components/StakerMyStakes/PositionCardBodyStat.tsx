@@ -30,7 +30,7 @@ export default function PositionCardBodyStat({ rewardToken, earned, bonusRewardT
     
     return (
         <div className={"f c mxs_fd-c p-1 br-8 mb-1"} style={{backgroundColor: 'var(--ebony-clay)'}}>
-            <h3 className={"fs-075 mb-1"}>Rewards</h3>
+            <h3 className={"fs-075 mb-1"}>Earned rewards</h3>
             <div className="f">
             {
                 rewardList.map( (reward: any, i) => 

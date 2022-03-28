@@ -12,10 +12,10 @@ interface PositionCardBodyHeaderProps {
 
 export default function PositionCardBodyHeader({ farmingType, date, enteredInEternalFarming, eternalFarming }: PositionCardBodyHeaderProps) {
     return (
-        <div className={`flex-s-between b mb-1 fs-125 ${farmingType === FarmingType.ETERNAL ? 'farming-card-header' : ''}`}>
+        <div className={`flex-s-between b mb-1 fs-125 ${farmingType === FarmingType.ETERNAL ? 'farming-card-header ms_fd-c' : ''}`}>
             <span className={'w-100'}>{farmingType === FarmingType.FINITE ? 'Limit ' : 'Infinite '} Farming</span>
             {farmingType === FarmingType.ETERNAL && enteredInEternalFarming && eternalFarming && (
-                <span className={'fs-085 l w-100'} style={{textAlign: 'right'}}>
+                <span className={'fs-085 l w-100 ms_ta-l mxs_ta-l ta-r'}>
                         <span>Entered at: </span>
                         <span>{date.slice(0, -3)}</span>
                     </span>

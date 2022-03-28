@@ -65,6 +65,14 @@ export function StakerEventCard({
         return [convertLocalDate(date), convertDateTime(date)];
     }, [endTime]);
 
+    const _enterTime = useMemo(() => {
+        if (!startTime) return []
+
+        const date = new Date((+startTime - (2 * 24 + 4) * 60 * 60) * 1000)
+
+        return [convertLocalDate(date), convertDateTime(date)]
+    }, [startTime])
+
     const rewardList = useMemo(() => {
 
         if (!reward || !bonusReward) return
@@ -196,14 +204,13 @@ export function StakerEventCard({
                 {apr && (
                 <div className={"staker-event-card__reward-apr p-05 br-8 ml-a fs-085"}>
                     <span>{Math.round(apr)}%</span>
-                    <span className="ml-05">APR</span>
+                    <span style={{marginLeft: '5px'}}>APR</span>
                 </div>
             )}
             </div>
             <div className={"staker-event-card__reward-wrapper mb-05 f c br-8"}>
                 <div className="staker-event-card__reward-wrapper-header fs-075 b">REWARDS</div>
                 <ul className="staker-event-card__reward-list">
-                    {console.log(rewardList)}
                     {
                         rewardList?.map( (reward: any, i) => 
                             <li key={i} className="staker-event-card__reward-list-item f">
@@ -219,77 +226,55 @@ export function StakerEventCard({
                 </ul>
             </div>
             {
-                !eternal && <div className="w-100">
-                    <div className="w-100 f">
-                        <div className="w-100 b fs-075" style={{textTransform: 'uppercase', textAlign: 'left'}}>Enter</div>
-                        <div className="w-100 b fs-075" style={{textTransform: 'uppercase', textAlign: 'center'}}>Start</div>
-                        <div className="w-100 b fs-075" style={{textTransform: 'uppercase', textAlign: 'right'}}>End</div>
+                !eternal && <div className="w-100 staker-event-card__timeline">
+                    <div className="w-100 f staker-event-card__timeline-dates">
+                        <div className="w-100 b fs-075 ta-l">Enter</div>
+                        <div className="w-100 b fs-075 ta-c">Start</div>
+                        <div className="w-100 b fs-075 ta-r">End</div>
                     </div>
                     <div className="w-100 f mt-05">
-                        <div className="f f-ac f-jc" style={{width: '25px', height: '25px', backgroundColor: 'white',borderRadius: '50%'}}>
-                            <div style={{width: '13px', height: '13px', background: '#36f', borderRadius: '50%'}}></div>
+                        <div className="f f-ac f-jc staker-event-card__timeline-circle">
+                                <div className="staker-event-card__timeline-circle__inner"></div>
                         </div>
-                        <div style={{height: '12px', padding: '4px 2px', width: '129px', marginTop: '6px', marginLeft: '-2px', marginRight: '-2px', background: 'white'}}>
-                            <div className="w-100" style={{ height: '4px', borderRadius: '4px', backgroundColor: '#36f'}}></div>
+                        <div className="staker-event-card__timeline-line">
+                                <div className="staker-event-card__timeline-line__inner" style={{ width: active ? '100%' : `${getProgress(Number(createdAtTimestamp), startTime, now)}%`}}></div>
                         </div>
-                        <div className="f f-ac f-jc" style={{width: '25px', height: '25px', backgroundColor: 'white',borderRadius: '50%'}}>
-                            <div className="blob" style={{width: '13px', height: '13px', background: '#36f', borderRadius: '50%'}}></div>
+                        <div className="f f-ac f-jc staker-event-card__timeline-circle">
+                            {
+                                active &&
+                                <div className="staker-event-card__timeline-circle__inner active"></div>
+                            }
+                                </div>
+                        <div className="staker-event-card__timeline-line">
+                            {
+                                active &&
+                                <div className="w-100 staker-event-card__timeline-line__inner" style={{ width: `${getProgress(startTime, endTime, now)}%`}}></div>
+                            }
                         </div>
-                        <div style={{height: '12px', padding: '4px 2px', width: '129px', marginTop: '6px', marginLeft: '-2px', marginRight: '-2px', background: 'white'}}>
-                            <div className="w-100" style={{ width: '45%', height: '4px', borderRadius: '4px', backgroundColor: '#36f'}}></div>
-                        </div>
-                        <div style={{width: '25px', height: '25px', backgroundColor: 'white', borderRadius: '50%'}} ></div>
+                        <div className="staker-event-card__timeline-circle"></div>
                     </div>
                     <div className="w-100 f fs-085" style={{marginTop: '10px'}}>
                         <div className="w-100 f f-ac">
-                            <div className="blob-qw first" style={{ textAlign: 'center', padding: '6px', borderRadius: '4px', backgroundColor: '#3b5971'}}>
-                                <div style={{lineHeight: '18px'}}>April 24</div>
-                                <div>22:00</div>
+                            <div className="staker-event-card__timeline-calendar first ta-c">
+                                <div className="staker-event-card__timeline-calendar-day">{_enterTime[0]}</div>
+                                <div className="staker-event-card__timeline-calendar-hour">{_enterTime[1]}</div>
                             </div>
                         </div>
                         <div className="w-100 f f-ac f-jc">
-                            <div className="blob-qw second" style={{ textAlign: 'center', padding: '6px', borderRadius: '4px', backgroundColor: '#3b5971'}}>
-                                <div style={{lineHeight: '18px'}}>April 24</div>
-                                <div>22:00</div>
+                            <div className="staker-event-card__timeline-calendar second ta-c">
+                                <div className="staker-event-card__timeline-calendar-day">{_startTime[0]}</div>
+                                <div className="staker-event-card__timeline-calendar-hour">{_startTime[1]}</div>
                             </div>
                         </div>
                         <div className="w-100 f f-jc" style={{justifyContent: 'flex-end'}}>
-                            <div className="blob-qw third" style={{ textAlign: 'center', padding: '6px', borderRadius: '4px', backgroundColor: '#3b5971'}}>
-                                <div style={{lineHeight: '18px'}}>April 24</div>
-                                <div>22:00</div>
+                            <div className="staker-event-card__timeline-calendar third ta-c">
+                                <div className="staker-event-card__timeline-calendar-day">{_endTime[0]}</div>
+                                <div className="staker-event-card__timeline-calendar-hour">{_endTime[1]}</div>
                             </div>
                         </div>
                     </div>
                     </div>
             }
-            {/* {!eternal && (
-                <div className={"flex-s-between mv-1"}>
-                    <div className={"f c"}>
-                        <span className={"fs-075 b"}>START</span>
-                        <span>{startTime && _startTime[0]}</span>
-                        <span>{startTime && _startTime[1]}</span>
-                    </div>
-                    <div className={"f c"}>
-                        <span className={"fs-075 b"}>END</span>
-                        <span>{endTime && _endTime[0]}</span>
-                        <span>{endTime && _endTime[1]}</span>
-                    </div>
-                </div>
-            )}
-            {!eternal && (
-                <div className={"fs-075 mb-05 ta-c"}>
-                    {active ? <span>{`ends in ${getCountdownTime(endTime ?? 0, now ?? Date.now())}`}</span> : <span>{`starts in ${getCountdownTime(startTime ?? 0, now ?? Date.now())}`}</span>}
-                </div>
-            )}
-            {!eternal && (
-                <div className={"staker-event-card__progress w-100 br-8 p-025"}>
-                    {active ? (
-                        <div className={"br-8"} style={{ width: `${getProgress(startTime, endTime, now)}%` }} />
-                    ) : (
-                        <div className={"br-8"} style={{ width: `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }} />
-                    )}
-                </div>
-            )} */}
             {account && !active ? (
                 <button
                     style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}

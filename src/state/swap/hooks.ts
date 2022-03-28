@@ -122,8 +122,9 @@ export function useDerivedSwapInfo(): {
         recipient
     } = useSwapState()
 
-    const inputCurrency = useCurrency(inputCurrencyId)
-    const outputCurrency = useCurrency(outputCurrencyId)
+
+    const inputCurrency = useCurrency(inputCurrencyId || '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
+    const outputCurrency = useCurrency(outputCurrencyId || '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
 
     const recipientLookup = useENS(recipient ?? undefined)
     const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null

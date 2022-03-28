@@ -31,7 +31,7 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                 return
             }  
             setSelectedTier(tier);
-            selectTier(tier);
+            selectTier(tier.toString());
         }, [selectedTier]
     );
 

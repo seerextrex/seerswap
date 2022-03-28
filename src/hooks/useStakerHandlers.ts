@@ -317,9 +317,9 @@ export function useStakerHandlers() {
                     result = await farmingCenterContract.enterEternalFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id,
-                        // {
-                        //     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                        // }
+                        {
+                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                        }
                     )
                 } else {
 
@@ -331,9 +331,9 @@ export function useStakerHandlers() {
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id,
                         selectedTier,
-                        // {
-                        //     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                        // },
+                        {
+                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                        },
                     )
                 }
 
@@ -375,9 +375,9 @@ export function useStakerHandlers() {
                     account,
                     FARMING_CENTER[chainId],
                     selectedNFT.id,
-                    // {
-                    //     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                    // }
+                    {
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                    }
                 )
 
                 addTransaction(result, {

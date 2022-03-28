@@ -197,6 +197,8 @@ export function StakeModal({
 
     const isEnoughALGB = useMemo(() => {
 
+        if (farmingType === FarmingType.FINITE) return true
+
         if (!balance) return false
 
         const _balance = +balance.toSignificant(4)
@@ -281,7 +283,9 @@ export function StakeModal({
                             <X size={18} stroke={"var(--white)"} />
                         </button>
                     </div>
-                    <StakeModalFarmingTiers
+                    {
+                        farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 &&
+                        <StakeModalFarmingTiers
                         tiersLimits={{
                             low: algbAmountForLevel1,
                             medium: algbAmountForLevel2,
@@ -293,10 +297,14 @@ export function StakeModal({
                             high: level3multiplier,
                         }}
                         selectTier={tierSelectionHandler}
-                    />
-                           <div className="mv-1 f w-100">
-                <span className="b" style={{fontSize: '18px'}}>2. Select a Position</span>
-            </div>
+                        />
+                    }
+                    {
+                        farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 &&
+                        <div className="mv-1 f w-100">
+                        <span className="b" style={{fontSize: '18px'}}>{`${farmingType === FarmingType.FINITE ? '2. ' : ''}Select a Position`}</span>
+                    </div>
+                    }
                     <div style={{marginLeft: '-1rem', position: 'relative', marginRight: '-1rem'}} className="mb-1 pl-1 pr-1">
                         {chunkedPositions && chunkedPositions.length === 0 ? (
                             <div className={"h-400 f c f-ac f-jc"}>
@@ -361,12 +369,14 @@ export function StakeModal({
                             </NFTPositionsRow>
                         )}
                     </div>
-                    { selectedTier === '' ? <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
+                    { selectedTier === '' && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0  ? <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
                     Select Tier
-                </button> : selectedTier && !isEnoughALGB ? 
+                </button> : selectedTier && !isEnoughALGB && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? 
                     <button disabled className="btn primary w-100 p-1">Not enough ALGB</button>
                 : selectedNFT ? (
                         <div className={"f mxs_fd-c w-100"}>
+                            {
+                            farmingType === FarmingType.FINITE &&
                             <button disabled={!showApproval || !selectedTier} onClick={approveCallback} id={"farming-approve-algb"} className={"btn primary w-100 mr-1 mxs_mr-0 p-1 mxs_mb-1 farming-approve-algb"}>
                                 {approval === ApprovalState.PENDING ? (
                                     <span className={"f f-ac f-jc"}>
@@ -379,6 +389,7 @@ export function StakeModal({
                                     "Approve ALGB"
                                 )}
                             </button>
+}
                             <button disabled={submitLoader || !NFTsForApprove} onClick={approveNFTs} id={"farming-approve-nft"} className={"btn primary w-100 mr-1 mxs_mr-0 mxs_mb-1 p-1 farming-approve-nft"}>
                                 {submitLoader && submitState === 0 ? (
                                     <span className={"f f-ac f-jc"}>

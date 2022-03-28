@@ -11,71 +11,48 @@ import { useCurrencyBalance } from "state/wallet/hooks";
 import "./index.scss";
 
 import { CurrencyAmount } from "@uniswap/sdk-core";
+import { formatAmountTokens } from "utils/numbers";
+import { HelpCircle } from "react-feather";
+import { Link } from "react-router-dom";
 
 export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier }: { tiersLimits: any; tiersMultipliers: any; selectTier: any }) {
     const { account } = useActiveWeb3React();
 
-    const [selectedTier, setSelectedTier] = useState(0);
+    const [selectedTier, setSelectedTier] = useState();
 
     const balance = useCurrencyBalance(account ?? undefined, ALGEBRA_POLYGON ?? undefined);
     const _balance = useMemo(() => (!balance ? "" : balance.toSignificant(4)), [balance]);
 
-    const _amountForApprove = useMemo(() => {
-        switch (selectedTier) {
-            case 1:
-                return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, tiersLimits.low);
-            case 2:
-                return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, tiersLimits.medium);
-            case 3:
-                return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, tiersLimits.high);
-            default:
-                return undefined;
-        }
-    }, [selectedTier]);
-
-    const [approval, approveCallback] = useApproveCallback(_amountForApprove, FARMING_CENTER[SupportedChainId.POLYGON]);
-
-    const showApproval = approval !== ApprovalState.APPROVED && !!_amountForApprove;
-
     const handleTier = useCallback(
         (tier) => {
+            if (selectedTier === tier) {
+                setSelectedTier(undefined)
+                selectTier('')
+                return
+            }  
             setSelectedTier(tier);
-
-            if (approval === ApprovalState.NOT_APPROVED) return;
-
             selectTier(tier);
-        },
-        [approval]
+        }, [selectedTier]
     );
 
+    const tiersList = useMemo(() => {
+
+        if (!tiersLimits || !tiersMultipliers) return []
+
+        return [
+            { img: '∅', title: 'No tier', lock: 0, earn: 0 },
+            { img: '🍩', title: 'Tier 1', lock: tiersLimits.low, earn: tiersMultipliers.low },
+            { img: '🍇', title: 'Tier 2', lock: tiersLimits.medium, earn: tiersMultipliers.medium },
+            { img: '🎂', title: 'Tier 3', lock: tiersLimits.high, earn: tiersMultipliers.high },
+        ]
+
+    }, [tiersLimits, tiersMultipliers, balance])
+
     return (
-        <div className="p-1 mb-2 f c" style={{ borderRadius: "8px", border: "1px solid red" }}>
-            <div className="f w-100">
-                <button className="p-1 f c mr-1 w-100 farming-tier" data-selected={selectedTier === 1} onClick={() => handleTier(1)} style={{ borderRadius: "6px", border: "1px solid blue" }}>
-                    <div className="mb-05">Tier 1</div>
-                    <div className="f f-jb w-100">
-                        <span>From {tiersLimits.low / 1000000000000000000} ALGB</span>
-                        <span>+ {tiersMultipliers.low / 100}%</span>
-                    </div>
-                </button>
-                <button className="p-1 f c mr-1 w-100 farming-tier" data-selected={selectedTier === 2} onClick={() => handleTier(2)} style={{ borderRadius: "6px", border: "1px solid blue" }}>
-                    <div className="mb-05">Tier 2</div>
-                    <div className="f f-jb w-100">
-                        <span>From {tiersLimits.medium / 1000000000000000000} ALGB</span>
-                        <span>+ {tiersMultipliers.medium / 100}%</span>
-                    </div>
-                </button>
-                <button className="p-1 f c w-100 farming-tier" data-selected={selectedTier === 3} onClick={() => handleTier(3)} style={{ borderRadius: "6px", border: "1px solid blue" }}>
-                    <div className="mb-05">Tier 3</div>
-                    <div className="f f-jb w-100">
-                        <span>From {tiersLimits.high / 1000000000000000000} ALGB</span>
-                        <span>+ {tiersMultipliers.high / 100}%</span>
-                    </div>
-                </button>
-            </div>
-            <div className="mt-1 f-ac f">
+        <div className="f c">
+            <div className="f-ac f farming-tier__balance br-8 mb-1">
+                <div className="farming-tier__balance-title mr-1">Balance</div>
                 <div>
-                    <div className="mb-05 b">You have</div>
                     <div className="f">
                         <CurrencyLogo currency={ALGEBRA_POLYGON as WrappedCurrency} />
                         <div className="ml-05" style={{ lineHeight: "24px" }}>
@@ -83,13 +60,41 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                         </div>
                     </div>
                 </div>
-                <div className="ml-a">
-                    {showApproval && (
-                        <button onClick={approveCallback} className="btn primary p-05">
-                            Approve ALGB
-                        </button>
-                    )}
+                <div className="ml-a mxs_display-none ms_display-none">
+                    <Link to={'/swap'} className="farming-tier__balance-buy b">Buy ALGB →</Link> 
                 </div>
+            </div>
+            <div className="mb-1 f w-100">
+                <span className="b" style={{fontSize: '18px'}}>1. Select a Tier</span>
+                <div className="ml-a f f-ac farming-tier__hint">
+                    <HelpCircle color="#347CC9" size={'14px'} />
+                    <a href="/" className="ml-05">How tiers work</a>
+                </div>
+            </div>
+            <div className="f w-100 farming-tier-wrapper pl-1 pb-1 pr-1 mxs_pb-0">
+                {
+                    tiersList.map( (tier, i) => 
+                    <button className="p-1 f c w-100 farming-tier" key={i} data-selected={selectedTier === i} onClick={() => handleTier(i)}>
+                    <div className="p-1 farming-tier__header w-100 ta-l pos-r">
+                        <div className="farming-tier__img mb-1">{tier.img}</div>
+                        <div className="farming-tier__title b f f-jb">
+                            <span>{tier.title}</span>
+                        </div>
+                    </div>
+                    <div className="p-1 farming-tier__body w-100">
+                        <div className="farming-tier__locked w-100 f mb-1">
+                            <span className="b">Lock:</span>
+                            <span className="ml-a farming-tier__locked-value">{tier.lock ? `${formatAmountTokens(tier.lock / 1000000000000000000, true)} ALGB` : '-'}</span>
+                        </div>
+                        <div className="farming-tier__rewards f">
+                            <span className="b">Earn:</span>
+                            <span className="ml-a farming-tier__rewards-value">{tier.earn ? `${100+(tier.earn / 100)}%` : '100%'}</span>
+                        </div>
+                    </div>
+                </button>
+                    
+                    )
+                }
             </div>
         </div>
     );

@@ -197,7 +197,7 @@ export function StakeModal({
 
     const isEnoughALGB = useMemo(() => {
 
-        if (farmingType === FarmingType.FINITE) return true
+        if (farmingType === FarmingType.ETERNAL) return true
 
         if (!balance) return false
 
@@ -268,7 +268,7 @@ export function StakeModal({
                     </div>
                     <div className={"h-400 f c f-ac f-jc"}>
                         <CheckCircle size={55} stroke={"var(--green)"} />
-                        <p className={"mt-05"}>{`NFT #${selectedNFT?.id} deposited succesfully!`}</p>
+                        <p className={"mt-05"}>{`Position #${selectedNFT?.id} deposited succesfully!`}</p>
                     </div>
                 </div>
             ) : positionsForPoolLoading ? (
@@ -305,7 +305,7 @@ export function StakeModal({
                         <span className="b" style={{fontSize: '18px'}}>{`${farmingType === FarmingType.FINITE ? '2. ' : ''}Select a Position`}</span>
                     </div>
                     }
-                    <div style={{marginLeft: '-1rem', position: 'relative', marginRight: '-1rem'}} className="mb-1 pl-1 pr-1">
+                    <div style={{height: farmingType === FarmingType.ETERNAL ? '400px' : 'unset', marginLeft: '-1rem', position: 'relative', marginRight: '-1rem'}} className="mb-1 pl-1 pr-1">
                         {chunkedPositions && chunkedPositions.length === 0 ? (
                             <div className={"h-400 f c f-ac f-jc"}>
                                 <Frown size={30} stroke={"var(--white)"} />

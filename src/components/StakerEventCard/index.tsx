@@ -65,6 +65,32 @@ export function StakerEventCard({
         return [convertLocalDate(date), convertDateTime(date)];
     }, [endTime]);
 
+    const _enterTime = useMemo(() => {
+        if (!startTime) return []
+
+        const date = new Date((+startTime - (2 * 24 + 4) * 60 * 60) * 1000)
+
+        return [convertLocalDate(date), convertDateTime(date)]
+    }, [startTime])
+
+    const rewardList = useMemo(() => {
+
+        if (!reward || !bonusReward) return
+
+        if (rewardToken.id === bonusRewardToken.id) {
+            return [
+                { token: rewardToken, amount: +reward + +bonusReward }
+            ]
+        }
+
+        return [
+            { token: rewardToken, amount: reward },
+            { token: bonusRewardToken, amount: bonusReward }
+        ]
+
+
+    }, [reward, bonusReward, rewardToken, bonusRewardToken])
+
     if (secret) {
         return (
             <div className={"staker-event-card p-1 br-12"} data-refreshing={refreshing}>
@@ -168,79 +194,87 @@ export function StakerEventCard({
             )}
             <div className={"f mb-1"}>
                 <div className={"f mr-1"}>
-                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency} size={"35px"} />
-                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"35px"} />
+                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency} size={"30px"} />
+                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"30px"} />
                 </div>
                 <div>
                     <h3 className={"fs-075 b"}>POOL</h3>
-                    <div>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
+                    <div style={{marginTop: '2px'}}>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
+                {apr && (
+                <div className={"staker-event-card__reward-apr p-05 br-8 ml-a fs-085"}>
+                    <span>{Math.round(apr)}%</span>
+                    <span style={{marginLeft: '5px'}}>APR</span>
+                </div>
+            )}
             </div>
-            <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
-                <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, rewardToken.id, 18, rewardToken.symbol) as WrappedCurrency} size={"35px"} />
-                <div className={"ml-1 f c"}>
-                    <span className={"c-ph fs-075 b"}>REWARD</span>
-                    <span>{rewardToken.symbol}</span>
-                </div>
-                {reward && (
-                    <div className={"m-a mr-0 fs-125"} title={reward.toString()}>
-                        {eternal ? <span /> : <span>{formatAmountTokens(reward)}</span>}
+            <div className={"staker-event-card__reward-wrapper mb-05 f c br-8"}>
+                <div className="staker-event-card__reward-wrapper-header fs-075 b">REWARDS</div>
+                <ul className="staker-event-card__reward-list">
+                    {
+                        rewardList?.map( (reward: any, i) => 
+                            <li key={i} className="staker-event-card__reward-list-item f">
+                            <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
+                            <span className="staker-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
+                            <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
+                                {eternal ? <span /> : <span>{formatAmountTokens(reward.amount)}</span>}
+                            </div>
+                            </li>
+                            )
+
+                    }
+                </ul>
+            </div>
+            {
+                !eternal && <div className="w-100 staker-event-card__timeline">
+                    <div className="w-100 f staker-event-card__timeline-dates">
+                        <div className="w-100 b fs-075 ta-l">Enter</div>
+                        <div className="w-100 b fs-075 ta-c">Start</div>
+                        <div className="w-100 b fs-075 ta-r">End</div>
                     </div>
-                )}
-            </div>
-            <div className={"staker-event-card__plus"}>
-                <div>
-                    <Plus style={{ display: "block" }} size={18} />
-                </div>
-            </div>
-            {bonusReward && bonusReward > 0 && (
-                <div className={"staker-event-card__reward-wrapper mb-1 f f-ac p-05 br-8"}>
-                    <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, bonusRewardToken.id, 18, bonusRewardToken.symbol) as WrappedCurrency} size={"35px"} />
-                    <div className={"ml-1 f c"}>
-                        <span className={"c-ph fs-075 b"}>BONUS</span>
-                        <span>{bonusRewardToken.symbol}</span>
-                    </div>
-                    {bonusReward && (
-                        <div className={"m-a mr-0 fs-125"} title={bonusReward.toString()}>
-                            {eternal ? <span /> : <span>{formatAmountTokens(bonusReward)}</span>}
+                    <div className="w-100 f mt-05">
+                        <div className="f f-ac f-jc staker-event-card__timeline-circle">
+                                <div className="staker-event-card__timeline-circle__inner"></div>
                         </div>
-                    )}
-                </div>
-            )}
-            {!eternal && (
-                <div className={"flex-s-between mb-05"}>
-                    <div className={"f c"}>
-                        <span className={"fs-075 b"}>START</span>
-                        <span>{startTime && _startTime[0]}</span>
-                        <span>{startTime && _startTime[1]}</span>
+                        <div className="staker-event-card__timeline-line">
+                                <div className="staker-event-card__timeline-line__inner" style={{ width: active ? '100%' : `${getProgress(Number(createdAtTimestamp), startTime, now)}%`}}></div>
+                        </div>
+                        <div className="f f-ac f-jc staker-event-card__timeline-circle">
+                            {
+                                active &&
+                                <div className="staker-event-card__timeline-circle__inner active"></div>
+                            }
+                                </div>
+                        <div className="staker-event-card__timeline-line">
+                            {
+                                active &&
+                                <div className="w-100 staker-event-card__timeline-line__inner" style={{ width: `${getProgress(startTime, endTime, now)}%`}}></div>
+                            }
+                        </div>
+                        <div className="staker-event-card__timeline-circle"></div>
                     </div>
-                    <div className={"f c"}>
-                        <span className={"fs-075 b"}>END</span>
-                        <span>{endTime && _endTime[0]}</span>
-                        <span>{endTime && _endTime[1]}</span>
+                    <div className="w-100 f fs-085" style={{marginTop: '10px'}}>
+                        <div className="w-100 f f-ac">
+                            <div className="staker-event-card__timeline-calendar first ta-c">
+                                <div className="staker-event-card__timeline-calendar-day">{_enterTime[0]}</div>
+                                <div className="staker-event-card__timeline-calendar-hour">{_enterTime[1]}</div>
+                            </div>
+                        </div>
+                        <div className="w-100 f f-ac f-jc">
+                            <div className="staker-event-card__timeline-calendar second ta-c">
+                                <div className="staker-event-card__timeline-calendar-day">{_startTime[0]}</div>
+                                <div className="staker-event-card__timeline-calendar-hour">{_startTime[1]}</div>
+                            </div>
+                        </div>
+                        <div className="w-100 f f-jc" style={{justifyContent: 'flex-end'}}>
+                            <div className="staker-event-card__timeline-calendar third ta-c">
+                                <div className="staker-event-card__timeline-calendar-day">{_endTime[0]}</div>
+                                <div className="staker-event-card__timeline-calendar-hour">{_endTime[1]}</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            )}
-            {!eternal && (
-                <div className={"fs-075 mb-05 ta-c"}>
-                    {active ? <span>{`ends in ${getCountdownTime(endTime ?? 0, now ?? Date.now())}`}</span> : <span>{`starts in ${getCountdownTime(startTime ?? 0, now ?? Date.now())}`}</span>}
-                </div>
-            )}
-            {!eternal && (
-                <div className={"staker-event-card__progress w-100 br-8 p-025"}>
-                    {active ? (
-                        <div className={"br-8"} style={{ width: `${getProgress(startTime, endTime, now)}%` }} />
-                    ) : (
-                        <div className={"br-8"} style={{ width: `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }} />
-                    )}
-                </div>
-            )}
-            {eternal && (
-                <div className={"staker-event-card__reward-wrapper mb-1 flex-s-between p-05 br-8"}>
-                    <span className={"fs-085"}>Overall APR</span>
-                    <span>{apr?.toFixed(2)}%</span>
-                </div>
-            )}
+                    </div>
+            }
             {account && !active ? (
                 <button
                     style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}

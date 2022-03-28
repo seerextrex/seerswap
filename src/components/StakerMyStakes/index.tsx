@@ -247,10 +247,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                             earned={el.incentiveEarned}
                                                             bonusEarned={el.incentiveBonusEarned}
                                                             bonusRewardToken={el.incentiveBonusRewardToken} />
-                                                        <div className={'f'}>
+                                                        <div className={'f mxs_fd-c'}>
                                                             {!el.ended && el.incentiveEndTime * 1000 > Date.now() && (
                                                                 <div className={'f w-100'}>
-                                                                    <div className={'w-100 mr-1'} data-started={el.started || el.incentiveStartTime * 1000 < Date.now()}>
+                                                                    <div className={'w-100'} data-started={el.started || el.incentiveStartTime * 1000 < Date.now()}>
                                                                         {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
                                                                             <div className={'mb-05 p-r fs-075'}>{`Starts in ${getCountdownTime(el.incentiveStartTime, now)}`}</div>
                                                                         )}
@@ -267,7 +267,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                     </div>
                                                                     {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
                                                                         <button
-                                                                            className={'btn primary w-100 br-8 b pv-075'}
+                                                                            className={'btn primary w-100 ml-1 br-8 b pv-075'}
                                                                             disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.FINITE && gettingReward.state !== 'done'}
                                                                             onClick={() => {
                                                                                 setGettingReward({
@@ -324,7 +324,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={'f c f-ac f-jc mih-70'}>
+                                                    <div className={'my-stakes__position-card__empty f c f-ac f-jc'}>
                                                         {el.finiteAvailable ? <CheckOut link={'limit-farms'} /> : <span>No limit farms for now</span>}
                                                     </div>
                                                 )}
@@ -343,7 +343,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                             earned={el.eternalEarned}
                                                             bonusEarned={el.eternalBonusEarned}
                                                             bonusRewardToken={el.eternalBonusRewardToken} />
-                                                        <div className={'f w-100'}>
+                                                        <div className={'f mxs_fd-c w-100'}>
                                                             <button
                                                                 className={'btn primary w-100 b br-8 pv-075'}
                                                                 disabled={
@@ -368,7 +368,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 )}
                                                             </button>
                                                             <button
-                                                                className={'btn primary w-100 b br-8 ml-1 pv-075'}
+                                                                className={'btn primary w-100 b br-8 ml-1 mxs_ml-0 mxs_mt-1 pv-075'}
                                                                 disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== 'done'}
                                                                 onClick={() => {
                                                                     setGettingReward({
@@ -391,8 +391,8 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={'f c f-ac f-jc mih-70'}>
-                                                        {el.finiteAvailable ? <CheckOut link={'infinite-farms'} /> : <div>No infinite farms for now</div>}
+                                                    <div className={'my-stakes__position-card__empty f c f-ac f-jc'}>
+                                                        {el.eternalAvailable ? <CheckOut link={'infinite-farms'} /> : <div>No infinite farms for now</div>}
                                                     </div>
                                                 )}
                                             </div>

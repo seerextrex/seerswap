@@ -81,7 +81,7 @@ export default function StakingPage() {
                 />
                 <Switch>
                     <Route exact path={`${path}`}>
-                        <Redirect to={`${path}/${account ? "farms" : "limit-farms"}`} />
+                        <Redirect to={`${path}/${account ? "farms" : "infinite-farms"}`} />
                     </Route>
                     <Route exact path={`${path}/farms`}>
                         <Helmet>

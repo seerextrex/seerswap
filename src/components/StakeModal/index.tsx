@@ -239,16 +239,11 @@ export function StakeModal({
     }, [isEnoughALGB, selectedTier]);
 
     const _amountForApprove = useMemo(() => {
-        switch (selectedTier) {
-            case '1':
-                return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, algbAmountForLevel1);
-            case '2':
-                return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, algbAmountForLevel2);
-            case '3':
-                return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, algbAmountForLevel3);
-            default:
-                return undefined;
-        }
+
+        if (!selectedTier) return undefined
+
+        return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, selectedTier)
+        
     }, [selectedTier]);
 
     const [approval, approveCallback] = useApproveCallback(_amountForApprove, FARMING_CENTER[SupportedChainId.POLYGON]);

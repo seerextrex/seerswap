@@ -211,9 +211,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                     <Loader stroke={'white'} size={'1.5rem'} />
                 </div>
             ) : shallowPositions && shallowPositions.length === 0 ? (
-                <div className={'my-stakes__loader flex-s-between f-jc'}>
-                    <div className={'mr-05'}>No farms</div>
+                <div className={'my-stakes__loader flex-s-between f c f-jc'}>
                     <Frown size={35} stroke={'white'} />
+                    <div className={'mt-1'}>No farms</div>
                 </div>
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>

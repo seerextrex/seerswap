@@ -33,6 +33,7 @@
     white-space: nowrap;
     cursor: pointer;
     scroll-snap-align: start;
+    width: 164px;
 
     &:last-of-type {
       margin-right: 0;
@@ -47,6 +48,7 @@
       line-height: 24px;
       & > a {
         text-decoration: underline;
+        font-size: 13px;
       }
     }
 

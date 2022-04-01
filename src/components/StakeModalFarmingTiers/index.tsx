@@ -15,38 +15,49 @@ import { formatAmountTokens } from "utils/numbers";
 import { HelpCircle } from "react-feather";
 import { Link } from "react-router-dom";
 
-export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier }: { tiersLimits: any; tiersMultipliers: any; selectTier: any }) {
+import { Token } from "@uniswap/sdk-core";
+
+export default function StakeModalFarmingTiers({
+    tiersLimits,
+    tiersMultipliers,
+    selectTier,
+    lockedTokenAddress,
+}: {
+    tiersLimits: any;
+    tiersMultipliers: any;
+    selectTier: any;
+    lockedTokenAddress: string;
+}) {
     const { account } = useActiveWeb3React();
 
     const [selectedTier, setSelectedTier] = useState();
 
-    const balance = useCurrencyBalance(account ?? undefined, ALGEBRA_POLYGON ?? undefined);
+    const balance = useCurrencyBalance(account ?? undefined, new Token(137, lockedTokenAddress, 18, "SSS", "saas") ?? undefined);
     const _balance = useMemo(() => (!balance ? "" : balance.toSignificant(4)), [balance]);
 
     const handleTier = useCallback(
         (tier) => {
             if (selectedTier === tier) {
-                setSelectedTier(undefined)
-                selectTier('')
-                return
-            }  
+                setSelectedTier(undefined);
+                selectTier("");
+                return;
+            }
             setSelectedTier(tier);
             selectTier(tier);
-        }, [selectedTier]
+        },
+        [selectedTier]
     );
 
     const tiersList = useMemo(() => {
-
-        if (!tiersLimits || !tiersMultipliers) return []
+        if (!tiersLimits || !tiersMultipliers) return [];
 
         return [
-            { img: '∅', title: 'No tier', lock: 0, earn: 0 },
-            { img: '🍩', title: 'Tier 1', lock: tiersLimits.low, earn: tiersMultipliers.low },
-            { img: '🍇', title: 'Tier 2', lock: tiersLimits.medium, earn: tiersMultipliers.medium },
-            { img: '🎂', title: 'Tier 3', lock: tiersLimits.high, earn: tiersMultipliers.high },
-        ]
-
-    }, [tiersLimits, tiersMultipliers, balance])
+            { img: "∅", title: "No tier", lock: 0, earn: 0 },
+            { img: "🍩", title: "Tier 1", lock: tiersLimits.low, earn: tiersMultipliers.low },
+            { img: "🍇", title: "Tier 2", lock: tiersLimits.medium, earn: tiersMultipliers.medium },
+            { img: "🎂", title: "Tier 3", lock: tiersLimits.high, earn: tiersMultipliers.high },
+        ];
+    }, [tiersLimits, tiersMultipliers, balance]);
 
     return (
         <div className="f c">
@@ -61,40 +72,43 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                     </div>
                 </div>
                 <div className="ml-a mxs_display-none ms_display-none">
-                    <Link to={'/swap'} className="farming-tier__balance-buy b">Buy ALGB →</Link> 
+                    <Link to={"/swap"} className="farming-tier__balance-buy b">
+                        Buy ALGB →
+                    </Link>
                 </div>
             </div>
             <div className="mb-1 f w-100">
-                <span className="b" style={{fontSize: '18px'}}>1. Select a Tier</span>
+                <span className="b" style={{ fontSize: "18px" }}>
+                    1. Select a Tier
+                </span>
                 <div className="ml-a f f-ac farming-tier__hint">
-                    <HelpCircle color="#347CC9" size={'14px'} />
-                    <a href="/" className="ml-05">How tiers work</a>
+                    <HelpCircle color="#347CC9" size={"14px"} />
+                    <a href="/" className="ml-05">
+                        How tiers work
+                    </a>
                 </div>
             </div>
             <div className="f w-100 farming-tier-wrapper pl-1 pb-1 pr-1 mxs_pb-0">
-                {
-                    tiersList.map( (tier, i) => 
+                {tiersList.map((tier, i) => (
                     <button className="p-1 f c w-100 farming-tier" key={i} data-selected={selectedTier === i} onClick={() => handleTier(i)}>
-                    <div className="p-1 farming-tier__header w-100 ta-l pos-r">
-                        <div className="farming-tier__img mb-1">{tier.img}</div>
-                        <div className="farming-tier__title b f f-jb">
-                            <span>{tier.title}</span>
+                        <div className="p-1 farming-tier__header w-100 ta-l pos-r">
+                            <div className="farming-tier__img mb-1">{tier.img}</div>
+                            <div className="farming-tier__title b f f-jb">
+                                <span>{tier.title}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="p-1 farming-tier__body w-100">
-                        <div className="farming-tier__locked w-100 f mb-1">
-                            <span className="b">Lock:</span>
-                            <span className="ml-a farming-tier__locked-value">{tier.lock ? `${formatAmountTokens(tier.lock / 1000000000000000000, true)} ALGB` : '-'}</span>
+                        <div className="p-1 farming-tier__body w-100">
+                            <div className="farming-tier__locked w-100 f mb-1">
+                                <span className="b">Lock:</span>
+                                <span className="ml-a farming-tier__locked-value">{tier.lock ? `${formatAmountTokens(tier.lock / 1000000000000000000, true)} ALGB` : "-"}</span>
+                            </div>
+                            <div className="farming-tier__rewards f">
+                                <span className="b">Earn:</span>
+                                <span className="ml-a farming-tier__rewards-value">{tier.earn ? `${100 + tier.earn / 100}%` : "100%"}</span>
+                            </div>
                         </div>
-                        <div className="farming-tier__rewards f">
-                            <span className="b">Earn:</span>
-                            <span className="ml-a farming-tier__rewards-value">{tier.earn ? `${100+(tier.earn / 100)}%` : '100%'}</span>
-                        </div>
-                    </div>
-                </button>
-                    
-                    )
-                }
+                    </button>
+                ))}
             </div>
         </div>
     );

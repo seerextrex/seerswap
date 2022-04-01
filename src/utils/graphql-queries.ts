@@ -51,6 +51,7 @@ query fetchIncentive($incentiveId: ID) {
         endTime
         reward
         bonusReward
+        multiplierToken
         createdAtTimestamp
     }
 }`
@@ -120,6 +121,7 @@ export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
         startTime
         endTime
         reward
+        multiplierToken
       }
     }
     `
@@ -285,6 +287,7 @@ query futureEvents ($timestamp: BigInt) {
         algbAmountForLevel1
         algbAmountForLevel2
         algbAmountForLevel3
+        multiplierToken
     }
 }`
 
@@ -305,6 +308,7 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         algbAmountForLevel1
         algbAmountForLevel2
         algbAmountForLevel3
+        multiplierToken
     }
 }`
 
@@ -327,6 +331,7 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           startTime
           endTime
           reward
+          multiplierToken
         }
       }
       `

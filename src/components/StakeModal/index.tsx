@@ -21,6 +21,8 @@ import { FARMING_CENTER } from "constants/addresses";
 import { SupportedChainId } from "constants/chains";
 import { useActiveWeb3React } from "hooks/web3";
 
+import { Token } from "@uniswap/sdk-core";
+
 interface StakeModalProps {
     event: {
         pool: any;
@@ -35,18 +37,31 @@ interface StakeModalProps {
         algbAmountForLevel1: string;
         algbAmountForLevel2: string;
         algbAmountForLevel3: string;
+        multiplierToken: string;
     };
     closeHandler: () => void;
     farmingType: FarmingType;
 }
 
 export function StakeModal({
-    event: { pool, startTime, endTime, rewardToken, bonusRewardToken, level1multiplier, level2multiplier, level3multiplier, algbAmountForLevel1, algbAmountForLevel2, algbAmountForLevel3 },
+    event: {
+        pool,
+        startTime,
+        endTime,
+        rewardToken,
+        bonusRewardToken,
+        level1multiplier,
+        level2multiplier,
+        level3multiplier,
+        multiplierToken,
+        algbAmountForLevel1,
+        algbAmountForLevel2,
+        algbAmountForLevel3,
+    },
     closeHandler,
     farmingType,
 }: StakeModalProps) {
-
-    const { account } = useActiveWeb3React()
+    const { account } = useActiveWeb3React();
 
     const [selectedNFT, setSelectedNFT] = useState<null | NTFInterface>(null);
     const {
@@ -55,7 +70,7 @@ export function StakeModal({
 
     const { approveHandler, approvedHash, stakeHandler, stakedHash } = useStakerHandlers() || {};
 
-    const [selectedTier, setSelectedTier] = useState<string | null>('');
+    const [selectedTier, setSelectedTier] = useState<string | null>("");
 
     useEffect(() => {
         fetchPositionsForPoolFn(pool);
@@ -196,54 +211,52 @@ export function StakeModal({
     const balance = useCurrencyBalance(account ?? undefined, ALGEBRA_POLYGON ?? undefined);
 
     const isEnoughALGB = useMemo(() => {
+        if (farmingType === FarmingType.ETERNAL) return true;
 
-        if (farmingType === FarmingType.ETERNAL) return true
+        if (!balance) return false;
 
-        if (!balance) return false
-
-        const _balance = +balance.toSignificant(4)
+        const _balance = +balance.toSignificant(4);
 
         switch (selectedTier) {
-            case '1':
-                return _balance > +algbAmountForLevel1
-            case '2':
-                return _balance > +algbAmountForLevel2
-            case '3':
-                return _balance > +algbAmountForLevel3
+            case "1":
+                return _balance > +algbAmountForLevel1;
+            case "2":
+                return _balance > +algbAmountForLevel2;
+            case "3":
+                return _balance > +algbAmountForLevel3;
             default:
                 return true;
         }
-    }, [balance, selectedTier, algbAmountForLevel1, algbAmountForLevel2, algbAmountForLevel3])
+    }, [balance, selectedTier, algbAmountForLevel1, algbAmountForLevel2, algbAmountForLevel3]);
 
-    const tierSelectionHandler = useCallback((tier) => {
+    const tierSelectionHandler = useCallback(
+        (tier) => {
+            switch (tier) {
+                case 0:
+                    setSelectedTier(null);
+                    break;
+                case 1:
+                    setSelectedTier(algbAmountForLevel1);
+                    break;
+                case 2:
+                    setSelectedTier(algbAmountForLevel2);
+                    break;
+                case 3:
+                    setSelectedTier(algbAmountForLevel3);
+                    break;
+                case "":
+                    setSelectedTier("");
+            }
 
-        switch (tier) {
-            case 0:
-                setSelectedTier(null);
-                break;
-            case 1:
-                setSelectedTier(algbAmountForLevel1);
-                break;
-            case 2:
-                setSelectedTier(algbAmountForLevel2);
-                break;
-            case 3:
-                setSelectedTier(algbAmountForLevel3);
-                break;
-            case '':
-                setSelectedTier('')
-        }
-
-        if (!isEnoughALGB || tier === '') setSelectedNFT(null)
-
-    }, [isEnoughALGB, selectedTier]);
+            if (!isEnoughALGB || tier === "") setSelectedNFT(null);
+        },
+        [isEnoughALGB, selectedTier]
+    );
 
     const _amountForApprove = useMemo(() => {
+        if (!selectedTier) return undefined;
 
-        if (!selectedTier) return undefined
-
-        return CurrencyAmount.fromRawAmount(ALGEBRA_POLYGON, selectedTier)
-        
+        return CurrencyAmount.fromRawAmount(new Token(137, multiplierToken, 18, "SSS", "saas"), selectedTier);
     }, [selectedTier]);
 
     const [approval, approveCallback] = useApproveCallback(_amountForApprove, FARMING_CENTER[SupportedChainId.POLYGON]);
@@ -278,29 +291,28 @@ export function StakeModal({
                             <X size={18} stroke={"var(--white)"} />
                         </button>
                     </div>
-                    {
-                        farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 &&
+                    {farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 && (
                         <StakeModalFarmingTiers
-                        tiersLimits={{
-                            low: algbAmountForLevel1,
-                            medium: algbAmountForLevel2,
-                            high: algbAmountForLevel3,
-                        }}
-                        tiersMultipliers={{
-                            low: level1multiplier,
-                            medium: level2multiplier,
-                            high: level3multiplier,
-                        }}
-                        selectTier={tierSelectionHandler}
+                            tiersLimits={{
+                                low: algbAmountForLevel1,
+                                medium: algbAmountForLevel2,
+                                high: algbAmountForLevel3,
+                            }}
+                            tiersMultipliers={{
+                                low: level1multiplier,
+                                medium: level2multiplier,
+                                high: level3multiplier,
+                            }}
+                            lockedTokenAddress={multiplierToken}
+                            selectTier={tierSelectionHandler}
                         />
-                    }
-                    {
-                        farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 &&
+                    )}
+                    {farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 && (
                         <div className="mv-1 f w-100">
-                        <span className="b" style={{fontSize: '18px'}}>{`${farmingType === FarmingType.FINITE ? '2. ' : ''}Select a Position`}</span>
-                    </div>
-                    }
-                    <div style={{height: farmingType === FarmingType.ETERNAL ? '400px' : 'unset', marginLeft: '-1rem', position: 'relative', marginRight: '-1rem'}} className="mb-1 pl-1 pr-1">
+                            <span className="b" style={{ fontSize: "18px" }}>{`${farmingType === FarmingType.FINITE ? "2. " : ""}Select a Position`}</span>
+                        </div>
+                    )}
+                    <div style={{ height: farmingType === FarmingType.ETERNAL ? "400px" : "unset", marginLeft: "-1rem", position: "relative", marginRight: "-1rem" }} className="mb-1 pl-1 pr-1">
                         {chunkedPositions && chunkedPositions.length === 0 ? (
                             <div className={"h-400 f c f-ac f-jc"}>
                                 <Frown size={30} stroke={"var(--white)"} />
@@ -313,14 +325,14 @@ export function StakeModal({
                             </div>
                         ) : chunkedPositions && chunkedPositions.length !== 0 ? (
                             chunkedPositions.map((row, i, arr) => (
-                                <div style={{opacity: !isEnoughALGB && selectedTier ? '0.5' : '1'}} className="f mb-1 pl-1 pb-1 pr-1 mxs_pb-0 stake-modal__nft-position-row" key={i}>
+                                <div style={{ opacity: !isEnoughALGB && selectedTier ? "0.5" : "1" }} className="f mb-1 pl-1 pb-1 pr-1 mxs_pb-0 stake-modal__nft-position-row" key={i}>
                                     {row.map((el, j) => (
                                         <div
                                             className={"stake-modal__nft-position p-1 br-8 c-w"}
                                             key={j}
                                             data-selected={!!selectedNFT && selectedNFT.id === el.id}
                                             onClick={(e: any) => {
-                                                if (!isEnoughALGB && selectedTier) return
+                                                if (!isEnoughALGB && selectedTier) return;
                                                 if (e.target.tagName !== "A" && !submitLoader) {
                                                     setSelectedNFT((old) =>
                                                         old && old.id === el.id
@@ -335,12 +347,12 @@ export function StakeModal({
                                         >
                                             <NFTPositionIcon name={el.id}>{el.id}</NFTPositionIcon>
                                             <div className="ml-1">
-                                            <IsActive el={el} />
-                                            <div className={"stake-modal__nft-position__description"}>
-                                                <a className={"fs-085 c-w hover-cp"} href={`https://app.algebra.finance/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
-                                                    View position
-                                                </a>
-                                            </div>
+                                                <IsActive el={el} />
+                                                <div className={"stake-modal__nft-position__description"}>
+                                                    <a className={"fs-085 c-w hover-cp"} href={`https://app.algebra.finance/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
+                                                        View position
+                                                    </a>
+                                                </div>
                                             </div>
                                             {/* <div className={"stake-modal__nft-position__circle f f-ac f-jc"} data-selected={!!selectedNFT && selectedNFT.id === el.id}>
                                                 <Check data-selected={!!selectedNFT && selectedNFT.id === el.id} size={"1rem"} stroke={"white"} />
@@ -364,28 +376,41 @@ export function StakeModal({
                             </NFTPositionsRow>
                         )}
                     </div>
-                    { selectedTier === '' && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0  ? <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
-                    Select Tier
-                </button> : selectedTier && !isEnoughALGB && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? 
-                    <button disabled className="btn primary w-100 p-1">Not enough ALGB</button>
-                : selectedNFT ? (
+                    {selectedTier === "" && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
+                        <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
+                            Select Tier
+                        </button>
+                    ) : selectedTier && !isEnoughALGB && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
+                        <button disabled className="btn primary w-100 p-1">
+                            Not enough ALGB
+                        </button>
+                    ) : selectedNFT ? (
                         <div className={"f mxs_fd-c w-100"}>
-                            {
-                            farmingType === FarmingType.FINITE &&
-                            <button disabled={!showApproval || !selectedTier} onClick={approveCallback} id={"farming-approve-algb"} className={"btn primary w-100 mr-1 mxs_mr-0 p-1 mxs_mb-1 farming-approve-algb"}>
-                                {approval === ApprovalState.PENDING ? (
-                                    <span className={"f f-ac f-jc"}>
-                                        <Loader stroke={"white"} />
-                                        <span className={"ml-05"}>Approving</span>
-                                    </span>
-                                ) : !showApproval ? (
-                                    "ALGB Approved"
-                                ) : (
-                                    "Approve ALGB"
-                                )}
-                            </button>
-}
-                            <button disabled={submitLoader || !NFTsForApprove} onClick={approveNFTs} id={"farming-approve-nft"} className={"btn primary w-100 mr-1 mxs_mr-0 mxs_mb-1 p-1 farming-approve-nft"}>
+                            {farmingType === FarmingType.FINITE && (
+                                <button
+                                    disabled={!showApproval || !selectedTier}
+                                    onClick={approveCallback}
+                                    id={"farming-approve-algb"}
+                                    className={"btn primary w-100 mr-1 mxs_mr-0 p-1 mxs_mb-1 farming-approve-algb"}
+                                >
+                                    {approval === ApprovalState.PENDING ? (
+                                        <span className={"f f-ac f-jc"}>
+                                            <Loader stroke={"white"} />
+                                            <span className={"ml-05"}>Approving</span>
+                                        </span>
+                                    ) : !showApproval ? (
+                                        "ALGB Approved"
+                                    ) : (
+                                        "Approve ALGB"
+                                    )}
+                                </button>
+                            )}
+                            <button
+                                disabled={submitLoader || !NFTsForApprove}
+                                onClick={approveNFTs}
+                                id={"farming-approve-nft"}
+                                className={"btn primary w-100 mr-1 mxs_mr-0 mxs_mb-1 p-1 farming-approve-nft"}
+                            >
                                 {submitLoader && submitState === 0 ? (
                                     <span className={"f f-ac f-jc"}>
                                         <Loader stroke={"white"} />
@@ -397,7 +422,12 @@ export function StakeModal({
                                     "Approve Position"
                                 )}
                             </button>
-                            <button disabled={submitLoader || !NFTsForStake} onClick={() => stakeNFTs(farmingType)} id={"farming-deposit-nft"} className={"btn primary w-100 mxs_mb-1 p-1 farming-deposit-nft"}>
+                            <button
+                                disabled={submitLoader || !NFTsForStake}
+                                onClick={() => stakeNFTs(farmingType)}
+                                id={"farming-deposit-nft"}
+                                className={"btn primary w-100 mxs_mb-1 p-1 farming-deposit-nft"}
+                            >
                                 {submitLoader && submitState === 2 ? (
                                     <span className={"f f-ac f-jc"}>
                                         <Loader stroke={"white"} />

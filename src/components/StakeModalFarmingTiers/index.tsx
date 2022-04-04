@@ -17,22 +17,12 @@ import { Link } from "react-router-dom";
 
 import { Token } from "@uniswap/sdk-core";
 
-export default function StakeModalFarmingTiers({
-    tiersLimits,
-    tiersMultipliers,
-    selectTier,
-    lockedTokenAddress,
-}: {
-    tiersLimits: any;
-    tiersMultipliers: any;
-    selectTier: any;
-    lockedTokenAddress: string;
-}) {
+export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; lockedToken: any }) {
     const { account } = useActiveWeb3React();
 
     const [selectedTier, setSelectedTier] = useState();
 
-    const balance = useCurrencyBalance(account ?? undefined, new Token(137, lockedTokenAddress, 18, "SSS", "saas") ?? undefined);
+    const balance = useCurrencyBalance(account ?? undefined, new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) ?? undefined);
     const _balance = useMemo(() => (!balance ? "" : balance.toSignificant(4)), [balance]);
 
     const handleTier = useCallback(
@@ -65,16 +55,12 @@ export default function StakeModalFarmingTiers({
                 <div className="farming-tier__balance-title mr-1">Balance</div>
                 <div>
                     <div className="f">
-                        <CurrencyLogo currency={ALGEBRA_POLYGON as WrappedCurrency} />
-                        <div className="ml-05" style={{ lineHeight: "24px" }}>
-                            {_balance} ALGB
-                        </div>
+                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) as WrappedCurrency} />
+                        <div className="ml-05" style={{ lineHeight: "24px" }}>{`${_balance} ${lockedToken.symbol}`}</div>
                     </div>
                 </div>
                 <div className="ml-a mxs_display-none ms_display-none">
-                    <Link to={"/swap"} className="farming-tier__balance-buy b">
-                        Buy ALGB →
-                    </Link>
+                    <Link to={"/swap"} className="farming-tier__balance-buy b">{`Buy ${lockedToken.symbol} →`}</Link>
                 </div>
             </div>
             <div className="mb-1 f w-100">
@@ -100,7 +86,9 @@ export default function StakeModalFarmingTiers({
                         <div className="p-1 farming-tier__body w-100">
                             <div className="farming-tier__locked w-100 f mb-1">
                                 <span className="b">Lock:</span>
-                                <span className="ml-a farming-tier__locked-value">{tier.lock ? `${formatAmountTokens(tier.lock / 1000000000000000000, true)} ALGB` : "-"}</span>
+                                <span className="ml-a farming-tier__locked-value">
+                                    {tier.lock ? `${formatAmountTokens(tier.lock / Math.pow(10, +lockedToken.decimals), true)} ${lockedToken.symbol}` : "-"}
+                                </span>
                             </div>
                             <div className="farming-tier__rewards f">
                                 <span className="b">Earn:</span>

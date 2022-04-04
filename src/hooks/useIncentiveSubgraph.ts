@@ -100,12 +100,14 @@ export function useIncentiveSubgraph() {
             const pool = await fetchPool(events[i].pool)
             const rewardToken = await fetchToken(events[i].rewardToken)
             const bonusRewardToken = await fetchToken(events[i].bonusRewardToken)
+            const lockedToken = await fetchToken(events[i].multiplierToken)
 
             const _event: any = {
                 ...events[i],
                 pool,
                 rewardToken,
                 bonusRewardToken,
+                lockedToken,
                 reward: formatUnits(BigNumber.from(events[i].reward), rewardToken.decimals),
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }

@@ -37,7 +37,7 @@ interface StakeModalProps {
         algbAmountForLevel1: string;
         algbAmountForLevel2: string;
         algbAmountForLevel3: string;
-        multiplierToken: string;
+        lockedToken: any;
     };
     closeHandler: () => void;
     farmingType: FarmingType;
@@ -53,7 +53,7 @@ export function StakeModal({
         level1multiplier,
         level2multiplier,
         level3multiplier,
-        multiplierToken,
+        lockedToken,
         algbAmountForLevel1,
         algbAmountForLevel2,
         algbAmountForLevel3,
@@ -208,7 +208,7 @@ export function StakeModal({
         [selectedNFT, submitState, selectedTier]
     );
 
-    const balance = useCurrencyBalance(account ?? undefined, ALGEBRA_POLYGON ?? undefined);
+    const balance = useCurrencyBalance(account ?? undefined, new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) ?? undefined);
 
     const isEnoughALGB = useMemo(() => {
         if (farmingType === FarmingType.ETERNAL) return true;
@@ -231,6 +231,7 @@ export function StakeModal({
 
     const tierSelectionHandler = useCallback(
         (tier) => {
+            console.log(algbAmountForLevel1, algbAmountForLevel2, algbAmountForLevel3);
             switch (tier) {
                 case 0:
                     setSelectedTier(null);
@@ -254,10 +255,10 @@ export function StakeModal({
     );
 
     const _amountForApprove = useMemo(() => {
-        if (!selectedTier) return undefined;
+        if (!selectedTier || !lockedToken) return undefined;
 
-        return CurrencyAmount.fromRawAmount(new Token(137, multiplierToken, 18, "SSS", "saas"), selectedTier);
-    }, [selectedTier]);
+        return CurrencyAmount.fromRawAmount(new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name), selectedTier);
+    }, [selectedTier, lockedToken]);
 
     const [approval, approveCallback] = useApproveCallback(_amountForApprove, FARMING_CENTER[SupportedChainId.POLYGON]);
 
@@ -303,7 +304,7 @@ export function StakeModal({
                                 medium: level2multiplier,
                                 high: level3multiplier,
                             }}
-                            lockedTokenAddress={multiplierToken}
+                            lockedToken={lockedToken}
                             selectTier={tierSelectionHandler}
                         />
                     )}
@@ -399,9 +400,9 @@ export function StakeModal({
                                             <span className={"ml-05"}>Approving</span>
                                         </span>
                                     ) : !showApproval ? (
-                                        "ALGB Approved"
+                                        `${lockedToken.symbol} Approved`
                                     ) : (
-                                        "Approve ALGB"
+                                        `Approve ${lockedToken.symbol}`
                                     )}
                                 </button>
                             )}

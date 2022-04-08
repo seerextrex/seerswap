@@ -14,13 +14,13 @@ import { Trans } from '@lingui/macro'
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
-import { Frown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { addPolygonNetwork } from 'components/Web3Status/Web3StatusInner'
 
 import { OptionGrid, Wrapper } from './styled'
 import Card from '../../shared/components/Card/Card'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
+import { UserRejectedRequestError, WalletConnectConnector } from '@web3-react/walletconnect-connector'
 
 const WALLET_VIEWS = {
     OPTIONS: 'options',
@@ -40,10 +40,9 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
     const { active, account, connector, activate, error } = useWeb3React()
 
     const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-
     const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
-
     const [pendingError, setPendingError] = useState<boolean>()
+    const [errorMessage, setErrorMessage] = useState<string>('')
 
     const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
     const toggleWalletModal = useWalletModalToggle()
@@ -93,28 +92,33 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
         setPendingWallet(connector) // set wallet for pending view
         setWalletView(WALLET_VIEWS.PENDING)
 
+        if (connector instanceof WalletConnectConnector) {
+            connector.walletConnectProvider = undefined
+        }
+
         connector &&
-        activate(connector, undefined, true).catch((error) => {
-            if (error instanceof UnsupportedChainIdError) {
-                activate(connector) // a little janky...can't use setError because the connector isn't set
-            } else {
-                setPendingError(true)
-            }
-        })
+        activate(connector, undefined, true)
+            .then(async () => {
+                const walletAddress = await connector.getAccount()
+                if (walletAddress) {
+                    setWalletView(WALLET_VIEWS.ACCOUNT)
+                }
+            })
+            .catch((error) => {
+                if (error instanceof UnsupportedChainIdError) {
+                    setErrorMessage('Please connect to the Polygon network.')
+                    setPendingError(true)
+                } else if (error instanceof UserRejectedRequestError) {
+                    setWalletView(WALLET_VIEWS.ACCOUNT)
+                } else {
+                    setPendingError(true)
+                }
+            })
     }
 
     // get wallets user can switch too, depending on device/browser
     function getOptions() {
         const isMetamask = window.ethereum && window.ethereum.isMetaMask
-
-        if (!isMetamask && isMobile) {
-            return (
-                <div>
-                    <Frown stroke={'var(--primary)'} />
-                    <p>Mobile devices are not currently supported. Please use your desktop.</p>
-                </div>
-            )
-        }
 
         return Object.keys(SUPPORTED_WALLETS).map((key) => {
             const option = SUPPORTED_WALLETS[key]
@@ -247,7 +251,12 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
 
                 <Card isDark classes={'p-1 br-12 mt-1'}>
                     {walletView === WALLET_VIEWS.PENDING ? (
-                        <PendingView connector={pendingWallet} error={pendingError} setPendingError={setPendingError} tryActivation={tryActivation} />
+                        <PendingView
+                            connector={pendingWallet}
+                            error={pendingError}
+                            setPendingError={setPendingError}
+                            tryActivation={tryActivation}
+                            errorMessage={errorMessage} />
                     ) : (
                         <OptionGrid>{getOptions()}</OptionGrid>
                     )}

@@ -1,12 +1,13 @@
 import RealStakerRangeButtons from './RealStakerRangeButtons'
 import React, { Dispatch } from 'react'
-import { ContentModal, SilderWrapper, StakeButton, StakerSlider } from './styled'
+import { StakerSlider } from './styled'
 import Modal from '../../components/Modal'
 import RealStakerUnstakeInputRange from './RealStakerUnstakeInputRange'
 import { formatEther } from 'ethers/lib/utils'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { BigNumber } from '@ethersproject/bignumber'
 import { FactorySubgraph, StakeSubgraph, SubgraphResponseStaking } from '../../models/interfaces'
+import './index.scss'
 
 interface UnstakeModalProps {
     openModal: boolean
@@ -56,7 +57,7 @@ export default function RealStakerUnstakeModal({
             }}
             maxHeight={300}
         >
-            <ContentModal onKeyPress={(e) => {
+            <div className={'unstake-wrapper mh-1 mb-1'} onKeyPress={(e) => {
                 enerHandler(e)
             }}>
                 <RealStakerUnstakeInputRange
@@ -65,26 +66,27 @@ export default function RealStakerUnstakeModal({
                     baseCurrency={formatEther(baseCurrency)}
                     fiatValue={fiatValue}
                 />
-                <SilderWrapper>
+                <div className={'w-100'}>
                     <StakerSlider
                         value={unstakePercent}
                         onChange={setUnstakePercent}
-                        size={22} />
-                </SilderWrapper>
+                        size={22}
+                        disabled={false} />
+                </div>
                 <RealStakerRangeButtons
                     onPercentSelect={onPercentSelect}
                     balance={formatEther(baseCurrency)}
                 />
-                <StakeButton onClick={() => {
+                <button className={'btn primary w-100 pa-1 mt-1'} onClick={() => {
                     unstakeHandler(unstaked, stakedResult, baseCurrency, allXALGBFreeze)
                     setUnstaked('')
                     setUnstakePercent(0)
                     setOpenModal(false)
                 }}
-                             disabled={+unstaked > +formatEther(baseCurrency) || unstaked === ''}>
+                        disabled={+unstaked > +formatEther(baseCurrency) || unstaked === ''}>
                     {+unstaked > +formatEther(baseCurrency) ? 'Insufficient ALGB balance' : 'Unstake'}
-                </StakeButton>
-            </ContentModal>
+                </button>
+            </div>
         </Modal>
     )
 }

@@ -6,13 +6,12 @@ import { warningSeverity } from '../../utils/prices'
 import HoverInlineText from 'components/HoverInlineText'
 import { Trans } from '@lingui/macro'
 
-export function FiatValue({
-    fiatValue,
-    priceImpact
-}: {
+interface FiatValueProps {
     fiatValue: CurrencyAmount<Currency> | null | undefined
     priceImpact?: Percent
-}) {
+}
+
+export function FiatValue({ fiatValue, priceImpact }: FiatValueProps) {
     const theme = useTheme()
     const priceImpactColor = useMemo(() => {
         if (!priceImpact) return undefined

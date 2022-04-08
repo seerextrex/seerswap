@@ -101,13 +101,6 @@ export default function CurrencyInputPanel({
         return +balance.toFixed(3);
     }, [balance]);
 
-    // if (currency && currency.symbol === "MATIC") {
-    //     if (chainId === 137) {
-    //         currency.symbol = "MATIC";
-    //         currency.name = "Matic";
-    //     }
-    // }
-
     return (
         <InputPanel id={id} hideInput={hideInput} {...rest}>
             {locked && (
@@ -144,7 +137,6 @@ export default function CurrencyInputPanel({
                             selected={!!currency}
                             hideInput={hideInput}
                             className="open-currency-select-button"
-                            // style={{ backgroundColor: '#0f2e40', color: '#4cc1d5', border: '1px solid #153448' }}
                             shallow={shallow}
                             swap={swap}
                             disabled={shallow && page !== "addLiq"}
@@ -186,7 +178,8 @@ export default function CurrencyInputPanel({
                                                         </span>
                                                     ) : (
                                                         showBalance &&
-                                                        !balance && (
+                                                        !balance &&
+                                                        account && (
                                                             <span style={{ position: "absolute", right: 0 }}>
                                                                 <Loader />
                                                             </span>

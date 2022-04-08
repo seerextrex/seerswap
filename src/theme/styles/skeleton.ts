@@ -17,10 +17,10 @@ export const skeletonGradient = css`
     transform: translateX(-100%);
     background-image: linear-gradient(
       90deg,
-      rgba(91, 105, 141, 0) 0,
-      rgba(94, 131, 225, 0.25) 25%,
-      rgba(94, 131, 225, 0.5) 60%,
-      rgba(91, 105, 141, 0)
+      var(--dark-ebony-clay) 0,
+      var(--primary-hover) 25%,
+      var(--primary-weak) 60%,
+      var(--dark-ebony-clay)
     );
     animation-name: ${skeletonAnimation};
     animation-duration: 1.5s;

@@ -6,26 +6,11 @@ import { useAllTransactions } from '../../state/transactions/hooks'
 import { useChunkedRows } from '../../utils/chunkForRows'
 import Loader from '../Loader'
 import { FarmingType } from '../../models/enums'
-import {
-    CloseModalButton,
-    EmptyMock,
-    LoaderMock,
-    ModalBody,
-    ModalHeader,
-    ModalWrapper,
-    NFTPosition,
-    NFTPositionDescription,
-    NFTPositionIcon,
-    NFTPositionIndex,
-    NFTPositionLink,
-    NFTPositionSelectCircle,
-    NFTPositionsRow,
-    ProvideLiquidityLink,
-    StakeButton,
-    StakeButtonLoader
-} from './styled'
+import { NFTPosition, NFTPositionDescription, NFTPositionIcon, NFTPositionIndex, NFTPositionLink, NFTPositionSelectCircle, NFTPositionsRow } from './styled'
 import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
 import { NTFInterface } from '../../models/interfaces'
+import { NavLink } from 'react-router-dom'
+import './index.scss'
 
 interface StakeModalProps {
     event: {
@@ -181,50 +166,48 @@ export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bon
     return (
         <>
             {submitState === 3 ? (
-                <ModalWrapper>
-                    <ModalHeader>
-                        <div />
-                        <CloseModalButton onClick={closeHandler}>
-                            <X size={18} stroke={'#080064'} />
-                        </CloseModalButton>
-                    </ModalHeader>
-                    <ModalBody style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <CheckCircle size={55} stroke={'#24ae2c'} />
-                        <p>{`NFT #${selectedNFT?.id} deposited succesfully!`}</p>
-                    </ModalBody>
-                </ModalWrapper>
+                <div className={'w-100 p-1 c-w cur-d'}>
+                    <div className={'f f-je mb-1 w-100'}>
+                        <button className={'bg-t br-0'} onClick={closeHandler}>
+                            <X size={18} stroke={'var(--white)'} />
+                        </button>
+                    </div>
+                    <div className={'h-400 f c f-ac f-jc'}>
+                        <CheckCircle size={55} stroke={'var(--green)'} />
+                        <p className={'mt-05'}>{`NFT #${selectedNFT?.id} deposited succesfully!`}</p>
+                    </div>
+                </div>
             ) : positionsForPoolLoading ? (
-                <ModalWrapper>
-                    <LoaderMock>
-                        <Loader stroke={'#080064'} size={'25px'} />
-                    </LoaderMock>
-                </ModalWrapper>
+                <div className={'w-100 p-1 c-w h-400 f c f-ac f-jc cur-p'}>
+                    <Loader stroke={'var(--white)'} size={'25px'} />
+                </div>
             ) : (
-                <ModalWrapper>
-                    <ModalHeader>
+                <div className={'w-100 c-w'}>
+                    <div className={'mb-1 flex-s-between'}>
                         <div>Select NFT for farming</div>
-                        <CloseModalButton onClick={closeHandler}>
-                            <X size={18} stroke={'#080064'} />
-                        </CloseModalButton>
-                    </ModalHeader>
-                    <ModalBody>
+                        <button className={'bg-t br-0'} onClick={closeHandler}>
+                            <X size={18} stroke={'var(--white)'} />
+                        </button>
+                    </div>
+                    <div className={'h-400'}>
                         {chunkedPositions && chunkedPositions.length === 0 ? (
-                            <EmptyMock>
-                                <Frown size={30} stroke={'#080064'} />
-                                <p>No NFT-s for this pool</p>
-                                <p style={{ textAlign: 'center' }}>{`To take part in this farming event, you need to`}</p>
-                                <ProvideLiquidityLink to={linkToProviding}>
+                            <div className={'h-400 f c f-ac f-jc'}>
+                                <Frown size={30} stroke={'var(--white)'} />
+                                <p className={'mt-1 mb-05'}>No NFT-s for this pool</p>
+                                <p>To take part in this farming event, you need to</p>
+                                <NavLink className={'flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1 hover-c-ph'} to={linkToProviding}>
                                     <span>{`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
-                                    <ArrowRight style={{ marginLeft: '5px' }} size={16} />
-                                </ProvideLiquidityLink>
-                            </EmptyMock>
+                                    <ArrowRight className={'ml-05'} size={16} />
+                                </NavLink>
+                            </div>
                         ) : chunkedPositions && chunkedPositions.length !== 0 ? (
                             chunkedPositions.map((row, i) => (
-                                <NFTPositionsRow key={i}>
+                                <div key={i}>
                                     {row.map((el, j) => (
-                                        <NFTPosition
+                                        <div
+                                            className={'stake-modal__nft-position p-05 br-8 mr-05 c-w'}
                                             key={j}
-                                            selected={!!selectedNFT && selectedNFT.id === el.id}
+                                            data-selected={!!selectedNFT && selectedNFT.id === el.id}
                                             onClick={(e: any) => {
                                                 if (e.target.tagName !== 'A' && !submitLoader) {
                                                     setSelectedNFT((old) =>
@@ -239,30 +222,28 @@ export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bon
                                             }}
                                         >
                                             <NFTPositionIcon name={el.id} />
-                                            <NFTPositionDescription>
-                                                <NFTPositionIndex>{`#${+el.id}`}</NFTPositionIndex>
-                                                <NFTPositionLink
+                                            <div className={'stake-modal__nft-position__description ml-05'}>
+                                                <div>#{el.id}</div>
+                                                <a
+                                                    className={'fs-085 c-w hover-cp'}
                                                     href={`https://app.algebra.finance/#/pool/${+el.id}`}
                                                     rel='noopener noreferrer'
                                                     target='_blank'
                                                 >
                                                     View position
-                                                </NFTPositionLink>
-                                            </NFTPositionDescription>
-                                            <NFTPositionSelectCircle
-                                                selected={!!selectedNFT && selectedNFT.id === el.id}>
+                                                </a>
+                                            </div>
+                                            <div className={'stake-modal__nft-position__circle f f-ac f-jc'}
+                                                 data-selected={!!selectedNFT && selectedNFT.id === el.id}>
                                                 <Check
-                                                    style={{
-                                                        transitionDuration: '.2s',
-                                                        opacity: selectedNFT && selectedNFT.id === el.id ? '1' : '0'
-                                                    }}
-                                                    size={16}
+                                                    data-selected={!!selectedNFT && selectedNFT.id === el.id}
+                                                    size={'1rem'}
                                                     stroke={'white'}
                                                 />
-                                            </NFTPositionSelectCircle>
-                                        </NFTPosition>
+                                            </div>
+                                        </div>
                                     ))}
-                                </NFTPositionsRow>
+                                </div>
                             ))
                         ) : (
                             <NFTPositionsRow>
@@ -278,49 +259,46 @@ export function StakeModal({ event: { pool, startTime, endTime, rewardToken, bon
                                 ))}
                             </NFTPositionsRow>
                         )}
-                    </ModalBody>
+                    </div>
                     {selectedNFT ? (
-                        <div style={{ display: 'flex' }}>
-                            <StakeButton
+                        <div className={'f'}>
+                            <button
                                 disabled={submitLoader || !NFTsForApprove}
                                 onClick={approveNFTs}
                                 id={'farming-approve-nft'}
-                                className={'farming-approve-nft'}
+                                className={'btn primary w-100 mr-1 p-1 farming-approve-nft'}
                             >
                                 {submitLoader && submitState === 0 ? (
-                                    <StakeButtonLoader>
+                                    <span className={'f f-ac f-jc'}>
                                         <Loader stroke={'white'} />
-                                        <span style={{ marginLeft: '5px' }}>Approving</span>
-                                    </StakeButtonLoader>
-                                ) : NFTsForStake && !NFTsForApprove ? (
-                                    'Approved'
-                                ) : (
-                                    `Approve`
-                                )}
-                            </StakeButton>
-                            <StakeButton
+                                        <span className={'ml-05'}>Approving</span>
+                                    </span>
+                                ) : NFTsForStake && !NFTsForApprove ? 'Approved' : 'Approve'}
+                            </button>
+                            <button
                                 disabled={submitLoader || !NFTsForStake}
                                 onClick={() => stakeNFTs(farmingType)}
                                 id={'farming-deposit-nft'}
-                                className={'farming-deposit-nft'}
+                                className={'btn primary w-100 p-1 farming-deposit-nft'}
                             >
                                 {submitLoader && submitState === 2 ? (
-                                    <StakeButtonLoader>
+                                    <span className={'f f-ac f-jc'}>
                                         <Loader stroke={'white'} />
-                                        <span style={{ marginLeft: '5px' }}>Depositing</span>
-                                    </StakeButtonLoader>
-                                ) : (
-                                    `Deposit`
-                                )}
-                            </StakeButton>
+                                        <span className={'ml-05'}>Depositing</span>
+                                    </span>
+                                ) : 'Deposit'
+                                }
+                            </button>
                         </div>
                     ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <StakeButton disabled id={'farming-select-nft'}
-                                     className={'farming-select-nft'}>
-                            {`Select NFT`}
-                        </StakeButton>
+                        <button
+                            disabled
+                            id={'farming-select-nft'}
+                            className={'btn primary w-100 p-1 farming-select-nft'}>
+                            Select NFT
+                        </button>
                     ) : null}
-                </ModalWrapper>
+                </div>
             )}
         </>
     )

@@ -104,6 +104,7 @@ export function Chart({
                         <rect x='0' y='0' width={innerWidth} height={height} />
                     </clipPath>
 
+                    <linearGradient id="liquidity-chart-gradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(39, 151, 255, 0.2)"></stop><stop offset="100%" stopColor="rgba(39, 151, 255, 0)"></stop></linearGradient>
                     {brushDomain && (
                         // mask to highlight selected area
                         <mask id={`${id}-chart-area-mask`}>

@@ -40,13 +40,16 @@ import {
 } from '../models/interfaces'
 import { EthereumWindow } from '../models/types'
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
-
+import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
+import { useEthPrices } from './useEthPrices'
 
 export function useIncentiveSubgraph() {
 
     const { chainId, account } = useActiveWeb3React()
 
     const { dataClient, farmingClient } = useClients()
+
+    const ethPrices = useEthPrices()
 
     const [positionsForPool, setPositionsForPool] = useState<Position[] | null>(null)
     const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
@@ -303,14 +306,26 @@ export function useIncentiveSubgraph() {
                 return
             }
 
+            const eventTVL = await fetchLimitFarmTVL()
+            const aprs: Aprs = await fetchLimitFarmAPR()
+
+            const price = 1.7
+
+            const EVENT_LOCK = 600_000
 
             setAllEvents({
                 currentEvents: await getEvents(currentEvents.map(el => ({
                     ...el,
-                    active: true
+                    active: true,
+                    apr: aprs[el.id]
                 }))),
-                futureEvents: await getEvents((futureEvents))
+                futureEvents: await getEvents(futureEvents.map(el => ({
+                    ...el,
+                    locked: eventTVL[el.id] === undefined ? false : eventTVL[el.id] * price >= EVENT_LOCK,
+                    apr: aprs[el.id]
+                })))
             })
+
             setAllEventsLoading(false)
 
         } catch (err) {
@@ -368,7 +383,7 @@ export function useIncentiveSubgraph() {
                 if (!position.incentive && !position.eternalFarming && typeof position.pool === 'string') {
 
                     const _pool = await fetchPool(position.pool)
-//@ts-ignore
+                    //@ts-ignore
                     _position = { ..._position, pool: _pool }
                 }
 
@@ -402,8 +417,8 @@ export function useIncentiveSubgraph() {
                         started: +startTime * 1000 < Date.now(),
                         ended: +endTime * 1000 < Date.now(),
                         createdAtTimestamp: +createdAtTimestamp,
-                        incentiveEarned: formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals),
-                        incentiveBonusEarned: formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals)
+                        incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
+                        incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0
                     }
 
                 } else {
@@ -415,7 +430,7 @@ export function useIncentiveSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (incentives.length !== 0) {
+                    if (incentives.filter((incentive: any) => Math.round(Date.now() / 1000) < incentive.startTime).length !== 0) {
                         _position = {
                             ..._position,
                             finiteAvailable: true
@@ -426,8 +441,6 @@ export function useIncentiveSubgraph() {
                 if (position.eternalFarming) {
 
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(position.eternalFarming)
-
-                    // console.log(rewardToken, 'sdsada')
 
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],
@@ -467,7 +480,7 @@ export function useIncentiveSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (eternalFarmings.length !== 0) {
+                    if (eternalFarmings.filter((farm: any) => +farm.rewardRate || +farm.bonusRewardRate).length !== 0) {
                         _position = {
                             ..._position,
                             eternalAvailable: true
@@ -640,7 +653,7 @@ export function useIncentiveSubgraph() {
 
             let _eternalFarmings: FormattedEternalFarming[] = []
 
-            for (const farming of eternalFarmings) {
+            for (const farming of eternalFarmings.filter(farming => +farming.bonusRewardRate || +farming.rewardRate)) {
                 const pool = await fetchPool(farming.pool)
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)

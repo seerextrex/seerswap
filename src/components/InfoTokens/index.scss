@@ -1,0 +1,41 @@
+.grid-tokens-table {
+  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
+}
+
+.mock-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+}
+
+.link {
+  display: flex;
+  text-decoration: none;
+  color: var(--light-gray);
+
+}
+
+.currency-wrapper {
+  display: flex;
+  align-items: center;
+
+  &__row {
+    margin-right: .3rem;
+  }
+
+}
+
+@media screen and (max-width: 960px) {
+  .grid-tokens-table {
+    grid-template-columns: 20px 1fr repeat(4, 1fr);
+  }
+}
+
+@media screen and (max-width: 720px) {
+
+  .tokens-table-wrapper {
+    overflow: scroll;
+    min-width: 700px;
+  }
+}

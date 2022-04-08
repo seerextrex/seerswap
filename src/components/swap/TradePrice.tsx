@@ -27,7 +27,7 @@ export default function TradePrice({ price, showInverted, setShowInverted }: Tra
     return (
         <StyledPriceContainer onClick={flipPrice} title={text}>
             <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-                <Text fontWeight={500} fontSize={14} color={'#2f567b'}>
+                <Text fontWeight={500} fontSize={14} color={'var(--primary)'}>
                     {text}
                 </Text>
             </div>

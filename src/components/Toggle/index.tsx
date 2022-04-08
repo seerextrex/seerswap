@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { ReactNode } from 'react'
-import { BaseToggleElement, StyledToggle } from './styled'
+import './index.scss'
 
 interface ToggleProps {
     id?: string
@@ -10,21 +10,15 @@ interface ToggleProps {
     unchecked?: ReactNode
 }
 
-export default function Toggle({
-    id,
-    isActive,
-    toggle,
-    checked = <Trans>On</Trans>,
-    unchecked = <Trans>Off</Trans>
-}: ToggleProps) {
+export default function Toggle({ id, isActive, toggle, checked = <Trans>On</Trans>, unchecked = <Trans>Off</Trans> }: ToggleProps) {
     return (
-        <StyledToggle id={id} isActive={isActive} onClick={toggle}>
-            <BaseToggleElement isActive={isActive} isOnSwitch={true}>
+        <button className={'toggle-button f br-12'} id={id} onClick={toggle}>
+            <span className={'br-8 c-w hover-op'} data-isActive={isActive}>
                 {checked}
-            </BaseToggleElement>
-            <BaseToggleElement isActive={!isActive} isOnSwitch={false}>
+            </span>
+            <span className={'br-8 c-w hover-op'} data-isActive={!isActive}>
                 {unchecked}
-            </BaseToggleElement>
-        </StyledToggle>
+            </span>
+        </button>
     )
 }

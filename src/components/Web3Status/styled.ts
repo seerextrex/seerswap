@@ -49,6 +49,7 @@ export const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
 export const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
     background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg0)};
     color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
+    padding: 10px 0 10px 10px;
     font-weight: 500;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`

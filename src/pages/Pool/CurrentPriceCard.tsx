@@ -1,41 +1,32 @@
-import { Currency } from '@uniswap/sdk-core'
-import { ExtentsText } from './styleds'
-import { Trans } from '@lingui/macro'
-import { Pool } from '@uniswap/v3-sdk'
-import { LightCard } from '../../components/Card'
-import { AutoColumn } from '../../components/Column'
-import { TYPE } from 'theme'
+import { Currency } from "@uniswap/sdk-core";
+import { Trans } from "@lingui/macro";
+import { Pool } from "@uniswap/v3-sdk";
+import Card from "../../shared/components/Card/Card";
+import AutoColumn from "../../shared/components/AutoColumn";
 
 interface CurrentPriceCardProps {
-    inverted?: boolean
-    pool: Pool | null
-    currencyQuote?: Currency
-    currencyBase?: Currency
+    inverted?: boolean;
+    pool: Pool | null;
+    currencyQuote?: Currency;
+    currencyBase?: Currency;
 }
 
-export function CurrentPriceCard({
-    inverted,
-    pool,
-    currencyQuote,
-    currencyBase
-}: CurrentPriceCardProps) {
-    if (!pool || !currencyQuote || !currencyBase) return null
+export function CurrentPriceCard({ inverted, pool, currencyQuote, currencyBase }: CurrentPriceCardProps) {
+    if (!pool || !currencyQuote || !currencyBase) return null;
 
     return (
-        <LightCard padding='12px '>
-            <AutoColumn gap='8px' justify='center'>
-                <ExtentsText>
+        <Card isDark classes={"p-1 br-12"}>
+            <AutoColumn gap="1">
+                <span className={"c-lg fs-095 ta-c"} style={{ color: "var(--white)" }}>
                     <Trans>Current price</Trans>
-                </ExtentsText>
-                <TYPE.mediumHeader textAlign='center'>
-                    {(inverted ? pool.token1Price : pool.token0Price).toSignificant(6)}{' '}
-                </TYPE.mediumHeader>
-                <ExtentsText>
+                </span>
+                <span className={"fs-125 ta-c"}>{(inverted ? pool.token1Price : pool.token0Price).toSignificant(6)} </span>
+                <span className={"c-lg fs-085 ta-c"} style={{ color: "var(--white)" }}>
                     <Trans>
                         {currencyQuote?.symbol} per {currencyBase?.symbol}
                     </Trans>
-                </ExtentsText>
+                </span>
             </AutoColumn>
-        </LightCard>
-    )
+        </Card>
+    );
 }

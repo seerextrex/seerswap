@@ -29,11 +29,10 @@ import { calculateGasMargin } from "../../utils/calculateGasMargin";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { t } from "@lingui/macro";
 import { SupportedChainId } from "../../constants/chains";
-import { ArrowLeft, Download } from "react-feather";
+import { ArrowLeft, Download, Info } from "react-feather";
 // @ts-ignore
 import PDFAlgebra from "../../assets/pdf/Algebra_Tech_Paper.pdf";
 import SettingsTab from "../../components/Settings";
-import { RowFixed } from "../../components/Row";
 import usePrevious from "../../hooks/usePrevious";
 import ReactGA from "react-ga";
 import { useAppSelector } from "../../state/hooks";
@@ -45,23 +44,9 @@ import {
     ButtonsWrapper,
     Error,
     FullRangeButton,
-    HelperCirlce,
-    LiquidityWrapper,
     MaxButton,
-    Navigation,
-    PageWrapper,
     PairNotSelectedMock,
-    PoolInfo,
-    PoolInfoItem,
-    PoolInfoItemTitle,
-    PoolInfoItemValue,
-    PoolInfoItemValueMetric,
-    PriceRangeChart,
     PriceRangeInputs,
-    PriceRangeWrapper,
-    TechPaperDownloadButton,
-    TechPaperHint,
-    TechPaperHintTitle,
     Title,
     TokenItem,
     TokenItemBottomInputWrapper,
@@ -69,10 +54,16 @@ import {
     Warning,
 } from "./styled";
 
+import "./index.scss";
+
 //TODO test merge without failed polygon
 import NON_FUN_POS_MAN from "../../abis/non-fun-pos-man.json";
 import { EthereumWindow, WrappedCurrency } from "../../models/types";
 import { GAS_PRICE_MULTIPLIER } from "../../hooks/useGasPrice";
+import { useIsNetworkFailedImmediate } from "hooks/useIsNetworkFailed";
+import Loader from "components/Loader";
+import Card from "../../shared/components/Card/Card";
+import { NavLink } from "react-router-dom";
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
@@ -98,7 +89,6 @@ export default function AddLiquidityPage({
         if (!state.application.gasPrice.fetched) return 70;
         return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched;
     });
-
     const allTransactions = useAllTransactions();
 
     const sortedRecentTransactions = useMemo(() => {
@@ -160,6 +150,10 @@ export default function AddLiquidityPage({
     // mint state
     const { independentField, typedValue, startPriceTypedValue } = useV3MintState();
 
+    // modal and loading
+    const [showConfirm, setShowConfirm] = useState<boolean>(false);
+    const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false); // clicked confirm
+
     const derivedMintInfo = useV3DerivedMintInfo(
         baseCurrency ?? undefined,
         quoteCurrency ?? undefined,
@@ -169,6 +163,8 @@ export default function AddLiquidityPage({
         _existingPosition
     );
     const prevDerivedMintInfo = usePrevious({ ...derivedMintInfo });
+
+    const isNetworkFailed = useIsNetworkFailedImmediate();
 
     const {
         pool,
@@ -208,6 +204,7 @@ export default function AddLiquidityPage({
     const deadline = useTransactionDeadline(); // custom from users settings
 
     const [txHash, setTxHash] = useState<string>("");
+    const [showTech, setShowTech] = useState(false);
 
     // get formatted amounts
     const formattedAmounts = {
@@ -242,11 +239,7 @@ export default function AddLiquidityPage({
     const allowedSlippage = useUserSlippageToleranceWithDefault(outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE);
 
     async function onAdd() {
-        console.log(position && account && deadline);
-
-        if (!chainId || !library || !account) {
-            return;
-        }
+        if (!chainId || !library || !account) return;
 
         if (!positionManager || !baseCurrency || !quoteCurrency) {
             return;
@@ -307,10 +300,6 @@ export default function AddLiquidityPage({
                     }
                 });
         } else {
-            setTimeout(() => {
-                console.log(position, account, deadline);
-                onAdd();
-            }, 3000);
             return;
         }
     }
@@ -388,363 +377,349 @@ export default function AddLiquidityPage({
 
     return (
         <>
-            <PageWrapper>
-                <LiquidityWrapper>
-                    <div
-                        style={{
-                            marginBottom: "2rem",
-                            fontFamily: "Montserrat",
-                            fontSize: "21px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <div style={{ flex: 1 }}>
-                            <Navigation to={"/pool"}>
-                                <ArrowLeft style={{ marginRight: "8px" }} size={15} />
-                                <span>Back to pools</span>
-                            </Navigation>
-                        </div>
-                        <div style={{ flex: 1, textAlign: "center" }}>
-                            <span>Add Liquidity</span>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <RowFixed style={{ marginLeft: "auto" }}>
-                                <SettingsTab placeholderSlippage={allowedSlippage} />
-                            </RowFixed>
-                        </div>
-                    </div>
-                    <TokenPair>
-                        <TokenItem noPadding>
-                            <CurrencyDropdown
-                                centered={true}
-                                value={formattedAmounts[Field.CURRENCY_A]}
-                                onUserInput={onFieldAInput}
-                                hideInput={true}
-                                onMax={() => {
-                                    onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? "");
-                                }}
-                                onCurrencySelect={handleCurrencyASelect}
-                                showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-                                currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
-                                id="add-liquidity-input-tokena"
-                                showCommonBases
-                                showBalance={false}
-                                pool={"page"}
-                                disabled={false}
-                                swap={false}
-                                shallow={false}
-                            />
-                        </TokenItem>
-                        <TokenItem noPadding>
-                            <CurrencyDropdown
-                                centered={true}
-                                value={formattedAmounts[Field.CURRENCY_B]}
-                                hideInput={true}
-                                onUserInput={onFieldBInput}
-                                onCurrencySelect={handleCurrencyBSelect}
-                                onMax={() => {
-                                    onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "");
-                                }}
-                                showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
-                                currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
-                                id="add-liquidity-input-tokenb"
-                                showCommonBases
-                                showBalance={false}
-                                page={"page"}
-                                swap={false}
-                                shallow={false}
-                                disabled={false}
-                            />
-                        </TokenItem>
-                    </TokenPair>
-                    {baseCurrency && quoteCurrency && account ? (
-                        <>
-                            <PoolInfo>
-                                <PoolInfoItem pulse={false}>
-                                    <PoolInfoItemTitle>{`${noLiquidity ? "Initial" : "Current"} Fee:`}</PoolInfoItemTitle>
-                                    <span style={{ display: "flex" }}>
-                                        <PoolInfoItemValue>{noLiquidity ? "0.05" : dynamicFee / 10000}%</PoolInfoItemValue>
-                                        <HelperCirlce>
-                                            <span style={{ userSelect: "none" }}>?</span>
-                                            <TechPaperHint>
-                                                <TechPaperHintTitle>
-                                                    <span style={{ fontSize: "16px", fontWeight: 600 }}>📄 Tech paper</span>
-                                                </TechPaperHintTitle>
-                                                <div style={{ fontSize: "14px", lineHeight: "18px", marginTop: "10px" }}>Check out how dynamic fee is calculated</div>
-                                                <div style={{ marginTop: "10px", width: "100%" }}>
-                                                    <TechPaperDownloadButton download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
-                                                        <span>
+            <NavLink className={"f f-ac c-p mb-1 w-fc hover-op"} to={"/pool"}>
+                <ArrowLeft size={16} />
+                <span className={"ml-05"}>Back to pools</span>
+            </NavLink>
+            <Card classes={"p-2 br-24"}>
+                <div className={"flex-s-between mb-1 fs-15"}>
+                    <span className={"b"}>Add Liquidity</span>
+                    <SettingsTab placeholderSlippage={allowedSlippage} />
+                </div>
+                <div className={"flex-s-between mxs_fd-c"}>
+                    <Card isDark={false} classes={"p-1 br-12 w-100 mr-05 mxs_mr-0 mxs_mb-1"}>
+                        <CurrencyDropdown
+                            centered={true}
+                            value={formattedAmounts[Field.CURRENCY_A]}
+                            onUserInput={onFieldAInput}
+                            hideInput={true}
+                            onMax={() => {
+                                onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? "");
+                            }}
+                            onCurrencySelect={handleCurrencyASelect}
+                            showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
+                            currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
+                            id="add-liquidity-input-tokena"
+                            showCommonBases
+                            showBalance={false}
+                            pool={"page"}
+                            disabled={false}
+                            swap={false}
+                            shallow={false}
+                        />
+                    </Card>
+                    <Card isDark={false} classes={"p-1 br-12 w-100 ml-05 mxs_ml-0 mxs_mb-1"}>
+                        <CurrencyDropdown
+                            centered={true}
+                            value={formattedAmounts[Field.CURRENCY_B]}
+                            hideInput={true}
+                            onUserInput={onFieldBInput}
+                            onCurrencySelect={handleCurrencyBSelect}
+                            onMax={() => {
+                                onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "");
+                            }}
+                            showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
+                            currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
+                            id="add-liquidity-input-tokenb"
+                            showCommonBases
+                            showBalance={false}
+                            page={"page"}
+                            swap={false}
+                            shallow={false}
+                            disabled={false}
+                        />
+                    </Card>
+                </div>
+                {baseCurrency && quoteCurrency && account ? (
+                    <>
+                        {account && (
+                            <>
+                                <div className={"flex-s-between mxs_fd-c"}>
+                                    <Card isDark={false} classes={"p-1 br-12 w-100 mr-05 mt-1 mxs_mr-0"}>
+                                        <div className={"f f-ac fs-1 pos-r"}>
+                                            <span className={"b mr-05"}>{`${noLiquidity ? "Initial" : "Current"} Fee:`}</span>
+                                            <span className={"f f-ac ml-a"}>
+                                                <span className={"mr-05 c-p"}>{noLiquidity ? "0.05" : dynamicFee / 10000}%</span>
+                                                <div className={"fee-helper"} onMouseEnter={() => setShowTech(true)} onMouseLeave={() => setShowTech(false)}>
+                                                    <Info size={"0.85rem"} stroke={"var(--light-gray)"} />
+                                                    <Card isDark classes={"fee-helper__inner pos-a z-10 p-1 br-8 f c bg-dg r-0 w-100 maw-300"}>
+                                                        <span className={"b"}>📄 Tech paper</span>
+                                                        <div className={"fs-085 mt-05"}>Check out how dynamic fee is calculated</div>
+                                                        <a className={"btn primary w-100 f f-jc pv-025 mt-05 br-8"} download="Algebra-Tech-Paper.pdf" href={PDFAlgebra}>
                                                             <Download size={16} color={"white"} />
-                                                        </span>
-                                                        <span style={{ marginLeft: "10px" }}>Download .PDF</span>
-                                                    </TechPaperDownloadButton>
+                                                            <span className={"ml-05"}>Download .PDF</span>
+                                                        </a>
+                                                    </Card>
                                                 </div>
-                                            </TechPaperHint>
-                                        </HelperCirlce>
-                                    </span>
-                                </PoolInfoItem>
-                                {price && baseCurrency && quoteCurrency && !noLiquidity ? (
-                                    <PoolInfoItem pulse={false}>
-                                        <PoolInfoItemTitle>Current Price:</PoolInfoItemTitle>
-                                        <span style={{ display: "flex" }}>
-                                            <PoolInfoItemValue>{invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}</PoolInfoItemValue>
-                                            <PoolInfoItemValueMetric>
-                                                {quoteCurrency?.symbol} per {baseCurrency.symbol}
-                                            </PoolInfoItemValueMetric>
-                                        </span>
-                                    </PoolInfoItem>
-                                ) : (
-                                    <PoolInfoItem pulse={!startPriceTypedValue}>
-                                        <PoolInfoItemTitle>Starting Price</PoolInfoItemTitle>
-                                        <span style={{ display: "flex" }}>
-                                            <PoolInfoItemValue style={{ marginTop: "-1px" }}>
-                                                <StyledInput
-                                                    style={{
-                                                        textAlign: window.innerWidth < 501 ? "left" : "right",
-                                                        backgroundColor: "transparent",
-                                                    }}
-                                                    className="start-price-input"
-                                                    value={startPriceTypedValue}
-                                                    onUserInput={onStartPriceInput}
-                                                />
-                                            </PoolInfoItemValue>
-                                            <PoolInfoItemValueMetric>
-                                                {quoteCurrency?.symbol} per {baseCurrency.symbol}
-                                            </PoolInfoItemValueMetric>
-                                        </span>
-                                    </PoolInfoItem>
-                                )}
-                            </PoolInfo>
-                            {account && (
-                                <>
-                                    <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none" } : {}}>
-                                        <Title>
+                                            </span>
+                                        </div>
+                                    </Card>
+                                    <Card isDark={false} classes={"p-1 br-12 w-100 ml-05 mt-1 mxs_ml-0"}>
+                                        {price && baseCurrency && quoteCurrency && !noLiquidity ? (
+                                            <div className={"f f-ac fs-1"}>
+                                                <span className={"b mr-05 ws-no-wrap fs-1"}>Current Price:</span>
+                                                <div className={"f f-ac ml-a fs-1"}>
+                                                    <span className={"mr-05 c-p"}>{invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}</span>
+                                                    <span className={"ws-no-wrap fs-075"}>
+                                                        {quoteCurrency?.symbol} per {baseCurrency.symbol}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className={"flex-s-between"}>
+                                                <span className={"b mr-05 ws-no-wrap fs-1"}>Starting Price</span>
+                                                <div className={"f"}>
+                                                    <span className={"mr-05"}>
+                                                        <StyledInput
+                                                            style={{
+                                                                textAlign: window.innerWidth < 501 ? "left" : "right",
+                                                                backgroundColor: "transparent",
+                                                            }}
+                                                            className="start-price-input"
+                                                            value={startPriceTypedValue}
+                                                            onUserInput={onStartPriceInput}
+                                                        />
+                                                    </span>
+                                                    <span className={"ws-no-wrap fs-085 mxs_fs-075"} style={{ lineHeight: "21px" }}>
+                                                        {quoteCurrency?.symbol} per {baseCurrency?.symbol}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </Card>
+                                </div>
+                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: "relative" } : {}}>
+                                    <div className={"f"}>
+                                        <Title style={{ margin: 0, position: "static" }}>Price Range</Title>
+                                        <div className="f f-ac w-100">
                                             {outOfRange && (
                                                 <Warning>
                                                     <span>Warning: Price is out of range</span>
                                                 </Warning>
                                             )}
                                             {invalidRange && <Error>Error: The Min price must be lower than the Max price</Error>}
-                                            Price Range
-                                        </Title>
-                                        <PriceRangeWrapper>
-                                            {price && baseCurrency && quoteCurrency && !noLiquidity && (
-                                                <PriceRangeChart>
-                                                    <LiquidityChartRangeInput
-                                                        currencyA={baseCurrency ?? undefined}
-                                                        currencyB={quoteCurrency ?? undefined}
-                                                        feeAmount={dynamicFee}
-                                                        ticksAtLimit={ticksAtLimit}
-                                                        price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
-                                                        priceLower={priceLower}
-                                                        priceUpper={priceUpper}
-                                                        onLeftRangeInput={onLeftRangeInput}
-                                                        onRightRangeInput={onRightRangeInput}
-                                                        interactive={!hasExistingPosition}
-                                                    />
-                                                </PriceRangeChart>
-                                            )}
-                                            <PriceRangeInputs initial={!!noLiquidity}>
-                                                <RangeSelector
-                                                    priceLower={priceLower}
-                                                    priceUpper={priceUpper}
-                                                    getDecrementLower={getDecrementLower}
-                                                    getIncrementLower={getIncrementLower}
-                                                    getDecrementUpper={getDecrementUpper}
-                                                    getIncrementUpper={getIncrementUpper}
-                                                    onLeftRangeInput={onLeftRangeInput}
-                                                    onRightRangeInput={onRightRangeInput}
-                                                    currencyA={baseCurrency}
-                                                    currencyB={quoteCurrency}
+                                        </div>
+                                    </div>
+                                    <div className={"f w-100 mxs_fd-c"}>
+                                        {price && baseCurrency && quoteCurrency && !noLiquidity && (
+                                            <div className={"price-range-chart h-100 br-12"}>
+                                                <LiquidityChartRangeInput
+                                                    currencyA={baseCurrency ?? undefined}
+                                                    currencyB={quoteCurrency ?? undefined}
                                                     feeAmount={dynamicFee}
                                                     ticksAtLimit={ticksAtLimit}
-                                                    initial={!!noLiquidity}
-                                                    disabled={!startPriceTypedValue && !price}
+                                                    price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+                                                    priceLower={priceLower}
+                                                    priceUpper={priceUpper}
+                                                    onLeftRangeInput={onLeftRangeInput}
+                                                    onRightRangeInput={onRightRangeInput}
+                                                    interactive={!hasExistingPosition}
                                                 />
-                                                {!noLiquidity && (
-                                                    <FullRangeButton
-                                                        onClick={() => {
-                                                            getSetFullRange();
+                                            </div>
+                                        )}
+                                        <div className={"price-range-inputs h-100 ml-1 mxs_mt-1 mxs_ml-0"} data-initial={!!noLiquidity}>
+                                            <RangeSelector
+                                                priceLower={priceLower}
+                                                priceUpper={priceUpper}
+                                                getDecrementLower={getDecrementLower}
+                                                getIncrementLower={getIncrementLower}
+                                                getDecrementUpper={getDecrementUpper}
+                                                getIncrementUpper={getIncrementUpper}
+                                                onLeftRangeInput={onLeftRangeInput}
+                                                onRightRangeInput={onRightRangeInput}
+                                                currencyA={baseCurrency}
+                                                currencyB={quoteCurrency}
+                                                feeAmount={dynamicFee}
+                                                ticksAtLimit={ticksAtLimit}
+                                                initial={!!noLiquidity}
+                                                disabled={!startPriceTypedValue && !price}
+                                            />
+                                            {!noLiquidity && (
+                                                <button
+                                                    className={"btn secondary full-range-btn w-100 p-1 hover-b"}
+                                                    onClick={() => {
+                                                        getSetFullRange();
 
-                                                            ReactGA.event({
-                                                                category: "Liquidity",
-                                                                action: "Full Range Clicked",
-                                                            });
+                                                        ReactGA.event({
+                                                            category: "Liquidity",
+                                                            action: "Full Range Clicked",
+                                                        });
+                                                    }}
+                                                >
+                                                    Full Range
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    style={
+                                        (!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange
+                                            ? {
+                                                  opacity: 0.2,
+                                                  userSelect: "none",
+                                                  pointerEvents: "none",
+                                              }
+                                            : {}
+                                    }
+                                >
+                                    <Title>Deposit Amounts</Title>
+                                    <TokenPair
+                                        style={{
+                                            height: `${window.innerWidth < 500 ? "" : "145px"}`,
+                                            marginBottom: "1rem",
+                                        }}
+                                    >
+                                        <TokenItem highPrice={false}>
+                                            {!atMaxAmounts[Field.CURRENCY_A] && !depositADisabled && (
+                                                <MaxButton
+                                                    disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
+                                                    onClick={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toFixed() ?? "")}
+                                                >
+                                                    Max
+                                                </MaxButton>
+                                            )}
+                                            <CurrencyDropdown
+                                                value={formattedAmounts[Field.CURRENCY_A]}
+                                                onUserInput={onFieldAInput}
+                                                hideInput={true}
+                                                onMax={() => {
+                                                    onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toFixed() ?? "");
+                                                }}
+                                                onCurrencySelect={handleCurrencyASelect}
+                                                showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
+                                                currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
+                                                id="add-liquidity-input-tokena"
+                                                showCommonBases
+                                                showBalance={true}
+                                                disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper}
+                                                shallow={true}
+                                                page={"pool"}
+                                                swap={false}
+                                            />
+                                            <TokenItemBottomInputWrapper>
+                                                <div style={{ width: "100%" }}>
+                                                    <CurrencyInputPanel
+                                                        value={formattedAmounts[Field.CURRENCY_A]}
+                                                        onUserInput={onFieldAInput}
+                                                        onMax={() => {
+                                                            onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? "");
+                                                        }}
+                                                        showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
+                                                        currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
+                                                        id="add-liquidity-input-tokena"
+                                                        fiatValue={usdcValues[Field.CURRENCY_A]}
+                                                        showCommonBases
+                                                        locked={depositADisabled}
+                                                        hideCurrency={true}
+                                                        hideInput={depositADisabled}
+                                                        disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
+                                                        shallow={true}
+                                                        page={"pool"}
+                                                        swap={false}
+                                                    />
+                                                </div>
+                                                {showApprovalA && !depositADisabled && (
+                                                    <ApproveButtonContainer
+                                                        style={{
+                                                            display: "flex",
+                                                            width: "100%",
                                                         }}
                                                     >
-                                                        Full Range
-                                                    </FullRangeButton>
+                                                        <ApproveButton onClick={approveACallback} disabled={approvalA === ApprovalState.PENDING}>
+                                                            {approvalA === ApprovalState.PENDING
+                                                                ? `Approving ${currencies[Field.CURRENCY_A]?.symbol}`
+                                                                : `Approve ${currencies[Field.CURRENCY_A]?.symbol}`}
+                                                        </ApproveButton>
+                                                    </ApproveButtonContainer>
                                                 )}
-                                            </PriceRangeInputs>
-                                        </PriceRangeWrapper>
-                                    </div>
-
-                                    <div
-                                        style={
-                                            (!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange
-                                                ? {
-                                                      opacity: 0.2,
-                                                      userSelect: "none",
-                                                      pointerEvents: "none",
-                                                  }
-                                                : {}
-                                        }
-                                    >
-                                        <Title>Deposit Amounts</Title>
-                                        <TokenPair
-                                            style={{
-                                                height: `${window.innerWidth < 500 ? "" : "145px"}`,
-                                                marginBottom: "1rem",
-                                            }}
-                                        >
-                                            <TokenItem highPrice={false}>
-                                                {!atMaxAmounts[Field.CURRENCY_A] && !depositADisabled && (
-                                                    <MaxButton
-                                                        disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
-                                                        onClick={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toFixed() ?? "")}
-                                                    >
-                                                        Max
-                                                    </MaxButton>
-                                                )}
-                                                <CurrencyDropdown
-                                                    value={formattedAmounts[Field.CURRENCY_A]}
-                                                    onUserInput={onFieldAInput}
-                                                    hideInput={true}
-                                                    onMax={() => {
-                                                        onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toFixed() ?? "");
-                                                    }}
-                                                    onCurrencySelect={handleCurrencyASelect}
-                                                    showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-                                                    currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
-                                                    id="add-liquidity-input-tokena"
-                                                    showCommonBases
-                                                    showBalance={true}
-                                                    disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper}
-                                                    shallow={true}
-                                                    page={"pool"}
-                                                    swap={false}
-                                                />
-                                                <TokenItemBottomInputWrapper>
-                                                    <div style={{ width: "100%" }}>
-                                                        <CurrencyInputPanel
-                                                            value={formattedAmounts[Field.CURRENCY_A]}
-                                                            onUserInput={onFieldAInput}
-                                                            onMax={() => {
-                                                                onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? "");
-                                                            }}
-                                                            showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-                                                            currency={currencies[Field.CURRENCY_A] as WrappedCurrency}
-                                                            id="add-liquidity-input-tokena"
-                                                            fiatValue={usdcValues[Field.CURRENCY_A]}
-                                                            showCommonBases
-                                                            locked={depositADisabled}
-                                                            hideCurrency={true}
-                                                            hideInput={depositADisabled}
-                                                            disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
-                                                            shallow={true}
-                                                            page={"pool"}
-                                                            swap={false}
-                                                        />
-                                                    </div>
-                                                    {showApprovalA && !depositADisabled && (
-                                                        <ApproveButtonContainer
-                                                            style={{
-                                                                display: "flex",
-                                                                width: "100%",
-                                                            }}
-                                                        >
-                                                            <ApproveButton onClick={approveACallback} disabled={approvalA === ApprovalState.PENDING}>
-                                                                {approvalA === ApprovalState.PENDING
-                                                                    ? `Approving ${currencies[Field.CURRENCY_A]?.symbol}`
-                                                                    : `Approve ${currencies[Field.CURRENCY_A]?.symbol}`}
-                                                            </ApproveButton>
-                                                        </ApproveButtonContainer>
-                                                    )}
-                                                </TokenItemBottomInputWrapper>
-                                            </TokenItem>
-                                            <TokenItem highPrice={false}>
-                                                {!atMaxAmounts[Field.CURRENCY_B] && !depositBDisabled && (
-                                                    <MaxButton
-                                                        disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
-                                                        onClick={() => onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "")}
-                                                    >
-                                                        Max
-                                                    </MaxButton>
-                                                )}
-                                                <CurrencyDropdown
-                                                    swap={false}
-                                                    value={formattedAmounts[Field.CURRENCY_B]}
-                                                    hideInput={true}
-                                                    onUserInput={onFieldBInput}
-                                                    onCurrencySelect={handleCurrencyBSelect}
-                                                    currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
-                                                    id="add-liquidity-input-tokenb"
-                                                    showCommonBases
-                                                    showBalance={true}
+                                            </TokenItemBottomInputWrapper>
+                                        </TokenItem>
+                                        <TokenItem highPrice={false}>
+                                            {!atMaxAmounts[Field.CURRENCY_B] && !depositBDisabled && (
+                                                <MaxButton
                                                     disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
-                                                    shallow={true}
-                                                    page={"pool"}
-                                                    showMaxButton={false}
-                                                />
-                                                <TokenItemBottomInputWrapper>
-                                                    <div style={{ width: "100%" }}>
-                                                        <CurrencyInputPanel
-                                                            value={formattedAmounts[Field.CURRENCY_B]}
-                                                            onUserInput={onFieldBInput}
-                                                            onMax={() => {
-                                                                onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "");
-                                                            }}
-                                                            showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
-                                                            fiatValue={usdcValues[Field.CURRENCY_B]}
-                                                            currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
-                                                            id="add-liquidity-input-tokenb"
-                                                            showCommonBases
-                                                            locked={depositBDisabled}
-                                                            hideCurrency={true}
-                                                            hideInput={depositBDisabled}
-                                                            showBalance={true}
-                                                            disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
-                                                            shallow={true}
-                                                            page={"pool"}
-                                                            swap={false}
-                                                        />
-                                                    </div>
-                                                    {showApprovalB && !depositBDisabled && (
-                                                        <ApproveButtonContainer
-                                                            style={{
-                                                                display: "flex",
-                                                                width: "100%",
-                                                            }}
-                                                        >
-                                                            <ApproveButton onClick={approveBCallback} disabled={approvalB === ApprovalState.PENDING}>
-                                                                {approvalB === ApprovalState.PENDING
-                                                                    ? `Approving ${currencies[Field.CURRENCY_B]?.symbol}`
-                                                                    : `Approve ${currencies[Field.CURRENCY_B]?.symbol}`}
-                                                            </ApproveButton>
-                                                        </ApproveButtonContainer>
-                                                    )}
-                                                </TokenItemBottomInputWrapper>
-                                            </TokenItem>
-                                        </TokenPair>
-                                    </div>
-                                </>
-                            )}
-                            <ButtonsWrapper>
+                                                    onClick={() => onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "")}
+                                                >
+                                                    Max
+                                                </MaxButton>
+                                            )}
+                                            <CurrencyDropdown
+                                                swap={false}
+                                                value={formattedAmounts[Field.CURRENCY_B]}
+                                                hideInput={true}
+                                                onUserInput={onFieldBInput}
+                                                onCurrencySelect={handleCurrencyBSelect}
+                                                currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
+                                                id="add-liquidity-input-tokenb"
+                                                showCommonBases
+                                                showBalance={true}
+                                                disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
+                                                shallow={true}
+                                                page={"pool"}
+                                                showMaxButton={false}
+                                            />
+                                            <TokenItemBottomInputWrapper>
+                                                <div style={{ width: "100%" }}>
+                                                    <CurrencyInputPanel
+                                                        value={formattedAmounts[Field.CURRENCY_B]}
+                                                        onUserInput={onFieldBInput}
+                                                        onMax={() => {
+                                                            onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "");
+                                                        }}
+                                                        showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
+                                                        fiatValue={usdcValues[Field.CURRENCY_B]}
+                                                        currency={currencies[Field.CURRENCY_B] as WrappedCurrency}
+                                                        id="add-liquidity-input-tokenb"
+                                                        showCommonBases
+                                                        locked={depositBDisabled}
+                                                        hideCurrency={true}
+                                                        hideInput={depositBDisabled}
+                                                        showBalance={true}
+                                                        disabled={(!startPriceTypedValue && !price) || !priceLower || !priceUpper || invalidRange}
+                                                        shallow={true}
+                                                        page={"pool"}
+                                                        swap={false}
+                                                    />
+                                                </div>
+                                                {showApprovalB && !depositBDisabled && (
+                                                    <ApproveButtonContainer
+                                                        style={{
+                                                            display: "flex",
+                                                            width: "100%",
+                                                        }}
+                                                    >
+                                                        <ApproveButton onClick={approveBCallback} disabled={approvalB === ApprovalState.PENDING}>
+                                                            {approvalB === ApprovalState.PENDING
+                                                                ? `Approving ${currencies[Field.CURRENCY_B]?.symbol}`
+                                                                : `Approve ${currencies[Field.CURRENCY_B]?.symbol}`}
+                                                        </ApproveButton>
+                                                    </ApproveButtonContainer>
+                                                )}
+                                            </TokenItemBottomInputWrapper>
+                                        </TokenItem>
+                                    </TokenPair>
+                                </div>
+                            </>
+                        )}
+                        <ButtonsWrapper>
+                            <div className="mr-1 w-100">
                                 {errorMessage && (startPriceTypedValue || price) && priceLower && priceUpper && !invalidRange && (
                                     <Error
                                         style={{
-                                            position: "relative",
                                             padding: "14px 16px",
                                             marginRight: "1rem",
-                                            top: 0,
+                                            maxWidth: "unset",
                                         }}
                                     >
                                         {errorMessage}
                                     </Error>
                                 )}
+                            </div>
+                            <div className="w-100">
                                 <AddLiquidityButton
+                                    className="ml-0 w-100"
                                     onClick={() => {
                                         onAdd();
                                     }}
@@ -753,24 +728,41 @@ export default function AddLiquidityPage({
                                         mustCreateSeparately ||
                                         !isValid ||
                                         (approvalA !== ApprovalState.APPROVED && !depositADisabled) ||
-                                        (approvalB !== ApprovalState.APPROVED && !depositBDisabled)
+                                        (approvalB !== ApprovalState.APPROVED && !depositBDisabled) ||
+                                        !!txHash ||
+                                        isNetworkFailed
                                     }
                                 >
-                                    Add Liquidity
+                                    <div className={"b f f-ac"}>
+                                        {isNetworkFailed ? (
+                                            <>
+                                                <Loader stroke={"#9ca1a5"} />
+                                                <span style={{ marginLeft: "8px" }}>Updating...</span>
+                                            </>
+                                        ) : txHash ? (
+                                            <>
+                                                {" "}
+                                                <Loader stroke={"#9ca1a5"} />
+                                                <span style={{ marginLeft: "8px" }}>Adding Liquidity...</span>
+                                            </>
+                                        ) : (
+                                            "Add Liquidity"
+                                        )}
+                                    </div>
                                 </AddLiquidityButton>
-                            </ButtonsWrapper>
-                        </>
-                    ) : account ? (
-                        <PairNotSelectedMock>Please select a token pair</PairNotSelectedMock>
-                    ) : (
-                        <PairNotSelectedMock>
-                            <AddLiquidityButton onClick={toggleWalletModal} style={{ margin: "auto" }}>
-                                Connect Wallet
-                            </AddLiquidityButton>
-                        </PairNotSelectedMock>
-                    )}
-                </LiquidityWrapper>
-            </PageWrapper>
+                            </div>
+                        </ButtonsWrapper>
+                    </>
+                ) : account ? (
+                    <PairNotSelectedMock>Please select a token pair</PairNotSelectedMock>
+                ) : (
+                    <PairNotSelectedMock>
+                        <AddLiquidityButton onClick={toggleWalletModal} style={{ margin: "auto" }}>
+                            Connect Wallet
+                        </AddLiquidityButton>
+                    </PairNotSelectedMock>
+                )}
+            </Card>
         </>
     );
 }

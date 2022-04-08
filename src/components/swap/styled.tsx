@@ -17,20 +17,22 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0px;
-    border-radius: 60px;
+    padding: 0;
+    border-radius: 12px;
     height: 42px;
     width: 35px;
     position: relative;
     margin-top: -32px;
     margin-bottom: -14px;
     left: calc(50% - 11px);
-    background-color: #759fe3;
+    background-color: var(--primary-weak);
+    opacity: .5;
     border: none;
     z-index: 2;
 
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   margin-top: -15px;
+  margin-bottom: 5px;
   `}
 
     ${({ clickable }) =>

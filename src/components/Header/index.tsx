@@ -1,120 +1,97 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useETHBalances } from 'state/wallet/hooks'
+import { useEffect, useMemo, useState } from "react";
+import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
-import WinterLogo from '../../assets/images/winter-logo.png'
+import Logo from "../../assets/svg/logo.svg";
 // @ts-ignore
-import Logo_logo from '../../assets/svg/alg-logo-svg.svg'
-import { useActiveWeb3React } from '../../hooks/web3'
-import Web3Status from '../Web3Status'
-import NetworkCard from './NetworkCard'
-import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
-import usePrevious from '../../hooks/usePrevious'
-import { isMobile } from 'react-device-detect'
-import { useAppSelector } from '../../state/hooks'
-import { AccountElement, AlgIcon, BalanceText, FarmingInfoLabel, HeaderControls, HeaderElement, HeaderFrame, HeaderLinks, LogoWrapper, StyledNavLink, Title, TitleIce, TitleIcicle } from './styled'
+import Logo_logo from "../../assets/svg/alg-logo-svg.svg";
+import { useActiveWeb3React } from "../../hooks/web3";
+import Web3Status from "../Web3Status";
+import NetworkCard from "./NetworkCard";
+import { useIsNetworkFailed } from "../../hooks/useIsNetworkFailed";
+import usePrevious from "../../hooks/usePrevious";
+import { isMobile } from "react-device-detect";
+import { useAppSelector } from "../../state/hooks";
+import { BalanceText } from "./styled";
+import "./index.scss";
+import { NavLink } from "react-router-dom";
 
 export default function Header() {
-    const { startTime, eternalFarmings } = useAppSelector((state) => state.farming)
-    const { account, chainId } = useActiveWeb3React()
+    const { startTime, eternalFarmings } = useAppSelector((state) => state.farming);
+    const { account, chainId } = useActiveWeb3React();
 
-    const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+    const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? ""];
 
-    const prevEthBalance = usePrevious(userEthBalance)
+    const prevEthBalance = usePrevious(userEthBalance);
 
     const _userEthBalance = useMemo(() => {
         if (!userEthBalance) {
-            return prevEthBalance
+            return prevEthBalance;
         }
 
-        return userEthBalance
-    }, [userEthBalance])
+        return userEthBalance;
+    }, [userEthBalance]);
 
-    const networkFailed = useIsNetworkFailed()
+    const networkFailed = useIsNetworkFailed();
 
-    const [isEvents, setEvents] = useState(false)
+    const [isEvents, setEvents] = useState(false);
 
-    let chainValue
+    let chainValue;
 
     if (chainId === 137) {
-        chainValue = 'MATIC'
+        chainValue = "MATIC";
     }
 
     useEffect(() => {
         if (startTime.trim() || eternalFarmings) {
-            setEvents(true)
+            setEvents(true);
         }
-    }, [startTime, eternalFarmings])
+    }, [startTime, eternalFarmings]);
 
     return (
-        <HeaderFrame showBackground={false}>
-            <LogoWrapper>
-                <Title href='.'>
-                    <TitleIce>
-                        <AlgIcon>
-                            <img
-                                width={'calc(100% - 10px)'}
-                                src={window.innerWidth < 501 ? Logo_logo : WinterLogo}
-                                alt='logo'
-                            />
-                        </AlgIcon>
-                    </TitleIce>
-                </Title>
-                <TitleIcicle />
-            </LogoWrapper>
-            <HeaderLinks>
-                <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+        <div className={"header__wrapper flex-s-between w-100 pv-1 pl-2"}>
+            <a className={"header__logo hover-op mxs_mr-1"} href=".">
+                <img width={"calc(100% - 10px)"} src={Logo} alt="logo" />
+            </a>
+            <div className={"header__links flex-s-between"}>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
                     Swap
-                </StyledNavLink>
-                <StyledNavLink
+                </NavLink>
+                <NavLink
+                    className={"header__links__link hover-op"}
                     id={`pool-nav-link`}
-                    to={'/pool'}
+                    to={"/pool"}
                     isActive={(match, { pathname }) =>
-                        Boolean(match) ||
-                        pathname.startsWith('/add') ||
-                        pathname.startsWith('/remove') ||
-                        pathname.startsWith('/increase') ||
-                        pathname.startsWith('/find')
+                        Boolean(match) || pathname.startsWith("/add") || pathname.startsWith("/remove") || pathname.startsWith("/increase") || pathname.startsWith("/find")
                     }
+                    activeClassName={"header__links__link--active"}
                 >
                     Pool
-                </StyledNavLink>
-                <StyledNavLink id={`farming-nav-link`} to={'/farming'}>
-                <span style={{ position: 'relative' }}>
-            <span>Farming</span>
-          <FarmingInfoLabel isEvents={isEvents} isHeader />
-            </span>
-                </StyledNavLink>
-                <StyledNavLink id={`staking-nav-link`} to={'/staking'}>
+                </NavLink>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
+                    <span>Farming</span>
+                    <span className={"header__farming-circle"} />
+                </NavLink>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`staking-nav-link`} to={"/staking"}>
                     Staking
-                </StyledNavLink>
-                <StyledNavLink id={`info-nav-link`} to={'/info'}>
+                </NavLink>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     Info
-                </StyledNavLink>
-            </HeaderLinks>
+                </NavLink>
+            </div>
 
-            <HeaderControls>
-                <HeaderElement>
-                    <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-                        {account &&
-                            <>
-                                <NetworkCard />
-                                {chainId === 137 && account && userEthBalance || networkFailed ? (
-                                    <BalanceText
-                                        style={{ flexShrink: 0 }}
-                                        pl='0.75rem'
-                                        pt='0.75rem'
-                                        pb='0.75rem'
-                                        pr='0.5rem'
-                                        fontWeight={500}
-                                    >
-                                        {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
-                                    </BalanceText>
-                                ) : null}
-                            </>}
-                        <Web3Status />
-                    </AccountElement>
-                </HeaderElement>
-            </HeaderControls>
-        </HeaderFrame>
-    )
+            <div className={"header__account flex-s-between"}>
+                {account && (
+                    <>
+                        <NetworkCard />
+                        {(chainId === 137 && account && userEthBalance) || networkFailed ? (
+                            <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
+                                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
+                            </BalanceText>
+                        ) : null}
+                    </>
+                )}
+                <Web3Status />
+            </div>
+        </div>
+    );
 }

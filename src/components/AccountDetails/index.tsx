@@ -4,42 +4,29 @@ import { useActiveWeb3React } from '../../hooks/web3'
 import { clearAllTransactions } from '../../state/transactions/actions'
 import { shortenAddress } from '../../utils'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
-import { AutoRow } from '../Row'
 import Copy from './Copy'
 import Transaction from './Transaction'
-
+import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 import { ExternalLink as LinkIcon } from 'react-feather'
-import { LinkStyledButton, TYPE } from '../../theme'
+import { ExternalLink } from '../../theme'
 import { Trans } from '@lingui/macro'
 import { useAppDispatch } from 'state/hooks'
-import {
-    AccountControl,
-    AccountGroupingRow,
-    AccountSection,
-    AddressLink,
-    CloseColor,
-    CloseIcon,
-    HeaderRow,
-    IconWrapper,
-    InfoCard,
-    LowerSection,
-    TransactionListWrapper,
-    UpperSection,
-    WalletAction,
-    WalletName,
-    YourAccount
-} from './styled'
+import { IconWrapper, WalletAction } from './styled'
 import { EthereumWindow } from '../../models/types'
+import './index.scss'
+import Card from '../../shared/components/Card/Card'
 
 function renderTransactions(transactions: string[]) {
     return (
-        <TransactionListWrapper>
+        <div>
             {transactions.map((hash, i) => {
-                return <Transaction key={i} hash={hash} />
+                return <div className={'mb-025'} key={i}>
+                    <Transaction hash={hash} />
+                </div>
             })}
-        </TransactionListWrapper>
+        </div>
     )
 }
 
@@ -65,9 +52,9 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
             )
             .map((k) => SUPPORTED_WALLETS[k].name)[0]
         return (
-            <WalletName>
+            <div className={`fs-085 ${name === 'Metamask' && 'mb-05'}`}>
                 <Trans>Connected with {name}</Trans>
-            </WalletName>
+            </div>
         )
     }
 
@@ -88,139 +75,91 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
 
     return (
         <>
-            <UpperSection>
-                <CloseIcon onClick={toggleWalletModal}>
-                    <CloseColor />
-                </CloseIcon>
-                <HeaderRow>
+            <div className={'pos-r'}>
+                <div className={'flex-s-between w-100 c-w mb-1'}>
                     <Trans>Account</Trans>
-                </HeaderRow>
-                <AccountSection>
-                    <YourAccount>
-                        <InfoCard>
-                            <AccountGroupingRow>
-                                {formatConnectorName()}
-                                <div>
-                                    {connector !== injected && (
-                                        <WalletAction
-                                            style={{
-                                                fontSize: '.825rem',
-                                                fontWeight: 400,
-                                                marginRight: '8px',
-                                                color: '#080064'
-                                            }}
-                                            onClick={() => {
-                                                ;(connector as any).close()
-                                            }}
-                                        >
-                                            <Trans>Disconnect</Trans>
-                                        </WalletAction>
-                                    )}
-                                </div>
-                            </AccountGroupingRow>
-                            <AccountGroupingRow id='web3-account-identifier-row'>
-                                <AccountControl>
-                                    {ENSName ? (
-                                        <>
-                                            <div>
-                                                {getStatusIcon()}
-                                                <p> {ENSName}</p>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div>
-                                                {getStatusIcon()}
-                                                <p> {account && shortenAddress(account)}</p>
-                                            </div>
-                                        </>
-                                    )}
-                                </AccountControl>
-                            </AccountGroupingRow>
-                            <AccountGroupingRow>
-                                {ENSName ? (
-                                    <>
-                                        <AccountControl>
-                                            <div>
-                                                {account && (
-                                                    <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px', color: '#080064' }}>
-                              <Trans>Copy Address</Trans>
-                            </span>
-                                                    </Copy>
-                                                )}
-                                                {chainId && account && (
-                                                    <AddressLink
-                                                        hasENS={!!ENSName}
-                                                        isENS={true}
-                                                        href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}
-                                                    >
-                                                        <LinkIcon size={16} />
-                                                        <span style={{
-                                                            marginLeft: '4px',
-                                                            color: '#080064'
-                                                        }}>
-                              <Trans>View on Explorer</Trans>
-                            </span>
-                                                    </AddressLink>
-                                                )}
-                                            </div>
-                                        </AccountControl>
-                                    </>
-                                ) : (
-                                    <>
-                                        <AccountControl>
-                                            <div>
-                                                {account && (
-                                                    <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px', color: '#080064' }}>
-                              <Trans>Copy Address</Trans>
-                            </span>
-                                                    </Copy>
-                                                )}
-                                                {chainId && account && (
-                                                    <AddressLink
-                                                        hasENS={!!ENSName}
-                                                        isENS={false}
-                                                        href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}
-                                                    >
-                                                        <LinkIcon size={16} color='#080064' />
-                                                        <span style={{
-                                                            marginLeft: '4px',
-                                                            color: '#080064'
-                                                        }}>
-                              <Trans>View on Explorer</Trans>
-                            </span>
-                                                    </AddressLink>
-                                                )}
-                                            </div>
-                                        </AccountControl>
-                                    </>
+                    <span className={'cur-p hover-op'} onClick={toggleWalletModal}>
+                        <Close />
+                    </span>
+                </div>
+                <div className={'account-details p-1 mb-15 br-12 c-w'}>
+                    <div className={'f f-ac mb-05'}>
+                        {formatConnectorName()}
+                        {connector !== injected && (
+                            <WalletAction
+                                onClick={() => {
+                                    (connector as any).close()
+                                }}
+                            >
+                                <Trans>Disconnect</Trans>
+                            </WalletAction>
+                        )}
+                    </div>
+                    <div className={'l f f-ac c-w mb-05'} id='web3-account-identifier-row'>
+                        {ENSName ? (
+                            <>
+                                {getStatusIcon()}
+                                <p> {ENSName}</p>
+                            </>
+                        ) : (
+                            <>
+                                {getStatusIcon()}
+                                <p> {account && shortenAddress(account)}</p>
+                            </>
+                        )}
+                    </div>
+                    <div className={'f'}>
+                        {ENSName ? (
+                            <>
+                                {account && (
+                                    <Copy toCopy={account}>
+                                        <Trans>Copy Address</Trans>
+                                    </Copy>
                                 )}
-                            </AccountGroupingRow>
-                        </InfoCard>
-                    </YourAccount>
-                </AccountSection>
-            </UpperSection>
+                                {chainId && account && (
+                                    <ExternalLink href={getExplorerLink(chainId, ENSName, ExplorerDataType.ADDRESS)}>
+                                        <LinkIcon size={'1rem'} color='var(--primary)' />
+                                        <span className={'ml-025 c-p hover-line'}>
+                                            <Trans>View on Explorer</Trans>
+                                        </span>
+                                    </ExternalLink>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {account && (
+                                    <Copy toCopy={account}>
+                                        <Trans>Copy Address</Trans>
+                                    </Copy>
+                                )}
+                                {chainId && account && (
+                                    <ExternalLink href={getExplorerLink(chainId, account, ExplorerDataType.ADDRESS)}>
+                                        <LinkIcon size={'1rem'} color='var(--primary)' />
+                                        <span className={'ml-025 c-p hover-line'}>
+                                            <Trans>View on Explorer</Trans>
+                                        </span>
+                                    </ExternalLink>
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
             {!!pendingTransactions.length || !!confirmedTransactions.length ? (
-                <LowerSection>
-                    <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-                        <TYPE.body style={{ color: '#080064' }}>
-                            <Trans>Recent Transactions</Trans>
-                        </TYPE.body>
-                        <LinkStyledButton onClick={clearAllTransactionsCallback}>
+                <Card isDark classes={'br-12 mt-1 p-1'}>
+                    <div className={'c-p flex-s-between mb-05'}>
+                        <Trans>Recent Transactions</Trans>
+                        <button className={'br-0 bg-t c-p p-0 hover-line'} onClick={clearAllTransactionsCallback}>
                             <Trans>(clear all)</Trans>
-                        </LinkStyledButton>
-                    </AutoRow>
+                        </button>
+                    </div>
                     {renderTransactions(pendingTransactions)}
                     {renderTransactions(confirmedTransactions)}
-                </LowerSection>
+                </Card>
             ) : (
-                <LowerSection>
-                    <TYPE.body color={'#080064'}>
-                        <Trans>Your transactions will appear here...</Trans>
-                    </TYPE.body>
-                </LowerSection>
+                <Card isDark classes={'f c f-ac f-jc br-12 mt-1 h-200'}>
+                    <Trans>Your transactions will appear here...</Trans>
+                </Card>
             )}
         </>
     )

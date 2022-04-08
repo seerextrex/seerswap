@@ -18,7 +18,7 @@ const Base = styled(RebassButton)<{
     width: ${({ width }) => width ?? '100%'};
     font-weight: 500;
     text-align: center;
-    border-radius: ${({ $borderRadius }) => $borderRadius ?? '20px'};
+    border-radius: ${({ $borderRadius }) => $borderRadius ?? '12px'};
     outline: none;
     border: 1px solid transparent;
     color: white;
@@ -274,37 +274,33 @@ const ButtonConfirmedStyle = styled(Base)`
 `
 
 const ButtonErrorStyle = styled(Base)`
-    background-color: ${({ theme }) => theme.winterMainButton};
+    background-color: var(--primary);
 
     &:focus {
-        box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.red1)};
-        background-color: ${({ theme }) => darken(0.05, theme.red1)};
+        box-shadow: 0 0 0 1pt var(--red);
+        background-color: var(--red);
     }
 
     &:hover {
-        background-color: ${({ theme }) => darken(0.05, theme.red1)};
+        background-color: var(--red);
     }
 
     &:active {
-        box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.red1)};
-        background-color: ${({ theme }) => darken(0.1, theme.red1)};
+        box-shadow: 0 0 0 1pt var(--red);
+        background-color: var(--red);
     }
 
     &:disabled {
         opacity: 50%;
         cursor: auto;
         box-shadow: none;
-        color: rgb(195, 197, 203);
-        background-color: ${({}) => '#073c66'};
-        border: 1px solid ${({}) => '#073c66'};
+        color: var(--light-gray);
+        background-color: var(--primary-weak);
+        border: 1px solid var(--primary-weak);
     }
 `
 
-export function ButtonConfirmed({
-    confirmed,
-    altDisabledStyle,
-    ...rest
-}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
+export function ButtonConfirmed({ confirmed, altDisabledStyle, ...rest }: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
     if (confirmed) {
         return <ButtonConfirmedStyle {...rest} />
     } else {

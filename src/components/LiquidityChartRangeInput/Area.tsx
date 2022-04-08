@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react'
-import { area, curveStepAfter, ScaleLinear } from 'd3'
-import { Path } from './styled'
-import { ChartEntry } from './types'
-import inRange from 'lodash/inRange'
+import React, { useMemo } from "react";
+import { area, curveStepAfter, ScaleLinear } from "d3";
+import { Path } from "./styled";
+import { ChartEntry } from "./types";
+import inRange from "lodash/inRange";
 
 export const Area = ({
     series,
@@ -10,14 +10,14 @@ export const Area = ({
     yScale,
     xValue,
     yValue,
-    fill
+    fill,
 }: {
-    series: ChartEntry[]
-    xScale: ScaleLinear<number, number>
-    yScale: ScaleLinear<number, number>
-    xValue: (d: ChartEntry) => number
-    yValue: (d: ChartEntry) => number
-    fill?: string | undefined
+    series: ChartEntry[];
+    xScale: ScaleLinear<number, number>;
+    yScale: ScaleLinear<number, number>;
+    xValue: (d: ChartEntry) => number;
+    yValue: (d: ChartEntry) => number;
+    fill?: string | undefined;
 }) =>
     useMemo(
         () => (
@@ -28,11 +28,9 @@ export const Area = ({
                         .curve(curveStepAfter)
                         .x((d: unknown) => xScale(xValue(d as ChartEntry)))
                         .y1((d: unknown) => yScale(yValue(d as ChartEntry)))
-                        .y0(yScale(0))(
-                            series.filter((d) => inRange(xScale(xValue(d)), 0, innerWidth)) as Iterable<[number, number]>
-                        ) ?? undefined
+                        .y0(yScale(0))(series.filter((d) => inRange(xScale(xValue(d)), 0, innerWidth)) as Iterable<[number, number]>) ?? undefined
                 }
             />
         ),
         [fill, series, xScale, xValue, yScale, yValue]
-    )
+    );

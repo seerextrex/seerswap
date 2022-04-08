@@ -9,6 +9,7 @@ import {
     CHART_POOL_LAST_ENTRY,
     CHART_POOL_LAST_NOT_EMPTY,
     FETCH_ETERNAL_FARM_FROM_POOL,
+    FETCH_LIMIT_FARM_FROM_POOL,
     GET_STAKE,
     GET_STAKE_HISTORY,
     POOLS_FROM_ADDRESSES,
@@ -42,22 +43,25 @@ import {
     TotalStatSubgraph
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces'
+import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL, fetchPoolsAPR } from 'utils/api'
+import { LimitFarmingByPool } from "models/interfaces/responseSubgraph"
+import { FarmingType } from "models/enums"
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-            accum[poolData.id] = poolData
-            return accum
-        }, {})
+        accum[poolData.id] = poolData
+        return accum
+    }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-            accum[tokenData.id] = tokenData
-            return accum
-        }, {})
+        accum[tokenData.id] = tokenData
+        return accum
+    }, {})
         : {}
 }
 
@@ -92,31 +96,6 @@ export function useInfoSubgraph() {
     const [stakeHistoriesResult, setHistories] = useState<null | HistoryStakingSubgraph[] | string>(null)
     const [historiesLoading, setHistoriesLoading] = useState<boolean>(false)
 
-    async function fetchPoolsAPR() {
-
-        const apiURL = 'https://api.algebra.finance/api/APR/pools/'
-
-        try {
-            return await fetch(apiURL).then(v => v.json())
-
-        } catch (error: any) {
-            return {}
-        }
-
-    }
-
-    async function fetchEternalFarmAPR() {
-
-        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
-
-        try {
-            return await fetch(apiURL).then(v => v.json())
-
-        } catch (error: any) {
-            return {}
-        }
-
-    }
 
     async function fetchInfoPools() {
 
@@ -159,6 +138,7 @@ export function useInfoSubgraph() {
             const parsedPoolsWeek = parsePoolsData(poolsWeek)
 
             const aprs = await fetchPoolsAPR()
+
             const farmAprs = await fetchEternalFarmAPR()
 
             const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
@@ -168,6 +148,19 @@ export function useInfoSubgraph() {
                     [el.pool]: farmAprs[el.id]
                 }
             ), {})
+
+            const limitFarms: { [key: string]: number } = await fetchLimitFarmAPR()
+
+            const filteredFarms: { [key: string]: number } = Object.entries(limitFarms).filter((el) => el[1] >= 0).reduce((acc, el) => ({
+                ...acc,
+                [el[0]]: el[1]
+            }), {})
+
+            const limitAprs = await fetchLimitFarmingsAPRByPool(poolsAddresses)
+            const _limitAprs: { [type: string]: number } = limitAprs.reduce((acc, el) => ({
+                ...acc,
+                [el.pool]: filteredFarms[el.id]
+            }), {})
 
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address]
@@ -193,6 +186,9 @@ export function useInfoSubgraph() {
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
                 const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0
+                const limitApr = _limitAprs[address] ? +_limitAprs[address] : 0
+
+                const aprType = farmingApr > limitApr ? FarmingType.ETERNAL : FarmingType.FINITE
 
                 accum[address] = {
                     token0: current.token0,
@@ -207,7 +203,8 @@ export function useInfoSubgraph() {
                     tvlUSDChange,
                     totalValueLockedUSD: current[manageUntrackedTVL],
                     apr: aprPercent,
-                    farmingApr
+                    farmingApr: Math.max(farmingApr, limitApr),
+                    aprType
                 }
                 return accum
             }, {})
@@ -215,6 +212,7 @@ export function useInfoSubgraph() {
             setPools(Object.values(formatted))
 
         } catch (err) {
+            console.log('ERROR', err)
             setPools('failed')
             throw new Error('Info pools fetch ' + err)
         } finally {
@@ -367,6 +365,23 @@ export function useInfoSubgraph() {
         } catch (err) {
             throw new Error('Pools by time fetching ' + err)
         }
+    }
+
+    async function fetchLimitFarmingsAPRByPool(poolAddresses: string[]): Promise<LimitFarmingByPool[]> {
+
+        try {
+
+            const { data: { incentives }, error } = await farmingClient.query({
+                query: FETCH_LIMIT_FARM_FROM_POOL(poolAddresses),
+                fetchPolicy: 'network-only'
+            })
+
+            return incentives
+
+        } catch (err) {
+            throw new Error('Eternal fetch error ' + err)
+        }
+
     }
 
     async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]): Promise<EternalFarmingByPool[]> {
@@ -539,6 +554,11 @@ export function useInfoSubgraph() {
                 fetchPolicy: 'network-only',
                 variables: { pool, startTimestamp, endTimestamp }
             })
+
+            // console.log(startTimestamp, endTimestamp)
+            //
+            // console.log(poolHourDatas)
+            // console.log(poolHourDatas.map(el => el.volumeUSD).reduce((prev, cur) => +prev + +cur, 0)/ poolHourDatas.length)
 
             if (error) return
 

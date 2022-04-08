@@ -14,6 +14,7 @@ import RBCLogo from '../../assets/images/rubic-logo.png'
 import HarmonyLogo from '../../assets/images/harmony-logo.png'
 // @ts-ignore
 import IrisLogo from '../../assets/images/iris-logo.png'
+import HSMLogo from '../../assets/images/hsm-logo.png'
 
 interface SpecialTokensInterface {
     [key: string]: {
@@ -54,5 +55,9 @@ export const specialTokens: SpecialTokensInterface = {
     ['0x6b7a87899490ece95443e979ca9485cbe7e71522']: {
         name: 'ONE',
         logo: HarmonyLogo
+    },
+    ['0x77ec58f36f3d1a9cf8694fc5c544b04b8c9639dd']: {
+        name: 'HSM',
+        logo: HSMLogo
     }
 }

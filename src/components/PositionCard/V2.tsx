@@ -2,7 +2,7 @@ import JSBI from 'jsbi'
 import { useState } from 'react'
 import { CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 import { ChevronDown, ChevronUp } from 'react-feather'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useTotalSupply } from '../../hooks/useTotalSupply'
 import { Trans } from '@lingui/macro'
@@ -25,6 +25,7 @@ import { AutoColumnInfo, FixedHeightRow, RowFixedMigrate, StyledV2PositionCard }
 import Badge, { BadgeVariant } from '../Badge'
 import { Pair } from '../../utils/computePairAddress'
 import { WrappedCurrency } from '../../models/types'
+import Card from '../../shared/components/Card/Card'
 
 interface PositionCardProps {
     pair: Pair | null
@@ -36,8 +37,6 @@ interface PositionCardProps {
 
 export default function V2PositionCard({ pair, border, stakedBalance, sushi }: PositionCardProps) {
     const { account } = useActiveWeb3React()
-
-    console.log(sushi)
 
     const currency0 = unwrappedToken(pair?.token0 as WrappedCurrency)
     const currency1 = unwrappedToken(pair?.token1 as WrappedCurrency)
@@ -70,14 +69,14 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
             ]
             : [undefined, undefined]
 
-    const backgroundColor = useColor(pair?.token0)
-
     return (
-        <StyledV2PositionCard border={border} bgColor={backgroundColor}>
+        <Card isDark={false} classes={'p-1 br-12'}>
             <AutoColumn gap='12px'>
                 <FixedHeightRow>
                     <AutoRow gap='8px'>
-                        <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
+                        <div className={'ml-2'}>
+                            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
+                        </div>
                         <Text fontWeight={500} fontSize={20}>
                             {!currency0 || !currency1 ? (
                                 <Dots>
@@ -195,20 +194,14 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
 
                         {userDefaultPoolBalance && JSBI.greaterThan(userDefaultPoolBalance.quotient, BIG_INT_ZERO) && (
                             <RowBetween marginTop='10px'>
-                                <ButtonPrimary
-                                    padding='8px'
-                                    $borderRadius='8px'
-                                    as={Link}
-                                    to={`/migrate/${pair?.liquidityToken.address}`}
-                                    width='100%'
-                                >
+                                <NavLink className={'btn primary br-8 w-100 p-05 f f-ac f-jc b'} to={`/migrate/${pair?.liquidityToken.address}`}>
                                     <Trans>Migrate</Trans>
-                                </ButtonPrimary>
+                                </NavLink>
                             </RowBetween>
                         )}
                     </AutoColumnInfo>
                 )}
             </AutoColumn>
-        </StyledV2PositionCard>
+        </Card>
     )
 }

@@ -12,12 +12,7 @@ interface StakerInputRangeProps {
     fiatValue: any
 }
 
-export default function RealStakerUnstakeInputRange({
-    baseCurrency,
-    amountValue,
-    setAmountValue,
-    fiatValue
-}: StakerInputRangeProps) {
+export default function RealStakerUnstakeInputRange({ baseCurrency, amountValue, setAmountValue, fiatValue }: StakerInputRangeProps) {
 
     const ALGBCurrency = useCurrency('0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
     const rightBalance = useMemo(() => {

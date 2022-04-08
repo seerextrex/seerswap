@@ -13,6 +13,54 @@ import { isAddress } from '../utils'
 import { useActiveWeb3React } from './web3'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 
+const DEFAULT_TOKEN_LIST: any = {
+    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
+        name: 'USDC',
+        decimals: 6,
+        symbol: 'USDC'
+    },
+    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
+        name: 'Algebra',
+        decimals: 18,
+        symbol: 'ALGB'
+    },
+    ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
+        name: 'WMATIC',
+        decimals: 18,
+        symbol: 'WMATIC'
+    },
+    ['0x7ceb23fd6bc0add59e62ac25578270cff1b9f619']: {
+        name: 'WETH',
+        decimals: 18,
+        symbol: 'WETH'
+    },
+    ['0xc2132d05d31c914a87c6611c10748aeb04b58e8f']: {
+        name: 'USDT',
+        decimals: 6,
+        symbol: 'USDT'
+    },
+    ['0xc3cffdaf8f3fdf07da6d5e3a89b8723d5e385ff8']: {
+        name: 'Rubic',
+        decimals: 18,
+        symbol: 'RBC'
+    },
+    ['0xdab35042e63e93cc8556c9bae482e5415b5ac4b1']: {
+        name: 'IRIS',
+        decimals: 18,
+        symbol: 'IRIS'
+    },
+    ['0x6b7a87899490ece95443e979ca9485cbe7e71522']: {
+        name: 'Harmony ONE',
+        decimals: 18,
+        symbol: 'ONE'
+    },
+    ['0x77ec58f36f3d1a9cf8694fc5c544b04b8c9639dd']: {
+        name: 'HSM',
+        decimals: 18,
+        symbol: 'HSM'
+    }
+}
+
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
     const { chainId } = useActiveWeb3React()
@@ -125,6 +173,12 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
     const tokens = useAllTokens()
 
     const address = isAddress(tokenAddress)
+    const _lowkeyAddress = useMemo(() => {
+        if (!address) return
+
+        return address.toLowerCase()
+
+    }, [tokenAddress, address])
 
     const tokenContract = useTokenContract(address ? address : undefined, false)
     const tokenContractBytes32 = useBytes32TokenContract(address ? address : undefined, false)
@@ -145,7 +199,14 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 
     return useMemo(() => {
         if (token) return token
-        if (!chainId || !address) return undefined
+        if (!chainId || !address || !_lowkeyAddress) return undefined
+        if (_lowkeyAddress in DEFAULT_TOKEN_LIST) return new Token(
+            chainId,
+            address,
+            DEFAULT_TOKEN_LIST[_lowkeyAddress].decimals,
+            DEFAULT_TOKEN_LIST[_lowkeyAddress].symbol,
+            DEFAULT_TOKEN_LIST[_lowkeyAddress].name
+        )
         if (decimals.loading || symbol.loading || tokenName.loading) return null
         if (decimals.result) {
             return new Token(

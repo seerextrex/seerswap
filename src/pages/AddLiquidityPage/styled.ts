@@ -54,7 +54,7 @@ export const TokenItem = styled.div<{ noPadding?: boolean; highPrice?: boolean }
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: rgba(60, 97, 126, 0.5);
+  background-color: var(--ebony-clay);
   ${({ noPadding }) =>
     !noPadding &&
     css`
@@ -170,7 +170,7 @@ export const TechPaperHint = styled.div`
   right: 1rem;
   top: 100%;
   margin-top: -8px;
-  box-shadow: 0 0 10px rgba(156, 126, 220, 0.18);
+  box-shadow: 0 0 10px rgba(156, 126, 220);
   opacity: 0;
   transition-duration: 0.2s;
   cursor: default;
@@ -223,6 +223,7 @@ export const HelperCirlce = styled.span`
 `
 export const Title = styled.div`
   position: relative;
+  white-space: nowrap;
   font-size: 18px;
   font-family: Montserrat, sans-serif;
   font-weight: 600;
@@ -233,11 +234,10 @@ export const Title = styled.div`
   `}
 `
 export const Warning = styled.div`
-  position: absolute;
-  right: 0;
+  margin-left: auto;
   padding: 8px 16px;
-  top: 10px;
   font-size: 13px;
+  max-width: fit-content;
   background: #69270d;
   color: #e55d47;
   border-radius: 6px;
@@ -254,8 +254,9 @@ export const Warning = styled.div`
   `}
 `
 export const Error = styled(Warning)`
-  color: white;
-  background-color: #be4d4d;
+  color: #F55755;
+  background-color: #2e0909;
+  border: 1px solid #F55755;
   width: 100%;
   text-align: center;
 `
@@ -265,12 +266,6 @@ export const PriceRangeWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
-`
-export const PriceRangeChart = styled.div`
-  height: 100%;
-  flex: 2;
-  border-radius: 6px;
-  background: rgba(60, 97, 126, 0.5);
 `
 export const PriceRangeInputs = styled.div<{ initial: boolean }>`
   height: 100%;
@@ -288,6 +283,9 @@ export const ButtonsWrapper = styled.div`
   `}
 `
 export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 16px;
   height: 2.8rem;
   background: ${({ theme }) => theme.winterMainButton};
@@ -300,7 +298,15 @@ export const AddLiquidityButton = styled.button<{ disabled?: boolean }>`
   margin-left: auto;
   white-space: nowrap;
 
+  &:hover {
+    &:not(&:disabled) {
+      background-color: var(--primary-hover);
+    }
+  }
+
   &:disabled {
+    display: flex;
+    align-items: center;
     background-color: ${({ theme }) => darken(0.2, theme.winterMainButton)};
     color: ${darken(0.35, 'white')};
     font-weight: 600;

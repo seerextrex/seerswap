@@ -1,118 +1,94 @@
 <!DOCTYPE html>
-<html translate="no">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="shortcut icon" type="image/png" href="%PUBLIC_URL%/favicon.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="%PUBLIC_URL%/images/192x192_App_Icon.png" />
-    <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/images/512x512_App_Icon.png" />
+<html translate='no'>
+<head>
+  <meta charset='utf-8' />
+  <link rel='shortcut icon' type='image/png' href='%PUBLIC_URL%/favicon.png' />
+  <link rel='apple-touch-icon' sizes='192x192' href='%PUBLIC_URL%/images/192x192_App_Icon.png' />
+  <link rel='apple-touch-icon' sizes='512x512' href='%PUBLIC_URL%/images/512x512_App_Icon.png' />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="rgba(91,183,255,0.6)" />
-    <meta name="fortmatic-site-verification" content="j93LgcVZk79qcgyo" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta name='theme-color' content='rgba(91,183,255,0.6)' />
+  <meta name='fortmatic-site-verification' content='j93LgcVZk79qcgyo' />
+  <!--
+    manifest.json provides metadata used when your web app is installed on a
+    user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+  -->
+  <link rel='manifest' href='%PUBLIC_URL%/manifest.json' />
+  <!--
+    Notice the use of %PUBLIC_URL% in the tags above.
+    It will be replaced with the URL of the `public` folder during the build.
+    Only files inside the `public` folder can be referenced from the HTML.
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
+    Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+    work correctly both with client-side routing and a non-root public URL.
+    Learn how to configure a non-root public URL by running `npm run build`.
+  -->
 
-    <style>
+  <style>
       * {
-        font-family: 'Inter pro', sans-serif;
-        box-sizing: border-box;
-      }
-
-      @supports (font-variation-settings: normal) {
-        * {
-          font-family: 'Inter', sans-serif;
-        }
+          font-family: 'SF-Pro-Display', sans-serif;
+          box-sizing: border-box;
       }
 
       html,
       body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
+          margin: 0;
+          padding: 0;
+          height: 100%;
       }
 
       button {
-        user-select: none;
+          user-select: none;
       }
 
       html {
-        font-size: 16px;
-        font-variant: none;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv03' on;
-      }
-
-      #background-image {
-        position: fixed;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        background-repeat: no-repeat, repeat;
-        background-size: cover, auto;
-        background-origin: padding-box, padding-box;
-        background-clip: border-box, border-box;
-        background-attachment: fixed;
-        background-position: 100% center, 0% 0%;
-        background-image: url('https://i.imgur.com/sou9KfN.png');
+          font-size: 16px;
+          font-variant: none;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+          background: var(--dark-gray);
+          font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv03' on;
+          background-repeat: no-repeat, repeat;
+          background-size: cover, auto;
+          background-origin: padding-box, padding-box;
+          background-clip: border-box, border-box;
+          background-attachment: fixed;
+          background-position: 100% center, 0% 0%;
+          background-image: url("https://sun9-49.userapi.com/impg/7Kh5RU9WJNjQKdnQFUeISnqtq40PHwEP58JNUQ/UKW2aEBAyfU.jpg?size=1440x862&quality=95&sign=42b774f201ef0fc5bc6c0035d4ffc15d&type=album");
       }
 
       html {
-        min-height: 100%;
+          min-height: 100%;
+
       }
 
       #root {
-        height: 100%;
+          height: 100%;
       }
 
-      @media (prefers-color-scheme: dark) {
-        html {
-          background-color: white;
-        }
-      }
-      @media (prefers-color-scheme: light) {
-        html {
-          background-color: white;
-        }
-      }
-    </style>
+  </style>
 
-    <title>Algebra</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+  <title>Algebra</title>
+</head>
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
 
-    <!-- The root is the container of the app -->
-    <div id="root">
-      <!-- Triggers the font to load immediately and then is replaced by the app -->
-      <div style="visibility: hidden">X</div>
-    </div>
+<!-- The root is the container of the app -->
+<div id='root'>
+  <!-- Triggers the font to load immediately and then is replaced by the app -->
+  <div style='visibility: hidden'>X</div>
+</div>
 
-    <div id="background-image"></div>
+<!--
+  This HTML file is a template.
+  If you open it directly in the browser, you will see an empty page.
 
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+  You can add webfonts, meta tags, or analytics to this file.
+  The build step will place the bundled scripts into the <body> tag.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+  To begin the development, run `npm start` or `yarn start`.
+  To create a production bundle, use `npm run build` or `yarn build`.
+-->
+</body>
 </html>

@@ -1,7 +1,6 @@
 import { t, Trans } from '@lingui/macro'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Percent } from '@uniswap/sdk-core'
-import { ThemeContext } from 'styled-components/macro'
 import QuestionHelper from '../QuestionHelper'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
@@ -25,7 +24,6 @@ interface TransactionSettingsProps {
 
 export default function TransactionSettings({ placeholderSlippage }: TransactionSettingsProps) {
     const { chainId } = useActiveWeb3React()
-    const theme = useContext(ThemeContext)
 
     const userSlippageTolerance = useUserSlippageTolerance()
     const setUserSlippageTolerance = useSetUserSlippageTolerance()
@@ -90,7 +88,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
         <AutoColumn gap='md'>
             <AutoColumn gap='sm'>
                 <RowFixed>
-                    <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
+                    <TYPE.black fontWeight={400} fontSize={14} color={'var(--white)'}>
                         <Trans>Slippage tolerance</Trans>
                     </TYPE.black>
                     <QuestionHelper
@@ -102,11 +100,6 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
                 </RowFixed>
                 <RowBetween>
                     <Option
-                        style={{
-                            background: theme.winterMainButton,
-                            color: 'white',
-                            borderColor: theme.winterMainButton
-                        }}
                         onClick={() => {
                             parseSlippageInput('')
                         }}
@@ -116,12 +109,12 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
                     </Option>
                     <OptionCustom active={userSlippageTolerance !== 'auto'}
                                   warning={!!slippageError} tabIndex={-1}>
-                        <RowBetween>
+                        <div className={'flex-s-between c-p'}>
                             {tooLow || tooHigh ? (
                                 <SlippageEmojiContainer>
-                  <span role='img' aria-label='warning'>
-                    ⚠️
-                  </span>
+                              <span role='img' aria-label='warning'>
+                                ⚠️
+                              </span>
                                 </SlippageEmojiContainer>
                             ) : null}
                             <Input
@@ -141,7 +134,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
                                 color={slippageError ? 'red' : ''}
                             />
                             %
-                        </RowBetween>
+                        </div>
                     </OptionCustom>
                 </RowBetween>
                 {slippageError || tooLow || tooHigh ? (
@@ -166,7 +159,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
             {showCustomDeadlineRow && (
                 <AutoColumn gap='sm'>
                     <RowFixed>
-                        <TYPE.black fontSize={14} fontWeight={400} color={'#080064'}>
+                        <TYPE.black fontSize={14} fontWeight={400} color={'var(--white)'}>
                             <Trans>Transaction deadline</Trans>
                         </TYPE.black>
                         <QuestionHelper
@@ -193,7 +186,7 @@ export default function TransactionSettings({ placeholderSlippage }: Transaction
                                 color={deadlineError ? 'red' : ''}
                             />
                         </OptionCustom>
-                        <TYPE.body style={{ paddingLeft: '8px', color: '#080064' }} fontSize={14}>
+                        <TYPE.body style={{ paddingLeft: '8px', color: 'var(--white)' }} fontSize={14}>
                             <Trans>minutes</Trans>
                         </TYPE.body>
                     </RowFixed>

@@ -7,7 +7,6 @@ import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components/macro'
 import { LightCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
-import { AutoRow } from '../../components/Row'
 import { Dots } from '../../components/swap/styled'
 import { V2_FACTORY_ADDRESSES } from '../../constants/addresses'
 import { useIsNetworkFailed } from '../../hooks/useIsNetworkFailed'
@@ -16,10 +15,10 @@ import { useActiveWeb3React } from '../../hooks/web3'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { StyledInternalLink, TYPE } from '../../theme'
-import { BodyWrapper } from '../styled'
 import { Helmet } from 'react-helmet'
 import { EmptyState } from './EmptyState'
 import { toSushiLiquidityToken } from '../../utils/toSushiLiquidityToken'
+import Card from '../../shared/components/Card/Card'
 
 export default function MigrateV2() {
     const theme = useContext(ThemeContext)
@@ -113,29 +112,24 @@ export default function MigrateV2() {
             <Helmet>
                 <title>Algebra — Migrate Liquidity</title>
             </Helmet>
-            <BodyWrapper style={{ padding: 24 }}>
+            <Card classes={'p-2 br-24 w-100 maw-765 mh-a mxs_p-1'}>
                 <AutoColumn gap='16px'>
-                    <AutoRow style={{ alignItems: 'center', justifyContent: 'center' }} gap='8px'>
-                        <TYPE.mediumHeader>Migrate Liquidity</TYPE.mediumHeader>
-                    </AutoRow>
-
-                    <TYPE.body style={{ marginBottom: 8, fontWeight: 400, textAlign: 'center' }}>
+                    <h3 className={'fs-125'}>Migrate Liquidity</h3>
+                    <span>
                         Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to
                         Algebra.
-                    </TYPE.body>
+                    </span>
 
                     {!account ? (
-                        <LightCard padding='40px'>
-                            <TYPE.body color={theme.text3} textAlign='center'>
-                                Connect to a wallet to view your liquidity.
-                            </TYPE.body>
-                        </LightCard>
+                        <Card isDark={false} classes={'p-1 br-12'}>
+                            <div className={'ta-c w-100 b'}>
+                                Connect wallet to view your liquidity.
+                            </div>
+                        </Card>
                     ) : v2IsLoading && !networkFailed ? (
-                        <LightCard padding='40px'>
-                            <TYPE.body color={theme.text3} textAlign='center'>
-                                <Dots>Loading</Dots>
-                            </TYPE.body>
-                        </LightCard>
+                        <Card isDark={false} classes={'p-1 br-12 f f-ac f-jc'}>
+                            <Dots>Loading</Dots>
+                        </Card>
                     ) : _v2Pairs.filter(([, pair]) => !!pair).length > 0 ||
                     _v2SushiPairs.filter(([, pair]) => !!pair).length > 0 ? (
                         <>
@@ -177,7 +171,7 @@ export default function MigrateV2() {
                         </Text>
                     </AutoColumn>
                 </AutoColumn>
-            </BodyWrapper>
+            </Card>
             <SwitchLocaleLink />
         </>
     )

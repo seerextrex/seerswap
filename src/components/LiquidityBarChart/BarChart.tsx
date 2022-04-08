@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { axisBottom, create, max, scaleBand, scaleLinear, select } from 'd3'
-import { ChartSvg } from './styled'
 import { ProcessedData } from '../../models/interfaces'
 
 interface BarChartProps {
@@ -78,23 +77,23 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
             .attr('font-size', '12px')
 
         const InfoCurrentCircle = create('svg:circle')
-            .attr('fill', '#fffb0f')
+            .attr('fill', 'var(--green)')
             .attr('r', '5px')
             .attr('cx', '200px')
             .attr('cy', '21px')
             .attr('display', 'none')
 
-           //TODO rewrite to div
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRect.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRectPrice0.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRectPrice1.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoRectPriceLocked.node())
-           // @ts-ignore
-           InfoRectGroup.node().append(InfoCurrentCircle.node())
+        //TODO rewrite to div
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRect.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRectPrice0.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRectPrice1.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoRectPriceLocked.node())
+        // @ts-ignore
+        InfoRectGroup.node().append(InfoCurrentCircle.node())
 
         const svg = svgEl.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 
@@ -135,7 +134,7 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
         if (activeTickIdxInRange) {
             svg
                 .append('circle')
-                .attr('fill', 'yellow')
+                .attr('fill', 'var(--green)')
                 .attr('r', '5px')
                 .attr('cx', (xScale(data[activeTickIdxInRange]?.price0) ?? 0) + 2)
                 .attr('cy', -9)
@@ -143,7 +142,7 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
             svg
                 .append('text')
                 .attr('transform', `translate(${(xScale(data[activeTickIdxInRange].price0) ?? 0) + 15}, ${-5})`)
-                .attr('fill', 'yellow')
+                .attr('fill', 'var(--green)')
                 .attr('font-size', '12px')
                 .property('innerHTML', 'Current price')
         }
@@ -153,7 +152,7 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
             .selectAll('rect')
             .data(data)
             .join('rect')
-            .attr('fill', '#63c0f8')
+            .attr('fill', 'var(--primary)')
             .attr('x', (i) => xScale(i.price0) || 0)
             .attr('y', (i) => yScale(i.activeLiquidity))
             .attr('height', (i) => yScale(0) - yScale(i.activeLiquidity))
@@ -168,7 +167,7 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
             .attr('y', 0)
             .attr('height', height)
             .attr('width', xScale.bandwidth())
-            .attr('fill', (v) => (v.isCurrent ? '#fffb0f' : 'transparent'))
+            .attr('fill', (v) => (v.isCurrent ? 'var(--green)' : 'transparent'))
             .on('mouseover', (d, v) => {
                 const highlight = select(d.target)
                 highlight.attr('fill', 'rgba(255,255,255,0.5)')
@@ -207,11 +206,11 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
             })
             .on('mouseleave', (d, v) => {
                 const rect = select(d.target)
-                rect.attr('fill', v.isCurrent ? '#fffb0f' : 'transparent')
+                rect.attr('fill', v.isCurrent ? 'var(--green)' : 'transparent')
             })
 
         svg.append(() => InfoRectGroup.node())
     }, [data, activeTickIdxInRange])
 
-    return <ChartSvg ref={svgRef} width={svgWidth} height={svgHeight} />
+    return <svg ref={svgRef} width={svgWidth} height={svgHeight} />
 }

@@ -42,7 +42,7 @@ export async function addPolygonNetwork() {
                                 decimals: 18,
                             },
                             blockExplorerUrls: ["https://polygonscan.com/"],
-                            rpcUrls: ["https://polygon-mainnet.infura.io/v3/a4f8e4693b7a465da0848c3f82732f23"],
+                            rpcUrls: ["https://polygon-rpc.com"],
                         },
                     ],
                 });

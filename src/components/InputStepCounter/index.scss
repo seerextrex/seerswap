@@ -1,0 +1,13 @@
+.price-card {
+    background-color: var(--ebony-clay);
+
+    &[data-initial=true] {
+        margin-bottom: 1rem;
+    }
+
+    &:first-of-type {
+        &[data-initial=true] {
+            margin-right: 1rem;
+        }
+    }
+}

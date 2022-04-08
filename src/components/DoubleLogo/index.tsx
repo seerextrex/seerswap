@@ -24,7 +24,7 @@ const HigherLogo = styled(CurrencyLogo)`
 `
 const CoveredLogo = styled(CurrencyLogo)<{ sizeraw: number }>`
   position: absolute;
-  left: ${({ sizeraw }) => '-' + (sizeraw / 2).toString() + 'px'} !important;
+  left: ${({ sizeraw }) => '-' + (sizeraw / 1.5).toString() + 'px'} !important;
 `
 
 export default function DoubleCurrencyLogo({ currency0, currency1, size = 16, margin = false }: DoubleCurrencyLogoProps) {

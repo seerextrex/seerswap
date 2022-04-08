@@ -3,7 +3,8 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import INJECTED_ICON_URL from '../assets/images/arrow-right.svg'
 // @ts-ignore
 import METAMASK_ICON_URL from '../assets/svg/metamask-logo.svg'
-import { injected } from '../connectors'
+import WALLET_CONNECT_URL from '../assets/images/walletConnectionIcon.svg'
+import { injected, walletconnector } from '../connectors'
 
 interface WalletInfo {
     connector?: AbstractConnector
@@ -34,5 +35,14 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
         description: 'Easy-to-use browser extension.',
         href: null,
         color: '#E8831D'
+    },
+    WALLET_CONNECT: {
+        connector: walletconnector,
+        name: "Wallet Connect",
+        iconURL: WALLET_CONNECT_URL,
+        description: "",
+        href: null,
+        color: '#2797FFFF',
+        mobile: true
     }
 }

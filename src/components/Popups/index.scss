@@ -1,0 +1,25 @@
+.popup {
+  display: inline-block;
+  background-color: var(--ebony-clay);
+  overflow: hidden;
+
+  &__close {
+    top: 10px;
+    right: 10px;
+    position: absolute;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .popup {
+    min-width: 290px;
+
+    &:not(:last-of-type) {
+      margin-right: 20px;
+    }
+  }
+}

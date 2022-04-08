@@ -1,14 +1,14 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import Chart from './Chart'
 import Loader from '../Loader'
 import { ChartType } from '../../models/enums'
 import { isMobile, isTablet } from 'react-device-detect'
-import { MockLoading, ToggleToken, TokenInfo, Wrapper } from './styled'
 import { FeeChart, FeeSubgraph, PoolHourData } from '../../models/interfaces'
 import { ChartToken } from '../../models/enums/poolInfoPage'
 import { Trans } from '@lingui/macro'
 import { Token } from '@uniswap/sdk-core'
 import Toggle from '../Toggle'
+import './index.scss'
 
 interface FeeChartRangeInputProps {
     fetchedData: {
@@ -105,38 +105,38 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
         }
     }, [fetchedData, token])
 
+    // useEffect(() => console.log(formattedData.data), [formattedData])
 
-    // useEffect(() => console.log(fetchedData?.previousData), [fetchedData?.previousData])
     return (
-        <Wrapper ref={ref}>
+        <div className={'w-100 fee-chart pt-1 mxs_p-0'} ref={ref}>
             {refreshing ?
-                <MockLoading>
+                <div className={'fee-chart__mock-loader'}>
                     <Loader stroke={'white'} size={'25px'} />
-                </MockLoading> :
+                </div> :
                 <>
                     {
                         type === ChartType.PRICE &&
-                        <TokenInfo>
+                        <div className={'fee-chart__price-info'}>
                             {token === ChartToken.TOKEN0 ? token0?.symbol : token1?.symbol}
-                        </TokenInfo>
+                        </div>
                     }
                     {
                         type === ChartType.PRICE &&
-                        <ToggleToken>
+                        <div className={'fee-chart__toggle'}>
                             <Toggle
                                 isActive={!!token}
                                 toggle={() => setToken(token === ChartToken.TOKEN0 ? 1 : 0)}
                                 checked={<Trans>{token0?.symbol}</Trans>}
                                 unchecked={<Trans>{token1?.symbol}</Trans>}
                             />
-                        </ToggleToken>
+                        </div>
                     }
                     <Chart
                         feeData={formattedData}
                         dimensions={{
-                            width: isTablet || isMobile ? ref && ref.current && ref.current.offsetWidth - 80 || 0 : 810,
-                            height: isTablet || isMobile ? 200 : 300,
-                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: 50 }
+                            width: isTablet || isMobile ? ref && ref.current && ref.current.offsetWidth - 40 || 0 : 1000,
+                            height: isTablet || isMobile ? 200 : 400,
+                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 30 : 50 }
                         }}
                         tokens={{ token0: token0?.symbol, token1: token1?.symbol }}
                         isMobile={isMobile}
@@ -147,6 +147,6 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                 </>
 
             }
-        </Wrapper>
+        </div>
     )
 }

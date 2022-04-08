@@ -53,7 +53,7 @@ function colors(darkMode: boolean): Colors {
         bg6: darkMode ? '#1A2028' : '#6C7284',
 
         //specialty colors
-        modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
+        modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.8)',
         advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
         //primary colors
@@ -193,7 +193,6 @@ export const TYPE = {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.winterBackground} !important;
 }
 
 a {

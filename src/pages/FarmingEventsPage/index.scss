@@ -1,0 +1,19 @@
+.farmings-page {
+  &__loader {
+    height: 400px;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(3, 330px);
+  }
+}
+
+@media screen and (max-width: 500px){
+  .farmings-page {
+
+    &__row {
+      grid-template-columns: repeat(1, 100%);
+    }
+  }
+}

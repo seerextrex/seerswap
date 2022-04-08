@@ -147,3 +147,16 @@ export interface EternalFarmingByPool {
     rewardToken: string
     startTime: string
 }
+
+
+export interface LimitFarmingByPool {
+    id: string
+    createdAtTimestamp: string
+    rewardToken: string
+    bonusReward: string
+    bonusRewardToken: string
+    pool: string
+    startTime: string
+    endTime: string
+    reward: string
+}

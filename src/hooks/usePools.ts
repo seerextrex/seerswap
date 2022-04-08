@@ -56,7 +56,7 @@ export function usePools(
 
     const _globalState0s = useMemo(() => {
 
-        if (!prevGlobalState0s || !globalState0s) return globalState0s
+        if (!prevGlobalState0s || !globalState0s || globalState0s.length === 1) return globalState0s
 
         if (globalState0s.every(el => el.error) && !prevGlobalState0s.every(el => el.error)) return prevGlobalState0s
 
@@ -69,7 +69,7 @@ export function usePools(
 
     const _liquidities = useMemo(() => {
 
-        if (!prevLiquidities || !liquidities) return liquidities
+        if (!prevLiquidities || !liquidities || liquidities.length === 1) return liquidities
 
         if (liquidities.every(el => el.error) && !prevLiquidities.every(el => el.error)) return prevLiquidities
 

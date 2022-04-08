@@ -1,20 +1,17 @@
-import { useCallback, useContext, useEffect } from 'react'
-import { useSpring } from 'react-spring/web'
-import { ThemeContext } from 'styled-components/macro'
+import { useCallback, useEffect } from 'react'
 import { PopupContent } from '../../state/application/actions'
 import { useRemovePopup } from '../../state/application/hooks'
 import TransactionPopup from './TransactionPopup'
-import { Popup, StyledClose } from './styled'
+import './index.scss'
+import { X } from 'react-feather'
 
-export default function PopupItem({
-    removeAfterMs,
-    content,
-    popKey
-}: {
+interface PopupItemProps {
     removeAfterMs: number | null
     content: PopupContent
     popKey: string
-}) {
+}
+
+export default function PopupItem({ removeAfterMs, content, popKey }: PopupItemProps) {
     const removePopup = useRemovePopup()
     const removeThisPopup = useCallback(() => removePopup(popKey), [popKey, removePopup])
     useEffect(() => {
@@ -29,8 +26,6 @@ export default function PopupItem({
         }
     }, [removeAfterMs, removeThisPopup])
 
-    const theme = useContext(ThemeContext)
-
     let popupContent
     if ('txn' in content) {
         const {
@@ -39,16 +34,12 @@ export default function PopupItem({
         popupContent = <TransactionPopup hash={hash} success={success} summary={summary} />
     }
 
-    const faderStyle = useSpring({
-        from: { width: '100%' },
-        to: { width: '0%' },
-        config: { duration: removeAfterMs ?? undefined }
-    })
-
     return (
-        <Popup>
-            <StyledClose color={theme.winterDisabledButton} onClick={removeThisPopup} />
+        <div className={'popup w-100 br-8 pos-r p-1'}>
+            <span className={'popup__close'} onClick={removeThisPopup}>
+                <X color={'var(--dark-gray)'} />
+            </span>
             {popupContent}
-        </Popup>
+        </div>
     )
 }

@@ -1,40 +1,35 @@
 import { Trans } from '@lingui/macro'
-import { ButtonPrimary } from 'components/Button'
-import { AutoColumn } from 'components/Column'
-import { SwapPoolTabs } from 'components/NavigationTabs'
 import PositionList from 'components/PositionList'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { useV3Positions } from 'hooks/useV3Positions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useContext, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useUserHideClosedPositions } from 'state/user/hooks'
-import { ThemeContext } from 'styled-components/macro'
-import { TYPE } from 'theme'
 import { Helmet } from 'react-helmet'
 import Loader from '../../components/Loader'
-import { ButtonRow, FilterPanelWrapper, MainContentWrapper, MigrateButtonPrimary, NoLiquidity, PageWrapper, ResponsiveButtonPrimary, TitleRow } from './styleds'
 import FilterPanelItem from './FilterPanelItem'
 import { PositionPool } from '../../models/interfaces'
+import Card from '../../shared/components/Card/Card'
+import AutoColumn from '../../shared/components/AutoColumn'
+import { SwapPoolTabs } from '../../components/NavigationTabs'
+import './index.scss'
+import { usePreviousNonEmptyArray } from '../../hooks/usePrevious'
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React()
     const toggleWalletModal = useWalletModalToggle()
 
-    const theme = useContext(ThemeContext)
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions()
     const [hideFarmingPositions, setHideFarmingPositions] = useState(false)
 
     const { positions, loading: positionsLoading } = useV3Positions(account)
 
-    const [openPositions, closedPositions] = positions?.reduce<[PositionPool[], PositionPool[]]>(
-        (acc, p) => {
-            acc[p.liquidity?.isZero() ? 1 : 0].push(p)
-            return acc
-        },
-        [[], []]
-    ) ?? [[], []]
+    const [openPositions, closedPositions] = positions?.reduce<[PositionPool[], PositionPool[]]>((acc, p) => {
+        acc[p.liquidity?.isZero() ? 1 : 0].push(p)
+        return acc
+    }, [[], []]) ?? [[], []]
 
     const filters = [
         {
@@ -58,6 +53,17 @@ export default function Pool() {
         ...(userHideClosedPositions ? [] : closedPositions)
     ], [inRangeWithOutFarmingPositions, userHideClosedPositions, hideFarmingPositions])
 
+    //TODO LIVNUL
+
+    const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions)
+
+    const _filteredPositions = useMemo(() => {
+        if (filteredPositions.length === 0 && prevFilteredPositions) {
+            return prevFilteredPositions
+        }
+        return filteredPositions
+    }, [filteredPositions])
+
     const showConnectAWallet = Boolean(!account)
 
     let chainSymbol
@@ -71,76 +77,55 @@ export default function Pool() {
             <Helmet>
                 <title>Algebra — Pool</title>
             </Helmet>
-            <PageWrapper>
+            <Card classes={'br-24 ph-2 pv-1 mxs_ph-1'}>
                 <SwapPoolTabs active={'pool'} />
-                <AutoColumn
-                    gap='lg'
-                    justify='center'
-                    style={{
-                        backgroundColor: theme.winterBackground,
-                        borderRadius: '20px'
-                    }}
-                >
-                    <AutoColumn gap='lg' style={{ width: '100%', gridRowGap: '0' }}>
-                        <TitleRow padding={'0px'}>
-                            <TYPE.body fontSize={'20px'}>
-                                <Trans>Pools Overview</Trans>
-                            </TYPE.body>
-                            <ButtonRow>
-                                <MigrateButtonPrimary
-                                    id='join-pool-button'
-                                    as={Link}
-                                    style={{ color: 'white' }}
-                                    to={`/migrate`}
-                                >
-                                    <Trans>Migrate Pool</Trans>
-                                </MigrateButtonPrimary>
-                                <ResponsiveButtonPrimary
-                                    id='join-pool-button'
-                                    style={{ color: 'white' }}
-                                    as={Link}
-                                    to={`/add/${chainSymbol}`}
-                                >
-                                    + <Trans>New Position</Trans>
-                                </ResponsiveButtonPrimary>
-                            </ButtonRow>
-                        </TitleRow>
-                        <FilterPanelWrapper>
-                            {filters.map((item, key) =>
-                                <FilterPanelItem
-                                    item={item}
-                                    key={key}
-                                />)}
-                        </FilterPanelWrapper>
-                        <MainContentWrapper>
-                            {positionsLoading ? (
-                                <Loader style={{ margin: 'auto' }} stroke='white' size={'30px'} />
-                            ) : filteredPositions && filteredPositions.length > 0 ? (
-                                <PositionList positions={filteredPositions} />
-                            ) : (
-                                <NoLiquidity>
-                                    <TYPE.body color={'white'} textAlign='center'>
-                                        <div>
-                                            <Trans>You do not have any liquidity positions.</Trans>
-                                        </div>
-                                    </TYPE.body>
-                                    {showConnectAWallet && (
-                                        <ButtonPrimary
-                                            style={{
-                                                marginTop: '2em',
-                                                padding: '8px 16px'
-                                            }}
-                                            onClick={toggleWalletModal}
-                                        >
-                                            <Trans>Connect Wallet</Trans>
-                                        </ButtonPrimary>
-                                    )}
-                                </NoLiquidity>
-                            )}
-                        </MainContentWrapper>
-                    </AutoColumn>
+                <AutoColumn gap='1'>
+                    <div className={'pool__header flex-s-between'}>
+                        <span className={'fs-125'}>
+                            <Trans>Pools Overview</Trans>
+                        </span>
+                        <div className={'flex-s-between mxs_mv-05'}>
+                            <NavLink
+                                className={'btn primary p-05 br-8 mr-1'}
+                                id='join-pool-button'
+                                to={`/migrate`}
+                            >
+                                <Trans>Migrate Pool</Trans>
+                            </NavLink>
+                            <NavLink
+                                className={'btn primary p-05 br-8'}
+                                id='join-pool-button'
+                                to={`/add/${chainSymbol}`}
+                            >
+                                + <Trans>New Position</Trans>
+                            </NavLink>
+                        </div>
+                    </div>
+                    <div className={'f mb-05 rg-2 cg-2 mxs_f-jc'}>
+                        {filters.map((item, key) =>
+                            <FilterPanelItem
+                                item={item}
+                                key={key}
+                            />)}
+                    </div>
+                    <main className={'f c f-ac'}>
+                        {positionsLoading ? (
+                            <Loader style={{ margin: 'auto' }} stroke='white' size={'2rem'} />
+                        ) : _filteredPositions && _filteredPositions.length > 0 ? (
+                            <PositionList positions={_filteredPositions} />
+                        ) : (
+                            <div className={'f c f-ac f-jc h-400 w-100 maw-300'}>
+                                <Trans>You do not have any liquidity positions.</Trans>
+                                {showConnectAWallet && (
+                                    <button className={'btn primary pv-05 ph-1 mt-1 w-100'} onClick={toggleWalletModal}>
+                                        <Trans>Connect Wallet</Trans>
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </main>
                 </AutoColumn>
-            </PageWrapper>
+            </Card>
             <SwitchLocaleLink />
         </>
     )

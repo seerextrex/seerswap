@@ -32,9 +32,8 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
     return (
         // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
         <StyledMenu ref={node as any}>
-            <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)}
-                   maxHeight={100}>
-                <ModalContentWrapper>
+            <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
+                <div>
                     <AutoColumn gap='lg'>
                         <RowBetween style={{ padding: '0 2rem' }}>
                             <div />
@@ -72,7 +71,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
                             </ButtonError>
                         </AutoColumn>
                     </AutoColumn>
-                </ModalContentWrapper>
+                </div>
             </Modal>
             <StyledMenuButton onClick={toggle} id='open-settings-dialog-button'>
                 <StyledMenuIcon />
@@ -96,7 +95,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
                         </Text>
                         <RowBetween>
                             <RowFixed>
-                                <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
+                                <TYPE.black fontWeight={400} fontSize={14} color={'var(--white)'}>
                                     <Trans>Expert Mode</Trans>
                                 </TYPE.black>
                                 <QuestionHelper
@@ -124,7 +123,7 @@ export default function SettingsTab({ placeholderSlippage }: { placeholderSlippa
                         </RowBetween>
                         <RowBetween>
                             <RowFixed>
-                                <TYPE.black fontWeight={400} fontSize={14} color={'#080064'}>
+                                <TYPE.black fontWeight={400} fontSize={14} color={'var(--white)'}>
                                     <Trans>Multihops</Trans>
                                 </TYPE.black>
                                 <QuestionHelper

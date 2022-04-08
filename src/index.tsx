@@ -23,6 +23,7 @@ import ThemeProvider, { ThemedGlobalStyle } from './theme'
 import getLibrary from './utils/getLibrary'
 import '@fontsource/montserrat'
 import GasUpdater from './state/application/gasUpdater'
+import './assets/styles/index.scss'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 type __window = Window & { ethereum: any }
@@ -34,7 +35,7 @@ if (_window.ethereum) {
 }
 
 const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-dev',
+    uri: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/algebra',
     cache: new InMemoryCache()
 })
 

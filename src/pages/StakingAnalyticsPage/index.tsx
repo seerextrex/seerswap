@@ -3,8 +3,9 @@ import React, { useEffect } from 'react'
 import { useInfoSubgraph } from '../../hooks/subgraph/useInfoSubgraph'
 import Loader from '../../components/Loader'
 import { ArrowLeft } from 'react-feather'
-import { BackButton, ChartCard, ChartHint, ChartTitle, ChartTitleLeft, ChartTitleRight, ChartTitleWrapper, ColorRect, ColorTextWrapper, LoaderWrapper, StakingAnalyticsPageWrapper } from './styled'
 import { chartTypes } from '../../models/enums'
+import { NavLink } from 'react-router-dom'
+import './index.scss'
 
 const chartsInfo = [
     {
@@ -38,8 +39,8 @@ const chartsInfo = [
         hint: ['Amount of newly-minted xALGB per day', 'Amount of newly-burned xALGB per day ']
     }
 ]
-const chart1Color = '#1f8bcd'
-const chart2Color = '#d90ebb'
+const chart1Color = 'var(--primary)'
+const chart2Color = 'var(--red)'
 
 export default function StakingAnalyticsPage() {
     const {
@@ -55,47 +56,44 @@ export default function StakingAnalyticsPage() {
     }, [])
 
     return (
-        <StakingAnalyticsPageWrapper>
-            <BackButton to={'/staking'}><ArrowLeft size={'16px'} /> <p>Staking</p>
-            </BackButton>
+        <div className={'w-100 maw-1180 mb-3'}>
+            <NavLink className={'c-p f hover-op w-fc'} to={'/staking'}><ArrowLeft size={'16px'} /><p className={'ml-05'}>Staking</p></NavLink>
             {chartsInfo.map((item, i) =>
-                <ChartCard key={i}>
+                <div className={'stacking-chart-card br-24 pv-1 ph-2 mv-1 mxs_ph-1'} key={i}>
                     {item.type === 'xALGBminted' ?
-                        <ChartTitleWrapper>
-                            <ChartTitleLeft>
-                                <ColorTextWrapper>
-                                    <ColorRect stroke={chart1Color} />
-                                    <ChartTitle
-                                        style={{ marginLeft: '.5rem' }}>{item.title[0]}</ChartTitle>
-                                </ColorTextWrapper>
-                                <ChartHint>{item.hint[0]}</ChartHint>
-                            </ChartTitleLeft>
-                            <ChartTitleRight>
-                                <ColorTextWrapper>
-                                    <ColorRect stroke={chart2Color} />
-                                    <ChartTitle
-                                        style={{ marginLeft: '.5rem' }}>{item.title[1]}</ChartTitle>
-                                </ColorTextWrapper>
-                                <ChartHint>{item.hint[1]}</ChartHint>
-                            </ChartTitleRight>
-                        </ChartTitleWrapper>
+                        <div className={'stacking-chart-card__color-text'}>
+                            <div>
+                                <div className={'f f-ac'}>
+                                    <div className={'stacking-chart-card__color-rect'} data-stroke={'first'} />
+                                    <h2 className={'ml-05 fs-15'}>{item.title[0]}</h2>
+                                </div>
+                                <p className={'mt-025'}>{item.hint[0]}</p>
+                            </div>
+                            <div className={'ml-2'}>
+                                <div className={'f f-ac'}>
+                                    <div className={'stacking-chart-card__color-rect'} data-stroke={'second'} />
+                                    <h2 className={'ml-05 fs-15'}>{item.title[1]}</h2>
+                                </div>
+                                <p className={'mt-025'}>{item.hint[1]}</p>
+                            </div>
+                        </div>
                         :
                         <>
-                            <ChartTitle>{item.title}</ChartTitle>
-                            <ChartHint>{item.hint}</ChartHint>
+                            <h2 className={'fs-15'}>{item.title}</h2>
+                            <p className={'mt-025'}>{item.hint}</p>
                         </>
                     }
                     {historiesLoading ?
-                        <LoaderWrapper>
+                        <div className={'stacking-chart-card__loader br-12 mt-1'}>
                             <Loader size={'35px'} stroke={'white'} />
-                        </LoaderWrapper> :
+                        </div> :
                         <StakingAnalyticsChart
                             stakeHistoriesResult={stakeHistoriesResult}
                             type={item.type}
                             colors={[chart1Color, chart2Color]} />
                     }
-                </ChartCard>)
+                </div>)
             }
-        </StakingAnalyticsPageWrapper>
+        </div>
     )
 }

@@ -211,6 +211,10 @@ export const ReloadButton = styled.button<{ refreshing: boolean }>`
     animation: ${({ refreshing }) => refreshing ? spinAnimation : ''} infinite 3s;
     cursor: pointer;
 
+    &:hover {
+        opacity: .8;
+    }
+
     &:disabled {
         opacity: 0.5;
         cursor: default;
@@ -258,7 +262,7 @@ export const XALGBCousreWrapper = styled.div`
     justify-content: space-between;
     font-size: 13px;
     margin: 1rem 0 0 0;
-    background: linear-gradient(90deg, rgb(23, 81, 124) 56%, rgb(0, 143, 255));
+    background: linear-gradient(90deg, var(--primary-disabled) 56%, var(--primary));
     border-radius: 8px;
 
 `
@@ -499,6 +503,7 @@ export const ContentModal = styled.div`
 
 //UnstakeInputRange
 export const UnstakeCurrencyInputPanelWrapper = styled(CurrencyInputPanelWrapper)`
+    background-color: var(--dark-ebony-clay);
     span {
         color: #C3C5CB;
         cursor: default;

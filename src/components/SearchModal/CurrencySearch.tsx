@@ -2,19 +2,17 @@ import { Currency, Token } from '@uniswap/sdk-core'
 import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { t, Trans } from '@lingui/macro'
 import { FixedSizeList } from 'react-window'
-import { Text } from 'rebass'
 import { ExtendedEther } from '../../constants/tokens'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAllTokens, useIsUserAddedToken, useSearchInactiveTokenLists, useToken } from '../../hooks/Tokens'
 import { CloseIcon, TYPE } from '../../theme'
 import { isAddress } from '../../utils'
 import Column from '../Column'
-import Row, { RowBetween } from '../Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens, useSortedTokensByQuery } from './filtering'
 import { useTokenComparator } from './sorting'
-import { ContentWrapper, PaddedColumn, SearchInput, Separator } from './styled'
+import { SearchInput } from './styled'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import useToggle from 'hooks/useToggle'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
@@ -117,13 +115,10 @@ export function CurrencySearch({
         return filteredSortedTokens
     }, [debouncedQuery, ether, filteredSortedTokens])
 
-    const handleCurrencySelect = useCallback(
-        (currency: Currency) => {
-            onCurrencySelect(currency)
-            onDismiss()
-        },
-        [onDismiss, onCurrencySelect]
-    )
+    const handleCurrencySelect = useCallback((currency: Currency) => {
+        onCurrencySelect(currency)
+        onDismiss()
+    }, [onDismiss, onCurrencySelect])
 
     // clear the input on open
     useEffect(() => {
@@ -139,24 +134,21 @@ export function CurrencySearch({
         fixedList.current?.scrollTo(0)
     }, [])
 
-    const handleEnter = useCallback(
-        (e: KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === 'Enter') {
-                const s = debouncedQuery.toLowerCase().trim()
-                if (s === 'matic' && ether) {
-                    handleCurrencySelect(ether)
-                } else if (filteredSortedTokensWithETH.length > 0) {
-                    if (
-                        filteredSortedTokensWithETH[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
-                        filteredSortedTokensWithETH.length === 1
-                    ) {
-                        handleCurrencySelect(filteredSortedTokensWithETH[0])
-                    }
+    const handleEnter = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            const s = debouncedQuery.toLowerCase().trim()
+            if (s === 'matic' && ether) {
+                handleCurrencySelect(ether)
+            } else if (filteredSortedTokensWithETH.length > 0) {
+                if (
+                    filteredSortedTokensWithETH[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
+                    filteredSortedTokensWithETH.length === 1
+                ) {
+                    handleCurrencySelect(filteredSortedTokensWithETH[0])
                 }
             }
-        },
-        [debouncedQuery, ether, filteredSortedTokensWithETH, handleCurrencySelect]
-    )
+        }
+    }, [debouncedQuery, ether, filteredSortedTokensWithETH, handleCurrencySelect])
 
     // menu ui
     const [open, toggle] = useToggle(false)
@@ -169,55 +161,44 @@ export function CurrencySearch({
     )
 
     return (
-        <ContentWrapper>
-            <PaddedColumn gap='16px'>
-                <RowBetween>
-                    <Text fontWeight={500} fontSize={16}>
-                        <Trans>Select a token</Trans>
-                    </Text>
+        <div>
+            <div>
+                <div className={'flex-s-between mb-1'}>
+                    <Trans>Select a token</Trans>
                     <CloseIcon onClick={onDismiss} />
-                </RowBetween>
-                <Row>
-                    <SearchInput
-                        type='text'
-                        id='token-search-input'
-                        placeholder={t`Search name or paste address`}
-                        autoComplete='off'
-                        value={searchQuery}
-                        ref={inputRef as RefObject<HTMLInputElement>}
-                        onChange={handleInput}
-                        onKeyDown={handleEnter}
-                    />
-                </Row>
+                </div>
+                <SearchInput
+                    type='text'
+                    id='token-search-input'
+                    placeholder={t`Search name or paste address`}
+                    autoComplete='off'
+                    value={searchQuery}
+                    ref={inputRef as RefObject<HTMLInputElement>}
+                    onChange={handleInput}
+                    onKeyDown={handleEnter}
+                />
                 {showCommonBases && (
-                    <CommonBases onSelect={handleCurrencySelect}
-                                 selectedCurrency={selectedCurrency} />
+                    <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
                 )}
-            </PaddedColumn>
-            <Separator style={{ backgroundColor: '#3881a5' }} />
+            </div>
             {searchToken && !searchTokenIsAdded ? (
-                <Column style={{ padding: '20px 0', height: '100%' }}>
-                    <ImportRow token={searchToken} showImportView={showImportView}
-                               setImportToken={setImportToken} />
-                </Column>
+                <div>
+                    <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
+                </div>
             ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
-                <div style={{ flex: '1' }}>
-                    <AutoSizer disableWidth>
-                        {({ height }) => (
-                            <CurrencyList
-                                height={height}
-                                currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
-                                otherListTokens={filteredInactiveTokens}
-                                onCurrencySelect={handleCurrencySelect}
-                                otherCurrency={otherSelectedCurrency}
-                                selectedCurrency={selectedCurrency}
-                                fixedListRef={fixedList}
-                                showImportView={showImportView}
-                                setImportToken={setImportToken}
-                                showCurrencyAmount={showCurrencyAmount}
-                            />
-                        )}
-                    </AutoSizer>
+                <div className={'h-200'}>
+                    <CurrencyList
+                        height={200}
+                        currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
+                        otherListTokens={filteredInactiveTokens}
+                        onCurrencySelect={handleCurrencySelect}
+                        otherCurrency={otherSelectedCurrency}
+                        selectedCurrency={selectedCurrency}
+                        fixedListRef={fixedList}
+                        showImportView={showImportView}
+                        setImportToken={setImportToken}
+                        showCurrencyAmount={showCurrencyAmount}
+                    />
                 </div>
             ) : (
                 <Column style={{ padding: '20px', height: '100%' }}>
@@ -226,6 +207,6 @@ export function CurrencySearch({
                     </TYPE.main>
                 </Column>
             )}
-        </ContentWrapper>
+        </div>
     )
 }

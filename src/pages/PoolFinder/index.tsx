@@ -6,7 +6,7 @@ import { Plus } from 'react-feather'
 import { useLocation } from 'react-router'
 import { Text } from 'rebass'
 import { ButtonDropdownLight } from '../../components/Button'
-import { BlueCard, LightCard } from '../../components/Card'
+import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import { FindPoolTabs } from '../../components/NavigationTabs'
@@ -20,11 +20,10 @@ import { PairState, useV2Pair } from '../../hooks/useV2Pairs'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { usePairAdder } from '../../state/user/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
-import { TYPE } from '../../theme'
-import AppBody from '../AppBody'
 import { Dots } from '../Pool/styleds'
 import { Helmet } from 'react-helmet'
 import { WrappedCurrency } from '../../models/types'
+import Card from 'shared/components/Card/Card'
 
 enum Fields {
     TOKEN0 = 0,
@@ -134,17 +133,14 @@ export default function PoolFinder() {
             <Helmet>
                 <title>Algebra — Find Pool</title>
             </Helmet>
-            <AppBody style={{ padding: '10px 30px' }}>
+            <Card classes={'p-2 br-24 w-100 maw-765 mh-a mxs_p-1'}>
                 <FindPoolTabs origin={query.get('origin') ?? '/migrate'} />
-                <AutoColumn style={{ padding: '1rem' }} gap='md'>
-                    <BlueCard style={{ backgroundColor: '#3d76a9' }}>
-                        <AutoColumn gap='10px'>
-                            <TYPE.link fontWeight={400} color={'primaryText1'}>
-                                <Trans>Select a token to find your liquidity on SushiSwap or
-                                    QuickSwap.</Trans>
-                            </TYPE.link>
-                        </AutoColumn>
-                    </BlueCard>
+                <AutoColumn gap='md'>
+                    <Card isDark={false} classes={'p-1 br-12'}>
+                        <div className={'l ta-c w-100'}>
+                            <Trans>Select a token to find your liquidity on SushiSwap or QuickSwap.</Trans>
+                        </div>
+                    </Card>
                     <ButtonDropdownLight
                         onClick={() => {
                             setShowSearch(true)
@@ -250,7 +246,7 @@ export default function PoolFinder() {
                     showCommonBases
                     selectedCurrency={(activeField === Fields.TOKEN0 ? currency1 : currency0) ?? undefined}
                 />
-            </AppBody>
+            </Card>
             <SwitchLocaleLink />
         </>
     )

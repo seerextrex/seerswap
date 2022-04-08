@@ -1,0 +1,41 @@
+.liquidity-chart {
+  position: relative;
+
+  &__zoom-buttons {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    &__button {
+      border-radius: 50%;
+      border: none;
+      width: 32px;
+      height: 32px;
+      background-color: var(--primary);
+      color: var(--white);
+      font-weight: 700;
+      &:last-of-type {
+        margin-left: 10px;
+      }
+
+      &:not(:disabled) {
+        &:hover {
+          background-color: var(--primary-hover);
+        }
+      }
+
+      &:disabled {
+        opacity: 0.3;
+      }
+    }
+  }
+
+  &__mock-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 460px;
+    padding: 0 1rem;
+    max-width: 1000px;
+  }
+}

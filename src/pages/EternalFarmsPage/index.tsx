@@ -5,7 +5,7 @@ import Modal from '../../components/Modal'
 import { StakeModal } from '../../components/StakeModal'
 import { StakerEventCard } from '../../components/StakerEventCard'
 import { FarmingType } from '../../models/enums'
-import { EmptyMock, EventsCards, EventsCardsRow, PageWrapper } from './styled'
+import './index.scss'
 
 export default function EternalFarmsPage({ data, refreshing, fetchHandler }: {
     data: any
@@ -29,33 +29,29 @@ export default function EternalFarmsPage({ data, refreshing, fetchHandler }: {
                     />
                 )}
             </Modal>
-            <PageWrapper>
-                {refreshing ? (
-                    <EmptyMock>
-                        <Loader stroke='white' size='20px' />
-                    </EmptyMock>
-                ) : !data || data.length === 0 ? (
-                    <EmptyMock>
-                        <div>No infinite farms</div>
-                        <Frown size={35} stroke={'white'} />
-                    </EmptyMock>
-                ) : !refreshing && data.length !== 0 ? (
-                    <EventsCards>
-                        <EventsCardsRow>
-                            {data.map((event: any, j: number) => (
-                                <StakerEventCard
-                                    key={j}
-                                    stakeHandler={() => setModalForPool(event)}
-                                    refreshing={refreshing}
-                                    now={0}
-                                    eternal
-                                    event={event}
-                                />
-                            ))}
-                        </EventsCardsRow>
-                    </EventsCards>
-                ) : null}
-            </PageWrapper>
+            {refreshing ? (
+                <div className={'eternal-page__loader'}>
+                    <Loader stroke='white' size='1.5rem' />
+                </div>
+            ) : !data || data.length === 0 ? (
+                <div className={'eternal-page__loader'}>
+                    <div>No infinite farms</div>
+                    <Frown size={'2rem'} stroke={'white'} />
+                </div>
+            ) : !refreshing && data.length !== 0 ? (
+                <div className={'eternal-page__row mb-1 w-100'}>
+                    {data.map((event: any, j: number) => (
+                        <StakerEventCard
+                            key={j}
+                            stakeHandler={() => setModalForPool(event)}
+                            refreshing={refreshing}
+                            now={0}
+                            eternal
+                            event={event}
+                        />
+                    ))}
+                </div>
+            ) : null}
         </>
     )
 }

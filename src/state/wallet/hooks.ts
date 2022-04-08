@@ -60,7 +60,6 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
 
     }, [balances])
 
-
 }
 
 /**

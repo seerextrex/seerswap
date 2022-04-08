@@ -6,7 +6,7 @@ export const StyledMenuIcon = styled(Settings)`
   width: 20px;
 
   > * {
-    stroke: white;
+    stroke: var(--primary);
   }
 
   :hover {
@@ -21,7 +21,7 @@ export const StyledCloseIcon = styled(X)`
   }
 
   > * {
-    stroke: #080064;
+    stroke: var(--white);
   }
 `
 export const StyledMenuButton = styled.button`
@@ -57,8 +57,8 @@ export const StyledMenu = styled.div`
 `
 export const MenuFlyout = styled.span`
   min-width: 20.125rem;
-  background-color: #b3e6ff;
-  color: #080064;
+  background-color: var(--ebony-clay);
+  color: var(--white);
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.01), 0 4px 8px rgba(0, 0, 0, 0.04), 0 16px 24px rgba(0, 0, 0, 0.04),
     0 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 12px;
@@ -79,7 +79,7 @@ export const MenuFlyout = styled.span`
 export const Break = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${({ theme }) => theme.bg3};
+  background: var(--primary);
 `
 export const ModalContentWrapper = styled.div`
   display: flex;

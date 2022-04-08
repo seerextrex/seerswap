@@ -225,5 +225,4 @@ export const ConnectNetwork = styled.div`
   cursor: pointer;
   &:hover {
     background-color: ${darken(0.08, '#36f')};
-  }
-`
+  }`

@@ -33,11 +33,11 @@ export const Container = styled.div<{ hideInput: boolean }>`
     background-color: transparent;
     width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
 `
-export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?: boolean; page?: string; shallow: boolean; swap: boolean }>`
+export const CurrencySelect = styled(ButtonGray) <{ selected: boolean; hideInput?: boolean; page?: string; shallow: boolean; swap: boolean }>`
     align-items: center;
     font-size: 24px;
     font-weight: 500;
-    background-color: ${({ selected, theme }) => (selected ? '#759FE3' : theme.winterMainButton)};
+    background-color: var(--dark-ebony-clay);
     color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     border-radius: 16px;
     box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
@@ -47,16 +47,15 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
     border: none;
     height: ${({ hideInput }) => (hideInput ? '38px' : '35px')};
     width: ${({ hideInput }) => (hideInput ? '100%' : 'initial')};
+    min-width: 214px;
     padding: 0 15px;
     justify-content: space-between;
     margin-right: ${({ hideInput }) => (hideInput ? '0' : '12px')};
 
-    :focus,
-    :hover {
-        background-color: ${({ selected, theme, page }) =>
-            page === 'addLiq' ? 'unset' : selected ? darken(0.05, '#759FE3') : darken(0.05, theme.winterMainButton)};
+    &:focus,
+    &:hover {
+        background-color: var(--mirage);
     }
-
     ${({ shallow }) =>
         shallow &&
         css`
@@ -64,19 +63,14 @@ export const CurrencySelect = styled(ButtonGray)<{ selected: boolean; hideInput?
             background-color: transparent;
             box-shadow: none;
 
-            &:hover {
+            &:hover, &:focus {
                 background-color: transparent;
+                cursor: default;
             }
-        `}
-
-    ${({ swap }) =>
-        swap &&
-        css`
-            width: 218px;
         `}
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
     width: 100%;
-    margin: 10px 0 0 0;
+    margin: 0;
   }`}
 `
 export const InputRow = styled.div<{ selected: boolean; hideCurrency: boolean }>`
@@ -88,7 +82,7 @@ export const InputRow = styled.div<{ selected: boolean; hideCurrency: boolean }>
     align-items: stretch;
   }`}
 `
-export const AutoColumnStyled = styled(AutoColumn)<{ page?: string }>`
+export const AutoColumnStyled = styled(AutoColumn) <{ page?: string }>`
     left: 1rem;
     bottom: -13% !important;
     ${({ theme, page }) => theme.mediaWidth.upToExtraSmall`
@@ -109,7 +103,7 @@ export const LabelRow = styled.div`
         color: ${({ theme }) => darken(0.2, theme.text2)};
     }
 `
-export const FiatRow = styled(LabelRow)<{ shallow?: boolean; page: string | undefined }>`
+export const FiatRow = styled(LabelRow) <{ shallow?: boolean; page: string | undefined }>`
     justify-content: flex-end;
     padding: ${({ shallow, page }) => (page === 'addLiq' ? '0 1rem' : shallow ? '0' : '0 1rem 1rem')};
     margin-top: ${({ page }) => (page === 'pool' ? '.3rem' : '0')};
@@ -139,7 +133,7 @@ export const NumericalInputStyled = styled(NumericalInput)`
     margin: 15px 0 10px!important;
   }`}
 `
-export const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
+export const StyledDropDown = styled(DropDown) <{ selected: boolean }>`
     margin: 0 0.25rem 0 0.35rem;
     height: 35%;
 
@@ -153,7 +147,7 @@ export const StyledTokenName = styled.span<{ active?: boolean }>`
     font-size: ${({ active }) => (active ? '16px' : '16px')};
 `
 export const MaxButton = styled.button<{ page: string | undefined }>`
-    background-color: ${({ page, theme }) => page === 'addLiq' ? theme.winterMainButton : '#245376'};
+    background-color: ${({ page, theme }) => page === 'addLiq' ? 'var(--primary)' : 'var(--primary-weak)'};
     border-radius: 6px;
     color: white;
     margin-right: 10px;
@@ -165,9 +159,9 @@ export const MaxButton = styled.button<{ page: string | undefined }>`
   `}
     &:hover {
         background-color: ${({
-            page,
-            theme
-        }) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
+    page,
+    theme
+}) => page === 'addLiq' ? darken(0.05, theme.winterMainButton) : darken(0.05, '#245376')};
     }
 
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`

@@ -13,6 +13,7 @@ import { GAS_PRICE_MULTIPLIER } from './useGasPrice'
 import { TransactionResponse } from '@ethersproject/providers'
 import { DefaultFarming, DefaultFarmingWithError, GetRewardsHashInterface, GetRewardsHashInterfaceWithError } from '../models/interfaces'
 import { FarmingType } from '../models/enums'
+import { fetchLimitFarmTVL } from 'utils/api'
 
 export function useStakerHandlers() {
 
@@ -25,7 +26,7 @@ export function useStakerHandlers() {
 
     const gasPrice = useAppSelector((state) => {
         if (!state.application.gasPrice.fetched) return 70
-            return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
     })
 
     const addTransaction = useTransactionAdder()
@@ -284,6 +285,7 @@ export function useStakerHandlers() {
     }, [account, chainId])
 
     const stakeHandler = useCallback(async (selectedNFT, {
+        id,
         rewardToken,
         bonusRewardToken,
         pool,
@@ -468,9 +470,9 @@ export function useStakerHandlers() {
             ])
 
             const result = await farmingCenterContract.multicall([
-                    approveData,
-                    sendData
-                ],
+                approveData,
+                sendData
+            ],
                 {
                     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                 })

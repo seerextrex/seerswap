@@ -45,3 +45,15 @@ export const formatAmount = (num: number | undefined, digits = 3) => {
         }
     })
 }
+
+
+export const formatAmountTokens = (num: number | undefined, digits = 3) => {
+    if (num === 0) return '0'
+    if (!num) return '-'
+    if (num < 0.001) {
+        return '<0.001'
+    }
+    return numbro(num).format({
+        thousandSeparated: true,
+    })
+}

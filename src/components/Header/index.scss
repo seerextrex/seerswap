@@ -1,0 +1,119 @@
+.header {
+
+  &__wrapper {
+    background-color: var(--dark-blue);
+    border-bottom: 1px solid #0e1f3a;
+  }
+
+  &__logo {
+    width: 100px;
+
+    img {
+      width: inherit;
+    }
+  }
+
+  &__links {
+    position: absolute;
+    justify-self: center;
+    transform: translateX(-50%);
+    left: calc(50%);
+    padding: 0 16px;
+    overflow: visible;
+    align-items: center;
+
+    &__link {
+      position: relative;
+      color: var(--light-gray);
+      margin: 0 .3rem;
+      padding: 19px 2rem;
+
+      &:hover {
+        color: var(--white);
+        opacity: 1 !important;
+      }
+
+      &--active {
+        cursor: default;
+        border-bottom: 1px solid var(--primary);
+        color: var(--primary);
+
+        &:hover, &:focus {
+          color: var(--primary);
+          opacity: 1 !important;
+        }
+      }
+    }
+    
+  }
+
+  &__account {
+    background: #041023;
+    margin-top: -1rem;
+    margin-bottom: -1rem;
+    border-radius: 0;
+    border-left: 1px solid #0e1f3a;
+    padding: 10px 1rem;
+  }
+
+  &__farming-circle {
+    border-radius: 50%;
+    padding: 5px;
+    background-color: var(--primary);
+    position: absolute;
+    top: 8px;
+    right: 1rem;
+  }
+}
+
+@media screen and (max-width: 960px) {
+
+  .header {
+
+    &__links {
+      position: fixed;
+      flex-direction: row;
+      justify-content: space-between;
+      justify-self: center;
+      z-index: 99;
+      margin: 0 auto;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      width: 95%;
+      overflow-x: scroll;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      border-radius: 0;
+      background: #030b18;
+      transform: none;
+      border-top: 1px solid #0e1f3a;
+
+      &__link {
+        padding: 1rem;
+        &--active {
+          background-color: var(--primary);
+          color: var(--white);
+          &:focus {
+            color: var(--white);
+          }
+        }
+      }
+    }
+
+    &__farming-circle {
+      top: 8px;
+      right: 2px;
+    }
+  }
+
+}
+
+@media screen and (max-width: 720px) {
+
+}
+
+@media screen and (max-width: 500px) {
+
+}

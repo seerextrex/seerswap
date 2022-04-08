@@ -1,5 +1,5 @@
 import React from 'react'
-import { RangeButtonsWrapper, ToolbarOptionsItem } from './styled'
+import './index.scss'
 
 const buttonsData = [
     { title: 'Day' },
@@ -10,16 +10,16 @@ const buttonsData = [
 
 const RangeButtons = ({ setSpan, span }: { setSpan: any, span: string }) => {
     return (
-        <RangeButtonsWrapper>
+        <ul className={'flex-center'}>
             {
                 buttonsData.map((item, i) =>
-                    <ToolbarOptionsItem key={i} onClick={() => {
+                    <li className={'stacking-chart-card__buttons mr-05 br-8 pv-025 ph-05'} key={i} onClick={() => {
                         setSpan(item.title)
-                    }} selected={span === item.title}>
+                    }} data-selected={span === item.title}>
                         {item.title}
-                    </ToolbarOptionsItem>)
+                    </li>)
             }
-        </RangeButtonsWrapper>
+        </ul>
     )
 }
 export default RangeButtons

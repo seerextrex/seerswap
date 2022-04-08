@@ -1,36 +1,25 @@
 import React from 'react'
 import { ExternalLink } from '../../theme'
-import { CircleWrapper, GreenCircle, HeaderText, IconWrapper, OptionCardClickable, OptionCardLeft, SubHeader } from './styled'
+import { CircleWrapper, GreenCircle, IconWrapper } from './styled'
 
-
-export default function Option({
-    link = null,
-    clickable = true,
-    size,
-    onClick = null,
-    color,
-    header,
-    subheader = null,
-    icon,
-    active = false,
-    id
-}: {
+interface OptionProps {
     link?: string | null
     clickable?: boolean
     size?: number | null
-    onClick?: null | (() => void)
+    onClick?: any
     color: string
     header: React.ReactNode
     subheader: React.ReactNode | null
     icon: string
     active?: boolean
     id: string
-}) {
+}
+
+export default function Option({ link = null, clickable = true, size, onClick = null, color, header, subheader = null, icon, active = false, id }: OptionProps) {
     const content = (
-        <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active}
-                             active={active}>
-            <OptionCardLeft>
-                <HeaderText color={color}>
+        <button className={'btn primary bg-ecl flex-s-between w-100 p-1'} id={id} onClick={onClick} data-clickable={clickable && !active}>
+            <div className={'f f-jc f-ac h-100'}>
+                <div color={color}>
                     {active ? (
                         <CircleWrapper>
                             <GreenCircle>
@@ -41,13 +30,13 @@ export default function Option({
                         ''
                     )}
                     {header}
-                </HeaderText>
-                {subheader && <SubHeader>{subheader}</SubHeader>}
-            </OptionCardLeft>
+                </div>
+                {subheader && <div className={'fs-075 ml-05'}>{subheader}</div>}
+            </div>
             <IconWrapper size={size}>
                 <img src={icon} alt={'Icon'} />
             </IconWrapper>
-        </OptionCardClickable>
+        </button>
     )
     if (link) {
         return <ExternalLink href={link}>{content}</ExternalLink>

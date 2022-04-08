@@ -1,10 +1,10 @@
-import { animated } from 'react-spring'
-import { DialogContent, DialogOverlay } from '@reach/dialog'
-import styled, { css } from 'styled-components/macro'
-import { transparentize } from 'polished'
-import React from 'react'
+import { animated } from "react-spring";
+import { DialogContent, DialogOverlay } from "@reach/dialog";
+import styled, { css } from "styled-components/macro";
+import { transparentize } from "polished";
+import React from "react";
 
-const AnimatedDialogOverlay = animated(DialogOverlay)
+const AnimatedDialogOverlay = animated(DialogOverlay);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     &[data-reach-dialog-overlay] {
@@ -18,15 +18,13 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
 
         background-color: ${({ theme }) => theme.modalBG};
     }
-`
+`;
 
-const AnimatedDialogContent = animated(DialogContent)
+const AnimatedDialogContent = animated(DialogContent);
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...rest }) => (
-    <AnimatedDialogContent {...rest} />
-)).attrs({
-    'aria-label': 'dialog'
+export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...rest }) => <AnimatedDialogContent {...rest} />).attrs({
+    "aria-label": "dialog",
 })`
     overflow-y: auto;
 
@@ -41,7 +39,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
         overflow-x: hidden;
         padding: 1rem;
 
-        align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
+        align-self: ${({ mobile }) => (mobile ? "flex-end" : "center")};
 
         max-width: 700px;
         ${({ maxHeight }) =>
@@ -63,12 +61,12 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
         ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
       width:  85vw;
       ${
-            mobile &&
-            css`
-                width: 100vw;
-                border-radius: 20px 20px 0 0;
-            `
-        }
+          mobile &&
+          css`
+              width: 100vw;
+              border-radius: 20px 20px 0 0;
+          `
+      }
     `}
     }
-`
+`;

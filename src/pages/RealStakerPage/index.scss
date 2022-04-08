@@ -1,3 +1,17 @@
+:root {
+  --current-apr-bg: #2C4B3B;
+  --current-apr-text: #22dc22;
+  --calc-bg: #26343f;
+  --calc-input: #385368;
+  --calc-input-text: #fff;
+  --calc-input-field-bg: #233543;
+  --button-bg: #385368;
+  --button-bg--selected: #2797ff;
+  --button-text: #74b6f4;
+  --button-text--selected: #fff;
+  --profit-text: #22dc22;
+}
+
 .real-staker-page {
   width: 100%;
   margin-bottom: 5rem;
@@ -11,6 +25,14 @@
   img {
     width: 36px;
     height: 36px;
+  }
+}
+
+.stake {
+  &__calculate-button {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
   }
 }
 

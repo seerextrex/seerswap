@@ -237,6 +237,10 @@ msgstr "Approve {0}"
 msgid "Approving {0}"
 msgstr "Approving {0}"
 
+#: src/utils/convertDate.ts
+msgid "April"
+msgstr "April"
+
 #: src/components/Settings/index.tsx
 msgid "Are you sure?"
 msgstr "Are you sure?"
@@ -244,6 +248,10 @@ msgstr "Are you sure?"
 #: 
 #~ msgid "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
 #~ msgstr "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
+
+#: src/utils/convertDate.ts
+msgid "August"
+msgstr "August"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Auto"
@@ -284,6 +292,10 @@ msgstr "By adding liquidity you'll earn 0.3% of all trades on this pair proporti
 #: src/components/SearchModal/ImportList.tsx
 msgid "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
 msgstr "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
+
+#: src/pages/RealStakerPage/index.tsx
+msgid "Calculate Proift"
+msgstr "Calculate Proift"
 
 #: 
 #~ msgid "Change"
@@ -354,6 +366,8 @@ msgstr "Collect fees"
 msgid "Collected"
 msgstr "Collected"
 
+#: src/components/StakerMyStakes/index.tsx
+#: src/components/StakerMyStakes/index.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collecting"
 msgstr "Collecting"
@@ -498,6 +512,10 @@ msgstr "Current price"
 #~ msgid "Current {0} Price:"
 #~ msgstr "Current {0} Price:"
 
+#: src/utils/convertDate.ts
+msgid "December"
+msgstr "December"
+
 #: 
 #~ msgid "Delegate Votes"
 #~ msgstr "Delegate Votes"
@@ -610,8 +628,8 @@ msgstr "Enter valid token address"
 msgid "Error"
 msgstr "Error"
 
-#: src/components/WalletModal/PendingView.tsx
 #: src/components/WalletModal/index.tsx
+#: src/components/WalletModal/PendingView.tsx
 msgid "Error connecting"
 msgstr "Error connecting"
 
@@ -643,6 +661,10 @@ msgstr "Expert mode turns off the confirm transaction prompt and allows high sli
 #: 
 #~ msgid "Farming"
 #~ msgstr "Farming"
+
+#: src/utils/convertDate.ts
+msgid "February"
+msgstr "February"
 
 #: src/components/PositionPreview/index.tsx
 msgid "Fee"
@@ -796,6 +818,18 @@ msgstr "Invalid price input"
 msgid "Invalid recipient"
 msgstr "Invalid recipient"
 
+#: src/utils/convertDate.ts
+msgid "January"
+msgstr "January"
+
+#: src/utils/convertDate.ts
+msgid "July"
+msgstr "July"
+
+#: src/utils/convertDate.ts
+msgid "June"
+msgstr "June"
+
 #: 
 #~ msgid "Learn more"
 #~ msgstr "Learn more"
@@ -820,8 +854,8 @@ msgstr "Lists"
 msgid "Loaded"
 msgstr "Loaded"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 #: src/pages/PoolFinder/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Loading"
@@ -845,6 +879,10 @@ msgstr "Manage"
 msgid "Manage Liquidity in Rewards Pool"
 msgstr "Manage Liquidity in Rewards Pool"
 
+#: src/utils/convertDate.ts
+msgid "March"
+msgstr "March"
+
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Max"
 msgstr "Max"
@@ -866,8 +904,12 @@ msgstr "Max:"
 msgid "Maximum sent"
 msgstr "Maximum sent"
 
-#: src/components/PositionCard/V2.tsx
+#: src/utils/convertDate.ts
+msgid "May"
+msgstr "May"
+
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Migrate"
 msgstr "Migrate"
 
@@ -957,6 +999,10 @@ msgstr "No results found."
 #~ msgid "Not created"
 #~ msgstr "Not created"
 
+#: src/utils/convertDate.ts
+msgid "November"
+msgstr "November"
+
 #: 
 #~ msgid "Now"
 #~ msgstr "Now"
@@ -972,6 +1018,10 @@ msgstr "ON"
 #: src/components/Settings/index.tsx
 msgid "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
 msgstr "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
+
+#: src/utils/convertDate.ts
+msgid "October"
+msgstr "October"
 
 #: src/components/Toggle/index.tsx
 msgid "Off"
@@ -1061,15 +1111,15 @@ msgstr "Pool Found!"
 #~ msgid "Pool rate"
 #~ msgstr "Pool rate"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Pool tokens in rewards pool:"
 msgstr "Pool tokens in rewards pool:"
 
-#: src/components/PositionCard/V2.tsx
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/V2.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
@@ -1232,6 +1282,10 @@ msgstr "Selected Range"
 msgid "Send NFT"
 msgstr "Send NFT"
 
+#: src/utils/convertDate.ts
+msgid "September"
+msgstr "September"
+
 #: src/pages/AddLiquidity/PoolInfoHeader.tsx
 #: src/pages/AddLiquidity/PoolInfoHeader.tsx
 #~ msgid "Set Price Range"
@@ -1253,8 +1307,8 @@ msgstr "Show"
 #~ msgid "Simple"
 #~ msgstr "Simple"
 
-#: src/components/TransactionSettings/index.tsx
 #: src/components/swap/AdvancedSwapDetails.tsx
+#: src/components/TransactionSettings/index.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
@@ -1491,6 +1545,10 @@ msgstr "Turn On Expert Mode"
 msgid "Unclaimed fees"
 msgstr "Unclaimed fees"
 
+#: src/components/StakerMyStakes/index.tsx
+msgid "Undepositing"
+msgstr "Undepositing"
+
 #: 
 #~ msgid "Uniswap governance is only available on Layer 1. Switch your network to Ethereum Mainnet to view Proposals and Vote."
 #~ msgstr "Uniswap governance is only available on Layer 1. Switch your network to Ethereum Mainnet to view Proposals and Vote."
@@ -1687,9 +1745,9 @@ msgstr "Your Reward"
 #~ msgid "Your V3 liquidity positions will appear here."
 #~ msgstr "Your V3 liquidity positions will appear here."
 
+#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
 msgid "Your pool share:"
 msgstr "Your pool share:"
 
@@ -1727,8 +1785,8 @@ msgstr "Your positions"
 #~ msgid "Your rate"
 #~ msgstr "Your rate"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Your total pool tokens:"
 msgstr "Your total pool tokens:"
 

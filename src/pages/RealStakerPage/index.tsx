@@ -252,7 +252,7 @@ export default function RealStakerPage({}) {
                     </div>
                     <div>
                         {/* @ts-ignore */}
-                        <calculator-algb></calculator-algb>
+                        <calculator-algb balance={_balance}></calculator-algb>
                     </div>
                 </div>
             </Modal>

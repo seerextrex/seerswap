@@ -3,7 +3,7 @@ import PositionList from "components/PositionList";
 import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { useV3Positions } from "hooks/useV3Positions";
 import { useActiveWeb3React } from "hooks/web3";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useWalletModalToggle } from "state/application/hooks";
 import { useUserHideClosedPositions } from "state/user/hooks";
@@ -16,6 +16,7 @@ import AutoColumn from "../../shared/components/AutoColumn";
 import { SwapPoolTabs } from "../../components/NavigationTabs";
 import "./index.scss";
 import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
+import { EthereumWindow } from "models/types";
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React();
@@ -27,8 +28,6 @@ export default function Pool() {
     const { positions, loading: positionsLoading } = useV3Positions(account);
 
     const prevAccount = usePrevious(account);
-
-    console.log("accounts", account, prevAccount);
 
     const [openPositions, closedPositions] = positions?.reduce<[PositionPool[], PositionPool[]]>(
         (acc, p) => {
@@ -77,6 +76,14 @@ export default function Pool() {
     if (chainId === 137) {
         chainSymbol = "MATIC";
     }
+
+    const reload = useCallback(() => window.location.reload(), [])
+
+    useEffect(() => {
+        const _window = window as EthereumWindow
+        _window.ethereum.on('accountsChanged', reload)
+        return () => _window.ethereum.removeListener('accountsChanged', reload)
+    }, [])
 
     return (
         <>

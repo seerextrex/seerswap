@@ -246,13 +246,13 @@ export default function RealStakerPage({}) {
                 <div>
                     <div className="mb-1 f f-jb f-ac">
                         <Trans>Calculate Proift</Trans>
-                        <div onClick={() => toggleCalcModal(false)}>
+                        <div onClick={() => toggleCalcModal(false)} className={'cur-p hover-op'}>
                             <X />
                         </div>
                     </div>
                     <div>
                         {/* @ts-ignore */}
-                        <calculator-algb balance={_balance}></calculator-algb>
+                        <calculator-algb balance={balance && balance.toSignificant(30)}></calculator-algb>
                     </div>
                 </div>
             </Modal>

@@ -237,6 +237,10 @@ msgstr "Approve {0}"
 msgid "Approving {0}"
 msgstr "Approving {0}"
 
+#: src/utils/convertDate.ts
+msgid "April"
+msgstr "April"
+
 #: src/components/Settings/index.tsx
 msgid "Are you sure?"
 msgstr "Are you sure?"
@@ -244,6 +248,10 @@ msgstr "Are you sure?"
 #: 
 #~ msgid "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
 #~ msgstr "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
+
+#: src/utils/convertDate.ts
+msgid "August"
+msgstr "August"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Auto"
@@ -354,6 +362,8 @@ msgstr "Collect fees"
 msgid "Collected"
 msgstr "Collected"
 
+#: src/components/StakerMyStakes/index.tsx
+#: src/components/StakerMyStakes/index.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collecting"
 msgstr "Collecting"
@@ -497,6 +507,10 @@ msgstr "Current price"
 #: src/pages/AddLiquidity/PoolInfoHeader.tsx
 #~ msgid "Current {0} Price:"
 #~ msgstr "Current {0} Price:"
+
+#: src/utils/convertDate.ts
+msgid "December"
+msgstr "December"
 
 #: 
 #~ msgid "Delegate Votes"
@@ -643,6 +657,10 @@ msgstr "Expert mode turns off the confirm transaction prompt and allows high sli
 #: 
 #~ msgid "Farming"
 #~ msgstr "Farming"
+
+#: src/utils/convertDate.ts
+msgid "February"
+msgstr "February"
 
 #: src/components/PositionPreview/index.tsx
 msgid "Fee"
@@ -796,6 +814,18 @@ msgstr "Invalid price input"
 msgid "Invalid recipient"
 msgstr "Invalid recipient"
 
+#: src/utils/convertDate.ts
+msgid "January"
+msgstr "January"
+
+#: src/utils/convertDate.ts
+msgid "July"
+msgstr "July"
+
+#: src/utils/convertDate.ts
+msgid "June"
+msgstr "June"
+
 #: 
 #~ msgid "Learn more"
 #~ msgstr "Learn more"
@@ -845,6 +875,10 @@ msgstr "Manage"
 msgid "Manage Liquidity in Rewards Pool"
 msgstr "Manage Liquidity in Rewards Pool"
 
+#: src/utils/convertDate.ts
+msgid "March"
+msgstr "March"
+
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Max"
 msgstr "Max"
@@ -865,6 +899,10 @@ msgstr "Max:"
 #: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Maximum sent"
 msgstr "Maximum sent"
+
+#: src/utils/convertDate.ts
+msgid "May"
+msgstr "May"
 
 #: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
@@ -957,6 +995,10 @@ msgstr "No results found."
 #~ msgid "Not created"
 #~ msgstr "Not created"
 
+#: src/utils/convertDate.ts
+msgid "November"
+msgstr "November"
+
 #: 
 #~ msgid "Now"
 #~ msgstr "Now"
@@ -972,6 +1014,10 @@ msgstr "ON"
 #: src/components/Settings/index.tsx
 msgid "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
 msgstr "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
+
+#: src/utils/convertDate.ts
+msgid "October"
+msgstr "October"
 
 #: src/components/Toggle/index.tsx
 msgid "Off"
@@ -1232,6 +1278,10 @@ msgstr "Selected Range"
 msgid "Send NFT"
 msgstr "Send NFT"
 
+#: src/utils/convertDate.ts
+msgid "September"
+msgstr "September"
+
 #: src/pages/AddLiquidity/PoolInfoHeader.tsx
 #: src/pages/AddLiquidity/PoolInfoHeader.tsx
 #~ msgid "Set Price Range"
@@ -1490,6 +1540,10 @@ msgstr "Turn On Expert Mode"
 #: src/pages/Pool/PositionPage.tsx
 msgid "Unclaimed fees"
 msgstr "Unclaimed fees"
+
+#: src/components/StakerMyStakes/index.tsx
+msgid "Undepositing"
+msgstr "Undepositing"
 
 #: 
 #~ msgid "Uniswap governance is only available on Layer 1. Switch your network to Ethereum Mainnet to view Proposals and Vote."

@@ -6,8 +6,9 @@ import getLibrary from '../utils/getLibrary'
 import { NetworkConnector } from './NetworkConnector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 
+const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
 const NETWORK_URLS: { [key in SupportedChainId]: string } = {
-    [SupportedChainId.POLYGON]: 'https://polygon-mainnet.infura.io/v3/a4f8e4693b7a465da0848c3f82732f23'
+    [SupportedChainId.POLYGON]: `https://polygon-mainnet.infura.io/v3/${INFURA_KEY}`
 }
 
 export const network = new NetworkConnector({

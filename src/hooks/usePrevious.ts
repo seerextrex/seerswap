@@ -8,7 +8,7 @@ export default function usePrevious<T>(value: T) {
 
     // Store current value in ref
     useEffect(() => {
-        if (value) {
+        if (value && ref.current !== value) {
             ref.current = value
         }
     }, [value]) // Only re-run if value changes
@@ -24,9 +24,9 @@ export function usePreviousNonEmptyArray<T>(value: T[]) {
 
     // Store current value in ref
     useEffect(() => {
-        if (value.length > 0) [
+        if (value.length > 0) {
             ref.current = value
-        ]
+        }
     }, [value]) // Only re-run if value changes
 
     // Return previous value (happens before update in useEffect above)
@@ -40,9 +40,9 @@ export function usePreviousNonEmptyObject<T>(value: T) {
 
     // Store current value in ref
     useEffect(() => {
-        if (value && Object.keys(value).length !== 0) [
+        if (value && Object.keys(value).length !== 0) {
             ref.current = value
-        ]
+        }
     }, [value]) // Only re-run if value changes
 
     // Return previous value (happens before update in useEffect above)
@@ -56,9 +56,9 @@ export function usePreviousNonErroredArray<T>(value: T[]) {
 
     // Store current value in ref
     useEffect(() => {
-        if (value.length > 0 && !value.every((el: any) => el.error)) [
+        if (value.length > 0 && !value.every((el: any) => el.error)) {
             ref.current = value
-        ]
+        }
     }, [value]) // Only re-run if value changes
 
     // Return previous value (happens before update in useEffect above)

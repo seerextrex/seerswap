@@ -20,7 +20,7 @@ const Menu = ({ items, classes, refreshHandler, isLoading, size }: MenuProps) =>
         <div className={`menu-wrapper w-100 flex-s-between b ${classes}`}>
             <ul className={`menu-list`}>
                 {items.map((el, i) => (
-                    <NavLink key={i} to={el.link} className={"menu-list-item ph-1 hover-op"} activeClassName={"menu-list-item--active"}>
+                    <NavLink key={i} to={el.link} className={"menu-list-item ph-1"} activeClassName={"menu-list-item--active"}>
                         {el.icon}
                         {el.title}
                     </NavLink>

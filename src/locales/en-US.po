@@ -293,6 +293,10 @@ msgstr "By adding liquidity you'll earn 0.3% of all trades on this pair proporti
 msgid "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
 msgstr "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
 
+#: src/pages/RealStakerPage/index.tsx
+msgid "Calculate Proift"
+msgstr "Calculate Proift"
+
 #: 
 #~ msgid "Change"
 #~ msgstr "Change"
@@ -624,8 +628,8 @@ msgstr "Enter valid token address"
 msgid "Error"
 msgstr "Error"
 
-#: src/components/WalletModal/PendingView.tsx
 #: src/components/WalletModal/index.tsx
+#: src/components/WalletModal/PendingView.tsx
 msgid "Error connecting"
 msgstr "Error connecting"
 
@@ -850,8 +854,8 @@ msgstr "Lists"
 msgid "Loaded"
 msgstr "Loaded"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 #: src/pages/PoolFinder/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Loading"
@@ -904,8 +908,8 @@ msgstr "Maximum sent"
 msgid "May"
 msgstr "May"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Migrate"
 msgstr "Migrate"
 
@@ -1107,15 +1111,15 @@ msgstr "Pool Found!"
 #~ msgid "Pool rate"
 #~ msgstr "Pool rate"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Pool tokens in rewards pool:"
 msgstr "Pool tokens in rewards pool:"
 
-#: src/components/PositionCard/V2.tsx
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/V2.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
@@ -1303,8 +1307,8 @@ msgstr "Show"
 #~ msgid "Simple"
 #~ msgstr "Simple"
 
-#: src/components/TransactionSettings/index.tsx
 #: src/components/swap/AdvancedSwapDetails.tsx
+#: src/components/TransactionSettings/index.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
@@ -1741,9 +1745,9 @@ msgstr "Your Reward"
 #~ msgid "Your V3 liquidity positions will appear here."
 #~ msgstr "Your V3 liquidity positions will appear here."
 
+#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
 msgid "Your pool share:"
 msgstr "Your pool share:"
 
@@ -1781,8 +1785,8 @@ msgstr "Your positions"
 #~ msgid "Your rate"
 #~ msgstr "Your rate"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Your total pool tokens:"
 msgstr "Your total pool tokens:"
 

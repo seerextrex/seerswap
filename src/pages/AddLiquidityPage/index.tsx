@@ -486,7 +486,7 @@ export default function AddLiquidityPage({
                                         )}
                                     </Card>
                                 </div>
-                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: 'relative' } : {}}>
+                                <div style={!startPriceTypedValue && !price ? { opacity: 0.2, pointerEvents: "none", userSelect: "none", zIndex: -1, position: "relative" } : {}}>
                                     <div className={"f"}>
                                         <Title style={{ margin: 0, position: "static" }}>Price Range</Title>
                                         <div className="f f-ac w-100">

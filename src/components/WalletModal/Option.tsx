@@ -17,7 +17,7 @@ interface OptionProps {
 
 export default function Option({ link = null, clickable = true, size, onClick = null, color, header, subheader = null, icon, active = false, id }: OptionProps) {
     const content = (
-        <button className={'btn primary flex-s-between w-100 p-1'} id={id} onClick={onClick} data-clickable={clickable && !active}>
+        <button className={'btn primary bg-ecl flex-s-between w-100 p-1'} id={id} onClick={onClick} data-clickable={clickable && !active}>
             <div className={'f f-jc f-ac h-100'}>
                 <div color={color}>
                     {active ? (

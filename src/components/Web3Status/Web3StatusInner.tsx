@@ -15,7 +15,6 @@ import { StatusIcon } from "./StatusIcon";
 import { EthereumWindow } from "models/types";
 
 export async function addPolygonNetwork() {
-
     const _window = window as EthereumWindow;
 
     try {
@@ -90,17 +89,13 @@ export function Web3StatusInner() {
     } else if (error) {
         return (
             <Web3StatusError onClick={addPolygonNetwork}>
-            <NetworkIcon />
-            <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Polygon</Trans> : <Trans>Error</Trans>}</Text>
-        </Web3StatusError>
+                <NetworkIcon />
+                <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Polygon</Trans> : <Trans>Error</Trans>}</Text>
+            </Web3StatusError>
         );
     } else {
         return (
-            <Web3StatusConnect
-                id="connect-wallet"
-                onClick={toggleWalletModal}
-                faded={!account}
-            >
+            <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
                 <Text>
                     <Trans>Connect Wallet</Trans>
                 </Text>

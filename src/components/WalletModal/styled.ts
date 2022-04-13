@@ -94,8 +94,8 @@ const InfoCard = styled.button<{ active?: boolean }>`
   }
 
   border: 1px solid ${({
-    theme,
-    active
+  theme,
+  active
 }) => (active ? theme.winterMainButton : theme.winterMainButton)};
 `
 const OptionCard = styled(InfoCard as any)`
@@ -111,7 +111,7 @@ export const OptionCardLeft = styled.div`
   justify-content: center;
   height: 100%;
 `
-export const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
+export const OptionCardClickable = styled(OptionCard as any) <{ clickable?: boolean }>`
   margin-top: 0;
   &:hover {
     cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};

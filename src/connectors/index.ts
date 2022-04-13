@@ -4,6 +4,7 @@ import { InjectedConnector } from '@web3-react/injected-connector'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from '../constants/chains'
 import getLibrary from '../utils/getLibrary'
 import { NetworkConnector } from './NetworkConnector'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
 const NETWORK_URLS: { [key in SupportedChainId]: string } = {
@@ -26,3 +27,11 @@ export const injected = new InjectedConnector({
 })
 
 export const gnosisSafe = new SafeAppConnector()
+
+export const walletconnector = new WalletConnectConnector({
+    rpc : {137: 'https://rpc-mainnet.matic.network'},
+    supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
+    qrcode: true,
+    chainId: 137
+})
+

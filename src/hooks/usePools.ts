@@ -77,7 +77,6 @@ export function usePools(
 
     }, [poolAddresses, liquidities])
 
-
     return useMemo(() => {
         return poolKeys.map((_key, index) => {
             const [token0, token1] = transformed[index] ?? []

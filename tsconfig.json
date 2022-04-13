@@ -30,6 +30,10 @@
       "react-spring",
       "jest"
     ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "src/*"
+    ],
     "baseUrl": "src",
   },
    "exclude": [

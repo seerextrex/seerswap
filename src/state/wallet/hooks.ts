@@ -77,24 +77,23 @@ export function useTokenBalancesWithLoadingIndicator(
     const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens])
     const ERC20Interface = new Interface(ERC20ABI) as Erc20Interface
     const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20Interface, 'balanceOf', [address], {
-        gasRequired:  100_000
+        gasRequired: 100_000
     })
 
     const _balances = useMemo(
-            () =>
-                address && validatedTokens.length > 0
-                    ? validatedTokens.reduce<{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }>((memo, token, i) => {
-                        const value = balances?.[i]?.result?.[0]
-                        const amount = value ? JSBI.BigInt(value.toString()) : undefined
-                        if (amount) {
-                            memo[token.address] = CurrencyAmount.fromRawAmount(token, amount)
-                        }
-                        return memo
-                    }, {})
-                    : {},
-            [address, validatedTokens, balances]
-        )
-
+        () =>
+            address && validatedTokens.length > 0
+                ? validatedTokens.reduce<{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }>((memo, token, i) => {
+                    const value = balances?.[i]?.result?.[0]
+                    const amount = value ? JSBI.BigInt(value.toString()) : undefined
+                    if (amount) {
+                        memo[token.address] = CurrencyAmount.fromRawAmount(token, amount)
+                    }
+                    return memo
+                }, {})
+                : {},
+        [address, validatedTokens, balances]
+    )
     const prevBalances = usePreviousNonEmptyObject(_balances)
 
     const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [_balances])

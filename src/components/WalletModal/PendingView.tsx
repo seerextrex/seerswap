@@ -5,18 +5,15 @@ import { injected } from '../../connectors'
 import { Trans } from '@lingui/macro'
 import { ErrorButton, ErrorGroup, LoadingMessage, LoadingWrapper, PendingSection, StyledLoader } from './styled'
 
-
-export default function PendingView({
-    connector,
-    error = false,
-    setPendingError,
-    tryActivation
-}: {
+interface PendingView {
     connector?: AbstractConnector
     error?: boolean
     setPendingError: (error: boolean) => void
     tryActivation: (connector: AbstractConnector) => void
-}) {
+    errorMessage: string
+}
+
+export default function PendingView({ connector, error = false, setPendingError, tryActivation, errorMessage }:PendingView ) {
     const isMetamask = window?.ethereum?.isMetaMask
 
     return (
@@ -62,7 +59,7 @@ export default function PendingView({
                             key={key}
                             clickable={false}
                             color={option.color}
-                            header={option.name}
+                            header={errorMessage}
                             subheader={option.description}
                             icon={option.iconURL}
                         />

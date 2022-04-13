@@ -95,6 +95,8 @@ export type AlgebraDayData_Filter = {
   tvlUSD_lte?: Maybe<Scalars['BigDecimal']>;
   tvlUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
   tvlUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum AlgebraDayData_OrderBy {
@@ -126,6 +128,10 @@ export type Block = {
   stateRoot?: Maybe<Scalars['String']>;
   size?: Maybe<Scalars['BigInt']>;
   unclesHash?: Maybe<Scalars['String']>;
+};
+
+export type BlockChangedFilter = {
+  number_gte: Scalars['Int'];
 };
 
 export type Block_Filter = {
@@ -313,20 +319,13 @@ export type Block_Filter = {
   unclesHash_ends_with_nocase?: Maybe<Scalars['String']>;
   unclesHash_not_ends_with?: Maybe<Scalars['String']>;
   unclesHash_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
-/** The block at which the query should be executed. */
 export type Block_Height = {
-  /** Value containing a block hash */
   hash?: Maybe<Scalars['Bytes']>;
-  /** Value containing a block number */
   number?: Maybe<Scalars['Int']>;
-  /**
-   * Value containing the minimum block number.
-   * In the case of `number_gte`, the query will be executed on the latest block only if
-   * the subgraph has progressed to or past the minimum block number.
-   * Defaults to the latest block when omitted.
-   */
   number_gte?: Maybe<Scalars['Int']>;
 };
 
@@ -370,6 +369,8 @@ export type Bundle_Filter = {
   maticPriceUSD_lte?: Maybe<Scalars['BigDecimal']>;
   maticPriceUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
   maticPriceUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Bundle_OrderBy {
@@ -561,6 +562,8 @@ export type Burn_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_in?: Maybe<Array<Scalars['BigInt']>>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Burn_OrderBy {
@@ -708,6 +711,8 @@ export type Collect_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_in?: Maybe<Array<Scalars['BigInt']>>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Collect_OrderBy {
@@ -798,6 +803,8 @@ export type Deposit_Filter = {
   enteredInEternalFarming_lte?: Maybe<Scalars['BigInt']>;
   enteredInEternalFarming_in?: Maybe<Array<Scalars['BigInt']>>;
   enteredInEternalFarming_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Deposit_OrderBy {
@@ -913,6 +920,8 @@ export type EternalFarming_Filter = {
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum EternalFarming_OrderBy {
@@ -970,6 +979,8 @@ export type Factory_Filter = {
   ALGBfromVault_lte?: Maybe<Scalars['BigInt']>;
   ALGBfromVault_not?: Maybe<Scalars['BigInt']>;
   ALGBfromVault_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
   currentStakedAmount?: Maybe<Scalars['BigInt']>;
   currentStakedAmount_gt?: Maybe<Scalars['BigInt']>;
   currentStakedAmount_gte?: Maybe<Scalars['BigInt']>;
@@ -1228,6 +1239,8 @@ export type FeeHourData_Filter = {
   endFee_lte?: Maybe<Scalars['BigInt']>;
   endFee_in?: Maybe<Array<Scalars['BigInt']>>;
   endFee_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum FeeHourData_OrderBy {
@@ -1375,6 +1388,8 @@ export type Flash_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_in?: Maybe<Array<Scalars['BigInt']>>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Flash_OrderBy {
@@ -1469,6 +1484,8 @@ export type History_Filter = {
   ALGBfromVault_lte?: Maybe<Scalars['BigInt']>;
   ALGBfromVault_in?: Maybe<Array<Scalars['BigInt']>>;
   ALGBfromVault_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum History_OrderBy {
@@ -1567,6 +1584,8 @@ export type Incentive_Filter = {
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Incentive_OrderBy {
@@ -1773,6 +1792,8 @@ export type Mint_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_in?: Maybe<Array<Scalars['BigInt']>>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Mint_OrderBy {
@@ -2131,6 +2152,8 @@ export type PoolDayData_Filter = {
   close_lte?: Maybe<Scalars['BigDecimal']>;
   close_in?: Maybe<Array<Scalars['BigDecimal']>>;
   close_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum PoolDayData_OrderBy {
@@ -2212,6 +2235,8 @@ export type PoolFeeData_Filter = {
   fee_lte?: Maybe<Scalars['BigInt']>;
   fee_in?: Maybe<Array<Scalars['BigInt']>>;
   fee_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum PoolFeeData_OrderBy {
@@ -2427,6 +2452,8 @@ export type PoolHourData_Filter = {
   close_lte?: Maybe<Scalars['BigDecimal']>;
   close_in?: Maybe<Array<Scalars['BigDecimal']>>;
   close_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum PoolHourData_OrderBy {
@@ -2742,6 +2769,8 @@ export type Pool_Filter = {
   liquidityProviderCount_lte?: Maybe<Scalars['BigInt']>;
   liquidityProviderCount_in?: Maybe<Array<Scalars['BigInt']>>;
   liquidityProviderCount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Pool_OrderBy {
@@ -2995,6 +3024,8 @@ export type PositionSnapshot_Filter = {
   feeGrowthInside1LastX128_lte?: Maybe<Scalars['BigInt']>;
   feeGrowthInside1LastX128_in?: Maybe<Array<Scalars['BigInt']>>;
   feeGrowthInside1LastX128_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum PositionSnapshot_OrderBy {
@@ -3255,6 +3286,8 @@ export type Position_Filter = {
   token1Tvl_lte?: Maybe<Scalars['BigDecimal']>;
   token1Tvl_in?: Maybe<Array<Scalars['BigDecimal']>>;
   token1Tvl_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Position_OrderBy {
@@ -3929,6 +3962,8 @@ export type Reward_Filter = {
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   owner_contains?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Reward_OrderBy {
@@ -4007,6 +4042,8 @@ export type StakeTx_Filter = {
   xALGBAmount_lte?: Maybe<Scalars['BigInt']>;
   xALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
   xALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum StakeTx_OrderBy {
@@ -4042,6 +4079,8 @@ export type Stake_Filter = {
   xALGBAmount_lte?: Maybe<Scalars['BigInt']>;
   xALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
   xALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Stake_OrderBy {
@@ -4843,6 +4882,8 @@ export type Swap_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_in?: Maybe<Array<Scalars['BigInt']>>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Swap_OrderBy {
@@ -5025,6 +5066,8 @@ export type TickDayData_Filter = {
   feeGrowthOutside1X128_lte?: Maybe<Scalars['BigInt']>;
   feeGrowthOutside1X128_in?: Maybe<Array<Scalars['BigInt']>>;
   feeGrowthOutside1X128_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum TickDayData_OrderBy {
@@ -5161,6 +5204,8 @@ export type TickHourData_Filter = {
   feesUSD_lte?: Maybe<Scalars['BigDecimal']>;
   feesUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
   feesUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum TickHourData_OrderBy {
@@ -5369,6 +5414,8 @@ export type Tick_Filter = {
   feeGrowthOutside1X128_lte?: Maybe<Scalars['BigInt']>;
   feeGrowthOutside1X128_in?: Maybe<Array<Scalars['BigInt']>>;
   feeGrowthOutside1X128_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Tick_OrderBy {
@@ -5577,6 +5624,8 @@ export type TokenDayData_Filter = {
   close_lte?: Maybe<Scalars['BigDecimal']>;
   close_in?: Maybe<Array<Scalars['BigDecimal']>>;
   close_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum TokenDayData_OrderBy {
@@ -5739,6 +5788,8 @@ export type TokenHourData_Filter = {
   close_lte?: Maybe<Scalars['BigDecimal']>;
   close_in?: Maybe<Array<Scalars['BigDecimal']>>;
   close_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum TokenHourData_OrderBy {
@@ -5759,6 +5810,8 @@ export enum TokenHourData_OrderBy {
 }
 
 export type Token_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
   decimals?: Maybe<Scalars['BigInt']>;
   decimals_gt?: Maybe<Scalars['BigInt']>;
   decimals_gte?: Maybe<Scalars['BigInt']>;
@@ -6031,6 +6084,8 @@ export type Transaction_Filter = {
   gasPrice_lte?: Maybe<Scalars['BigInt']>;
   gasPrice_in?: Maybe<Array<Scalars['BigInt']>>;
   gasPrice_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
 };
 
 export enum Transaction_OrderBy {

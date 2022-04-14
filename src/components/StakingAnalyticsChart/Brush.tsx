@@ -125,7 +125,7 @@ export default function Brush({ data, data2, colors, focusHeight, width, margin,
                 gb.call(brush.move, defaultSelection)
                 return
             }
-            const div = Math.round(1100 / X.length)
+            const div = width / X.length
             const minX = Math.floor(selection[0] / div)
             const maxX = Math.floor(selection[1] / div)
 

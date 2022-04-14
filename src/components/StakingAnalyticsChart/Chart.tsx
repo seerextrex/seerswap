@@ -2,7 +2,6 @@ import { axisBottom, axisLeft, create, curveBumpX, easeCircle, interpolate, line
 import { useEffect, useMemo, useRef } from 'react'
 import { ChardDataInterface } from './index'
 import { isMobile } from 'react-device-detect'
-import { ChartWrapper } from './styled'
 import { chartTypes } from '../../models/enums'
 
 interface ChartProps {
@@ -44,7 +43,22 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
         const xScale = scaleUtc(xDomain, [margin.left, dimensions.width - margin.right])
         // @ts-ignore
         const yScale = scaleLinear(yDomain, [dimensions.height - margin.bottom, margin.top])
-        const xAxis = axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length)
+        const xAxis = axisBottom(xScale).ticks(data.length < 3 ? 1 : data.length < 4 ? 2 : data.length).tickFormat((el, i) => {
+            if (el instanceof Date) {
+                if (data.length > 41) {
+                    if (el.getDate() === 1 || el.getDate() === 2 || i === 0 || i === 1) {
+                        return el.toLocaleString('default', { month: 'short' })
+                    }
+                } else {
+                    if (el.getDate() === 1 || i === 0) {
+                        return el.toLocaleString('default', { month: 'short' })
+                    }
+                }
+
+                return el.getDate().toString()
+            }
+            return ''
+        })
         const yAxis = axisLeft(yScale).ticks(dimensions.height / 40).tickFormat(val => val >= 1000_000 ? `${+val / 1000000}m` : `${val >= 1000 ? `${+val / 1000}k` : val}`)
 
         // Construct a focus line.
@@ -232,7 +246,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
                         .attr('transform', 'rotate(-65)')
                 }
                 if (i % 2 === 0) {
-                    if (data.length > 14) {
+                    if (data.length > 40) {
                         select(el).attr('display', 'none')
                     }
                 }
@@ -254,10 +268,10 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
 
                         Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
                         LineHoryzontal.attr('y1', `${yScale(+data[i]?.value)}px`).attr('y2', `${yScale(+data[i]?.value)}px`)
-                       if (data2?.length !== 0) {
-                           //@ts-ignore
-                           LineHoryzontal2.attr('y1', `${yScale(+data2[i]?.value)}px`).attr('y2', `${yScale(+data2[i]?.value)}px`)
-                       }
+                        if (data2?.length !== 0) {
+                            //@ts-ignore
+                            LineHoryzontal2.attr('y1', `${yScale(+data2[i]?.value)}px`).attr('y2', `${yScale(+data2[i]?.value)}px`)
+                        }
                         InfoRectGroup.attr(
                             'transform',
                             `translate(${isOverflowing ? Number(xTranslate) - (isMobile ? 145 : 160) : Number(xTranslate) + (isMobile ? -5 : 10)},10)`

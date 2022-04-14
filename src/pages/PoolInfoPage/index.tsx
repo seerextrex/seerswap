@@ -63,11 +63,9 @@ export default function PoolInfoPage(
                 if (day.month() === 2) {
                     return day.subtract(31, 'day').unix()
                 }
-                return day.subtract(1, 'month').unix()
+                return day.subtract(30 * 24 + day.hour(), 'hour').unix()
         }
     }, [span])
-
-    // useEffect(() => console.log(startTimestamp), [startTimestamp])
 
     const chartTypes = [
         {

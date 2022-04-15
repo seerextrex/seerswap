@@ -4,7 +4,7 @@ import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useIncentiveSubgraph } from './useIncentiveSubgraph'
 import { PositionPool } from '../models/interfaces'
-import { usePreviousNonEmptyArray } from './usePrevious'
+import usePrevious, { usePreviousNonEmptyArray } from './usePrevious'
 import { useActiveWeb3React } from './web3'
 
 interface UseV3PositionsResults {
@@ -21,6 +21,8 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
     const error = useMemo(() => results.some(({ error }) => error), [results])
 
     const { account } = useActiveWeb3React()
+
+    const prevAccount = usePrevious(account)
 
     const positions = useMemo(() => {
         if (!loading && !error && tokenIds) {
@@ -51,9 +53,19 @@ function useV3PositionsFromTokenIds(tokenIds: BigNumber[] | undefined): UseV3Pos
 
     return useMemo(() => {
 
+        if (prevAccount !== account) return {
+            loading,
+            positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
+        }
+
         if (!prevPositions && positions) return {
             loading,
             positions: positions?.map((position, i) => ({ ...position, tokenId: inputs[i][0] }))
+        }
+
+        if (tokenIds && prevPositions && tokenIds.length !== prevPositions.length) return {
+            loading: false,
+            positions: []
         }
 
         if ((!positions || positions.length === 0) && prevPositions && prevPositions.length !== 0) return {
@@ -124,19 +136,19 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         return []
     }, [account, tokenIdResults])
 
-    const prevTokenIds = usePreviousNonEmptyArray(tokenIds)
+    // const prevTokenIds = usePreviousNonEmptyArray(tokenIds)
 
-    const _tokenIds = useMemo(() => {
+    // const _tokenIds = useMemo(() => {
 
-        if (!prevTokenIds) return tokenIds
+    //     if (!prevTokenIds) return tokenIds
 
-        if (tokenIds.length === 0 && prevTokenIds.length !== 0) return prevTokenIds
+    //     if (tokenIds.length === 0 && prevTokenIds.length !== 0) return prevTokenIds
 
-        return tokenIds
+    //     return tokenIds
 
-    }, [tokenIds, account])
+    // }, [tokenIds, account])
 
-    const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(_tokenIds)
+    const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(tokenIds)
 
     const transferredTokenIds = useMemo(() => {
 

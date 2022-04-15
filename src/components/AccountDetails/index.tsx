@@ -52,7 +52,7 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
             )
             .map((k) => SUPPORTED_WALLETS[k].name)[0]
         return (
-            <div className={'fs-085 mb-05'}>
+            <div className={`fs-085 ${name === 'Metamask' && 'mb-05'}`}>
                 <Trans>Connected with {name}</Trans>
             </div>
         )
@@ -83,8 +83,8 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                     </span>
                 </div>
                 <div className={'account-details p-1 mb-15 br-12 c-w'}>
-                    {formatConnectorName()}
-                    <div>
+                    <div className={'f f-ac mb-05'}>
+                        {formatConnectorName()}
                         {connector !== injected && (
                             <WalletAction
                                 onClick={() => {

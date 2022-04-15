@@ -9,7 +9,7 @@ import PoolReward from './PoolReward'
 
 const eventsHistory = [
     {
-        start: new Date('Nov 19 2021'),
+        start: new Date('Nov 19 2021').getTime(),
         startStr: 'Nov 19',
         end: 'Nov 26',
         pool: {
@@ -23,10 +23,9 @@ const eventsHistory = [
         participants: 92,
         type: 'Finite',
         apr: '3404',
-        tvl: '$175k'
     },
     {
-        start: new Date('Dec 7 2021'),
+        start: new Date('Dec 7 2021').getTime(),
         startStr: 'Dec 7',
         end: 'Dec 14',
         pool: {
@@ -40,10 +39,9 @@ const eventsHistory = [
         participants: 64,
         type: 'Finite',
         apr: '472',
-        tvl: '$192k'
     },
     {
-        start: new Date('Dec 22 2021'),
+        start: new Date('Dec 22 2021').getTime(),
         startStr: 'Dec 22',
         end: 'Jan 5',
         pool: {
@@ -57,10 +55,9 @@ const eventsHistory = [
         participants: 113,
         type: 'Finite',
         apr: '312',
-        tvl: '$234k'
     },
     {
-        start: new Date('Jan 3 2022'),
+        start: new Date('Jan 3 2022').getTime(),
         startStr: 'Jan 3',
         end: 'Jan 17',
         pool: {
@@ -74,7 +71,6 @@ const eventsHistory = [
         participants: 23,
         type: 'Finite',
         apr: '200',
-        tvl: '$93k'
     },
     {
         start: new Date('Jan 6 2022').getTime(),
@@ -91,7 +87,54 @@ const eventsHistory = [
         participants: 64,
         type: 'Finite',
         apr: '840',
-        tvl: '$400k'
+    },
+    {
+        start: new Date('Mar 6 2022').getTime(),
+        startStr: 'Mar 6',
+        end: 'Mar 13',
+        pool: {
+            token0: { address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', symbol: 'MATIC' },
+            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USCD' }
+        },
+        rewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
+        reward: 1_000_000,
+        bonusRewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
+        bonusReward: 400_000,
+        participants: 69,
+        type: 'Finite',
+        apr: '1504',
+    },
+    {
+        start: new Date('Mar 17 2022').getTime(),
+        startStr: 'Mar 17',
+        end: 'Mar 24',
+        pool: {
+            token0: { address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', symbol: 'WETH' },
+            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USCD' }
+        },
+        rewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
+        reward: 1_000_000,
+        bonusRewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
+        bonusReward: 400_000,
+        participants: 19,
+        type: 'Finite',
+        apr: '1802',
+    },
+    {
+        start: new Date('Mar 27 2022').getTime(),
+        startStr: 'Mar 27',
+        end: 'Apr 3',
+        pool: {
+            token0: { address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', symbol: 'WETH' },
+            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USCD' }
+        },
+        rewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
+        reward: 1_000_000,
+        bonusRewardToken: null,
+        bonusReward: null,
+        participants: 28,
+        type: 'Finite',
+        apr: '473',
     }
 ]
 

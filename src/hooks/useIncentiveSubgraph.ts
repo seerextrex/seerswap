@@ -107,7 +107,12 @@ export function useIncentiveSubgraph() {
                 pool,
                 rewardToken,
                 bonusRewardToken,
-                lockedToken,
+                lockedToken: {
+                    decimals: 18,
+                    id: '0xE0EeD4d7b02b5EC02e2B4BeF2755fD47F14BB7b4',
+                    symbol: 'ALGB',
+                    name: 'Algebra'
+                },
                 reward: formatUnits(BigNumber.from(events[i].reward), rewardToken.decimals),
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }

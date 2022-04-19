@@ -63,6 +63,20 @@ export function StakeModal({
 }: StakeModalProps) {
     const { account } = useActiveWeb3React();
 
+    console.log(
+        pool,
+        startTime,
+        endTime,
+        rewardToken,
+        bonusRewardToken,
+        level1multiplier,
+        level2multiplier,
+        level3multiplier,
+        lockedToken,
+        algbAmountForLevel1,
+        algbAmountForLevel2,
+        algbAmountForLevel3
+    );
     const [selectedNFT, setSelectedNFT] = useState<null | NTFInterface>(null);
     const {
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn },

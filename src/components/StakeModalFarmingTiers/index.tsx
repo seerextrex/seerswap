@@ -17,6 +17,11 @@ import { Link } from "react-router-dom";
 
 import { Token } from "@uniswap/sdk-core";
 
+import NoTierIcon from "../../assets/images/no-tier-icon.png";
+import BachelorTierIcon from "../../assets/images/bachelor-tier-icon.png";
+import MasterTierIcon from "../../assets/images/master-tier-icon.png";
+import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
+
 export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; lockedToken: any }) {
     const { account } = useActiveWeb3React();
 
@@ -42,12 +47,14 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
         if (!tiersLimits || !tiersMultipliers) return [];
 
         return [
-            { img: "∅", title: "No tier", lock: 0, earn: 0 },
-            { img: "🍩", title: "Tier 1", lock: tiersLimits.low, earn: tiersMultipliers.low },
-            { img: "🍇", title: "Tier 2", lock: tiersLimits.medium, earn: tiersMultipliers.medium },
-            { img: "🎂", title: "Tier 3", lock: tiersLimits.high, earn: tiersMultipliers.high },
+            { img: NoTierIcon, title: "No tier", lock: 0, earn: 0 },
+            { img: BachelorTierIcon, title: "Bachelor", lock: tiersLimits.low, earn: tiersMultipliers.low },
+            { img: MasterTierIcon, title: "Master", lock: tiersLimits.medium, earn: tiersMultipliers.medium },
+            { img: ProfessorTierIcon, title: "Professor", lock: tiersLimits.high, earn: tiersMultipliers.high },
         ];
     }, [tiersLimits, tiersMultipliers, balance]);
+
+    console.log("LOCKED", lockedToken);
 
     return (
         <div className="f c">
@@ -78,7 +85,9 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                 {tiersList.map((tier, i) => (
                     <button className="p-1 f c w-100 farming-tier" key={i} data-selected={selectedTier === i} onClick={() => handleTier(i)}>
                         <div className="p-1 farming-tier__header w-100 ta-l pos-r">
-                            <div className="farming-tier__img mb-1">{tier.img}</div>
+                            <div className="farming-tier__img mb-1">
+                                <img width={"48px"} height={"48px"} src={tier.img} />
+                            </div>
                             <div className="farming-tier__title b f f-jb">
                                 <span>{tier.title}</span>
                             </div>

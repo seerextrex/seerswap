@@ -29,7 +29,7 @@ export const USDT_POLYGON = new Token(
 
 export const USDC_POLYGON = new Token(
     SupportedChainId.POLYGON,
-    '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
+    '0xafc507028f15b33071226fAA315525131F8326F1',
     6,
     'USDC',
     'USD//C'
@@ -37,7 +37,7 @@ export const USDC_POLYGON = new Token(
 
 export const ALGEBRA_POLYGON = new Token(
     SupportedChainId.POLYGON,
-    '0x38A5C36FA8c8c9E4649b51FCD61810B14e7ce047',
+    '0xE0EeD4d7b02b5EC02e2B4BeF2755fD47F14BB7b4',
     18,
     'ALGB',
     'Algebra'

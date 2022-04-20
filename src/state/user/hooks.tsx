@@ -1,7 +1,5 @@
 import { Percent, Token } from '@uniswap/sdk-core'
-import { L2_CHAIN_IDS, SupportedChainId } from 'constants/chains'
 import { SupportedLocale } from 'constants/locales'
-import { L2_DEADLINE_FROM_NOW } from 'constants/misc'
 import JSBI from 'jsbi'
 import flatMap from 'lodash.flatmap'
 import { useCallback, useMemo } from 'react'
@@ -19,8 +17,7 @@ import {
     removeSerializedToken,
     SerializedPair,
     SerializedToken,
-    updateArbitrumAlphaAcknowledged,
-    updateHideClosedPositions,
+    updateHideClosedPositions, updateHideFarmingPositions,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -194,6 +191,21 @@ export function useUserHideClosedPositions(): [boolean, (newHideClosedPositions:
     return [hideClosedPositions, setHideClosedPositions]
 }
 
+export function useUserHideFarmingPositions(): [boolean, (newHideFarmingPositions: boolean) => void] {
+    const dispatch = useAppDispatch()
+
+    const hideFarmingPositions = useAppSelector((state) => state.user.userHideFarmingPositions)
+
+    const setHideFarmingPositions = useCallback(
+        (newHideFarmingPositions: boolean) => {
+            dispatch(updateHideFarmingPositions({ userHideFarmingPositions: newHideFarmingPositions }))
+        },
+        [dispatch]
+    )
+
+    return [hideFarmingPositions, setHideFarmingPositions]
+}
+
 /**
  * Same as above but replaces the auto with a default value
  * @param defaultSlippageTolerance the default value to replace auto with
@@ -209,7 +221,7 @@ export function useUserSlippageToleranceWithDefault(defaultSlippageTolerance: Pe
 export function useUserTransactionTTL(): [number, (slippage: number) => void] {
 
     const dispatch = useAppDispatch()
-    const deadline =  useAppSelector((state) => state.user.userDeadline)
+    const deadline = useAppSelector((state) => state.user.userDeadline)
 
     const setUserDeadline = useCallback(
         (userDeadline: number) => {

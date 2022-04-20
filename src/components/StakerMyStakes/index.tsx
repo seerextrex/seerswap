@@ -18,7 +18,6 @@ import ModalBody from './ModalBody'
 import PositionHeader from './PositionHeader'
 import PositionCardBodyHeader from './PositionCardBodyHeader'
 import PositionCardBodyStat from './PositionCardBodyStat'
-import { Dots } from '../swap/styled'
 import { Trans } from '@lingui/macro'
 
 interface StakerMyStakesProps {
@@ -88,7 +87,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
         } else if (sendNFTL2Hash && confirmed.includes(String(sendNFTL2Hash.hash))) {
             setSending({ id: sendNFTL2Hash.id, state: 'done' })
             if (!shallowPositions) return
-            setShallowPositions(shallowPositions.filter((el) => el.l2TokenId === sendNFTL2Hash.id))
+            setShallowPositions(shallowPositions.filter((el) => el.L2tokenId !== sendNFTL2Hash.id))
         }
     }, [sendNFTL2Hash, confirmed])
 

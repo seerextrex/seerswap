@@ -165,7 +165,7 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
                             height: 400,
                             margin: { top: isMobile ? 80 :30, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 0 :50 }
                         }}
-                        isMobile={isMobile}
+                        zoom={zoom}
                     />
                 </>
             )}

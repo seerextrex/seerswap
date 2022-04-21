@@ -368,7 +368,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                             </button>
                                                             <button
                                                                 className={'btn primary w-100 b br-8 ml-1 mxs_ml-0 mxs_mt-1 pv-075'}
-                                                                disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== 'done'}
+                                                                disabled={gettingReward.id === el.id &&
+                                                                    gettingReward.farmingType === FarmingType.ETERNAL &&
+                                                                    gettingReward.state !== 'done'}
                                                                 onClick={() => {
                                                                     setGettingReward({
                                                                         id: el.id,
@@ -378,7 +380,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                     claimRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL)
                                                                 }}
                                                             >
-                                                                {gettingReward && gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== 'done' ? (
+                                                                {gettingReward &&
+                                                                gettingReward.id === el.id &&
+                                                                gettingReward.farmingType === FarmingType.ETERNAL &&
+                                                                gettingReward.state !== 'done' ? (
                                                                     <div className={'f f-jc f-ac cg-05'}>
                                                                         <Loader size={'18px'} stroke={'var(--white)'}/>
                                                                         <Trans>Undepositing</Trans>

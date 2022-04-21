@@ -29,20 +29,36 @@ import Slider from '../../components/Slider'
 import 'algebra-packeges'
 import Modal from 'components/Modal'
 import { Trans } from '@lingui/macro'
+import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
+import { useAllTransactions } from '../../state/transactions/hooks'
+import { UnstakingInterface } from '../../models/interfaces'
 
 export default function RealStakerPage({}) {
     const currencyId = '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6'
     const { chainId, account } = useActiveWeb3React()
     const { percent } = useBurnV3State()
     const { onPercentSelect } = useBurnV3ActionHandlers()
-    const { stakerHandler, stakerClaimHandler, stakerUnstakeHandler, frozenStakedHandler, frozenStaked, claimLoading, unstakeLoading, stakeLoading } = useRealStakerHandlers()
     const {
-        getStakes: { stakesResult, fetchStakingFn }
-    } = useInfoSubgraph()
+        stakerHandler,
+        stakerClaimHandler,
+        stakerUnstakeHandler,
+        frozenStakedHandler,
+        frozenStaked,
+        claimLoading,
+        unstakeLoading,
+        stakeLoading,
+        stakerHash,
+        setStakedHash
+    } = useRealStakerHandlers()
+    const { getStakes: { stakesResult, fetchStakingFn } } = useInfoSubgraph()
     const toggleWalletModal = useWalletModalToggle()
     const baseCurrency = useCurrency(currencyId)
-
     const [calcModal, toggleCalcModal] = useState(false)
+
+    //transactions
+    const allTransactions = useAllTransactions()
+    const sortedRecentTransactions = useSortedRecentTransactions()
+    const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash), [sortedRecentTransactions, allTransactions])
 
     //balances
     const balance = useCurrencyBalance(account ?? undefined, baseCurrency ?? undefined)
@@ -62,7 +78,9 @@ export default function RealStakerPage({}) {
     const [xALGBBalance, setXALGB] = useState<string>('')
     const [showFrozen, setFrozen] = useState<boolean>(false)
     const [loadingClaim, setLoadingClaim] = useState<boolean>(false)
-    // const [sending, setSending] = useState(false)
+    const [staking, setStaking] = useState<UnstakingInterface>({id: null, state: null})
+    const [claiming, setClaiming] = useState<UnstakingInterface>({id: null, state: null})
+    const [unstaking, setUnstaking] = useState<UnstakingInterface>({id: null, state: null})
 
     const now = Date.now
 
@@ -237,6 +255,39 @@ export default function RealStakerPage({}) {
         setUnstakeAmount(staked.add(earned))
     }, [staked, earned])
 
+    useEffect(() => {
+        console.log(stakerHash, staking)
+        if (staking.state === 'done') {
+            setStaking({id: null, state: null})
+            setStakedHash(null)
+            return
+        }
+
+        if (!stakerHash) {
+            setStaking({ id: null, state: null })
+        } else if (confirmed.includes(String(stakerHash.hash))) {
+            setStaking({ id: stakerHash.hash, state: 'done'})
+        }
+    }, [confirmed, stakerHash])
+
+    useEffect(() => {
+
+        if (!stakerHash) {
+            setClaiming({ id: null, state: null })
+        } else if (confirmed.includes(String(stakerHash.hash))) {
+            setClaiming({ id: stakerHash.hash, state: 'done'})
+        }
+    }, [confirmed, stakerHash])
+
+    useEffect(() => {
+
+        if (!stakerHash) {
+            setUnstaking({ id: null, state: null })
+        } else if (confirmed.includes(String(stakerHash.hash))) {
+            setUnstaking({ id: stakerHash.hash, state: 'done'})
+        }
+    }, [confirmed, stakerHash])
+
     return (
         <div className={'real-staker-page maw-765 mh-a'}>
             <Modal fitContent={true} dangerouslyBypassFocusLock={true} isOpen={calcModal} onHide={() => toggleCalcModal(false)} onDismiss={() => {
@@ -299,9 +350,9 @@ export default function RealStakerPage({}) {
                                         }
                                     })
                                 }}
-                                disabled={(balance && +amountValue > +balance.toSignificant(30)) || amountValue === '' || stakeLoading}
+                                disabled={(balance && +amountValue > +balance.toSignificant(30)) || amountValue === '' || (stakeLoading && staking && staking.state !== 'done')}
                             >
-                                {stakeLoading ? (
+                                {stakeLoading && staking && staking.state !== 'done' ? (
                                     <div className={'f f-jc f-ac'}>
                                         <Loader stroke={'var(--white)'} size={'1rem'} /> <span className={'ml-05'}>Staking</span>
                                     </div>
@@ -357,7 +408,7 @@ export default function RealStakerPage({}) {
                             stakerClaimHandler(earned, stakesResult)
                         }}
                         algbCourse={algbCourse}
-                        loading={claimLoading}
+                        loading={(claimLoading && claiming && claiming.state !== 'done')}
                     />
                     <RealStakerResBlocks
                         action={'Unstake'}
@@ -368,7 +419,7 @@ export default function RealStakerPage({}) {
                             setOpenModal(true)
                         }}
                         algbCourse={algbCourse}
-                        loading={unstakeLoading}
+                        loading={(unstakeLoading && claiming && claiming.state !== 'done')}
                     />
                 </div>
                 <div className={'xalgb-wrapper flex-s-between br-8 mt-1'}>

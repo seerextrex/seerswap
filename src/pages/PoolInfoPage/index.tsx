@@ -42,7 +42,8 @@ export default function PoolInfoPage(
 
     const {
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn },
-        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn }
+        fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn },
+        fetchPriceRangePositions: {fetchPriceRangePositionsFn}
     } = useInfoSubgraph()
 
     const { fetchTicksSurroundingPrice: { ticksResult, ticksLoading, fetchTicksSurroundingPriceFn } } = useInfoTickData()
@@ -115,6 +116,8 @@ export default function PoolInfoPage(
         } else {
             fetchChartPoolDataFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
         }
+
+        fetchPriceRangePositionsFn()
     }, [span, type])
 
     useEffect(() => {

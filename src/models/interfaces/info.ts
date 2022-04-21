@@ -122,3 +122,9 @@ export interface FeeChart {
     data: FormattedFeeChart[] | undefined[]
     previousData: FormattedFeeChart[] | undefined[]
 }
+
+export interface PriceRangePositions {
+    liquidity: string
+    timestamp: string
+    position: {id: string}
+}

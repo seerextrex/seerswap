@@ -376,6 +376,24 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
 
 //Info
 
+
+export const FULL_POSITIONS_PRICE_RANGE = gql`
+  {
+    positionSnapshots (where: {owner: "0x060e9576673f8c8E1Fcf96d45e827602CE0B92C0", pool: "0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed"}, orderBy: timestamp, orderDirection: desc)
+    {
+        liquidity
+        timestamp
+        position {
+            id
+        }
+    }
+  }
+`
+
+export const CLOSED_POSITIONS_PRICE_RANGE = (positions: any[]) => {
+
+}
+
 export const INFINITE_EVENTS = gql`
     query infiniteFarms {
         eternalFarmings (where: {isDetached: false}) {
@@ -392,43 +410,6 @@ export const INFINITE_EVENTS = gql`
         }
     }
 `
-//
-// export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
-//   query swapsPerDay {
-//     swaps (first: 1000, where: {timestamp_gt: ${startTimestamp}, timestamp_lt: ${Math.round(Date.now() / 1000)}} ) {
-//       pool {
-//         id
-//       }
-//       timestamp
-//       tick
-//       amountUSD
-//     }
-//   }
-// `
-// export const ALL_POSITIONS = gql`
-// query allPositions {
-//   positions (first: 1000) {
-//     pool {
-//       id
-//     }
-//     id
-//     liquidity
-//     tickLower {
-//       tickIdx
-//       liquidityGross
-//     }
-//     tickUpper {
-//       tickIdx
-//       liquidityGross
-//     }
-//     transaction {
-//       mints {
-//         amountUSD
-//       }
-//     }
-//   }
-// }
-// `
 
 export const TOP_POOLS = gql`
 query topPools {

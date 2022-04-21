@@ -9,7 +9,7 @@ import {
     CHART_POOL_LAST_ENTRY,
     CHART_POOL_LAST_NOT_EMPTY,
     FETCH_ETERNAL_FARM_FROM_POOL,
-    FETCH_LIMIT_FARM_FROM_POOL,
+    FETCH_LIMIT_FARM_FROM_POOL, FULL_POSITIONS_PRICE_RANGE,
     GET_STAKE,
     GET_STAKE_HISTORY,
     POOLS_FROM_ADDRESSES,
@@ -34,7 +34,7 @@ import {
     HistoryStakingSubgraph,
     LastPoolSubgraph,
     PoolAddressSubgraph,
-    PoolSubgraph,
+    PoolSubgraph, PriceRangePositions,
     StakeSubgraph,
     SubgraphResponse,
     SubgraphResponseStaking,
@@ -662,6 +662,31 @@ export function useInfoSubgraph() {
         setTotalStatsLoading(false)
     }
 
+    async function fetchPriceRangePositions() {
+
+        const {data: {positionSnapshots: positions}, error} =  await dataClient.query<SubgraphResponse<PriceRangePositions[]>>({
+            query: FULL_POSITIONS_PRICE_RANGE,
+            fetchPolicy: 'network-only'
+        })
+
+        const openPositions: string[] = []
+        const closedPositions: string[] = []
+        let positionsObj: {[key: string]: { timestamp: string, liquidity: string }[]} = {}
+
+        positions.forEach(item => {
+            positionsObj = {
+                ...positionsObj,
+                [item.position.id]: positionsObj[item.position.id] ? [...positionsObj[item.position.id], {timestamp: item.timestamp, liquidity: item.liquidity}] : [{timestamp: item.timestamp, liquidity: item.liquidity}]
+            }
+        })
+
+        for (const key in positionsObj) {
+            console.log(positionsObj[key].sort((a, b) => +b.timestamp - +a.timestamp)[0])
+        }
+
+        console.log(positionsObj)
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
@@ -670,6 +695,7 @@ export function useInfoSubgraph() {
         fetchStakedHistory: { historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
-        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
+        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
+        fetchPriceRangePositions: {fetchPriceRangePositionsFn: fetchPriceRangePositions}
     }
 }

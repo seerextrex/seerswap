@@ -232,11 +232,11 @@ export function StakeModal({
         const _balance = +balance.toSignificant(4);
 
         switch (selectedTier) {
-            case "1":
+            case algbAmountForLevel1:
                 return _balance > +algbAmountForLevel1;
-            case "2":
+            case algbAmountForLevel2:
                 return _balance > +algbAmountForLevel2;
-            case "3":
+            case algbAmountForLevel3:
                 return _balance > +algbAmountForLevel3;
             default:
                 return true;
@@ -245,7 +245,6 @@ export function StakeModal({
 
     const tierSelectionHandler = useCallback(
         (tier) => {
-            console.log(algbAmountForLevel1, algbAmountForLevel2, algbAmountForLevel3);
             switch (tier) {
                 case 0:
                     setSelectedTier(null);
@@ -396,9 +395,7 @@ export function StakeModal({
                             Select Tier
                         </button>
                     ) : selectedTier && !isEnoughALGB && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled className="btn primary w-100 p-1">
-                            Not enough ALGB
-                        </button>
+                        <button disabled className="btn primary w-100 p-1">{`Not enough ${lockedToken.symbol}`}</button>
                     ) : selectedNFT ? (
                         <div className={"f mxs_fd-c w-100"}>
                             {farmingType === FarmingType.FINITE && (

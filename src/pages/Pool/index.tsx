@@ -81,7 +81,7 @@ export default function Pool() {
 
     useEffect(() => {
         const _window = window as EthereumWindow
-        _window.ethereum.on('accountsChanged', reload)
+        _window.ethereum?.on('accountsChanged', reload)
         return () => _window.ethereum.removeListener('accountsChanged', reload)
     }, [])
 

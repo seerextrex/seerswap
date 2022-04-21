@@ -77,13 +77,16 @@ export default function Pool() {
         chainSymbol = "MATIC";
     }
 
-    const reload = useCallback(() => window.location.reload(), [])
+    const reload = useCallback(() => window.location.reload(), []);
 
     useEffect(() => {
-        const _window = window as EthereumWindow
-        _window.ethereum.on('accountsChanged', reload)
-        return () => _window.ethereum.removeListener('accountsChanged', reload)
-    }, [])
+        const _window = window as EthereumWindow;
+
+        if (!_window.ethereum) return;
+
+        _window.ethereum.on("accountsChanged", reload);
+        return () => _window.ethereum.removeListener("accountsChanged", reload);
+    }, []);
 
     return (
         <>

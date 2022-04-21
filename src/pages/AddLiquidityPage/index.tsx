@@ -379,7 +379,7 @@ export default function AddLiquidityPage({
                 <ArrowLeft size={16} />
                 <span className={"ml-05"}>Back to pools</span>
             </NavLink>
-            <Card classes={"p-2 br-24"}>
+            <Card classes={"p-2 br-24 mxs_ph-1"}>
                 <div className={"flex-s-between mb-1 fs-15"}>
                     <span className={"b"}>Add Liquidity</span>
                     <SettingsTab placeholderSlippage={allowedSlippage} />
@@ -456,9 +456,9 @@ export default function AddLiquidityPage({
                                         {price && baseCurrency && quoteCurrency && !noLiquidity ? (
                                             <div className={"f f-ac fs-1"}>
                                                 <span className={"b mr-05 ws-no-wrap fs-1"}>Current Price:</span>
-                                                <div className={"f f-ac ml-a fs-1"}>
+                                                <div className={"f f-ac ml-a fs-1 mxs_fd-c"}>
                                                     <span className={"mr-05 c-p"}>{invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}</span>
-                                                    <span className={"ws-no-wrap fs-075"}>
+                                                    <span className={"ws-no-wrap fs-075 mxs_mt-025"}>
                                                         {quoteCurrency?.symbol} per {baseCurrency.symbol}
                                                     </span>
                                                 </div>

@@ -16,12 +16,12 @@ interface ModalBodyProps {
 
 export default function ModalBody({ sending, recipient, setRecipient, setSending, account, sendModal, sendNFTHandler }: ModalBodyProps) {
     return (
-        <div className={'p-2'} style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
+        <div className={'p-2 w-100'} style={{ alignItems: sending && sending.state === 'done' ? 'center' : '' }}>
             {sending.state === 'done' ? (
-                <>
+                <div className={'f f-ac f-jc w-100'}>
                     <CheckCircle size={'35px'} stroke={'#27AE60'} />
-                    <div className={'mt-1'}>{`NFT was sent!`}</div>
-                </>
+                    <div className={'ml-1'}>{`NFT was sent!`}</div>
+                </div>
             ) : (
                 <div className={'my-stakes__nft-send'}>
                     <div className={'mb-1 c-p fs-125 b'}>Send NFT to another account</div>

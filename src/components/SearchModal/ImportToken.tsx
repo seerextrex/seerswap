@@ -12,7 +12,7 @@ import { useAddUserToken } from 'state/user/hooks'
 import { useActiveWeb3React } from 'hooks/web3'
 import { ExternalLink } from '../../theme'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
-import { AddressText, PaddedColumn, Wrapper } from './styled'
+import { AddressText, PaddedColumn } from './styled'
 import { Plural, Trans } from '@lingui/macro'
 import { WrappedCurrency } from '../../models/types'
 
@@ -31,7 +31,7 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
     const addToken = useAddUserToken()
 
     return (
-        <Wrapper>
+        <div className={'w-100 pos-r'}>
             <PaddedColumn gap='14px' style={{ width: '100%', flex: '1 1' }}>
                 <RowBetween>
                     {onBack ? <ArrowLeft style={{ cursor: 'pointer' }} onClick={onBack} /> :
@@ -85,6 +85,6 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
                     <Trans>Import</Trans>
                 </ButtonPrimary>
             </AutoColumn>
-        </Wrapper>
+        </div>
     )
 }

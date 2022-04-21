@@ -13,7 +13,6 @@ import CurrencyList from './CurrencyList'
 import { filterTokens, useSortedTokensByQuery } from './filtering'
 import { useTokenComparator } from './sorting'
 import { SearchInput } from './styled'
-import AutoSizer from 'react-virtualized-auto-sizer'
 import useToggle from 'hooks/useToggle'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useTheme from 'hooks/useTheme'
@@ -186,7 +185,7 @@ export function CurrencySearch({
                     <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
                 </div>
             ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
-                <div className={'h-200'}>
+                <div className={'h-200'} style={{overflow: 'auto'}}>
                     <CurrencyList
                         height={200}
                         currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
@@ -201,7 +200,7 @@ export function CurrencySearch({
                     />
                 </div>
             ) : (
-                <Column style={{ padding: '20px', height: '100%' }}>
+                <Column style={{ padding: '20px', height: 'auto' }}>
                     <TYPE.main color={theme.text3} textAlign='center' mb='20px'>
                         <Trans>No results found.</Trans>
                     </TYPE.main>

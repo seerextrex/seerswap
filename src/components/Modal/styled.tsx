@@ -35,7 +35,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
         backdrop-filter: blur(6px);
         box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
         width: 60vw;
-        overflow-y: auto;
+        overflow-y: clip;
         overflow-x: hidden;
         padding: 1rem;
 

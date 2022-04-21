@@ -94,7 +94,7 @@ const eventsHistory = [
         end: 'Mar 13',
         pool: {
             token0: { address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', symbol: 'MATIC' },
-            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USCD' }
+            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USDC' }
         },
         rewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
         reward: 1_000_000,
@@ -110,7 +110,7 @@ const eventsHistory = [
         end: 'Mar 24',
         pool: {
             token0: { address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', symbol: 'WETH' },
-            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USCD' }
+            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USDC' }
         },
         rewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
         reward: 1_000_000,
@@ -126,7 +126,7 @@ const eventsHistory = [
         end: 'Apr 3',
         pool: {
             token0: { address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', symbol: 'WETH' },
-            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USCD' }
+            token1: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USDC' }
         },
         rewardToken: { address: '0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6', symbol: 'ALGB' },
         reward: 1_000_000,

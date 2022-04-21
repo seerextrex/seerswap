@@ -10,7 +10,7 @@
     padding: 0.25rem 0.6rem;
     transition-duration: .2s;
 
-    &[data-isActive=true] {
+    &[data-isactive=true] {
       background-color: var(--primary);
     }
   }

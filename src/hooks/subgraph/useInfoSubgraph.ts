@@ -7,11 +7,11 @@ import {
     CHART_FEE_POOL_DATA,
     CHART_POOL_DATA,
     CHART_POOL_LAST_ENTRY,
-    CHART_POOL_LAST_NOT_EMPTY,
+    CHART_POOL_LAST_NOT_EMPTY, CLOSED_POSITIONS_PRICE_RANGE,
     FETCH_ETERNAL_FARM_FROM_POOL,
     FETCH_LIMIT_FARM_FROM_POOL, FULL_POSITIONS_PRICE_RANGE,
     GET_STAKE,
-    GET_STAKE_HISTORY,
+    GET_STAKE_HISTORY, OPENED_POSITIONS_PRICE_RANGE,
     POOLS_FROM_ADDRESSES,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
@@ -34,7 +34,7 @@ import {
     HistoryStakingSubgraph,
     LastPoolSubgraph,
     PoolAddressSubgraph,
-    PoolSubgraph, PriceRangePositions,
+    PoolSubgraph, PriceRangeChart, PriceRangeClosed, PriceRangePositions,
     StakeSubgraph,
     SubgraphResponse,
     SubgraphResponseStaking,
@@ -44,24 +44,26 @@ import {
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces'
 import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL, fetchPoolsAPR } from 'utils/api'
-import { LimitFarmingByPool } from "models/interfaces/responseSubgraph"
-import { FarmingType } from "models/enums"
+import { LimitFarmingByPool } from 'models/interfaces/responseSubgraph'
+import { FarmingType } from 'models/enums'
+import dayjs from 'dayjs'
+import { getPositionRangeChart } from '../../utils/getPositionRangeChart'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-        accum[poolData.id] = poolData
-        return accum
-    }, {})
+            accum[poolData.id] = poolData
+            return accum
+        }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-        accum[tokenData.id] = tokenData
-        return accum
-    }, {})
+            accum[tokenData.id] = tokenData
+            return accum
+        }, {})
         : {}
 }
 
@@ -96,6 +98,7 @@ export function useInfoSubgraph() {
     const [stakeHistoriesResult, setHistories] = useState<null | HistoryStakingSubgraph[] | string>(null)
     const [historiesLoading, setHistoriesLoading] = useState<boolean>(false)
 
+    const [positionsRange, setPositionsRange] = useState<{ closed: PriceRangeChart | null, opened: PriceRangeChart | null }>({ closed: null, opened: null })
 
     async function fetchInfoPools() {
 
@@ -555,11 +558,6 @@ export function useInfoSubgraph() {
                 variables: { pool, startTimestamp, endTimestamp }
             })
 
-            // console.log(startTimestamp, endTimestamp)
-            //
-            // console.log(poolHourDatas)
-            // console.log(poolHourDatas.map(el => el.volumeUSD).reduce((prev, cur) => +prev + +cur, 0)/ poolHourDatas.length)
-
             if (error) return
 
             const _poolHourDatas = poolHourDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolHourDatas
@@ -662,29 +660,64 @@ export function useInfoSubgraph() {
         setTotalStatsLoading(false)
     }
 
-    async function fetchPriceRangePositions() {
+    async function fetchPriceRangePositions(pool: string) {
 
-        const {data: {positionSnapshots: positions}, error} =  await dataClient.query<SubgraphResponse<PriceRangePositions[]>>({
-            query: FULL_POSITIONS_PRICE_RANGE,
-            fetchPolicy: 'network-only'
-        })
+        try {
+            const { data: { positionSnapshots: positions }, error: errorPos } = await dataClient.query<SubgraphResponse<PriceRangePositions[]>>({
+                query: FULL_POSITIONS_PRICE_RANGE(),
+                fetchPolicy: 'network-only',
+                variables: { account, pool }
+            })
 
-        const openPositions: string[] = []
-        const closedPositions: string[] = []
-        let positionsObj: {[key: string]: { timestamp: string, liquidity: string }[]} = {}
+            const openPositions: string[] = []
+            const closedPositions: string[] = []
+            let positionsObj: { [key: string]: { timestamp: string, liquidity: string }[] } = {}
 
-        positions.forEach(item => {
-            positionsObj = {
-                ...positionsObj,
-                [item.position.id]: positionsObj[item.position.id] ? [...positionsObj[item.position.id], {timestamp: item.timestamp, liquidity: item.liquidity}] : [{timestamp: item.timestamp, liquidity: item.liquidity}]
+            const day = dayjs()
+
+            positions.forEach(item => {
+                positionsObj = {
+                    ...positionsObj,
+                    [item.position.id]: positionsObj[item.position.id] ? [...positionsObj[item.position.id], { timestamp: item.timestamp, liquidity: item.liquidity }] : [{
+                        timestamp: item.timestamp,
+                        liquidity: item.liquidity
+                    }]
+                }
+            })
+
+            for (const key in positionsObj) {
+                const position = positionsObj[key].sort((a, b) => +b.timestamp - +a.timestamp)[0]
+                if (!(position.liquidity === '0' && +position.timestamp < day.subtract(1, 'month').unix())) {
+                    if (position.liquidity === '0') {
+                        closedPositions.push(key)
+                    } else {
+                        openPositions.push(key)
+                    }
+                }
             }
-        })
 
-        for (const key in positionsObj) {
-            console.log(positionsObj[key].sort((a, b) => +b.timestamp - +a.timestamp)[0])
+            if (closedPositions.length === 0) return
+
+            const { data: dataClosed, error: errorClosed } = await dataClient.query<PriceRangeClosed>({
+                query: CLOSED_POSITIONS_PRICE_RANGE(closedPositions),
+                fetchPolicy: 'network-only'
+            })
+
+            if (openPositions.length === 0) return
+
+            const { data: dataOpened, error: errorOpen } = await dataClient.query<PriceRangeClosed>({
+                query: OPENED_POSITIONS_PRICE_RANGE(openPositions),
+                fetchPolicy: 'network-only'
+            })
+
+            setPositionsRange({
+                closed: getPositionRangeChart(dataClosed, positionsObj),
+                opened: getPositionRangeChart(dataOpened)
+            })
+        } catch (e) {
+            console.log(e)
         }
 
-        console.log(positionsObj)
     }
 
     return {
@@ -696,6 +729,6 @@ export function useInfoSubgraph() {
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
         fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
-        fetchPriceRangePositions: {fetchPriceRangePositionsFn: fetchPriceRangePositions}
+        fetchPriceRangePositions: { positionsRange, fetchPriceRangePositionsFn: fetchPriceRangePositions }
     }
 }

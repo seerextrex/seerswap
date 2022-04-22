@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { logDOM } from '@testing-library/react'
 
 //Farming
 
@@ -74,13 +75,13 @@ export const FETCH_ETERNAL_FARM = () => gql`
 `
 
 export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query eternalFarmingsFromPools {
         eternalFarmings(where: {pool_in: ${poolString}, isDetached: false}) {
           id
@@ -97,18 +98,18 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
         }
       }
       `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const now = Math.round(Date.now() / 1000)
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const now = Math.round(Date.now() / 1000)
+    const queryString =
+        `
     query limitFarmingsFromPools {
       incentives(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${now}}) {
         id
@@ -123,7 +124,7 @@ export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
       }
     }
     `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const FETCH_POOL = () => gql`
@@ -243,7 +244,7 @@ export const CHART_POOL_DATA = () => gql`
 `
 
 export const TOTAL_STATS = (block?: number) => {
-  const qString = `
+    const qString = `
   query totalStats {
     factories ${block ? `(block: { number: ${block} })` : ''} {
       totalVolumeUSD
@@ -253,7 +254,7 @@ export const TOTAL_STATS = (block?: number) => {
     }
   }
 `
-  return gql(qString)
+    return gql(qString)
 }
 
 export const LAST_EVENT = () => gql`
@@ -297,13 +298,13 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
 }`
 
 export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query finiteFarmingsFromPools {
         incentives(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${Math.round(Date.now() / 1000)}}) {
           id
@@ -318,7 +319,7 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
         }
       }
       `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const FROZEN_STAKED = () => gql`
@@ -376,10 +377,9 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
 
 //Info
 
-
-export const FULL_POSITIONS_PRICE_RANGE = gql`
-  {
-    positionSnapshots (where: {owner: "0x060e9576673f8c8E1Fcf96d45e827602CE0B92C0", pool: "0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed"}, orderBy: timestamp, orderDirection: desc)
+export const FULL_POSITIONS_PRICE_RANGE = () => gql`
+  query fullPositionsPriceRange ($account: Bytes, $pool: String) {
+    positionSnapshots (where: {owner: $account, pool: $pool }, orderBy: timestamp, orderDirection: desc)
     {
         liquidity
         timestamp
@@ -390,8 +390,74 @@ export const FULL_POSITIONS_PRICE_RANGE = gql`
   }
 `
 
-export const CLOSED_POSITIONS_PRICE_RANGE = (positions: any[]) => {
+export const CLOSED_POSITIONS_PRICE_RANGE = (positions: string[]) => {
+    const query = `
+        query closedPositionPriceRange {
+            ${
+        positions.map((item, i) => `
+                q${i}: positionSnapshots (where: {position_contains: "${item}"}, orderBy: timestamp, orderDirection: asc, first:1) {
+                    timestamp
+                    position {
+                      id
 
+                      token0 {
+                        decimals
+                      }
+                      token1 {
+                        decimals
+                      }
+
+                      tickLower {
+                        price0
+                        price1
+                      }
+
+                      tickUpper {
+                        price0
+                        price1
+                      }
+                    }
+                }
+                `)
+                }
+        }
+    `
+    return gql(query)
+}
+
+export const OPENED_POSITIONS_PRICE_RANGE = (positions: string[]) => {
+    const query = `
+        query openedPositionPriceRange {
+            ${
+        positions.map((item, i) => `
+                q${i}: positionSnapshots (where: {position_contains: "${item}"}, orderBy: timestamp, orderDirection: asc, first:1) {
+                     timestamp
+                    position {
+                      id
+
+                      token0 {
+                        decimals
+                      }
+                      token1 {
+                        decimals
+                      }
+
+                      tickLower {
+                        price0
+                        price1
+                      }
+
+                      tickUpper {
+                        price0
+                        price1
+                      }
+                    }
+                }
+                `)
+    }
+        }
+    `
+    return gql(query)
 }
 
 export const INFINITE_EVENTS = gql`
@@ -420,17 +486,17 @@ query topPools {
 `
 
 export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query pools {
         pools(where: {id_in: ${poolString}},` +
-    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           fee
           liquidity
@@ -463,7 +529,7 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
         }
       }
       `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 
@@ -476,17 +542,17 @@ export const TOP_TOKENS = gql`
 `
 
 export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: string[]) => {
-  let tokenString = `[`
-  tokens.map((address) => {
-    return (tokenString += `"${address}",`)
-  })
-  tokenString += ']'
-  const queryString =
-    `
+    let tokenString = `[`
+    tokens.map((address) => {
+        return (tokenString += `"${address}",`)
+    })
+    tokenString += ']'
+    const queryString =
+        `
       query tokens {
         tokens(where: {id_in: ${tokenString}},` +
-    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           symbol
           name
@@ -503,7 +569,7 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
       }
       `
 
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const GET_STAKE = () => gql`
@@ -538,15 +604,15 @@ query stake {
 //Blocklytics
 
 export const GET_BLOCKS = (timestamps: string[]) => {
-  let queryString = 'query blocks {'
-  queryString += timestamps.map((timestamp) => {
-    return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
-      } }) {
+    let queryString = 'query blocks {'
+    queryString += timestamps.map((timestamp) => {
+        return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
+        } }) {
           number
         }`
-  })
-  queryString += '}'
-  return gql(queryString)
+    })
+    queryString += '}'
+    return gql(queryString)
 }
 
 

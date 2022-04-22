@@ -3,7 +3,7 @@ import Chart from './Chart'
 import Loader from '../Loader'
 import { ChartType } from '../../models/enums'
 import { isMobile, isTablet } from 'react-device-detect'
-import { FeeChart, FeeSubgraph, PoolHourData } from '../../models/interfaces'
+import { FeeChart, FeeSubgraph, PoolHourData, PriceRangeChart } from '../../models/interfaces'
 import { ChartToken } from '../../models/enums/poolInfoPage'
 import { Trans } from '@lingui/macro'
 import { Token } from '@uniswap/sdk-core'
@@ -23,9 +23,13 @@ interface FeeChartRangeInputProps {
     token1: Token | undefined
     token0: Token | undefined
     setToken: (a: number) => void
+    positions: {
+        closed: PriceRangeChart | null,
+        opened: PriceRangeChart | null
+    }
 }
 
-export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken }: FeeChartRangeInputProps) {
+export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken, positions }: FeeChartRangeInputProps) {
 
     const ref = useRef<HTMLDivElement>(null)
 
@@ -143,6 +147,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                         span={span}
                         type={type}
                         token={token}
+                        positions={positions}
                     />
                 </>
 

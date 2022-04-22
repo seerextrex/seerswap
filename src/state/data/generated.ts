@@ -6465,6 +6465,24 @@ export type TransferedPositionsForPoolQuery = (
   )> }
 );
 
+export type FullPositionsPriceRangeQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+  pool?: Maybe<Scalars['String']>;
+}>;
+
+
+export type FullPositionsPriceRangeQuery = (
+  { __typename?: 'Query' }
+  & { positionSnapshots: Array<(
+    { __typename?: 'PositionSnapshot' }
+    & Pick<PositionSnapshot, 'liquidity' | 'timestamp'>
+    & { position: (
+      { __typename?: 'Position' }
+      & Pick<Position, 'id'>
+    ) }
+  )> }
+);
+
 export type InfiniteFarmsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -6920,6 +6938,21 @@ export const TransferedPositionsForPoolDocument = `
   }
 }
     `;
+export const FullPositionsPriceRangeDocument = `
+    query fullPositionsPriceRange($account: Bytes, $pool: String) {
+  positionSnapshots(
+    where: {owner: $account, pool: $pool}
+    orderBy: timestamp
+    orderDirection: desc
+  ) {
+    liquidity
+    timestamp
+    position {
+      id
+    }
+  }
+}
+    `;
 export const InfiniteFarmsDocument = `
     query infiniteFarms {
   eternalFarmings(where: {isDetached: false}) {
@@ -7075,6 +7108,9 @@ const injectedRtkApi = api.injectEndpoints({
     transferedPositionsForPool: build.query<TransferedPositionsForPoolQuery, TransferedPositionsForPoolQueryVariables | void>({
       query: (variables) => ({ document: TransferedPositionsForPoolDocument, variables })
     }),
+    fullPositionsPriceRange: build.query<FullPositionsPriceRangeQuery, FullPositionsPriceRangeQueryVariables | void>({
+      query: (variables) => ({ document: FullPositionsPriceRangeDocument, variables })
+    }),
     infiniteFarms: build.query<InfiniteFarmsQuery, InfiniteFarmsQueryVariables | void>({
       query: (variables) => ({ document: InfiniteFarmsDocument, variables })
     }),
@@ -7097,5 +7133,5 @@ const injectedRtkApi = api.injectEndpoints({
 });
 
 export { injectedRtkApi as api };
-export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useIncentiveQuery, useLazyIncentiveQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchIncentiveQuery, useLazyFetchIncentiveQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useFrozenStakedQuery, useLazyFrozenStakedQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useStakeHistoryQuery, useLazyStakeHistoryQuery, useStakeQuery, useLazyStakeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery } = injectedRtkApi;
+export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useIncentiveQuery, useLazyIncentiveQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchIncentiveQuery, useLazyFetchIncentiveQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useFrozenStakedQuery, useLazyFrozenStakedQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, useFullPositionsPriceRangeQuery, useLazyFullPositionsPriceRangeQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useStakeHistoryQuery, useLazyStakeHistoryQuery, useStakeQuery, useLazyStakeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery } = injectedRtkApi;
 

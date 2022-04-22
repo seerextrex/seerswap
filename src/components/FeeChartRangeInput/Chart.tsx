@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpolate, line, max, min, scaleLinear, scaleTime, select } from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
-import { FeeChart, FormattedFeeChart } from '../../models/interfaces'
+import { FeeChart, FormattedFeeChart, PriceRangeChart } from '../../models/interfaces'
 import { ChartToken } from '../../models/enums/poolInfoPage'
 import { convertLocalDate } from '../../utils/convertDate'
 import { convertDateTime } from '../../utils/time'
@@ -22,9 +22,13 @@ interface ChartInterface {
         token1: string | undefined
     }
     token: number
+    positions: {
+        closed: PriceRangeChart | null,
+        opened: PriceRangeChart | null
+    }
 }
 
-export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token }: ChartInterface) {
+export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token, positions: { closed, opened } }: ChartInterface) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -227,13 +231,29 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         return [..._data]
     }, [data, previousData])
 
-    // useEffect(() => console.log(_chartData, 'chart'), [_chartData])
-
     const xScale = useMemo(() => scaleTime()
             // @ts-ignore
             .domain([min(_chartData, (d) => new Date(d.timestamp)), max(_chartData, (d) => new Date(d.timestamp))])
             .range([0, width]),
         [span, _chartData])
+
+    const yScale = useMemo(() => scaleLinear()
+        // @ts-ignore
+        .domain([
+            // @ts-ignore
+            min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
+            // @ts-ignore
+            max(_chartData, (d) => +d.value + d.value * 0.2)
+        ])
+        .range([height, 0]), [span, _chartData, token0, token1])
+
+
+    useEffect(() => {
+        for (const key in opened) {
+            // @ts-ignore
+            console.log(xScale(opened[key].startTime))
+        }
+    }, [closed, opened])
 
     const Line = create('svg:line')
         .attr('id', 'pointer2')
@@ -300,6 +320,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .style('opacity', 1)
         .style('display', 'none')
 
+
     useEffect(() => {
         if (!data || data.length === 0) return
 
@@ -309,6 +330,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         const svg = svgEl
             .append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`)
+
 
         svg
             .on('mouseenter', () => {
@@ -341,18 +363,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         xAxisGroup.selectAll('line').attr('stroke', 'rgba(255, 255, 255, 0)').attr('id', 'xline')
         xAxisGroup.selectAll('text').attr('opacity', 0.5).attr('color', 'white').attr('font-size', '0.75rem')
 
-        const y = scaleLinear()
-            // @ts-ignore
-            .domain([
-                // @ts-ignore
-                min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
-                // @ts-ignore
-                max(_chartData, (d) => +d.value + d.value * 0.2)
-            ])
-            .range([height, 0])
-
         const yAxisGroup = svg.append('g').call(
-            axisLeft(y)
+            axisLeft(yScale)
                 .ticks(10)
                 .tickFormat((val) => `${type === ChartType.FEES ? `${val}%` : type === ChartType.PRICE ? `${val}` : `$${val >= 1000 ? `${+val / 1000}k` : val}`}`)
                 .tickSize(-width)
@@ -402,7 +414,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 })
                 .y(function(d) {
                     // @ts-ignore
-                    return y(d.value)
+                    return yScale(d.value)
                 })
             )
             .transition()
@@ -423,9 +435,9 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 // @ts-ignore
                 .x((d) => xScale(d.timestamp))
                 // @ts-ignore
-                .y0((d) => y(min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
+                .y0((d) => yScale(min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
                 // @ts-ignore
-                .y1((d) => y(d.value))
+                .y1((d) => yScale(d.value))
             )
             .style('opacity', 0)
             .transition()
@@ -464,9 +476,9 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     const date = new Date(_chartData[i]?.timestamp)
                     Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
                     //@ts-ignore
-                    LineHorizontal.attr('y1', `${y(_chartData[i]?.value)}px`).attr('y2', `${y(_chartData[i]?.value)}px`)
+                    LineHorizontal.attr('y1', `${yScale(_chartData[i]?.value)}px`).attr('y2', `${yScale(_chartData[i]?.value)}px`)
                     //@ts-ignore
-                    InfoRectGroup.attr('transform', `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) - (type === ChartType.PRICE ? 95 : 80)},${y(_chartData[i]?.value) - 68})`)
+                    InfoRectGroup.attr('transform', `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) - (type === ChartType.PRICE ? 95 : 80)},${yScale(_chartData[i]?.value) - 68})`)
                     InfoRectFeeText.property('innerHTML', `
                         ${type === ChartType.PRICE || type === ChartType.FEES ? '' : '$'}
                         ${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? 5 : 2)}
@@ -474,7 +486,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     )
                     InfoRectDateText.property('innerHTML', `${convertLocalDate(date)} ${span === ChartSpan.DAY ? convertDateTime(date) : ''}`)
                     // @ts-ignore
-                    Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${y(_chartData[i]?.value)})`)
+                    Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${yScale(_chartData[i]?.value)})`)
                 }
 
                 const rect = create('svg:rect')

@@ -43,7 +43,7 @@ export default function PoolInfoPage(
     const {
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn },
-        fetchPriceRangePositions: {fetchPriceRangePositionsFn}
+        fetchPriceRangePositions: { positionsRange, fetchPriceRangePositionsFn }
     } = useInfoSubgraph()
 
     const { fetchTicksSurroundingPrice: { ticksResult, ticksLoading, fetchTicksSurroundingPriceFn } } = useInfoTickData()
@@ -117,7 +117,7 @@ export default function PoolInfoPage(
             fetchChartPoolDataFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000))
         }
 
-        fetchPriceRangePositionsFn()
+        fetchPriceRangePositionsFn(id)
     }, [span, type])
 
     useEffect(() => {
@@ -197,6 +197,7 @@ export default function PoolInfoPage(
                                 token0={_token0 ?? undefined}
                                 token1={_token1 ?? undefined}
                                 setToken={setToken}
+                                positions={positionsRange}
                             />
                         )}
                     </div>

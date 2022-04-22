@@ -112,7 +112,7 @@ export function StakerEventCard({
                                 <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                                 <span className="staker-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                                 <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                    <span>{formatAmountTokens(reward.amount)}</span>
+                                    <span style={{ fontSize: "18px" }}>{formatAmountTokens(reward.amount)}</span>
                                 </div>
                             </li>
                         ))}

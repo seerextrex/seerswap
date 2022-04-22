@@ -323,10 +323,6 @@ export function useStakerHandlers() {
                     )
                 } else {
 
-                    console.log([rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +selectedNFT.id,
-                        selectedTier)
-
                     result = await farmingCenterContract.enterFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id,
@@ -429,8 +425,6 @@ export function useStakerHandlers() {
                     FARMING_CENTER[chainId],
                     selectedNFT.id
                 ])
-
-                console.log(FARMING_CENTER[chainId], selectedNFT.id)
 
                 const result = await nonFunPosManContract.multicall([approveData, transferData],
                     // { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }

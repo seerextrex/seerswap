@@ -22,6 +22,8 @@ import { SupportedChainId } from "constants/chains";
 import { useActiveWeb3React } from "hooks/web3";
 
 import { Token } from "@uniswap/sdk-core";
+import { formatUnits, parseUnits } from "ethers/lib/utils";
+import { BigNumber } from "ethers";
 
 interface StakeModalProps {
     event: {
@@ -233,11 +235,11 @@ export function StakeModal({
 
         switch (selectedTier) {
             case algbAmountForLevel1:
-                return _balance > +algbAmountForLevel1;
+                return _balance > +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
             case algbAmountForLevel2:
-                return _balance > +algbAmountForLevel2;
+                return _balance > +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
             case algbAmountForLevel3:
-                return _balance > +algbAmountForLevel3;
+                return _balance > +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
             default:
                 return true;
         }

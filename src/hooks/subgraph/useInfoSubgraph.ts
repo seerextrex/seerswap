@@ -555,11 +555,6 @@ export function useInfoSubgraph() {
                 variables: { pool, startTimestamp, endTimestamp }
             })
 
-            // console.log(startTimestamp, endTimestamp)
-            //
-            // console.log(poolHourDatas)
-            // console.log(poolHourDatas.map(el => el.volumeUSD).reduce((prev, cur) => +prev + +cur, 0)/ poolHourDatas.length)
-
             if (error) return
 
             const _poolHourDatas = poolHourDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolHourDatas

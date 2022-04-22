@@ -54,8 +54,6 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
         ];
     }, [tiersLimits, tiersMultipliers, balance]);
 
-    console.log("LOCKED", lockedToken);
-
     return (
         <div className="f c">
             <div className="f-ac f farming-tier__balance br-8 mb-1">

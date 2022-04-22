@@ -150,7 +150,6 @@ function toCallState(
     let result: Result | undefined = undefined
 
     if (success && data) {
-        // console.log('DATA', fragment, data)
         try {
             result = contractInterface.decodeFunctionResult(fragment, data)
         } catch (error) {
@@ -200,18 +199,9 @@ export function useSingleContractMultipleData(
         [contract, fragment, callInputs, gasRequired]
     )
 
-    if (methodName === 'quoteExactInput') {
-        console.log('here')
-    }
-
     const results = useCallsData(calls, blocksPerFetch ? { blocksPerFetch } : undefined, methodName)
 
     const latestBlockNumber = useBlockNumber()
-
-    if (methodName === 'quoteExactInput') {
-        // console.log(fragment, callInputs, results)
-        console.log(results, results.map((result) => toCallState(result, contract?.interface, fragment, latestBlockNumber)))
-    }
 
     return useMemo(() => {
         return results.map((result) => toCallState(result, contract?.interface, fragment, latestBlockNumber))

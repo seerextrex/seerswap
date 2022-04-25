@@ -176,6 +176,7 @@ export default function PoolInfoPage(
                             span={span}
                             type={type}
                             setSpan={setSpan}
+                            positions={positionsRange}
                         />
                         {type === ChartType.LIQUIDITY ? (
                             <LiquidityBarChart

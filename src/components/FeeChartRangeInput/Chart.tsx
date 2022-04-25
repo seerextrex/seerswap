@@ -6,6 +6,7 @@ import { FeeChart, FormattedFeeChart, PriceRangeChart } from '../../models/inter
 import { ChartToken } from '../../models/enums/poolInfoPage'
 import { convertLocalDate } from '../../utils/convertDate'
 import { convertDateTime } from '../../utils/time'
+import { stringToColour } from '../../utils/stringToColour'
 
 interface ChartInterface {
     feeData: FeeChart
@@ -238,22 +239,53 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         [span, _chartData])
 
     const yScale = useMemo(() => scaleLinear()
-        // @ts-ignore
-        .domain([
             // @ts-ignore
-            min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0)),
-            // @ts-ignore
-            max(_chartData, (d) => +d.value + d.value * 0.2)
-        ])
-        .range([height, 0]), [span, _chartData, token0, token1])
+            .domain([min(_chartData, d => (d.value > 0 ? d.value - d.value * 0.2 : 0)), max(_chartData, d => +d.value + d.value * 0.2)])
+            .range([height, 0]),
+        [span, _chartData, token])
 
 
-    useEffect(() => {
+    const priceRects = useMemo(() => {
+        const res: any[] = []
         for (const key in opened) {
-            // @ts-ignore
-            console.log(xScale(opened[key].startTime))
+            const pos = opened[key]
+            const _token0Range = pos.token0Range.sort((a, b) => a - b)
+            const _token1Range = pos.token1Range.sort((a, b) => a - b)
+
+            let token1Height = Math.abs(yScale(_token0Range[1]) - yScale(_token0Range[0]))
+            let token0Height = yScale(_token1Range[0]) - yScale(_token1Range[1])
+
+            let outOfChart = false
+
+            if (token === ChartToken.TOKEN1) {
+                if (yScale(_token0Range[1]) < 0) {
+                    outOfChart = true
+                    token1Height = token1Height - Math.abs(yScale(_token0Range[1]))
+                }
+            } else {
+                if (yScale(_token1Range[1]) + token0Height > height) {
+                    outOfChart = true
+                    token0Height = token0Height - (yScale(_token1Range[1]) + token0Height - height)
+                }
+            }
+
+            const rect = create('svg:rect')
+                .append('rect')
+                .attr('id', `pos-${key}`)
+                .attr('width', `${xScale(+pos.startTime * 1000) < 0 ? width : width - xScale(+pos.startTime * 1000)}`)
+                .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
+                .attr('fill', stringToColour(key).background)
+                .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
+                .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
+                .style('opacity', '0.1')
+            res.push(rect)
         }
-    }, [closed, opened])
+        return res
+    }, [closed, opened, token, yScale, _chartData])
+
+    const pricesRangesGroup = create('svg:g')
+        .style('pointer-events', 'none')
+
 
     const Line = create('svg:line')
         .attr('id', 'pointer2')
@@ -502,8 +534,12 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 svg.node().append(rect.node())
             })
 
+        priceRects.forEach(item => {
+            pricesRangesGroup.node()?.append(item.node())
+        })
         svg.append(() => Line.node())
         svg.append(() => LineHorizontal.node())
+        svg.append(() => pricesRangesGroup.node())
         svg.append(() => InfoRectGroup.node())
         svg.append(() => Focus.node())
     }, [data])

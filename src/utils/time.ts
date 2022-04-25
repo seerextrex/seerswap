@@ -21,3 +21,8 @@ export function convertDateTime(date: Date) {
 
     return (hChars[1] ? h : '0' + hChars[0]) + ':' + (mChars[1] ? m : '0' + mChars[0])
 }
+
+export function getDayMonth(timestamp: string) {
+    const date = new Date(timestamp)
+    const mm = date.toLocaleString()
+}

@@ -109,8 +109,6 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
         }
     }, [fetchedData, token])
 
-    // useEffect(() => console.log(formattedData.data), [formattedData])
-
     return (
         <div className={'w-100 fee-chart pt-1 mxs_p-0'} ref={ref}>
             {refreshing ?

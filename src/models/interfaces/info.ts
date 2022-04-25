@@ -147,15 +147,19 @@ interface PositionPriceRange {
 }
 
 export interface PriceRangeClosed {
-    [key: string] : {
+    [key: string]: {
         position: PositionPriceRange
         timestamp: string
     } []
 }
 
+
 export interface PriceRangeChart {
-    token0Range: number[]
-    token1Range: number[]
-    startTime: string
-    endTime?: string
+    [key: string]: {
+        token0Range: number[]
+        token1Range: number[]
+        startTime: string
+        endTime?: string
+    }
 }
+

@@ -65,20 +65,6 @@ export function StakeModal({
 }: StakeModalProps) {
     const { account } = useActiveWeb3React();
 
-    console.log(
-        pool,
-        startTime,
-        endTime,
-        rewardToken,
-        bonusRewardToken,
-        level1multiplier,
-        level2multiplier,
-        level3multiplier,
-        lockedToken,
-        algbAmountForLevel1,
-        algbAmountForLevel2,
-        algbAmountForLevel3
-    );
     const [selectedNFT, setSelectedNFT] = useState<null | NTFInterface>(null);
     const {
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn },
@@ -224,7 +210,10 @@ export function StakeModal({
         [selectedNFT, submitState, selectedTier]
     );
 
-    const balance = useCurrencyBalance(account ?? undefined, new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) ?? undefined);
+    const balance = useCurrencyBalance(
+        account ?? undefined,
+        lockedToken ? new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) : undefined
+    );
 
     const isEnoughALGB = useMemo(() => {
         if (farmingType === FarmingType.ETERNAL) return true;
@@ -235,11 +224,11 @@ export function StakeModal({
 
         switch (selectedTier) {
             case algbAmountForLevel1:
-                return _balance > +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
+                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
             case algbAmountForLevel2:
-                return _balance > +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
+                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel2), lockedToken.decimals);
             case algbAmountForLevel3:
-                return _balance > +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
+                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel3), lockedToken.decimals);
             default:
                 return true;
         }

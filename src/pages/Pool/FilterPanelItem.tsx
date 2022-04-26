@@ -10,22 +10,20 @@ interface FilterPanelProps {
     }
 }
 
-const FilterPanelItem = ({ item }: FilterPanelProps) => {
-
+const FilterPanelItem = ({ item: { title, method, checkValue } }: FilterPanelProps) => {
     return (
         <div>
             <div className={'mb-05 mxs_ta-c'}>
-                <Trans>{item.title}</Trans>
+                <Trans>{title}</Trans>
             </div>
             <Toggle
-                isActive={!item.checkValue}
-                toggle={() => item.method(!item.checkValue)}
+                isActive={!checkValue}
+                toggle={() => method(!checkValue)}
                 checked={<Trans>Show</Trans>}
                 unchecked={<Trans>Hide</Trans>}
             />
         </div>
     )
 }
-
 
 export default FilterPanelItem

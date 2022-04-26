@@ -1,4 +1,5 @@
 import { Contract } from '@ethersproject/contracts'
+//@ts-ignore
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import V2MigratorABI from 'abis/migrator.json'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'

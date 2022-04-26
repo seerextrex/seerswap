@@ -16,7 +16,7 @@ export function useRealStakerHandlers() {
     const _w: any = window
     const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
 
-    const [stakerHash, setStaked] = useState<null | StakeHash>(null)
+    const [stakerHash, setStakedHash] = useState<null | StakeHash>(null)
     const [frozenStaked, setFrozen] = useState<string | Frozen[]>([])
     const [stakeLoading, setStakeLoading] = useState<boolean>(false)
     const [claimLoading, setClaimLoading] = useState<boolean>(false)
@@ -39,12 +39,11 @@ export function useRealStakerHandlers() {
             addTransaction(result, {
                 summary: `Staked ${stakedCount} ALGB`
             })
-            setStaked({ hash: result.hash })
+            setStakedHash({ hash: result.hash })
 
         } catch (e) {
-            console.log(e)
-        } finally {
             setStakeLoading(false)
+            console.log(e)
         }
     }, [account, chainId])
 
@@ -66,11 +65,10 @@ export function useRealStakerHandlers() {
             addTransaction(result, {
                 summary: `Claimed ${formatEther(claimCount)} ALGB`
             })
-            setStaked({ hash: result.hash })
+            setStakedHash({ hash: result.hash })
 
         } catch (e) {
             console.log(e)
-        } finally {
             setClaimLoading(false)
         }
     }, [account, chainId])
@@ -95,11 +93,10 @@ export function useRealStakerHandlers() {
             addTransaction(result, {
                 summary: `Unstaked ${unstakeCount} ALGB`
             })
-            setStaked({ hash: result.hash })
+            setStakedHash({ hash: result.hash })
 
         } catch (e) {
             console.log(e)
-        } finally {
             setUnstakeLoading(false)
         }
     }, [account, chainId])
@@ -110,7 +107,7 @@ export function useRealStakerHandlers() {
             const { data: { stakeTxes }, error: error } = await stakerClient.query<SubgraphResponse<Frozen[]>>({
                 query: FROZEN_STAKED(),
                 fetchPolicy: 'network-only',
-                variables: {account: account.toLowerCase(), timestamp: Math.round(Date.now() / 1000)}
+                variables: { account: account.toLowerCase(), timestamp: Math.round(Date.now() / 1000) }
             })
 
             setFrozen(stakeTxes)
@@ -130,6 +127,7 @@ export function useRealStakerHandlers() {
         stakerUnstakeHandler,
         unstakeLoading,
         frozenStakedHandler,
-        frozenStaked
+        frozenStaked,
+        setStakedHash
     }
 }

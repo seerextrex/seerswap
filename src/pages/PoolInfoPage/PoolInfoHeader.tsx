@@ -34,7 +34,7 @@ export function PoolInfoHeader({ token0, token1, fee, collectedFees }: PoolInfoH
                     </span>
                         {poolTitle[0] || '...'} / {poolTitle[1] || '...'}
                 </span>
-                    <span className={'ml-1 br-8 fee-badge c-p'}>{`${+fee / 10000}%`}</span>
+                    <span className={'ml-1 br-8 fee-badge'}>{`${+fee / 10000}%`}</span>
                 </div>
                 {
                     +collectedFees !== 0 &&

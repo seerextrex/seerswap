@@ -3,6 +3,7 @@ import { AutoColumn } from "components/Column";
 import { FeeAmount } from "lib/src";
 import { Minus, Plus } from "react-feather";
 import { ButtonLabel, FocusedOutlineCard, InputRow, InputTitle, SmallButton, StyledInput } from "./styled";
+import { isMobile } from 'react-device-detect'
 
 interface StepCounterProps {
     value: string;
@@ -65,7 +66,7 @@ const StepCounter = ({ value, decrement, increment, decrementDisabled = false, i
     return (
         <FocusedOutlineCard initial={initial} active={active} onFocus={handleOnFocus} onBlur={handleOnBlur} width={width}>
             <AutoColumn style={{ position: "relative" }} gap="6px">
-                <div style={{ display: "flex", position: "absolute", right: "-1rem", top: "3px" }}>
+                <div style={{ display: "flex", position: "absolute", right: `${isMobile ? '0' : '-1rem'}`, top: `${isMobile ? '0' : '3px'}` }}>
                     {!locked && (
                         <button className={"btn secondary mr-05 hover-b"} onClick={handleDecrement} disabled={decrementDisabled || disabled}>
                             <ButtonLabel disabled={decrementDisabled || disabled} fontSize="12px">

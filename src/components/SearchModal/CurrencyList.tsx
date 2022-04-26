@@ -206,6 +206,7 @@ export default function CurrencyList({
 
     return (
         <FixedSizeList
+            style={{overflow: 'unset'}}
             height={height}
             ref={fixedListRef as any}
             width='100%'

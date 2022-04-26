@@ -10,10 +10,10 @@ interface BarChartProps {
         margin: { top: number; right: number; bottom: number; left: number }
     }
     activeTickIdx: number | undefined
-    isMobile: boolean
+    zoom: number
 }
 
-export default function BarChart({ data, activeTickIdx, dimensions }: BarChartProps) {
+export default function BarChart({ data, activeTickIdx, dimensions, zoom }: BarChartProps) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -135,8 +135,8 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
             svg
                 .append('circle')
                 .attr('fill', 'var(--green)')
-                .attr('r', '5px')
-                .attr('cx', (xScale(data[activeTickIdxInRange]?.price0) ?? 0) + 2)
+                .attr('r', zoom < 5 ? `${zoom + 1}px` : '5px')
+                .attr('cx', (xScale(data[activeTickIdxInRange]?.price0) ?? 0) + (zoom * 0.45))
                 .attr('cy', -9)
 
             svg

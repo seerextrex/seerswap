@@ -199,6 +199,10 @@ export const AccountElement = styled.div<{ active: boolean }>`
 `
 export const BalanceText = styled(Text)`
     cursor: default;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      font-size: 13px
+    `}
 `
 export const LogoWrapper = styled.div`
     position: relative;

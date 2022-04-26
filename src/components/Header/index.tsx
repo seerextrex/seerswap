@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
 import Logo from "../../assets/svg/logo.svg";
@@ -14,6 +14,8 @@ import { useAppSelector } from "../../state/hooks";
 import { BalanceText } from "./styled";
 import "./index.scss";
 import { NavLink } from "react-router-dom";
+import { Sliders } from "react-feather";
+import HeaderMenu from "components/HeaderMenu";
 
 export default function Header() {
     const { startTime, eternalFarmings } = useAppSelector((state) => state.farming);
@@ -46,6 +48,14 @@ export default function Header() {
             setEvents(true);
         }
     }, [startTime, eternalFarmings]);
+
+    const handleBlur = useCallback((e: React.ChangeEvent<HTMLLabelElement>) => {
+        const target = e.target.control as HTMLInputElement;
+
+        if (!target) return;
+
+        target.checked = false;
+    }, []);
 
     return (
         <div className={"header__wrapper flex-s-between w-100 pv-1 pl-2"}>
@@ -85,12 +95,19 @@ export default function Header() {
                         <NetworkCard />
                         {(chainId === 137 && account && userEthBalance) || networkFailed ? (
                             <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
-                                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
+                                {_userEthBalance?.toSignificant(2)} {!isMobile && chainValue}
                             </BalanceText>
                         ) : null}
                     </>
                 )}
                 <Web3Status />
+                <input id="preferences" type="checkbox" className="preferences-menu__checkbox" />
+                <label htmlFor="preferences" role="button" tabIndex={0} className="preferences-menu__toggler f ml-1 br-8" onBlur={handleBlur}>
+                    <Sliders style={{ display: "block" }} />
+                    <div className="preferences-menu__inner" onClick={(e) => e.preventDefault()}>
+                        <HeaderMenu />
+                    </div>
+                </label>
             </div>
         </div>
     );

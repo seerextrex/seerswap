@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
 import Logo from "../../assets/svg/logo.svg";
@@ -14,6 +14,8 @@ import { useAppSelector } from "../../state/hooks";
 import { BalanceText } from "./styled";
 import "./index.scss";
 import { NavLink } from "react-router-dom";
+import { Sliders } from "react-feather";
+import HeaderMenu from "components/HeaderMenu";
 
 export default function Header() {
     const { startTime, eternalFarmings } = useAppSelector((state) => state.farming);
@@ -47,6 +49,14 @@ export default function Header() {
         }
     }, [startTime, eternalFarmings]);
 
+    const handleBlur = useCallback((e: React.ChangeEvent<HTMLLabelElement>) => {
+        const target = e.target.control as HTMLInputElement;
+
+        if (!target) return;
+
+        target.checked = false;
+    }, []);
+
     return (
         <div className={"header__wrapper flex-s-between w-100 pv-1 pl-2"}>
             <a className={"header__logo hover-op mxs_mr-1"} href=".">
@@ -79,7 +89,7 @@ export default function Header() {
                 </NavLink>
             </div>
 
-            <div className={"header__account flex-s-between"}>
+            <div className={"header__account pos-r flex-s-between"}>
                 {account && (
                     <>
                         <NetworkCard />
@@ -91,6 +101,13 @@ export default function Header() {
                     </>
                 )}
                 <Web3Status />
+                <input id="preferences" type="checkbox" className="preferences-menu__checkbox" />
+                <label htmlFor="preferences" role="button" tabIndex={0} className="preferences-menu__toggler f ml-1 br-8" onBlur={handleBlur}>
+                    <Sliders />
+                    <div className="preferences-menu__inner" onClick={(e) => e.preventDefault()}>
+                        <HeaderMenu />
+                    </div>
+                </label>
             </div>
         </div>
     );

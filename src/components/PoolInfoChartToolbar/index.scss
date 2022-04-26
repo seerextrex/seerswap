@@ -1,0 +1,49 @@
+.positions-range-input {
+
+  input {
+    display: none;
+
+    &:checked {
+      & + .positions-range-input__label {
+        background-color: #080b32;
+        border: 1px solid #36f;
+
+        & > .positions-range-input__list {
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+    }
+  }
+
+  &__label {
+    position: relative;
+    width: 100%;
+    min-width: 200px;
+
+
+    div {
+      width: 100%;
+      border: 1px solid var(--primary);
+      min-width: 200px;
+    }
+  }
+
+  &__list {
+    opacity: 0;
+    position: absolute;
+    width: 200px;
+    pointer-events: none;
+    z-index: 100;
+
+    li {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: .5rem .25rem;
+      background: var(--ebony-clay);
+      border-bottom: 1px solid var(--light-gray);
+    }
+  }
+
+}

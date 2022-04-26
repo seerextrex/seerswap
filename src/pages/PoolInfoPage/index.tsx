@@ -51,6 +51,7 @@ export default function PoolInfoPage(
     const [span, setSpan] = useState(ChartSpan.DAY)
     const [type, setType] = useState(ChartType.VOLUME)
     const [token, setToken] = useState(ChartToken.TOKEN0)
+    const [selected, setSelected] = useState<string[]>([])
 
     const startTimestamp = useMemo(() => {
         const day = dayjs()
@@ -177,6 +178,8 @@ export default function PoolInfoPage(
                             type={type}
                             setSpan={setSpan}
                             positions={positionsRange}
+                            selected={selected}
+                            setSelected={setSelected}
                         />
                         {type === ChartType.LIQUIDITY ? (
                             <LiquidityBarChart
@@ -199,6 +202,7 @@ export default function PoolInfoPage(
                                 token1={_token1 ?? undefined}
                                 setToken={setToken}
                                 positions={positionsRange}
+                                selected={selected}
                             />
                         )}
                     </div>

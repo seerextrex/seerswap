@@ -27,9 +27,10 @@ interface ChartInterface {
         closed: PriceRangeChart | null,
         opened: PriceRangeChart | null
     }
+    selected: string[]
 }
 
-export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token, positions: { closed, opened } }: ChartInterface) {
+export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token, positions: { closed, opened }, selected }: ChartInterface) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
@@ -248,40 +249,106 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const priceRects = useMemo(() => {
         const res: any[] = []
         for (const key in opened) {
-            const pos = opened[key]
-            const _token0Range = pos.token0Range.sort((a, b) => a - b)
-            const _token1Range = pos.token1Range.sort((a, b) => a - b)
+            // if (selected.some(item => item !== key)) continue
+            if (selected.some(item => item === key)) {
+                const pos = opened[key]
+                const _token0Range = pos.token0Range.sort((a, b) => a - b)
+                const _token1Range = pos.token1Range.sort((a, b) => a - b)
 
-            let token1Height = Math.abs(yScale(_token0Range[1]) - yScale(_token0Range[0]))
-            let token0Height = yScale(_token1Range[0]) - yScale(_token1Range[1])
+                let token1Height = Math.abs(yScale(_token0Range[1]) - yScale(_token0Range[0]))
+                let token0Height = yScale(_token1Range[0]) - yScale(_token1Range[1])
 
-            let outOfChart = false
+                let outOfChart = false
 
-            if (token === ChartToken.TOKEN1) {
-                if (yScale(_token0Range[1]) < 0) {
-                    outOfChart = true
-                    token1Height = token1Height - Math.abs(yScale(_token0Range[1]))
+
+                if (token === ChartToken.TOKEN1) {
+                    if (yScale(_token0Range[1]) < 0 && yScale(_token0Range[1]) + token1Height > height) {
+                        console.log(height)
+                        outOfChart = true
+                        token1Height = height
+                    } else if (yScale(_token0Range[1]) < 0) {
+                        outOfChart = true
+                        token1Height = token1Height - Math.abs(yScale(_token0Range[1]))
+                    }
                 }
-            } else {
-                if (yScale(_token1Range[1]) + token0Height > height) {
-                    outOfChart = true
-                    token0Height = token0Height - (yScale(_token1Range[1]) + token0Height - height)
+                if (token === ChartToken.TOKEN0) {
+                    console.log(yScale(_token1Range[1]))
+                    if (yScale(_token1Range[1]) < 0 && yScale(_token1Range[1]) + token0Height > height) {
+                        outOfChart = true
+                        token0Height = height
+                    } else if (yScale(_token1Range[1]) < 0) {
+                        outOfChart = true
+                        token0Height = token0Height - Math.abs(yScale(_token1Range[1]))
+                    } else if (yScale(_token1Range[1]) + token0Height > height) {
+                        outOfChart = true
+                        token0Height = token0Height - (yScale(_token1Range[1]) + token0Height - height)
+                    }
                 }
+
+                const rect = create('svg:rect')
+                    .append('rect')
+                    .attr('id', `pos-${key}`)
+                    .attr('width', xScale(+pos.startTime * 1000) < 0 ? width : width - xScale(+pos.startTime * 1000))
+                    .attr('height', token === ChartToken.TOKEN1 ? token1Height : token0Height)
+                    .attr('fill', stringToColour(key).background)
+                    .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1])))
+                    .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
+                    .style('opacity', '0.1')
+                res.push(rect)
             }
+        }
 
-            const rect = create('svg:rect')
-                .append('rect')
-                .attr('id', `pos-${key}`)
-                .attr('width', `${xScale(+pos.startTime * 1000) < 0 ? width : width - xScale(+pos.startTime * 1000)}`)
-                .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
-                .attr('fill', stringToColour(key).background)
-                .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
-                .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
-                .style('opacity', '0.1')
-            res.push(rect)
+        for (const key in closed) {
+            // if (selected.some(item => item !== key)) continue
+            if (selected.some(item => item === key)) {
+                const pos = closed[key]
+
+                if (!pos.endTime) return
+
+                const _token0Range = pos.token0Range.sort((a, b) => a - b)
+                const _token1Range = pos.token1Range.sort((a, b) => a - b)
+
+                let token1Height = Math.abs(yScale(_token0Range[1]) - yScale(_token0Range[0]))
+                let token0Height = yScale(_token1Range[0]) - yScale(_token1Range[1])
+                let widthPos = (xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000)) - Math.abs(xScale(+pos.startTime * 1000))
+
+                let outOfChart = false
+
+                if (token === ChartToken.TOKEN1) {
+                    if (yScale(_token0Range[1]) < 0) {
+                        outOfChart = true
+                        token1Height = token1Height - Math.abs(yScale(_token0Range[1]))
+                    }
+                } else {
+                    if (yScale(_token1Range[1]) + token0Height > height) {
+                        outOfChart = true
+                        token0Height = token0Height - (yScale(_token1Range[1]) + token0Height - height)
+                    }
+                }
+
+
+                if (span === ChartSpan.WEEK || span === ChartSpan.MONTH) {
+                    let widthDif = 0
+                    if (xScale(+pos.endTime * 1000) > width) {
+                        widthDif = (xScale(+pos.endTime * 1000) - width)
+                    }
+                    widthPos = (xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000)) - widthDif
+                }
+
+                const rect = create('svg:rect')
+                    .append('rect')
+                    .attr('id', `pos-${key}`)
+                    .attr('width', widthPos)
+                    .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
+                    .attr('fill', 'black')
+                    .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
+                    .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
+                    .style('opacity', '0.4')
+                res.push(rect)
+            }
         }
         return res
-    }, [closed, opened, token, yScale, _chartData])
+    }, [closed, opened, token, yScale, _chartData, selected])
 
     const pricesRangesGroup = create('svg:g')
         .style('pointer-events', 'none')
@@ -534,7 +601,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 svg.node().append(rect.node())
             })
 
-        priceRects.forEach(item => {
+        priceRects?.forEach(item => {
             pricesRangesGroup.node()?.append(item.node())
         })
         svg.append(() => Line.node())
@@ -542,7 +609,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         svg.append(() => pricesRangesGroup.node())
         svg.append(() => InfoRectGroup.node())
         svg.append(() => Focus.node())
-    }, [data])
+    }, [data, selected])
 
     return <svg ref={svgRef} style={{ overflow: 'visible' }} width={svgWidth} height={svgHeight} />
 }

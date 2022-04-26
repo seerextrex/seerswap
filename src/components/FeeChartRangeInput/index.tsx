@@ -27,9 +27,10 @@ interface FeeChartRangeInputProps {
         closed: PriceRangeChart | null,
         opened: PriceRangeChart | null
     }
+    selected: string[]
 }
 
-export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken, positions }: FeeChartRangeInputProps) {
+export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken, positions, selected }: FeeChartRangeInputProps) {
 
     const ref = useRef<HTMLDivElement>(null)
 
@@ -146,6 +147,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                         type={type}
                         token={token}
                         positions={positions}
+                        selected={selected}
                     />
                 </>
 

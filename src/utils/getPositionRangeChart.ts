@@ -1,7 +1,7 @@
 import { PriceRangeChart, PriceRangeClosed } from '../models/interfaces'
 
 
-export function getPositionRangeChart(data: PriceRangeClosed, startObj?: { [key: string]: { timestamp: string, liquidity: string }[] }): PriceRangeChart | null {
+export function getPositionRangeChart(data: PriceRangeClosed , startObj?: { [key: string]: { timestamp: string, liquidity: string }[] }): PriceRangeChart | null {
     let res = {}
 
     if (Object.values(data).length === 0) return null
@@ -14,7 +14,7 @@ export function getPositionRangeChart(data: PriceRangeClosed, startObj?: { [key:
         const upperT0 = +entry.position.tickUpper.price0 * 10 ** (+entry.position.token0.decimals - +entry.position.token1.decimals)
         const upperT1 = +entry.position.tickUpper.price1 * 10 ** (+entry.position.token1.decimals - +entry.position.token0.decimals)
 
-        if (startObj && (+startObj[entry.position.id][0].timestamp - +entry.timestamp < 36000)) break
+        if (startObj && (+startObj[entry.position.id][0].timestamp - +entry.timestamp < 36000)) continue
 
         res = {
             ...res,

@@ -676,6 +676,7 @@ export function useInfoSubgraph() {
             const day = dayjs()
 
             positions.forEach(item => {
+                console.log(item)
                 positionsObj = {
                     ...positionsObj,
                     [item.position.id]: positionsObj[item.position.id] ? [...positionsObj[item.position.id], { timestamp: item.timestamp, liquidity: item.liquidity }] : [{
@@ -696,23 +697,32 @@ export function useInfoSubgraph() {
                 }
             }
 
-            if (closedPositions.length === 0) return
+            let dataOpened
 
-            const { data: dataClosed, error: errorClosed } = await dataClient.query<PriceRangeClosed>({
-                query: CLOSED_POSITIONS_PRICE_RANGE(closedPositions),
-                fetchPolicy: 'network-only'
-            })
+            if (openPositions.length !== 0) {
+                dataOpened = await dataClient.query<PriceRangeClosed>({
+                    query: OPENED_POSITIONS_PRICE_RANGE(openPositions),
+                    fetchPolicy: 'network-only'
+                })
+            }
 
-            if (openPositions.length === 0) return
 
-            const { data: dataOpened, error: errorOpen } = await dataClient.query<PriceRangeClosed>({
-                query: OPENED_POSITIONS_PRICE_RANGE(openPositions),
-                fetchPolicy: 'network-only'
-            })
+            let dataClosed
+            if (closedPositions.length !== 0) {
+
+
+                dataClosed = await dataClient.query<PriceRangeClosed>({
+                    query: CLOSED_POSITIONS_PRICE_RANGE(closedPositions),
+                    fetchPolicy: 'network-only'
+                })
+            }
 
             setPositionsRange({
-                closed: getPositionRangeChart(dataClosed, positionsObj),
-                opened: getPositionRangeChart(dataOpened)
+                //@ts-ignore
+
+                closed: getPositionRangeChart(dataClosed ? dataClosed.data : [], positionsObj),
+                //@ts-ignore
+                opened: getPositionRangeChart(dataOpened ? dataOpened.data : [])
             })
         } catch (e) {
             console.log(e)

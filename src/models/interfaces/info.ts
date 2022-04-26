@@ -126,7 +126,10 @@ export interface FeeChart {
 export interface PriceRangePositions {
     liquidity: string
     timestamp: string
-    position: { id: string }
+    position: {
+        id: string
+        owner: string
+    }
 }
 
 interface TickPriceRange {

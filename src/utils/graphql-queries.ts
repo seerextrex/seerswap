@@ -385,6 +385,7 @@ export const FULL_POSITIONS_PRICE_RANGE = () => gql`
         timestamp
         position {
             id
+            owner
         }
     }
   }

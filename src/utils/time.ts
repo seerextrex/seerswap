@@ -22,7 +22,16 @@ export function convertDateTime(date: Date) {
     return (hChars[1] ? h : '0' + hChars[0]) + ':' + (mChars[1] ? m : '0' + mChars[0])
 }
 
-export function getDayMonth(timestamp: string) {
-    const date = new Date(timestamp)
-    const mm = date.toLocaleString()
+export function getPositionPeriod(start: string, end?: string): string {
+    const date = new Date(+start * 1000)
+    const sm = date.toLocaleString('default', {month: 'short'})
+    const sd = date.getDate()
+
+    if (end) {
+        const endDate = new Date(+end * 1000)
+        const em = endDate.toLocaleString('default', {month: 'short'})
+        const ed = endDate.getDate()
+        return `${sm} ${sd} - ${em} ${ed}`
+    }
+    return `${sm} ${sd}`
 }

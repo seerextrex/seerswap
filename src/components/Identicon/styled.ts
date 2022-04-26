@@ -5,4 +5,8 @@ export const StyledIdenticonContainer = styled.div`
     width: 1rem;
     border-radius: 1.125rem;
     background-color: ${({ theme }) => theme.bg4};
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        display: none;
+    `}
 `

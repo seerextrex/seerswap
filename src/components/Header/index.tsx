@@ -89,13 +89,13 @@ export default function Header() {
                 </NavLink>
             </div>
 
-            <div className={"header__account pos-r flex-s-between"}>
+            <div className={"header__account flex-s-between"}>
                 {account && (
                     <>
                         <NetworkCard />
                         {(chainId === 137 && account && userEthBalance) || networkFailed ? (
                             <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
-                                {_userEthBalance?.toSignificant(3)} {!isMobile && chainValue}
+                                {_userEthBalance?.toSignificant(2)} {!isMobile && chainValue}
                             </BalanceText>
                         ) : null}
                     </>
@@ -103,7 +103,7 @@ export default function Header() {
                 <Web3Status />
                 <input id="preferences" type="checkbox" className="preferences-menu__checkbox" />
                 <label htmlFor="preferences" role="button" tabIndex={0} className="preferences-menu__toggler f ml-1 br-8" onBlur={handleBlur}>
-                    <Sliders />
+                    <Sliders style={{ display: "block" }} />
                     <div className="preferences-menu__inner" onClick={(e) => e.preventDefault()}>
                         <HeaderMenu />
                     </div>

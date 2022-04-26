@@ -49,10 +49,11 @@ export default function HeaderMenu() {
     const historyStack: MenuState[] = [MenuState.PRIMARY];
 
     const handleSelect = useCallback((item) => {
-        if (item in headers) {
-            historyStack.push(item);
-            setMenuState(item);
+        if (item.title in headers) {
+            // historyStack.push(item);
+            // setMenuState(item);
         } else {
+            window.open(item.link, "_blank", "noreferrer noopener");
         }
     }, []);
 
@@ -73,14 +74,15 @@ export default function HeaderMenu() {
             </div>
             <ul className="header-menu__list">
                 {items[menuState].map((item: any, i) => (
-                    <li className="header-menu__list-item" key={i} onClick={() => handleSelect(item.title)}>
-                        <a href={item.link || null} rel={"noreferrer noopener"} target={"_blank"} className="ph-1 pv-1 mxs_pv-1 ms_pv-1 w-100 f f-jb">
+                    <li className={`header-menu__list-item ${item.type === ItemType.SUB_MENU ? "disabled" : ""}`} key={i} onClick={() => handleSelect(item)}>
+                        <span className="ph-1 pv-1 mxs_pv-1 ms_pv-1 w-100 f f-jb f-ac">
                             <span className="header-menu__list-item__title f">
                                 <span>{item.title}</span>
                                 {/* {item.type === ItemType.LINK && <span className="ml-05">{<ExternalLink size={"18px"} />}</span>} */}
                             </span>
-                            {item.type === ItemType.SUB_MENU && <span className="header-menu__list-item__arrrow">→</span>}
-                        </a>
+                            {/* {item.type === ItemType.SUB_MENU && <span className="header-menu__list-item__arrrow">→</span>} */}
+                            {item.type === ItemType.SUB_MENU && <span style={{ fontSize: "13px", color: "#4fdeff" }}>Coming soon</span>}
+                        </span>
                     </li>
                 ))}
             </ul>

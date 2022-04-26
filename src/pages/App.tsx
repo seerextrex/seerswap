@@ -27,6 +27,8 @@ import { useActiveWeb3React } from "../hooks/web3";
 import { BugReportLink, GlobalStyle, InternetError, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
 
+import "./index.scss";
+
 const RealStakerPage = React.lazy(() => import("./RealStakerPage"));
 const StakingAnalyticsPage = React.lazy(() => import("./StakingAnalyticsPage"));
 const AddLiquidity = React.lazy(() => import("./AddLiquidity"));
@@ -71,7 +73,7 @@ export default function App() {
             <Web3ReactManager>
                 <>
                     <Header />
-                    <div className={"w-100 maw-1180 ph-1 pt-3 mh-a pb-4"} style={{ zIndex: 3, marginBottom: "5rem" }}>
+                    <div className={"app-body w-100 maw-1180 ph-1 pt-3 mh-a pb-4"} style={{ zIndex: 3, marginBottom: "5rem" }}>
                         <CautionModal />
                         {/* {!internet && (
                             <InternetError>

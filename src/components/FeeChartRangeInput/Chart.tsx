@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpolate, line, max, min, scaleLinear, scaleTime, select } from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
@@ -6,7 +6,7 @@ import { FeeChart, FormattedFeeChart, PriceRangeChart } from '../../models/inter
 import { ChartToken } from '../../models/enums/poolInfoPage'
 import { convertLocalDate } from '../../utils/convertDate'
 import { convertDateTime } from '../../utils/time'
-import { stringToColour } from '../../utils/stringToColour'
+import stc from 'string-to-color'
 
 interface ChartInterface {
     feeData: FeeChart
@@ -35,6 +35,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
     const svgHeight = height + margin.bottom + margin.top
+    const [chartDots, setChartDots] = useState({})
 
     const firstNonEmptyValue = useMemo(() => {
         if (!previousData) return null
@@ -85,7 +86,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 timestamp: data[0]?.timestamp
             })
         }
-        // console.log(data)
 
         for (let i = span === ChartSpan.DAY ? 0 : 1; i < data.length; i++) {
             if (dayjs(data[i]?.timestamp).startOf(span !== ChartSpan.DAY ? 'day' : _span).isSame(dayjs(data[i - 1]?.timestamp).startOf(_span))) {
@@ -117,8 +117,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             }
         }
 
-        // console.log(sameDays)
-
         if (sameDays.length !== 0) {
             res.push(sameDays.reduce(
                 (prev, cur) => {
@@ -145,9 +143,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         if (res.length === 0) {
             res = res.concat([...data])
         }
-
-        // console.log(res)
-        // console.log(res, data)
 
         res = res.map((date) => ({
             timestamp: new Date(dayjs(date?.timestamp).startOf(_span).unix() * 1000),
@@ -249,7 +244,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const priceRects = useMemo(() => {
         const res: any[] = []
         for (const key in opened) {
-            // if (selected.some(item => item !== key)) continue
             if (selected.some(item => item === key)) {
                 const pos = opened[key]
                 const _token0Range = pos.token0Range.sort((a, b) => a - b)
@@ -272,7 +266,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     }
                 }
                 if (token === ChartToken.TOKEN0) {
-                    console.log(yScale(_token1Range[1]))
                     if (yScale(_token1Range[1]) < 0 && yScale(_token1Range[1]) + token0Height > height) {
                         outOfChart = true
                         token0Height = height
@@ -290,16 +283,18 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     .attr('id', `pos-${key}`)
                     .attr('width', xScale(+pos.startTime * 1000) < 0 ? width : width - xScale(+pos.startTime * 1000))
                     .attr('height', token === ChartToken.TOKEN1 ? token1Height : token0Height)
-                    .attr('fill', stringToColour(key).background)
+                    .attr('fill', stc(key))
                     .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1])))
                     .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
-                    .style('opacity', '0.1')
+                    // .style('opacity', '0.1')
+                    // .style('stroke', 'black')
+                    // .style('stroke-width', '1px')
+
                 res.push(rect)
             }
         }
 
         for (const key in closed) {
-            // if (selected.some(item => item !== key)) continue
             if (selected.some(item => item === key)) {
                 const pos = closed[key]
 
@@ -430,7 +425,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-
         svg
             .on('mouseenter', () => {
                 Line.style('display', 'block')
@@ -446,6 +440,38 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 InfoRectGroup.style('display', 'none')
                 Focus.style('display', 'none')
             })
+
+        if (type === ChartType.PRICE) {
+            svg
+                .on('mousemove', ({ clientX, clientY }) => {
+
+                    let minS = Number.MAX_SAFE_INTEGER
+                    let closestRect: any
+
+
+                    priceRects?.map(item => {
+                        const node = item.node().getBoundingClientRect()
+
+                        if (clientX > node.x && clientX < node.x + node.width && clientY > node.y && clientY < node.y + node.height) {
+                            const S = node.width * node.height
+                            if (S <= minS) {
+                                minS = S
+                                closestRect = item.node()
+                            }
+                        }
+                    })
+                    closestRect?.setAttribute('stroke', 'red')
+                    closestRect?.setAttribute('stroke-width', '1px')
+
+                    priceRects?.forEach(rect => {
+
+                        if (rect.node() !== closestRect) {
+                            rect.node().setAttribute('stroke', 'none')
+                        }
+
+                    } )
+                })
+        }
 
         svg
             .on('tap', () => {

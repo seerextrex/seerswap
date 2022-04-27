@@ -377,89 +377,70 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
 
 //Info
 
-export const FULL_POSITIONS_PRICE_RANGE = () => gql`
-  query fullPositionsPriceRange ($account: Bytes, $pool: String) {
-    positionSnapshots (where: {owner: $account, pool: $pool }, orderBy: timestamp, orderDirection: desc)
-    {
-        liquidity
-        timestamp
-        position {
+export const POSITIONS_ON_FARMING = () => gql`
+  query positionsOnFarming ($account: Bytes, $pool: Bytes) {
+        deposits (orderBy: id, orderDirection: desc, where: {owner: $account, pool: $pool, onFarmingCenter: true}) {
             id
-            owner
-        }
     }
-  }
+}
 `
 
-export const CLOSED_POSITIONS_PRICE_RANGE = (positions: string[]) => {
+export const FULL_POSITIONS = (positions: string[], account: string | undefined, pool: string) => {
     const query = `
-        query closedPositionPriceRange {
-            ${
-        positions.map((item, i) => `
-                q${i}: positionSnapshots (where: {position_contains: "${item}"}, orderBy: timestamp, orderDirection: asc, first:1) {
-                    timestamp
-                    position {
-                      id
+        query fullPositionsPriceRange {
+            q1 : positions (where: {owner: "${account}", pool: "${pool}"})
+            {
+              owner
+              liquidity
+              id
+              closed
+              transaction {
+                timestamp
+              }
+              tickLower {
+                price0
+                price1
+              }
+              tickUpper {
+                price0
+                price1
+              }
+              token0 {
+                decimals
+              }
+              token1 {
+                decimals
+              }
+            }
 
-                      token0 {
-                        decimals
-                      }
-                      token1 {
-                        decimals
-                      }
-
-                      tickLower {
-                        price0
-                        price1
-                      }
-
-                      tickUpper {
-                        price0
-                        price1
-                      }
-                    }
-                }
-                `)
-                }
+            q2: positions (where: {id_in: [${positions}] }) {
+              owner
+              liquidity
+              id
+              closed
+              transaction {
+                timestamp
+              }
+              tickLower {
+                price0
+                price1
+              }
+              tickUpper {
+                price0
+                price1
+              }
+               token0 {
+                decimals
+              }
+              token1 {
+                decimals
+              }
+            }
         }
     `
     return gql(query)
 }
 
-export const OPENED_POSITIONS_PRICE_RANGE = (positions: string[]) => {
-    const query = `
-        query openedPositionPriceRange {
-            ${
-        positions.map((item, i) => `
-                q${i}: positionSnapshots (where: {position_contains: "${item}"}, orderBy: timestamp, orderDirection: asc, first:1) {
-                     timestamp
-                    position {
-                      id
-
-                      token0 {
-                        decimals
-                      }
-                      token1 {
-                        decimals
-                      }
-
-                      tickLower {
-                        price0
-                        price1
-                      }
-
-                      tickUpper {
-                        price0
-                        price1
-                      }
-                    }
-                }
-                `)
-    }
-        }
-    `
-    return gql(query)
-}
 
 export const INFINITE_EVENTS = gql`
     query infiniteFarms {

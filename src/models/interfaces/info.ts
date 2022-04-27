@@ -123,13 +123,8 @@ export interface FeeChart {
     previousData: FormattedFeeChart[] | undefined[]
 }
 
-export interface PriceRangePositions {
-    liquidity: string
-    timestamp: string
-    position: {
-        id: string
-        owner: string
-    }
+export interface FarmingPositions {
+    id: string
 }
 
 interface TickPriceRange {
@@ -141,12 +136,20 @@ interface TokenPriceRange {
     decimals: string
 }
 
-interface PositionPriceRange {
+interface TransactionPriceRange {
+    timestamp: string
+}
+
+export interface PositionPriceRange {
+    closed: string
+    liquidity: string
     id: string
+    owner: string
     tickLower: TickPriceRange
     tickUpper: TickPriceRange
     token0: TokenPriceRange
     token1: TokenPriceRange
+    transaction: TransactionPriceRange
 }
 
 export interface PriceRangeClosed {

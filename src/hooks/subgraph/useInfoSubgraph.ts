@@ -7,12 +7,13 @@ import {
     CHART_FEE_POOL_DATA,
     CHART_POOL_DATA,
     CHART_POOL_LAST_ENTRY,
-    CHART_POOL_LAST_NOT_EMPTY, CLOSED_POSITIONS_PRICE_RANGE,
+    CHART_POOL_LAST_NOT_EMPTY,
     FETCH_ETERNAL_FARM_FROM_POOL,
-    FETCH_LIMIT_FARM_FROM_POOL, FULL_POSITIONS_PRICE_RANGE,
+    FETCH_LIMIT_FARM_FROM_POOL, FULL_POSITIONS,
     GET_STAKE,
-    GET_STAKE_HISTORY, OPENED_POSITIONS_PRICE_RANGE,
+    GET_STAKE_HISTORY,
     POOLS_FROM_ADDRESSES,
+    POSITIONS_ON_FARMING,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
     TOP_TOKENS,
@@ -34,16 +35,19 @@ import {
     HistoryStakingSubgraph,
     LastPoolSubgraph,
     PoolAddressSubgraph,
-    PoolSubgraph, PriceRangeChart, PriceRangeClosed, PriceRangePositions,
+    PoolSubgraph,
+    PriceRangeChart,
+    PriceRangeClosed,
     StakeSubgraph,
+    FarmingPositions,
     SubgraphResponse,
     SubgraphResponseStaking,
     TokenAddressSubgraph,
     TokenInSubgraph,
-    TotalStatSubgraph
+    TotalStatSubgraph, PositionPriceRange
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces'
-import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL, fetchPoolsAPR } from 'utils/api'
+import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchPoolsAPR } from 'utils/api'
 import { LimitFarmingByPool } from 'models/interfaces/responseSubgraph'
 import { FarmingType } from 'models/enums'
 import dayjs from 'dayjs'
@@ -663,69 +667,46 @@ export function useInfoSubgraph() {
     async function fetchPriceRangePositions(pool: string) {
 
         try {
-            const { data: { positionSnapshots: positions }, error: errorPos } = await dataClient.query<SubgraphResponse<PriceRangePositions[]>>({
-                query: FULL_POSITIONS_PRICE_RANGE(),
+            const { data: { deposits }, error: errorDeposits } = await farmingClient.query<SubgraphResponse<FarmingPositions[]>>({
+                query: POSITIONS_ON_FARMING(),
                 fetchPolicy: 'network-only',
                 variables: { account, pool }
             })
 
-            const openPositions: string[] = []
-            const closedPositions: string[] = []
-            let positionsObj: { [key: string]: { timestamp: string, liquidity: string }[] } = {}
+            const ids = deposits.map(item => item.id)
+
+            const { data, error } = await dataClient.query({
+                query: FULL_POSITIONS(ids, account ?? undefined, pool),
+                fetchPolicy: 'network-only'
+            })
+
+            const fullPositions: PositionPriceRange[] = []
+
+            for (const key in data) {
+                fullPositions.push(...data[key])
+            }
+
+            const openPositions: PositionPriceRange[] = []
+            const closedPositions: PositionPriceRange[] = []
 
             const day = dayjs()
 
-            positions.forEach(item => {
-                console.log(item)
-                positionsObj = {
-                    ...positionsObj,
-                    [item.position.id]: positionsObj[item.position.id] ? [...positionsObj[item.position.id], { timestamp: item.timestamp, liquidity: item.liquidity }] : [{
-                        timestamp: item.timestamp,
-                        liquidity: item.liquidity
-                    }]
-                }
-            })
-
-            for (const key in positionsObj) {
-                const position = positionsObj[key].sort((a, b) => +b.timestamp - +a.timestamp)[0]
-                if (!(position.liquidity === '0' && +position.timestamp < day.subtract(1, 'month').unix())) {
-                    if (position.liquidity === '0') {
-                        closedPositions.push(key)
-                    } else {
-                        openPositions.push(key)
+            fullPositions.forEach(item => {
+                if (item.closed === '0') {
+                    openPositions.push(item)
+                } else {
+                    if (+item.closed > day.subtract(1, 'month').unix() && (+item.closed - +item.transaction.timestamp > 86_400)) {
+                        closedPositions.push(item)
                     }
                 }
-            }
-
-            let dataOpened
-
-            if (openPositions.length !== 0) {
-                dataOpened = await dataClient.query<PriceRangeClosed>({
-                    query: OPENED_POSITIONS_PRICE_RANGE(openPositions),
-                    fetchPolicy: 'network-only'
-                })
-            }
-
-
-            let dataClosed
-            if (closedPositions.length !== 0) {
-
-
-                dataClosed = await dataClient.query<PriceRangeClosed>({
-                    query: CLOSED_POSITIONS_PRICE_RANGE(closedPositions),
-                    fetchPolicy: 'network-only'
-                })
-            }
+            })
 
             setPositionsRange({
-                //@ts-ignore
-
-                closed: getPositionRangeChart(dataClosed ? dataClosed.data : [], positionsObj),
-                //@ts-ignore
-                opened: getPositionRangeChart(dataOpened ? dataOpened.data : [])
+                closed: getPositionRangeChart(closedPositions),
+                opened: getPositionRangeChart(openPositions)
             })
         } catch (e) {
-            console.log(e)
+            console.error(e)
         }
 
     }

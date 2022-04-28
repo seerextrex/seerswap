@@ -7,6 +7,8 @@ import { ChartToken } from '../../models/enums/poolInfoPage'
 import { convertLocalDate } from '../../utils/convertDate'
 import { convertDateTime } from '../../utils/time'
 import stc from 'string-to-color'
+import { hexToRgbA } from '../../utils/hexToRgba'
+import { ISelfPermit } from '@uniswap/v3-periphery/typechain/ISelfPermit'
 
 interface ChartInterface {
     feeData: FeeChart
@@ -30,12 +32,19 @@ interface ChartInterface {
     selected: string[]
 }
 
+function debounce(fn: any, time: any){
+    let timer: any = null;
+    return (evt: any) => {
+        clearTimeout(timer);
+        timer = setTimeout( () => fn(evt), time);
+    };
+}
+
 export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token, positions: { closed, opened }, selected }: ChartInterface) {
     const svgRef = useRef(null)
     const { width, height, margin } = dimensions
     const svgWidth = width + margin.left + margin.right + 10
     const svgHeight = height + margin.bottom + margin.top
-    const [chartDots, setChartDots] = useState({})
 
     const firstNonEmptyValue = useMemo(() => {
         if (!previousData) return null
@@ -240,6 +249,13 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .range([height, 0]),
         [span, _chartData, token])
 
+    function throttle(callback: any, wait: any) {
+        let timeout: any
+        return function(e: any) {
+            if (timeout) return;
+            timeout = setTimeout(() => (callback(e), timeout=undefined), wait)
+        }
+    }
 
     const priceRects = useMemo(() => {
         const res: any[] = []
@@ -266,6 +282,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     }
                 }
                 if (token === ChartToken.TOKEN0) {
+                    console.log(yScale(_token1Range[1]))
                     if (yScale(_token1Range[1]) < 0 && yScale(_token1Range[1]) + token0Height > height) {
                         outOfChart = true
                         token0Height = height
@@ -273,7 +290,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         outOfChart = true
                         token0Height = token0Height - Math.abs(yScale(_token1Range[1]))
                     } else if (yScale(_token1Range[1]) + token0Height > height) {
-                        outOfChart = true
+                        console.log('aa')
                         token0Height = token0Height - (yScale(_token1Range[1]) + token0Height - height)
                     }
                 }
@@ -283,13 +300,11 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     .attr('id', `pos-${key}`)
                     .attr('width', xScale(+pos.startTime * 1000) < 0 ? width : width - xScale(+pos.startTime * 1000))
                     .attr('height', token === ChartToken.TOKEN1 ? token1Height : token0Height)
-                    .attr('fill', stc(key))
+                    .attr('fill', hexToRgbA(stc(key), 0.2))
                     .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1])))
                     .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
-                    // .style('opacity', '0.1')
-                    // .style('stroke', 'black')
-                    // .style('stroke-width', '1px')
-
+                    .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
+                    .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
                 res.push(rect)
             }
         }
@@ -348,7 +363,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const pricesRangesGroup = create('svg:g')
         .style('pointer-events', 'none')
 
-
     const Line = create('svg:line')
         .attr('id', 'pointer2')
         .attr('x1', '0px')
@@ -359,6 +373,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .style('stroke-dasharray', '5, 5')
         .style('stroke', 'var(--primary)')
         .style('display', 'none')
+        .style('pointer-events', 'none')
+        .style('user-select', 'none')
 
     const LineHorizontal = create('svg:line')
         .attr('id', 'pointer3')
@@ -378,17 +394,17 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const InfoRect = create('svg:rect')
         .append('rect')
         .attr('id', 'info-label')
-        .attr('width', `${type === ChartType.PRICE ? '190px' : '160px'}`)
-        .attr('height', '68px')
-        .attr('rx', '12')
+        .attr('width', `${type === ChartType.PRICE ? '60px' : '160px'}`)
+        .attr('height', type === ChartType.PRICE ? '20px' : '68px')
+        .attr('rx', type === ChartType.PRICE ? '8' : '12')
         .style('fill', 'var(--primary)')
 
     const InfoRectFeeText = create('svg:text')
-        .attr('transform', `translate(${type === ChartType.PRICE ? '95' : '80'}, 25)`)
+        .attr('transform', `translate(${type === ChartType.PRICE ? '30,10' : '80,25'})`)
         .attr('fill', 'white')
         .attr('text-anchor', 'middle')
         .attr('alignment-baseline', 'central')
-        .attr('font-size', '22px')
+        .attr('font-size', type === ChartType.PRICE ? '12px' : '22px')
 
     const InfoRectDateText = create('svg:text')
         .attr('transform', 'translate(80, 50)')
@@ -397,13 +413,91 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .attr('alignment-baseline', 'central')
         .attr('font-size', '12px')
 
+    const DateRectGroup = create('svg:g')
+        .style('pointer-events', 'none')
+        .style('display', 'none')
+
+    const DateRect = create('svg:rect')
+        .append('rect')
+        .attr('id', 'info-label')
+        .attr('width', '60px')
+        .attr('height', '20px')
+        .attr('rx', '8')
+        .style('fill', 'var(--primary)')
+
+    const DateRectText = create('svg:text')
+        .attr('transform', `translate(30,10)`)
+        .attr('fill', 'white')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'central')
+        .attr('font-size', '12px')
+
+
+    const MaxPriceRectGroup = create('svg:g')
+        .style('pointer-events', 'none')
+        .style('display', 'none')
+
+    const MaxPriceRect = create('svg:rect')
+        .append('rect')
+        .attr('width', '60px')
+        .attr('height', '20px')
+        .attr('rx', '8')
+
+    const MaxPriceRectText = create('svg:text')
+        .attr('transform', `translate(30,10)`)
+        .attr('fill', 'black)')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'central')
+        .attr('font-size', '12px')
+
+    const MinPriceRectGroup = create('svg:g')
+        .style('pointer-events', 'none')
+        .style('display', 'none')
+
+    const MinPriceRect = create('svg:rect')
+        .append('rect')
+        .attr('width', '60px')
+        .attr('height', '20px')
+        .attr('rx', '8')
+
+    const MinPriceRectText = create('svg:text')
+        .attr('transform', `translate(30,10)`)
+        .attr('fill', 'black')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'central')
+        .attr('font-size', '12px')
+
+
     if (InfoRectGroup) {
         // @ts-ignore
         InfoRectGroup.node().append(InfoRect.node())
         // @ts-ignore
         InfoRectGroup.node().append(InfoRectFeeText.node())
+        if (type !== ChartType.PRICE) {
+            // @ts-ignore
+            InfoRectGroup.node().append(InfoRectDateText.node())
+        }
+    }
+
+    if (DateRectGroup) {
         // @ts-ignore
-        InfoRectGroup.node().append(InfoRectDateText.node())
+        DateRectGroup.node().append(DateRect.node())
+        // @ts-ignore
+        DateRectGroup.node().append(DateRectText.node())
+    }
+
+    if (MaxPriceRectGroup) {
+        // @ts-ignore
+        MaxPriceRectGroup.node()?.append(MaxPriceRect.node())
+        // @ts-ignore
+        MaxPriceRectGroup.node()?.append(MaxPriceRectText.node())
+    }
+
+    if (MinPriceRectGroup) {
+        // @ts-ignore
+        MinPriceRectGroup.node()?.append(MinPriceRect.node())
+        // @ts-ignore
+        MinPriceRectGroup.node()?.append(MinPriceRectText.node())
     }
 
     const Focus = create('svg:circle')
@@ -413,6 +507,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .attr('r', 5.5)
         .style('opacity', 1)
         .style('display', 'none')
+        .style('pointer-events', 'none')
 
 
     useEffect(() => {
@@ -420,6 +515,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
         const svgEl = select(svgRef.current)
         svgEl.selectAll('*').remove()
+
+        let isEntered = false
 
         const svg = svgEl
             .append('g')
@@ -430,6 +527,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 Line.style('display', 'block')
                 LineHorizontal.style('display', 'block')
                 InfoRectGroup.style('display', 'block')
+                DateRectGroup.style('display', 'block')
                 Focus.style('display', 'block')
             })
 
@@ -438,46 +536,19 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 Line.style('display', 'none')
                 LineHorizontal.style('display', 'none')
                 InfoRectGroup.style('display', 'none')
+                DateRectGroup.style('display', 'none')
+                MaxPriceRectGroup.style('display', 'none')
+                MinPriceRectGroup.style('display', 'none')
                 Focus.style('display', 'none')
+                isEntered = false
             })
-
-        if (type === ChartType.PRICE) {
-            svg
-                .on('mousemove', ({ clientX, clientY }) => {
-
-                    let minS = Number.MAX_SAFE_INTEGER
-                    let closestRect: any
-
-
-                    priceRects?.map(item => {
-                        const node = item.node().getBoundingClientRect()
-
-                        if (clientX > node.x && clientX < node.x + node.width && clientY > node.y && clientY < node.y + node.height) {
-                            const S = node.width * node.height
-                            if (S <= minS) {
-                                minS = S
-                                closestRect = item.node()
-                            }
-                        }
-                    })
-                    closestRect?.setAttribute('stroke', 'red')
-                    closestRect?.setAttribute('stroke-width', '1px')
-
-                    priceRects?.forEach(rect => {
-
-                        if (rect.node() !== closestRect) {
-                            rect.node().setAttribute('stroke', 'none')
-                        }
-
-                    } )
-                })
-        }
 
         svg
             .on('tap', () => {
                 Line.style('display', 'block')
                 LineHorizontal.style('display', 'block')
                 InfoRectGroup.style('display', 'block')
+                DateRectGroup.style('display', 'block')
                 Focus.style('display', 'block')
             })
 
@@ -596,44 +667,106 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     select(el).attr('display', 'none')
                 }
 
-                const hoverHandle = function(e: any) {
-                    const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
-                    const date = new Date(_chartData[i]?.timestamp)
-                    Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
-                    //@ts-ignore
-                    LineHorizontal.attr('y1', `${yScale(_chartData[i]?.value)}px`).attr('y2', `${yScale(_chartData[i]?.value)}px`)
-                    //@ts-ignore
-                    InfoRectGroup.attr('transform', `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) - (type === ChartType.PRICE ? 95 : 80)},${yScale(_chartData[i]?.value) - 68})`)
-                    InfoRectFeeText.property('innerHTML', `
+                const hoverHandle = function({ clientX, clientY }: any) {
+
+                    throttle(({ clientX, clientY }: any) => {
+
+                        const isOverflowing = Number(xTranslate) + 150 + 16 > dimensions.width
+                        const date = new Date(_chartData[i]?.timestamp)
+                        Line.attr('x1', `${xTranslate}px`).attr('x2', `${xTranslate}px`)
+                        //@ts-ignore
+                        LineHorizontal.attr('y1', `${yScale(_chartData[i]?.value)}px`).attr('y2', `${yScale(_chartData[i]?.value)}px`)
+                        //@ts-ignore
+                        InfoRectGroup.attr('transform', type === ChartType.PRICE ? `translate(-60, ${yScale(_chartData[i]?.value) - 10})` : `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) - 80},${yScale(_chartData[i]?.value) - 68})`)
+                        DateRectGroup.attr('transform', `translate(${Number(xTranslate) - 30}, ${height + 22})`)
+
+                        InfoRectFeeText.property('innerHTML', `
                         ${type === ChartType.PRICE || type === ChartType.FEES ? '' : '$'}
                         ${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? 5 : 2)}
-                        ${type === ChartType.FEES ? '%' : type === ChartType.PRICE ? `${token === ChartToken.TOKEN0 ? token0 : token1}` : ''}`
-                    )
-                    InfoRectDateText.property('innerHTML', `${convertLocalDate(date)} ${span === ChartSpan.DAY ? convertDateTime(date) : ''}`)
-                    // @ts-ignore
-                    Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${yScale(_chartData[i]?.value)})`)
+                        ${type === ChartType.FEES ? '%' : ''}`
+                        )
+
+                        DateRectText.property('innerHTML', `${convertLocalDate(date)} ${span === ChartSpan.DAY ? convertDateTime(date) : ''}`)
+
+                        InfoRectDateText.property('innerHTML', `${convertLocalDate(date)} ${span === ChartSpan.DAY ? convertDateTime(date) : ''}`)
+                        // @ts-ignore
+                        Focus.attr('transform', `translate(${xScale(_chartData[i].timestamp)},${yScale(_chartData[i]?.value)})`)
+
+
+                        if (type === ChartType.PRICE) {
+                            let minS = Number.MAX_SAFE_INTEGER
+                            let closestRect: any
+
+                            MaxPriceRectGroup.style('display', 'none')
+                            MinPriceRectGroup.style('display', 'none')
+
+                            priceRects?.map(item => {
+                                const node = item.node().getBoundingClientRect()
+
+                                if (clientX > node.x && clientX < node.x + node.width && clientY > node.y && clientY < node.y + node.height) {
+                                    const S = node.width * node.height
+                                    if (S <= minS) {
+
+                                        MaxPriceRectGroup.style('display', 'block')
+                                        MinPriceRectGroup.style('display', 'block')
+
+                                        MaxPriceRectGroup.attr('transform', `translate(-60, ${item.node().y.baseVal.value - 10})`)
+                                        MaxPriceRect.attr('fill', hexToRgbA(stc(item.node()?.id.split('-')[1]), 1))
+                                        MaxPriceRectText.property('innerHTML', `${Number(item.node().attributes.max.value).toFixed(5)}`)
+
+                                        MinPriceRectGroup.attr('transform', `translate(-60, ${item.node().y.baseVal.value + node.height - 10})`)
+                                        MinPriceRect.attr('fill', hexToRgbA(stc(item.node()?.id.split('-')[1]), 1))
+                                        MinPriceRectText.property('innerHTML', `${Number(item.node().attributes.min.value).toFixed(5)}`)
+
+                                        minS = S
+                                        closestRect = item.node()
+                                    }
+                                }
+                            })
+                            closestRect?.setAttribute('stroke', hexToRgbA(stc(closestRect?.id.split('-')[1]), 0.8))
+                            closestRect?.setAttribute('stroke-width', '1px')
+
+                            priceRects?.forEach(rect => {
+
+                                if (rect.node() !== closestRect) {
+                                    rect.node().setAttribute('stroke', 'none')
+                                }
+
+                            })
+
+                        }
+
+                    },  isEntered ? 55 : 0)({clientX, clientY})
+
+                    if (!isEntered) {
+                        isEntered = true
+                    }
+
                 }
 
                 const rect = create('svg:rect')
                     .attr('x', `${+xTranslate - tickWidth / 2}px`)
                     .attr('y', `-${0}px`)
-                    .attr('width', `${tickWidth}px`)
+                    .attr('width', `${tickWidth + 2}px`)
                     .attr('height', `${dimensions.height}px`)
                     .attr('fill', 'transparent')
-                    .on('mouseover', hoverHandle)
+                    .on('mousemove', hoverHandle)
                     .on('touchmove', hoverHandle)
 
                 // @ts-ignore
                 svg.node().append(rect.node())
             })
 
+        svg.append(() => Line.node())
+        svg.append(() => LineHorizontal.node())
         priceRects?.forEach(item => {
             pricesRangesGroup.node()?.append(item.node())
         })
-        svg.append(() => Line.node())
-        svg.append(() => LineHorizontal.node())
         svg.append(() => pricesRangesGroup.node())
+        svg.append(() => MaxPriceRectGroup.node())
+        svg.append(() => MinPriceRectGroup.node())
         svg.append(() => InfoRectGroup.node())
+        svg.append(() => DateRectGroup.node())
         svg.append(() => Focus.node())
     }, [data, selected])
 

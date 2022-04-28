@@ -57,7 +57,7 @@ export default function Modal({ isOpen, onDismiss, minHeight = false, maxHeight 
                                 {...(isMobile
                                     ? {
                                           ...bind(),
-                                          style: { transform: y.interpolate((y) => `translateY(${(y as number) > 0 ? y : 0}px)`) },
+                                          style: { transform: `translateY(-3rem)` },
                                       }
                                     : {
                                           style: { width: fitContent ? "unset" : "700px" },

@@ -4,7 +4,11 @@ import { darken } from 'polished'
 export const CautionModalInner = styled.div`
   padding: 2rem;
   line-height: 26px;
-    color: white;
+  color: white;
+
+  ${({theme}) => theme.mediaWidth.upToSmall`
+    overflow: auto;
+  `}
 `
 export const CautionList = styled.ul`
   list-style: decimal;

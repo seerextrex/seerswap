@@ -65,6 +65,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
           css`
               width: 100vw;
               border-radius: 20px 20px 0 0;
+              padding-bottom: 3rem;
           `
       }
     `}

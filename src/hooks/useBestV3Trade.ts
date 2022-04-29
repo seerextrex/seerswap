@@ -16,7 +16,7 @@ export enum V3TradeState {
     SYNCING,
 }
 
-const DEFAULT_GAS_QUOTE = 2_000_000
+const DEFAULT_GAS_QUOTE = 20_000_000
 
 /**
  * Returns the best v3 trade for a desired exact input swap
@@ -108,7 +108,7 @@ export function useBestV3TradeExactIn(
         if (!prevTrade) return trade
 
         if (!trade.trade && prevTrade.trade) return prevTrade
-  
+
         return trade
     }, [trade])
 

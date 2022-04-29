@@ -21,9 +21,9 @@ export function useRouterTradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
                 type: 'exactIn'
             }
             : skipToken,
-        { pollingInterval: ms`10s` }
+        { pollingInterval: ms`1s` }
     )
-    
+
     // todo(judo): validate block number for freshness
 
     return !isLoading && !isError ? data?.routeString : undefined

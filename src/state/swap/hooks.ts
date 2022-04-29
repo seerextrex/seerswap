@@ -35,7 +35,7 @@ export function useSwapActionHandlers(): {
 
     let symbol: string
 
-    if (chainId === 137) {
+    if (chainId === 80001) {
         symbol = 'MATIC'
     }
 
@@ -122,8 +122,9 @@ export function useDerivedSwapInfo(): {
         recipient
     } = useSwapState()
 
-    const inputCurrency = useCurrency(inputCurrencyId)
-    const outputCurrency = useCurrency(outputCurrencyId)
+
+    const inputCurrency = useCurrency(inputCurrencyId || '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
+    const outputCurrency = useCurrency(outputCurrencyId || '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
 
     const recipientLookup = useENS(recipient ?? undefined)
     const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
@@ -210,7 +211,7 @@ export function useDerivedSwapInfo(): {
 function parseCurrencyFromURLParameter(urlParam: any, chainId: number): string {
     let chainSymbol
 
-    if (chainId === 137) {
+    if (chainId === 80001) {
         chainSymbol = 'MATIC'
     }
 
@@ -247,7 +248,7 @@ export function queryParametersToSwapState(parsedQs: ParsedQs, chainId: number):
     let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency, chainId)
     if (inputCurrency === '' && outputCurrency === '') {
         // default to ETH input
-        if (chainId === 137) {
+        if (chainId === 80001) {
             inputCurrency = 'MATIC'
         }
     } else if (inputCurrency === outputCurrency) {

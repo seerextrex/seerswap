@@ -66,8 +66,13 @@ export const NFTPositionSelectCircle = styled.div<{ selected?: boolean; skeleton
     background-color: ${({ selected }) => (selected ? '#3970FF' : 'transparent')}
 `
 export const NFTPositionIcon = styled.div<{ skeleton?: boolean; name?: string }>`
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
     border-radius: 50%;
     background: ${({ name }) => (name ? gradient('token' + name) : '')};
     ${({ skeleton }) =>

@@ -12,6 +12,7 @@ export const formatDollarAmount = (num: number | undefined, digits = 2, round = 
         average: round,
         mantissa: num > 1000 ? 2 : digits,
         abbreviations: {
+            thousand: 'K',
             million: 'M',
             billion: 'B'
         }
@@ -40,6 +41,7 @@ export const formatAmount = (num: number | undefined, digits = 3) => {
         average: true,
         mantissa: num > 1000 ? 2 : digits,
         abbreviations: {
+            thousand: 'K',
             million: 'M',
             billion: 'B'
         }
@@ -47,7 +49,7 @@ export const formatAmount = (num: number | undefined, digits = 3) => {
 }
 
 
-export const formatAmountTokens = (num: number | undefined, digits = 3) => {
+export const formatAmountTokens = (num: number | undefined, average?: any) => {
     if (num === 0) return '0'
     if (!num) return '-'
     if (num < 0.001) {
@@ -55,5 +57,11 @@ export const formatAmountTokens = (num: number | undefined, digits = 3) => {
     }
     return numbro(num).format({
         thousandSeparated: true,
+        average: !!average,
+        mantissa: 1,
+        abbreviations: {
+            thousand: 'K',
+            billion: 'B',
+        }
     })
 }

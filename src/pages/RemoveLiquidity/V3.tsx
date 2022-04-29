@@ -91,7 +91,6 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
     const prevDerivedInfo = usePrevious({ ...derivedInfo });
     const { positionSDK, liquidityPercentage, liquidityValue0, liquidityValue1, feeValue0, feeValue1, outOfRange, error } = useMemo(() => {
         if ((!derivedInfo.feeValue0 || !derivedInfo.liquidityValue0 || !derivedInfo.position) && prevDerivedInfo) {
-            // console.log(prevDerivedInfo)
             return {
                 positionSDK: prevDerivedInfo.position,
                 error: prevDerivedInfo.error,

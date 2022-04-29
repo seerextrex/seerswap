@@ -7,7 +7,7 @@ import { V2_FACTORY_ADDRESSES } from '../constants/addresses'
 
 // import { InsufficientReservesError, InsufficientInputAmountError } from '../errors'
 
-export const FACTORY_ADDRESS = V2_FACTORY_ADDRESSES[137]
+export const FACTORY_ADDRESS = V2_FACTORY_ADDRESSES[80001]
 export const SUSHI_FACTORY_ADDRESS = '0xc35dadb65012ec5796536bd9864ed8773abc74c4'
 
 export const INIT_CODE_HASH = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f'

@@ -68,6 +68,12 @@ export interface FarmingEvent extends DefaultFarmingEvent {
     pool: PoolSubgraph
     bonusRewardToken: TokenSubgraph
     rewardToken: TokenSubgraph
+    level1multiplier: string
+    level2multiplier: string
+    level3multiplier: string
+    algbAmountForLevel1: string
+    algbAmountForLevel2: string
+    algbAmountForLevel3: string
 }
 
 export interface FarmingEventString extends DefaultFarmingEvent {

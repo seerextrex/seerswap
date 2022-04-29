@@ -24,15 +24,15 @@ interface SpecialTokensInterface {
 }
 
 export const specialTokens: SpecialTokensInterface = {
-    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
+    ['0xafc507028f15b33071226faa315525131f8326f1']: {
         name: 'USDC',
         logo: USDCLogo
     },
-    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
+    ['0xe0eed4d7b02b5ec02e2b4bef2755fd47f14bb7b4']: {
         name: 'ALGB',
         logo: AlgebraLogo
     },
-    ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
+    ['0x5e716825c2368000df026372173b4c4dc2ce8a8b']: {
         name: 'WMATIC',
         logo: WMATICLogo
     },

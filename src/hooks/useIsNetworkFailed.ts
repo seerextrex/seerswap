@@ -7,7 +7,7 @@ import useCurrentBlockTimestamp from './useCurrentBlockTimestamp'
 import ms from 'ms.macro'
 
 const DEFAULT_MS_BEFORE_WARNING = ms`5m`
-const NETWORK_HEALTH_CHECK_MS = ms`1s`
+const NETWORK_HEALTH_CHECK_MS = ms`10s`
 
 const useMachineTimeMs = (updateInterval: number): number => {
     const [now, setNow] = useState(Date.now())

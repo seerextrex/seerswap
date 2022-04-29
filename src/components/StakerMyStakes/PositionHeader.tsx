@@ -47,13 +47,13 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
                     </div>
                 </div>
-                <div className="f f-ac ml-2 mxs_ml-0 mxs_mv-1">
+                {/* <div className="f f-ac ml-2 mxs_ml-0 mxs_mv-1">
                     <CurrencyLogo currency={new Token(137, el.lockedToken.id, +el.lockedToken.decimals, el.lockedToken.symbol) as WrappedCurrency} size={"35px"} />
                     <div className="ml-05">
                         <div className={"b fs-075"}>LOCKED</div>
                         <div>{`${formatAmountTokens(+el.algbLocked / Math.pow(10, +el.lockedToken.decimals))} ${el.lockedToken.symbol}`}</div>
                     </div>
-                </div>
+                </div> */}
             </div>
             <div className={"my-stakes__position-card__header__row"}>
                 {!el.incentive && !el.eternalFarming && (

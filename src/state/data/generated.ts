@@ -6522,7 +6522,7 @@ export type TransferedPositionsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming'>
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'algbLocked'>
   )> }
 );
 
@@ -6985,6 +6985,7 @@ export const TransferedPositionsDocument = `
     eternalFarming
     onFarmingCenter
     enteredInEternalFarming
+    algbLocked
   }
 }
     `;

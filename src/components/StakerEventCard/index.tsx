@@ -68,7 +68,7 @@ export function StakerEventCard({
     const _enterTime = useMemo(() => {
         if (!startTime) return [];
 
-        const date = new Date((+startTime - (2 * 24 + 4) * 60 * 60) * 1000);
+        const date = new Date((+startTime - (4 * 24 + 4) * 60 * 60) * 1000);
 
         return [convertLocalDate(date), convertDateTime(date)];
     }, [startTime]);

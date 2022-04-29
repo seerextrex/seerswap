@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 // @ts-ignore
 import MetamaskIcon from '../../assets/svg/metamask-logo.svg'
-import { injected } from '../../connectors'
+import { injected, OntoWalletConnector } from '../../connectors'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import usePrevious from '../../hooks/usePrevious'
 import { ApplicationModal } from '../../state/application/actions'
@@ -40,7 +40,7 @@ interface WalletModalProps {
 export default function WalletModal({ pendingTransactions, confirmedTransactions, ENSName }: WalletModalProps) {
     // important that these are destructed from the account-specific web3-react context
     const { active, account, connector, activate, error, setError } = useWeb3React()
-    const qq = useWeb3React()
+
 
     const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
     const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
@@ -98,6 +98,10 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
             connector.walletConnectProvider = undefined
         }
 
+        if (connector instanceof OntoWalletConnector) {
+
+        }
+
         connector &&
         activate(connector, undefined, true)
             .then(async () => {
@@ -107,6 +111,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 }
             })
             .catch((error) => {
+                console.error(error)
                 if (error instanceof UnsupportedChainIdError) {
                     setErrorMessage('Please connect to the Polygon network.')
                     setPendingError(true)

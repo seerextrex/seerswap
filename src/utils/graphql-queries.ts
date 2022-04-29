@@ -332,6 +332,12 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           endTime
           reward
           multiplierToken
+          algbAmountForLevel1
+          algbAmountForLevel2
+          algbAmountForLevel3
+          level1multiplier
+          level2multiplier
+          level3multiplier
         }
       }
       `
@@ -359,6 +365,7 @@ export const TRANSFERED_POSITIONS = () => gql`
             eternalFarming
             onFarmingCenter
             enteredInEternalFarming
+            algbLocked
     }
 }
 `

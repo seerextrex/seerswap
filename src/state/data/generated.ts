@@ -733,13 +733,15 @@ export type Deposit = {
   __typename?: 'Deposit';
   id: Scalars['ID'];
   L2tokenId: Scalars['BigInt'];
-  liquidity: Scalars['BigInt'];
   owner: Scalars['Bytes'];
   onFarmingCenter: Scalars['Boolean'];
   pool: Scalars['Bytes'];
   incentive?: Maybe<Scalars['Bytes']>;
   eternalFarming?: Maybe<Scalars['Bytes']>;
   enteredInEternalFarming?: Maybe<Scalars['BigInt']>;
+  liquidity: Scalars['BigInt'];
+  algbLocked: Scalars['BigInt'];
+  level: Scalars['BigInt'];
 };
 
 export type Deposit_Filter = {
@@ -759,14 +761,6 @@ export type Deposit_Filter = {
   L2tokenId_lte?: Maybe<Scalars['BigInt']>;
   L2tokenId_in?: Maybe<Array<Scalars['BigInt']>>;
   L2tokenId_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  liquidity?: Maybe<Scalars['BigInt']>;
-  liquidity_not?: Maybe<Scalars['BigInt']>;
-  liquidity_gt?: Maybe<Scalars['BigInt']>;
-  liquidity_lt?: Maybe<Scalars['BigInt']>;
-  liquidity_gte?: Maybe<Scalars['BigInt']>;
-  liquidity_lte?: Maybe<Scalars['BigInt']>;
-  liquidity_in?: Maybe<Array<Scalars['BigInt']>>;
-  liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -803,6 +797,30 @@ export type Deposit_Filter = {
   enteredInEternalFarming_lte?: Maybe<Scalars['BigInt']>;
   enteredInEternalFarming_in?: Maybe<Array<Scalars['BigInt']>>;
   enteredInEternalFarming_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  liquidity?: Maybe<Scalars['BigInt']>;
+  liquidity_not?: Maybe<Scalars['BigInt']>;
+  liquidity_gt?: Maybe<Scalars['BigInt']>;
+  liquidity_lt?: Maybe<Scalars['BigInt']>;
+  liquidity_gte?: Maybe<Scalars['BigInt']>;
+  liquidity_lte?: Maybe<Scalars['BigInt']>;
+  liquidity_in?: Maybe<Array<Scalars['BigInt']>>;
+  liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  algbLocked?: Maybe<Scalars['BigInt']>;
+  algbLocked_not?: Maybe<Scalars['BigInt']>;
+  algbLocked_gt?: Maybe<Scalars['BigInt']>;
+  algbLocked_lt?: Maybe<Scalars['BigInt']>;
+  algbLocked_gte?: Maybe<Scalars['BigInt']>;
+  algbLocked_lte?: Maybe<Scalars['BigInt']>;
+  algbLocked_in?: Maybe<Array<Scalars['BigInt']>>;
+  algbLocked_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  level?: Maybe<Scalars['BigInt']>;
+  level_not?: Maybe<Scalars['BigInt']>;
+  level_gt?: Maybe<Scalars['BigInt']>;
+  level_lt?: Maybe<Scalars['BigInt']>;
+  level_gte?: Maybe<Scalars['BigInt']>;
+  level_lte?: Maybe<Scalars['BigInt']>;
+  level_in?: Maybe<Array<Scalars['BigInt']>>;
+  level_not_in?: Maybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
 };
@@ -810,13 +828,15 @@ export type Deposit_Filter = {
 export enum Deposit_OrderBy {
   Id = 'id',
   L2tokenId = 'L2tokenId',
-  Liquidity = 'liquidity',
   Owner = 'owner',
   OnFarmingCenter = 'onFarmingCenter',
   Pool = 'pool',
   Incentive = 'incentive',
   EternalFarming = 'eternalFarming',
-  EnteredInEternalFarming = 'enteredInEternalFarming'
+  EnteredInEternalFarming = 'enteredInEternalFarming',
+  Liquidity = 'liquidity',
+  AlgbLocked = 'algbLocked',
+  Level = 'level'
 }
 
 export type EternalFarming = {
@@ -1511,6 +1531,13 @@ export type Incentive = {
   reward: Scalars['BigInt'];
   bonusReward: Scalars['BigInt'];
   isDetached?: Maybe<Scalars['Boolean']>;
+  algbAmountForLevel1: Scalars['BigInt'];
+  algbAmountForLevel2: Scalars['BigInt'];
+  algbAmountForLevel3: Scalars['BigInt'];
+  level1multiplier: Scalars['BigInt'];
+  level2multiplier: Scalars['BigInt'];
+  level3multiplier: Scalars['BigInt'];
+  multiplierToken: Scalars['Bytes'];
 };
 
 export type Incentive_Filter = {
@@ -1584,6 +1611,60 @@ export type Incentive_Filter = {
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  algbAmountForLevel1?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel1_not?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel1_gt?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel1_lt?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel1_gte?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel1_lte?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel1_in?: Maybe<Array<Scalars['BigInt']>>;
+  algbAmountForLevel1_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  algbAmountForLevel2?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel2_not?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel2_gt?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel2_lt?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel2_gte?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel2_lte?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel2_in?: Maybe<Array<Scalars['BigInt']>>;
+  algbAmountForLevel2_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  algbAmountForLevel3?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel3_not?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel3_gt?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel3_lt?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel3_gte?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel3_lte?: Maybe<Scalars['BigInt']>;
+  algbAmountForLevel3_in?: Maybe<Array<Scalars['BigInt']>>;
+  algbAmountForLevel3_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  level1multiplier?: Maybe<Scalars['BigInt']>;
+  level1multiplier_not?: Maybe<Scalars['BigInt']>;
+  level1multiplier_gt?: Maybe<Scalars['BigInt']>;
+  level1multiplier_lt?: Maybe<Scalars['BigInt']>;
+  level1multiplier_gte?: Maybe<Scalars['BigInt']>;
+  level1multiplier_lte?: Maybe<Scalars['BigInt']>;
+  level1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  level1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  level2multiplier?: Maybe<Scalars['BigInt']>;
+  level2multiplier_not?: Maybe<Scalars['BigInt']>;
+  level2multiplier_gt?: Maybe<Scalars['BigInt']>;
+  level2multiplier_lt?: Maybe<Scalars['BigInt']>;
+  level2multiplier_gte?: Maybe<Scalars['BigInt']>;
+  level2multiplier_lte?: Maybe<Scalars['BigInt']>;
+  level2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  level2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  level3multiplier?: Maybe<Scalars['BigInt']>;
+  level3multiplier_not?: Maybe<Scalars['BigInt']>;
+  level3multiplier_gt?: Maybe<Scalars['BigInt']>;
+  level3multiplier_lt?: Maybe<Scalars['BigInt']>;
+  level3multiplier_gte?: Maybe<Scalars['BigInt']>;
+  level3multiplier_lte?: Maybe<Scalars['BigInt']>;
+  level3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  level3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  multiplierToken?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not?: Maybe<Scalars['Bytes']>;
+  multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  multiplierToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  multiplierToken_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not_contains?: Maybe<Scalars['Bytes']>;
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
 };
@@ -1598,7 +1679,14 @@ export enum Incentive_OrderBy {
   EndTime = 'endTime',
   Reward = 'reward',
   BonusReward = 'bonusReward',
-  IsDetached = 'isDetached'
+  IsDetached = 'isDetached',
+  AlgbAmountForLevel1 = 'algbAmountForLevel1',
+  AlgbAmountForLevel2 = 'algbAmountForLevel2',
+  AlgbAmountForLevel3 = 'algbAmountForLevel3',
+  Level1multiplier = 'level1multiplier',
+  Level2multiplier = 'level2multiplier',
+  Level3multiplier = 'level3multiplier',
+  MultiplierToken = 'multiplierToken'
 }
 
 export type Mint = {
@@ -6252,7 +6340,7 @@ export type FetchIncentiveQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'createdAtTimestamp'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp'>
   )> }
 );
 
@@ -6393,7 +6481,7 @@ export type FutureEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward'>
+    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
   )> }
 );
 
@@ -6407,7 +6495,7 @@ export type CurrentEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
   )> }
 );
 
@@ -6652,6 +6740,7 @@ export const FetchIncentiveDocument = `
     endTime
     reward
     bonusReward
+    multiplierToken
     createdAtTimestamp
   }
 }
@@ -6833,6 +6922,13 @@ export const FutureEventsDocument = `
     startTime
     endTime
     reward
+    level1multiplier
+    level2multiplier
+    level3multiplier
+    algbAmountForLevel1
+    algbAmountForLevel2
+    algbAmountForLevel3
+    multiplierToken
   }
 }
     `;
@@ -6851,6 +6947,13 @@ export const CurrentEventsDocument = `
     startTime
     endTime
     reward
+    level1multiplier
+    level2multiplier
+    level3multiplier
+    algbAmountForLevel1
+    algbAmountForLevel2
+    algbAmountForLevel3
+    multiplierToken
   }
 }
     `;

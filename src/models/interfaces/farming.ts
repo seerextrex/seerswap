@@ -85,6 +85,13 @@ export interface FarmingEventString extends DefaultFarmingEvent {
 
 export interface FutureFarmingEvent extends FarmingEventString {
     createdAtTimestamp: string
+    multiplierToken: string
+    algbAmountForLevel1: string
+    algbAmountForLevel2: string
+    algbAmountForLevel3: string
+    level1multiplier: string
+    level2multiplier: string
+    level3multiplier: string
 }
 
 export interface Deposit {
@@ -120,6 +127,8 @@ export interface Deposit {
     token0: string
     token1: string
     l2TokenId: string | null
+    algbLocked: string
+    lockedToken: any
 }
 
 export interface StakeDefault {

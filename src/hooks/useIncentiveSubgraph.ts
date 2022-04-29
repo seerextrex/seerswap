@@ -172,6 +172,7 @@ export function useIncentiveSubgraph() {
         }
     }
 
+
     async function fetchEternalFarming(farmId: string) {
 
         try {
@@ -311,20 +312,20 @@ export function useIncentiveSubgraph() {
             const eventTVL = await fetchLimitFarmTVL()
             const aprs: Aprs = await fetchLimitFarmAPR()
 
-            const price = 1.7
+            const price = 1.3
 
-            const EVENT_LOCK = 600_000
+            const EVENT_LOCK = 700_000
 
             setAllEvents({
                 currentEvents: await getEvents(currentEvents.map(el => ({
                     ...el,
                     active: true,
-                    apr: aprs[el.id]
+                    apr: aprs[el.id] ? aprs[el.id] : 37
                 }))),
                 futureEvents: await getEvents(futureEvents.map(el => ({
                     ...el,
                     locked: eventTVL[el.id] === undefined ? false : eventTVL[el.id] * price >= EVENT_LOCK,
-                    apr: aprs[el.id]
+                    apr: aprs[el.id] ? aprs[el.id] : 37
                 })))
             })
 
@@ -397,7 +398,12 @@ export function useIncentiveSubgraph() {
                         provider.getSigner()
                     )
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp } = await fetchIncentive(position.incentive)
+                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, multiplierToken, algbAmountForLevel1,
+                        algbAmountForLevel2,
+                        algbAmountForLevel3,
+                        level1multiplier,
+                        level2multiplier,
+                        level3multiplier } = await fetchIncentive(position.incentive)
 
                     const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
                         [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
@@ -406,6 +412,7 @@ export function useIncentiveSubgraph() {
 
                     const _rewardToken = await fetchToken(rewardToken)
                     const _bonusRewardToken = await fetchToken(bonusRewardToken)
+                    const _multiplierToken = await fetchToken(multiplierToken)
                     const _pool = await fetchPool(pool)
 
                     _position = {
@@ -420,7 +427,14 @@ export function useIncentiveSubgraph() {
                         ended: +endTime * 1000 < Date.now(),
                         createdAtTimestamp: +createdAtTimestamp,
                         incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
-                        incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0
+                        incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
+                        lockedToken: _multiplierToken,
+                        algbAmountForLevel1,
+                        algbAmountForLevel2,
+                        algbAmountForLevel3,
+                        level1multiplier,
+                        level2multiplier,
+                        level3multiplier
                     }
 
                 } else {

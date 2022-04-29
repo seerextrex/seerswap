@@ -74,7 +74,7 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                 </span>
                 <div className="ml-a f f-ac farming-tier__hint">
                     <HelpCircle color="#347CC9" size={"14px"} />
-                    <a href="/" className="ml-05">
+                    <a href="https://help.algebra.finance/en/farm/multi-level-farming-on-algebra" target={"_blank"} rel={"noreferrer noopener"} className="ml-05">
                         How tiers work
                     </a>
                 </div>
@@ -91,7 +91,7 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                             </div>
                         </div>
                         <div className="p-1 farming-tier__body w-100">
-                            <div className="farming-tier__locked w-100 f mb-1">
+                            <div className="farming-tier__locked w-100 f ac mb-1">
                                 <span className="b">Lock:</span>
                                 <span className="ml-a farming-tier__locked-value">
                                     {tier.lock ? `${formatAmountTokens(tier.lock / Math.pow(10, +lockedToken.decimals), true)} ${lockedToken.symbol}` : "-"}

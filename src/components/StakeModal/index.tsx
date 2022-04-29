@@ -93,7 +93,8 @@ export function StakeModal({
     }, [positionsForPool]);
     const [chunkedPositions, setChunkedPositions] = useState<any[][] | null | undefined>(null);
 
-    const _chunked = useChunkedRows(positionsForStake, 3);
+    //TODO
+    const _chunked = useChunkedRows(positionsForStake, 1000);
 
     const [submitState, setSubmitState] = useState(0);
     const [submitLoader, setSubmitLoader] = useState(false);

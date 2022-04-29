@@ -8,6 +8,7 @@ import Loader from "../Loader";
 import { ChevronsUp, Send } from "react-feather";
 import { Deposit, UnstakingInterface } from "../../models/interfaces";
 import { t } from "@lingui/macro";
+import { formatAmountTokens } from "utils/numbers";
 
 interface PositionHeaderProps {
     el: Deposit;
@@ -27,17 +28,30 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </NFTPositionIcon>
                     <div className={"ml-05"}>
                         <IsActive el={el} />
-                        <a style={{textDecoration: 'underline'}} className={"c-w fs-075"} href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`} rel="noopener noreferrer" target="_blank">
+                        <a
+                            style={{ textDecoration: "underline" }}
+                            className={"c-w fs-075"}
+                            href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
                             View position
                         </a>
                     </div>
                 </div>
                 <div className={"f f-ac ml-2 mxs_ml-0 mxs_mv-1"}>
-                    <CurrencyLogo currency={new Token(80001, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
-                    <CurrencyLogo currency={new Token(80001, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
+                    <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
+                    <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
                     <div className={"ml-05"}>
                         <div className={"b fs-075"}>POOL</div>
                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
+                    </div>
+                </div>
+                <div className="f f-ac ml-2 mxs_ml-0 mxs_mv-1">
+                    <CurrencyLogo currency={new Token(137, el.lockedToken.id, +el.lockedToken.decimals, el.lockedToken.symbol) as WrappedCurrency} size={"35px"} />
+                    <div className="ml-05">
+                        <div className={"b fs-075"}>LOCKED</div>
+                        <div>{`${formatAmountTokens(+el.algbLocked / Math.pow(10, +el.lockedToken.decimals))} ${el.lockedToken.symbol}`}</div>
                     </div>
                 </div>
             </div>

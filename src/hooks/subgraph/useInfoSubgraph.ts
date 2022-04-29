@@ -212,7 +212,7 @@ export function useInfoSubgraph() {
             setPools(Object.values(formatted))
 
         } catch (err) {
-            console.log('ERROR', err)
+            console.error('ERROR', err)
             setPools('failed')
             throw new Error('Info pools fetch ' + err)
         } finally {

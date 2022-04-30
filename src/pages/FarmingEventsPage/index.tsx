@@ -63,7 +63,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
                             />
                         );
                     })}
-                    {/* {Date.now() < 1647356400000 && <StakerEventCard secret />} */}
+                    {Date.now() < 1652108400000 && <StakerEventCard secret />}
                 </div>
             ) : formattedData && formattedData.length === 0 ? (
                 Date.now() < 1651244400000 ? (

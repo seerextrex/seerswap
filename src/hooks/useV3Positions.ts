@@ -152,8 +152,8 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
     const transferredTokenIds = useMemo(() => {
 
-        if (positionsOnFarmer) {
-            return positionsOnFarmer
+        if (positionsOnFarmer && positionsOnFarmer.transferredPositionsIds) {
+            return positionsOnFarmer.transferredPositionsIds
         }
 
         return []
@@ -163,12 +163,28 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
     //@ts-ignore
     const { positions: _positionsOnFarmer, loading: _positionsOnFarmerLoading } = useV3PositionsFromTokenIds(transferredTokenIds)
 
+    const oldTransferredTokenIds = useMemo(() => {
+
+        if (positionsOnFarmer && positionsOnFarmer.oldTransferredPositionsIds) {
+            return positionsOnFarmer.oldTransferredPositionsIds
+        }
+
+        return []
+
+    }, [positionsOnFarmer, account])
+    
+    //@ts-ignore
+    const { positions: _positionsOnOldFarmer, loading: _positionsOnOldFarmerLoading } = useV3PositionsFromTokenIds(oldTransferredTokenIds)
+
     const combinedPositions = useMemo(() => {
 
-        if (positions && _positionsOnFarmer) {
+        if (positions && _positionsOnFarmer && _positionsOnOldFarmer) {
             return [...positions, ..._positionsOnFarmer.map(position => ({
                 ...position,
                 onFarming: true
+            })), ..._positionsOnOldFarmer.map(position => ({
+                ...position,
+                oldFarming: true
             }))]
         }
 

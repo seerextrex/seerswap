@@ -47,7 +47,7 @@ export function useIncentiveSubgraph() {
 
     const { chainId, account } = useActiveWeb3React()
 
-    const { dataClient, farmingClient } = useClients()
+    const { dataClient, farmingClient, oldFarmingClient } = useClients()
 
     const ethPrices = useEthPrices()
 
@@ -66,7 +66,7 @@ export function useIncentiveSubgraph() {
     const [allEvents, setAllEvents] = useState<{ currentEvents: FarmingEvent[]; futureEvents: FutureFarmingEvent[] } | null>(null)
     const [allEventsLoading, setAllEventsLoading] = useState<boolean>(false)
 
-    const [positionsOnFarmer, setPositionsOnFarmer] = useState<string[] | null>(null)
+    const [positionsOnFarmer, setPositionsOnFarmer] = useState<{transferredPositionsIds: string[], oldTransferredPositionsIds: string[]} | null>(null)
     const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState<boolean>(false)
 
     const [eternalFarms, setEternalFarms] = useState<FormattedEternalFarming[] | null>(null)
@@ -349,7 +349,7 @@ export function useIncentiveSubgraph() {
             setTransferredPositionsLoading(true)
 
             const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Deposit[]>>({
-                query: TRANSFERED_POSITIONS(),
+                query: TRANSFERED_POSITIONS(true),
                 fetchPolicy: reload ? 'network-only' : 'cache-first',
                 variables: { account }
             }))
@@ -623,22 +623,38 @@ export function useIncentiveSubgraph() {
             setPositionsOnFarmerLoading(true)
 
             const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Position[]>>({
-                query: TRANSFERED_POSITIONS(),
+                query: TRANSFERED_POSITIONS(true),
                 fetchPolicy: 'network-only',
                 variables: { account }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            if (positionsTransferred.length === 0) {
-                setPositionsOnFarmer([])
+            const { data: { deposits: oldPositionsTransferred }, error: _error } = (await oldFarmingClient.query<SubgraphResponse<Deposit[]>>({
+                query: TRANSFERED_POSITIONS(false),
+                fetchPolicy: 'network-only',
+                variables: { account }
+            }))
+
+            if (_error) throw new Error(`${_error.name} ${_error.message}`)
+
+            if (positionsTransferred.length === 0 && oldPositionsTransferred.length === 0) {
+                setPositionsOnFarmer({
+                    transferredPositionsIds: [],
+                    oldTransferredPositionsIds: []
+                })
                 setPositionsOnFarmerLoading(false)
                 return
             }
 
             const transferredPositionsIds = positionsTransferred.map(position => position.id)
 
-            setPositionsOnFarmer(transferredPositionsIds)
+            const oldTransferredPositionsIds = oldPositionsTransferred.map(position => position.id)
+
+            setPositionsOnFarmer({
+                transferredPositionsIds,
+                oldTransferredPositionsIds
+            })
 
         } catch (err) {
             setPositionsOnFarmerLoading(false)

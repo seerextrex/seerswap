@@ -75,6 +75,22 @@ export const HSM_POLYGON = new Token(
     'HoneySium'
 )
 
+export const QI_POLYGON = new Token(
+    SupportedChainId.POLYGON,
+    '0x580a84c73811e1839f75d86d75d88cca0c241ff4',
+    18,
+    'QiDAO',
+    'QI'
+)
+
+export const MAI_POLYGON = new Token(
+    SupportedChainId.POLYGON,
+    '0xa3Fa99A148fA48D14Ed51d610c367C61876997F1',
+    18,
+    'MAI',
+    'MIMATIC'
+)
+
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WMATIC

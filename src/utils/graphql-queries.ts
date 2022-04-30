@@ -53,6 +53,12 @@ query fetchIncentive($incentiveId: ID) {
         bonusReward
         multiplierToken
         createdAtTimestamp
+        level1multiplier
+        level2multiplier
+        level3multiplier
+        algbAmountForLevel1
+        algbAmountForLevel2
+        algbAmountForLevel3
     }
 }`
 
@@ -354,7 +360,7 @@ export const FROZEN_STAKED = () => gql`
 }
 `
 
-export const TRANSFERED_POSITIONS = () => gql`
+export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
     query transferedPositions ($account: Bytes) {
         deposits (orderBy: id, orderDirection: desc, where: {owner: $account, onFarmingCenter: true}) {
             id
@@ -364,8 +370,12 @@ export const TRANSFERED_POSITIONS = () => gql`
             incentive
             eternalFarming
             onFarmingCenter
-            enteredInEternalFarming
-            algbLocked
+            ${
+              tierFarming ? `
+              enteredInEternalFarming
+              algbLocked
+              level` : ''
+            }
     }
 }
 `

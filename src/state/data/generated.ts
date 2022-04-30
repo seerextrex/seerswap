@@ -6340,7 +6340,7 @@ export type FetchIncentiveQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3'>
   )> }
 );
 
@@ -6522,7 +6522,7 @@ export type TransferedPositionsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'algbLocked'>
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter'>
   )> }
 );
 
@@ -6742,6 +6742,12 @@ export const FetchIncentiveDocument = `
     bonusReward
     multiplierToken
     createdAtTimestamp
+    level1multiplier
+    level2multiplier
+    level3multiplier
+    algbAmountForLevel1
+    algbAmountForLevel2
+    algbAmountForLevel3
   }
 }
     `;
@@ -6984,8 +6990,6 @@ export const TransferedPositionsDocument = `
     incentive
     eternalFarming
     onFarmingCenter
-    enteredInEternalFarming
-    algbLocked
   }
 }
     `;

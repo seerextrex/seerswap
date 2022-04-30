@@ -58,6 +58,16 @@ const DEFAULT_TOKEN_LIST: any = {
         name: 'HSM',
         decimals: 18,
         symbol: 'HSM'
+    },
+    ['0x580a84c73811e1839f75d86d75d88cca0c241ff4']: {
+        name: 'QiDAO',
+        decimals: 18,
+        symbol: 'QI'
+    },
+    ['0xa3Fa99A148fA48D14Ed51d610c367C61876997F1']: {
+        name: 'MAI',
+        decimals: 18,
+        symbol: 'MIMATIC'
     }
 }
 

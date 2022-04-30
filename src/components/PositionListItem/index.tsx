@@ -89,6 +89,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
         tickLower: _tickLower,
         tickUpper: _tickUpper,
         onFarming: _onFarming,
+        oldFarming: _oldFarming
     } = useMemo(() => {
         if (!positionDetails && prevPositionDetails && prevPositionDetails.liquidity) {
             return { ...prevPositionDetails };
@@ -134,7 +135,7 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
     // check if price is within range
     const outOfRange: boolean = _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false;
 
-    const positionSummaryLink = `/pool/${positionDetails.tokenId}${_onFarming ? "?onFarming=true" : ""}`;
+    const positionSummaryLink = `/pool/${positionDetails.tokenId}${_onFarming ? "?onFarming=true" : _oldFarming ? "?oldFarming=true" : ""}`;
 
     const farmingLink = `/farming/farms#${positionDetails.tokenId}`;
 
@@ -154,9 +155,13 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
                     <div className={"position-list-item__header__badges flex-s-between w-100"}>
                         {_onFarming ? (
                             <NavLink className={"flex-s-between btn primary fs-085 p-025 br-8"} to={farmingLink}>
-                                <span>Farming</span>
+                                <span>On Farming</span>
                                 <ArrowRight size={14} color={"white"} style={{ marginLeft: "5px" }} />
                             </NavLink>
+                        ) : _oldFarming ? (
+                            <span className={"flex-s-between btn primary fs-085 p-025 br-8"} style={{background: '#46210a', borderColor: '#861f1f'}}>
+                            <span>On Old Farming Center</span>
+                        </span>
                         ) : (
                             <div />
                         )}

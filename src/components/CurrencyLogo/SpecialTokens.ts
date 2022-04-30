@@ -16,6 +16,9 @@ import HarmonyLogo from '../../assets/images/harmony-logo.png'
 import IrisLogo from '../../assets/images/iris-logo.png'
 import HSMLogo from '../../assets/images/hsm-logo.png'
 
+import QiLogo from '../../assets/images/qi-logo.png'
+import MimaticLogo from '../../assets/images/mimatic-logo.png'
+
 interface SpecialTokensInterface {
     [key: string]: {
         name: string
@@ -59,5 +62,13 @@ export const specialTokens: SpecialTokensInterface = {
     ['0x77ec58f36f3d1a9cf8694fc5c544b04b8c9639dd']: {
         name: 'HSM',
         logo: HSMLogo
+    },
+    ['0x580a84c73811e1839f75d86d75d88cca0c241ff4']: {
+        name: 'QiDAO',
+        logo: QiLogo
+    },
+    ['0xa3fa99a148fa48d14ed51d610c367c61876997f1']: {
+        name: 'MAI',
+        logo: MimaticLogo
     }
 }

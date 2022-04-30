@@ -91,28 +91,28 @@ export function StakerEventCard({
             <div className={"staker-event-card p-1 br-12"} data-refreshing={refreshing}>
                 <div className={"f mb-1"}>
                     <div className={"f mr-1"}>
-                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x2791bca1f2de4661ed88a30c99a7a9449aa84174", 18, "USDC") as WrappedCurrency} size={"30px"} />
+                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x580a84c73811e1839f75d86d75d88cca0c241ff4", 18, "QI") as WrappedCurrency} size={"30px"} />
                         <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", 18, "MATIC") as WrappedCurrency} size={"30px"} />
                     </div>
                     <div>
                         <h3 className={"fs-075 b"}>POOL</h3>
-                        <div style={{ marginTop: "2px" }}>{`USDC / MATIC`}</div>
+                        <div style={{ marginTop: "2px" }}>{`QI / WMATIC`}</div>
                     </div>
-                    {
+                    {/* {
                         <div className={"staker-event-card__reward-tier p-05 br-8 ml-a fs-085"}>
                             <span>👑 Tier</span>
                         </div>
-                    }
+                    } */}
                 </div>
                 <div className={"staker-event-card__reward-wrapper mb-05 f c br-8"}>
                     <div className="staker-event-card__reward-wrapper-header fs-075 b">REWARDS</div>
                     <ul className="staker-event-card__reward-list">
-                        {[{ token: { id: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174", symbol: "USDC" }, amount: "5000" }].map((reward: any, i) => (
+                        {[{ token: { id: "0xa3fa99a148fa48d14ed51d610c367c61876997f1", symbol: "MAI" }, amount: "2500" }].map((reward: any, i) => (
                             <li key={i} className="staker-event-card__reward-list-item f">
                                 <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                                 <span className="staker-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                                 <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                    <span style={{ fontSize: "18px" }}>{formatAmountTokens(reward.amount)}</span>
+                                    <span>{formatAmountTokens(reward.amount, false)}</span>
                                 </div>
                             </li>
                         ))}
@@ -130,7 +130,7 @@ export function StakerEventCard({
                                 <div className="staker-event-card__timeline-circle__inner active"></div>
                             </div>
                             <div className="staker-event-card__timeline-line">
-                                <div className="staker-event-card__timeline-line__inner" style={{ width: active ? "100%" : `${getProgress(Number(now), 1651244400000, now)}%` }}></div>
+                                <div className="staker-event-card__timeline-line__inner" style={{ width: active ? "100%" : `${getProgress(Number(now), 1652382000000, now)}%` }}></div>
                             </div>
                             <div className="f f-ac f-jc staker-event-card__timeline-circle">{active && <div className="staker-event-card__timeline-circle__inner"></div>}</div>
                             <div className="staker-event-card__timeline-line">{active && <div className="w-100 staker-event-card__timeline-line__inner" style={{ width: `0%` }}></div>}</div>
@@ -139,20 +139,20 @@ export function StakerEventCard({
                         <div className="w-100 f fs-085" style={{ marginTop: "10px" }}>
                             <div className="w-100 f f-ac">
                                 <div className="staker-event-card__timeline-calendar first ta-c">
-                                    <div className="staker-event-card__timeline-calendar-day">{convertLocalDate(new Date(1651244400000))}</div>
-                                    <div className="staker-event-card__timeline-calendar-hour">{convertDateTime(new Date(1651244400000))}</div>
+                                    <div className="staker-event-card__timeline-calendar-day">{convertLocalDate(new Date(1652108400000))}</div>
+                                    <div className="staker-event-card__timeline-calendar-hour">{convertDateTime(new Date(1652108400000))}</div>
                                 </div>
                             </div>
                             <div className="w-100 f f-ac f-jc">
                                 <div className="staker-event-card__timeline-calendar second ta-c">
-                                    <div className="staker-event-card__timeline-calendar-day">{convertLocalDate(new Date(1651604400000))}</div>
-                                    <div className="staker-event-card__timeline-calendar-hour">{convertDateTime(new Date(1651604400000))}</div>
+                                    <div className="staker-event-card__timeline-calendar-day">{convertLocalDate(new Date(1652382000000))}</div>
+                                    <div className="staker-event-card__timeline-calendar-hour">{convertDateTime(new Date(1652382000000))}</div>
                                 </div>
                             </div>
                             <div className="w-100 f f-jc" style={{ justifyContent: "flex-end" }}>
                                 <div className="staker-event-card__timeline-calendar third ta-c">
-                                    <div className="staker-event-card__timeline-calendar-day">{convertLocalDate(new Date(1652209200000))}</div>
-                                    <div className="staker-event-card__timeline-calendar-hour">{convertDateTime(new Date(1652209200000))}</div>
+                                    <div className="staker-event-card__timeline-calendar-day">{convertLocalDate(new Date(1652986800000))}</div>
+                                    <div className="staker-event-card__timeline-calendar-hour">{convertDateTime(new Date(1652986800000))}</div>
                                 </div>
                             </div>
                         </div>
@@ -217,7 +217,7 @@ export function StakerEventCard({
                             <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                             <span className="staker-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                             <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                {eternal ? <span /> : <span>{formatAmountTokens(reward.amount)}</span>}
+                                {eternal ? <span /> : <span>{formatAmountTokens(reward.amount, false)}</span>}
                             </div>
                         </li>
                     ))}
@@ -232,7 +232,7 @@ export function StakerEventCard({
                     </div>
                     <div className="w-100 f mt-05">
                         <div className="f f-ac f-jc staker-event-card__timeline-circle">
-                            <div className="staker-event-card__timeline-circle__inner"></div>
+                            <div className={`staker-event-card__timeline-circle__inner ${!active ? 'active' : ''}`}></div>
                         </div>
                         <div className="staker-event-card__timeline-line">
                             <div className="staker-event-card__timeline-line__inner" style={{ width: active ? "100%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}></div>

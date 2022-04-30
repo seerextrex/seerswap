@@ -15,4 +15,5 @@ export interface PositionPool {
     tokensOwed0: BigNumber
     tokensOwed1: BigNumber
     onFarming?: boolean
+    oldFarming?: boolean
 }

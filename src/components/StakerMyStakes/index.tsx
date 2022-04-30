@@ -235,7 +235,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                         <PositionHeader el={el} setUnstaking={setUnstaking} setSendModal={setSendModal} unstaking={unstaking} withdrawHandler={withdrawHandler} />
                                         <div className={"f cg-1 rg-1 mxs_fd-c"}>
                                             <div className={"my-stakes__position-card__body w-100 p-1 br-8"}>
-                                                <PositionCardBodyHeader farmingType={FarmingType.FINITE} date={date} />
+                                                <PositionCardBodyHeader el={el} farmingType={FarmingType.FINITE} date={date} />
                                                 {el.incentive ? (
                                                     <>
                                                         <PositionCardBodyStat

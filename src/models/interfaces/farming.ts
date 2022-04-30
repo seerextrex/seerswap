@@ -128,7 +128,9 @@ export interface Deposit {
     token1: string
     l2TokenId: string | null
     algbLocked: string
+    level: string
     lockedToken: any
+    oldFarming?: boolean
 }
 
 export interface StakeDefault {

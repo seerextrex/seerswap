@@ -58,7 +58,7 @@ export const formatAmountTokens = (num: number | undefined, average?: any) => {
     return numbro(num).format({
         thousandSeparated: true,
         average: !!average,
-        mantissa: 1,
+        mantissa: average ? 1 : 0,
         abbreviations: {
             thousand: 'K',
             billion: 'B',

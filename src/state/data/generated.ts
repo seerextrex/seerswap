@@ -7084,7 +7084,7 @@ export const StakeHistoryDocument = `
     `;
 export const StakeDocument = `
     query stake {
-  histories(where: {date_gte: 1642626000}) {
+  histories(first: 1000, where: {date_gte: 1642626000}) {
     date
     currentStakedAmount
     ALGBbalance

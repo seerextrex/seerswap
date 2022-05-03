@@ -576,7 +576,7 @@ query stakeHistory ($id: ID) {
 
 export const GET_STAKE_HISTORY = () => gql`
 query stake {
-  histories(where: { date_gte: 1642626000 }) {
+  histories(first: 1000, where: { date_gte: 1642626000 }) {
   date
   currentStakedAmount
   ALGBbalance

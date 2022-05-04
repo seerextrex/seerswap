@@ -9,12 +9,19 @@ import { stakerClient } from '../apollo/client'
 import { FROZEN_STAKED } from '../utils/graphql-queries'
 import { TransactionResponse } from '@ethersproject/providers'
 import { FactorySubgraph, Frozen, StakeHash, StakeSubgraph, SubgraphResponse, SubgraphResponseStaking } from '../models/interfaces'
+import { useAppSelector } from "state/hooks"
+import { GAS_PRICE_MULTIPLIER } from "./useGasPrice"
 
 export function useRealStakerHandlers() {
     const addTransaction = useTransactionAdder()
     const { chainId, account } = useActiveWeb3React()
     const _w: any = window
     const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
+
+    const gasPrice = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 36
+        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched
+    })
 
     const [stakerHash, setStakedHash] = useState<null | StakeHash>(null)
     const [frozenStaked, setFrozen] = useState<string | Frozen[]>([])
@@ -34,7 +41,9 @@ export function useRealStakerHandlers() {
             setStakeLoading(true)
 
             const bigNumStakerCount = parseUnits(stakedCount, 18)
-            const result: TransactionResponse = await realStaker.enter(bigNumStakerCount._hex)
+            const result: TransactionResponse = await realStaker.enter(bigNumStakerCount._hex, {
+                gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+            })
 
             addTransaction(result, {
                 summary: `Staked ${stakedCount} ALGB`
@@ -60,7 +69,9 @@ export function useRealStakerHandlers() {
 
             const claimSum: BigNumber = claimCount.mul(BigNumber.from(stakesResult.factories[0].xALGBtotalSupply)).div(BigNumber.from(stakesResult.factories[0].ALGBbalance))
 
-            const result: TransactionResponse = await realStaker.leave(claimSum._hex)
+            const result: TransactionResponse = await realStaker.leave(claimSum._hex, {
+                gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+            })
 
             addTransaction(result, {
                 summary: `Claimed ${formatEther(claimCount)} ALGB`
@@ -88,7 +99,9 @@ export function useRealStakerHandlers() {
 
             const bigNumUnstakeAmount = (parseUnits(unstakeCount.toString(), 18).mul(BigNumber.from(stakesResult.stakes[0].xALGBAmount).sub(allXALGBFreeze))).div(maxALGBAccount)
 
-            const result: TransactionResponse = await realStaker.leave(bigNumUnstakeAmount._hex)
+            const result: TransactionResponse = await realStaker.leave(bigNumUnstakeAmount._hex, {
+                gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+            })
 
             addTransaction(result, {
                 summary: `Unstaked ${unstakeCount} ALGB`

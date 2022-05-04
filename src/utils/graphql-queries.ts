@@ -370,12 +370,19 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
             incentive
             eternalFarming
             onFarmingCenter
-            ${
-              tierFarming ? `
+            ${tierFarming ? `
               enteredInEternalFarming
               algbLocked
               level` : ''
-            }
+  }
+    }
+}
+`
+
+export const HAS_TRANSFERED_POSITIONS = () => gql`
+    query hasTransferedPositions ($account: Bytes) {
+        deposits (first: 1, where: {owner: $account, onFarmingCenter: true}) {
+            id
     }
 }
 `

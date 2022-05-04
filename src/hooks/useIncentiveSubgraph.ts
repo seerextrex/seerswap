@@ -17,6 +17,7 @@ import {
     FETCH_REWARDS,
     FETCH_TOKEN,
     FUTURE_EVENTS,
+    HAS_TRANSFERED_POSITIONS,
     INFINITE_EVENTS,
     POSITIONS_ON_ETERNAL_FARMING,
     TRANSFERED_POSITIONS,
@@ -57,6 +58,9 @@ export function useIncentiveSubgraph() {
     const [transferredPositions, setTransferredPositions] = useState<Deposit[] | null>(null)
     const [transferredPositionsLoading, setTransferredPositionsLoading] = useState<boolean>(false)
 
+    const [hasTransferredPositions, setHasTransferredPositions] = useState<boolean | null>(null)
+    const [hasTransferredPositionsLoading, setHasTransferredPositionsLoading] = useState<boolean>(false)
+
     const [rewardsResult, setRewardsResult] = useState<FormattedRewardInterface[] | string>([])
     const [rewardsLoading, setRewardsLoading] = useState<boolean>(false)
 
@@ -66,7 +70,7 @@ export function useIncentiveSubgraph() {
     const [allEvents, setAllEvents] = useState<{ currentEvents: FarmingEvent[]; futureEvents: FutureFarmingEvent[] } | null>(null)
     const [allEventsLoading, setAllEventsLoading] = useState<boolean>(false)
 
-    const [positionsOnFarmer, setPositionsOnFarmer] = useState<{transferredPositionsIds: string[], oldTransferredPositionsIds: string[]} | null>(null)
+    const [positionsOnFarmer, setPositionsOnFarmer] = useState<{ transferredPositionsIds: string[], oldTransferredPositionsIds: string[] } | null>(null)
     const [positionsOnFarmerLoading, setPositionsOnFarmerLoading] = useState<boolean>(false)
 
     const [eternalFarms, setEternalFarms] = useState<FormattedEternalFarming[] | null>(null)
@@ -336,6 +340,34 @@ export function useIncentiveSubgraph() {
         } finally {
             setAllEventsLoading(false)
         }
+    }
+
+    async function fetchHasTransferredPositions() {
+        if (!chainId || !account) return
+
+        if (!provider) throw new Error('No provider')
+
+        try {
+            setHasTransferredPositionsLoading(true)
+
+
+            const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Deposit[]>>({
+                query: HAS_TRANSFERED_POSITIONS(),
+                fetchPolicy: 'network-only',
+                variables: { account }
+            }))
+
+            if (error) throw new Error(`${error.name} ${error.message}`)
+
+            setHasTransferredPositions(Boolean(positionsTransferred.length))
+            setHasTransferredPositionsLoading(false)
+
+        } catch (err: any) {
+            throw new Error('Has transferred positions ' + err.code + ' ' + err.message)
+        } finally {
+            setHasTransferredPositionsLoading(false)
+        }
+
     }
 
     async function fetchTransferredPositions(reload?: boolean) {
@@ -736,6 +768,11 @@ export function useIncentiveSubgraph() {
             transferredPositions,
             transferredPositionsLoading,
             fetchTransferredPositionsFn: fetchTransferredPositions
+        },
+        fetchHasTransferredPositions: {
+            hasTransferredPositions,
+            hasTransferredPositionsLoading,
+            fetchHasTransferredPositionsFn: fetchHasTransferredPositions
         },
         fetchPositionsOnFarmer: {
             positionsOnFarmer,

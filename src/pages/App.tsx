@@ -45,12 +45,13 @@ export default function App() {
     });
     const internet = useInternet();
     const { account } = useActiveWeb3React();
-    const { onIsFarming } = useFarmingActionsHandlers();
+    const { onIsFarming, hasTransferred } = useFarmingActionsHandlers();
     const networkFailed = useIsNetworkFailed();
 
     useEffect(() => {
         onIsFarming();
     }, []);
+
     useEffect(() => {
         if (!account) return;
 
@@ -62,6 +63,8 @@ export default function App() {
             event: "userId",
             user_id: account,
         });
+
+        hasTransferred();
     }, [account]);
 
     return (

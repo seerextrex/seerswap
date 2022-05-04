@@ -84,8 +84,8 @@ export default function AddLiquidityPage({
     const provider = _window.ethereum ? new providers.Web3Provider(_window.ethereum) : undefined;
 
     const gasPrice = useAppSelector((state) => {
-        if (!state.application.gasPrice.fetched) return 70;
-        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched;
+        if (!state.application.gasPrice.fetched) return 36;
+        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched;
     });
     const allTransactions = useAllTransactions();
 
@@ -99,14 +99,7 @@ export default function AddLiquidityPage({
     // @ts-ignore
     useEffect(async () => {
         if (confirmed.some((hash) => hash === txHash)) {
-            const nonFunPosManContract = new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId || 137], NON_FUN_POS_MAN, provider?.getSigner());
-
-            try {
-                const nftNum = await nonFunPosManContract.totalSupply();
-                history.push(`/pool/${nftNum}`);
-            } catch (err) {
-                history.push(`/pool`);
-            }
+            history.push(`/pool`);
         }
     }, [confirmed]);
 

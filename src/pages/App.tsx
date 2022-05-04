@@ -72,6 +72,7 @@ export default function App() {
             <Route component={GoogleAnalyticsReporter} />
             <Web3ReactManager>
                 <>
+                    <a href={'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html'} target={'_blank'}>open sss</a>
                     <Header />
                     <div className={"app-body w-100 maw-1180 ph-1 pt-3 mh-a pb-4"} style={{ zIndex: 3, marginBottom: "5rem" }}>
                         <CautionModal />

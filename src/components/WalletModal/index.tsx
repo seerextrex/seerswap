@@ -1,6 +1,6 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 // @ts-ignore
 import MetamaskIcon from '../../assets/svg/metamask-logo.svg'
@@ -23,6 +23,7 @@ import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { UserRejectedRequestError, WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { ArrowLeft } from 'react-feather'
 import { log } from 'util'
+import { OntoWindow } from '../../models/types/global'
 
 const WALLET_VIEWS = {
     OPTIONS: 'options',
@@ -39,18 +40,28 @@ interface WalletModalProps {
 
 export default function WalletModal({ pendingTransactions, confirmedTransactions, ENSName }: WalletModalProps) {
     // important that these are destructed from the account-specific web3-react context
-    const { active, account, connector, activate, error, setError } = useWeb3React()
+    const { active, account, connector, activate, error, setError, deactivate } = useWeb3React()
 
 
     const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
     const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
     const [pendingError, setPendingError] = useState<boolean>()
     const [errorMessage, setErrorMessage] = useState<string>('')
+    const [isOnto, setIsOnto] = useState(false)
 
     const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
     const toggleWalletModal = useWalletModalToggle()
 
     const previousAccount = usePrevious(account)
+
+    const _window = window as unknown as OntoWindow
+
+    function changeOntoWallet(e: string[]) {
+        if (e.length === 0) {
+            deactivate()
+            _window.onto.removeListener('accountsChanged', changeOntoWallet)
+        }
+    }
 
     // close on connection, when logged out before
     useEffect(() => {
@@ -99,7 +110,6 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
         }
 
         if (connector instanceof OntoWalletConnector) {
-
         }
 
         connector &&
@@ -108,6 +118,9 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 const walletAddress = await connector.getAccount()
                 if (walletAddress) {
                     setWalletView(WALLET_VIEWS.ACCOUNT)
+                    if (connector instanceof OntoWalletConnector) {
+                        _window.onto.on('accountsChanged', changeOntoWallet)
+                    }
                 }
             })
             .catch((error) => {
@@ -121,6 +134,9 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 } else {
                     setPendingError(true)
                 }
+            })
+            .finally(() => {
+                setIsOnto(connector instanceof OntoWalletConnector)
             })
     }
 
@@ -210,11 +226,18 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         {error instanceof UnsupportedChainIdError ? (
                             <>
                                 <h5 className={'mb-1'}>
-                                    <Trans>Please connect to the Polygon network.</Trans>
+                                    <Trans>
+                                        {
+                                           isOnto ?
+                                                'Change your network in Onto browser extension' :
+                                                'Please connect to the Polygon network.'
+                                        }
+                                    </Trans>
                                 </h5>
                                 {isMobile ? (
                                     <p>Add Polygon network to your metamask app.</p>
                                 ) : (
+                                    !isOnto &&
                                     <button
                                         className={'btn primary p-1 w-100 b'}
                                         onClick={addPolygonNetwork}>

@@ -9,7 +9,6 @@ import { OntoWindow } from '../models/types/global'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { ConnectorUpdate } from '@web3-react/types'
 import { getAddress } from 'ethers/lib/utils'
-import Web3 from 'web3'
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
 const NETWORK_URLS: { [key in SupportedChainId]: string } = {
@@ -72,7 +71,7 @@ export class OntoWalletConnector extends AbstractConnector {
     deactivate(): void {
     }
 
-    getAgent(): any {
+    protected getAgent(): any {
         return (
             (window as any).onto ??
             ((window as any).ethereum?.isONTO && (window as any).ethereum)
@@ -97,16 +96,16 @@ export class OntoWalletConnector extends AbstractConnector {
         return Promise.resolve(provider)
     }
 
-    async isAvalible(): Promise<boolean> {
+    protected async isAvalible(): Promise<boolean> {
         return !!this.getAgent()
     }
 
     async close(): Promise<void> {
-        const ethAgent = this.getAgent()
+        this.deactivate()
+        const { provider, account } = await this.activate()
         try {
-            const provider = new Web3Provider(ethAgent)
 
-            console.log(provider)
+
         } catch (e) {
             console.error(e)
         }

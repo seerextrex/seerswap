@@ -3,8 +3,9 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
 import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { gnosisSafe, injected } from '../connectors'
+import { gnosisSafe, injected, ontoconnector} from '../connectors'
 import { NetworkContextName } from '../constants/misc'
+import { OntoWindow } from '../models/types/global'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
     const context = useWeb3React<Web3Provider>()
@@ -93,10 +94,11 @@ export function useEagerConnect() {
  * and out after checking what network theyre on
  */
 export function useInactiveListener(suppress = false) {
-    const { active, error, activate } = useWeb3React()
+    const { active, error, activate, deactivate } = useWeb3React()
 
     useEffect(() => {
         const ethereum = window.ethereum
+        const onto = (window as unknown as OntoWindow).onto
 
         if (ethereum && ethereum.on && !active && !error && !suppress) {
             const handleChainChanged = () => {
@@ -114,8 +116,16 @@ export function useInactiveListener(suppress = false) {
                     })
                 }
             }
+            const ontoChainChange = (e: any) => {
+                deactivate()
+                activate(ontoconnector, undefined, true)
+                    .catch(e => {
+                        console.error(e)
+                    })
+            }
 
             ethereum.on('chainChanged', handleChainChanged)
+            onto.on('chainChanged', ontoChainChange)
             ethereum.on('accountsChanged', handleAccountsChanged)
 
             return () => {

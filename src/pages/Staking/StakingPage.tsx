@@ -15,6 +15,7 @@ import { FormattedRewardInterface, Reward } from "../../models/interfaces";
 import Card from "../../shared/components/Card/Card";
 import Menu from "../../components/Menu";
 import { InfinityIcon } from "../../components/StakingMenu/styled";
+import { useAppSelector } from "state/hooks";
 
 const stakingMenuList = [
     {
@@ -31,6 +32,7 @@ const stakingMenuList = [
         title: "Limit Farms",
         icon: <Zap size={18} />,
         link: "limit-farms",
+        marked: true,
     },
     {
         title: "Farms History",
@@ -44,11 +46,14 @@ export default function StakingPage() {
     const { path } = useRouteMatch();
     const toggleWalletModal = useWalletModalToggle();
 
+    const hasTransferred = useAppSelector((state) => state.farming.hasTransferred);
+
     const {
         fetchRewards: { rewardsResult, fetchRewardsFn, rewardsLoading },
         fetchAllEvents: { fetchAllEventsFn, allEvents, allEventsLoading },
         fetchTransferredPositions: { fetchTransferredPositionsFn, transferredPositions, transferredPositionsLoading },
         fetchEternalFarms: { fetchEternalFarmsFn, eternalFarms, eternalFarmsLoading },
+        fetchHasTransferredPositions: { fetchHasTransferredPositionsFn, hasTransferredPositions, hasTransferredPositionsLoading },
     } = useIncentiveSubgraph() || {};
 
     const [now, setNow] = useState(Date.now());
@@ -81,7 +86,7 @@ export default function StakingPage() {
                 />
                 <Switch>
                     <Route exact path={`${path}`}>
-                        <Redirect to={`${path}/${account ? "farms" : "limit-farms"}`} />
+                        <Redirect to={`${path}/${!account ? "limit-farms" : hasTransferred ? "farms" : "limit-farms"}`} />
                     </Route>
                     <Route exact path={`${path}/farms`}>
                         <Helmet>

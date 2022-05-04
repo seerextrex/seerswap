@@ -25,8 +25,8 @@ export function useStakerHandlers() {
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
 
     const gasPrice = useAppSelector((state) => {
-        if (!state.application.gasPrice.fetched) return 70
-        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+        if (!state.application.gasPrice.fetched) return 36
+        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched
     })
 
     const addTransaction = useTransactionAdder()
@@ -266,7 +266,6 @@ export function useStakerHandlers() {
                 0x0,
                 {
                     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
-                    gasLimit: 300000
                 }
             )
 
@@ -427,7 +426,7 @@ export function useStakerHandlers() {
                 ])
 
                 const result = await nonFunPosManContract.multicall([approveData, transferData],
-                    // { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
+                    { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
                 )
 
                 addTransaction(result, {

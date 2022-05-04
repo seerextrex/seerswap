@@ -1,18 +1,21 @@
 import { useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { useClients } from '../../hooks/subgraph/useClients'
-import { ONE_ETERNAL_FARMING, ONE_FARMING_EVENT } from '../../utils/graphql-queries'
-import { isFarming } from './actions'
+import { HAS_TRANSFERED_POSITIONS, ONE_ETERNAL_FARMING, ONE_FARMING_EVENT } from '../../utils/graphql-queries'
+import { isFarming, hasTransferredPositions } from './actions'
+import { useActiveWeb3React } from "hooks/web3"
 
 
 export function useFarmingActionsHandlers(): {
     onIsFarming: () => void
-    // onIsFarmingGet: () => boolean
+    hasTransferred: () => void
 } {
 
     const dispatch = useAppDispatch()
     const { farmingClient } = useClients()
     const { startTime } = useAppSelector(state => state.farming)
+
+    const { account } = useActiveWeb3React()
 
     const isFarmingAdd = useCallback(async () => {
         try {
@@ -48,21 +51,33 @@ export function useFarmingActionsHandlers(): {
 
     }, [dispatch])
 
-    // const isFarmingGet = useCallback( () => {
-    //     try {
-    //         if (startTime.trim() !== ''){
-    //             return true
-    //         }
-    //     return startTime
-    //     } catch (e) {
-    //         console.log(e)
-    //         return false
-    //     }
-    //
-    // }, [startTime])
+    const fetchHasTransferredPositions = useCallback(async () => {
+
+        if (!account) return
+
+        try {
+            const { data: { deposits }, error } = await farmingClient.query({
+                query: HAS_TRANSFERED_POSITIONS(),
+                fetchPolicy: 'network-only',
+                variables: {
+                    account
+                }
+            })
+
+            if (error) {
+                return
+            }
+
+            dispatch(hasTransferredPositions(Boolean(deposits.length)))
+
+        } catch (e) {
+            console.log(e)
+        }
+
+    }, [dispatch, account])
 
     return {
-        onIsFarming: isFarmingAdd
-        // onIsFarmingGet: isFarmingGet
+        onIsFarming: isFarmingAdd,
+        hasTransferred: fetchHasTransferredPositions
     }
 }

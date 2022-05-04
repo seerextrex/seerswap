@@ -45,9 +45,10 @@ export function StakingMenu() {
                     <MenuListItemIcon>{el.icon}</MenuListItemIcon>
                     <MenuListItemTitle>
                         <span>{el.title}</span>
-                        {el.title === "Limit Farms" && <FarmingInfoLabel isEvents={!!startTime} isHeader={false} />}
-                        {el.title === "Infinite Farms" && <FarmingInfoLabel isEvents={eternalFarmings} isHeader={false} />}
                     </MenuListItemTitle>
+                    <FarmingInfoLabel isHeader={false} isEvents={true} />
+                    {/* {el.title === "Limit Farms" ? <FarmingInfoLabel isEvents={true} isHeader={false} /> : null} */}
+                    {el.title === "Infinite Farms" ? <FarmingInfoLabel isEvents={eternalFarmings} isHeader={false} /> : null}
                 </MenuListItem>
             ))}
         </MenuList>

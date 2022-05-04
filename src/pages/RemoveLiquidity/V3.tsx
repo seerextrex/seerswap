@@ -74,8 +74,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
     }, [position]);
 
     const gasPrice = useAppSelector((state) => {
-        if (!state.application.gasPrice.fetched) return 70;
-        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched;
+        if (!state.application.gasPrice.fetched) return 36;
+        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched;
     });
 
     // flag for receiving WETH

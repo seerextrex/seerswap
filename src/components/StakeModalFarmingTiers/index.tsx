@@ -25,7 +25,7 @@ import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
 export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; lockedToken: any }) {
     const { account } = useActiveWeb3React();
 
-    const [selectedTier, setSelectedTier] = useState();
+    const [selectedTier, setSelectedTier] = useState<number | undefined>(0);
 
     const balance = useCurrencyBalance(account ?? undefined, new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) ?? undefined);
     const _balance = useMemo(() => (!balance ? "" : balance.toSignificant(4)), [balance]);

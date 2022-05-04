@@ -10,6 +10,8 @@ import { calculateGasMargin } from '../utils/calculateGasMargin'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './web3'
 import { useTokenAllowance } from './useTokenAllowance'
+import { useAppSelector } from "state/hooks"
+import { GAS_PRICE_MULTIPLIER } from "./useGasPrice"
 
 export enum ApprovalState {
     UNKNOWN = 'UNKNOWN',
@@ -27,6 +29,12 @@ export function useApproveCallback(
     const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
     const currentAllowance = useTokenAllowance(token, account ?? undefined, spender)
     const pendingApproval = useHasPendingApproval(token?.address, spender)
+
+
+    const gasPrice = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 36
+        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched
+    })
 
     // check the current approval status
     const approvalState: ApprovalState = useMemo(() => {
@@ -85,7 +93,8 @@ export function useApproveCallback(
 
         return tokenContract
             .approve(spender, useExact ? amountToApprove.quotient.toString() : MaxUint256, {
-                gasLimit: calculateGasMargin(chainId, estimatedGas)
+                gasLimit: calculateGasMargin(chainId, estimatedGas),
+                gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
             })
             .then((response: TransactionResponse) => {
                 addTransaction(response, {

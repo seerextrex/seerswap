@@ -204,8 +204,8 @@ export function useSwapCallback(
     const addTransaction = useTransactionAdder()
 
     const gasPrice = useAppSelector((state) => {
-        if (!state.application.gasPrice.fetched) return 70
-        return state.application.gasPrice.override ? 70 : state.application.gasPrice.fetched
+        if (!state.application.gasPrice.fetched) return 36
+        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched
     })
 
     const { address: recipientAddress } = useENS(recipientAddressOrName)

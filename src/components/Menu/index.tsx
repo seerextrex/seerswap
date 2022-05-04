@@ -8,6 +8,7 @@ interface MenuProps {
         title: string;
         icon: JSX.Element;
         link: string;
+        marked?: boolean;
     }[];
     classes?: string;
     refreshHandler: any;
@@ -23,6 +24,7 @@ const Menu = ({ items, classes, refreshHandler, isLoading, size }: MenuProps) =>
                     <NavLink key={i} to={el.link} className={"menu-list-item ph-1"} activeClassName={"menu-list-item--active"}>
                         {el.icon}
                         {el.title}
+                        {el.marked ? <span className={"menu-list-item__circle"}></span> : null}
                     </NavLink>
                 ))}
             </ul>

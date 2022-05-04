@@ -274,6 +274,12 @@ export default function RealStakerPage({}) {
     }, [confirmed, stakeHash])
 
     useEffect(() => {
+        if (claiming.state === 'done') {
+            setClaiming({ id: null, state: null })
+            setClaimHash({ hash: null })
+            return
+        }
+
         if (typeof claimgHash === 'string') {
             setClaiming({ id: null, state: null })
         } else if (confirmed.includes(String(claimgHash.hash))) {
@@ -282,6 +288,12 @@ export default function RealStakerPage({}) {
     }, [confirmed, claimgHash])
 
     useEffect(() => {
+        if (unstaking.state === 'done') {
+            setUnstaking({ id: null, state: null })
+            setUnstakeHash({ hash: null })
+            return
+        }
+
         if (typeof unstakeHash === 'string') {
             setUnstaking({ id: null, state: null })
         } else if (confirmed.includes(String(unstakeHash.hash))) {

@@ -76,8 +76,6 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
     const disconnectHandler = useCallback(() => {
         if (connector instanceof OntoWalletConnector) {
             deactivate()
-            connector.close()
-            return
         }
         (connector as any).close()
     }, [])
@@ -94,11 +92,13 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                 <div className={'account-details p-1 mb-15 br-12 c-w'}>
                     <div className={'f f-ac mb-05'}>
                         {formatConnectorName()}
-                        <WalletAction
-                            onClick={() => disconnectHandler()}
-                        >
-                            <Trans>Disconnect</Trans>
-                        </WalletAction>
+                        {connector !== injected &&
+                            <WalletAction
+                                onClick={() => disconnectHandler()}
+                            >
+                                <Trans>Disconnect</Trans>
+                            </WalletAction>
+                        }
                     </div>
                     <div className={'l f f-ac c-w mb-05'} id='web3-account-identifier-row'>
                         {ENSName ? (

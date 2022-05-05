@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 // @ts-ignore
 import MetamaskIcon from '../../assets/svg/metamask-logo.svg'
-import { injected, OntoWalletConnector } from '../../connectors'
+import { injected, ontoconnector, OntoWalletConnector } from '../../connectors'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import usePrevious from '../../hooks/usePrevious'
 import { ApplicationModal } from '../../state/application/actions'
@@ -24,6 +24,8 @@ import { UserRejectedRequestError, WalletConnectConnector } from '@web3-react/wa
 import { ArrowLeft } from 'react-feather'
 import { log } from 'util'
 import { OntoWindow } from '../../models/types/global'
+import { useUserSelectedWallet } from '../../state/user/hooks'
+import { InjectedConnector } from '@web3-react/injected-connector'
 
 const WALLET_VIEWS = {
     OPTIONS: 'options',
@@ -43,11 +45,14 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
     const { active, account, connector, activate, error, setError, deactivate } = useWeb3React()
 
 
+
     const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
     const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
     const [pendingError, setPendingError] = useState<boolean>()
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [isOnto, setIsOnto] = useState(false)
+
+    const [selectedWallet, setSelectedWallet] = useUserSelectedWallet()
 
     const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
     const toggleWalletModal = useWalletModalToggle()
@@ -60,6 +65,17 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
         if (e.length === 0) {
             deactivate()
             _window.onto.removeListener('accountsChanged', changeOntoWallet)
+            setSelectedWallet('')
+        } else {
+            activate(ontoconnector, undefined, true)
+                .then(() => {
+                    window.location.reload()
+                })
+                .catch(e => {
+                    if (e instanceof UnsupportedChainIdError) {
+                        window.location.reload()
+                    }
+                })
         }
     }
 
@@ -77,6 +93,10 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
             setWalletView(WALLET_VIEWS.ACCOUNT)
         }
     }, [walletModalOpen])
+
+    // useEffect(() => {
+    //     return _window.onto.removeListener('accountsChanged', changeOntoWallet)
+    // }, [])
 
     // close modal when a connection is successful
     const activePrevious = usePrevious(active)
@@ -119,16 +139,27 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 if (walletAddress) {
                     setWalletView(WALLET_VIEWS.ACCOUNT)
                     if (connector instanceof OntoWalletConnector) {
+                        setSelectedWallet('onto')
                         _window.onto.on('accountsChanged', changeOntoWallet)
+                    } else if (connector instanceof InjectedConnector) {
+                        setSelectedWallet('metamask')
                     }
                 }
             })
             .catch((error) => {
                 console.error(error)
                 if (error instanceof UnsupportedChainIdError) {
+
+                    if (connector instanceof OntoWalletConnector) {
+                        setSelectedWallet('onto')
+                    } else if (connector instanceof InjectedConnector) {
+                        setSelectedWallet('metamask')
+                    }
+
                     setErrorMessage('Please connect to the Polygon network.')
                     setPendingError(true)
                     setError(error)
+                    _window.onto.on('accountsChanged', changeOntoWallet)
                 } else if (error instanceof UserRejectedRequestError) {
                     setWalletView(WALLET_VIEWS.ACCOUNT)
                 } else {
@@ -228,7 +259,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                                 <h5 className={'mb-1'}>
                                     <Trans>
                                         {
-                                           isOnto ?
+                                            isOnto ?
                                                 'Change your network in Onto browser extension' :
                                                 'Please connect to the Polygon network.'
                                         }

@@ -10,7 +10,7 @@ import {
     SerializedToken,
     updateArbitrumAlphaAcknowledged,
     updateHideClosedPositions, updateHideFarmingPositions,
-    updateMatchesDarkMode,
+    updateMatchesDarkMode, updateSelectedWallet,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -64,6 +64,7 @@ export interface UserState {
 
     timestamp: number
     URLWarningVisible: boolean
+    userSelectedWallet: string
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -85,7 +86,8 @@ export const initialState: UserState = {
     tokens: {},
     pairs: {},
     timestamp: currentTimestamp(),
-    URLWarningVisible: true
+    URLWarningVisible: true,
+    userSelectedWallet: ''
 }
 
 export default createReducer(initialState, (builder) =>
@@ -199,5 +201,8 @@ export default createReducer(initialState, (builder) =>
                 delete state.pairs[chainId][pairKey(tokenBAddress, tokenAAddress)]
             }
             state.timestamp = currentTimestamp()
+        })
+        .addCase(updateSelectedWallet, (state, { payload: { name } }) => {
+            state.userSelectedWallet = name
         })
 )

@@ -44,6 +44,7 @@ interface OntoWalletConfig {
 }
 
 export class OntoWalletConnector extends AbstractConnector {
+
     constructor(config: OntoWalletConfig) {
         super({ supportedChainIds: config.supportedChainIds })
     }
@@ -102,7 +103,7 @@ export class OntoWalletConnector extends AbstractConnector {
 
     async close(): Promise<void> {
         this.deactivate()
-        const { provider, account } = await this.activate()
+        // const { provider, account } = await this.activate()
         try {
 
 
@@ -115,5 +116,3 @@ export class OntoWalletConnector extends AbstractConnector {
 export const ontoconnector = new OntoWalletConnector({
     supportedChainIds: [137]
 })
-
-

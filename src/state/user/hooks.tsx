@@ -17,7 +17,7 @@ import {
     removeSerializedToken,
     SerializedPair,
     SerializedToken,
-    updateHideClosedPositions, updateHideFarmingPositions,
+    updateHideClosedPositions, updateHideFarmingPositions, updateSelectedWallet,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -204,6 +204,18 @@ export function useUserHideFarmingPositions(): [boolean, (newHideFarmingPosition
     )
 
     return [hideFarmingPositions, setHideFarmingPositions]
+}
+
+export function useUserSelectedWallet(): [string, (selectedWallet: string) => void] {
+    const dispatch = useAppDispatch()
+
+    const selectedWallet = useAppSelector(state => state.user.userSelectedWallet)
+
+    const setSelectedWallet = useCallback((selectedWallet: string) => {
+        dispatch(updateSelectedWallet({ name: selectedWallet }))
+    }, [])
+
+    return [selectedWallet, setSelectedWallet]
 }
 
 /**

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from './web3'
 import { Contract, providers } from 'ethers'
 import ERC20_ABI from 'abis/erc20.json'
@@ -42,10 +42,11 @@ import { EthereumWindow } from '../models/types'
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
 import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
 import { useEthPrices } from './useEthPrices'
+import { walletconnector } from '../connectors'
 
 export function useIncentiveSubgraph() {
 
-    const { chainId, account } = useActiveWeb3React()
+    const { chainId, account, activate, library } = useActiveWeb3React()
 
     const { dataClient, farmingClient, oldFarmingClient } = useClients()
 
@@ -75,8 +76,8 @@ export function useIncentiveSubgraph() {
     const [positionsEternal, setPositionsEternal] = useState<TickFarming[] | null>(null)
     const [positionsEternalLoading, setPositionsEternalLoading] = useState<boolean>(false)
 
-    const _window = window as unknown as EthereumWindow
-    const provider = _window.ethereum ? new providers.Web3Provider(_window.ethereum) : undefined
+    //TODO
+    const provider = library ? new providers.Web3Provider(library.provider) : undefined
 
     async function fetchEternalFarmAPR() {
 
@@ -371,7 +372,7 @@ export function useIncentiveSubgraph() {
                     NON_FUN_POS_MAN,
                     provider.getSigner()
                 )
-
+                console.log(provider.getSigner().getAddress())
                 const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
 
                 let _position = {
@@ -398,12 +399,14 @@ export function useIncentiveSubgraph() {
                         provider.getSigner()
                     )
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, multiplierToken, algbAmountForLevel1,
+                    const {
+                        rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, multiplierToken, algbAmountForLevel1,
                         algbAmountForLevel2,
                         algbAmountForLevel3,
                         level1multiplier,
                         level2multiplier,
-                        level3multiplier } = await fetchIncentive(position.incentive)
+                        level3multiplier
+                    } = await fetchIncentive(position.incentive)
 
                     const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
                         [rewardToken, bonusRewardToken, pool, +startTime, +endTime],

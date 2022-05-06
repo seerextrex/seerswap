@@ -35,3 +35,5 @@ export const walletconnector = new WalletConnectConnector({
     chainId: 137
 })
 
+console.log('walet', walletconnector)
+

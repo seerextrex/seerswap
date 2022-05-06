@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export const GAS_PRICE_MULTIPLIER = 1000000000
+export const GAS_PRICE_MULTIPLIER = 1_000_000_000
 
 export function useGasPrice() {
     const [gasPrice, setGasPrice] = useState<{ fetched: null | number, override: boolean }>({ fetched: null, override: false })

@@ -6,7 +6,7 @@ import Polling from "../components/Header/Polling";
 import Popups from "../components/Popups";
 import Web3ReactManager from "../components/Web3ReactManager";
 import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
-import { RedirectDuplicateTokenIds } from "./AddLiquidity/redirects";
+import { RedirectDuplicateTokenIds, RedirectDuplicateTokenIdsNew } from "./AddLiquidity/redirects";
 import RemoveLiquidityV3 from "./RemoveLiquidity/V3";
 import Swap from "./Swap";
 import { RedirectPathToSwapOnly, RedirectToSwap } from "./Swap/redirects";
@@ -114,6 +114,9 @@ export default function App() {
                                     <Route exact strict path="/pool/:tokenId" component={PositionPage} />
 
                                     <Route exact strict path="/add/:currencyIdA?/:currencyIdB?/:feeAmount?" component={RedirectDuplicateTokenIds} />
+
+                                    <Route exact strict path="/new-add/:currencyIdA?/:currencyIdB?" component={RedirectDuplicateTokenIdsNew} />
+
                                     <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
                                     <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
                                     <Route exact strict path="/migrate" component={MigrateV2} />

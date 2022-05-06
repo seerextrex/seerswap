@@ -34,7 +34,7 @@ export function useEagerConnect() {
         } else {
             activate(ontoconnector, undefined, true)
                 .then(() => {
-                    window.location.reload()
+                    // window.location.reload()
                 })
                 .catch(e => {
                     window.location.reload()

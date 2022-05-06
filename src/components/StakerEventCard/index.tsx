@@ -68,7 +68,7 @@ export function StakerEventCard({
     const _enterTime = useMemo(() => {
         if (!startTime) return [];
 
-        const date = new Date((+startTime - (4 * 24 + 4) * 60 * 60) * 1000);
+        const date = new Date((+startTime - (3 * 24 + 4) * 60 * 60) * 1000);
 
         return [convertLocalDate(date), convertDateTime(date)];
     }, [startTime]);
@@ -232,7 +232,7 @@ export function StakerEventCard({
                     </div>
                     <div className="w-100 f mt-05">
                         <div className="f f-ac f-jc staker-event-card__timeline-circle">
-                            <div className={`staker-event-card__timeline-circle__inner ${!active ? 'active' : ''}`}></div>
+                            <div className={`staker-event-card__timeline-circle__inner ${!active ? "active" : ""}`}></div>
                         </div>
                         <div className="staker-event-card__timeline-line">
                             <div className="staker-event-card__timeline-line__inner" style={{ width: active ? "100%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}></div>

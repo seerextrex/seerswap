@@ -72,7 +72,7 @@ export function StakeModal({
 
     const { approveHandler, approvedHash, stakeHandler, stakedHash } = useStakerHandlers() || {};
 
-    const [selectedTier, setSelectedTier] = useState<string | null>("");
+    const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
     useEffect(() => {
         fetchPositionsForPoolFn(pool);
@@ -390,7 +390,7 @@ export function StakeModal({
                         <button disabled className="btn primary w-100 p-1">{`Not enough ${lockedToken.symbol}`}</button>
                     ) : selectedNFT ? (
                         <div className={"f mxs_fd-c w-100"}>
-                            {farmingType === FarmingType.FINITE && (
+                            {farmingType === FarmingType.FINITE && selectedTier && (
                                 <button
                                     disabled={!showApproval || !selectedTier}
                                     onClick={approveCallback}

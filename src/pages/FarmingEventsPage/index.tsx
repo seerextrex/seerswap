@@ -20,7 +20,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
     const formattedData = useMemo(() => {
         if (!data || typeof data === "string") return [];
 
-        return [...data?.futureEvents, ...data?.currentEvents];
+        return [...data?.currentEvents];
     }, [data]);
 
     useEffect(() => {

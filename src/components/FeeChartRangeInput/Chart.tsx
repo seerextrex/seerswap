@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpolate, line, max, min, scaleLinear, scaleTime, select } from 'd3'
 import dayjs from 'dayjs'
 import { ChartSpan, ChartType } from '../../models/enums'
@@ -8,7 +8,6 @@ import { convertLocalDate } from '../../utils/convertDate'
 import { convertDateTime } from '../../utils/time'
 import stc from 'string-to-color'
 import { hexToRgbA } from '../../utils/hexToRgba'
-import { ISelfPermit } from '@uniswap/v3-periphery/typechain/ISelfPermit'
 
 interface ChartInterface {
     feeData: FeeChart
@@ -32,12 +31,12 @@ interface ChartInterface {
     selected: string[]
 }
 
-function debounce(fn: any, time: any){
-    let timer: any = null;
+function debounce(fn: any, time: any) {
+    let timer: any = null
     return (evt: any) => {
-        clearTimeout(timer);
-        timer = setTimeout( () => fn(evt), time);
-    };
+        clearTimeout(timer)
+        timer = setTimeout(() => fn(evt), time)
+    }
 }
 
 export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token, positions: { closed, opened }, selected }: ChartInterface) {
@@ -252,8 +251,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     function throttle(callback: any, wait: any) {
         let timeout: any
         return function(e: any) {
-            if (timeout) return;
-            timeout = setTimeout(() => (callback(e), timeout=undefined), wait)
+            if (timeout) return
+            timeout = setTimeout(() => (callback(e), timeout = undefined), wait)
         }
     }
 
@@ -420,13 +419,13 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const DateRect = create('svg:rect')
         .append('rect')
         .attr('id', 'info-label')
-        .attr('width', '60px')
+        .attr('width', span === ChartSpan.DAY ? '80px' : '60px')
         .attr('height', '20px')
         .attr('rx', '8')
         .style('fill', 'var(--primary)')
 
     const DateRectText = create('svg:text')
-        .attr('transform', `translate(30,10)`)
+        .attr('transform', `translate(${span === ChartSpan.DAY ? '40' : '30'},10)`)
         .attr('fill', 'white')
         .attr('text-anchor', 'middle')
         .attr('alignment-baseline', 'central')
@@ -736,7 +735,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                         }
 
-                    },  isEntered ? 55 : 0)({clientX, clientY})
+                    }, isEntered ? 55 : 0)({ clientX, clientY })
 
                     if (!isEntered) {
                         isEntered = true

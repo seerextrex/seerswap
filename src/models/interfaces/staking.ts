@@ -6,7 +6,7 @@ export interface StakingData extends FactorySubgraph, StakeSubgraph {
 }
 
 export interface StakeHash {
-    hash: string
+    hash: string | null
 }
 
 export interface Frozen {

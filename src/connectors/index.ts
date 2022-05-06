@@ -12,7 +12,7 @@ import { getAddress } from 'ethers/lib/utils'
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
 const NETWORK_URLS: { [key in SupportedChainId]: string } = {
-    [SupportedChainId.POLYGON]: `https://polygon-mainnet.infura.io/v3/${INFURA_KEY}`
+    [SupportedChainId.POLYGON]: `https://polygon-rpc.com`
 }
 
 export const network = new NetworkConnector({

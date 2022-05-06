@@ -411,6 +411,7 @@ export const FULL_POSITIONS = (positions: string[], account: string | undefined,
               token1 {
                 decimals
               }
+              timestamps
             }
 
             q2: positions (where: {id_in: [${positions}] }) {
@@ -435,6 +436,7 @@ export const FULL_POSITIONS = (positions: string[], account: string | undefined,
               token1 {
                 decimals
               }
+              timestamps
             }
         }
     `

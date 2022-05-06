@@ -150,6 +150,7 @@ export interface PositionPriceRange {
     token0: TokenPriceRange
     token1: TokenPriceRange
     transaction: TransactionPriceRange
+    timestamps: string[]
 }
 
 export interface PriceRangeClosed {
@@ -166,6 +167,7 @@ export interface PriceRangeChart {
         token1Range: number[]
         startTime: string
         endTime?: string
+        timestamps: string[]
     }
 }
 

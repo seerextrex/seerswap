@@ -8,6 +8,7 @@ import { convertLocalDate } from '../../utils/convertDate'
 import { convertDateTime } from '../../utils/time'
 import stc from 'string-to-color'
 import { hexToRgbA } from '../../utils/hexToRgba'
+import { getPositionTokensSortRange } from '../../utils/getPositionTokensRange'
 
 interface ChartInterface {
     feeData: FeeChart
@@ -261,14 +262,12 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         for (const key in opened) {
             if (selected.some(item => item === key)) {
                 const pos = opened[key]
-                const _token0Range = pos.token0Range.sort((a, b) => a - b)
-                const _token1Range = pos.token1Range.sort((a, b) => a - b)
+                const [_token0Range, _token1Range] = getPositionTokensSortRange(pos.token0Range, pos.token1Range)
 
                 let token1Height = Math.abs(yScale(_token0Range[1]) - yScale(_token0Range[0]))
                 let token0Height = yScale(_token1Range[0]) - yScale(_token1Range[1])
 
                 let outOfChart = false
-
 
                 if (token === ChartToken.TOKEN1) {
                     if (yScale(_token0Range[1]) < 0 && yScale(_token0Range[1]) + token1Height > height) {
@@ -281,7 +280,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     }
                 }
                 if (token === ChartToken.TOKEN0) {
-                    console.log(yScale(_token1Range[1]))
                     if (yScale(_token1Range[1]) < 0 && yScale(_token1Range[1]) + token0Height > height) {
                         outOfChart = true
                         token0Height = height
@@ -289,22 +287,75 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         outOfChart = true
                         token0Height = token0Height - Math.abs(yScale(_token1Range[1]))
                     } else if (yScale(_token1Range[1]) + token0Height > height) {
-                        console.log('aa')
                         token0Height = token0Height - (yScale(_token1Range[1]) + token0Height - height)
                     }
                 }
 
-                const rect = create('svg:rect')
-                    .append('rect')
-                    .attr('id', `pos-${key}`)
-                    .attr('width', xScale(+pos.startTime * 1000) < 0 ? width : width - xScale(+pos.startTime * 1000))
-                    .attr('height', token === ChartToken.TOKEN1 ? token1Height : token0Height)
-                    .attr('fill', hexToRgbA(stc(key), 0.2))
-                    .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1])))
-                    .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
-                    .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
-                    .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
-                res.push(rect)
+                if (pos.timestamps.length > 1) {
+                    for (let i = 0; i < pos.timestamps.length; i++) {
+                        if (!pos.timestamps[i + 1]) {
+
+                            const posWidth = xScale(+pos.timestamps[i] * 1000) < 0 ? width : width - xScale(+pos.timestamps[i] * 1000)
+                            const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000)
+                            const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1]))
+
+                            const rect = create('svg:rect')
+                                .append('rect')
+                                .attr('id', `pos-${key}`)
+                                .attr('width', posWidth)
+                                .attr('height', token === ChartToken.TOKEN1 ? token1Height : token0Height)
+                                .attr('fill', hexToRgbA(stc(key), 0.2))
+                                .attr('y', posY)
+                                .attr('x', posX)
+                                .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
+                                .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
+                            res.push(rect)
+
+                        } else {
+                            const posWidth =
+                                xScale(+pos.timestamps[i + 1] * 1000) < 0 ? 0 :
+                                    xScale(+pos.timestamps[i] * 1000) < 0 ?
+                                        Math.abs(xScale(+pos.timestamps[i + 1] * 1000) - Math.abs(xScale(+pos.timestamps[i] * 1000)) - Math.abs(xScale(+pos.timestamps[i] * 1000))) :
+                                        xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000)
+
+                            const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000)
+                            const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1]))
+                            // const height =
+
+                            // console.log(token === ChartToken.TOKEN1 ? [_token0Range[0], _token0Range[1]] : [_token1Range[0], _token1Range[1]])
+
+                            const rect = create('svg:rect')
+                                .append('rect')
+                                .attr('id', `pos-${key}`)
+                                .attr('width', posWidth)
+                                .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
+                                .attr('fill', 'black')
+                                .attr('y', posY)
+                                .attr('x', posX)
+                                .style('opacity', '0.4')
+                                .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
+                                .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
+                            res.push(rect)
+                        }
+                        i++
+                    }
+                } else {
+                    const posWidth = xScale(+pos.startTime * 1000) < 0 ? width : width - xScale(+pos.startTime * 1000)
+                    const posX = xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000)
+                    const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1]))
+
+                    const rect = create('svg:rect')
+                        .append('rect')
+                        .attr('id', `pos-${key}`)
+                        .attr('width', posWidth)
+                        .attr('height', token === ChartToken.TOKEN1 ? token1Height : token0Height)
+                        .attr('fill', hexToRgbA(stc(key), 0.2))
+                        .attr('y', posY)
+                        .attr('x', posX)
+                        .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
+                        .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
+                    res.push(rect)
+                }
             }
         }
 
@@ -314,8 +365,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                 if (!pos.endTime) return
 
-                const _token0Range = pos.token0Range.sort((a, b) => a - b)
-                const _token1Range = pos.token1Range.sort((a, b) => a - b)
+                const [_token0Range, _token1Range] = getPositionTokensSortRange(pos.token0Range, pos.token1Range)
 
                 let token1Height = Math.abs(yScale(_token0Range[1]) - yScale(_token0Range[0]))
                 let token0Height = yScale(_token1Range[0]) - yScale(_token1Range[1])
@@ -344,16 +394,38 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     widthPos = (xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000)) - widthDif
                 }
 
-                const rect = create('svg:rect')
-                    .append('rect')
-                    .attr('id', `pos-${key}`)
-                    .attr('width', widthPos)
-                    .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
-                    .attr('fill', 'black')
-                    .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
-                    .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
-                    .style('opacity', '0.4')
-                res.push(rect)
+                if (pos.timestamps.length > 2) {
+                    for (let i = 0; i < pos.timestamps.length; i++) {
+                        if (pos.timestamps[i + 1]) {
+                            const rect = create('svg:rect')
+                                .append('rect')
+                                .attr('id', `pos-${key}`)
+                                .attr('width', xScale(+pos.timestamps[i + 1] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000))
+                                .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
+                                .attr('fill', 'black')
+                                .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
+                                .attr('x', xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000))
+                                .style('opacity', '0.4')
+                                .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
+                                .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
+                            i++
+                            res.push(rect)
+                        }
+                    }
+                } else {
+                    const rect = create('svg:rect')
+                        .append('rect')
+                        .attr('id', `pos-${key}`)
+                        .attr('width', widthPos)
+                        .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
+                        .attr('fill', 'black')
+                        .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
+                        .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
+                        .style('opacity', '0.4')
+                        .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
+                        .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
+                    res.push(rect)
+                }
             }
         }
         return res

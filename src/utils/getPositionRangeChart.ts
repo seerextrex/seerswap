@@ -17,7 +17,8 @@ export function getPositionRangeChart(data: PositionPriceRange[]): PriceRangeCha
                 token0Range: [lowerT0, upperT0],
                 token1Range: [lowerT1, upperT1],
                 startTime: item.transaction.timestamp,
-                endTime: item.closed
+                endTime: item.closed,
+                timestamps: item.timestamps
             }
         }
     })

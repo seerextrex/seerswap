@@ -40,7 +40,6 @@ interface WalletModalProps {
 export default function WalletModal({ pendingTransactions, confirmedTransactions, ENSName }: WalletModalProps) {
     // important that these are destructed from the account-specific web3-react context
     const { active, account, connector, activate, error, setError } = useWeb3React()
-    const qq = useWeb3React()
 
     const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
     const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()

@@ -14,14 +14,14 @@ import { GAS_PRICE_MULTIPLIER } from "./useGasPrice"
 
 export function useRealStakerHandlers() {
     const addTransaction = useTransactionAdder()
-    const { chainId, account } = useActiveWeb3React()
-    const _w: any = window
-    const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
-    
+
+    const { chainId, account, library } = useActiveWeb3React()
+    const provider = library && new providers.Web3Provider(library.provider)
+
     const [stakeHash, setStakedHash] = useState<string | StakeHash>({ hash: null })
     const [claimgHash, setClaimHash] = useState<string | StakeHash>({ hash: null })
     const [unstakeHash, setUnstakeHash] = useState<string | StakeHash>({ hash: null })
-    
+
     const gasPrice = useAppSelector((state) => {
         if (!state.application.gasPrice.fetched) return 36
         return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched
@@ -62,7 +62,7 @@ export function useRealStakerHandlers() {
 
     const stakerClaimHandler = useCallback(async (claimCount: BigNumber, stakesResult: SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]> | null | string) => {
         if (!account || !provider || !chainId || !stakesResult || typeof stakesResult === 'string') return
-        setClaimHash({ hash: null})
+        setClaimHash({ hash: null })
         try {
             const realStaker = new Contract(
                 REAL_STAKER_ADDRESS[chainId],

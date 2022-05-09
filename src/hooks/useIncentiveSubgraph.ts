@@ -317,9 +317,9 @@ export function useIncentiveSubgraph() {
             const eventTVL = await fetchLimitFarmTVL()
             const aprs: Aprs = await fetchLimitFarmAPR()
 
-            const price = 1.3
+            const price = 1
 
-            const EVENT_LOCK = 700_000
+            const EVENT_LOCK = 100_000
 
             setAllEvents({
                 currentEvents: await getEvents(currentEvents.map(el => ({

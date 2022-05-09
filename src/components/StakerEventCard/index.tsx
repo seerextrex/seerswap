@@ -202,12 +202,12 @@ export function StakerEventCard({
                     <h3 className={"fs-075 b"}>POOL</h3>
                     <div style={{ marginTop: "2px" }}>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
-                {apr && (
+                {apr && apr > 0 ? (
                     <div className={"staker-event-card__reward-apr p-05 br-8 ml-a fs-085"}>
                         <span>{Math.round(apr)}%</span>
                         <span style={{ marginLeft: "5px" }}>APR</span>
                     </div>
-                )}
+                ) : null}
             </div>
             <div className={"staker-event-card__reward-wrapper mb-05 f c br-8"}>
                 <div className="staker-event-card__reward-wrapper-header fs-075 b">REWARDS</div>

@@ -20,7 +20,12 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
     const formattedData = useMemo(() => {
         if (!data || typeof data === "string") return [];
 
-        return [...data?.currentEvents];
+        if (Date.now() < 1652108400000) {
+            return [...data?.currentEvents];
+        } else {
+           return [...data?.futureEvents, ...data?.currentEvents];
+        }
+
     }, [data]);
 
     useEffect(() => {

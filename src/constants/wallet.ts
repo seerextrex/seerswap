@@ -40,7 +40,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
         connector: walletconnector,
         name: "Wallet Connect",
         iconURL: WALLET_CONNECT_URL,
-        description: "",
+        description: "Universal wallet protocol",
         href: null,
         color: '#2797FFFF',
         mobile: true
@@ -49,7 +49,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
         connector: ontoconnector,
         name: "Onto",
         iconURL: ONTO_ICON_URL,
-        description: "",
+        description: "Secure browser extension.",
         href: null,
         color: '#000000',
         chromeOnly: true

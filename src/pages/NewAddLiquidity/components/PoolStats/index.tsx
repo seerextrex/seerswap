@@ -7,13 +7,13 @@ interface IPoolStats {
 
 export function PoolStats({ fee, apr }: IPoolStats) {
     return (
-        <div>
-            <div>
-                <span>Fee:</span>
+        <div className="f">
+            <div className="pool-stats__fee">
+                <span>Fee: </span>
                 <span>{fee}</span>
             </div>
-            <div>
-                <span>APR</span>
+            <div className="pool-stats__apr ml-1">
+                <span>APR: </span>
                 <span>{`${apr}%`}</span>
             </div>
         </div>

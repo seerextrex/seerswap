@@ -14,11 +14,11 @@ export function PopularPairs({ pairs, farmings }: IPopularPairs) {
     }
 
     return (
-        <div>
-            <div>
+        <div style={{ borderLeft: "1px solid #36f" }} className={"pl-1"}>
+            <div className="mb-1">
                 <Trans>Popular pairs</Trans>
             </div>
-            <div>
+            <div className="mb-1">
                 <ul>
                     {pairs.map((pair, key) => (
                         <li key={key}>
@@ -46,5 +46,5 @@ function PopularPair({ pair, farming }: { pair: [string, string]; farming: boole
 
     if (!token0 || !token1) return <div></div>;
 
-    return <div className={`popular-pair ${farming ? "farming" : ""}`}>{`${token0.symbol} / ${token1.symbol}`}</div>;
+    return <div className={`popular-pair ${farming ? "farming" : ""}`}>{`${farming ? "Farming: " : ""} ${token0.symbol} / ${token1.symbol}`}</div>;
 }

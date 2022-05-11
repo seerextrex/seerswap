@@ -3,7 +3,7 @@ import { Token } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import CurrencyLogo from "components/CurrencyLogo";
-import { ChevronDown } from "react-feather";
+import { ChevronRight } from "react-feather";
 
 interface ITokenCard {
     handleTokenSelection: (id: string) => void;
@@ -13,14 +13,14 @@ interface ITokenCard {
 export function TokenCard({ handleTokenSelection, token }: ITokenCard) {
     return (
         <div className="token-card p-1">
-            <div className="token-card-logo">
+            <div className="token-card-logo mb-1">
                 <CurrencyLogo currency={token}></CurrencyLogo>
             </div>
             <div className="token-card-selector">
-                <button onClick={() => handleTokenSelection("")}>
+                <button className="f" onClick={() => handleTokenSelection("")}>
                     <span>Select a token</span>
                     <span>
-                        <ChevronDown />
+                        <ChevronRight className="ml-05" size={"18px"} />
                     </span>
                 </button>
             </div>

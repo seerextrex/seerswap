@@ -1,0 +1,21 @@
+.add-liquidity-page {
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 8px;
+    display: grid; 
+  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "steps steps stepper"
+    "steps steps stepper"
+    "steps steps stepper"; 
+}
+
+.steps { grid-area: steps; }
+.stepper { 
+    grid-area: stepper;
+    display: flex;
+    padding-top: 2rem;
+    justify-content: center;
+ }

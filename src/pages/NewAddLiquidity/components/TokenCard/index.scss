@@ -1,0 +1,12 @@
+.token-card {
+
+    background-color: yellow;
+    border-radius: 8px;
+
+    &-logo {
+        width: 35px;
+        height: 35px;
+        background-color: green;
+        border-radius: 50%;
+    }
+}

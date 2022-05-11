@@ -1,0 +1,10 @@
+.popular-pair {
+    padding: 4px;
+    border-radius: 4px;
+    background-color: blue;
+    width: fit-content;
+
+    &.farming {
+        background-color: black;
+    }
+}

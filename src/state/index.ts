@@ -19,7 +19,7 @@ import { api as dataApi } from './data/slice'
 // import { incentiveApi } from "./data/slice"
 import { routingApi } from './routing/slice'
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
+const PERSISTED_KEYS: string[] = ['user', 'lists']
 
 const store = configureStore({
     reducer: {
@@ -43,7 +43,8 @@ const store = configureStore({
         getDefaultMiddleware({ thunk: true })
             .concat(dataApi.middleware)
             .concat(routingApi.middleware)
-            .concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),
+            .concat(save({ states: ['transactions'], debounce: 1000}))
+            .concat(save({ states: PERSISTED_KEYS, debounce: 0 })),
     preloadedState: load({
         states: PERSISTED_KEYS,
         disableWarnings: process.env.NODE_ENV === 'test'

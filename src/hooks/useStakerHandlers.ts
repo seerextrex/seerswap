@@ -17,10 +17,10 @@ import { fetchLimitFarmTVL } from 'utils/api'
 
 export function useStakerHandlers() {
 
-    const { chainId, account } = useActiveWeb3React()
+    const { chainId, account, library } = useActiveWeb3React()
 
     const _w: any = window
-    const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
+    const provider = library ? new providers.Web3Provider(library.provider) : undefined
 
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
 

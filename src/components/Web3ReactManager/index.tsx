@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { Trans } from "@lingui/macro";
 import { network } from "../../connectors";
 import { useEagerConnect, useInactiveListener } from "../../hooks/web3";
 import { NetworkContextName } from "../../constants/misc";
-import Loader from "../Loader";
 import { Message, MessageWrapper } from "./styled";
 
 export default function Web3ReactManager({ children }: { children: JSX.Element }) {

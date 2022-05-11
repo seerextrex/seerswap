@@ -45,7 +45,7 @@ import { useEthPrices } from './useEthPrices'
 
 export function useIncentiveSubgraph() {
 
-    const { chainId, account } = useActiveWeb3React()
+    const { chainId, account, library } = useActiveWeb3React()
 
     const { dataClient, farmingClient } = useClients()
 
@@ -75,8 +75,8 @@ export function useIncentiveSubgraph() {
     const [positionsEternal, setPositionsEternal] = useState<TickFarming[] | null>(null)
     const [positionsEternalLoading, setPositionsEternalLoading] = useState<boolean>(false)
 
-    const _window = window as unknown as EthereumWindow
-    const provider = _window.ethereum ? new providers.Web3Provider(_window.ethereum) : undefined
+    const provider = library ? new providers.Web3Provider(library.provider) : undefined
+
 
     async function fetchEternalFarmAPR() {
 

@@ -1,5 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers'
-import { useWeb3React } from '@web3-react/core'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
 import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -13,7 +13,6 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
     const contextNetwork = useWeb3React<Web3Provider>(NetworkContextName)
     return context.active ? context : contextNetwork
 }
-
 
 export function useEagerConnect() {
     const { activate, active, deactivate } = useWeb3React()
@@ -29,15 +28,18 @@ export function useEagerConnect() {
     function changeOntoWallet(e: string[]) {
         if (e.length === 0) {
             deactivate()
-            setWallet('')
+            // setWallet('')
             onto.removeListener('accountsChanged', changeOntoWallet)
         } else {
             activate(ontoconnector, undefined, true)
                 .then(() => {
-                    // window.location.reload()
+                    window.location.reload()
                 })
                 .catch(e => {
-                    window.location.reload()
+                    console.log(e)
+                    if (e instanceof UnsupportedChainIdError) {
+                        window.location.reload()
+                    }
                 })
         }
     }
@@ -65,9 +67,11 @@ export function useEagerConnect() {
                         onto.on('accountsChanged', changeOntoWallet)
                     })
                     .catch((e) => {
-                        alert('Unsupported Chain Id')
-                        setTriedOnto(true)
-                        onto.on('accountsChanged', changeOntoWallet)
+                        if (e instanceof UnsupportedChainIdError) {
+                            alert('Unsupported Chain Id')
+                            setTriedOnto(true)
+                            onto.on('accountsChanged', changeOntoWallet)
+                        }
                     })
             } else {
                 setTriedOnto(true)
@@ -127,9 +131,16 @@ export function useEagerConnect() {
  */
 export function useInactiveListener(suppress = false) {
     const { active, error, activate, deactivate } = useWeb3React()
-    const [, setWallet] = useUserSelectedWallet()
+    const [wallet, setWallet] = useUserSelectedWallet()
+    const onto = (window as unknown as OntoWindow).onto
+    const [connectOnto, setConnectOnto] = useState(false)
 
-    const [currentOntoAccount, setCurrentOntoAccount] = useState('')
+    useEffect(() => {
+        if (connectOnto && wallet === 'onto') {
+            console.log(wallet)
+            window.location.reload()
+        }
+    }, [connectOnto, wallet])
 
     useEffect(() => {
         const ethereum = window.ethereum
@@ -164,7 +175,34 @@ export function useInactiveListener(suppress = false) {
             }
 
         }
+        return undefined
+    }, [active, error, suppress, activate])
 
+    useEffect(() => {
+        if (onto && onto.on && !active && !error && !suppress) {
+
+            const handleAccountsChanged = (accounts: string[]) => {
+                if (accounts.length > 0) {
+                    // eat errors
+                    activate(ontoconnector, undefined, true)
+                        .then(() => {
+                            setWallet('onto')
+                            setConnectOnto(true)
+                        })
+                        .catch((error) => {
+                            console.error('Failed to activate after accounts changed', error)
+                        })
+                } else {
+                    setWallet('')
+                }
+            }
+
+            onto.on('accountsChanged', handleAccountsChanged)
+
+            return () => {
+                onto.removeListener('accountsChanged', handleAccountsChanged)
+            }
+        }
         return undefined
     }, [active, error, suppress, activate])
 }

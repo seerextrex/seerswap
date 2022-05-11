@@ -12,9 +12,8 @@ import { FactorySubgraph, Frozen, StakeHash, StakeSubgraph, SubgraphResponse, Su
 
 export function useRealStakerHandlers() {
     const addTransaction = useTransactionAdder()
-    const { chainId, account } = useActiveWeb3React()
-    const _w: any = window
-    const provider = _w.ethereum ? new providers.Web3Provider(_w.ethereum) : undefined
+    const { chainId, account, library } = useActiveWeb3React()
+    const provider = library ? new providers.Web3Provider(library.provider) : undefined
 
     const [stakerHash, setStakedHash] = useState<null | StakeHash>(null)
     const [frozenStaked, setFrozen] = useState<string | Frozen[]>([])

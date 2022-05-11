@@ -1,9 +1,10 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { useEffect, useState } from 'react'
-import { isMobile } from 'react-device-detect'
+import { isMobile, isChrome } from 'react-device-detect'
 import MetamaskIcon from '../../assets/svg/metamask-logo.svg'
-import { injected, OntoWalletConnector } from '../../connectors'
+import OntoIcon from '../../assets/images/onto-logo.svg'
+import { injected, ontoconnector, OntoWalletConnector } from '../../connectors'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import usePrevious from '../../hooks/usePrevious'
 import { ApplicationModal } from '../../state/application/actions'
@@ -177,6 +178,27 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 return null
             }
 
+            if (!isChrome) {
+                if (!option.chromeOnly && option.name !== 'Injected') {
+                    return (
+                        <Option
+                            onClick={() => {
+                                option.connector !== connector && !option.href && tryActivation(option.connector)
+                            }}
+                            id={`connect-${key}`}
+                            key={key}
+                            active={option.connector && option.connector === connector}
+                            color={option.color}
+                            link={option.href}
+                            header={option.name}
+                            subheader={null}
+                            icon={option.iconURL}
+                        />
+                    )
+                }
+                return  null
+            }
+
             // overwrite injected when needed
             if (option.connector === injected) {
                 // don't show injected if there's no injected provider
@@ -194,6 +216,15 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 // likewise for generic
                 else if (option.name === 'Injected' && isMetamask) {
                     return null
+                }
+            }
+
+            if (option.connector === ontoconnector) {
+                // @ts-ignore
+                if (!(window.onto)) {
+                    if (option.name === 'Onto') {
+                        return <Option id={`connect-${key}`} key={key} color={'#000000'} header={<Trans>Install Onto</Trans>} subheader={null} link={'https://onto.app/'} icon={OntoIcon} />
+                    } else return null
                 }
             }
 

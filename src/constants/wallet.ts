@@ -15,6 +15,7 @@ interface WalletInfo {
     primary?: true
     mobile?: true
     mobileOnly?: true
+    chromeOnly?: true
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
@@ -50,6 +51,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
         iconURL: ONTO_ICON_URL,
         description: "",
         href: null,
-        color: '#000000'
+        color: '#000000',
+        chromeOnly: true
     }
 }

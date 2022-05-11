@@ -28,7 +28,7 @@ export function useEagerConnect() {
     function changeOntoWallet(e: string[]) {
         if (e.length === 0) {
             deactivate()
-            // setWallet('')
+            setWallet('')
             onto.removeListener('accountsChanged', changeOntoWallet)
         } else {
             activate(ontoconnector, undefined, true)
@@ -67,6 +67,10 @@ export function useEagerConnect() {
                         onto.on('accountsChanged', changeOntoWallet)
                     })
                     .catch((e) => {
+                        if (e.code === 4001) {
+                           window.location.reload()
+                            setWallet('')
+                        }
                         if (e instanceof UnsupportedChainIdError) {
                             alert('Unsupported Chain Id')
                             setTriedOnto(true)
@@ -191,6 +195,9 @@ export function useInactiveListener(suppress = false) {
                         })
                         .catch((error) => {
                             console.error('Failed to activate after accounts changed', error)
+                            if (error instanceof UnsupportedChainIdError) {
+                                window.location.reload()
+                            }
                         })
                 } else {
                     setWallet('')
@@ -200,7 +207,7 @@ export function useInactiveListener(suppress = false) {
             onto.on('accountsChanged', handleAccountsChanged)
 
             return () => {
-                onto.removeListener('accountsChanged', handleAccountsChanged)
+                // onto.removeListener('accountsChanged', handleAccountsChanged)
             }
         }
         return undefined

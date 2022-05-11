@@ -9,6 +9,7 @@ import { convertDateTime } from '../../utils/time'
 import stc from 'string-to-color'
 import { hexToRgbA } from '../../utils/hexToRgba'
 import { getPositionTokensSortRange } from '../../utils/getPositionTokensRange'
+import { setTooltipPricePositions } from '../../utils/setTooltipPricePositions'
 
 interface ChartInterface {
     feeData: FeeChart
@@ -30,14 +31,6 @@ interface ChartInterface {
         opened: PriceRangeChart | null
     }
     selected: string[]
-}
-
-function debounce(fn: any, time: any) {
-    let timer: any = null
-    return (evt: any) => {
-        clearTimeout(timer)
-        timer = setTimeout(() => fn(evt), time)
-    }
 }
 
 export default function Chart({ feeData: { data, previousData }, span, type, dimensions, isMobile, tokens: { token0, token1 }, token, positions: { closed, opened }, selected }: ChartInterface) {
@@ -257,8 +250,31 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         }
     }
 
+    const outOfChartTooltipGroup = create('svg:g')
+        .style('pointer-events', 'none')
+
+    const outOfChartTooltipRect = create('svg:rect')
+        .append('rect')
+        .attr('width', 100)
+        .attr('height', 40)
+        .attr('fill', 'red')
+
+    const outOfChartTooltipText = create('svg:text')
+        .attr('fill', 'white')
+        .attr('transform', 'translate(20, 20)')
+
+    // @ts-ignore
+    outOfChartTooltipGroup.node()?.append(outOfChartTooltipRect.node())
+    // @ts-ignore
+    outOfChartTooltipGroup.node()?.append(outOfChartTooltipText.node())
+
     const priceRects = useMemo(() => {
         const res: any[] = []
+        const halfOfHeight = height / 2
+        let openI = 0
+        let closedI = 0
+
+
         for (const key in opened) {
             if (selected.some(item => item === key)) {
                 const pos = opened[key]
@@ -309,7 +325,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 .attr('x', posX)
                                 .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
-                            res.push(rect)
+
+                            setTooltipPricePositions(token0Height, token1Height, posY, res, halfOfHeight, outOfChartTooltipRect, outOfChartTooltipText, outOfChartTooltipGroup, rect, height, openI)
 
                         } else {
                             const posWidth =
@@ -320,9 +337,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                             const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000)
                             const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : (outOfChart ? 0 : yScale(_token1Range[1]))
-                            // const height =
-
-                            // console.log(token === ChartToken.TOKEN1 ? [_token0Range[0], _token0Range[1]] : [_token1Range[0], _token1Range[1]])
 
                             const rect = create('svg:rect')
                                 .append('rect')
@@ -335,7 +349,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 .style('opacity', '0.4')
                                 .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
-                            res.push(rect)
+
+                            setTooltipPricePositions(token0Height, token1Height, posY, res, halfOfHeight, outOfChartTooltipRect, outOfChartTooltipText, outOfChartTooltipGroup, rect, height, openI)
                         }
                         i++
                     }
@@ -354,9 +369,11 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         .attr('x', posX)
                         .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                         .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
-                    res.push(rect)
+
+                    setTooltipPricePositions(token0Height, token1Height, posY, res, halfOfHeight, outOfChartTooltipRect, outOfChartTooltipText, outOfChartTooltipGroup, rect, height, closedI)
                 }
             }
+            openI++
         }
 
         for (const key in closed) {
@@ -385,48 +402,60 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     }
                 }
 
-
                 if (span === ChartSpan.WEEK || span === ChartSpan.MONTH) {
                     let widthDif = 0
                     if (xScale(+pos.endTime * 1000) > width) {
                         widthDif = (xScale(+pos.endTime * 1000) - width)
                     }
-                    widthPos = (xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000)) - widthDif
+                    if (xScale(+pos.startTime * 1000) < 0) {
+                        widthPos = xScale(+pos.endTime * 1000) - widthDif
+                    } else {
+                        widthPos = (xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000)) - widthDif
+                    }
                 }
 
                 if (pos.timestamps.length > 2) {
                     for (let i = 0; i < pos.timestamps.length; i++) {
                         if (pos.timestamps[i + 1]) {
+                            const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000)
+                            const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1])
+                            const posWidth = xScale(+pos.timestamps[i + 1] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000)
+
                             const rect = create('svg:rect')
                                 .append('rect')
                                 .attr('id', `pos-${key}`)
-                                .attr('width', xScale(+pos.timestamps[i + 1] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000))
+                                .attr('width', posWidth)
                                 .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
                                 .attr('fill', 'black')
-                                .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
-                                .attr('x', xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000))
+                                .attr('y', posY)
+                                .attr('x', posX)
                                 .style('opacity', '0.4')
                                 .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
                             i++
-                            res.push(rect)
+                            setTooltipPricePositions(token0Height, token1Height, posY, res, halfOfHeight, outOfChartTooltipRect, outOfChartTooltipText, outOfChartTooltipGroup, rect, height, closedI)
                         }
                     }
                 } else {
+                    const posX = xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000)
+                    const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1])
+
                     const rect = create('svg:rect')
                         .append('rect')
                         .attr('id', `pos-${key}`)
                         .attr('width', widthPos)
                         .attr('height', `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
                         .attr('fill', 'black')
-                        .attr('y', token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]))
-                        .attr('x', xScale(+pos.startTime * 1000) < 0 ? 0 : xScale(+pos.startTime * 1000))
+                        .attr('y', posY)
+                        .attr('x', posX)
                         .style('opacity', '0.4')
                         .attr('min', token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                         .attr('max', token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1])
-                    res.push(rect)
+
+                    setTooltipPricePositions(token0Height, token1Height, posY, res, halfOfHeight, outOfChartTooltipRect, outOfChartTooltipText, outOfChartTooltipGroup, rect, height, closedI)
                 }
             }
+            closedI++
         }
         return res
     }, [closed, opened, token, yScale, _chartData, selected])
@@ -502,7 +531,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .attr('text-anchor', 'middle')
         .attr('alignment-baseline', 'central')
         .attr('font-size', '12px')
-
 
     const MaxPriceRectGroup = create('svg:g')
         .style('pointer-events', 'none')
@@ -776,7 +804,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                                 if (clientX > node.x && clientX < node.x + node.width && clientY > node.y && clientY < node.y + node.height) {
                                     const S = node.width * node.height
-                                    if (S <= minS) {
+                                    if (S <= minS && item.node().tagName !== 'g') {
 
                                         MaxPriceRectGroup.style('display', 'block')
                                         MinPriceRectGroup.style('display', 'block')
@@ -802,17 +830,13 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 if (rect.node() !== closestRect) {
                                     rect.node().setAttribute('stroke', 'none')
                                 }
-
                             })
-
                         }
-
                     }, isEntered ? 55 : 0)({ clientX, clientY })
 
                     if (!isEntered) {
                         isEntered = true
                     }
-
                 }
 
                 const rect = create('svg:rect')

@@ -414,7 +414,7 @@ export const FULL_POSITIONS = (positions: string[], account: string | undefined,
               timestamps
             }
 
-            q2: positions (where: {id_in: [${positions}] }) {
+            q2: positions (where: {id_in: [606] }) {
               owner
               liquidity
               id

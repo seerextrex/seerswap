@@ -404,7 +404,7 @@ export function useIncentiveSubgraph() {
                     NON_FUN_POS_MAN,
                     provider.getSigner()
                 )
-                console.log(provider.getSigner().getAddress())
+
                 const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id)
 
                 let _position = {

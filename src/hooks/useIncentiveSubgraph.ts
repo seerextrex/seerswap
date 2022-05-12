@@ -47,7 +47,8 @@ import { walletconnector } from '../connectors'
 
 export function useIncentiveSubgraph() {
 
-    const { chainId, account, activate, library } = useActiveWeb3React()
+
+    const { chainId, account, library } = useActiveWeb3React()
 
     const { dataClient, farmingClient, oldFarmingClient } = useClients()
 
@@ -80,7 +81,6 @@ export function useIncentiveSubgraph() {
     const [positionsEternal, setPositionsEternal] = useState<TickFarming[] | null>(null)
     const [positionsEternalLoading, setPositionsEternalLoading] = useState<boolean>(false)
 
-    //TODO
     const provider = library ? new providers.Web3Provider(library.provider) : undefined
 
     async function fetchEternalFarmAPR() {

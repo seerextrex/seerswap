@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { clearAllTransactions } from '../../state/transactions/actions'
@@ -7,7 +7,7 @@ import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
 import Copy from './Copy'
 import Transaction from './Transaction'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { injected } from '../../connectors'
+import { injected, OntoWalletConnector } from '../../connectors'
 import Identicon from '../Identicon'
 import { ExternalLink as LinkIcon } from 'react-feather'
 import { ExternalLink } from '../../theme'
@@ -39,7 +39,7 @@ interface AccountDetailsProps {
 }
 
 export default function AccountDetails({ toggleWalletModal, pendingTransactions, confirmedTransactions, ENSName }: AccountDetailsProps) {
-    const { chainId, account, connector } = useActiveWeb3React()
+    const { chainId, account, connector, deactivate } = useActiveWeb3React()
     const dispatch = useAppDispatch()
 
     function formatConnectorName() {
@@ -73,6 +73,13 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
         if (chainId) dispatch(clearAllTransactions({ chainId }))
     }, [dispatch, chainId])
 
+    const disconnectHandler = useCallback(() => {
+        if (connector instanceof OntoWalletConnector) {
+            deactivate()
+        }
+        (connector as any).close()
+    }, [])
+
     return (
         <>
             <div className={'pos-r'}>
@@ -85,15 +92,13 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                 <div className={'account-details p-1 mb-15 br-12 c-w'}>
                     <div className={'f f-ac mb-05'}>
                         {formatConnectorName()}
-                        {connector !== injected && (
+                        {connector !== injected &&
                             <WalletAction
-                                onClick={() => {
-                                    (connector as any).close()
-                                }}
+                                onClick={() => disconnectHandler()}
                             >
                                 <Trans>Disconnect</Trans>
                             </WalletAction>
-                        )}
+                        }
                     </div>
                     <div className={'l f f-ac c-w mb-05'} id='web3-account-identifier-row'>
                         {ENSName ? (

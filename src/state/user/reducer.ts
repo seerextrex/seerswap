@@ -8,9 +8,10 @@ import {
     removeSerializedToken,
     SerializedPair,
     SerializedToken,
+    toggleOntoWrongChainModal,
     updateArbitrumAlphaAcknowledged,
     updateHideClosedPositions, updateHideFarmingPositions,
-    updateMatchesDarkMode,
+    updateMatchesDarkMode, updateSelectedWallet,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -64,6 +65,8 @@ export interface UserState {
 
     timestamp: number
     URLWarningVisible: boolean
+    userSelectedWallet: string
+    ontoWrongChainWarning: boolean
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -85,7 +88,9 @@ export const initialState: UserState = {
     tokens: {},
     pairs: {},
     timestamp: currentTimestamp(),
-    URLWarningVisible: true
+    URLWarningVisible: true,
+    userSelectedWallet: '',
+    ontoWrongChainWarning: false
 }
 
 export default createReducer(initialState, (builder) =>
@@ -121,7 +126,9 @@ export default createReducer(initialState, (builder) =>
                 state.userDeadline = DEFAULT_DEADLINE_FROM_NOW
             }
 
-            state.lastUpdateVersionTimestamp = currentTimestamp()
+            //TODO
+
+            // state.lastUpdateVersionTimestamp = currentTimestamp()
         })
         .addCase(updateUserDarkMode, (state, action) => {
             state.userDarkMode = action.payload.userDarkMode
@@ -199,5 +206,11 @@ export default createReducer(initialState, (builder) =>
                 delete state.pairs[chainId][pairKey(tokenBAddress, tokenAAddress)]
             }
             state.timestamp = currentTimestamp()
+        })
+        .addCase(updateSelectedWallet, (state, { payload: { name } }) => {
+            state.userSelectedWallet = name
+        })
+        .addCase(toggleOntoWrongChainModal, (state, { payload: { toggled } }) => {
+            state.ontoWrongChainWarning = toggled
         })
 )

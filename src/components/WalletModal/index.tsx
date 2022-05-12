@@ -1,35 +1,35 @@
-import { AbstractConnector } from '@web3-react/abstract-connector'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { useEffect, useState } from 'react'
-import { isMobile } from 'react-device-detect'
-// @ts-ignore
-import MetamaskIcon from '../../assets/svg/metamask-logo.svg'
-import { injected } from '../../connectors'
-import { SUPPORTED_WALLETS } from '../../constants/wallet'
-import usePrevious from '../../hooks/usePrevious'
-import { ApplicationModal } from '../../state/application/actions'
-import { useModalOpen, useWalletModalToggle } from '../../state/application/hooks'
-import AccountDetails from '../AccountDetails'
-import { Trans } from '@lingui/macro'
-import Modal from '../Modal'
-import Option from './Option'
-import PendingView from './PendingView'
-import ReactGA from 'react-ga'
-import { addPolygonNetwork } from 'components/Web3Status/Web3StatusInner'
-
-import { OptionGrid, Wrapper } from './styled'
-import Card from '../../shared/components/Card/Card'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { UserRejectedRequestError, WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import { ArrowLeft } from 'react-feather'
-import { log } from 'util'
+import { AbstractConnector } from "@web3-react/abstract-connector";
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import { useEffect, useState } from "react";
+import { isMobile, isChrome } from "react-device-detect";
+import MetamaskIcon from "../../assets/svg/metamask-logo.svg";
+import OntoIcon from "../../assets/images/onto-logo.svg";
+import { injected, ontoconnector, OntoWalletConnector } from "../../connectors";
+import { SUPPORTED_WALLETS } from "../../constants/wallet";
+import usePrevious from "../../hooks/usePrevious";
+import { ApplicationModal } from "../../state/application/actions";
+import { useModalOpen, useWalletModalToggle } from "../../state/application/hooks";
+import AccountDetails from "../AccountDetails";
+import { Trans } from "@lingui/macro";
+import Modal from "../Modal";
+import Option from "./Option";
+import PendingView from "./PendingView";
+import ReactGA from "react-ga";
+import { addPolygonNetwork } from "components/Web3Status/Web3StatusInner";
+import { OptionGrid, Wrapper } from "./styled";
+import Card from "../../shared/components/Card/Card";
+import { ReactComponent as Close } from "../../assets/images/x.svg";
+import { UserRejectedRequestError, WalletConnectConnector } from "@web3-react/walletconnect-connector";
+import { ArrowLeft } from "react-feather";
+import { useUserSelectedWallet } from "../../state/user/hooks";
+import { InjectedConnector } from "@web3-react/injected-connector";
 
 const WALLET_VIEWS = {
-    OPTIONS: 'options',
-    OPTIONS_SECONDARY: 'options_secondary',
-    ACCOUNT: 'account',
-    PENDING: 'pending'
-}
+    OPTIONS: "options",
+    OPTIONS_SECONDARY: "options_secondary",
+    ACCOUNT: "account",
+    PENDING: "pending",
+};
 
 interface WalletModalProps {
     pendingTransactions: string[]; // hashes of pending
@@ -39,91 +39,122 @@ interface WalletModalProps {
 
 export default function WalletModal({ pendingTransactions, confirmedTransactions, ENSName }: WalletModalProps) {
     // important that these are destructed from the account-specific web3-react context
-    const { active, account, connector, activate, error, setError } = useWeb3React()
 
-    const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-    const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
-    const [pendingError, setPendingError] = useState<boolean>()
-    const [errorMessage, setErrorMessage] = useState<string>('')
+    const { active, account, connector, activate, error, setError, deactivate } = useWeb3React();
 
-    const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
-    const toggleWalletModal = useWalletModalToggle()
+    const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
+    const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>();
+    const [pendingError, setPendingError] = useState<boolean>();
+    const [errorMessage, setErrorMessage] = useState<string>("");
+    const [isOnto, setIsOnto] = useState(false);
+    const [connect, setConnect] = useState(false);
 
-    const previousAccount = usePrevious(account)
+    const [wallet, setSelectedWallet] = useUserSelectedWallet();
+
+    const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
+    const toggleWalletModal = useWalletModalToggle();
+
+    const previousAccount = usePrevious(account);
 
     // close on connection, when logged out before
     useEffect(() => {
         if (account && !previousAccount && walletModalOpen) {
-            toggleWalletModal()
+            toggleWalletModal();
         }
-    }, [account, previousAccount, toggleWalletModal, walletModalOpen])
+    }, [account, previousAccount, toggleWalletModal, walletModalOpen]);
 
     // always reset to account view
     useEffect(() => {
         if (walletModalOpen) {
-            setPendingError(false)
-            setWalletView(WALLET_VIEWS.ACCOUNT)
+            setPendingError(false);
+            setWalletView(WALLET_VIEWS.ACCOUNT);
         }
-    }, [walletModalOpen])
+    }, [walletModalOpen]);
+
+    useEffect(() => {
+        if (connect && wallet === "onto") {
+            window.location.reload();
+        }
+    }, [wallet, connect]);
 
     // close modal when a connection is successful
-    const activePrevious = usePrevious(active)
-    const connectorPrevious = usePrevious(connector)
+    const activePrevious = usePrevious(active);
+    const connectorPrevious = usePrevious(connector);
+
     useEffect(() => {
         if (walletModalOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
-            setWalletView(WALLET_VIEWS.ACCOUNT)
+            setWalletView(WALLET_VIEWS.ACCOUNT);
         }
-    }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
+    }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious]);
 
     const tryActivation = async (connector: AbstractConnector | undefined) => {
-        let name = ''
+        let name = "";
         Object.keys(SUPPORTED_WALLETS).map((key) => {
             if (connector === SUPPORTED_WALLETS[key].connector) {
-                return (name = SUPPORTED_WALLETS[key].name)
+                return (name = SUPPORTED_WALLETS[key].name);
             }
-            return true
-        })
+            return true;
+        });
 
         ReactGA.event({
-            category: 'Wallet',
-            action: 'Change Wallet',
-            label: name
-        })
+            category: "Wallet",
+            action: "Change Wallet",
+            label: name,
+        });
 
-        setPendingWallet(connector)
-        setWalletView(WALLET_VIEWS.PENDING)
+        setPendingWallet(connector);
+        setWalletView(WALLET_VIEWS.PENDING);
 
         if (connector instanceof WalletConnectConnector) {
-            connector.walletConnectProvider = undefined
+            connector.walletConnectProvider = undefined;
         }
 
+        if (connector instanceof OntoWalletConnector) {
+            setSelectedWallet("onto");
+        }
         connector &&
-        activate(connector, undefined, true)
-            .then(async () => {
-                const walletAddress = await connector.getAccount()
-                if (walletAddress) {
-                    setWalletView(WALLET_VIEWS.ACCOUNT)
-                }
-            })
-            .catch((error) => {
-                if (error instanceof UnsupportedChainIdError) {
-                    setErrorMessage('Please connect to the Polygon network.')
-                    setPendingError(true)
-                    setError(error)
-                } else if (error instanceof UserRejectedRequestError) {
-                    setWalletView(WALLET_VIEWS.ACCOUNT)
-                } else {
-                    setPendingError(true)
-                }
-            })
-    }
+            activate(connector, undefined, true)
+                .then(async () => {
+                    const walletAddress = await connector.getAccount();
+                    if (walletAddress) {
+                        setWalletView(WALLET_VIEWS.ACCOUNT);
+                        if (connector instanceof OntoWalletConnector) {
+                            setSelectedWallet("onto");
+                            setConnect(true);
+                        } else if (connector instanceof InjectedConnector) {
+                            setSelectedWallet("metamask");
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    if (error instanceof UnsupportedChainIdError) {
+                        if (connector instanceof OntoWalletConnector) {
+                            setSelectedWallet("onto");
+                        } else if (connector instanceof InjectedConnector) {
+                            setSelectedWallet("metamask");
+                        }
+
+                        setErrorMessage("Please connect to the Polygon network.");
+                        setPendingError(true);
+                        setError(error);
+                    } else if (error instanceof UserRejectedRequestError) {
+                        setWalletView(WALLET_VIEWS.ACCOUNT);
+                    } else {
+                        setPendingError(true);
+                    }
+                })
+                .finally(() => {
+                    setIsOnto(connector instanceof OntoWalletConnector);
+                });
+    };
 
     // get wallets user can switch too, depending on device/browser
     function getOptions() {
-        const isMetamask = window.ethereum && window.ethereum.isMetaMask
+        const isMetamask = window.ethereum && window.ethereum.isMetaMask;
 
         return Object.keys(SUPPORTED_WALLETS).map((key) => {
-            const option = SUPPORTED_WALLETS[key]
+            const option = SUPPORTED_WALLETS[key];
             // check for mobile options
             if (isMobile) {
                 //disable portis on mobile for now
@@ -131,7 +162,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                     return (
                         <Option
                             onClick={() => {
-                                option.connector !== connector && !option.href && tryActivation(option.connector)
+                                option.connector !== connector && !option.href && tryActivation(option.connector);
                             }}
                             id={`connect-${key}`}
                             key={key}
@@ -142,28 +173,60 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                             subheader={null}
                             icon={option.iconURL}
                         />
-                    )
+                    );
                 }
-                return null
+                return null;
+            }
+
+            if (!isChrome) {
+                if (!option.chromeOnly && option.name !== "Injected") {
+                    return (
+                        <Option
+                            onClick={() => {
+                                option.connector !== connector && !option.href && tryActivation(option.connector);
+                            }}
+                            id={`connect-${key}`}
+                            key={key}
+                            active={option.connector && option.connector === connector}
+                            color={option.color}
+                            link={option.href}
+                            header={option.name}
+                            subheader={null}
+                            icon={option.iconURL}
+                        />
+                    );
+                }
+                return null;
             }
 
             // overwrite injected when needed
             if (option.connector === injected) {
                 // don't show injected if there's no injected provider
                 if (!(window.web3 || window.ethereum)) {
-                    if (option.name === 'MetaMask') {
-                        return <Option id={`connect-${key}`} key={key} color={'#E8831D'} header={<Trans>Install Metamask</Trans>} subheader={null} link={'https://metamask.io/'} icon={MetamaskIcon} />
+                    if (option.name === "MetaMask") {
+                        return <Option id={`connect-${key}`} key={key} color={"#E8831D"} header={<Trans>Install Metamask</Trans>} subheader={null} link={"https://metamask.io/"} icon={MetamaskIcon} />;
                     } else {
-                        return null //dont want to return install twice
+                        return null; //dont want to return install twice
                     }
                 }
                 // don't return metamask if injected provider isn't metamask
-                else if (option.name === 'MetaMask' && !isMetamask) {
-                    return null
+                else if (option.name === "MetaMask" && !isMetamask) {
+                    return null;
                 }
                 // likewise for generic
-                else if (option.name === 'Injected' && isMetamask) {
-                    return null
+                else if (option.name === "Injected" && isMetamask) {
+                    return null;
+                } else if (option.name === "Onto") {
+                    return <div>Please select Polygon chain</div>;
+                }
+            }
+
+            if (option.connector === ontoconnector) {
+                // @ts-ignore
+                if (!window.onto) {
+                    if (option.name === "Onto") {
+                        return <Option id={`connect-${key}`} key={key} color={"#000000"} header={<Trans>Install Onto</Trans>} subheader={null} link={"https://onto.app/"} icon={OntoIcon} />;
+                    } else return null;
                 }
             }
 
@@ -174,7 +237,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                     <Option
                         id={`connect-${key}`}
                         onClick={() => {
-                            option.connector === connector ? setWalletView(WALLET_VIEWS.ACCOUNT) : !option.href && tryActivation(option.connector)
+                            option.connector === connector ? setWalletView(WALLET_VIEWS.ACCOUNT) : !option.href && tryActivation(option.connector);
                         }}
                         key={key}
                         active={option.connector === connector}
@@ -185,35 +248,35 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         icon={option.iconURL}
                     />
                 )
-            )
-        })
+            );
+        });
     }
 
     function getModalContent() {
         if (error) {
             return (
-                <div className={'c-w b'}>
-                    <div className={'flex-s-between'}>
+                <div className={"c-w b"}>
+                    <div className={"flex-s-between"}>
                         {error instanceof UnsupportedChainIdError ? <Trans>Wrong Network</Trans> : <Trans>Error connecting</Trans>}
 
-                        <div className={'cur-p hover-op'} onClick={toggleWalletModal}>
+                        <div className={"cur-p hover-op"} onClick={toggleWalletModal}>
                             <Close />
                         </div>
                     </div>
-                    <div className={'pt-1'}>
+                    <div className={"pt-1"}>
                         {error instanceof UnsupportedChainIdError ? (
                             <>
-                                <h5 className={'mb-1'}>
-                                    <Trans>Please connect to the Polygon network.</Trans>
+                                <h5 className={"mb-1"}>
+                                    <Trans>{isOnto ? "Change your network in Onto browser extension" : "Please connect to the Polygon network."}</Trans>
                                 </h5>
                                 {isMobile ? (
                                     <p>Add Polygon network to your metamask app.</p>
                                 ) : (
-                                    <button
-                                        className={'btn primary p-1 w-100 b'}
-                                        onClick={addPolygonNetwork}>
-                                        Connect to Polygon
-                                    </button>
+                                    !isOnto && (
+                                        <button className={"btn primary p-1 w-100 b"} onClick={addPolygonNetwork}>
+                                            Connect to Polygon
+                                        </button>
+                                    )
                                 )}
                             </>
                         ) : (
@@ -221,7 +284,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         )}
                     </div>
                 </div>
-            )
+            );
         }
         if (account && walletView === WALLET_VIEWS.ACCOUNT) {
             return (
@@ -232,50 +295,47 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                     ENSName={ENSName}
                     openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
                 />
-            )
+            );
         }
         return (
-            <div className={'pos-r'}>
-                <div className={'flex-s-between'}>
+            <div className={"pos-r"}>
+                <div className={"flex-s-between"}>
                     {walletView !== WALLET_VIEWS.ACCOUNT ? (
                         <span
-                            className={'hover-op f cur-p'}
+                            className={"hover-op f cur-p"}
                             onClick={() => {
-                                setPendingError(false)
-                                setWalletView(WALLET_VIEWS.ACCOUNT)
+                                setPendingError(false);
+                                setWalletView(WALLET_VIEWS.ACCOUNT);
                             }}
                         >
-                            <Trans><ArrowLeft size={'1rem'} className={'mr-025'} /> Back</Trans>
+                            <Trans>
+                                <ArrowLeft size={"1rem"} className={"mr-025"} /> Back
+                            </Trans>
                         </span>
                     ) : (
-                        <span className={'c-w'}>
+                        <span className={"c-w"}>
                             <Trans>Connect Wallet</Trans>
                         </span>
                     )}
-                    <div className={'cur-p hover-op'} onClick={toggleWalletModal}>
+                    <div className={"cur-p hover-op"} onClick={toggleWalletModal}>
                         <Close />
                     </div>
                 </div>
 
-                <Card isDark classes={'p-1 br-12 mt-1'}>
+                <Card isDark classes={"p-1 br-12 mt-1"}>
                     {walletView === WALLET_VIEWS.PENDING ? (
-                        <PendingView
-                            connector={pendingWallet}
-                            error={pendingError}
-                            setPendingError={setPendingError}
-                            tryActivation={tryActivation}
-                            errorMessage={errorMessage} />
+                        <PendingView connector={pendingWallet} error={pendingError} setPendingError={setPendingError} tryActivation={tryActivation} errorMessage={errorMessage} />
                     ) : (
                         <OptionGrid>{getOptions()}</OptionGrid>
                     )}
                 </Card>
             </div>
-        )
+        );
     }
 
     return (
         <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
             <Wrapper>{getModalContent()}</Wrapper>
         </Modal>
-    )
+    );
 }

@@ -28,6 +28,8 @@ import { BugReportLink, GlobalStyle, InternetError, Marginer, NetworkFailedCard 
 import Footer from "components/Footer";
 
 import "./index.scss";
+import { useOntoWarningModalToggled } from "state/user/hooks";
+import { OntoWrongChainModal } from "components/OntoWrongChainModal";
 
 const RealStakerPage = React.lazy(() => import("./RealStakerPage"));
 const StakingAnalyticsPage = React.lazy(() => import("./StakingAnalyticsPage"));

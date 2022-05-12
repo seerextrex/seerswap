@@ -16,7 +16,7 @@ export function useRealStakerHandlers() {
     const addTransaction = useTransactionAdder()
 
     const { chainId, account, library } = useActiveWeb3React()
-    const provider = library && new providers.Web3Provider(library.provider)
+    const provider = library ? new providers.Web3Provider(library.provider) : undefined
 
     const [stakeHash, setStakedHash] = useState<string | StakeHash>({ hash: null })
     const [claimgHash, setClaimHash] = useState<string | StakeHash>({ hash: null })

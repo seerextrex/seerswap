@@ -18,7 +18,7 @@ export function useStakerHandlers() {
 
     const { chainId, account, library } = useActiveWeb3React()
 
-    const provider = library && new providers.Web3Provider(library.provider)
+    const provider = library ? new providers.Web3Provider(library.provider) : undefined
 
     const farmingCenterInterface = new Interface(FARMING_CENTER_ABI)
 

@@ -166,6 +166,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@apollo/client": "^3.4.11",
+    "@ethersproject/providers-a": "npm:@ethersproject/providers@^5.6.4",
     "@fontsource/montserrat": "^4.5.1",
     "algebra-packeges": "^2.1.4",
     "bignumber.js": "^9.0.1",

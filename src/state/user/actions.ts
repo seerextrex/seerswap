@@ -28,3 +28,5 @@ export const addSerializedToken = createAction<{ serializedToken: SerializedToke
 export const removeSerializedToken = createAction<{ chainId: number; address: string }>('user/removeSerializedToken')
 export const addSerializedPair = createAction<{ serializedPair: SerializedPair }>('user/addSerializedPair')
 export const removeSerializedPair = createAction<{ chainId: number; tokenAAddress: string; tokenBAddress: string }>('user/removeSerializedPair')
+export const updateSelectedWallet = createAction<{ name: string }>('user/selectedWallet')
+export const toggleOntoWrongChainModal = createAction<{ toggled: boolean }>('user/toggleOntoWrongChainModal')

@@ -10,7 +10,6 @@ import NetworkCard from "./NetworkCard";
 import { useIsNetworkFailed } from "../../hooks/useIsNetworkFailed";
 import usePrevious from "../../hooks/usePrevious";
 import { isMobile } from "react-device-detect";
-import { useAppSelector } from "../../state/hooks";
 import { BalanceText } from "./styled";
 import "./index.scss";
 import { NavLink } from "react-router-dom";
@@ -18,7 +17,6 @@ import { Sliders } from "react-feather";
 import HeaderMenu from "components/HeaderMenu";
 
 export default function Header() {
-    const { startTime, eternalFarmings } = useAppSelector((state) => state.farming);
     const { account, chainId } = useActiveWeb3React();
 
     const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? ""];
@@ -35,19 +33,11 @@ export default function Header() {
 
     const networkFailed = useIsNetworkFailed();
 
-    const [isEvents, setEvents] = useState(false);
-
     let chainValue;
 
     if (chainId === 137) {
         chainValue = "MATIC";
     }
-
-    useEffect(() => {
-        if (startTime.trim() || eternalFarmings) {
-            setEvents(true);
-        }
-    }, [startTime, eternalFarmings]);
 
     const handleBlur = useCallback((e: React.ChangeEvent<HTMLLabelElement>) => {
         const target = e.target.control as HTMLInputElement;

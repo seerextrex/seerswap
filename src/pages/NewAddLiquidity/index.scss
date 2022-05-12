@@ -7,9 +7,9 @@
   grid-template-rows: 1fr 1fr 1fr; 
   gap: 0px 0px; 
   grid-template-areas: 
-    "steps steps stepper"
-    "steps steps stepper"
-    "steps steps stepper"; 
+    "steps steps steps stepper"
+    "steps steps steps stepper"
+    "steps steps steps stepper"; 
 }
 
 .steps { grid-area: steps; }

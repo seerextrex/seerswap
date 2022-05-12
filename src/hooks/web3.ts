@@ -3,6 +3,8 @@ import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
 import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
+import { useAppDispatch } from "state/hooks"
+import { toggleOntoWrongChainModal } from "state/user/actions"
 import { gnosisSafe, injected, ontoconnector } from '../connectors'
 import { NetworkContextName } from '../constants/misc'
 import { OntoWindow } from '../models/types/global'
@@ -15,10 +17,14 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
 }
 
 export function useEagerConnect() {
+
+    const dispatch = useAppDispatch()
+
     const { activate, active, deactivate } = useWeb3React()
     const [tried, setTried] = useState(false)
     const [wallet, setWallet] = useUserSelectedWallet()
     const onto = (window as unknown as OntoWindow).onto
+
 
     // gnosisSafe.isSafeApp() races a timeout against postMessage, so it delays pageload if we are not in a safe app;
     // if we are not embedded in an iframe, it is not worth checking
@@ -38,6 +44,7 @@ export function useEagerConnect() {
                 .catch(e => {
                     console.log(e)
                     if (e instanceof UnsupportedChainIdError) {
+                        setWallet('')
                         window.location.reload()
                     }
                 })
@@ -68,11 +75,11 @@ export function useEagerConnect() {
                     })
                     .catch((e) => {
                         if (e.code === 4001) {
-                           window.location.reload()
+                            window.location.reload()
                             setWallet('')
                         }
                         if (e instanceof UnsupportedChainIdError) {
-                            alert('Unsupported Chain Id')
+                            dispatch(toggleOntoWrongChainModal({ toggled: true }))
                             setTriedOnto(true)
                             onto.on('accountsChanged', changeOntoWallet)
                         }

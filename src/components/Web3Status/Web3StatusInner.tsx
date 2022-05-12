@@ -11,6 +11,9 @@ import { Sock } from "./Sock";
 import { shortenAddress } from "../../utils";
 import { StatusIcon } from "./StatusIcon";
 import { EthereumWindow } from "models/types";
+import { useOntoWarningModalToggled } from "../../state/user/hooks";
+import { OntoWrongChainModal } from "components/OntoWrongChainModal";
+import { useState } from "react";
 
 export async function addPolygonNetwork() {
     const _window = window as EthereumWindow;
@@ -57,11 +60,15 @@ export function Web3StatusInner() {
     const { ENSName } = useENSName(account ?? undefined);
     const sortedRecentTransactions = useSortedRecentTransactions();
 
+    const ontoWrongChainWarning = useOntoWarningModalToggled();
+
     const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash);
 
     const hasPendingTransactions = !!pending.length;
     const hasSocks = useHasSocks();
     const toggleWalletModal = useWalletModalToggle();
+
+    const [ontoHelper, toggleOntoHelper] = useState(false);
 
     if (account) {
         return (
@@ -88,6 +95,18 @@ export function Web3StatusInner() {
                 <NetworkIcon />
                 <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Polygon</Trans> : <Trans>Error</Trans>}</Text>
             </Web3StatusError>
+        );
+    } else if (ontoWrongChainWarning) {
+        return (
+            <>
+                {ontoHelper && <OntoWrongChainModal handleClose={() => toggleOntoHelper(false)} />}
+                <Web3StatusError onClick={() => toggleOntoHelper(true)}>
+                    <NetworkIcon />
+                    <Text>
+                        <Trans>Connect to Polygon</Trans>
+                    </Text>
+                </Web3StatusError>
+            </>
         );
     } else {
         return (

@@ -208,6 +208,8 @@ export function useInactiveListener(suppress = false) {
                         .catch((error) => {
                             console.error('Failed to activate after accounts changed', error)
                             if (error instanceof UnsupportedChainIdError) {
+                                onto.removeListener('accountsChanged', handleAccountsChanged)
+                                setWallet('')
                                 window.location.reload()
                             } else {
                                 dispatch(toggleOntoWrongChainModal({ toggled: false }))

@@ -46,6 +46,8 @@ export function useEagerConnect() {
                     if (e instanceof UnsupportedChainIdError) {
                         setWallet('')
                         window.location.reload()
+                    } else {
+                        dispatch(toggleOntoWrongChainModal({ toggled: false }))
                     }
                 })
         }
@@ -75,13 +77,15 @@ export function useEagerConnect() {
                     })
                     .catch((e) => {
                         if (e.code === 4001) {
-                            window.location.reload()
                             setWallet('')
+                            window.location.reload()
                         }
                         if (e instanceof UnsupportedChainIdError) {
                             dispatch(toggleOntoWrongChainModal({ toggled: true }))
                             setTriedOnto(true)
                             onto.on('accountsChanged', changeOntoWallet)
+                        } else {
+                            dispatch(toggleOntoWrongChainModal({ toggled: false }))
                         }
                     })
             } else {
@@ -146,9 +150,10 @@ export function useInactiveListener(suppress = false) {
     const onto = (window as unknown as OntoWindow).onto
     const [connectOnto, setConnectOnto] = useState(false)
 
+    const dispatch = useAppDispatch()
+
     useEffect(() => {
         if (connectOnto && wallet === 'onto') {
-            console.log(wallet)
             window.location.reload()
         }
     }, [connectOnto, wallet])
@@ -204,6 +209,8 @@ export function useInactiveListener(suppress = false) {
                             console.error('Failed to activate after accounts changed', error)
                             if (error instanceof UnsupportedChainIdError) {
                                 window.location.reload()
+                            } else {
+                                dispatch(toggleOntoWrongChainModal({ toggled: false }))
                             }
                         })
                 } else {

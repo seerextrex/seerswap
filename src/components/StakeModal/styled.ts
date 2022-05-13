@@ -72,7 +72,7 @@ export const NFTPositionIcon = styled.div<{ skeleton?: boolean; name?: string }>
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 12px;
     border-radius: 50%;
     background: ${({ name }) => (name ? gradient('token' + name) : '')};
     ${({ skeleton }) =>

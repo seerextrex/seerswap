@@ -216,7 +216,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 // likewise for generic
                 else if (option.name === "Injected" && isMetamask) {
                     return null;
-                } else if (option.name === "Onto") {
+                } else if (option.name === "ONTO Wallet") {
                     return <div>Please select Polygon chain</div>;
                 }
             }
@@ -224,8 +224,8 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
             if (option.connector === ontoconnector) {
                 // @ts-ignore
                 if (!window.onto) {
-                    if (option.name === "Onto") {
-                        return <Option id={`connect-${key}`} key={key} color={"#000000"} header={<Trans>Install Onto</Trans>} subheader={null} link={"https://onto.app/"} icon={OntoIcon} />;
+                    if (option.name === "ONTO Wallet") {
+                        return <Option id={`connect-${key}`} key={key} color={"#000000"} header={<Trans>ONTO Wallet</Trans>} subheader={null} link={"https://onto.app/"} icon={OntoIcon} />;
                     } else return null;
                 }
             }
@@ -267,7 +267,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         {error instanceof UnsupportedChainIdError ? (
                             <>
                                 <h5 className={"mb-1"}>
-                                    <Trans>{isOnto ? "Change your network in Onto browser extension" : "Please connect to the Polygon network."}</Trans>
+                                    <Trans>{isOnto ? "Change your network in ONTO Wallet browser extension" : "Please connect to the Polygon network."}</Trans>
                                 </h5>
                                 {isMobile ? (
                                     <p>Add Polygon network to your metamask app.</p>

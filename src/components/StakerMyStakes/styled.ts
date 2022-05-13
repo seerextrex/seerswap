@@ -58,8 +58,8 @@ export const PositionCard = styled.div<{ navigatedTo: boolean }>`
   `}
 
     ${({ navigatedTo }) =>
-    navigatedTo &&
-    css`
+        navigatedTo &&
+        css`
             background-color: ${darken(0.05, 'rgba(91,183,255,0.6)')};
             border-radius: 5px;
             padding: 8px 5px;
@@ -83,14 +83,15 @@ export const NFTPositionIcon = styled.div<{ name: string; skeleton?: boolean }>`
     align-items: center;
     justify-content: center;
     font-weight: 600;
+    font-size: 12px;
     width: 35px;
     height: 35px;
     border-radius: 50%;
     margin-top: 2px;
     background: ${({ name }) => (name ? gradient('token' + name) : '')};
     ${({ skeleton }) =>
-    skeleton &&
-    css`
+        skeleton &&
+        css`
             background: rgba(60, 97, 126, 0.5);
             ${skeletonGradient}
         `};
@@ -100,8 +101,8 @@ export const NFTPositionDescription = styled.div<{ skeleton?: boolean }>`
     line-height: 18px;
 
     ${({ skeleton }) =>
-    skeleton &&
-    css`
+        skeleton &&
+        css`
             & > * {
                 background: rgba(60, 97, 126, 0.5);
                 border-radius: 6px;
@@ -216,7 +217,7 @@ export const PositionCardStatsItemTitle = styled.div`
     text-transform: uppercase;
 `
 
-export const PositionCardStatsItemValue = styled.div<{title: any}>`
+export const PositionCardStatsItemValue = styled.div<{ title: any }>`
     font-size: 16px;
     line-height: 25px;
 `
@@ -304,8 +305,8 @@ export const StakeCountdown = styled.div<{ skeleton: boolean }>`
   `}
     & > * {
         ${({ skeleton }) =>
-    skeleton
-        ? css`
+        skeleton
+            ? css`
                     width: 80px;
                     height: 16px;
                     background: #5aa7df;
@@ -313,7 +314,7 @@ export const StakeCountdown = styled.div<{ skeleton: boolean }>`
 
                     ${skeletonGradient}
                 `
-        : null}
+            : null}
     }
 `
 
@@ -377,8 +378,8 @@ export const StakeButton = styled.button<{ skeleton?: boolean }>`
     }
 
     ${({ disabled }) =>
-    disabled &&
-    css`
+        disabled &&
+        css`
             opacity: 0.4;
             cursor: default;
 
@@ -388,12 +389,12 @@ export const StakeButton = styled.button<{ skeleton?: boolean }>`
         `}
 
     ${({ skeleton }) =>
-    skeleton
-        ? css`
+        skeleton
+            ? css`
                 ${skeletonGradient};
                 width: 80px;
             `
-        : null}
+            : null}
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
@@ -428,8 +429,8 @@ export const TokensNames = styled.div<{ skeleton?: boolean }>`
   `}
     & > * {
         ${({ skeleton }) =>
-    skeleton
-        ? css`
+        skeleton
+            ? css`
                     width: 40px;
                     height: 16px;
                     background: #5aa7df;
@@ -437,7 +438,7 @@ export const TokensNames = styled.div<{ skeleton?: boolean }>`
                     border-radius: 4px;
                     ${skeletonGradient}
                 `
-        : null}
+            : null}
     }
 `
 
@@ -552,7 +553,7 @@ export const EventProgressInner = styled.div.attrs(({ progress }: { progress: nu
     style: {
         width: `${progress}%`
     }
-}))<{ progress: number }>`
+})) <{ progress: number }>`
     height: 100%;
     background-color: #5bb7ff;
     border-radius: 6px;

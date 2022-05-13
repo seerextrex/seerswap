@@ -66,6 +66,23 @@ export class OntoWalletConnector extends AbstractConnector {
 
         const { chainId } = await provider.getNetwork()
 
+        // @ts-ignore
+        provider.provider.on('accountsChanged', (accounts: string[]): void => {
+            //@ts-ignore
+            if (account !== accounts[0]) {
+                window.location.reload()
+            }
+        })
+
+        //@ts-ignore
+        provider.provider.on('chainChanged', (chain) => {
+            //@ts-ignore
+            if (chain !== chainId) {
+                window.location.reload()
+            }
+        })
+
+
         return Promise.resolve({ provider: provider.provider, chainId, account })
     }
 
@@ -111,6 +128,33 @@ export class OntoWalletConnector extends AbstractConnector {
             console.error(e)
         }
     }
+
+    parseSendReturn(sendReturn: any) {
+        return sendReturn.hasOwnProperty('result') ? sendReturn.result : sendReturn
+    }
+
+
+    async isAuthorized(): Promise<boolean> {
+
+        const _window = window as unknown as OntoWindow
+
+        if (!_window.onto) {
+            return false
+        }
+
+        try {
+            return await _window.onto.send('eth_accounts').then((sendReturn: any) => {
+                if (this.parseSendReturn(sendReturn).length > 0) {
+                    return true
+                } else {
+                    return false
+                }
+            })
+        } catch {
+            return false
+        }
+    }
+
 }
 
 export const ontoconnector = new OntoWalletConnector({

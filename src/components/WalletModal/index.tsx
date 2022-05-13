@@ -175,6 +175,11 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         />
                     );
                 }
+
+                if (error && error instanceof UnsupportedChainIdError) {
+                    return <div>Please connect to Polygon chain</div>;
+                }
+
                 return null;
             }
 

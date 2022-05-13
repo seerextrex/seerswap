@@ -14,7 +14,7 @@ export function OntoWrongChainModal({ handleClose }: { handleClose: () => void }
                 handleClose();
             }}
         >
-            <div style={{ overflowY: "auto" }}>
+            <div style={{ overflowY: "auto", overflowX: "hidden" }}>
                 <div className="mb-1" style={{ fontSize: "18px" }}>
                     Please select Polygon chain
                 </div>

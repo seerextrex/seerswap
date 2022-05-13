@@ -154,7 +154,7 @@ export function useInactiveListener(suppress = false) {
 
     useEffect(() => {
         if (connectOnto && wallet === 'onto') {
-            window.location.reload()
+            // window.location.reload()
         }
     }, [connectOnto, wallet])
 

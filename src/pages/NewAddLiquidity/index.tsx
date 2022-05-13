@@ -16,7 +16,9 @@ export function NewAddLiquidityPage({
 }>) {
     return (
         <div className="add-liquidity-page">
-            <div className="steps">
+            <div className="add-liquidity-page__title">Add liquidity</div>
+            <div className="add-liquidity-page__toolbar"></div>
+            <div className="add-liquidity-page__steps">
                 <div className="f f-ac mv-1">
                     <div className="f f-ac f-jc" style={{ borderRadius: "50%", width: "25px", height: "25px", background: "blue" }}>
                         1
@@ -45,7 +47,7 @@ export function NewAddLiquidityPage({
                     <EnterAmounts />
                 </div>
             </div>
-            <div className="stepper">
+            <div className="add-liquidity-page__stepper">
                 <Stepper step={1} />
             </div>
         </div>

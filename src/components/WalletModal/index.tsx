@@ -21,8 +21,6 @@ import Card from "../../shared/components/Card/Card";
 import { ReactComponent as Close } from "../../assets/images/x.svg";
 import { UserRejectedRequestError, WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { ArrowLeft } from "react-feather";
-import { useUserSelectedWallet } from "../../state/user/hooks";
-import { InjectedConnector } from "@web3-react/injected-connector";
 
 const WALLET_VIEWS = {
     OPTIONS: "options",
@@ -49,8 +47,6 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
     const [isOnto, setIsOnto] = useState(false);
     const [connect, setConnect] = useState(false);
 
-    const [wallet, setSelectedWallet] = useUserSelectedWallet();
-
     const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
     const toggleWalletModal = useWalletModalToggle();
 
@@ -70,12 +66,6 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
             setWalletView(WALLET_VIEWS.ACCOUNT);
         }
     }, [walletModalOpen]);
-
-    useEffect(() => {
-        if (connect && wallet === "onto") {
-            window.location.reload();
-        }
-    }, [wallet, connect]);
 
     // close modal when a connection is successful
     const activePrevious = usePrevious(active);
@@ -109,32 +99,18 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
             connector.walletConnectProvider = undefined;
         }
 
-        if (connector instanceof OntoWalletConnector) {
-            setSelectedWallet("onto");
-        }
+
         connector &&
             activate(connector, undefined, true)
                 .then(async () => {
                     const walletAddress = await connector.getAccount();
                     if (walletAddress) {
                         setWalletView(WALLET_VIEWS.ACCOUNT);
-                        if (connector instanceof OntoWalletConnector) {
-                            setSelectedWallet("onto");
-                            setConnect(true);
-                        } else if (connector instanceof InjectedConnector) {
-                            setSelectedWallet("metamask");
-                        }
                     }
                 })
                 .catch((error) => {
                     console.error(error);
                     if (error instanceof UnsupportedChainIdError) {
-                        if (connector instanceof OntoWalletConnector) {
-                            setSelectedWallet("onto");
-                        } else if (connector instanceof InjectedConnector) {
-                            setSelectedWallet("metamask");
-                        }
-
                         setErrorMessage("Please connect to the Polygon network.");
                         setPendingError(true);
                         setError(error);

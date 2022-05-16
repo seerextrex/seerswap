@@ -70,7 +70,10 @@ export class OntoWalletConnector extends AbstractConnector {
         provider.provider.on('accountsChanged', (accounts: string[]): void => {
             //@ts-ignore
             if (account !== accounts[0]) {
+                localStorage.setItem('ontoWarning', '')
                 window.location.reload()
+            } else if (accounts.length === 0) {
+                localStorage.setItem('ontoWarning', '')
             }
         })
 
@@ -79,6 +82,8 @@ export class OntoWalletConnector extends AbstractConnector {
             //@ts-ignore
             if (chain !== chainId) {
                 window.location.reload()
+            } else {
+                localStorage.setItem('ontoWarning', '')
             }
         })
 

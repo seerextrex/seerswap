@@ -5,10 +5,8 @@ import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useAppDispatch, useAppSelector } from "state/hooks"
 import { toggleOntoWrongChainModal } from "state/user/actions"
-import { gnosisSafe, injected, ontoconnector } from '../connectors'
+import { gnosisSafe, injected, ontoconnector, OntoWalletConnector } from '../connectors'
 import { NetworkContextName } from '../constants/misc'
-import { OntoWindow } from '../models/types/global'
-import { useUserSelectedWallet } from '../state/user/hooks'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
     const context = useWeb3React<Web3Provider>()
@@ -80,7 +78,7 @@ export function useEagerConnect() {
             Promise.race([isAuthorized, timeout]).then(isAuthorized => {
 
                 if (isAuthorized) {
-                    activate(injected, undefined, true).catch(() => {
+                    activate(injected, undefined, true).catch((e) => {
                         setTried(true)
                     })
                 } else {
@@ -113,18 +111,19 @@ export function useEagerConnect() {
  * and out after checking what network theyre on
  */
 export function useInactiveListener(suppress = false) {
-    const { active, error, activate } = useWeb3React()
+    const { active, error, activate, connector } = useWeb3React()
 
-    const dispatch = useAppDispatch()
-
-    const ontoWrongChain = useAppSelector((state) => state.user.ontoWrongChainWarning)
+    const ontoWrongChain = !!localStorage.getItem('ontoWarning')
 
     useEffect(() => {
         if (!error) return
 
-        if (error instanceof UnsupportedChainIdError && !ontoWrongChain) {
-            dispatch(toggleOntoWrongChainModal({ toggled: true }))
-            window.location.reload()
+        if (error instanceof UnsupportedChainIdError) {
+            // @ts-ignore
+            if (window.onto.selectedAddress !== '') {
+                localStorage.setItem('ontoWarning', 'true')
+                window.location.reload()
+            }
         }
 
     }, [error, ontoWrongChain])
@@ -144,7 +143,7 @@ export function useInactiveListener(suppress = false) {
             const handleAccountsChanged = (accounts: string[]) => {
                 if (accounts.length > 0) {
                     // eat errors
-                    dispatch(toggleOntoWrongChainModal({ toggled: false }))
+                    localStorage.setItem('ontoWarning', '')
                     activate(injected, undefined, true).catch((error) => {
                         console.error('Failed to activate after accounts changed', error)
                     })

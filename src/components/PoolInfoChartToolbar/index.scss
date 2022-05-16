@@ -6,43 +6,122 @@
     &:checked {
       & + .positions-range-input__label {
         background-color: #080b32;
-        border: 1px solid #36f;
 
-        & > .positions-range-input__list {
+
+        .positions-range-input__title {
+          border: 1px solid #387bba;
+        }
+
+        & > .positions-range-input__inner {
           opacity: 1;
           pointer-events: all;
+          margin-top: 8px;
         }
       }
     }
   }
 
-  &__label {
-    position: relative;
+  &__title {
     width: 100%;
-    min-width: 200px;
+    border: 1px solid #111f2a;
+    padding: 0.5rem 1rem;
+    background-color: #111f2a;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 
-
-    div {
-      width: 100%;
-      border: 1px solid var(--primary);
-      min-width: 200px;
+    &:hover {
+      background-color: #142736;
+      border-color: #142736;
     }
   }
 
-  &__list {
+
+  &__inner {
     opacity: 0;
     position: absolute;
     width: 200px;
     pointer-events: none;
     z-index: 100;
+    background-color: #111f2a;
+    border-radius: 8px;
+    transition-duration: .3s;
+    margin-top: 4px;
+    right: 0;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 
-    li {
+    & > div {
+      border-bottom: 1px solid #23333f;
+      font-size: 14px;
+      color: #bababa;
+
+      &:last-of-type {
+        border-top: 1px solid #23333f;
+      }
+    }
+  }
+
+  &__list {
+
+    &-item {
       width: 100%;
       display: flex;
-      justify-content: space-between;
-      padding: .5rem .25rem;
-      background: var(--ebony-clay);
-      border-bottom: 1px solid var(--light-gray);
+      align-items: center;
+      padding: 0.5rem 1rem;
+      
+      &:not(:last-of-type) {
+        border-bottom: 1px solid #23333f;
+      }
+
+      &:last-of-type {
+        border-radius: 0 0 8px 8px;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: #192834;
+      }
+
+      &__circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      &__id {
+
+      }
+
+      &__date {
+        font-size: 13px;
+        color: #bababa;
+      }
+
+      &__checked {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: #1b2f3e;
+
+        &.active {
+          background-color: #4ab1ff;
+        }
+      }
+    }
+  }
+
+  &__tooltip {
+    &-item {
+      &:not(:last-of-type) {
+        margin-right: 10px;
+      }
+    }
+    &-circle {
+      width: 8px;
+      height: 8px; 
+      background: red;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
     }
   }
 

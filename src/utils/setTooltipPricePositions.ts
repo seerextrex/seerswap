@@ -6,6 +6,8 @@ export function setTooltipPricePositions(height0: number, height1: number, y: nu
             outOfChartTooltipRect
                 .attr('x', i > 0 ? 100 + (10 * i) : 0)
                 .attr('y', height - 40)
+                .attr('fill', 'blue')
+                .attr('rx', '6')
 
             outOfChartTooltipText
                 .attr('transform', `translate(${20 * (i + 1)}, 390)`)

@@ -25,6 +25,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
         }
         return res;
     }, [opened]);
+
     const _closed = useMemo(() => {
         const res = [];
         for (const key in closed) {
@@ -36,8 +37,6 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
         }
         return res;
     }, [closed]);
-
-    // console.log(closed)
 
     const closeHandler = useCallback((e) => {
         const target = e.target.control;

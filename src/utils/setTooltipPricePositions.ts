@@ -1,17 +1,21 @@
-export function setTooltipPricePositions(height0: number, height1: number, y: number, res: any[], halfOfHeight: number, outOfChartTooltipRect: any, outOfChartTooltipText: any, outOfChartTooltipGroup: any, rect: any, height: number, i: number) {
+import stc from "string-to-color"
+
+export function setTooltipPricePositions(height0: number, height1: number, y: number, res: any[], halfOfHeight: number, outOfChartTooltipRect: any, outOfChartTooltipText: any, outOfChartTooltipGroup: any, rect: any, height: number, i: number, positionNumber: string) {
     if (height1 < 0 || height0 < 0) {
 
         if (y > halfOfHeight) {
 
+            //? eto massiv?
             outOfChartTooltipRect
-                .attr('x', i > 0 ? 100 + (10 * i) : 0)
-                .attr('y', height - 40)
-                .attr('fill', 'blue')
-                .attr('rx', '6')
+                .attr('fill', stc(positionNumber))
+
+            outOfChartTooltipGroup
+                .attr('x', i > 0 ? 100 + (10 * i) : 10)
+                .attr('y', height - 30)
 
             outOfChartTooltipText
-                .attr('transform', `translate(${20 * (i + 1)}, 390)`)
-                .property('innerHTML', `VNIZ`)
+                .property('innerHTML', positionNumber)
+
             res.push(outOfChartTooltipGroup)
         } else {
             outOfChartTooltipRect
@@ -19,10 +23,12 @@ export function setTooltipPricePositions(height0: number, height1: number, y: nu
                 .attr('y', 0)
 
             outOfChartTooltipText
-                .property('innerHTML', `VVERH`)
+                .property('innerHTML', positionNumber)
             res.push(outOfChartTooltipGroup)
         }
     } else {
+        //? mutaetsya ref??
         res.push(rect)
     }
 }
+

@@ -10,6 +10,7 @@ import { Token } from "@uniswap/sdk-core";
 import Toggle from "../Toggle";
 import "./index.scss";
 import PositionsSelect from "components/PoolInfoChartToolbar/PositionsSelect";
+import { useActiveWeb3React } from "hooks/web3";
 
 interface FeeChartRangeInputProps {
     fetchedData:
@@ -37,6 +38,8 @@ interface FeeChartRangeInputProps {
 
 export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken, positions, selected, setSelected }: FeeChartRangeInputProps) {
     const ref = useRef<HTMLDivElement>(null);
+
+    const { account } = useActiveWeb3React();
 
     const formattedData: FeeChart = useMemo(() => {
         if (!fetchedData || typeof fetchedData === "string")
@@ -145,7 +148,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                             />
                         </div>
                     )}
-                    {type === ChartType.PRICE && (
+                    {type === ChartType.PRICE && account && (
                         <div className={"fee-chart__toggle"}>
                             <PositionsSelect positions={positions} selected={selected} setSelected={setSelected} />
                         </div>

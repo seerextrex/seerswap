@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { area, axisBottom, axisLeft, create, curveBumpX, easeCircleOut, interpolate, line, max, min, scaleLinear, scaleTime, select } from "d3";
 import dayjs from "dayjs";
 import { ChartSpan, ChartType } from "../../models/enums";
@@ -38,6 +38,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const { width, height, margin } = dimensions;
     const svgWidth = width + margin.left + margin.right + 10;
     const svgHeight = height + margin.bottom + margin.top;
+
+    const [firstLoad, setFirstLoad] = useState(true);
 
     const firstNonEmptyValue = useMemo(() => {
         if (!previousData) return null;
@@ -270,18 +272,19 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const outOfChartTooltipGroup = create("svg:g").style("pointer-events", "none");
 
     const outOfChartTooltipRect = create("svg:rect").attr("width", 60).attr("height", 25).attr("rx", "8");
+    const outOfChartTooltipChevron = create("svg:rect").attr("width", 10).attr("height", 10);
 
-    const outOfChartTooltipText = create("svg:text").attr("fill", "white").attr("x", 30).attr("y", 18).attr("text-anchor", "middle").attr("alignment-baseline", "middle");
+    const outOfChartTooltipText = create("svg:text").attr("fill", "white").attr("x", 30).attr("y", 18);
 
     outOfChartTooltipGroup.append(() => outOfChartTooltipRect.node());
-
+    outOfChartTooltipGroup.append(() => outOfChartTooltipChevron.node());
     outOfChartTooltipGroup.append(() => outOfChartTooltipText.node());
 
     const priceRects = useMemo(() => {
         const res: any[] = [];
         const halfOfHeight = height / 2;
-        let openI = 0;
-        let closedI = 0;
+
+        let outRangeIndex = 0;
 
         for (const key in opened) {
             if (selected.some((item) => item === key)) {
@@ -327,7 +330,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 .attr("id", `pos-${key}`)
                                 .attr("width", posWidth)
                                 .attr("height", token === ChartToken.TOKEN1 ? token1Height : token0Height)
-                                .attr("fill", hexToRgbA(stc(key), 0.2))
+                                .attr("fill", hexToRgbA(stc(key), 0.4))
                                 .attr("y", posY)
                                 .attr("x", posX)
                                 .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
@@ -342,33 +345,38 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 outOfChartTooltipRect,
                                 outOfChartTooltipText,
                                 outOfChartTooltipGroup,
+                                outOfChartTooltipChevron,
                                 rect,
                                 height,
-                                openI,
+                                outRangeIndex,
                                 key
                             );
                         } else {
+                            console.log(xScale(+pos.timestamps[i] * 1000), xScale(+pos.timestamps[i + 1] * 1000));
                             const posWidth =
                                 xScale(+pos.timestamps[i + 1] * 1000) < 0
                                     ? 0
                                     : xScale(+pos.timestamps[i] * 1000) < 0
-                                    ? Math.abs(xScale(+pos.timestamps[i + 1] * 1000) - Math.abs(xScale(+pos.timestamps[i] * 1000)) - Math.abs(xScale(+pos.timestamps[i] * 1000)))
+                                    ? Math.abs(Math.abs(xScale(+pos.timestamps[i + 1] * 1000) - Math.abs(xScale(+pos.timestamps[i] * 1000))) - Math.abs(xScale(+pos.timestamps[i] * 1000)))
                                     : xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000);
 
                             const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000);
                             const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : outOfChart ? 0 : yScale(_token1Range[1]);
+
+                            const closedGroup = create("svg:g");
 
                             const rect = create("svg:rect")
                                 .append("rect")
                                 .attr("id", `pos-${key}`)
                                 .attr("width", posWidth)
                                 .attr("height", `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
-                                .attr("fill", "black")
+                                .attr("fill", hexToRgbA(stc(key), 0.4))
                                 .attr("y", posY)
                                 .attr("x", posX)
-                                .style("opacity", "0.4")
                                 .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
+
+                            closedGroup.append(() => rect.node());
 
                             setTooltipPricePositions(
                                 token0Height,
@@ -379,9 +387,10 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 outOfChartTooltipRect,
                                 outOfChartTooltipText,
                                 outOfChartTooltipGroup,
-                                rect,
+                                outOfChartTooltipChevron,
+                                closedGroup,
                                 height,
-                                openI,
+                                outRangeIndex,
                                 key
                             );
                         }
@@ -398,16 +407,30 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         .attr("id", `pos-${key}`)
                         .attr("width", posWidth)
                         .attr("height", token === ChartToken.TOKEN1 ? token1Height : token0Height)
-                        .attr("fill", hexToRgbA(stc(key), 0.2))
+                        .attr("fill", hexToRgbA(stc(key), 0.4))
                         .attr("y", posY)
                         .attr("x", posX)
                         .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                         .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
 
-                    setTooltipPricePositions(token0Height, token1Height, posY, res, halfOfHeight, outOfChartTooltipRect, outOfChartTooltipText, outOfChartTooltipGroup, rect, height, closedI, key);
+                    setTooltipPricePositions(
+                        token0Height,
+                        token1Height,
+                        posY,
+                        res,
+                        halfOfHeight,
+                        outOfChartTooltipRect,
+                        outOfChartTooltipText,
+                        outOfChartTooltipGroup,
+                        outOfChartTooltipChevron,
+                        rect,
+                        height,
+                        outRangeIndex,
+                        key
+                    );
                 }
+                outRangeIndex++;
             }
-            openI++;
         }
 
         for (const key in closed) {
@@ -455,19 +478,16 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                             const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000);
                             const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]);
                             const posWidth = xScale(+pos.timestamps[i + 1] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000);
-
                             const rect = create("svg:rect")
                                 .append("rect")
                                 .attr("id", `pos-${key}`)
                                 .attr("width", posWidth)
                                 .attr("height", `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
-                                .attr("fill", "black")
+                                .attr("fill", hexToRgbA(stc(key), 0.4))
                                 .attr("y", posY)
                                 .attr("x", posX)
-                                .style("opacity", "0.4")
                                 .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
-                            // zachem?
                             i++;
                             setTooltipPricePositions(
                                 token0Height,
@@ -478,9 +498,10 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 outOfChartTooltipRect,
                                 outOfChartTooltipText,
                                 outOfChartTooltipGroup,
+                                outOfChartTooltipChevron,
                                 rect,
                                 height,
-                                closedI,
+                                outRangeIndex,
                                 key
                             );
                         }
@@ -494,17 +515,30 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         .attr("id", `pos-${key}`)
                         .attr("width", widthPos)
                         .attr("height", `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
-                        .attr("fill", "black")
+                        .attr("fill", hexToRgbA(stc(key), 0.4))
                         .attr("y", posY)
                         .attr("x", posX)
-                        .style("opacity", "0.4")
                         .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                         .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
 
-                    setTooltipPricePositions(token0Height, token1Height, posY, res, halfOfHeight, outOfChartTooltipRect, outOfChartTooltipText, outOfChartTooltipGroup, rect, height, closedI, key);
+                    setTooltipPricePositions(
+                        token0Height,
+                        token1Height,
+                        posY,
+                        res,
+                        halfOfHeight,
+                        outOfChartTooltipRect,
+                        outOfChartTooltipText,
+                        outOfChartTooltipGroup,
+                        outOfChartTooltipChevron,
+                        rect,
+                        height,
+                        outRangeIndex,
+                        key
+                    );
                 }
+                outRangeIndex++;
             }
-            closedI++;
         }
         return res;
     }, [closed, opened, token, yScale, _chartData, selected]);
@@ -536,77 +570,26 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         .style("display", "none");
 
     const InfoRectGroup = create("svg:g").style("pointer-events", "none").style("display", "none");
-
-    const InfoRect = create("svg:rect")
-        .append("rect")
-        .attr("id", "info-label")
-        .attr("width", `${type === ChartType.PRICE ? "60px" : "160px"}`)
-        .attr("height", type === ChartType.PRICE ? "20px" : "68px")
-        .attr("rx", type === ChartType.PRICE ? "8" : "12")
-        .style("fill", "var(--primary)");
-
-    const InfoRectFeeText = create("svg:text")
-        .attr("transform", `translate(${type === ChartType.PRICE ? "30,10" : "80,25"})`)
-        .attr("fill", "white")
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "central")
-        .attr("font-size", type === ChartType.PRICE ? "12px" : "22px");
-
-    const InfoRectDateText = create("svg:text")
-        .attr("transform", "translate(80, 50)")
-        .attr("fill", "white")
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "central")
-        .attr("font-size", "12px");
+    const InfoRect = create("svg:rect").append("rect").attr("id", "info-label").attr("height", "20px").attr("rx", "8").style("fill", "var(--primary)");
+    const InfoRectFeeText = create("svg:text").attr("fill", "white").attr("font-size", "12px");
 
     const DateRectGroup = create("svg:g").style("pointer-events", "none").style("display", "none");
-
-    const DateRect = create("svg:rect")
-        .append("rect")
-        .attr("id", "info-label")
-        .attr("width", span === ChartSpan.DAY ? "80px" : "60px")
-        .attr("height", "20px")
-        .attr("rx", "8")
-        .style("fill", "var(--primary)");
-
-    const DateRectText = create("svg:text")
-        .attr("transform", `translate(${span === ChartSpan.DAY ? "40" : "30"},10)`)
-        .attr("fill", "white")
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "central")
-        .attr("font-size", "12px");
+    const DateRect = create("svg:rect").append("rect").attr("id", "info-label").attr("height", "20px").attr("rx", "8").style("fill", "var(--primary)");
+    const DateRectText = create("svg:text").attr("fill", "white").attr("font-size", "12px");
 
     const MaxPriceRectGroup = create("svg:g").style("pointer-events", "none").style("display", "none");
-
-    const MaxPriceRect = create("svg:rect").append("rect").attr("width", "60px").attr("height", "20px").attr("rx", "8");
-
-    const MaxPriceRectText = create("svg:text")
-        .attr("transform", `translate(30,10)`)
-        .attr("fill", "black)")
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "central")
-        .attr("font-size", "12px");
+    const MaxPriceRect = create("svg:rect").append("rect").attr("height", "20px").attr("rx", "8");
+    const MaxPriceRectText = create("svg:text").attr("fill", "white").attr("font-size", "12px");
 
     const MinPriceRectGroup = create("svg:g").style("pointer-events", "none").style("display", "none");
-
-    const MinPriceRect = create("svg:rect").append("rect").attr("width", "60px").attr("height", "20px").attr("rx", "8");
-
-    const MinPriceRectText = create("svg:text")
-        .attr("transform", `translate(30,10)`)
-        .attr("fill", "black")
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "central")
-        .attr("font-size", "12px");
+    const MinPriceRect = create("svg:rect").append("rect").attr("height", "20px").attr("rx", "8");
+    const MinPriceRectText = create("svg:text").attr("fill", "white").attr("font-size", "12px");
 
     if (InfoRectGroup) {
         // @ts-ignore
         InfoRectGroup.node().append(InfoRect.node());
         // @ts-ignore
         InfoRectGroup.node().append(InfoRectFeeText.node());
-        if (type !== ChartType.PRICE) {
-            // @ts-ignore
-            InfoRectGroup.node().append(InfoRectDateText.node());
-        }
     }
 
     if (DateRectGroup) {
@@ -687,7 +670,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                 .tickSize(-width)
         );
 
-        yAxisGroup.selectAll("line").attr("stroke", "var(--mirage)").attr("id", "xline");
+        yAxisGroup.selectAll("line").attr("stroke", "#293b49").attr("id", "xline");
         yAxisGroup.select(".domain").remove();
         yAxisGroup.selectAll("text").attr("opacity", 0.5).attr("color", "white").attr("font-size", "0.75rem");
 
@@ -715,7 +698,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             .attr("stop-color", (d) => d.color);
 
         // Chart data visualize
-        svg.append("path")
+        const linePath = svg
+            .append("path")
             .datum(_chartData)
             .attr("fill", "none")
             .attr("stroke", "var(--primary)")
@@ -734,16 +718,10 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         // @ts-ignore
                         return yScale(d.value);
                     })
-            )
-            .transition()
-            .duration(1000)
-            .ease(easeCircleOut)
-            .attrTween("stroke-dasharray", function () {
-                const length = this.getTotalLength();
-                return interpolate(`0,${length}`, `${length},${length}`);
-            });
+            );
 
-        svg.append("path")
+        const areaPath = svg
+            .append("path")
             .datum(_chartData)
             .attr("fill", "url(#gradient)")
             // @ts-ignore
@@ -758,13 +736,20 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     .y0((d) => yScale(min(_chartData, (d) => (d.value > 0 ? d.value - d.value * 0.2 : 0))))
                     // @ts-ignore
                     .y1((d) => yScale(d.value))
-            )
-            .style("opacity", 0)
-            .transition()
-            .delay(900)
-            .duration(500)
-            .ease(easeCircleOut)
-            .style("opacity", 1);
+            );
+
+        if (firstLoad) {
+            areaPath.style("opacity", 0).transition().delay(900).duration(500).ease(easeCircleOut).style("opacity", 1);
+            linePath
+                .transition()
+                .duration(1000)
+                .ease(easeCircleOut)
+                .attrTween("stroke-dasharray", function () {
+                    const length = this.getTotalLength();
+                    return interpolate(`0,${length}`, `${length},${length}`);
+                });
+            setFirstLoad(false);
+        }
 
         xAxisGroup
             .selectAll(".tick")
@@ -794,28 +779,36 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                             Line.attr("x1", `${xTranslate}px`).attr("x2", `${xTranslate}px`);
                             //@ts-ignore
                             LineHorizontal.attr("y1", `${yScale(_chartData[i]?.value)}px`).attr("y2", `${yScale(_chartData[i]?.value)}px`);
-                            //@ts-ignore
-                            InfoRectGroup.attr(
-                                "transform",
-                                type === ChartType.PRICE
-                                    ? //@ts-ignore
-                                      `translate(-60, ${yScale(_chartData[i]?.value) - 10})`
-                                    : //@ts-ignore
-                                      `translate(${isOverflowing ? Number(xTranslate) - 150 - 16 : Number(xTranslate) - 80},${yScale(_chartData[i]?.value) - 68})`
-                            );
-                            DateRectGroup.attr("transform", `translate(${Number(xTranslate) - 30}, ${height + 22})`);
+
+                            const _value = Number(_chartData[i]?.value);
 
                             InfoRectFeeText.property(
                                 "innerHTML",
                                 `
                         ${type === ChartType.PRICE || type === ChartType.FEES ? "" : "$"}
-                        ${Number(_chartData[i]?.value).toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? 5 : 2)}
+                        ${_value.toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? (_value >= 0.01 ? (_value >= 100 ? 0 : 2) : 5) : 2)}
                         ${type === ChartType.FEES ? "%" : ""}`
                             );
 
+                            const textWidth = InfoRectFeeText.node()?.getBoundingClientRect().width;
+
+                            InfoRectFeeText.attr("transform", "translate(0, 0)").attr("x", `8px`).attr("y", "13.5px");
+
+                            InfoRect.attr("width", `${textWidth ? textWidth + 16 : 0}px`);
+
+                            //@ts-ignore
+                            InfoRectGroup.attr("transform", `translate(-45, ${yScale(_chartData[i]?.value) - 10})`);
+
                             DateRectText.property("innerHTML", `${convertLocalDate(date)} ${span === ChartSpan.DAY ? convertDateTime(date) : ""}`);
 
-                            InfoRectDateText.property("innerHTML", `${convertLocalDate(date)} ${span === ChartSpan.DAY ? convertDateTime(date) : ""}`);
+                            const dateTextWidth = DateRectText.node()?.getBoundingClientRect().width;
+
+                            DateRectText.attr("x", "8px").attr("y", "13.5px");
+
+                            DateRect.attr("width", `${dateTextWidth ? dateTextWidth + 16 : 0}`);
+
+                            DateRectGroup.attr("transform", `translate(${Number(xTranslate) - (dateTextWidth ? dateTextWidth / 2 + 8 : 0)}, ${height + 5})`);
+
                             // @ts-ignore
                             Focus.attr("transform", `translate(${xScale(_chartData[i].timestamp)},${yScale(_chartData[i]?.value)})`);
 
@@ -828,20 +821,29 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                                 priceRects?.map((item) => {
                                     const node = item.node().getBoundingClientRect();
-
                                     if (clientX > node.x && clientX < node.x + node.width && clientY > node.y && clientY < node.y + node.height) {
                                         const S = node.width * node.height;
                                         if (S <= minS && item.node().tagName !== "g") {
                                             MaxPriceRectGroup.style("display", "block");
                                             MinPriceRectGroup.style("display", "block");
 
-                                            MaxPriceRectGroup.attr("transform", `translate(-60, ${item.node().y.baseVal.value - 10})`);
-                                            MaxPriceRect.attr("fill", hexToRgbA(stc(item.node()?.id.split("-")[1]), 1));
-                                            MaxPriceRectText.property("innerHTML", `${Number(item.node().attributes.max.value).toFixed(5)}`);
+                                            const _maxValue = Number(item.node().attributes.max.value);
+                                            MaxPriceRectText.property("innerHTML", `${_maxValue.toFixed(_maxValue >= 0.01 ? (_maxValue >= 100 ? 0 : 2) : 5)}`);
 
-                                            MinPriceRectGroup.attr("transform", `translate(-60, ${item.node().y.baseVal.value + node.height - 10})`);
-                                            MinPriceRect.attr("fill", hexToRgbA(stc(item.node()?.id.split("-")[1]), 1));
-                                            MinPriceRectText.property("innerHTML", `${Number(item.node().attributes.min.value).toFixed(5)}`);
+                                            const maxTextWidth = MaxPriceRectText.node()?.getBoundingClientRect().width;
+
+                                            MaxPriceRectText.attr("x", "8px").attr("y", "13.5px");
+                                            MaxPriceRectGroup.attr("transform", `translate(-45, ${item.node().y.baseVal.value - 10})`);
+                                            MaxPriceRect.attr("width", `${maxTextWidth ? maxTextWidth + 16 : 0}px`).attr("fill", hexToRgbA(stc(item.node()?.id.split("-")[1]), 1));
+
+                                            const _minValue = Number(item.node().attributes.min.value);
+                                            MinPriceRectText.property("innerHTML", `${_minValue.toFixed(_minValue >= 0.01 ? (_minValue >= 100 ? 0 : 2) : 5)}`);
+
+                                            const minTextWidth = MinPriceRectText.node()?.getBoundingClientRect().width;
+
+                                            MinPriceRectText.attr("x", "8px").attr("y", "13.5px");
+                                            MinPriceRectGroup.attr("transform", `translate(-45, ${item.node().y.baseVal.value + node.height - 10})`);
+                                            MinPriceRect.attr("width", `${minTextWidth ? minTextWidth + 16 : 0}px`).attr("fill", hexToRgbA(stc(item.node()?.id.split("-")[1]), 1));
 
                                             minS = S;
                                             closestRect = item.node();

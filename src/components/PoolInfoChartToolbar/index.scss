@@ -126,3 +126,20 @@
   }
 
 }
+
+
+@media screen and (max-width: 500px) {
+  .toolbar-btn {
+    &__list {
+      white-space: nowrap;
+      overflow: auto;
+      display: flex;
+      width: calc(100% + 2rem);
+      margin-left: -1rem;
+      padding-left: 1rem;
+      margin-right: -1rem;
+      padding-right: 1rem;
+    }
+    }
+   
+}

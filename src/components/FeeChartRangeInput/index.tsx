@@ -158,7 +158,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                         dimensions={{
                             width: isTablet || isMobile ? (ref && ref.current && ref.current.offsetWidth - 40) || 0 : 1000,
                             height: isTablet || isMobile ? 200 : 400,
-                            margin: { top: 30, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 30 : 50 },
+                            margin: { top: type === ChartType.PRICE ? 50 : 20, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 30 : 35 },
                         }}
                         tokens={{ token0: token0?.symbol, token1: token1?.symbol }}
                         isMobile={isMobile}

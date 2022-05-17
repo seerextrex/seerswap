@@ -10,8 +10,9 @@ import {
     SerializedToken,
     toggleOntoWrongChainModal,
     updateArbitrumAlphaAcknowledged,
-    updateHideClosedPositions, updateHideFarmingPositions,
-    updateMatchesDarkMode, updateSelectedWallet,
+    updateHideClosedPositions,
+    updateHideFarmingPositions,
+    updateMatchesDarkMode,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -65,7 +66,6 @@ export interface UserState {
 
     timestamp: number
     URLWarningVisible: boolean
-    userSelectedWallet: string
     ontoWrongChainWarning: boolean
 }
 
@@ -89,7 +89,6 @@ export const initialState: UserState = {
     pairs: {},
     timestamp: currentTimestamp(),
     URLWarningVisible: true,
-    userSelectedWallet: '',
     ontoWrongChainWarning: false
 }
 
@@ -206,9 +205,6 @@ export default createReducer(initialState, (builder) =>
                 delete state.pairs[chainId][pairKey(tokenBAddress, tokenAAddress)]
             }
             state.timestamp = currentTimestamp()
-        })
-        .addCase(updateSelectedWallet, (state, { payload: { name } }) => {
-            state.userSelectedWallet = name
         })
         .addCase(toggleOntoWrongChainModal, (state, { payload: { toggled } }) => {
             state.ontoWrongChainWarning = toggled

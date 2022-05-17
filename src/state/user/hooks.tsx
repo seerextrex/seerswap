@@ -19,7 +19,6 @@ import {
     SerializedToken,
     updateHideClosedPositions,
     updateHideFarmingPositions,
-    updateSelectedWallet,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -198,18 +197,6 @@ export function useUserHideFarmingPositions(): [boolean, (newHideFarmingPosition
     return [hideFarmingPositions, setHideFarmingPositions];
 }
 
-export function useUserSelectedWallet(): [string, (selectedWallet: string) => void] {
-    const dispatch = useAppDispatch();
-
-    const selectedWallet = useAppSelector((state) => state.user.userSelectedWallet);
-
-    const setSelectedWallet = useCallback((selectedWallet: string) => {
-        dispatch(updateSelectedWallet({ name: selectedWallet }));
-    }, []);
-
-    return [selectedWallet, setSelectedWallet];
-}
-
 /**
  * Same as above but replaces the auto with a default value
  * @param defaultSlippageTolerance the default value to replace auto with
@@ -363,8 +350,4 @@ export function useTrackedTokenPairs(): [Token, Token][] {
 
         return Object.keys(keyed).map((key) => keyed[key]);
     }, [combinedList]);
-}
-
-export function useOntoWarningModalToggled(): boolean {
-    return useAppSelector((state) => state.user.ontoWrongChainWarning);
 }

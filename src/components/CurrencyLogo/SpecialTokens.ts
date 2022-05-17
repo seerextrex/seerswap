@@ -18,6 +18,7 @@ import HSMLogo from '../../assets/images/hsm-logo.png'
 
 import QiLogo from '../../assets/images/qi-logo.png'
 import MimaticLogo from '../../assets/images/mimatic-logo.png'
+import KomLogo from '../../assets/images/kom-logo.png'
 
 interface SpecialTokensInterface {
     [key: string]: {
@@ -70,5 +71,9 @@ export const specialTokens: SpecialTokensInterface = {
     ['0xa3fa99a148fa48d14ed51d610c367c61876997f1']: {
         name: 'MAI',
         logo: MimaticLogo
+    },
+    ['0xc004e2318722ea2b15499d6375905d75ee5390b8']: {
+        name: 'KOM',
+        logo: KomLogo
     }
 }

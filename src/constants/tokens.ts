@@ -91,6 +91,13 @@ export const MAI_POLYGON = new Token(
     'MIMATIC'
 )
 
+export const KOM_POLYGON = new Token(
+    SupportedChainId.POLYGON,
+    '0xc004e2318722ea2b15499d6375905d75ee5390b8',
+    6,
+    'KOM',
+    'Kommunitas'
+)
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WMATIC

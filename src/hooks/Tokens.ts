@@ -68,6 +68,11 @@ const DEFAULT_TOKEN_LIST: any = {
         name: 'MAI',
         decimals: 18,
         symbol: 'MIMATIC'
+    },
+    ['0xc004e2318722ea2b15499d6375905d75ee5390b8']: {
+        name: 'Kommunitas',
+        decimals: 6,
+        symbol: 'KOM'
     }
 }
 

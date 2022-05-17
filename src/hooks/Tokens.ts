@@ -71,7 +71,7 @@ const DEFAULT_TOKEN_LIST: any = {
     },
     ['0xc004e2318722ea2b15499d6375905d75ee5390b8']: {
         name: 'Kommunitas',
-        decimals: 6,
+        decimals: 8,
         symbol: 'KOM'
     }
 }

@@ -94,7 +94,7 @@ export const MAI_POLYGON = new Token(
 export const KOM_POLYGON = new Token(
     SupportedChainId.POLYGON,
     '0xc004e2318722ea2b15499d6375905d75ee5390b8',
-    6,
+    8,
     'KOM',
     'Kommunitas'
 )

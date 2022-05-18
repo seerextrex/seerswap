@@ -127,6 +127,34 @@
 
 }
 
+.toolbar-btn {
+  &__zoom {
+    margin-top: 7px; 
+    margin-bottom: 9px;
+
+    &-btn {
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: none;
+      background-color: #414551;
+      color: white;
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      
+      &:not(:disabled) {
+        &:hover {
+          cursor: pointer;
+          background-color: #505565;
+        }
+      }
+
+    }
+  }
+}
+
 
 @media screen and (max-width: 500px) {
   .toolbar-btn {
@@ -141,5 +169,20 @@
       padding-right: 1rem;
     }
     }
-   
+    .positions-range-input {
+      &__tooltip {
+        &-item {
+          margin-right: 0 !important;
+          &:not(:last-of-type) {
+            margin-bottom: 5px;
+          }
+        }
+      }
+
+      &__icon {
+        &.hidden {
+          display: none;
+        }
+      }
+    }
 }

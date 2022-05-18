@@ -9,7 +9,7 @@ import { convertDateTime } from "../../utils/time";
 import stc from "string-to-color";
 import { hexToRgbA } from "../../utils/hexToRgba";
 import { getPositionTokensSortRange } from "../../utils/getPositionTokensRange";
-import { setTooltipPricePositions } from "../../utils/setTooltipPricePositions";
+import usePrevious, { usePreviousNonEmptyArray } from "hooks/usePrevious";
 
 interface ChartInterface {
     feeData: FeeChart;
@@ -40,6 +40,9 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
     const svgHeight = height + margin.bottom + margin.top;
 
     const [firstLoad, setFirstLoad] = useState(true);
+    const prevSelected = usePreviousNonEmptyArray(selected);
+    const prevSpan = usePrevious(span);
+    const prevToken = usePrevious(token);
 
     const firstNonEmptyValue = useMemo(() => {
         if (!previousData) return null;
@@ -269,22 +272,101 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         };
     }
 
-    const outOfChartTooltipGroup = create("svg:g").style("pointer-events", "none");
+    const OutOfChartTooltipGroup = create("svg:g").style("pointer-events", "none");
 
-    const outOfChartTooltipRect = create("svg:rect").attr("width", 60).attr("height", 25).attr("rx", "8");
-    const outOfChartTooltipChevron = create("svg:rect").attr("width", 10).attr("height", 10);
+    const OutOfChartTooltipRect = create("svg:rect").attr("width", 60).attr("height", 25).attr("rx", "8");
+    const OutOfChartTooltipChevron = create("svg:rect").attr("width", 10).attr("height", 10);
 
-    const outOfChartTooltipText = create("svg:text").attr("fill", "white").attr("x", 30).attr("y", 18);
+    const OutOfChartTooltipText = create("svg:text").attr("fill", "white").attr("y", 18);
 
-    outOfChartTooltipGroup.append(() => outOfChartTooltipRect.node());
-    outOfChartTooltipGroup.append(() => outOfChartTooltipChevron.node());
-    outOfChartTooltipGroup.append(() => outOfChartTooltipText.node());
+    OutOfChartTooltipGroup.append(() => OutOfChartTooltipRect.node());
+    OutOfChartTooltipGroup.append(() => OutOfChartTooltipChevron.node());
+    OutOfChartTooltipGroup.append(() => OutOfChartTooltipText.node());
 
     const priceRects = useMemo(() => {
         const res: any[] = [];
         const halfOfHeight = height / 2;
 
         let outRangeIndex = 0;
+        let outTimeIndex = 0;
+        let outRangeIds: { [key: string]: boolean } = {};
+        let outTimeIds: { [key: string]: boolean } = {};
+
+        function setTooltipPricePositions(height0: number, height1: number, width: number, y: number, res: any[], halfOfHeight: number, rect: any, positionNumber: string) {
+            if (outRangeIds[positionNumber]) return;
+
+            const clonedRect = select(OutOfChartTooltipRect.node()).clone();
+            const clonedChevron = select(OutOfChartTooltipChevron.node()).clone();
+            const clonedGroup = select(OutOfChartTooltipGroup.node()).clone();
+            const clonedText = select(OutOfChartTooltipText.node()).clone();
+
+            clonedGroup.append(() => clonedRect.node());
+            clonedGroup.append(() => clonedChevron.node());
+            clonedGroup.append(() => clonedText.node());
+
+            clonedText.property("innerHTML", positionNumber);
+
+            //hack for getting text width for SVG not existing in DOM
+            const div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.visibility = "hidden";
+            div.style.fontSize = "12";
+            div.style.width = "auto";
+            div.style.height = "auto";
+            div.innerHTML = positionNumber;
+
+            document.body.appendChild(div);
+            clonedText.attr("x", `${(60 - div.offsetWidth) / 2}px`);
+            document.body.removeChild(div);
+
+            clonedGroup.attr("id", `pos-${positionNumber}`).attr("data-previous", "true");
+            clonedRect.attr("fill", stc(positionNumber));
+
+            clonedChevron.attr("fill", stc(positionNumber));
+
+            if (height1 < 0 || height0 < 0) {
+                const marginLeft = outRangeIndex > 0 ? 80 * outRangeIndex + (outRangeIndex > 1 ? 0 : 10) : 20;
+
+                if (y > halfOfHeight) {
+                    clonedChevron.style("transform", "translate(30px, 18px) rotate(45deg)");
+                    clonedGroup.attr("transform", `translate(${marginLeft}, ${height - 40})`);
+                } else {
+                    clonedChevron.style("transform", "translate(30px, -7px) rotate(45deg)");
+                    clonedGroup.attr("transform", `translate(${marginLeft}, 10)`);
+                }
+                res.push(clonedGroup);
+                outRangeIndex++;
+                outRangeIds = {
+                    ...outRangeIds,
+                    [positionNumber]: true,
+                };
+            } else if (width <= 0) {
+                const marginTop = outTimeIndex > 0 ? 80 * outTimeIndex + (outTimeIndex > 1 ? 0 : 10) : 45;
+
+                clonedChevron.style("transform", "translate(1px, 6px) rotate(45deg)");
+                clonedGroup.attr("transform", `translate(20, ${marginTop})`);
+
+                outTimeIndex++;
+                outTimeIds = {
+                    ...outTimeIds,
+                    [positionNumber]: true,
+                };
+
+                const outsideIdx = res.findIndex((el: any) => el.node().id === clonedGroup.node()?.id && el.node()?.dataset.previous);
+
+                if (outsideIdx === -1) {
+                    res.push(clonedGroup);
+                }
+            } else {
+                const outsideIdx = res.findIndex((el: any) => el.node().id === rect.node()?.id && el.node()?.dataset.previous);
+
+                if (outsideIdx > -1) {
+                    res.splice(outsideIdx, 1, rect);
+                } else {
+                    res.push(rect);
+                }
+            }
+        }
 
         for (const key in opened) {
             if (selected.some((item) => item === key)) {
@@ -298,7 +380,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                 if (token === ChartToken.TOKEN1) {
                     if (yScale(_token0Range[1]) < 0 && yScale(_token0Range[1]) + token1Height > height) {
-                        console.log(height);
                         outOfChart = true;
                         token1Height = height;
                     } else if (yScale(_token0Range[1]) < 0) {
@@ -336,23 +417,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
 
-                            setTooltipPricePositions(
-                                token0Height,
-                                token1Height,
-                                posY,
-                                res,
-                                halfOfHeight,
-                                outOfChartTooltipRect,
-                                outOfChartTooltipText,
-                                outOfChartTooltipGroup,
-                                outOfChartTooltipChevron,
-                                rect,
-                                height,
-                                outRangeIndex,
-                                key
-                            );
+                            setTooltipPricePositions(token0Height, token1Height, posWidth, posY, res, halfOfHeight, rect, key);
                         } else {
-                            console.log(xScale(+pos.timestamps[i] * 1000), xScale(+pos.timestamps[i + 1] * 1000));
                             const posWidth =
                                 xScale(+pos.timestamps[i + 1] * 1000) < 0
                                     ? 0
@@ -362,8 +428,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                             const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000);
                             const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : outOfChart ? 0 : yScale(_token1Range[1]);
-
-                            const closedGroup = create("svg:g");
 
                             const rect = create("svg:rect")
                                 .append("rect")
@@ -376,23 +440,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
 
-                            closedGroup.append(() => rect.node());
-
-                            setTooltipPricePositions(
-                                token0Height,
-                                token1Height,
-                                posY,
-                                res,
-                                halfOfHeight,
-                                outOfChartTooltipRect,
-                                outOfChartTooltipText,
-                                outOfChartTooltipGroup,
-                                outOfChartTooltipChevron,
-                                closedGroup,
-                                height,
-                                outRangeIndex,
-                                key
-                            );
+                            setTooltipPricePositions(token0Height, token1Height, posWidth, posY, res, halfOfHeight, rect, key);
                         }
 
                         i++;
@@ -413,23 +461,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                         .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
 
-                    setTooltipPricePositions(
-                        token0Height,
-                        token1Height,
-                        posY,
-                        res,
-                        halfOfHeight,
-                        outOfChartTooltipRect,
-                        outOfChartTooltipText,
-                        outOfChartTooltipGroup,
-                        outOfChartTooltipChevron,
-                        rect,
-                        height,
-                        outRangeIndex,
-                        key
-                    );
+                    setTooltipPricePositions(token0Height, token1Height, posWidth, posY, res, halfOfHeight, rect, key);
                 }
-                outRangeIndex++;
             }
         }
 
@@ -444,7 +477,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
                 let token1Height = Math.abs(yScale(_token0Range[1]) - yScale(_token0Range[0]));
                 let token0Height = yScale(_token1Range[0]) - yScale(_token1Range[1]);
-                let widthPos = xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000) - Math.abs(xScale(+pos.startTime * 1000));
+                let posWidth = xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000) - Math.abs(xScale(+pos.startTime * 1000));
 
                 let outOfChart = false;
 
@@ -466,9 +499,9 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         widthDif = xScale(+pos.endTime * 1000) - width;
                     }
                     if (xScale(+pos.startTime * 1000) < 0) {
-                        widthPos = xScale(+pos.endTime * 1000) - widthDif;
+                        posWidth = xScale(+pos.endTime * 1000) - widthDif;
                     } else {
-                        widthPos = xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000) - widthDif;
+                        posWidth = xScale(+pos.endTime * 1000) - xScale(+pos.startTime * 1000) - widthDif;
                     }
                 }
 
@@ -476,34 +509,28 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     for (let i = 0; i < pos.timestamps.length; i++) {
                         if (pos.timestamps[i + 1]) {
                             const posX = xScale(+pos.timestamps[i] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i] * 1000);
-                            const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : yScale(_token1Range[1]);
-                            const posWidth = xScale(+pos.timestamps[i + 1] * 1000) < 0 ? 0 : xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000);
+                            const posY = token === ChartToken.TOKEN1 ? (outOfChart ? 0 : yScale(_token0Range[1])) : outOfChart ? 0 : yScale(_token1Range[1]);
+                            const posWidth =
+                                xScale(+pos.timestamps[i + 1] * 1000) < 0
+                                    ? 0
+                                    : xScale(+pos.timestamps[i] * 1000) < 0
+                                    ? xScale(+pos.timestamps[i + 1] * 1000)
+                                    : Math.abs(xScale(+pos.timestamps[i + 1] * 1000) - xScale(+pos.timestamps[i] * 1000));
+                            const posHeight = token === ChartToken.TOKEN1 ? token1Height : token0Height;
+
                             const rect = create("svg:rect")
                                 .append("rect")
                                 .attr("id", `pos-${key}`)
                                 .attr("width", posWidth)
-                                .attr("height", `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
+                                .attr("height", `${posHeight > height ? height : posHeight}`)
                                 .attr("fill", hexToRgbA(stc(key), 0.4))
                                 .attr("y", posY)
                                 .attr("x", posX)
                                 .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
                             i++;
-                            setTooltipPricePositions(
-                                token0Height,
-                                token1Height,
-                                posY,
-                                res,
-                                halfOfHeight,
-                                outOfChartTooltipRect,
-                                outOfChartTooltipText,
-                                outOfChartTooltipGroup,
-                                outOfChartTooltipChevron,
-                                rect,
-                                height,
-                                outRangeIndex,
-                                key
-                            );
+                            console.log(posWidth);
+                            setTooltipPricePositions(token0Height, token1Height, posWidth, posY, res, halfOfHeight, rect, key);
                         }
                     }
                 } else {
@@ -513,7 +540,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     const rect = create("svg:rect")
                         .append("rect")
                         .attr("id", `pos-${key}`)
-                        .attr("width", widthPos)
+                        .attr("width", posWidth)
                         .attr("height", `${token === ChartToken.TOKEN1 ? token1Height : token0Height}`)
                         .attr("fill", hexToRgbA(stc(key), 0.4))
                         .attr("y", posY)
@@ -521,23 +548,8 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                         .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                         .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
 
-                    setTooltipPricePositions(
-                        token0Height,
-                        token1Height,
-                        posY,
-                        res,
-                        halfOfHeight,
-                        outOfChartTooltipRect,
-                        outOfChartTooltipText,
-                        outOfChartTooltipGroup,
-                        outOfChartTooltipChevron,
-                        rect,
-                        height,
-                        outRangeIndex,
-                        key
-                    );
+                    setTooltipPricePositions(token0Height, token1Height, posWidth, posY, res, halfOfHeight, rect, key);
                 }
-                outRangeIndex++;
             }
         }
         return res;
@@ -738,7 +750,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     .y1((d) => yScale(d.value))
             );
 
-        if (firstLoad) {
+        if (firstLoad && !selected.length) {
             areaPath.style("opacity", 0).transition().delay(900).duration(500).ease(easeCircleOut).style("opacity", 1);
             linePath
                 .transition()
@@ -749,6 +761,26 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                     return interpolate(`0,${length}`, `${length},${length}`);
                 });
             setFirstLoad(false);
+        } else {
+            setFirstLoad(false);
+        }
+
+        if (type === ChartType.PRICE) {
+            if (selected.length !== 1 && selected.length && prevSelected && prevSelected.length && selected.every((el, i) => prevSelected && el == prevSelected[i])) {
+                areaPath.style("opacity", 0);
+            } else if (!selected.length && prevToken && prevToken !== token) {
+                areaPath.style("opacity", 1);
+            } else if (!selected.length && prevSelected && prevSelected.length) {
+                areaPath.style("opacity", 0).transition().duration(500).ease(easeCircleOut).style("opacity", 1);
+            } else if (selected.length === 1 && (!prevSelected || !prevSelected.length)) {
+                areaPath.style("opacity", 1).transition().duration(500).ease(easeCircleOut).style("opacity", 0);
+            } else if (prevSelected && prevSelected.length === 1 && selected.length === 1 && prevSelected[0] === selected[0]) {
+                areaPath.style("opacity", 1).transition().duration(500).ease(easeCircleOut).style("opacity", 0);
+            } else if (selected.length === 1 && prevSelected && prevSelected.length) {
+                areaPath.style("opacity", 0);
+            } else if (selected.length && prevSelected && prevSelected.length) {
+                areaPath.style("opacity", 0);
+            }
         }
 
         xAxisGroup
@@ -786,7 +818,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 "innerHTML",
                                 `
                         ${type === ChartType.PRICE || type === ChartType.FEES ? "" : "$"}
-                        ${_value.toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? (_value >= 0.01 ? (_value >= 100 ? 0 : 2) : 5) : 2)}
+                        ${_value.toFixed(type === ChartType.FEES ? 3 : type === ChartType.PRICE ? (_value >= 0.1 ? (_value >= 100 ? 0 : 2) : 5) : 2)}
                         ${type === ChartType.FEES ? "%" : ""}`
                             );
 
@@ -823,12 +855,13 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                     const node = item.node().getBoundingClientRect();
                                     if (clientX > node.x && clientX < node.x + node.width && clientY > node.y && clientY < node.y + node.height) {
                                         const S = node.width * node.height;
+
                                         if (S <= minS && item.node().tagName !== "g") {
                                             MaxPriceRectGroup.style("display", "block");
                                             MinPriceRectGroup.style("display", "block");
 
                                             const _maxValue = Number(item.node().attributes.max.value);
-                                            MaxPriceRectText.property("innerHTML", `${_maxValue.toFixed(_maxValue >= 0.01 ? (_maxValue >= 100 ? 0 : 2) : 5)}`);
+                                            MaxPriceRectText.property("innerHTML", `${_maxValue.toFixed(_maxValue >= 0.1 ? (_maxValue >= 100 ? 0 : 2) : 5)}`);
 
                                             const maxTextWidth = MaxPriceRectText.node()?.getBoundingClientRect().width;
 
@@ -837,7 +870,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                             MaxPriceRect.attr("width", `${maxTextWidth ? maxTextWidth + 16 : 0}px`).attr("fill", hexToRgbA(stc(item.node()?.id.split("-")[1]), 1));
 
                                             const _minValue = Number(item.node().attributes.min.value);
-                                            MinPriceRectText.property("innerHTML", `${_minValue.toFixed(_minValue >= 0.01 ? (_minValue >= 100 ? 0 : 2) : 5)}`);
+                                            MinPriceRectText.property("innerHTML", `${_minValue.toFixed(_minValue >= 0.1 ? (_minValue >= 100 ? 0 : 2) : 5)}`);
 
                                             const minTextWidth = MinPriceRectText.node()?.getBoundingClientRect().width;
 
@@ -850,11 +883,14 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                         }
                                     }
                                 });
+
                                 closestRect?.setAttribute("stroke", hexToRgbA(stc(closestRect?.id.split("-")[1]), 0.8));
                                 closestRect?.setAttribute("stroke-width", "1px");
 
                                 priceRects?.forEach((rect) => {
-                                    if (rect.node() !== closestRect) {
+                                    if (closestRect && rect.node().id === closestRect.id) {
+                                        rect.node().setAttribute("stroke", hexToRgbA(stc(closestRect?.id.split("-")[1]), 0.8));
+                                    } else if (rect.node() !== closestRect) {
                                         rect.node().setAttribute("stroke", "none");
                                     }
                                 });
@@ -883,9 +919,11 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
 
         svg.append(() => Line.node());
         svg.append(() => LineHorizontal.node());
-        priceRects?.forEach((item) => {
+
+        priceRects?.forEach((item, i, arr) => {
             pricesRangesGroup.node()?.append(item.node());
         });
+
         svg.append(() => pricesRangesGroup.node());
         svg.append(() => MaxPriceRectGroup.node());
         svg.append(() => MinPriceRectGroup.node());

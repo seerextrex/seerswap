@@ -128,7 +128,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                 }),
             };
         }
-    }, [fetchedData, token]);
+    }, [fetchedData, token, account]);
 
     return (
         <div className={"w-100 fee-chart pt-1 mxs_p-0"} ref={ref}>
@@ -138,21 +138,23 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                 </div>
             ) : (
                 <>
-                    {type === ChartType.PRICE && (
-                        <div className={"fee-chart__price-info"}>
-                            <Toggle
-                                isActive={!!token}
-                                toggle={() => setToken(token === ChartToken.TOKEN0 ? 1 : 0)}
-                                checked={<Trans>{token0?.symbol}</Trans>}
-                                unchecked={<Trans>{token1?.symbol}</Trans>}
-                            />
-                        </div>
-                    )}
-                    {type === ChartType.PRICE && account && (
-                        <div className={"fee-chart__toggle"}>
-                            <PositionsSelect positions={positions} selected={selected} setSelected={setSelected} />
-                        </div>
-                    )}
+                    <div>
+                        {type === ChartType.PRICE && (
+                            <div className={"fee-chart__price-info"}>
+                                <Toggle
+                                    isActive={!!token}
+                                    toggle={() => setToken(token === ChartToken.TOKEN0 ? 1 : 0)}
+                                    checked={<Trans>{token0?.symbol}</Trans>}
+                                    unchecked={<Trans>{token1?.symbol}</Trans>}
+                                />
+                            </div>
+                        )}
+                        {type === ChartType.PRICE && account && (
+                            <div className={"fee-chart__toggle"}>
+                                <PositionsSelect positions={positions} selected={selected} setSelected={setSelected} />
+                            </div>
+                        )}
+                    </div>
                     <Chart
                         feeData={formattedData}
                         dimensions={{

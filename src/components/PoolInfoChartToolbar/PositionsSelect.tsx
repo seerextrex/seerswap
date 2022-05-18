@@ -4,6 +4,7 @@ import { getPositionPeriod } from "../../utils/time";
 import stc from "string-to-color";
 import "./index.scss";
 import { ChevronDown, Layers } from "react-feather";
+import { useActiveWeb3React } from "hooks/web3";
 
 interface PositionsSelectProps {
     positions: {
@@ -15,6 +16,8 @@ interface PositionsSelectProps {
 }
 
 export default function PositionsSelect({ positions: { closed, opened }, setSelected, selected }: PositionsSelectProps) {
+    const { account } = useActiveWeb3React();
+
     const _opened = useMemo(() => {
         const res = [];
         for (const key in opened) {
@@ -24,7 +27,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
             });
         }
         return res;
-    }, [opened]);
+    }, [opened, account]);
 
     const _closed = useMemo(() => {
         const res = [];
@@ -36,7 +39,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
             });
         }
         return res;
-    }, [closed]);
+    }, [closed, account]);
 
     const closeHandler = useCallback((e) => {
         const target = e.target.control;
@@ -64,14 +67,14 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
             <input type="checkbox" id="positions" />
             <label htmlFor="positions" role={"button"} tabIndex={0} onBlur={closeHandler} className={"positions-range-input__label"}>
                 <div className={"positions-range-input__title br-8 f f-ac f-jb"}>
-                    <span className="mr-05">
+                    <span className={`mr-05 positions-range-input__icon ${selected.length ? "hidden" : ""}`}>
                         <Layers size={14} />
                     </span>
                     <span className="fs-085">
                         {selected.length === 0 ? (
                             "My positions"
                         ) : (
-                            <span>
+                            <span className="f mxs_fd-c">
                                 {selected.map((id, key, arr) => (
                                     <span className={"positions-range-input__tooltip-item"} key={key}>
                                         <span className={"positions-range-input__tooltip-circle"} style={{ backgroundColor: stc(id) }}></span>
@@ -85,7 +88,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
                 <div className="positions-range-input__inner">
                     {_opened.length > 0 ? (
                         <>
-                            <div className="pv-05 ph-1">Opened positions</div>
+                            <div className="pv-05 ph-1">Open positions</div>
                             <ul className={"positions-range-input__list"} onClick={(e) => e.preventDefault()}>
                                 {_opened.map((item) => (
                                     <li className="positions-range-input__list-item" key={item.id} onClick={() => updateSelect(item.id)}>
@@ -111,6 +114,11 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
                                     </li>
                                 ))}
                             </ul>
+                        </>
+                    ) : null}
+                    {!_closed.length && !_opened.length ? (
+                        <>
+                            <div className="positions-range-input__empty pv-2 ph-1 ta-c">No positions</div>
                         </>
                     ) : null}
                 </div>

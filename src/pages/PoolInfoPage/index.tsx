@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import FeeChartRangeInput from "../../components/FeeChartRangeInput";
 import PoolInfoChartToolbar from "../../components/PoolInfoChartToolbar/PoolInfoChartToolbar";
@@ -17,6 +17,7 @@ import { InfoTotalStats } from "../../components/InfoTotalStats";
 import { ArrowLeft } from "react-feather";
 import { NavLink } from "react-router-dom";
 import Card from "../../shared/components/Card/Card";
+import { useActiveWeb3React } from "hooks/web3";
 
 interface PoolInfoPageProps {
     totalStats: any;
@@ -38,6 +39,8 @@ export default function PoolInfoPage({
         params: { id },
     },
 }: PoolInfoPageProps & RouteComponentProps<{ id?: string }>) {
+    const { account } = useActiveWeb3React();
+
     const {
         fetchPool: { fetchPoolFn, poolResult },
     } = useInfoPoolChart();
@@ -56,6 +59,10 @@ export default function PoolInfoPage({
     const [type, setType] = useState(ChartType.VOLUME);
     const [token, setToken] = useState(ChartToken.TOKEN0);
     const [selected, setSelected] = useState<string[]>([]);
+
+    useEffect(() => {
+        setSelected([]);
+    }, [account]);
 
     const startTimestamp = useMemo(() => {
         const day = dayjs();
@@ -123,7 +130,7 @@ export default function PoolInfoPage({
         }
 
         fetchPriceRangePositionsFn(id);
-    }, [span, type]);
+    }, [span, type, account]);
 
     useEffect(() => {
         if (!id) return;
@@ -139,7 +146,7 @@ export default function PoolInfoPage({
         } else {
             return chartPoolData;
         }
-    }, [feesResult, chartPoolData, ticksResult]);
+    }, [feesResult, chartPoolData, ticksResult, account]);
 
     const refreshing = useMemo(() => {
         if (!feesLoading && !chartPoolDataLoading && !ticksLoading) return false;
@@ -148,6 +155,22 @@ export default function PoolInfoPage({
 
     const _token0 = useToken(poolResult?.token0.id);
     const _token1 = useToken(poolResult?.token1.id);
+
+    const [zoom, setZoom] = useState(5);
+
+    const MAX_ZOOM = 10;
+
+    const handleZoomIn = useCallback(() => {
+        if (zoom < MAX_ZOOM) {
+            setZoom(zoom + 1);
+        }
+    }, [zoom]);
+
+    const handleZoomOut = useCallback(() => {
+        if (zoom > 0) {
+            setZoom(zoom - 1);
+        }
+    }, [zoom]);
 
     return (
         <div className={"mb-3"}>
@@ -182,9 +205,9 @@ export default function PoolInfoPage({
                                 span={span}
                                 type={type}
                                 setSpan={setSpan}
-                                positions={positionsRange}
-                                selected={selected}
-                                setSelected={setSelected}
+                                zoom={zoom}
+                                handleZoomIn={handleZoomIn}
+                                handleZoomOut={handleZoomOut}
                             />
                         </div>
                         {type === ChartType.LIQUIDITY ? (
@@ -194,6 +217,7 @@ export default function PoolInfoPage({
                                 token0={poolResult.token0.symbol}
                                 token1={poolResult.token1.symbol}
                                 refreshing={refreshing}
+                                zoom={zoom}
                             />
                         ) : (
                             <FeeChartRangeInput

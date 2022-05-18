@@ -58,7 +58,7 @@ export function useInfoTickData() {
 
             const { data: { pools }, error } = await dataClient.query<SubgraphResponse<SmallPoolSubgraph[]>>({
                 query: FETCH_POOL(),
-                variables: {poolId}
+                variables: { poolId }
             })
 
             if (error) return

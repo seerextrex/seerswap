@@ -16,6 +16,7 @@ export function SelectRange() {
                 </div>
                 <div>
                     <RangeChart />
+                    <div className="range__notification w-100">Error</div>
                 </div>
             </div>
             <div className="ml-2">

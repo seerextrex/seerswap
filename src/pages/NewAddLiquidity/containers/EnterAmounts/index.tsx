@@ -6,11 +6,11 @@ export function EnterAmounts() {
     return (
         <div className="f">
             <div className="f c mr-2">
-                <div className="mb-1">
-                    <TokenAmountCard token={""} />
+                <div className="mb-1" style={{ overflow: "hidden" }}>
+                    <TokenAmountCard token={""} approved={true} disabled={true} />
                 </div>
                 <div>
-                    <TokenAmountCard token={""} />
+                    <TokenAmountCard token={""} approved={false} disabled={false} />
                 </div>
             </div>
             <div className="full-h">

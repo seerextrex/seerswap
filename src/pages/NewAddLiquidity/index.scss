@@ -1,10 +1,10 @@
 .add-liquidity-page {
-    background-color: #1e1e1e;
+    background-color: #1c2a359e;
     padding: 2rem;
     border-radius: 8px;
     display: grid; 
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 2rem auto 1fr 1fr 1fr;
     gap: 0px 0px; 
     grid-template-areas:
     "title title title title title"
@@ -26,6 +26,12 @@
 
    &__toolbar {
      grid-area: toolbar;
+     width: calc(100% + 4rem);
+     background-color: red;
+     margin-left: -2rem;
+     margin-right: -2rem;
+     padding-left: 2rem;
+     padding-right: 2rem;
    }
 
    &__title {

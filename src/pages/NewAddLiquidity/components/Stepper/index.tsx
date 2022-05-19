@@ -8,7 +8,7 @@ export function Stepper({ step }: IStepper) {
     return (
         <div>
             <div className="f f-ac">
-                <div className="stepper__circle mr-1"></div>
+                <div className="stepper__circle done mr-1"></div>
                 <div>{`Step 1`}</div>
             </div>
             <div className="f" style={{ width: "35px", height: "40px" }}>

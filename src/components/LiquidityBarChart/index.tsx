@@ -20,13 +20,10 @@ interface LiquidityBarChartProps {
     token0: string;
     token1: string;
     refreshing: boolean;
+    zoom: number;
 }
 
-export default function LiquidityBarChart({ data, token0, token1, refreshing }: LiquidityBarChartProps) {
-    const [zoom, setZoom] = useState(5);
-
-    const MAX_ZOOM = 10;
-
+export default function LiquidityBarChart({ data, token0, token1, refreshing, zoom }: LiquidityBarChartProps) {
     const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1);
 
     const [processedData, setProcessedData] = useState<ProcessedData[] | null>(null);
@@ -67,18 +64,7 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
                     const pool = _token0 && _token1 ? new Pool(_token0, _token1, 500, sqrtPriceX96, t.liquidityActive, t.tickIdx, mockTicks) : undefined;
                     const nextSqrtX96 = data.ticksProcessed[i - 1] ? TickMath.getSqrtRatioAtTick(data.ticksProcessed[i - 1].tickIdx) : undefined;
 
-                    const isBad =
-                        _token0 &&
-                        _token1 &&
-                        ["0x49c1c3ac4f301ad71f788398c0de919c35eaf565", "0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed"].includes(
-                            computePoolAddress({
-                                poolDeployer: POOL_DEPLOYER_ADDRESS[137],
-                                tokenA: _token0,
-                                tokenB: _token1,
-                            }).toLowerCase()
-                        );
-
-                    const maxAmountToken0 = _token0 ? CurrencyAmount.fromRawAmount(isBad ? _token1 : _token0, MAX_UINT128.toString()) : undefined;
+                    const maxAmountToken0 = _token0 ? CurrencyAmount.fromRawAmount(_token0, MAX_UINT128.toString()) : undefined;
                     const outputRes0 = pool && maxAmountToken0 ? await pool.getOutputAmount(maxAmountToken0, nextSqrtX96) : undefined;
 
                     const token1Amount = outputRes0?.[0] as CurrencyAmount<Token> | undefined;
@@ -130,18 +116,6 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
         return idx;
     }, [formattedData, zoom]);
 
-    const handleZoomIn = useCallback(() => {
-        if (zoom < MAX_ZOOM) {
-            setZoom(zoom + 1);
-        }
-    }, [processedData, zoom]);
-
-    const handleZoomOut = useCallback(() => {
-        if (zoom > 0) {
-            setZoom(zoom - 1);
-        }
-    }, [processedData, zoom]);
-
     return (
         <div className={"w-100 liquidity-chart"} ref={ref}>
             {refreshing ? (
@@ -149,26 +123,16 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing }: 
                     <Loader stroke={"white"} size={"25px"} />
                 </div>
             ) : (
-                <>
-                    <div className={"liquidity-chart__zoom-buttons"}>
-                        <button className={"liquidity-chart__zoom-buttons__button"} disabled={zoom === MAX_ZOOM} onClick={handleZoomIn}>
-                            +
-                        </button>
-                        <button className={"liquidity-chart__zoom-buttons__button"} disabled={zoom === 2} onClick={handleZoomOut}>
-                            -
-                        </button>
-                    </div>
-                    <BarChart
-                        data={formattedData || undefined}
-                        activeTickIdx={activeTickIdx}
-                        dimensions={{
-                            width: isMobile ? (ref && ref.current && ref.current.offsetWidth - 10) || 0 : 1020,
-                            height: 400,
-                            margin: { top: isMobile ? 80 : 30, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 0 : 50 },
-                        }}
-                        zoom={zoom}
-                    />
-                </>
+                <BarChart
+                    data={formattedData || undefined}
+                    activeTickIdx={activeTickIdx}
+                    dimensions={{
+                        width: isMobile ? (ref && ref.current && ref.current.offsetWidth - 10) || 0 : 1020,
+                        height: 400,
+                        margin: { top: isMobile ? 80 : 30, right: 20, bottom: isMobile ? 70 : 30, left: isMobile ? 0 : 50 },
+                    }}
+                    isMobile={isMobile}
+                />
             )}
         </div>
     );

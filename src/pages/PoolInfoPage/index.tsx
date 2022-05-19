@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import FeeChartRangeInput from "../../components/FeeChartRangeInput";
 import PoolInfoChartToolbar from "../../components/PoolInfoChartToolbar/PoolInfoChartToolbar";
@@ -17,6 +17,7 @@ import { InfoTotalStats } from "../../components/InfoTotalStats";
 import { ArrowLeft } from "react-feather";
 import { NavLink } from "react-router-dom";
 import Card from "../../shared/components/Card/Card";
+import { useActiveWeb3React } from "hooks/web3";
 
 interface PoolInfoPageProps {
     totalStats: any;
@@ -38,6 +39,8 @@ export default function PoolInfoPage({
         params: { id },
     },
 }: PoolInfoPageProps & RouteComponentProps<{ id?: string }>) {
+    const { account } = useActiveWeb3React();
+
     const {
         fetchPool: { fetchPoolFn, poolResult },
     } = useInfoPoolChart();
@@ -45,6 +48,7 @@ export default function PoolInfoPage({
     const {
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn },
+        fetchPriceRangePositions: { positionsRange, fetchPriceRangePositionsFn },
     } = useInfoSubgraph();
 
     const {
@@ -54,6 +58,11 @@ export default function PoolInfoPage({
     const [span, setSpan] = useState(ChartSpan.DAY);
     const [type, setType] = useState(ChartType.VOLUME);
     const [token, setToken] = useState(ChartToken.TOKEN0);
+    const [selected, setSelected] = useState<string[]>([]);
+
+    useEffect(() => {
+        setSelected([]);
+    }, [account]);
 
     const startTimestamp = useMemo(() => {
         const day = dayjs();
@@ -119,7 +128,9 @@ export default function PoolInfoPage({
         } else {
             fetchChartPoolDataFn(id, startTimestamp, Math.floor(new Date().getTime() / 1000));
         }
-    }, [span, type]);
+
+        fetchPriceRangePositionsFn(id);
+    }, [span, type, account]);
 
     useEffect(() => {
         if (!id) return;
@@ -135,7 +146,7 @@ export default function PoolInfoPage({
         } else {
             return chartPoolData;
         }
-    }, [feesResult, chartPoolData, ticksResult]);
+    }, [feesResult, chartPoolData, ticksResult, account]);
 
     const refreshing = useMemo(() => {
         if (!feesLoading && !chartPoolDataLoading && !ticksLoading) return false;
@@ -144,6 +155,22 @@ export default function PoolInfoPage({
 
     const _token0 = useToken(poolResult?.token0.id);
     const _token1 = useToken(poolResult?.token1.id);
+
+    const [zoom, setZoom] = useState(5);
+
+    const MAX_ZOOM = 10;
+
+    const handleZoomIn = useCallback(() => {
+        if (zoom < MAX_ZOOM) {
+            setZoom(zoom + 1);
+        }
+    }, [zoom]);
+
+    const handleZoomOut = useCallback(() => {
+        if (zoom > 0) {
+            setZoom(zoom - 1);
+        }
+    }, [zoom]);
 
     return (
         <div className={"mb-3"}>
@@ -169,8 +196,20 @@ export default function PoolInfoPage({
                         blocksFetched={blocksFetched}
                         poolsStat={poolsResult}
                     />
-                    <div className={"info-chart-wrapper br-12 p-1 mt-1"}>
-                        <PoolInfoChartToolbar chartSpans={chartSpans} chartTypes={chartTypes} setType={setType} span={span} type={type} setSpan={setSpan} />
+                    <div className={"info-chart-wrapper br-12 ph-1 pb-1 mt-1"}>
+                        <div className={"info-chart__toolbar"}>
+                            <PoolInfoChartToolbar
+                                chartSpans={chartSpans}
+                                chartTypes={chartTypes}
+                                setType={setType}
+                                span={span}
+                                type={type}
+                                setSpan={setSpan}
+                                zoom={zoom}
+                                handleZoomIn={handleZoomIn}
+                                handleZoomOut={handleZoomOut}
+                            />
+                        </div>
                         {type === ChartType.LIQUIDITY ? (
                             <LiquidityBarChart
                                 //@ts-ignore
@@ -178,6 +217,7 @@ export default function PoolInfoPage({
                                 token0={poolResult.token0.symbol}
                                 token1={poolResult.token1.symbol}
                                 refreshing={refreshing}
+                                zoom={zoom}
                             />
                         ) : (
                             <FeeChartRangeInput
@@ -191,6 +231,9 @@ export default function PoolInfoPage({
                                 token0={_token0 ?? undefined}
                                 token1={_token1 ?? undefined}
                                 setToken={setToken}
+                                positions={positionsRange}
+                                selected={selected}
+                                setSelected={setSelected}
                             />
                         )}
                     </div>

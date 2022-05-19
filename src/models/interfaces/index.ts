@@ -31,7 +31,11 @@ export type {
     TokenTick,
     LiquidityChartData,
     FormattedProcessedData,
-    FeeChart
+    FeeChart,
+    FarmingPositions,
+    PriceRangeClosed,
+    PriceRangeChart,
+    PositionPriceRange
 } from './info'
 export type { StakingData, StakeHash, Frozen } from './staking'
 export type {

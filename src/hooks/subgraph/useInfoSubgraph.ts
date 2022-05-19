@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../web3'
 import { useClients } from './useClients'
 import {
@@ -9,10 +9,11 @@ import {
     CHART_POOL_LAST_ENTRY,
     CHART_POOL_LAST_NOT_EMPTY,
     FETCH_ETERNAL_FARM_FROM_POOL,
-    FETCH_LIMIT_FARM_FROM_POOL,
+    FETCH_LIMIT_FARM_FROM_POOL, FULL_POSITIONS,
     GET_STAKE,
     GET_STAKE_HISTORY,
     POOLS_FROM_ADDRESSES,
+    POSITIONS_ON_FARMING,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
     TOP_TOKENS,
@@ -35,33 +36,38 @@ import {
     LastPoolSubgraph,
     PoolAddressSubgraph,
     PoolSubgraph,
+    PriceRangeChart,
+    PriceRangeClosed,
     StakeSubgraph,
+    FarmingPositions,
     SubgraphResponse,
     SubgraphResponseStaking,
     TokenAddressSubgraph,
     TokenInSubgraph,
-    TotalStatSubgraph
+    TotalStatSubgraph, PositionPriceRange
 } from '../../models/interfaces'
 import { EternalFarmingByPool } from '../../models/interfaces'
-import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL, fetchPoolsAPR } from 'utils/api'
-import { LimitFarmingByPool } from "models/interfaces/responseSubgraph"
-import { FarmingType } from "models/enums"
+import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchPoolsAPR } from 'utils/api'
+import { LimitFarmingByPool } from 'models/interfaces/responseSubgraph'
+import { FarmingType } from 'models/enums'
+import dayjs from 'dayjs'
+import { getPositionRangeChart } from '../../utils/getPositionRangeChart'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-        accum[poolData.id] = poolData
-        return accum
-    }, {})
+            accum[poolData.id] = poolData
+            return accum
+        }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-        accum[tokenData.id] = tokenData
-        return accum
-    }, {})
+            accum[tokenData.id] = tokenData
+            return accum
+        }, {})
         : {}
 }
 
@@ -96,6 +102,7 @@ export function useInfoSubgraph() {
     const [stakeHistoriesResult, setHistories] = useState<null | HistoryStakingSubgraph[] | string>(null)
     const [historiesLoading, setHistoriesLoading] = useState<boolean>(false)
 
+    const [positionsRange, setPositionsRange] = useState<{ closed: PriceRangeChart | null, opened: PriceRangeChart | null }>({ closed: null, opened: null })
 
     async function fetchInfoPools() {
 
@@ -657,6 +664,53 @@ export function useInfoSubgraph() {
         setTotalStatsLoading(false)
     }
 
+    async function fetchPriceRangePositions(pool: string) {
+
+        try {
+            const { data: { deposits }, error: errorDeposits } = await farmingClient.query<SubgraphResponse<FarmingPositions[]>>({
+                query: POSITIONS_ON_FARMING(),
+                fetchPolicy: 'network-only',
+                variables: { account, pool }
+            })
+
+            const ids = deposits.map(item => item.id)
+
+            const { data, error } = await dataClient.query({
+                query: FULL_POSITIONS(ids, account ?? undefined, pool),
+                fetchPolicy: 'network-only'
+            })
+
+            const fullPositions: PositionPriceRange[] = []
+
+            for (const key in data) {
+                fullPositions.push(...data[key])
+            }
+
+            const openPositions: PositionPriceRange[] = []
+            const closedPositions: PositionPriceRange[] = []
+
+            const day = dayjs()
+
+            fullPositions.forEach(item => {
+                if (item.closed === '0') {
+                    openPositions.push(item)
+                } else {
+                    if (+item.closed > day.subtract(1, 'month').unix() && (+item.closed - +item.transaction.timestamp > 86_400)) {
+                        closedPositions.push(item)
+                    }
+                }
+            })
+
+            setPositionsRange({
+                closed: getPositionRangeChart(closedPositions),
+                opened: getPositionRangeChart(openPositions)
+            })
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
@@ -665,6 +719,7 @@ export function useInfoSubgraph() {
         fetchStakedHistory: { historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
-        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats }
+        fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
+        fetchPriceRangePositions: { positionsRange, fetchPriceRangePositionsFn: fetchPriceRangePositions }
     }
 }

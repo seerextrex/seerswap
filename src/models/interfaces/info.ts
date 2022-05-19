@@ -1,7 +1,7 @@
 import { FeeSubgraph, LastPoolSubgraph, TokenSubgraph } from './responseSubgraph'
 import JSBI from 'jsbi'
 import { Token } from '@uniswap/sdk-core'
-import { FarmingType } from "models/enums"
+import { FarmingType } from 'models/enums'
 
 export interface FormattedPool {
     address: string
@@ -122,3 +122,52 @@ export interface FeeChart {
     data: FormattedFeeChart[] | undefined[]
     previousData: FormattedFeeChart[] | undefined[]
 }
+
+export interface FarmingPositions {
+    id: string
+}
+
+interface TickPriceRange {
+    price0: string
+    price1: string
+}
+
+interface TokenPriceRange {
+    decimals: string
+}
+
+interface TransactionPriceRange {
+    timestamp: string
+}
+
+export interface PositionPriceRange {
+    closed: string
+    liquidity: string
+    id: string
+    owner: string
+    tickLower: TickPriceRange
+    tickUpper: TickPriceRange
+    token0: TokenPriceRange
+    token1: TokenPriceRange
+    transaction: TransactionPriceRange
+    timestamps: string[]
+}
+
+export interface PriceRangeClosed {
+    [key: string]: {
+        position: PositionPriceRange
+        timestamp: string
+    } []
+}
+
+
+export interface PriceRangeChart {
+    [key: string]: {
+        token0Range: number[]
+        token1Range: number[]
+        startTime: string
+        endTime?: string
+        timestamps: string[]
+    }
+}
+

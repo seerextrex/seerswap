@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { logDOM } from '@testing-library/react'
 
 //Farming
 
@@ -81,13 +82,13 @@ export const FETCH_ETERNAL_FARM = () => gql`
 `
 
 export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query eternalFarmingsFromPools {
         eternalFarmings(where: {pool_in: ${poolString}, isDetached: false}) {
           id
@@ -104,18 +105,18 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
         }
       }
       `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const now = Math.round(Date.now() / 1000)
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const now = Math.round(Date.now() / 1000)
+    const queryString =
+        `
     query limitFarmingsFromPools {
       incentives(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${now}}) {
         id
@@ -131,7 +132,7 @@ export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
       }
     }
     `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const FETCH_POOL = () => gql`
@@ -251,7 +252,7 @@ export const CHART_POOL_DATA = () => gql`
 `
 
 export const TOTAL_STATS = (block?: number) => {
-  const qString = `
+    const qString = `
   query totalStats {
     factories ${block ? `(block: { number: ${block} })` : ''} {
       totalVolumeUSD
@@ -261,7 +262,7 @@ export const TOTAL_STATS = (block?: number) => {
     }
   }
 `
-  return gql(qString)
+    return gql(qString)
 }
 
 export const LAST_EVENT = () => gql`
@@ -319,13 +320,13 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
 }`
 
 export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query finiteFarmingsFromPools {
         incentives(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${Math.round(Date.now() / 1000)}}) {
           id
@@ -347,7 +348,7 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
         }
       }
       `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const FROZEN_STAKED = () => gql`
@@ -417,6 +418,73 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
 
 //Info
 
+export const POSITIONS_ON_FARMING = () => gql`
+  query positionsOnFarming ($account: Bytes, $pool: Bytes) {
+        deposits (orderBy: id, orderDirection: desc, where: {owner: $account, pool: $pool, onFarmingCenter: true}) {
+            id
+    }
+}
+`
+
+export const FULL_POSITIONS = (positions: string[], account: string | undefined, pool: string) => {
+    const query = `
+        query fullPositionsPriceRange {
+            q1 : positions (where: {owner: "${account}", pool: "${pool}"})
+            {
+              owner
+              liquidity
+              id
+              closed
+              transaction {
+                timestamp
+              }
+              tickLower {
+                price0
+                price1
+              }
+              tickUpper {
+                price0
+                price1
+              }
+              token0 {
+                decimals
+              }
+              token1 {
+                decimals
+              }
+              timestamps
+            }
+
+            q2: positions (where: {id_in: [${positions}] }) {
+              owner
+              liquidity
+              id
+              closed
+              transaction {
+                timestamp
+              }
+              tickLower {
+                price0
+                price1
+              }
+              tickUpper {
+                price0
+                price1
+              }
+               token0 {
+                decimals
+              }
+              token1 {
+                decimals
+              }
+              timestamps
+            }
+        }
+    `
+    return gql(query)
+}
+
+
 export const INFINITE_EVENTS = gql`
     query infiniteFarms {
         eternalFarmings (where: {isDetached: false}) {
@@ -433,43 +501,6 @@ export const INFINITE_EVENTS = gql`
         }
     }
 `
-//
-// export const SWAPS_PER_DAY = (startTimestamp: string) => gql`
-//   query swapsPerDay {
-//     swaps (first: 1000, where: {timestamp_gt: ${startTimestamp}, timestamp_lt: ${Math.round(Date.now() / 1000)}} ) {
-//       pool {
-//         id
-//       }
-//       timestamp
-//       tick
-//       amountUSD
-//     }
-//   }
-// `
-// export const ALL_POSITIONS = gql`
-// query allPositions {
-//   positions (first: 1000) {
-//     pool {
-//       id
-//     }
-//     id
-//     liquidity
-//     tickLower {
-//       tickIdx
-//       liquidityGross
-//     }
-//     tickUpper {
-//       tickIdx
-//       liquidityGross
-//     }
-//     transaction {
-//       mints {
-//         amountUSD
-//       }
-//     }
-//   }
-// }
-// `
 
 export const TOP_POOLS = gql`
 query topPools {
@@ -480,17 +511,17 @@ query topPools {
 `
 
 export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: string[]) => {
-  let poolString = `[`
-  pools.map((address) => {
-    return (poolString += `"${address}",`)
-  })
-  poolString += ']'
-  const queryString =
-    `
+    let poolString = `[`
+    pools.map((address) => {
+        return (poolString += `"${address}",`)
+    })
+    poolString += ']'
+    const queryString =
+        `
       query pools {
         pools(where: {id_in: ${poolString}},` +
-    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           fee
           liquidity
@@ -523,7 +554,7 @@ export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: str
         }
       }
       `
-  return gql(queryString)
+    return gql(queryString)
 }
 
 
@@ -536,17 +567,17 @@ export const TOP_TOKENS = gql`
 `
 
 export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: string[]) => {
-  let tokenString = `[`
-  tokens.map((address) => {
-    return (tokenString += `"${address}",`)
-  })
-  tokenString += ']'
-  const queryString =
-    `
+    let tokenString = `[`
+    tokens.map((address) => {
+        return (tokenString += `"${address}",`)
+    })
+    tokenString += ']'
+    const queryString =
+        `
       query tokens {
         tokens(where: {id_in: ${tokenString}},` +
-    (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-    ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
+        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
           id
           symbol
           name
@@ -563,7 +594,7 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
       }
       `
 
-  return gql(queryString)
+    return gql(queryString)
 }
 
 export const GET_STAKE = () => gql`
@@ -598,15 +629,15 @@ query stake {
 //Blocklytics
 
 export const GET_BLOCKS = (timestamps: string[]) => {
-  let queryString = 'query blocks {'
-  queryString += timestamps.map((timestamp) => {
-    return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
-      } }) {
+    let queryString = 'query blocks {'
+    queryString += timestamps.map((timestamp) => {
+        return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600
+        } }) {
           number
         }`
-  })
-  queryString += '}'
-  return gql(queryString)
+    })
+    queryString += '}'
+    return gql(queryString)
 }
 
 

@@ -1,12 +1,39 @@
 .token-card {
 
-    background-color: yellow;
+    background-color: var(--ebony-clay);
     border-radius: 8px;
+    width: 200px;
+    border: 1px solid #233d65;
 
     &-logo {
         width: 35px;
         height: 35px;
-        background-color: green;
+        background-color: #3a4e5d;
         border-radius: 50%;
+    }
+
+    &-selector {
+        &__btn {
+            border: none;
+            padding: 6px 8px 6px 1rem;
+            border-radius: 8px;
+            background-color: #182732;
+            color: #92b6d1;
+            font-size: 15px;
+            $self: &;
+
+            &-chevron {
+                transition-duration: .3s;
+            }
+
+            &:hover {
+                background-color: #2a4559;
+            }
+            &:hover {
+                #{$self}-chevron {
+                    margin-right: 5px;
+                }
+            }
+        }
     }
 }

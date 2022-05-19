@@ -1,6 +1,15 @@
-polyline {
-    fill: none;
-    stroke: #231F20;
-    // vector-effect: non-scaling-stroke;
-    stroke-width: 1;
+.range-input {
+    width: 110px;
+    background: #26343f;
+    color: white;
+    border: none;
+    padding: 8px 1rem;
+    border-radius: 8px;
+}
+
+.current-price-tip {
+    background-color: #419fe8;
+    width: fit-content;
+    padding: 9px;
+    border-radius: 10px;
 }

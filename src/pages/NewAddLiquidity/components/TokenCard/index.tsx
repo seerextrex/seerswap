@@ -17,10 +17,10 @@ export function TokenCard({ handleTokenSelection, token }: ITokenCard) {
                 <CurrencyLogo currency={token}></CurrencyLogo>
             </div>
             <div className="token-card-selector">
-                <button className="f" onClick={() => handleTokenSelection("")}>
+                <button className="token-card-selector__btn f f-ac w-100 f-jb" onClick={() => handleTokenSelection("")}>
                     <span>Select a token</span>
-                    <span>
-                        <ChevronRight className="ml-05" size={"18px"} />
+                    <span className="token-card-selector__btn-chevron">
+                        <ChevronRight className="ml-05" size={18} />
                     </span>
                 </button>
             </div>

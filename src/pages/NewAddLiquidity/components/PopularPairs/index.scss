@@ -1,10 +1,39 @@
 .popular-pair {
-    padding: 4px;
+    padding: 4px 8px;
     border-radius: 4px;
-    background-color: blue;
+    background-color: #182732;
+    border: 1px solid #254476;
     width: fit-content;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #2a4559;
+    }
 
     &.farming {
-        background-color: black;
+        background: linear-gradient(90deg, rgb(88, 105, 241) 0%, rgb(188, 49, 255) 100%);
+
+        &:hover {
+            background: linear-gradient(90deg, rgba(138,151,252,1) 0%, rgba(212,123,255,1) 100%);
+        }
+    }
+}
+
+.pair-list {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    &-wrapper {
+        border-left: 2px solid rgb(85, 112, 131);
+    }
+
+    &-item {
+        font-size: 15px;
+
+        &:not(:last-of-type) {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
     }
 }

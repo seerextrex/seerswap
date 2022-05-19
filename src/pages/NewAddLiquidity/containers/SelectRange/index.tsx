@@ -1,4 +1,4 @@
-import { MostUsedRanges } from "pages/NewAddLiquidity/components/MostUsedRanges";
+import { PresetRanges } from "pages/NewAddLiquidity/components/PresetRanges";
 import { RangeChart } from "pages/NewAddLiquidity/components/RangeChart";
 import { RangeSelector } from "pages/NewAddLiquidity/components/RangeSelector";
 import "./index.scss";
@@ -20,7 +20,7 @@ export function SelectRange() {
                 </div>
             </div>
             <div className="ml-2">
-                <MostUsedRanges handlePresetRangeSelection={(range) => console.log(range)} />
+                <PresetRanges handlePresetRangeSelection={(range) => console.log(range)} />
             </div>
         </div>
     );

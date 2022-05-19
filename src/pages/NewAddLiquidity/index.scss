@@ -3,18 +3,29 @@
     padding: 2rem;
     border-radius: 8px;
     display: grid; 
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
-    grid-template-rows: 2rem auto 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr; 
+    grid-template-rows: auto 1fr 1fr 1fr;
     gap: 0px 0px; 
     grid-template-areas:
-    "title title title title title"
-    "toolbar toolbar toolbar toolbar toolbar"
+    "header header header header header"
     "steps steps steps steps stepper"
     "steps steps steps steps stepper"
     "steps steps steps steps stepper";
 
     &__steps { 
       grid-area: steps;
+   }
+
+   &__step {
+     &-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid #4ea3e5;
+     }
+     &-title {
+      font-size: 18px;
+     }
    }
   
     &__stepper { 
@@ -24,17 +35,11 @@
       justify-content: center;
    }
 
-   &__toolbar {
-     grid-area: toolbar;
-     width: calc(100% + 4rem);
-     background-color: red;
-     margin-left: -2rem;
-     margin-right: -2rem;
-     padding-left: 2rem;
-     padding-right: 2rem;
-   }
+   &__header {
+     grid-area: header;
 
-   &__title {
-     grid-area: title;
+     &-title {
+       font-size: 25px;
+     }
    }
 }

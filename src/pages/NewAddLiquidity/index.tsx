@@ -3,7 +3,6 @@ import { Stepper } from "./components/Stepper";
 import { EnterAmounts } from "./containers/EnterAmounts";
 import { SelectPair } from "./containers/SelectPair";
 import { SelectRange } from "./containers/SelectRange";
-import { LiquidityToolbar } from "./containers/LiquidityToolbar";
 
 import "./index.scss";
 
@@ -18,34 +17,31 @@ export function NewAddLiquidityPage({
 }>) {
     return (
         <div className="add-liquidity-page">
-            <div className="add-liquidity-page__title">Add liquidity</div>
-            <div className="add-liquidity-page__toolbar">
-                <LiquidityToolbar></LiquidityToolbar>
+            <div className="add-liquidity-page__header f">
+                <span className="add-liquidity-page__header-title">Add liquidity</span>
+                <span className="ml-a">
+                    <span className="mr-1">Price in</span>
+                    <span>Settings</span>
+                </span>
             </div>
             <div className="add-liquidity-page__steps">
-                <div className="f f-ac mv-1">
-                    <div className="f f-ac f-jc" style={{ borderRadius: "50%", width: "25px", height: "25px", background: "blue" }}>
-                        1
-                    </div>
-                    <div className="ml-1">Select pair</div>
+                <div className="f f-ac mt-2 mb-1">
+                    <div className="add-liquidity-page__step-circle f f-ac f-jc">1</div>
+                    <div className="add-liquidity-page__step-title ml-1">Select pair</div>
                 </div>
                 <div className="select-pair">
                     <SelectPair />
                 </div>
-                <div className="f f-ac mv-1">
-                    <div className="f f-ac f-jc" style={{ borderRadius: "50%", width: "25px", height: "25px", background: "blue" }}>
-                        2
-                    </div>
-                    <div className="ml-1">Select range</div>
+                <div className="f f-ac mt-2 mb-1">
+                    <div className="add-liquidity-page__step-circle f f-ac f-jc">2</div>
+                    <div className="add-liquidity-page__step-title ml-1">Select range</div>
                 </div>
                 <div className="select-range">
                     <SelectRange />
                 </div>
-                <div className="f f-ac mv-1">
-                    <div className="f f-ac f-jc" style={{ borderRadius: "50%", width: "25px", height: "25px", background: "blue" }}>
-                        3
-                    </div>
-                    <div className="ml-1">Enter an amount</div>
+                <div className="f f-ac mt-2 mb-1">
+                    <div className="add-liquidity-page__step-circle f f-ac f-jc">3</div>
+                    <div className="add-liquidity-page__step-title ml-1">Enter an amount</div>
                 </div>
                 <div className="enter-ammounts">
                     <EnterAmounts />

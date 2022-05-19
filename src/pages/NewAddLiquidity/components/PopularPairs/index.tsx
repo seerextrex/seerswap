@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { useToken } from "hooks/Tokens";
-import { useMemo } from "react";
+import { Star, Zap } from "react-feather";
+
 import "./index.scss";
 
 interface IPopularPairs {
@@ -14,27 +15,40 @@ export function PopularPairs({ pairs, farmings }: IPopularPairs) {
     }
 
     return (
-        <div style={{ borderLeft: "1px solid #36f" }} className={"pl-1"}>
-            <div className="mb-1">
-                <Trans>Popular pairs</Trans>
+        <div>
+            <div className={"pair-list-wrapper pl-1"}>
+                <div className="mb-1 f f-ac">
+                    <Star style={{ display: "block" }} fill={"white"} size={15} />
+                    <span className="ml-05">
+                        <Trans>Popular pairs</Trans>
+                    </span>
+                </div>
+                <div className="mb-1">
+                    <ul className="pair-list">
+                        {pairs.map((pair, key) => (
+                            <li key={key} className="pair-list-item">
+                                <PopularPair pair={pair} farming={false} />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
-            <div className="mb-1">
-                <ul>
-                    {pairs.map((pair, key) => (
-                        <li key={key}>
-                            <PopularPair pair={pair} farming={false} />
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div>
-                <ul>
-                    {farmings.map((farming, key) => (
-                        <li key={key}>
-                            <PopularPair pair={farming} farming={true} />
-                        </li>
-                    ))}
-                </ul>
+            <div className={"pair-list-wrapper pl-1"}>
+                <div className="mb-1 f f-ac">
+                    <Zap style={{ display: "block" }} fill={"white"} size={15} />
+                    <span className="ml-05">
+                        <Trans>Farms</Trans>
+                    </span>
+                </div>
+                <div>
+                    <ul className="pair-list">
+                        {farmings.map((farming, key) => (
+                            <li key={key} className="pair-list-item">
+                                <PopularPair pair={farming} farming={true} />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );
@@ -46,5 +60,5 @@ function PopularPair({ pair, farming }: { pair: [string, string]; farming: boole
 
     if (!token0 || !token1) return <div></div>;
 
-    return <div className={`popular-pair ${farming ? "farming" : ""}`}>{`${farming ? "Farming: " : ""} ${token0.symbol} / ${token1.symbol}`}</div>;
+    return <div className={`popular-pair ${farming ? "farming" : ""}`}>{`${token0.symbol} / ${token1.symbol}`}</div>;
 }

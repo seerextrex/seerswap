@@ -395,7 +395,7 @@ export default function PositionPage({
                                                 <Trans>$-</Trans>
                                             </span>
                                         )}
-                                        {(ownsNFT || isOnFarming) && (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0) || !!collectMigrationHash) ? (
+                                        {ownsNFT && (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0) || !!collectMigrationHash) ? (
                                             <button className={"btn primary pv-025 ph-05 br-8"} disabled={collecting || !!collectMigrationHash} onClick={collect}>
                                                 {!!collectMigrationHash && !isCollectPending ? (
                                                     <span>

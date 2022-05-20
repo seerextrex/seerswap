@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Token } from "@uniswap/sdk-core";
-import { Layers } from "react-feather";
+import { Divide } from "react-feather";
 
 import "./index.scss";
 
@@ -15,13 +15,13 @@ export function TokenRatio({ token0, token1, token0Ratio, token1Ratio }: ITokenR
     return (
         <div className={"preset-ranges-wrapper pl-1"}>
             <div className="mb-1 f f-ac">
-                <Layers style={{ display: "block", transform: "rotate(90deg)" }} size={15} />
+                <Divide style={{ display: "block", fill: "currentcolor" }} size={15} />
                 <span className="ml-05">
                     <Trans>Token ratio</Trans>
                 </span>
             </div>
             <div className="f full-h pos-r">
-                <div className="full-h f" style={{ width: "280px", height: "25px", borderRadius: "8px", background: "grey" }}>
+                <div className="full-h f" style={{ width: "280px", height: "20px", borderRadius: "8px", background: "grey" }}>
                     <div className="full-h" style={{ width: "30%", background: "#707eff", borderRadius: "8px 0 0 8px" }}></div>
                     <div className="full-h" style={{ width: "70%", background: "#ec92ff", borderRadius: "0 8px 8px 0" }}></div>
                 </div>

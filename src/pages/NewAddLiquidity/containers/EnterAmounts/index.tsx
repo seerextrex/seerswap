@@ -7,10 +7,10 @@ export function EnterAmounts() {
         <div className="f">
             <div className="f c">
                 <div className="mb-1" style={{ overflow: "hidden", borderRadius: "8px" }}>
-                    <TokenAmountCard token={""} approved={true} disabled={true} />
+                    <TokenAmountCard token={""} approved={true} disabled={true} error={"Not enough USDC"} />
                 </div>
                 <div>
-                    <TokenAmountCard token={""} approved={false} disabled={false} />
+                    <TokenAmountCard token={""} approved={false} disabled={false} error={null} />
                 </div>
             </div>
             <div className="full-h ml-2">

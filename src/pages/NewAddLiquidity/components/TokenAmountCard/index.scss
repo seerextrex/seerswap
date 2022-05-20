@@ -28,4 +28,37 @@
         border-radius: 8px;
         text-align: center;
     }
+
+    &__max-btn {
+        background: transparent;
+        color: #4ca8ef;
+        border: none;
+        padding: 0;
+        font-size: 13px;
+        margin-top: 6px;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &__approve-btn {
+        padding: 4px 8px;
+        background-color: #31b633;
+        border-radius: 6px;
+        border: none;
+        color: white;
+
+        &:hover {
+            background-color: #229024;
+        }
+    }
+
+    &__approved {
+        color: #3acd3b;
+    }
+
+    &__usd-price {
+        font-size: 14px;
+    }
 }

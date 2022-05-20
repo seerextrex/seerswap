@@ -89,7 +89,7 @@ export function useStakerHandlers() {
                     callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [eternalBonusRewardToken.id, account, 0, MaxUint128]))
                 }
 
-                result = await farmingCenterContract.multicall(callDatas, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
+                result = await farmingCenterContract.multicall(callDatas, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER, gasLimit: 350000 })
 
             } else {
                 callDatas = [
@@ -104,7 +104,7 @@ export function useStakerHandlers() {
                     callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [incentiveBonusRewardToken.id, account, MaxUint128, 0]))
                 }
 
-                result = await farmingCenterContract.multicall(callDatas, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER })
+                result = await farmingCenterContract.multicall(callDatas, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER, gasLimit: 350000 })
             }
 
             addTransaction(result, {

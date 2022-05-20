@@ -24,7 +24,7 @@ import { WMATIC_EXTENDED } from "../../constants/tokens";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
 import RangeSelector from "../../components/RangeSelector";
 import LiquidityChartRangeInput from "../../components/LiquidityChartRangeInput";
-import { NonfungiblePositionManager as NonFunPosMan } from "./nft-manager";
+import { NonfungiblePositionManager as NonFunPosMan } from "../../lib/src/nonfungiblePositionManager";
 import { calculateGasMargin } from "../../utils/calculateGasMargin";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { t } from "@lingui/macro";

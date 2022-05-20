@@ -1,4 +1,6 @@
+import { Trans } from "@lingui/macro";
 import { Token } from "@uniswap/sdk-core";
+import { Layers } from "react-feather";
 
 import "./index.scss";
 
@@ -11,20 +13,28 @@ interface ITokenRatio {
 
 export function TokenRatio({ token0, token1, token0Ratio, token1Ratio }: ITokenRatio) {
     return (
-        <div className="f full-h pos-r">
-            <div className="full-h" style={{ width: "40px", height: "280px", borderRadius: "8px", background: "grey" }}>
-                <div className="full-w" style={{ height: "50%", background: "blue", borderRadius: "6px 6px 0 0" }}></div>
-                <div className="full-w" style={{ height: "50%", background: "cyan", borderRadius: "0 0 6px 6px" }}></div>
+        <div className={"preset-ranges-wrapper pl-1"}>
+            <div className="mb-1 f f-ac">
+                <Layers style={{ display: "block", transform: "rotate(90deg)" }} size={15} />
+                <span className="ml-05">
+                    <Trans>Token ratio</Trans>
+                </span>
             </div>
-            <div className="ml-05">
-                <div>
-                    <div>{token0.symbol}</div>
-                    <div>{token0Ratio}%</div>
+            <div className="f full-h pos-r">
+                <div className="full-h f" style={{ width: "280px", height: "25px", borderRadius: "8px", background: "grey" }}>
+                    <div className="full-h" style={{ width: "30%", background: "#707eff", borderRadius: "8px 0 0 8px" }}></div>
+                    <div className="full-h" style={{ width: "70%", background: "#ec92ff", borderRadius: "0 8px 8px 0" }}></div>
                 </div>
-                <div style={{ position: "absolute", top: "50%" }}>
-                    <div>{token1.symbol}</div>
-                    <div>{token1Ratio}%</div>
-                </div>
+                {/* <div className="ml-05">
+                    <div>
+                        <div>{token0.symbol}</div>
+                        <div>{token0Ratio}%</div>
+                    </div>
+                    <div style={{ position: "absolute", top: "50%" }}>
+                        <div>{token1.symbol}</div>
+                        <div>{token1Ratio}%</div>
+                    </div>
+                </div> */}
             </div>
         </div>
     );

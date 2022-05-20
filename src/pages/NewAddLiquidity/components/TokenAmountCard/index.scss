@@ -1,0 +1,31 @@
+.token-amount-card {
+    &-wrapper {
+        background-color: var(--ebony-clay);
+        border-radius: 8px; 
+        width: 462px;
+    }
+
+    &__logo {
+        width: 35px;
+        height: 35px;
+        background: #3a4e5d;
+        border-radius: 50%; 
+    }
+
+    &__input {
+        background-color: #182732;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 8px 1rem;
+    }
+
+    &__error {
+        padding: 8px;
+        background-color: #290505;
+        color: #f31b1b;
+        border: 1px solid #580d0d;
+        border-radius: 8px;
+        text-align: center;
+    }
+}

@@ -9,4 +9,10 @@
         border-radius: 0 0 8px 8px;
         text-align: center;
     }
+
+    &__chart {
+        width: 462px;
+        background-color: var(--ebony-clay);
+        border-radius: 8px;
+    }
 }

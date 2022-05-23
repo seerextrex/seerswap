@@ -1,10 +1,27 @@
 .range-input {
-    width: 110px;
-    background: #26343f;
-    color: white;
-    border: none;
-    padding: 8px 1rem;
-    border-radius: 8px;
+    width: 140px !important;
+    background: #26343f !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 1rem !important;
+    border-radius: 8px !important;
+    font-size: unset !important;
+
+    &__btn {
+        background-color: transparent;
+        color: white;
+        border: 1px solid #23406d;
+        border-radius: 50%;
+        width: 22px;
+
+        &:hover {
+            background-color: #2a4559;
+        }
+
+        &:first-of-type {
+            margin-right: 5px;
+        }
+    }
 }
 
 .current-price-tip {

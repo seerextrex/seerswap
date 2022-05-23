@@ -65,9 +65,9 @@ export const Brush = ({
 
     // keep local and external brush extent in sync
     // i.e. snap to ticks on bruhs end
-    useEffect(() => {
-        setLocalBrushExtent(brushExtent);
-    }, [brushExtent]);
+    // useEffect(() => {
+    //     setLocalBrushExtent(brushExtent);
+    // }, [brushExtent]);
 
     // initialize the brush
     useEffect(() => {
@@ -96,18 +96,18 @@ export const Brush = ({
     }, [brushExtent, brushed, id, innerHeight, innerWidth, interactive, previousBrushExtent, xScale]);
 
     // respond to xScale changes only
-    useEffect(() => {
-        if (!brushRef.current || !brushBehavior.current) return;
+    // useEffect(() => {
+    //     if (!brushRef.current || !brushBehavior.current) return;
 
-        brushBehavior.current.move(select(brushRef.current) as any, brushExtent.map(xScale) as any);
-    }, [brushExtent, xScale]);
+    //     brushBehavior.current.move(select(brushRef.current) as any, brushExtent.map(xScale) as any);
+    // }, [brushExtent, xScale]);
 
     // show labels when local brush changes
-    useEffect(() => {
-        setShowLabels(true);
-        const timeout = setTimeout(() => setShowLabels(false), 1500);
-        return () => clearTimeout(timeout);
-    }, [localBrushExtent]);
+    // useEffect(() => {
+    //     setShowLabels(true);
+    //     const timeout = setTimeout(() => setShowLabels(false), 1500);
+    //     return () => clearTimeout(timeout);
+    // }, [localBrushExtent]);
 
     // variables to help render the SVGs
     const flipWestHandle = localBrushExtent && xScale(localBrushExtent[0]) > FLIP_HANDLE_THRESHOLD_PX;

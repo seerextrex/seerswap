@@ -633,3 +633,18 @@ query surroundingTicks(
   }
 }
 `
+
+//Add Liquidity
+
+export const FETCH_POPULAR_POOLS = () => gql`
+query popularPools {
+ pools (orderBy: totalValueLockedUSD, orderDirection: desc, first: 5) {
+    token0{
+      id
+    }
+    token1 {
+      id
+    }
+  }
+}
+`

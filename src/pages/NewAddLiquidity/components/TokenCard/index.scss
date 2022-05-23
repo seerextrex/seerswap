@@ -28,12 +28,16 @@
 
             &:hover {
                 background-color: #2a4559;
-            }
-            &:hover {
+
                 #{$self}-chevron {
                     margin-right: 5px;
                 }
             }
+            // &:hover {
+            //     #{$self}-chevron {
+            //         margin-right: 5px;
+            //     }
+            // }
         }
     }
 }

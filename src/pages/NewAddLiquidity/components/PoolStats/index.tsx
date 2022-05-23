@@ -1,8 +1,8 @@
 import "./index.scss";
 
 interface IPoolStats {
-    fee: number;
-    apr: number;
+    fee: string | undefined;
+    apr: string | undefined;
 }
 
 export function PoolStats({ fee, apr }: IPoolStats) {

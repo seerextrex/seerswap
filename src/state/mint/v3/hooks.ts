@@ -114,6 +114,7 @@ export function useV3DerivedMintInfo(
     lowerPrice: any,
     upperPrice: any
 } {
+
     const { account } = useActiveWeb3React()
 
     const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } = useV3MintState()
@@ -128,7 +129,7 @@ export function useV3DerivedMintInfo(
                 [Field.CURRENCY_B]: currencyB
             }
         )
-        ,[currencyA, currencyB])
+        , [currencyA, currencyB])
 
     // formatted with tokens
     const [tokenA, tokenB, baseToken] = useMemo(
@@ -235,7 +236,7 @@ export function useV3DerivedMintInfo(
                 typeof existingPosition?.tickLower === 'number'
                     ? existingPosition.tickLower
                     : (invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-                    (!invertPrice && typeof leftRangeTypedValue === 'boolean')
+                        (!invertPrice && typeof leftRangeTypedValue === 'boolean')
                         ? tickSpaceLimits[Bound.LOWER]
                         : invertPrice
                             ? tryParseTick(token1, token0, feeAmount, rightRangeTypedValue.toString())
@@ -244,7 +245,7 @@ export function useV3DerivedMintInfo(
                 typeof existingPosition?.tickUpper === 'number'
                     ? existingPosition.tickUpper
                     : (!invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-                    (invertPrice && typeof leftRangeTypedValue === 'boolean')
+                        (invertPrice && typeof leftRangeTypedValue === 'boolean')
                         ? tickSpaceLimits[Bound.UPPER]
                         : invertPrice
                             ? tryParseTick(token1, token0, feeAmount, leftRangeTypedValue.toString())

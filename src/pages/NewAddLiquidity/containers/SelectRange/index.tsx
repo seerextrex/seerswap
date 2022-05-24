@@ -84,7 +84,7 @@ export function SelectRange({
                         priceUpper={priceUpper}
                         onLeftRangeInput={onLeftRangeInput}
                         onRightRangeInput={onRightRangeInput}
-                        interactive={true}
+                        interactive={false}
                     />
                     {/* <div className="range__notification w-100">Error</div> */}
                 </div>

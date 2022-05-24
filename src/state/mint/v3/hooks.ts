@@ -15,6 +15,34 @@ import { tryParseTick } from './utils'
 import { usePool } from 'hooks/usePools'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
+export interface IDerivedMintInfo {
+    pool?: Pool | null
+    poolState: PoolState
+    ticks: { [bound in Bound]?: number | undefined }
+    price?: Price<Token, Token>
+    pricesAtTicks: {
+        [bound in Bound]?: Price<Token, Token> | undefined
+    }
+    currencies: { [field in Field]?: Currency }
+    currencyBalances: { [field in Field]?: CurrencyAmount<Currency> }
+    dependentField: Field
+    parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> }
+    position: Position | undefined
+    noLiquidity?: boolean
+    errorMessage?: string
+    errorCode?: number
+    invalidPool: boolean
+    outOfRange: boolean
+    invalidRange: boolean
+    depositADisabled: boolean
+    depositBDisabled: boolean
+    invertPrice: boolean
+    ticksAtLimit: { [bound in Bound]?: boolean | undefined },
+    dynamicFee: number,
+    lowerPrice: any,
+    upperPrice: any
+}
+
 export function useV3MintState(): AppState['mintV3'] {
     return useAppSelector((state) => state.mintV3)
 }

@@ -50,7 +50,6 @@ export const Brush = ({
                 setLocalBrushExtent(null);
                 return;
             }
-
             const scaled = (selection as [number, number]).map(xScale.invert) as [number, number];
 
             // avoid infinite render loop by checking for change
@@ -72,6 +71,8 @@ export const Brush = ({
     // initialize the brush
     useEffect(() => {
         if (!brushRef.current) return;
+
+        console.log("HEHEHER", brushExtent, id, innerHeight, innerWidth, interactive, previousBrushExtent, xScale);
 
         brushBehavior.current = brushX<SVGGElement>()
             .extent([

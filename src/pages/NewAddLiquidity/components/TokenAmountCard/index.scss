@@ -13,11 +13,13 @@
     }
 
     &__input {
-        background-color: #182732;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        padding: 8px 1rem;
+        background-color: #182732 !important;
+        border: none !important;
+        border-radius: 8px !important;
+        color: white !important;
+        padding: 8px 1rem !important;
+        width: 100% !important;
+        font-size: unset !important;
     }
 
     &__error {
@@ -36,6 +38,11 @@
         padding: 0;
         font-size: 13px;
         margin-top: 6px;
+
+        &:disabled {
+            pointer-events: none;
+            color: #506f87;
+        }
 
         &:hover {
             text-decoration: underline;

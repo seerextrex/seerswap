@@ -40,3 +40,13 @@
      }
    }
 }
+
+.add-buttons {
+  &__liquidity {
+    padding: 8px 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+}

@@ -1,6 +1,6 @@
 import { Price, Token, Currency } from "@uniswap/sdk-core";
 import Input from "components/NumericalInput";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bound } from "state/mint/v3/actions";
 
 import "./index.scss";
@@ -64,10 +64,30 @@ export function RangeSelector({
 }: IRangeSelector) {
     const tokenA = (currencyA ?? undefined)?.wrapped;
     const tokenB = (currencyB ?? undefined)?.wrapped;
-    const isSorted = tokenA && tokenB && tokenA.sortsBefore(tokenB);
 
-    const leftPrice = isSorted ? priceLower : priceUpper?.invert();
-    const rightPrice = isSorted ? priceUpper : priceLower?.invert();
+    const isSorted = useMemo(() => {
+        return tokenA && tokenB && tokenA.sortsBefore(tokenB);
+    }, [tokenA, tokenB]);
+
+    const leftPrice = useMemo(() => {
+        return isSorted ? priceLower : priceUpper?.invert();
+    }, [isSorted, priceLower, priceUpper]);
+
+    const rightPrice = useMemo(() => {
+        return isSorted ? priceUpper : priceLower?.invert();
+    }, [isSorted, priceUpper, priceLower]);
+
+    const currentPrice = useMemo(() => {
+        if (!price) return;
+
+        const _price = invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5);
+
+        if (Number(_price) <= 0.0001) {
+            return _price;
+        } else {
+            return Number(_price).toFixed(3);
+        }
+    }, [price]);
 
     return (
         <div className="f f-jb">
@@ -94,7 +114,7 @@ export function RangeSelector({
                         <div className="mb-05" style={{ whiteSpace: "nowrap" }}>
                             Current price
                         </div>
-                        <div className="current-price-tip ta-c">{invertPrice ? price.invert().toSignificant(6) : price.toSignificant(6)}</div>
+                        <div className="current-price-tip ta-c">{currentPrice}</div>
                     </div>
                 </>
             )}

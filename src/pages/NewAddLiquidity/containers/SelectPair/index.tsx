@@ -2,7 +2,7 @@ import { PoolStats } from "pages/NewAddLiquidity/components/PoolStats";
 import { PopularPairs } from "pages/NewAddLiquidity/components/PopularPairs";
 import { TokenCard } from "pages/NewAddLiquidity/components/TokenCard";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Plus } from "react-feather";
+import { Plus, RefreshCw } from "react-feather";
 
 import { WrappedCurrency } from "models/types";
 import { Token, Currency } from "@uniswap/sdk-core";
@@ -19,6 +19,7 @@ import { useInfoLiquidity } from "hooks/subgraph/useInfoLiquidity";
 interface ISelectPair {
     baseCurrency: Currency | null | undefined;
     quoteCurrency: Currency | null | undefined;
+    handleCurrencySwap: () => void;
     handleCurrencyASelect: (newCurrency: Currency) => void;
     handleCurrencyBSelect: (newCurrency: Currency) => void;
     noLiquidity: boolean | undefined;
@@ -27,7 +28,7 @@ interface ISelectPair {
     handlePopularPairSelection: (pair: [string, string]) => void;
 }
 
-export function SelectPair({ baseCurrency, quoteCurrency, handleCurrencyASelect, handleCurrencyBSelect, noLiquidity, fee, pool, handlePopularPairSelection }: ISelectPair) {
+export function SelectPair({ baseCurrency, quoteCurrency, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, noLiquidity, fee, pool, handlePopularPairSelection }: ISelectPair) {
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 
     const {
@@ -64,8 +65,13 @@ export function SelectPair({ baseCurrency, quoteCurrency, handleCurrencyASelect,
             <div className="token-pairs-wrapper f c">
                 <div className="f">
                     <TokenCard currency={baseCurrency} otherCurrency={quoteCurrency} handleTokenSelection={handleCurrencyASelect}></TokenCard>
-                    <div className="token-pairs-plus mh-1 mt-a mb-a f f-ac f-jc">
-                        <Plus size={18} />
+                    <div className={`token-pairs-plus ${baseCurrency && quoteCurrency ? "swap-btn" : ""} mh-1 mt-a mb-a f f-ac f-jc`}>
+                        {baseCurrency && quoteCurrency && (
+                            <div className="f f-ac f-jc full-wh" onClick={handleCurrencySwap}>
+                                <RefreshCw size={16} />
+                            </div>
+                        )}
+                        {(!baseCurrency || !quoteCurrency) && <Plus size={16} />}
                     </div>
                     <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect}></TokenCard>
                 </div>

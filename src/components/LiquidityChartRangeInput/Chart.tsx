@@ -41,27 +41,27 @@ export function Chart({
                 .range([innerHeight, 0]),
         };
 
-        // if (zoom) {
-        //     const newXscale = zoom.rescaleX(scales.xScale);
+        if (zoom) {
+            const newXscale = zoom.rescaleX(scales.xScale);
 
-        //     scales.xScale.domain(
-        //         newXscale.domain().map((el, i, arr) => {
-        //             if (i === arr.length - 1 && el < 0.1) {
-        //                 return 0.1;
-        //             }
+            scales.xScale.domain(
+                newXscale.domain().map((el, i, arr) => {
+                    if (i === arr.length - 1 && el < 0.1) {
+                        return 0.1;
+                    }
 
-        //             if (el < 0) {
-        //                 return 0;
-        //             }
+                    if (el < 0) {
+                        return 0;
+                    }
 
-        //             if (el > maxXScale) {
-        //                 return maxXScale;
-        //             }
+                    if (el > maxXScale) {
+                        return maxXScale;
+                    }
 
-        //             return el;
-        //         })
-        //     );
-        // }
+                    return el;
+                })
+            );
+        }
 
         return scales;
     }, [current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom]);

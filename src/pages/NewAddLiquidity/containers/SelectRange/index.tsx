@@ -8,6 +8,7 @@ import "./index.scss";
 import { Bound } from "state/mint/v3/actions";
 import { useV3MintState } from "state/mint/v3/hooks";
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
+import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 
 interface IRangeSelector {
     priceLower: Price<Token, Token> | undefined;
@@ -90,6 +91,7 @@ export function SelectRange({
                 </div>
             </div>
             <div className="ml-2">
+                <USDPrices />
                 <PresetRanges handlePresetRangeSelection={(range) => console.log(range)} />
             </div>
         </div>

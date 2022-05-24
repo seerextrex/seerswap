@@ -8,5 +8,13 @@
         height: 30px;
         background-color: #547289;
         border-radius: 50%;
+
+        &.swap-btn {
+            cursor: pointer;
+            &:hover {
+                background-color: #395e7b;
+            }
+        }
     }
+
 }

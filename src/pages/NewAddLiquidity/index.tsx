@@ -150,6 +150,10 @@ export function NewAddLiquidityPage({
         [handleCurrencySelect, currencyIdA, history]
     );
 
+    const handleCurrencySwap = useCallback(() => {
+        history.push(`/new-add/${currencyIdB}/${currencyIdA}`);
+    }, [history, handleCurrencySelect, currencyIdA, currencyIdB]);
+
     const handlePopularPairSelection = useCallback((pair: [string, string]) => {
         history.push(`/new-add/${pair[0]}/${pair[1]}`);
     }, []);
@@ -220,6 +224,7 @@ export function NewAddLiquidityPage({
                     <SelectPair
                         baseCurrency={baseCurrency}
                         quoteCurrency={quoteCurrency}
+                        handleCurrencySwap={handleCurrencySwap}
                         handleCurrencyASelect={handleCurrencyASelect}
                         handleCurrencyBSelect={handleCurrencyBSelect}
                         fee={mintInfo.dynamicFee}

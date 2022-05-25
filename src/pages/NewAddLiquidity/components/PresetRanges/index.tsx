@@ -88,9 +88,11 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
                     <Trans>Preset ranges</Trans>
                 </span>
             </div>
+            <div className="f" style={{overflow: 'auto'}}>
             {ranges.map((range, i) => (
-                <div className="i-f" key={i}>
+                <div className="mr-1" style={{width: '140px'}} key={i}>
                     <button
+                    style={{width: '140px'}}
                         className={`preset-ranges__button ${i === 0 ? "active" : ""} mr-05`}
                         onClick={() => {
                             handlePresetRangeSelection(range);
@@ -98,26 +100,27 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
                         }}
                         key={i}
                     >
-                        {range.title}
-                    </button>
-                    {(() => {
-                        if (selectedPreset === range.type) {
+                        <div className="mb-05 b">{range.title}</div>
+                        {(() => {
                             const color = [PresetProfits.VERY_LOW, PresetProfits.LOW].includes(range.risk) ? "low" : range.risk === PresetProfits.MEDIUM ? "medium" : "high";
 
                             return (
                                 <div className="preset-ranges__description">
-                                    <span className={`preset-ranges__description-risk ${color}`}>{range.risk}</span>
-                                    <span> risk</span>
-                                    <span className="preset-ranges__description-separator mh-05">|</span>
-                                    <span className={`preset-ranges__description-profit ${color}`}>{range.profit}</span>
-                                    <span> profit</span>
+                                    <div className="f mb-05">
+                                        <span>Risk:</span>
+                                        <span className={`preset-ranges__description-risk ml-a ${color}`}>{range.risk}</span>
+                                    </div>
+                                    <div className="f">
+                                        <span>Profit:</span>
+                                        <span className={`preset-ranges__description-profit ml-a ${color}`}>{range.profit}</span>
+                                    </div>
                                 </div>
                             );
-                        }
-                        return;
                     })()}
+                    </button>
                 </div>
             ))}
+            </div>
         </div>
     );
 }

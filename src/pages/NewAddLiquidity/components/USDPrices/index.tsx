@@ -14,7 +14,6 @@ interface ISelectRangeUSDC {
 }
 
 export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC }: ISelectRangeUSDC) {
-    console.log(" USDC ASDASDA", currencyAUSDC, currencyBUSDC);
 
     return (
         <div className={"preset-ranges-wrapper pl-1 mb-2"}>

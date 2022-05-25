@@ -5,6 +5,15 @@
     border: 1px solid #254476;
     width: fit-content;
     cursor: pointer;
+    line-height: 14px;
+
+    &__logo {
+        margin-right: 5px;
+    }
+
+    &__plus {
+        margin: 0 5px;
+    }
 
     &:hover {
         background-color: #2a4559;
@@ -25,7 +34,7 @@
     flex-wrap: wrap;
 
     &-wrapper {
-        border-left: 2px solid rgb(85, 112, 131);
+        border-left: 1px solid rgb(85, 112, 131);
     }
 
     &-item {

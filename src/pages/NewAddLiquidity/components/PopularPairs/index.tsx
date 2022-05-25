@@ -1,6 +1,8 @@
 import { Trans } from "@lingui/macro";
+import CurrencyLogo from "components/CurrencyLogo";
 import Loader from "components/Loader";
 import { useToken } from "hooks/Tokens";
+import { WrappedCurrency } from "models/types";
 import { Star, Zap } from "react-feather";
 
 import "./index.scss";
@@ -64,5 +66,11 @@ function PopularPair({ pair, farming, handlePopularPairSelection }: { pair: [str
 
     if (!token0 || !token1) return <div></div>;
 
-    return <div onClick={() => handlePopularPairSelection(pair)} className={`popular-pair ${farming ? "farming" : ""}`}>{`${token0.symbol} / ${token1.symbol}`}</div>;
+    return <div onClick={() => handlePopularPairSelection(pair)} className={`f f-ac f-jc popular-pair ${farming ? "farming" : ""}`}>
+        <span className="popular-pair__logo"><CurrencyLogo currency={token0 as WrappedCurrency} size={'16px'} /></span>
+        <span>{token0.symbol}</span>
+        <span className="popular-pair__plus">+</span>
+        <span className="popular-pair__logo"><CurrencyLogo currency={token1 as WrappedCurrency} size={'16px'} /></span>
+        <span>{token1.symbol}</span>
+    </div>;
 }

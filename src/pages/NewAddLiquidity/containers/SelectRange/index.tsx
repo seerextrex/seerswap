@@ -17,9 +17,10 @@ interface IRangeSelector {
     currencyA: Currency | null | undefined;
     currencyB: Currency | null | undefined;
     mintInfo: IDerivedMintInfo;
+    disabled: boolean
 }
 
-export function SelectRange({ currencyA, currencyB, mintInfo }: IRangeSelector) {
+export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRangeSelector) {
     const { startPriceTypedValue } = useV3MintState();
 
     const currencyAUSDC = useUSDCPrice(currencyA ?? undefined);

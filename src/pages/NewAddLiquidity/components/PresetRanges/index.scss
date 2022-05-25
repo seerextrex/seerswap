@@ -4,17 +4,17 @@
             flex-wrap: wrap;
         
             &-wrapper {
-                border-left: 2px solid rgb(85, 112, 131);
+                border-left: 1px solid rgb(85, 112, 131);
                 position: relative;
             }
 
             &__button {
                 border: none;
                 border-radius: 4px;
-                padding: 4px 8px;
+                padding: 8px 16px;
                 background-color: #182732;
                 color: white;
-                border: 1px solid #254476;
+                text-align: left;
 
                 &.active {
                     border-color: #419fe8;
@@ -26,13 +26,10 @@
             }
 
             &__description {
-                position: absolute;
-                left: 1rem;
-                top: 5rem;
-                padding: 8px 1rem;
-                background-color: #182732;
+                // padding: 8px 1rem;
+                // background-color: #182732;
                 border-radius: 8px;
-                border: 1px solid #557083;
+                // border: 1px solid #557083;
                 font-size: 15px;
                 white-space: nowrap;
 

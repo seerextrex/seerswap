@@ -5,6 +5,7 @@
         
             &-wrapper {
                 border-left: 2px solid rgb(85, 112, 131);
+                position: relative;
             }
 
             &__button {
@@ -21,6 +22,49 @@
 
                 &:hover {
                     background-color: #2a4559;
+                }
+            }
+
+            &__description {
+                position: absolute;
+                left: 1rem;
+                top: 5rem;
+                padding: 8px 1rem;
+                background-color: #182732;
+                border-radius: 8px;
+                border: 1px solid #557083;
+                font-size: 15px;
+                white-space: nowrap;
+
+                &-separator {
+                    color: #2b496e;
+                    font-weight: 300;
+                }
+
+                &-risk {
+                    &.high {
+                        color: #ff3678;
+                    }
+                    &.medium {
+                        color: #f5c815;
+                    }
+                    &.low {
+                        color: #22d522;
+                    }
+                }
+
+                &-profit {
+                    &.high {
+                        color: #22d522;
+                    }
+
+                    &.medium {
+                        color: #f5c815;
+                    }
+
+                    &.low {
+                        color: #ff3678;
+                    }
                 }
             }
 }

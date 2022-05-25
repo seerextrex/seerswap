@@ -2,7 +2,15 @@
     &-wrapper {
         background-color: var(--ebony-clay);
         border-radius: 8px; 
-        width: 462px;
+        width: 542px;
+    }
+
+    &__locked {
+        left: 0;
+        top: 0;
+        z-index: 99;
+        background-color: rgba(38, 52, 63, 0.85);
+        border-radius: 8px;
     }
 
     &__logo {

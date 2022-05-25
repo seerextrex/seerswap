@@ -1,17 +1,25 @@
 .range {
     &__notification {
         position: relative;
-        margin-top: -2rem;
         padding: 8px;
-        background-color: #290505;
-        color: #f31b1b;
-        border-top: 1px solid #580d0d;
         border-radius: 0 0 8px 8px;
         text-align: center;
+
+        &.out-of-range {
+            background-color: #292305;
+            color: #f3a91b;
+            border-top: 1px solid #583b0d;
+        }
+
+        &.error {
+            background-color: #290505;
+            color: #f31b1b;
+            border-top: 1px solid #580d0d;
+        }
     }
 
     &__chart {
-        width: 462px;
+        width: 542px;
         background-color: var(--ebony-clay);
         border-radius: 8px;
     }

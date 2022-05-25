@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import Loader from "components/Loader";
 import { useToken } from "hooks/Tokens";
 import { Star, Zap } from "react-feather";
 
@@ -11,10 +12,6 @@ interface IPopularPairs {
 }
 
 export function PopularPairs({ pairs, farmings, handlePopularPairSelection }: IPopularPairs) {
-    if (!pairs) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div>
             <div className={"pair-list-wrapper pl-1"}>
@@ -24,15 +21,19 @@ export function PopularPairs({ pairs, farmings, handlePopularPairSelection }: IP
                         <Trans>Popular pairs</Trans>
                     </span>
                 </div>
-                <div className="mb-1">
-                    <ul className="pair-list">
-                        {pairs.map((pair, key) => (
-                            <li key={key} className="pair-list-item">
-                                <PopularPair handlePopularPairSelection={handlePopularPairSelection} pair={pair} farming={false} />
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                {pairs ? (
+                    <div className="mb-1">
+                        <ul className="pair-list">
+                            {pairs.map((pair, key) => (
+                                <li key={key} className="pair-list-item">
+                                    <PopularPair handlePopularPairSelection={handlePopularPairSelection} pair={pair} farming={false} />
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ) : (
+                    <Loader stroke="white" />
+                )}
             </div>
             {farmings.length ? (
                 <div className={"pair-list-wrapper pl-1"}>

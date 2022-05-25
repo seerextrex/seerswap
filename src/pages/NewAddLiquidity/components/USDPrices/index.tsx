@@ -1,8 +1,21 @@
 import { Trans } from "@lingui/macro";
 import { DollarSign } from "react-feather";
-import "./index.scss";
 
-export function USDPrices() {
+import { Currency, Token, Price } from "@uniswap/sdk-core";
+
+import "./index.scss";
+import Loader from "components/Loader";
+
+interface ISelectRangeUSDC {
+    currencyA: Currency;
+    currencyB: Currency;
+    currencyAUSDC: Price<Currency, Token> | undefined;
+    currencyBUSDC: Price<Currency, Token> | undefined;
+}
+
+export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC }: ISelectRangeUSDC) {
+    console.log(" USDC ASDASDA", currencyAUSDC, currencyBUSDC);
+
     return (
         <div className={"preset-ranges-wrapper pl-1 mb-2"}>
             <div className="mb-1 f f-ac">
@@ -11,10 +24,14 @@ export function USDPrices() {
                     <Trans>USD Prices</Trans>
                 </span>
             </div>
-            <div>
-                <div className="mb-05">1 ALGB = $0.212</div>
-                <div>1 ALGB = $0.212</div>
-            </div>
+            {currencyAUSDC && currencyBUSDC ? (
+                <div className="fs-085">
+                    <div className="mb-05">{`1 ${currencyA.symbol} = $${currencyAUSDC?.toFixed(3)}`}</div>
+                    <div className="mb-05">{`1 ${currencyB.symbol} = $${currencyBUSDC?.toFixed(3)}`}</div>
+                </div>
+            ) : (
+                <Loader stroke="white" />
+            )}
         </div>
     );
 }

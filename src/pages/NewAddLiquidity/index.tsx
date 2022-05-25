@@ -22,6 +22,8 @@ import { maxAmountSpend } from "utils/maxAmountSpend";
 import { useUSDCValue } from "hooks/useUSDCPrice";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
+import { PriceFormatToggler } from "./components/PriceFomatToggler";
+import { AddLiquidityButton } from "./containers/AddLiquidityButton";
 
 export function NewAddLiquidityPage({
     match: {
@@ -61,27 +63,6 @@ export function NewAddLiquidityPage({
     //TODO
     const quoteCurrency = baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB;
 
-    // mint state
-
-    const { independentField, typedValue, startPriceTypedValue } = useV3MintState();
-
-    // const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(tokenId ? BigNumber.from(tokenId) : undefined);
-    // const hasExistingPosition = !!existingPositionDetails && !positionLoading;
-    // const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails);
-
-    // const prevExistingPosition = usePrevious(existingPosition);
-
-    // const _existingPosition = useMemo(() => {
-    //     if (!existingPosition && prevExistingPosition) {
-    //         return {
-    //             ...prevExistingPosition,
-    //         };
-    //     }
-    //     return {
-    //         ...existingPosition,
-    //     };
-    // }, [existingPosition, baseCurrency, quoteCurrency]);
-
     const derivedMintInfo = useV3DerivedMintInfo(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, baseCurrency ?? undefined, undefined);
     const prevDerivedMintInfo = usePrevious({ ...derivedMintInfo });
 
@@ -108,7 +89,7 @@ export function NewAddLiquidityPage({
                 chainSymbol = "MATIC";
             }
 
-            if (currencyIdNew === currencyIdOther) {
+            if (currencyIdNew.toLowerCase() === currencyIdOther?.toLowerCase()) {
                 // not ideal, but for now clobber the other if the currency ids are equal
                 return [currencyIdNew, undefined];
             } else {
@@ -158,61 +139,17 @@ export function NewAddLiquidityPage({
         history.push(`/new-add/${pair[0]}/${pair[1]}`);
     }, []);
 
-    // get value and prices at ticks
-    const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = mintInfo.ticks;
-    const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = mintInfo.pricesAtTicks;
-
-    const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } = useRangeHopCallbacks(
-        baseCurrency ?? undefined,
-        quoteCurrency ?? undefined,
-        mintInfo.dynamicFee,
-        tickLower,
-        tickUpper,
-        mintInfo.pool
-    );
-
-    //DEPOSIT
-
-    // get formatted amounts
-    const formattedAmounts = {
-        [independentField]: typedValue,
-        [mintInfo.dependentField]: mintInfo.parsedAmounts[mintInfo.dependentField]?.toSignificant(6) ?? "",
-    };
-
-    const usdcValues = {
-        [Field.CURRENCY_A]: useUSDCValue(mintInfo.parsedAmounts[Field.CURRENCY_A]),
-        [Field.CURRENCY_B]: useUSDCValue(mintInfo.parsedAmounts[Field.CURRENCY_B]),
-    };
-
-    // get the max amounts user can add
-    const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce((accumulator, field) => {
-        return {
-            ...accumulator,
-            [field]: maxAmountSpend(mintInfo.currencyBalances[field]),
-        };
-    }, {});
-
-    const atMaxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce((accumulator, field) => {
-        return {
-            ...accumulator,
-            [field]: maxAmounts[field]?.equalTo(mintInfo.parsedAmounts[field] ?? "0"),
-        };
-    }, {});
-
-    // check whether the user has approved the router on the tokens
-    const [approvalA, approveACallback] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_A], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
-    const [approvalB, approveBCallback] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_B], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
-
-    const showApprovalA = approvalA !== ApprovalState.APPROVED && !!mintInfo.parsedAmounts[Field.CURRENCY_A];
-    const showApprovalB = approvalB !== ApprovalState.APPROVED && !!mintInfo.parsedAmounts[Field.CURRENCY_B];
+    const handlePriceFormat = useCallback(() => {}, []);
 
     return (
         <div className="add-liquidity-page">
             <div className="add-liquidity-page__header f">
                 <span className="add-liquidity-page__header-title">Add liquidity</span>
                 <span className="ml-a">
-                    <span className="mr-1">Price in</span>
-                    <span>Settings</span>
+                    <span className="mr-1">
+                        <PriceFormatToggler handlePriceFormat={handlePriceFormat} />
+                    </span>
+                    {/* <span>Settings</span> */}
                 </span>
             </div>
             <div className="add-liquidity-page__steps">
@@ -224,12 +161,10 @@ export function NewAddLiquidityPage({
                     <SelectPair
                         baseCurrency={baseCurrency}
                         quoteCurrency={quoteCurrency}
+                        mintInfo={mintInfo}
                         handleCurrencySwap={handleCurrencySwap}
                         handleCurrencyASelect={handleCurrencyASelect}
                         handleCurrencyBSelect={handleCurrencyBSelect}
-                        fee={mintInfo.dynamicFee}
-                        noLiquidity={mintInfo.noLiquidity}
-                        pool={mintInfo.pool}
                         handlePopularPairSelection={handlePopularPairSelection}
                     />
                 </div>
@@ -238,35 +173,17 @@ export function NewAddLiquidityPage({
                     <div className="add-liquidity-page__step-title ml-1">Select range</div>
                 </div>
                 <div className="select-range">
-                    <SelectRange
-                        priceLower={priceLower}
-                        priceUpper={priceUpper}
-                        getDecrementLower={getDecrementLower}
-                        getIncrementLower={getIncrementLower}
-                        getDecrementUpper={getDecrementUpper}
-                        getIncrementUpper={getIncrementUpper}
-                        onLeftRangeInput={onLeftRangeInput}
-                        onRightRangeInput={onRightRangeInput}
-                        currencyA={baseCurrency}
-                        currencyB={quoteCurrency}
-                        feeAmount={mintInfo.dynamicFee}
-                        ticksAtLimit={mintInfo.ticksAtLimit}
-                        initial={!!mintInfo.noLiquidity}
-                        disabled={!startPriceTypedValue && !mintInfo.price}
-                        noLiquidity={mintInfo.noLiquidity}
-                        price={mintInfo.price}
-                        invertPrice={mintInfo.invertPrice}
-                    />
+                    <SelectRange currencyA={baseCurrency} currencyB={quoteCurrency} mintInfo={mintInfo} />
                 </div>
                 <div className="f f-ac mt-2 mb-1">
                     <div className="add-liquidity-page__step-circle f f-ac f-jc">3</div>
                     <div className="add-liquidity-page__step-title ml-1">Enter an amount</div>
                 </div>
                 <div className="enter-ammounts">
-                    <EnterAmounts currencyA={baseCurrency} currencyB={currencyB} mintInfo={mintInfo} />
+                    <EnterAmounts currencyA={baseCurrency ?? undefined} currencyB={currencyB ?? undefined} mintInfo={mintInfo} />
                 </div>
                 <div className="add-buttons mt-2">
-                    <button className="add-buttons__liquidity">Add liquidity</button>
+                    <AddLiquidityButton baseCurrency={baseCurrency ?? undefined} quoteCurrency={quoteCurrency ?? undefined} mintInfo={mintInfo} />
                 </div>
             </div>
             {/* <div className="add-liquidity-page__stepper">

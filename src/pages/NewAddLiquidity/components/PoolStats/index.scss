@@ -25,6 +25,11 @@
         color: #22cbdc;
         border: 1px solid #133156;
         border-right: none;
+        
+        &.single {
+            border-radius: 0 8px 8px 0;
+            border-right: 1px solid #133156;
+        }
     }
     
     &__apr {

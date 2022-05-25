@@ -110,7 +110,7 @@ export default function LiquidityChartRangeInput({
     interactive = interactive && Boolean(formattedData?.length);
 
     const brushDomain: [number, number] | undefined = useMemo(() => {
-        console.log("asdasd", currencyA, currencyB, priceLower, priceUpper);
+        // console.log("asdasd", currencyA, currencyB, priceLower, priceUpper);
         //TODO
         const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
         // const isSorted = true

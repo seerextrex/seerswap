@@ -22,6 +22,8 @@ interface IRangeSelector {
     disabled: boolean;
     price: Price<Token, Token> | undefined;
     invertPrice: boolean;
+    isBeforePrice: boolean;
+    isAfterPrice: boolean;
 }
 
 interface IRangePart {
@@ -61,6 +63,8 @@ export function RangeSelector({
     disabled,
     invertPrice,
     price,
+    isBeforePrice,
+    isAfterPrice,
 }: IRangeSelector) {
     const tokenA = (currencyA ?? undefined)?.wrapped;
     const tokenB = (currencyB ?? undefined)?.wrapped;
@@ -89,9 +93,11 @@ export function RangeSelector({
         }
     }, [price]);
 
+    console.log("IS AFTER", isAfterPrice, isBeforePrice);
+
     return (
         <div className="f f-jb">
-            <div>
+            <div className={`min-price`} style={{ order: isAfterPrice ? 2 : 1 }}>
                 <RangePart
                     value={ticksAtLimit[Bound.LOWER] ? "0" : leftPrice?.toSignificant(5) ?? ""}
                     onUserInput={onLeftRangeInput}
@@ -109,16 +115,14 @@ export function RangeSelector({
                 />
             </div>
             {price && (
-                <>
-                    <div className="f c f-ac">
-                        <div className="mb-05" style={{ whiteSpace: "nowrap" }}>
-                            Current price
-                        </div>
-                        <div className="current-price-tip ta-c">{currentPrice}</div>
+                <div className="current-price f c f-ac" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
+                    <div className="mb-05" style={{ whiteSpace: "nowrap" }}>
+                        Current price
                     </div>
-                </>
+                    <div className="current-price-tip ta-c">{currentPrice}</div>
+                </div>
             )}
-            <div>
+            <div className="max-price" style={{ order: isBeforePrice ? 2 : 3 }}>
                 <RangePart
                     value={ticksAtLimit[Bound.UPPER] ? "∞" : rightPrice?.toSignificant(5) ?? ""}
                     onUserInput={onRightRangeInput}

@@ -1,53 +1,84 @@
 import { Trans } from "@lingui/macro";
 import { range } from "lodash";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Layers } from "react-feather";
 import "./index.scss";
 
 interface IPresetRanges {
+    isStablecoinPair: boolean;
     handlePresetRangeSelection: ({ type, min, max }: { type: Presets; min: number; max: number }) => void;
 }
 
 enum Presets {
     SAFE,
     RISK,
-    POPULAR,
+    NORMAL,
     FULL,
+    STABLE,
 }
 
-export function PresetRanges({ handlePresetRangeSelection }: IPresetRanges) {
+enum PresetProfits {
+    VERY_LOW = "Very low",
+    LOW = "Low",
+    MEDIUM = "Medium",
+    HIGH = "High",
+}
+
+export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: IPresetRanges) {
+    const [selectedPreset, selectPreset] = useState<Presets | null>(null);
+
     const popularRange = useMemo(() => {
         return [0, 100];
     }, []);
 
     const ranges = useMemo(() => {
+        if (isStablecoinPair)
+            return [
+                {
+                    type: Presets.STABLE,
+                    title: "Stablecoins",
+                    min: 0,
+                    max: 100,
+                    risk: PresetProfits.VERY_LOW,
+                    profit: PresetProfits.VERY_LOW,
+                },
+            ];
+
         return [
+            {
+                type: Presets.FULL,
+                title: "Full range",
+                min: 0,
+                max: 100,
+                risk: PresetProfits.VERY_LOW,
+                profit: PresetProfits.VERY_LOW,
+            },
             {
                 type: Presets.SAFE,
                 title: "Safe",
                 min: 20,
                 max: 50,
+                risk: PresetProfits.LOW,
+                profit: PresetProfits.LOW,
+            },
+            {
+                type: Presets.NORMAL,
+                title: "Normal",
+                min: popularRange[0],
+                max: popularRange[1],
+                risk: PresetProfits.MEDIUM,
+                profit: PresetProfits.MEDIUM,
             },
             {
                 type: Presets.RISK,
                 title: "Risk",
                 min: 10,
                 max: 20,
-            },
-            {
-                type: Presets.POPULAR,
-                title: "Trending",
-                min: popularRange[0],
-                max: popularRange[1],
-            },
-            {
-                type: Presets.FULL,
-                title: "Full range",
-                min: 0,
-                max: 100,
+                risk: PresetProfits.HIGH,
+                profit: PresetProfits.HIGH,
             },
         ];
-    }, [popularRange]);
+    }, [popularRange, isStablecoinPair]);
 
     return (
         <div className={"preset-ranges-wrapper pl-1"}>
@@ -58,9 +89,34 @@ export function PresetRanges({ handlePresetRangeSelection }: IPresetRanges) {
                 </span>
             </div>
             {ranges.map((range, i) => (
-                <button className={`preset-ranges__button ${i === 0 ? "active" : ""} mr-05`} onClick={() => handlePresetRangeSelection(range)} key={i}>
-                    {range.title}
-                </button>
+                <div className="i-f" key={i}>
+                    <button
+                        className={`preset-ranges__button ${i === 0 ? "active" : ""} mr-05`}
+                        onClick={() => {
+                            handlePresetRangeSelection(range);
+                            selectPreset(range.type);
+                        }}
+                        key={i}
+                    >
+                        {range.title}
+                    </button>
+                    {(() => {
+                        if (selectedPreset === range.type) {
+                            const color = [PresetProfits.VERY_LOW, PresetProfits.LOW].includes(range.risk) ? "low" : range.risk === PresetProfits.MEDIUM ? "medium" : "high";
+
+                            return (
+                                <div className="preset-ranges__description">
+                                    <span className={`preset-ranges__description-risk ${color}`}>{range.risk}</span>
+                                    <span> risk</span>
+                                    <span className="preset-ranges__description-separator mh-05">|</span>
+                                    <span className={`preset-ranges__description-profit ${color}`}>{range.profit}</span>
+                                    <span> profit</span>
+                                </div>
+                            );
+                        }
+                        return;
+                    })()}
+                </div>
             ))}
         </div>
     );

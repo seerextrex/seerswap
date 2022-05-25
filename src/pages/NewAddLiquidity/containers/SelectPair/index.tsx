@@ -15,20 +15,21 @@ import { Pool } from "lib/src";
 import { computePoolAddress } from "hooks/computePoolAddress";
 import { POOL_DEPLOYER_ADDRESS } from "constants/addresses";
 import { useInfoLiquidity } from "hooks/subgraph/useInfoLiquidity";
+import Loader from "components/Loader";
+import { IDerivedMintInfo } from "state/mint/v3/hooks";
+import { PoolState } from "hooks/usePools";
 
 interface ISelectPair {
     baseCurrency: Currency | null | undefined;
     quoteCurrency: Currency | null | undefined;
+    mintInfo: IDerivedMintInfo;
     handleCurrencySwap: () => void;
     handleCurrencyASelect: (newCurrency: Currency) => void;
     handleCurrencyBSelect: (newCurrency: Currency) => void;
-    noLiquidity: boolean | undefined;
-    fee: number;
-    pool: Pool | null | undefined;
     handlePopularPairSelection: (pair: [string, string]) => void;
 }
 
-export function SelectPair({ baseCurrency, quoteCurrency, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, noLiquidity, fee, pool, handlePopularPairSelection }: ISelectPair) {
+export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, handlePopularPairSelection }: ISelectPair) {
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 
     const {
@@ -43,13 +44,15 @@ export function SelectPair({ baseCurrency, quoteCurrency, handleCurrencySwap, ha
     const farmings: any[] = [];
 
     const feeString = useMemo(() => {
-        if (noLiquidity) return "0.01";
+        if (mintInfo.poolState === PoolState.INVALID || mintInfo.poolState === PoolState.LOADING) return <Loader stroke="#22cbdc" />;
 
-        return `${(fee / 10000).toFixed(3)}`;
-    }, [fee, noLiquidity]);
+        if (mintInfo.noLiquidity) return "0.01% fee";
+
+        return `${(mintInfo.dynamicFee / 10000).toFixed(3)}% fee`;
+    }, [mintInfo]);
 
     const aprString = useMemo(() => {
-        if (!aprs || !baseCurrency || !quoteCurrency) return "Loading";
+        if (!aprs || !baseCurrency || !quoteCurrency) return <Loader stroke="#22dc22" />;
 
         const poolAddress = computePoolAddress({
             poolDeployer: POOL_DEPLOYER_ADDRESS[137],
@@ -57,7 +60,7 @@ export function SelectPair({ baseCurrency, quoteCurrency, handleCurrencySwap, ha
             tokenB: quoteCurrency.wrapped,
         }).toLowerCase();
 
-        return aprs[poolAddress] ? aprs[poolAddress].toFixed(2) : "";
+        return aprs[poolAddress] ? `${aprs[poolAddress].toFixed(2)}% APR` : undefined;
     }, [baseCurrency, quoteCurrency, aprs]);
 
     return (
@@ -75,9 +78,7 @@ export function SelectPair({ baseCurrency, quoteCurrency, handleCurrencySwap, ha
                     </div>
                     <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect}></TokenCard>
                 </div>
-                <div className="mt-1">
-                    <PoolStats fee={feeString} apr={aprString}></PoolStats>
-                </div>
+                <div className="mt-1">{baseCurrency && quoteCurrency && <PoolStats fee={feeString} apr={aprString}></PoolStats>}</div>
             </div>
             <div className="token-pairs__popular-wrapper mh-2">
                 <PopularPairs handlePopularPairSelection={handlePopularPairSelection} pairs={popularPools} farmings={farmings}></PopularPairs>

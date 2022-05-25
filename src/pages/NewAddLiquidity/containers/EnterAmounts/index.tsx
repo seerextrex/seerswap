@@ -16,9 +16,11 @@ import { Bound } from "state/mint/v3/actions";
 import { useMemo } from "react";
 import { tryParseAmount } from "state/swap/hooks";
 
+import { MaxUint256 } from "@ethersproject/constants";
+
 interface IEnterAmounts {
-    currencyA: Currency | undefined | null;
-    currencyB: Currency | undefined | null;
+    currencyA: Currency | undefined;
+    currencyB: Currency | undefined;
     mintInfo: IDerivedMintInfo;
 }
 
@@ -56,11 +58,30 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo }: IEnterAmounts) 
     }, {});
 
     // check whether the user has approved the router on the tokens
-    const [approvalA, approveACallback] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_A], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
-    const [approvalB, approveBCallback] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_B], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
+    const [approvalA, approveACallback] = useApproveCallback(
+        mintInfo.parsedAmounts[Field.CURRENCY_A] || tryParseAmount("1000000000000000000000", currencyA),
+        chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined
+    );
+    const [approvalB, approveBCallback] = useApproveCallback(
+        mintInfo.parsedAmounts[Field.CURRENCY_B] || tryParseAmount("1000000000000000000000", currencyB),
+        chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined
+    );
 
-    const showApprovalA = approvalA !== ApprovalState.APPROVED && !!mintInfo.parsedAmounts[Field.CURRENCY_A];
-    const showApprovalB = approvalB !== ApprovalState.APPROVED && !!mintInfo.parsedAmounts[Field.CURRENCY_B];
+    const showApprovalA = useMemo(() => {
+        if (approvalA === ApprovalState.UNKNOWN) return undefined;
+
+        if (approvalA === ApprovalState.NOT_APPROVED) return true;
+
+        return approvalA !== ApprovalState.APPROVED;
+    }, [approvalA]);
+
+    const showApprovalB = useMemo(() => {
+        if (approvalB === ApprovalState.UNKNOWN) return undefined;
+
+        if (approvalB === ApprovalState.NOT_APPROVED) return true;
+
+        return approvalB !== ApprovalState.APPROVED;
+    }, [approvalB]);
 
     const [token0Ratio, token1Ratio] = useMemo(() => {
         const usdcA = usdcValues[Field.CURRENCY_A];
@@ -81,7 +102,27 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo }: IEnterAmounts) 
         }
 
         return ["0", "0"];
-    }, [currencyA, currencyB, mintInfo]);
+    }, [currencyA, currencyB, usdcValues]);
+
+    const currencyAError = useMemo(() => {
+        if ((mintInfo.errorCode !== 4 && mintInfo.errorCode !== 5) || !mintInfo.errorMessage || !currencyA) return;
+
+        const erroredToken = mintInfo.errorMessage.split(" ")[1];
+
+        if (currencyA.wrapped.symbol === erroredToken) return mintInfo.errorMessage;
+
+        return;
+    }, [mintInfo, currencyA]);
+
+    const currencyBError = useMemo(() => {
+        if ((mintInfo.errorCode !== 5 && mintInfo.errorCode !== 4) || !mintInfo.errorMessage || !currencyB) return;
+
+        const erroredToken = mintInfo.errorMessage.split(" ")[1];
+
+        if (currencyB.wrapped.symbol === erroredToken) return mintInfo.errorMessage;
+
+        return;
+    }, [mintInfo, currencyB]);
 
     return (
         <div className="f">
@@ -93,10 +134,13 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo }: IEnterAmounts) 
                         fiatValue={usdcValues[Field.CURRENCY_A]}
                         handleInput={onFieldAInput}
                         handleMax={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? "")}
-                        approved={!showApprovalA}
+                        showApproval={showApprovalA}
+                        isApproving={approvalA === ApprovalState.PENDING}
+                        handleApprove={approveACallback}
                         disabled={true}
+                        locked={mintInfo.depositADisabled}
                         isMax={!!atMaxAmounts[Field.CURRENCY_A]}
-                        error={"Not enough USDC"}
+                        error={currencyAError}
                     />
                 </div>
                 <div>
@@ -106,10 +150,13 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo }: IEnterAmounts) 
                         fiatValue={usdcValues[Field.CURRENCY_B]}
                         handleInput={onFieldBInput}
                         handleMax={() => onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "")}
-                        approved={!showApprovalB}
+                        showApproval={showApprovalB}
+                        isApproving={approvalB === ApprovalState.PENDING}
+                        handleApprove={approveBCallback}
                         disabled={false}
+                        locked={mintInfo.depositBDisabled}
                         isMax={!!atMaxAmounts[Field.CURRENCY_B]}
-                        error={null}
+                        error={currencyBError}
                     />
                 </div>
             </div>

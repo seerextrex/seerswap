@@ -49,31 +49,31 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
                 type: Presets.FULL,
                 title: "Full range",
                 min: 0,
-                max: 100,
+                max: Infinity,
                 risk: PresetProfits.VERY_LOW,
                 profit: PresetProfits.VERY_LOW,
             },
             {
                 type: Presets.SAFE,
                 title: "Safe",
-                min: 20,
-                max: 50,
+                min: 0.8,
+                max: 1.4,
                 risk: PresetProfits.LOW,
                 profit: PresetProfits.LOW,
             },
             {
                 type: Presets.NORMAL,
                 title: "Normal",
-                min: popularRange[0],
-                max: popularRange[1],
+                min: 0.9,
+                max: 1.2,
                 risk: PresetProfits.MEDIUM,
                 profit: PresetProfits.MEDIUM,
             },
             {
                 type: Presets.RISK,
                 title: "Risk",
-                min: 10,
-                max: 20,
+                min: 0.95,
+                max: 1.1,
                 risk: PresetProfits.HIGH,
                 profit: PresetProfits.HIGH,
             },
@@ -88,20 +88,24 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
                     <Trans>Preset ranges</Trans>
                 </span>
             </div>
-            <div className="f" style={{overflow: 'auto'}}>
             {ranges.map((range, i) => (
-                <div className="mr-1" style={{width: '140px'}} key={i}>
+                <div className="i-f" key={i}>
                     <button
-                    style={{width: '140px'}}
-                        className={`preset-ranges__button ${i === 0 ? "active" : ""} mr-05`}
+                        className={`preset-ranges__button ${selectedPreset === range.type ? "active" : ""} mr-05`}
                         onClick={() => {
                             handlePresetRangeSelection(range);
-                            selectPreset(range.type);
+                            if (selectedPreset == range.type) {
+                                selectPreset(null);
+                            } else {
+                                selectPreset(range.type);
+                            }
                         }}
                         key={i}
                     >
-                        <div className="mb-05 b">{range.title}</div>
-                        {(() => {
+                        <div>{range.title}</div>
+                    </button>
+                    {(() => {
+                        if (selectedPreset === range.type) {
                             const color = [PresetProfits.VERY_LOW, PresetProfits.LOW].includes(range.risk) ? "low" : range.risk === PresetProfits.MEDIUM ? "medium" : "high";
 
                             return (
@@ -116,11 +120,11 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
                                     </div>
                                 </div>
                             );
+                        }
+                        return;
                     })()}
-                    </button>
                 </div>
             ))}
-            </div>
         </div>
     );
 }

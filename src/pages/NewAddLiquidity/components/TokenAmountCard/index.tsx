@@ -76,7 +76,7 @@ export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleI
                 <div className="ml-a">
                     {showApproval ? (
                         isApproving ? (
-                            <button className="token-amount-card__approve-btn f" disabled>
+                            <button className="token-amount-card__approve-btn f f-ac" disabled>
                                 <Loader style={{ marginRight: "3px" }} stroke="white" />
                                 <span>Approving</span>
                             </button>

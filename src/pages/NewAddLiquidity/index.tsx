@@ -35,7 +35,7 @@ export function NewAddLiquidityPage({
     currencyIdA?: string;
     currencyIdB?: string;
 }>) {
-    const { account, chainId, library } = useActiveWeb3React();
+    const { chainId } = useActiveWeb3React();
 
     // const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
     // const expertMode = useIsExpertMode()
@@ -143,19 +143,19 @@ export function NewAddLiquidityPage({
     const handlePriceFormat = useCallback(() => {}, []);
 
     const step1 = useMemo(() => {
-        return baseCurrency && quoteCurrency
-    }, [baseCurrency, quoteCurrency])
+        return baseCurrency && quoteCurrency;
+    }, [baseCurrency, quoteCurrency]);
 
     const step2 = useMemo(() => {
-        return mintInfo.lowerPrice && mintInfo.upperPrice
-    }, [mintInfo])
+        return mintInfo.lowerPrice && mintInfo.upperPrice && !mintInfo.invalidRange;
+    }, [mintInfo]);
 
     const step3 = useMemo(() => {
         if (mintInfo.outOfRange) {
-            return mintInfo.parsedAmounts[Field.CURRENCY_A] || mintInfo.parsedAmounts[Field.CURRENCY_B]
+            return mintInfo.parsedAmounts[Field.CURRENCY_A] || mintInfo.parsedAmounts[Field.CURRENCY_B];
         }
-        return mintInfo.parsedAmounts[Field.CURRENCY_A] && mintInfo.parsedAmounts[Field.CURRENCY_B]
-    }, [mintInfo])
+        return mintInfo.parsedAmounts[Field.CURRENCY_A] && mintInfo.parsedAmounts[Field.CURRENCY_B];
+    }, [mintInfo]);
 
     return (
         <div className="add-liquidity-page">
@@ -170,7 +170,7 @@ export function NewAddLiquidityPage({
             </div>
             <div className="add-liquidity-page__steps">
                 <div className="f f-ac mt-2 mb-1">
-                    <div className={`add-liquidity-page__step-circle ${step1 ? 'done' : ''} f f-ac f-jc`}>{step1 ? <Check stroke={'white'} strokeWidth={3} size={15}/> : '1'}</div>
+                    <div className={`add-liquidity-page__step-circle ${step1 ? "done" : ""} f f-ac f-jc`}>{step1 ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "1"}</div>
                     <div className="add-liquidity-page__step-title ml-1">Select pair</div>
                 </div>
                 <div className="select-pair">
@@ -185,20 +185,21 @@ export function NewAddLiquidityPage({
                     />
                 </div>
                 <div className="f f-ac mt-2 mb-1">
-                    <div className={`add-liquidity-page__step-circle ${step2 ? 'done' : ''} f f-ac f-jc`}>{step2 ? <Check stroke={'white'} strokeWidth={3} size={15}/> : '2'}</div>
+                    <div className={`add-liquidity-page__step-circle ${step2 ? "done" : ""} f f-ac f-jc`}>{step2 ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "2"}</div>
                     <div className="add-liquidity-page__step-title ml-1">Select range</div>
                 </div>
                 <div className="select-range">
                     <SelectRange currencyA={baseCurrency} currencyB={quoteCurrency} mintInfo={mintInfo} disabled={!step1} />
                 </div>
                 <div className="f f-ac mt-2 mb-1">
-                    <div className={`add-liquidity-page__step-circle ${step3 ? 'done' : ''} f f-ac f-jc`}>{step3 ? <Check stroke={'white'} strokeWidth={3} size={15}/> : '3'}</div>
+                    <div className={`add-liquidity-page__step-circle ${step3 ? "done" : ""} f f-ac f-jc`}>{step3 ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "3"}</div>
                     <div className="add-liquidity-page__step-title ml-1">Enter an amount</div>
                 </div>
                 <div className="enter-ammounts">
                     <EnterAmounts currencyA={baseCurrency ?? undefined} currencyB={currencyB ?? undefined} mintInfo={mintInfo} />
                 </div>
                 <div className="add-buttons mt-2">
+                    <Stepper step={1} />
                     <AddLiquidityButton baseCurrency={baseCurrency ?? undefined} quoteCurrency={quoteCurrency ?? undefined} mintInfo={mintInfo} />
                 </div>
             </div>

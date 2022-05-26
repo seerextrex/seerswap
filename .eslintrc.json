@@ -30,6 +30,13 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-this-alias": [
+      "error",
+      {
+        "allowDestructuring": true, // Allow `const { props, state } = this`; false by default
+        "allowedNames": ["vm"] // Allow `const vm= this`; `[]` by default
+      }
+    ],
     "no-restricted-imports": [
       "error",
       {

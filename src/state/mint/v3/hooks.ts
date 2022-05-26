@@ -259,6 +259,7 @@ export function useV3DerivedMintInfo(
     const ticks: {
         [key: string]: number | undefined
     } = useMemo(() => {
+
         return {
             [Bound.LOWER]:
                 typeof existingPosition?.tickLower === 'number'
@@ -306,6 +307,8 @@ export function useV3DerivedMintInfo(
 
     // always returns the price with 0 as base token
     const pricesAtTicks = useMemo(() => {
+
+        console.log()
         return {
             [Bound.LOWER]: getTickToPrice(token0, token1, ticks[Bound.LOWER]),
             [Bound.UPPER]: getTickToPrice(token0, token1, ticks[Bound.UPPER])

@@ -11,13 +11,13 @@ import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from "constants/tokens";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
     currencyB: Currency | null | undefined;
     mintInfo: IDerivedMintInfo;
-    disabled: boolean
+    disabled: boolean;
 }
 
 export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRangeSelector) {
@@ -34,11 +34,19 @@ export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRange
         return stablecoins.includes(currencyA.wrapped.address) && stablecoins.includes(currencyB.wrapped.address);
     }, [currencyA, currencyB]);
 
+    const isOneStableCoin = useMemo(() => {
+        if (!currencyA || !currencyB || isStablecoinPair) return false;
+
+        const stablecoins = [USDC_POLYGON.address, USDT_POLYGON.address, MAI_POLYGON.address];
+
+        return stablecoins.includes(currencyA.wrapped.address) || stablecoins.includes(currencyB.wrapped.address);
+    }, [currencyA, currencyB, isStablecoinPair]);
+
     // get value and prices at ticks
     const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = mintInfo.ticks;
     const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = mintInfo.pricesAtTicks;
 
-    const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper } = useRangeHopCallbacks(
+    const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } = useRangeHopCallbacks(
         currencyA ?? undefined,
         currencyB ?? undefined,
         mintInfo.dynamicFee,
@@ -54,15 +62,15 @@ export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRange
 
     const isSorted = useMemo(() => {
         return tokenA && tokenB && tokenA.sortsBefore(tokenB);
-    }, [tokenA, tokenB]);
+    }, [tokenA, tokenB, mintInfo]);
 
     const leftPrice = useMemo(() => {
         return isSorted ? priceLower : priceUpper?.invert();
-    }, [isSorted, priceLower, priceUpper]);
+    }, [isSorted, priceLower, priceUpper, mintInfo]);
 
     const rightPrice = useMemo(() => {
         return isSorted ? priceUpper : priceLower?.invert();
-    }, [isSorted, priceUpper, priceLower]);
+    }, [isSorted, priceUpper, priceLower, mintInfo]);
 
     const price = useMemo(() => {
         if (!mintInfo.price) return;
@@ -74,13 +82,28 @@ export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRange
         if (!price || !leftPrice || !rightPrice) return false;
 
         return mintInfo.outOfRange && price > rightPrice.toSignificant(5);
-    }, [price, leftPrice, rightPrice]);
+    }, [price, leftPrice, rightPrice, mintInfo]);
 
     const isAfterPrice = useMemo(() => {
         if (!price || !leftPrice || !rightPrice) return false;
 
         return mintInfo.outOfRange && price < leftPrice.toSignificant(5);
-    }, [price, leftPrice, rightPrice]);
+    }, [price, leftPrice, rightPrice, mintInfo]);
+
+    const handlePresetRangeSelection = useCallback(
+        (range) => {
+            if (!price) return;
+
+            if (range.min === 0 && range.max === Infinity) {
+                getSetFullRange();
+                return;
+            }
+
+            onLeftRangeInput(String(+price * (isOneStableCoin ? range.min : range.min - 0.2)));
+            onRightRangeInput(String(+price * (isOneStableCoin ? range.max : range.max + 0.2)));
+        },
+        [price, isOneStableCoin]
+    );
 
     return (
         <div className="f">
@@ -120,13 +143,13 @@ export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRange
                         onRightRangeInput={onRightRangeInput}
                         interactive={false}
                     />
-                    {mintInfo.outOfRange && <div className="range__notification mt-05 out-of-range">Out of range</div>}
+                    {mintInfo.outOfRange && <div className="range__notification out-of-range">Out of range</div>}
                     {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
                 </div>
             </div>
             <div className="ml-2">
                 {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} />}
-                <PresetRanges isStablecoinPair={isStablecoinPair} handlePresetRangeSelection={(range) => console.log(range)} />
+                <PresetRanges isStablecoinPair={isStablecoinPair} handlePresetRangeSelection={handlePresetRangeSelection} />
             </div>
         </div>
     );

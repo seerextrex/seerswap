@@ -63,6 +63,8 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, handleCurren
         return aprs[poolAddress] ? `${aprs[poolAddress].toFixed(2)}% APR` : undefined;
     }, [baseCurrency, quoteCurrency, aprs]);
 
+    console.log("POOL STATE", mintInfo.poolState);
+
     return (
         <div className="select-pair-wrapper f">
             <div className="token-pairs-wrapper f c">
@@ -78,7 +80,17 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, handleCurren
                     </div>
                     <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect}></TokenCard>
                 </div>
-                <div className="mt-1">{baseCurrency && quoteCurrency && <PoolStats fee={feeString} apr={aprString}></PoolStats>}</div>
+
+                <div className="mt-1">
+                    {baseCurrency && quoteCurrency && (
+                        <PoolStats
+                            fee={feeString}
+                            apr={aprString}
+                            loading={mintInfo.poolState === PoolState.LOADING || mintInfo.poolState === PoolState.INVALID}
+                            noLiquidity={mintInfo.noLiquidity}
+                        ></PoolStats>
+                    )}
+                </div>
             </div>
             <div className="token-pairs__popular-wrapper mh-2">
                 <PopularPairs handlePopularPairSelection={handlePopularPairSelection} pairs={popularPools} farmings={farmings}></PopularPairs>

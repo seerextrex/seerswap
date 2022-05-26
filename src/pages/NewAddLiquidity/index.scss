@@ -2,16 +2,8 @@
     background-color: #1c2a359e;
     padding: 2rem;
     border-radius: 8px;
-    display: grid; 
-    grid-template-columns: auto; 
-    grid-template-rows: auto;
-    gap: 0px 0px; 
-    grid-template-areas:
-    "header header header"
-    "steps steps steps"
-    "steps steps steps"
-    "steps steps steps";
-  
+    display: flex; 
+    flex-direction: column;
 
    &__step {
      &-circle {
@@ -31,14 +23,12 @@
    }
   
     &__stepper { 
-      grid-area: stepper;
       display: flex;
       padding-top: 2rem;
       justify-content: center;
    }
 
    &__header {
-     grid-area: header;
 
      &-title {
        font-size: 25px;

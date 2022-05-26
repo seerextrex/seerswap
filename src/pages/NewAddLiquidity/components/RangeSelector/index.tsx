@@ -93,8 +93,6 @@ export function RangeSelector({
         }
     }, [price]);
 
-    console.log("IS AFTER", isAfterPrice, isBeforePrice);
-
     return (
         <div className="f f-jb">
             <div className={`min-price`} style={{ order: isAfterPrice ? 2 : 1 }}>
@@ -143,9 +141,6 @@ export function RangeSelector({
 }
 
 function RangePart({ value, decrement, increment, decrementDisabled = false, incrementDisabled = false, width, locked, onUserInput, initial, disabled, title }: IRangePart) {
-    //  for focus state, styled components doesnt let you select input parent container
-    const [active, setActive] = useState(false);
-
     // let user type value and only update parent value on blur
     const [localValue, setLocalValue] = useState("");
     const [useLocalValue, setUseLocalValue] = useState(false);
@@ -153,13 +148,10 @@ function RangePart({ value, decrement, increment, decrementDisabled = false, inc
     // animation if parent value updates local value
     const handleOnFocus = () => {
         setUseLocalValue(true);
-        setActive(true);
     };
 
     const handleOnBlur = useCallback(() => {
         setUseLocalValue(false);
-        setActive(false);
-        onUserInput(localValue); // trigger update on parent value
     }, [localValue, onUserInput]);
 
     // for button clicks
@@ -172,6 +164,14 @@ function RangePart({ value, decrement, increment, decrementDisabled = false, inc
         setUseLocalValue(false);
         onUserInput(increment());
     }, [increment, onUserInput]);
+
+    const handleInput = useCallback(
+        (val) => {
+            setLocalValue(val.trim());
+            onUserInput(val.trim());
+        },
+        [onUserInput]
+    );
 
     useEffect(() => {
         if (localValue !== value && !useLocalValue) {
@@ -194,17 +194,7 @@ function RangePart({ value, decrement, increment, decrementDisabled = false, inc
                     </button>
                 </div>
             </div>
-            <Input
-                value={localValue}
-                onFocus={handleOnFocus}
-                onBlur={handleOnBlur}
-                className="range-input"
-                disabled={disabled || locked}
-                onUserInput={(val) => {
-                    setLocalValue(val.trim());
-                }}
-                placeholder="0.00"
-            />
+            <Input value={localValue} onFocus={handleOnFocus} onBlur={handleOnBlur} className="range-input" disabled={disabled || locked} onUserInput={handleInput} placeholder="0.00" />
         </div>
     );
 }

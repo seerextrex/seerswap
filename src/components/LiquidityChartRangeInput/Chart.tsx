@@ -43,24 +43,7 @@ export function Chart({
 
         if (zoom) {
             const newXscale = zoom.rescaleX(scales.xScale);
-
-            scales.xScale.domain(
-                newXscale.domain().map((el, i, arr) => {
-                    if (i === arr.length - 1 && el < 0.1) {
-                        return 0.1;
-                    }
-
-                    if (el < 0) {
-                        return 0;
-                    }
-
-                    if (el > maxXScale) {
-                        return maxXScale;
-                    }
-
-                    return el;
-                })
-            );
+            scales.xScale.domain(newXscale.domain());
         }
 
         return scales;
@@ -72,11 +55,13 @@ export function Chart({
     }, [zoomLevels]);
 
     useEffect(() => {
-        if (!brushDomain) {
+        if (!brushDomain && current) {
             //L-1
-            onBrushDomainChange(xScale.domain() as [number, number]);
+            const initialLowPrice = current * 0.75;
+            const initialHighPrice = current * 1.5;
+            onBrushDomainChange([initialLowPrice, initialHighPrice], undefined);
         }
-    }, [brushDomain, onBrushDomainChange, xScale]);
+    }, [brushDomain, current, onBrushDomainChange, xScale]);
 
     useEffect(() => {
         select(".tick:first-child").attr("transform", "translate(10,0)");
@@ -127,8 +112,6 @@ export function Chart({
                         innerWidth={innerWidth}
                         innerHeight={innerHeight}
                         setBrushExtent={onBrushDomainChange}
-                        westHandleColor={styles.brush.handle.west}
-                        eastHandleColor={styles.brush.handle.east}
                     />
                 </g>
             </svg>

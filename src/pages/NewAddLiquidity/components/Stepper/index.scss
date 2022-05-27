@@ -3,10 +3,13 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        background-color: blue;
+        background-color: white;
+        color: black;
+        font-size: 13px;
         
         &.done {
-            background-color: seagreen;
+            background-color: #26a626;
+            color: white;
         }
     }
 }

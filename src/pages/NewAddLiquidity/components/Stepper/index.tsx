@@ -1,48 +1,20 @@
 import "./index.scss";
 
 interface IStepper {
-    step: number;
+    completedSteps: number[];
 }
 
-export function Stepper({ step }: IStepper) {
+export function Stepper({ completedSteps }: IStepper) {
+    const steps = ["Select a pair", "Select a range", "Enter an amount", "Approve ALGB", "Approve USDC"];
+
     return (
-        <div className="f">
-            <div className="f c f-ac">
-                <div className="stepper__circle done mb-05"></div>
-                <div>{`Select pair`}</div>
-            </div>
-            <div className="f" style={{ width: "35px", height: "40px" }}>
-                <div className="full-w"></div>
-                <div className="full-w" style={{ borderLeft: "2px dashed black" }}></div>
-            </div>
-            <div className="f c f-ac">
-                <div className="stepper__circle mb-05"></div>
-                <div>{`Select range`}</div>
-            </div>
-            <div className="f" style={{ width: "35px", height: "40px" }}>
-                <div className="full-w"></div>
-                <div className="full-w" style={{ borderLeft: "2px dashed black" }}></div>
-            </div>
-            <div className="f c f-ac">
-                <div className="stepper__circle mb-05"></div>
-                <div>{`Enter an amount`}</div>
-            </div>
-            <div className="f" style={{ width: "35px", height: "40px" }}>
-                <div className="full-w"></div>
-                <div className="full-w" style={{ borderLeft: "2px dashed black" }}></div>
-            </div>
-            <div className="f c f-ac">
-                <div className="stepper__circle mb-05"></div>
-                <div>{`Approve ALGB`}</div>
-            </div>
-            <div className="f" style={{ width: "35px", height: "40px" }}>
-                <div className="full-w"></div>
-                <div className="full-w" style={{ borderLeft: "2px dashed black" }}></div>
-            </div>
-            <div className="f c f-ac">
-                <div className="stepper__circle mb-05"></div>
-                <div>{`Approve USDC`}</div>
-            </div>
+        <div className="f w-100" style={{ justifyContent: "space-between" }}>
+            {steps.map((el, i) => (
+                <div className="f f-ac">
+                    <div className={`stepper__circle mr-1 f f-ac f-jc ${completedSteps.length - 1 >= i ? "done" : ""} `}>{i + 1}</div>
+                    <div>{el}</div>
+                </div>
+            ))}
         </div>
     );
 }

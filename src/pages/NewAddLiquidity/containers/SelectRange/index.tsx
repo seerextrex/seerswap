@@ -12,15 +12,17 @@ import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from "constants/tokens";
 import { useCallback, useMemo } from "react";
+import { Check } from "react-feather";
 
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
     currencyB: Currency | null | undefined;
     mintInfo: IDerivedMintInfo;
     disabled: boolean;
+    isCompleted: boolean;
 }
 
-export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRangeSelector) {
+export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, disabled }: IRangeSelector) {
     const { startPriceTypedValue } = useV3MintState();
 
     const currencyAUSDC = useUSDCPrice(currencyA ?? undefined);
@@ -106,50 +108,56 @@ export function SelectRange({ currencyA, currencyB, mintInfo, disabled }: IRange
     );
 
     return (
-        <div className="f">
-            <div className="f c">
-                <div className="mb-1">
-                    <RangeSelector
-                        priceLower={priceLower}
-                        priceUpper={priceUpper}
-                        getDecrementLower={getDecrementLower}
-                        getIncrementLower={getIncrementLower}
-                        getDecrementUpper={getDecrementUpper}
-                        getIncrementUpper={getIncrementUpper}
-                        onLeftRangeInput={onLeftRangeInput}
-                        onRightRangeInput={onRightRangeInput}
-                        currencyA={currencyA}
-                        currencyB={currencyB}
-                        feeAmount={mintInfo.dynamicFee}
-                        ticksAtLimit={mintInfo.ticksAtLimit}
-                        initial={!!mintInfo.noLiquidity}
-                        disabled={!startPriceTypedValue && !mintInfo.price}
-                        price={mintInfo.price}
-                        invertPrice={mintInfo.invertPrice}
-                        isBeforePrice={isBeforePrice}
-                        isAfterPrice={isAfterPrice}
-                    />
-                </div>
-                <div className="range__chart">
-                    <LiquidityChartRangeInput
-                        currencyA={currencyA ?? undefined}
-                        currencyB={currencyB ?? undefined}
-                        feeAmount={mintInfo.dynamicFee}
-                        ticksAtLimit={mintInfo.ticksAtLimit}
-                        price={mintInfo.price ? parseFloat((mintInfo.invertPrice ? mintInfo.price.invert() : mintInfo.price).toSignificant(8)) : undefined}
-                        priceLower={priceLower}
-                        priceUpper={priceUpper}
-                        onLeftRangeInput={onLeftRangeInput}
-                        onRightRangeInput={onRightRangeInput}
-                        interactive={false}
-                    />
-                    {mintInfo.outOfRange && <div className="range__notification out-of-range">Out of range</div>}
-                    {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
-                </div>
+        <div className="f c">
+            <div className="f f-ac mb-2">
+                <div className={`add-liquidity-page__step-circle ${isCompleted ? "done" : ""} f f-ac f-jc`}>{isCompleted ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "2"}</div>
+                <div className="add-liquidity-page__step-title ml-1">Select range</div>
             </div>
-            <div className="ml-2">
-                {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} />}
-                <PresetRanges isStablecoinPair={isStablecoinPair} handlePresetRangeSelection={handlePresetRangeSelection} />
+            <div className="f">
+                <div className="f c">
+                    <div className="mb-1">
+                        <RangeSelector
+                            priceLower={priceLower}
+                            priceUpper={priceUpper}
+                            getDecrementLower={getDecrementLower}
+                            getIncrementLower={getIncrementLower}
+                            getDecrementUpper={getDecrementUpper}
+                            getIncrementUpper={getIncrementUpper}
+                            onLeftRangeInput={onLeftRangeInput}
+                            onRightRangeInput={onRightRangeInput}
+                            currencyA={currencyA}
+                            currencyB={currencyB}
+                            feeAmount={mintInfo.dynamicFee}
+                            ticksAtLimit={mintInfo.ticksAtLimit}
+                            initial={!!mintInfo.noLiquidity}
+                            disabled={!startPriceTypedValue && !mintInfo.price}
+                            price={mintInfo.price}
+                            invertPrice={mintInfo.invertPrice}
+                            isBeforePrice={isBeforePrice}
+                            isAfterPrice={isAfterPrice}
+                        />
+                    </div>
+                    <div className="range__chart">
+                        <LiquidityChartRangeInput
+                            currencyA={currencyA ?? undefined}
+                            currencyB={currencyB ?? undefined}
+                            feeAmount={mintInfo.dynamicFee}
+                            ticksAtLimit={mintInfo.ticksAtLimit}
+                            price={mintInfo.price ? parseFloat((mintInfo.invertPrice ? mintInfo.price.invert() : mintInfo.price).toSignificant(8)) : undefined}
+                            priceLower={priceLower}
+                            priceUpper={priceUpper}
+                            onLeftRangeInput={onLeftRangeInput}
+                            onRightRangeInput={onRightRangeInput}
+                            interactive={false}
+                        />
+                        {mintInfo.outOfRange && <div className="range__notification out-of-range">Out of range</div>}
+                        {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
+                    </div>
+                </div>
+                <div className="ml-2">
+                    {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} />}
+                    <PresetRanges isStablecoinPair={isStablecoinPair} handlePresetRangeSelection={handlePresetRangeSelection} />
+                </div>
             </div>
         </div>
     );

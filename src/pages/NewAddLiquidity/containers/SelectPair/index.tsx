@@ -2,7 +2,7 @@ import { PoolStats } from "pages/NewAddLiquidity/components/PoolStats";
 import { PopularPairs } from "pages/NewAddLiquidity/components/PopularPairs";
 import { TokenCard } from "pages/NewAddLiquidity/components/TokenCard";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Plus, RefreshCw } from "react-feather";
+import { Check, Plus, RefreshCw } from "react-feather";
 
 import { WrappedCurrency } from "models/types";
 import { Token, Currency } from "@uniswap/sdk-core";
@@ -23,13 +23,14 @@ interface ISelectPair {
     baseCurrency: Currency | null | undefined;
     quoteCurrency: Currency | null | undefined;
     mintInfo: IDerivedMintInfo;
+    isCompleted: boolean;
     handleCurrencySwap: () => void;
     handleCurrencyASelect: (newCurrency: Currency) => void;
     handleCurrencyBSelect: (newCurrency: Currency) => void;
     handlePopularPairSelection: (pair: [string, string]) => void;
 }
 
-export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, handlePopularPairSelection }: ISelectPair) {
+export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, handlePopularPairSelection }: ISelectPair) {
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 
     const {
@@ -63,37 +64,41 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, handleCurren
         return aprs[poolAddress] ? `${aprs[poolAddress].toFixed(2)}% APR` : undefined;
     }, [baseCurrency, quoteCurrency, aprs]);
 
-    console.log("POOL STATE", mintInfo.poolState);
-
     return (
-        <div className="select-pair-wrapper f">
-            <div className="token-pairs-wrapper f c">
-                <div className="f">
-                    <TokenCard currency={baseCurrency} otherCurrency={quoteCurrency} handleTokenSelection={handleCurrencyASelect}></TokenCard>
-                    <div className={`token-pairs-plus ${baseCurrency && quoteCurrency ? "swap-btn" : ""} mh-1 mt-a mb-a f f-ac f-jc`}>
-                        {baseCurrency && quoteCurrency && (
-                            <div className="f f-ac f-jc full-wh" onClick={handleCurrencySwap}>
-                                <RefreshCw size={16} />
-                            </div>
-                        )}
-                        {(!baseCurrency || !quoteCurrency) && <Plus size={16} />}
-                    </div>
-                    <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect}></TokenCard>
-                </div>
-
-                <div className="mt-1">
-                    {baseCurrency && quoteCurrency && (
-                        <PoolStats
-                            fee={feeString}
-                            apr={aprString}
-                            loading={mintInfo.poolState === PoolState.LOADING || mintInfo.poolState === PoolState.INVALID}
-                            noLiquidity={mintInfo.noLiquidity}
-                        ></PoolStats>
-                    )}
-                </div>
+        <div className="select-pair-wrapper f c">
+            <div className="f f-ac mb-2">
+                <div className={`add-liquidity-page__step-circle ${isCompleted ? "done" : ""} f f-ac f-jc`}>{isCompleted ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "1"}</div>
+                <div className="add-liquidity-page__step-title ml-1">Select pair</div>
             </div>
-            <div className="token-pairs__popular-wrapper mh-2">
-                <PopularPairs handlePopularPairSelection={handlePopularPairSelection} pairs={popularPools} farmings={farmings}></PopularPairs>
+            <div className="f">
+                <div className="token-pairs-wrapper f c">
+                    <div className="f">
+                        <TokenCard currency={baseCurrency} otherCurrency={quoteCurrency} handleTokenSelection={handleCurrencyASelect}></TokenCard>
+                        <div className={`token-pairs-plus ${baseCurrency && quoteCurrency ? "swap-btn" : ""} mh-1 mt-a mb-a f f-ac f-jc`}>
+                            {baseCurrency && quoteCurrency && (
+                                <div className="f f-ac f-jc full-wh" onClick={handleCurrencySwap}>
+                                    <RefreshCw size={16} />
+                                </div>
+                            )}
+                            {(!baseCurrency || !quoteCurrency) && <Plus size={16} />}
+                        </div>
+                        <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect}></TokenCard>
+                    </div>
+
+                    <div className="mt-1">
+                        {baseCurrency && quoteCurrency && (
+                            <PoolStats
+                                fee={feeString}
+                                apr={aprString}
+                                loading={mintInfo.poolState === PoolState.LOADING || mintInfo.poolState === PoolState.INVALID}
+                                noLiquidity={mintInfo.noLiquidity}
+                            ></PoolStats>
+                        )}
+                    </div>
+                </div>
+                <div className="token-pairs__popular-wrapper mh-2">
+                    <PopularPairs handlePopularPairSelection={handlePopularPairSelection} pairs={popularPools} farmings={farmings}></PopularPairs>
+                </div>
             </div>
         </div>
     );

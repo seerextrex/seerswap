@@ -29,10 +29,10 @@ export function RedirectDuplicateTokenIds(props: RouteComponentProps<{ currencyI
     return <AddLiquidityPage {...props} />;
 }
 
-export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>) {
+export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ currencyIdA: string; currencyIdB: string; step: string }>) {
     const {
         match: {
-            params: { currencyIdA, currencyIdB },
+            params: { currencyIdA, currencyIdB, step },
         },
     } = props;
 

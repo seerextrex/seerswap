@@ -10,26 +10,48 @@ interface IStepper {
     currencyA: Currency | undefined;
     currencyB: Currency | undefined;
     mintInfo: IDerivedMintInfo;
+    end: boolean;
 }
 
-export function Stepper({completedSteps, stepLinks, currencyA, currencyB, mintInfo}: IStepper) {
+export function Stepper({completedSteps, stepLinks, currencyA, currencyB, mintInfo, end}: IStepper) {
 
-    // const steps = ["Select a pair", "Select a range", "Enter an amounts"];
+    console.log(mintInfo.parsedAmounts.CURRENCY_A?.toSignificant(5), mintInfo.parsedAmounts.CURRENCY_B?.toSignificant(5))
 
     const steps = useMemo(() => {
         
         const _steps = stepLinks.map(el => el.title)
 
+        if (!currencyA || !currencyB || !mintInfo) return _steps
+
         if (currencyA && currencyB && completedSteps.length >= 1) {
             _steps[0] = `${currencyA.symbol} + ${currencyB.symbol}`
         } 
 
-        if (mintInfo.lowerPrice && mintInfo.upperPrice && completedSteps.length >= 2) {
-            _steps[1] = `Range: ${mintInfo.lowerPrice.toSignificant(5)} - ${mintInfo.upperPrice.toSignificant(5)}`
-        }
+        if (mintInfo.noLiquidity) {
+
+            if (mintInfo.price && completedSteps.length >= 2) {
+                _steps[1] = `Initial price: ${mintInfo.price.toSignificant(5)}`
+            }
+
+            if (mintInfo.lowerPrice && mintInfo.upperPrice && completedSteps.length >= 3) {
+                _steps[2] = `Range: ${mintInfo.lowerPrice.toSignificant(5)} — ${mintInfo.upperPrice.toSignificant(5)}`
+            }
         
-        if (mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && completedSteps.length >= 3) {
-            _steps[2] = '21'
+            if (mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
+                _steps[3] = 'asdas'
+            }
+
+        } else {
+
+            if (mintInfo.lowerPrice && mintInfo.upperPrice && completedSteps.length >= 2) {
+                _steps[1] = `Range: ${mintInfo.lowerPrice.toSignificant(5)} — ${mintInfo.upperPrice.toSignificant(5)}`
+            }
+        
+            if (mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
+                _steps[2] = `${mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5)} ${currencyA.symbol}, ${mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5)} ${currencyB.symbol}`
+            }
+
+
         }
 
         return _steps
@@ -40,8 +62,8 @@ export function Stepper({completedSteps, stepLinks, currencyA, currencyB, mintIn
         <div className="f w-100" style={{ justifyContent: "space-between" }}>
             {steps.map((el, i) => (
                 <div className="f f-ac">
-                    <div className={`stepper__circle mr-1 f f-ac f-jc ${i === completedSteps.length ? 'current' : ''} ${completedSteps.length - 1 >= i ? "done" : ""} `}>{i + 1}</div>
-                    <div className={`${i === completedSteps.length ? 'stepper__circle-current' : ''}`} >{el}</div>
+                    <div className={`stepper__circle mr-1 f f-ac f-jc ${i === completedSteps.length && !end ? 'current' : ''} ${completedSteps.length - 1 >= i || end ? "done" : ""} `}>{i + 1}</div>
+                    <div className={`${i === completedSteps.length && !end ? 'stepper__circle-current' : ''}`} >{el}</div>
                 </div>
             ))}
         </div>

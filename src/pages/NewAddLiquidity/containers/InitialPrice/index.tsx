@@ -1,6 +1,10 @@
 import { Currency } from '@uniswap/sdk-core'
+import useUSDCPrice from 'hooks/useUSDCPrice';
+import StartingPrice from 'pages/NewAddLiquidity/components/StartingPrice';
+import { StepTitle } from 'pages/NewAddLiquidity/components/StepTitle';
+import { USDPrices } from 'pages/NewAddLiquidity/components/USDPrices';
 import { Check } from 'react-feather';
-import { IDerivedMintInfo } from 'state/mint/v3/hooks';
+import { IDerivedMintInfo, useV3MintActionHandlers } from 'state/mint/v3/hooks';
 
 
 import './index.scss'
@@ -14,18 +18,19 @@ interface IInitialPrice {
 
 
 export function InitialPrice({currencyA, currencyB, mintInfo, isCompleted}: IInitialPrice) {
+
+    const currencyAUSDC = useUSDCPrice(currencyA ?? undefined);
+    const currencyBUSDC = useUSDCPrice(currencyB ?? undefined);
+
+    const { onStartPriceInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
+
     return <div className='initial-price-wrapper f c'>
-            <div className="f f-ac mb-2">
-                <div className={`add-liquidity-page__step-circle ${isCompleted ? "done" : ""} f f-ac f-jc`}>{isCompleted ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "2"}</div>
-                <div className="add-liquidity-page__step-title ml-1">Set initial price</div>
-            </div>
+            <StepTitle title={'Set initial price'} isCompleted={isCompleted} step={2} />
             <div className='f'>
-                <div>
-                    <div>
-                        <span className='initial-price__autofetched'>✨ Price were auto-fetched</span>
-                    </div>
+                <StartingPrice currencyA={currencyA} currencyB={currencyB} startPriceHandler={onStartPriceInput} />
+                <div className="ml-2">
+                    {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} />}
                 </div>
-                <div>side</div>
             </div>
     </div>;
 }

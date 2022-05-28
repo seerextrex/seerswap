@@ -7,9 +7,10 @@ import { OldFarmingWarning } from "./styled";
 
 type PositionListProps = React.PropsWithChildren<{
     positions: PositionPool[];
+    newestPosition: number | undefined
 }>;
 
-export default function PositionList({ positions }: PositionListProps) {
+export default function PositionList({ positions, newestPosition }: PositionListProps) {
     const _positions = useMemo(() => {
         if (!positions) {
             return [];
@@ -61,7 +62,7 @@ export default function PositionList({ positions }: PositionListProps) {
                 return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />;
             })}
             {_positions.map((p) => {
-                return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />;
+                return <PositionListItem newestPosition={newestPosition} key={p.tokenId.toString()} positionDetails={p} />;
             })}
         </>
     );

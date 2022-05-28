@@ -1,7 +1,15 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Field, resetMintState, setFullRange, typeInput, typeLeftRangeInput, typeRightRangeInput, typeStartPriceInput, updateDynamicFee } from './actions'
+import { Field, resetMintState, setAddLiquidityTxHash, setFullRange, setShowNewestPosition, typeInput, typeLeftRangeInput, typeRightRangeInput, typeStartPriceInput, updateDynamicFee, updateSelectedPreset } from './actions'
 
 export type FullRange = true
+
+export enum Presets {
+    SAFE,
+    RISK,
+    NORMAL,
+    FULL,
+    STABLE,
+}
 
 interface MintState {
     readonly independentField: Field
@@ -10,6 +18,9 @@ interface MintState {
     readonly leftRangeTypedValue: string | FullRange
     readonly rightRangeTypedValue: string | FullRange
     readonly dynamicFee: number
+    readonly preset: Presets | null
+    readonly txHash: string
+    readonly showNewestPosition: boolean
 }
 
 const initialState: MintState = {
@@ -18,7 +29,10 @@ const initialState: MintState = {
     startPriceTypedValue: '',
     leftRangeTypedValue: '',
     rightRangeTypedValue: '',
-    dynamicFee: 0
+    dynamicFee: 0,
+    preset: null,
+    txHash: '',
+    showNewestPosition: false
 }
 
 export default createReducer<MintState>(initialState, (builder) =>
@@ -79,6 +93,24 @@ export default createReducer<MintState>(initialState, (builder) =>
                     independentField: field,
                     typedValue
                 }
+            }
+        })
+        .addCase(updateSelectedPreset, (state, { payload: { preset } }) => {
+            return {
+                ...state,
+                preset
+            }
+        })
+        .addCase(setAddLiquidityTxHash, (state, { payload: { txHash } }) => {
+            return {
+                ...state,
+                txHash
+            }
+        })
+        .addCase(setShowNewestPosition, (state, { payload: { showNewestPosition } }) => {
+            return {
+                ...state,
+                showNewestPosition
             }
         })
 )

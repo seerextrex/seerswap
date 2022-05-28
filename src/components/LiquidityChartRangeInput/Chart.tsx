@@ -32,6 +32,7 @@ export function Chart({
     const maxXScale = useMemo(() => series.reduce((acc, el) => (el.price0 > acc ? el.price0 : acc), 0), [series]);
 
     const { xScale, yScale } = useMemo(() => {
+
         const scales = {
             xScale: scaleLinear()
                 .domain([current * zoomLevels.initialMin, current * zoomLevels.initialMax] as number[])
@@ -69,6 +70,18 @@ export function Chart({
 
     return (
         <>
+         <Zoom
+                svg={zoomRef.current}
+                xScale={xScale}
+                setZoom={setZoom}
+                width={innerWidth}
+                height={
+                    // allow zooming inside the x-axis
+                    height
+                }
+                showClear={false}
+                zoomLevels={zoomLevels}
+            />
             <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`}>
                 <defs>
                     <clipPath id={`${id}-chart-clip`}>

@@ -9,7 +9,7 @@ import { NonfungiblePositionManager as NonFunPosMan } from "lib/src/nonfungibleP
 
 import { Percent, Currency } from "@uniswap/sdk-core";
 import { calculateGasMargin } from "utils/calculateGasMargin";
-import { useAppSelector } from "state/hooks";
+import { useAppDispatch, useAppSelector } from "state/hooks";
 import { GAS_PRICE_MULTIPLIER } from "hooks/useGasPrice";
 import { t } from "@lingui/macro";
 import { useAllTransactions, useTransactionAdder } from "state/transactions/hooks";
@@ -17,24 +17,32 @@ import { useMemo, useState } from "react";
 
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { addTransaction } from "state/transactions/actions";
-import { IDerivedMintInfo } from "state/mint/v3/hooks";
+import { IDerivedMintInfo, useAddLiquidityTxHash } from "state/mint/v3/hooks";
+import { useApproveCallback } from "hooks/useApproveCallback";
+import { Field } from "state/mint/actions";
+import { useIsNetworkFailedImmediate } from "hooks/useIsNetworkFailed";
+import { setAddLiquidityTxHash } from "state/mint/v3/actions";
 
 interface IAddLiquidityButton {
     baseCurrency: Currency | undefined;
     quoteCurrency: Currency | undefined;
     mintInfo: IDerivedMintInfo;
+    handleAddLiquidity: () => void
 }
+const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
-export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo }: IAddLiquidityButton) {
+export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, handleAddLiquidity }: IAddLiquidityButton) {
     const { chainId, library, account } = useActiveWeb3React();
-
-    const [txHash, setTxHash] = useState<string>("");
 
     const positionManager = useV3NFTPositionManagerContract();
 
     const deadline = useTransactionDeadline();
 
-    const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
+    const dispatch = useAppDispatch()
+
+    const txHash = useAddLiquidityTxHash()
+
+    const isNetworkFailed = useIsNetworkFailedImmediate();
 
     const allowedSlippage = useUserSlippageToleranceWithDefault(mintInfo.outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE);
 
@@ -43,22 +51,14 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo }: IA
         return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched;
     });
 
-    const allTransactions = useAllTransactions();
     const addTransaction = useTransactionAdder();
 
-    const sortedRecentTransactions = useMemo(() => {
-        const txs = Object.values(allTransactions);
-        return txs.filter((tx) => new Date().getTime() - tx.addedTime < 86_400_000).sort((a, b) => b.addedTime - a.addedTime);
-    }, [allTransactions]);
+    const [approvalA] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_A], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
+    const [approvalB] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_B], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
 
-    const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash), [sortedRecentTransactions, allTransactions]);
-
-    // // @ts-ignore
-    // useEffect(async () => {
-    //     if (confirmed.some((hash) => hash === txHash)) {
-    //         history.push(`/pool`);
-    //     }
-    // }, [confirmed]);
+    const isReady = useMemo(() => {
+        return Boolean(approvalA && approvalB && !mintInfo.errorMessage && !mintInfo.outOfRange && !txHash && !isNetworkFailed )
+    }, [mintInfo, approvalA, approvalB])
 
     async function onAdd() {
         if (!chainId || !library || !account) return;
@@ -103,7 +103,9 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo }: IA
                                     ? t`Create pool and add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
                                     : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`,
                             });
-                            setTxHash(response.hash);
+
+                            handleAddLiquidity()
+                            dispatch(setAddLiquidityTxHash({txHash: response.hash}))
                         });
                 })
                 .catch((error) => {
@@ -119,7 +121,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo }: IA
     }
 
     return (
-        <button className="add-buttons__liquidity" onClick={onAdd}>
+        <button className="add-buttons__liquidity ml-a" disabled={!isReady} onClick={onAdd}>
             Add liquidity
         </button>
     );

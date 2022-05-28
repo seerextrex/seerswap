@@ -308,7 +308,6 @@ export function useV3DerivedMintInfo(
     // always returns the price with 0 as base token
     const pricesAtTicks = useMemo(() => {
 
-        console.log()
         return {
             [Bound.LOWER]: getTickToPrice(token0, token1, ticks[Bound.LOWER]),
             [Bound.UPPER]: getTickToPrice(token0, token1, ticks[Bound.UPPER])
@@ -528,7 +527,6 @@ export function useRangeHopCallbacks(
 ) {
     const dispatch = useAppDispatch()
 
-
     const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency])
     const quoteToken = useMemo(() => quoteCurrency?.wrapped, [quoteCurrency])
 
@@ -621,4 +619,20 @@ export function useRangeHopCallbacks(
         getSetRange,
         getSetFullRange
     }
+}
+
+
+export function useActivePreset(): AppState['mintV3']['preset'] {
+    const preset = useAppSelector((state: AppState) => state.mintV3.preset)
+    return useMemo(() => preset, [preset])
+}
+
+export function useAddLiquidityTxHash(): AppState['mintV3']['txHash'] {
+    const txHash = useAppSelector((state: AppState) => state.mintV3.txHash)
+    return useMemo(() => txHash, [txHash])
+}
+
+export function useShowNewestPosition(): AppState['mintV3']['showNewestPosition'] {
+    const newestPosition = useAppSelector((state: AppState) => state.mintV3.showNewestPosition)
+    return useMemo(() => newestPosition, [newestPosition])
 }

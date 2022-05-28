@@ -127,9 +127,6 @@ export const Brush = ({
     const westHandleInView = localBrushExtent && xScale(localBrushExtent[0]) >= 0 && xScale(localBrushExtent[0]) <= innerWidth;
     const eastHandleInView = localBrushExtent && xScale(localBrushExtent[1]) >= 0 && xScale(localBrushExtent[1]) <= innerWidth;
 
-
-    console.log('LOCALASD', localBrushExtent)
-
     return useMemo(
         () => (
             <>

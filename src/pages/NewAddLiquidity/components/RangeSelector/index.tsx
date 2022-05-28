@@ -87,7 +87,7 @@ export function RangeSelector({
         const _price = invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5);
 
         if (Number(_price) <= 0.0001) {
-            return _price;
+            return '< 0.0001'
         } else {
             return Number(_price).toFixed(3);
         }

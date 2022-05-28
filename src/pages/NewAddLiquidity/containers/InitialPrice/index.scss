@@ -3,10 +3,18 @@
 
     }
 
+    &__autofetched, &__not-autofetched {
+        border-radius: 6px;
+        padding: 4px 8px;
+    }
+
     &__autofetched {
         background-color: #36f;
         color: white;
-        border-radius: 6px;
-        padding: 4px 8px;
+    }
+
+    &__not-autofetched {
+        background-color: #292305;
+        color: #f3a91b;
     }
 }

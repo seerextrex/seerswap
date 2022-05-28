@@ -16,7 +16,7 @@ export function PriceFormatToggler({ handlePriceFormat }: IPriceFormatToggler) {
     const [inputType, setInputType] = useState(PriceFormats.TOKEN);
 
     return (
-        <div className="f">
+        <div className="f price-format-toggler">
             <Toggle
                 isActive={!!inputType}
                 toggle={() => {

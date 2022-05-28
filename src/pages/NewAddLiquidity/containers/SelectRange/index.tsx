@@ -1,29 +1,39 @@
-import { PresetRanges } from "pages/NewAddLiquidity/components/PresetRanges";
+import { IPresetArgs, PresetRanges } from "pages/NewAddLiquidity/components/PresetRanges";
 import { RangeChart } from "pages/NewAddLiquidity/components/RangeChart";
 import { RangeSelector } from "pages/NewAddLiquidity/components/RangeSelector";
 
 import { Price, Token, Currency } from "@uniswap/sdk-core";
 
 import "./index.scss";
-import { Bound } from "state/mint/v3/actions";
+import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
 import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from "constants/tokens";
 import { useCallback, useMemo } from "react";
+
+import { useAppDispatch } from 'state/hooks'
+import { useActivePreset } from "state/mint/v3/hooks";
+
 import { Check } from "react-feather";
+import { Presets } from "state/mint/v3/reducer";
+import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
     currencyB: Currency | null | undefined;
     mintInfo: IDerivedMintInfo;
-    disabled: boolean;
     isCompleted: boolean;
+    additionalStep: boolean;
+    disabled: boolean;
 }
 
-export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, disabled }: IRangeSelector) {
+export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, disabled }: IRangeSelector) {
     const { startPriceTypedValue } = useV3MintState();
+
+    const dispatch = useAppDispatch()
+    const activePreset = useActivePreset()
 
     const currencyAUSDC = useUSDCPrice(currencyA ?? undefined);
     const currencyBUSDC = useUSDCPrice(currencyB ?? undefined);
@@ -35,14 +45,6 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, disab
 
         return stablecoins.includes(currencyA.wrapped.address) && stablecoins.includes(currencyB.wrapped.address);
     }, [currencyA, currencyB]);
-
-    const isOneStableCoin = useMemo(() => {
-        if (!currencyA || !currencyB || isStablecoinPair) return false;
-
-        const stablecoins = [USDC_POLYGON.address, USDT_POLYGON.address, MAI_POLYGON.address];
-
-        return stablecoins.includes(currencyA.wrapped.address) || stablecoins.includes(currencyB.wrapped.address);
-    }, [currencyA, currencyB, isStablecoinPair]);
 
     // get value and prices at ticks
     const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = mintInfo.ticks;
@@ -93,26 +95,25 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, disab
     }, [price, leftPrice, rightPrice, mintInfo]);
 
     const handlePresetRangeSelection = useCallback(
-        (range) => {
+        (preset: IPresetArgs | null) => {
             if (!price) return;
 
-            if (range.min === 0 && range.max === Infinity) {
+            dispatch(updateSelectedPreset({preset: preset ? preset.type : null}))
+
+            if (preset && preset.type === Presets.FULL) {
                 getSetFullRange();
-                return;
+            } else {
+                onLeftRangeInput(preset ? String(+price * preset.min) : '');
+                onRightRangeInput(preset ? String(+price * preset.max) : '');
             }
 
-            onLeftRangeInput(String(+price * (isOneStableCoin ? range.min : range.min - 0.2)));
-            onRightRangeInput(String(+price * (isOneStableCoin ? range.max : range.max + 0.2)));
         },
-        [price, isOneStableCoin]
+        [price]
     );
 
     return (
         <div className="f c">
-            <div className="f f-ac mb-2">
-                <div className={`add-liquidity-page__step-circle ${isCompleted ? "done" : ""} f f-ac f-jc`}>{isCompleted ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "2"}</div>
-                <div className="add-liquidity-page__step-title ml-1">Select range</div>
-            </div>
+            <StepTitle title={'Select a range'} isCompleted={isCompleted} step={additionalStep ? 3 : 2} />
             <div className="f">
                 <div className="f c">
                     <div className="mb-1">
@@ -156,7 +157,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, disab
                 </div>
                 <div className="ml-2">
                     {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} />}
-                    <PresetRanges isStablecoinPair={isStablecoinPair} handlePresetRangeSelection={handlePresetRangeSelection} />
+                    <PresetRanges isStablecoinPair={isStablecoinPair} activePreset={activePreset} handlePresetRangeSelection={handlePresetRangeSelection} />
                 </div>
             </div>
         </div>

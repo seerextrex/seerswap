@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
+import { Presets } from './reducer';
 
 export enum Field {
     CURRENCY_A = 'CURRENCY_A',
@@ -18,3 +19,6 @@ export const typeRightRangeInput = createAction<{ typedValue: string }>('mintV3/
 export const resetMintState = createAction<void>('mintV3/resetMintState')
 export const setFullRange = createAction<void>('mintV3/setFullRange')
 export const updateDynamicFee = createAction<{ dynamicFee: number }>('mintV3/updateDynamicFee')
+export const updateSelectedPreset = createAction<{ preset: Presets | null }>('mintV3/updateSelectedPreset')
+export const setAddLiquidityTxHash = createAction<{ txHash: string }>('mintV3/setAddLiquidityTxHash')
+export const setShowNewestPosition = createAction<{ showNewestPosition: boolean }>('mintV3/setShowNewestPosition')

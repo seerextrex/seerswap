@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Position } from "lib/src";
 import DoubleCurrencyLogo from "components/DoubleLogo";
 import { usePool } from "hooks/usePools";
@@ -10,7 +10,7 @@ import { unwrappedToken } from "utils/unwrappedToken";
 import { USDC_POLYGON, USDT_POLYGON, WMATIC_EXTENDED } from "../../constants/tokens";
 import { Trans } from "@lingui/macro";
 import useIsTickAtLimit from "hooks/useIsTickAtLimit";
-import { Bound } from "state/mint/v3/actions";
+import { Bound, setShowNewestPosition } from "state/mint/v3/actions";
 import { ArrowRight } from "react-feather";
 import usePrevious from "../../hooks/usePrevious";
 import { PositionPool } from "../../models/interfaces";
@@ -18,9 +18,12 @@ import { NavLink } from "react-router-dom";
 import Card from "../../shared/components/Card/Card";
 import RangeBadge from "../Badge/RangeBadge";
 import "./index.scss";
+import { useShowNewestPosition } from "state/mint/v3/hooks";
+import { useAppDispatch } from "state/hooks";
 
 interface PositionListItemProps {
     positionDetails: PositionPool;
+    newestPosition?: number | undefined;
 }
 
 export function getPriceOrderingFromPositionForUI(position?: Position): {
@@ -80,7 +83,11 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     };
 }
 
-export default function PositionListItem({ positionDetails }: PositionListItemProps) {
+export default function PositionListItem({ positionDetails, newestPosition }: PositionListItemProps) {
+
+    const dispatch = useAppDispatch()
+    const showNewestPosition = useShowNewestPosition()
+
     const prevPositionDetails = usePrevious({ ...positionDetails });
     const {
         token0: _token0Address,
@@ -139,10 +146,19 @@ export default function PositionListItem({ positionDetails }: PositionListItemPr
 
     const farmingLink = `/farming/farms#${positionDetails.tokenId}`;
 
+    const isNewest = newestPosition ? newestPosition === +positionDetails.tokenId : undefined
+
     const removed = _liquidity?.eq(0);
 
+    useEffect(() => {
+        if (newestPosition && true) {
+            dispatch(setShowNewestPosition({showNewestPosition: false}))
+            document.querySelector('#newest')?.scrollIntoView({behavior: 'smooth'})
+        }
+    }, [])
+
     return (
-        <NavLink className={"w-100"} to={positionSummaryLink}>
+        <NavLink className={"w-100"} to={positionSummaryLink} style={{backgroundColor: isNewest ? 'red' : ''}} id={isNewest ? 'newest' : ''}>
             <Card isDark={false} classes={"br-24 p-1 mv-05"}>
                 <div className={"position-list-item__header f f-ac"}>
                     <div className={"f f-ac"}>

@@ -1,20 +1,20 @@
 import { Trans } from "@lingui/macro";
 import { range } from "lodash";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Layers } from "react-feather";
+import { useAppDispatch } from "state/hooks";
+import { useActivePreset } from "state/mint/v3/hooks";
+import { Presets } from "state/mint/v3/reducer";
 import "./index.scss";
+
+export interface IPresetArgs {
+    type: Presets; min: number; max: number;
+}
 
 interface IPresetRanges {
     isStablecoinPair: boolean;
-    handlePresetRangeSelection: ({ type, min, max }: { type: Presets; min: number; max: number }) => void;
-}
-
-enum Presets {
-    SAFE,
-    RISK,
-    NORMAL,
-    FULL,
-    STABLE,
+    activePreset: Presets | null;
+    handlePresetRangeSelection: (preset: IPresetArgs | null) => void;
 }
 
 enum PresetProfits {
@@ -24,12 +24,7 @@ enum PresetProfits {
     HIGH = "High",
 }
 
-export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: IPresetRanges) {
-    const [selectedPreset, selectPreset] = useState<Presets | null>(null);
-
-    const popularRange = useMemo(() => {
-        return [0, 100];
-    }, []);
+export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRangeSelection }: IPresetRanges) {
 
     const ranges = useMemo(() => {
         if (isStablecoinPair)
@@ -78,7 +73,8 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
                 profit: PresetProfits.HIGH,
             },
         ];
-    }, [popularRange, isStablecoinPair]);
+    }, [isStablecoinPair]);
+
 
     return (
         <div className={"preset-ranges-wrapper pl-1"}>
@@ -91,13 +87,13 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
             {ranges.map((range, i) => (
                 <div className="i-f" key={i}>
                     <button
-                        className={`preset-ranges__button ${selectedPreset === range.type ? "active" : ""} mr-05`}
+                        className={`preset-ranges__button ${activePreset === range.type ? "active" : ""} mr-05`}
                         onClick={() => {
                             handlePresetRangeSelection(range);
-                            if (selectedPreset == range.type) {
-                                selectPreset(null);
+                            if (activePreset == range.type) {
+                                handlePresetRangeSelection(null);
                             } else {
-                                selectPreset(range.type);
+                                handlePresetRangeSelection(range);
                             }
                         }}
                         key={i}
@@ -105,7 +101,7 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
                         <div>{range.title}</div>
                     </button>
                     {(() => {
-                        if (selectedPreset === range.type) {
+                        if (activePreset === range.type) {
                             const color = [PresetProfits.VERY_LOW, PresetProfits.LOW].includes(range.risk) ? "low" : range.risk === PresetProfits.MEDIUM ? "medium" : "high";
 
                             return (

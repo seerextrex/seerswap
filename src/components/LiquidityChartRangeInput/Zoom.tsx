@@ -72,19 +72,5 @@ export default function Zoom({
         initial();
     }, [initial, zoomLevels]);
 
-    return (
-        <Wrapper count={showClear ? 3 : 2}>
-            {showClear && (
-                <Button onClick={reset} disabled={false}>
-                    <RefreshCcw size={16} />
-                </Button>
-            )}
-            <Button onClick={zoomIn} disabled={false}>
-                <ZoomIn size={16} />
-            </Button>
-            <Button onClick={zoomOut} disabled={false}>
-                <ZoomOut size={16} />
-            </Button>
-        </Wrapper>
-    );
+    return <div></div>
 }

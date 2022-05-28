@@ -20,8 +20,8 @@ import { ChartWrapper } from "./styled";
 import ReactGA from "react-ga";
 
 const ZOOM_LEVEL: ZoomLevels = {
-    initialMin: 0.2,
-    initialMax: 3,
+    initialMin: 0.5,
+    initialMax: 2,
     min: 0.01,
     max: 20,
 };

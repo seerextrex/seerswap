@@ -82,16 +82,16 @@ export default function LiquidityChartRangeInput({
             batch(() => {
                 //L-2
                 // simulate user input for auto-formatting and other validations
-                if ((!ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] || mode === "handle" || mode === "reset") && leftRangeValue > 0) {
-                    onLeftRangeInput(leftRangeValue.toFixed(6));
-                }
-                if ((!ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] || mode === "reset") && rightRangeValue > 0) {
-                    // todo: remove this check. Upper bound for large numbers
-                    // sometimes fails to parse to tick.
-                    if (rightRangeValue < 1e35) {
-                        onRightRangeInput(rightRangeValue.toFixed(6));
-                    }
-                }
+                // if ((!ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] || mode === "handle" || mode === "reset") && leftRangeValue > 0) {
+                //     onLeftRangeInput(leftRangeValue.toFixed(6));
+                // }
+                // if ((!ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] || mode === "reset") && rightRangeValue > 0) {
+                //     // todo: remove this check. Upper bound for large numbers
+                //     // sometimes fails to parse to tick.
+                //     if (rightRangeValue < 1e35) {
+                //         onRightRangeInput(rightRangeValue.toFixed(6));
+                //     }
+                // }
             });
         },
         [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit]

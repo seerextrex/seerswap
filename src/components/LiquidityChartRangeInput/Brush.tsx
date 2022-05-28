@@ -51,6 +51,12 @@ export const Brush = ({
                 setLocalBrushExtent(null);
                 return;
             }
+
+            if (selection[0] === 0 && selection[1] === innerWidth) {
+                setLocalBrushExtent(null)
+                return
+            }
+
             const scaled = (selection as [number, number]).map(xScale.invert) as [number, number];
 
             // avoid infinite render loop by checking for change
@@ -75,8 +81,10 @@ export const Brush = ({
 
         brushBehavior.current = brushX<SVGGElement>()
             .extent([
-                [Math.max(0 + BRUSH_EXTENT_MARGIN_PX, xScale(0)), 0],
-                [innerWidth - BRUSH_EXTENT_MARGIN_PX, innerHeight],
+                // [Math.max(0 + BRUSH_EXTENT_MARGIN_PX, xScale(0)), 0],
+                // [innerWidth - BRUSH_EXTENT_MARGIN_PX, innerHeight],
+                [0, 0],
+                [0, 0]
             ])
             .handleSize(30)
             .filter(() => interactive)
@@ -117,6 +125,9 @@ export const Brush = ({
 
     const westHandleInView = localBrushExtent && xScale(localBrushExtent[0]) >= 0 && xScale(localBrushExtent[0]) <= innerWidth;
     const eastHandleInView = localBrushExtent && xScale(localBrushExtent[1]) >= 0 && xScale(localBrushExtent[1]) <= innerWidth;
+
+
+    console.log('LOCALASD', localBrushExtent)
 
     return useMemo(
         () => (

@@ -57,9 +57,9 @@ export function Chart({
     useEffect(() => {
         if (!brushDomain && current) {
             //L-1
-            const initialLowPrice = current * 0.75;
-            const initialHighPrice = current * 1.5;
-            onBrushDomainChange([initialLowPrice, initialHighPrice], undefined);
+            // const initialLowPrice = current * 0.75;
+            // const initialHighPrice = current * 1.5;
+            // onBrushDomainChange([initialLowPrice, initialHighPrice], undefined);
         }
     }, [brushDomain, current, onBrushDomainChange, xScale]);
 

@@ -38,7 +38,7 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency }: ITo
                 <div className="token-card-logo">
                     <CurrencyLogo size={"35px"} currency={currency as WrappedCurrency}></CurrencyLogo>
                 </div>
-                <div className={"f f-ac ml-1"}>{currency ? currency.name : ""}</div>
+                <div className={"f f-ac ml-1"}>{currency ? currency.name : "Not selected"}</div>
             </div>
             <div className="token-card-selector">
                 <button className="token-card-selector__btn f f-ac w-100 f-jb" onClick={() => toggleSelectModal(true)}>

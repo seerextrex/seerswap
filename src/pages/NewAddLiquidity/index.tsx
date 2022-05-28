@@ -24,12 +24,20 @@ import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { PriceFormatToggler } from "./components/PriceFomatToggler";
 import { AddLiquidityButton } from "./containers/AddLiquidityButton";
-import { Check } from "react-feather";
+import { Check, ChevronLeft, ChevronRight } from "react-feather";
 import { PoolState } from "hooks/usePools";
 import { InitialPrice } from "./components/InitialPrice";
 import { RouterGuard } from "./routing/router-guards";
 
-const stepLinks = ["select-pair", "select-range", "enter-an-amount", "initial-price"];
+const stepLinks = [
+    {
+        link: "select-pair",
+        title: 'Select a pair'
+    }, 
+    { link: "select-range", title: 'Select a range'}, 
+    { link: "enter-an-amounts", title: 'Enter an amounts'}, 
+    // { link: "initial-price", title: 'Set initial price'  }
+];
 
 export function NewAddLiquidityPage({
     match: {
@@ -191,42 +199,6 @@ export function NewAddLiquidityPage({
                 <Stepper completedSteps={completedSteps} />
             </div>
             <Switch>
-                {/* <Route
-                exact
-                path={`${path}/select-pair`}
-                render={() => {
-                    return (
-                        <>
-                            <div className="f f-ac mt-2 mb-1">
-                                <div className={`add-liquidity-page__step-circle ${step1 ? "done" : ""} f f-ac f-jc`}>{step1 ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "1"}</div>
-                                <div className="add-liquidity-page__step-title ml-1">Select pair</div>
-                            </div>
-                            <div className="select-pair">
-                                <SelectPair
-                                    baseCurrency={baseCurrency}
-                                    quoteCurrency={quoteCurrency}
-                                    mintInfo={mintInfo}
-                                    handleCurrencySwap={handleCurrencySwap}
-                                    handleCurrencyASelect={handleCurrencyASelect}
-                                    handleCurrencyBSelect={handleCurrencyBSelect}
-                                    handlePopularPairSelection={handlePopularPairSelection}
-                                />
-                            </div>
-                        </>
-                    );
-                }}
-            ></Route> */}
-                {/* <Route path={`/new-add/${currencyId}/${currencyIdB}/select-pair`}>
-                    <SelectPair
-                        baseCurrency={baseCurrency}
-                        quoteCurrency={quoteCurrency}
-                        mintInfo={mintInfo}
-                        handleCurrencySwap={handleCurrencySwap}
-                        handleCurrencyASelect={handleCurrencyASelect}
-                        handleCurrencyBSelect={handleCurrencyBSelect}
-                        handlePopularPairSelection={handlePopularPairSelection}
-                    />
-                </Route> */}
                 <RouterGuard
                     path={`/new-add/${currencyIdA}/${currencyIdB}/enter-an-amounts`}
                     redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
@@ -263,36 +235,33 @@ export function NewAddLiquidityPage({
                     handlePopularPairSelection={handlePopularPairSelection}
                 />
             </Switch>
-            <div className="add-buttons mt-2">
-                {currentStep === 3 ? (
+            <div className="add-buttons f f-jb mt-2">
+                {
+                    currentStep !== 0 && 
+                    <div>
+                        <button className="add-buttons__next f" onClick={() => {
+                            setCurrentStep(currentStep - 1);
+                            handleStepChange(stepLinks[currentStep - 1].link)
+                        }} >
+                            <ChevronLeft size={18} style={{marginRight: '5px'}}/>
+                            <span>{stepLinks[currentStep - 1].title}</span>
+                        </button>
+                        </div>}
+                {currentStep === 2 ? (
                     <AddLiquidityButton baseCurrency={baseCurrency ?? undefined} quoteCurrency={quoteCurrency ?? undefined} mintInfo={mintInfo} />
                 ) : (
                     <button
+                        className="add-buttons__next f ml-a"
                         onClick={() => {
                             setCurrentStep(currentStep + 1);
-                            handleStepChange(stepLinks[currentStep + 1]);
+                            handleStepChange(stepLinks[currentStep + 1].link);
                         }}
                     >
-                        Next step
+                        <span>{stepLinks[currentStep + 1].title}</span>
+                        <ChevronRight size={18} style={{marginLeft: '5px'}}/>
                     </button>
                 )}
             </div>
-            {/* <button
-                onClick={() => {
-                    setCurrentStep(1);
-                    handleStepChange("select-range");
-                }}
-            >
-                Step 2
-            </button>
-            <button
-                onClick={() => {
-                    setCurrentStep(2);
-                    handleStepChange("enter-an-amounts");
-                }}
-            >
-                Step 3
-            </button> */}
         </div>
     );
 

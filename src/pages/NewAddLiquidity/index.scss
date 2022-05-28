@@ -1,6 +1,6 @@
 .add-liquidity-page {
     background-color: #1c2a359e;
-    padding: 2rem;
+    padding: 2rem 2rem 0 2rem;
     border-radius: 8px;
     display: flex; 
     flex-direction: column;
@@ -45,11 +45,25 @@
 }
 
 .add-buttons {
-  &__liquidity {
+
+  margin-left: -2rem;
+  margin-right: -2rem;
+  padding: 1rem 2rem;
+  background-color: #26343f;
+  border-top: 1px solid #243956;
+  border-radius: 0 0 8px 8px;
+
+
+  &__liquidity, &__next {
     padding: 8px 1rem;
     border: none;
     border-radius: 8px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
   }
+
+  &__next {
+  
+  }
+
 }

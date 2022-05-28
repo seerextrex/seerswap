@@ -5,7 +5,7 @@ interface IStepper {
 }
 
 export function Stepper({ completedSteps }: IStepper) {
-    const steps = ["Select a pair", "Select a range", "Enter an amount", "Approve ALGB", "Approve USDC"];
+    const steps = ["Select a pair", "Select a range", "Enter an amount"];
 
     return (
         <div className="f w-100" style={{ justifyContent: "space-between" }}>

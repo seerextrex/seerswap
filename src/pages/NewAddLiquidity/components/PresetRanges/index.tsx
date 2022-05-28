@@ -71,7 +71,7 @@ export function PresetRanges({ isStablecoinPair, handlePresetRangeSelection }: I
             },
             {
                 type: Presets.RISK,
-                title: "Risk",
+                title: "Risky",
                 min: 0.95,
                 max: 1.1,
                 risk: PresetProfits.HIGH,

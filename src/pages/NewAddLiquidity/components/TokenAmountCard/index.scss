@@ -3,6 +3,7 @@
         background-color: var(--ebony-clay);
         border-radius: 8px; 
         width: 542px;
+        border: 1px solid #233d65;
     }
 
     &__locked {
@@ -22,13 +23,17 @@
 
     &__input {
         background-color: #182732 !important;
-        border: none !important;
+        border: 1px solid #233d65 !important;
         border-radius: 8px !important;
         color: white !important;
         padding: 8px 1rem !important;
         width: 100% !important;
         font-size: unset !important;
         text-align: left !important;
+
+        &:focus {
+            border: 1px solid #21cbff !important;
+        }
     }
 
     &__error {

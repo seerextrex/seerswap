@@ -26,18 +26,9 @@ import { PriceFormatToggler } from "./components/PriceFomatToggler";
 import { AddLiquidityButton } from "./containers/AddLiquidityButton";
 import { Check, ChevronLeft, ChevronRight } from "react-feather";
 import { PoolState } from "hooks/usePools";
-import { InitialPrice } from "./components/InitialPrice";
 import { RouterGuard } from "./routing/router-guards";
+import { InitialPrice } from "./containers/InitialPrice";
 
-const stepLinks = [
-    {
-        link: "select-pair",
-        title: 'Select a pair'
-    }, 
-    { link: "select-range", title: 'Select a range'}, 
-    { link: "enter-an-amounts", title: 'Enter an amounts'}, 
-    // { link: "initial-price", title: 'Set initial price'  }
-];
 
 export function NewAddLiquidityPage({
     match: {
@@ -161,29 +152,70 @@ export function NewAddLiquidityPage({
 
     const handleStepChange = useCallback((_step) => {
         history.push(`/new-add/${currencyIdA}/${currencyIdB}/${_step}`);
-    }, []);
+    }, [currencyIdA, currencyIdB, history]);
 
     const handlePriceFormat = useCallback(() => {}, []);
+
+    const stepLinks = useMemo(() => { 
+
+        const _stepLinks = [{
+            link: 'select-pair',
+            title: 'Select a pair'
+        }]
+        
+        if (mintInfo.noLiquidity && baseCurrency && quoteCurrency) {
+            _stepLinks.push({
+                link: 'initial-price',
+                title: 'Set initial price'
+            })
+        }
+
+        _stepLinks.push(
+            {
+                link: 'select-range',
+                title: 'Select a range'
+            },
+            { 
+            link: "enter-an-amounts", 
+            title: 'Enter an amounts'
+        })
+
+        return _stepLinks
+
+}, [baseCurrency, quoteCurrency, mintInfo])
 
     const step1 = useMemo(() => {
         return Boolean(baseCurrency && quoteCurrency);
     }, [baseCurrency, quoteCurrency]);
 
     const step2 = useMemo(() => {
-        return mintInfo.lowerPrice && mintInfo.upperPrice && !mintInfo.invalidRange;
+        return Boolean(mintInfo.lowerPrice && mintInfo.upperPrice && !mintInfo.invalidRange)
     }, [mintInfo]);
 
     const step3 = useMemo(() => {
         if (mintInfo.outOfRange) {
-            return mintInfo.parsedAmounts[Field.CURRENCY_A] || mintInfo.parsedAmounts[Field.CURRENCY_B];
+            return Boolean(mintInfo.parsedAmounts[Field.CURRENCY_A] || mintInfo.parsedAmounts[Field.CURRENCY_B])
         }
-        return mintInfo.parsedAmounts[Field.CURRENCY_A] && mintInfo.parsedAmounts[Field.CURRENCY_B];
+        return Boolean(mintInfo.parsedAmounts[Field.CURRENCY_A] && mintInfo.parsedAmounts[Field.CURRENCY_B])
     }, [mintInfo]);
+
+    const additionalStep = useMemo(() => {
+        return false
+    }, [mintInfo])
+
+    const steps = useMemo(() => {
+        return [
+            step1,
+            step2,
+            step3
+        ]
+    }, [step1, step2, step3])
 
     const completedSteps = useMemo(() => {
         return Array(currentStep).map((_, i) => i + 1);
     }, [currentStep]);
 
+    
     return (
         <div className="add-liquidity-page" style={{ width: "1080px" }}>
             <div className="add-liquidity-page__header f">
@@ -196,7 +228,7 @@ export function NewAddLiquidityPage({
                 </span>
             </div>
             <div className="add-liquidity-page__stepper mb-2">
-                <Stepper completedSteps={completedSteps} />
+                <Stepper currencyA={baseCurrency ?? undefined} currencyB={quoteCurrency ?? undefined} mintInfo={mintInfo} stepLinks={stepLinks} completedSteps={completedSteps} />
             </div>
             <Switch>
                 <RouterGuard
@@ -207,6 +239,7 @@ export function NewAddLiquidityPage({
                     currencyA={baseCurrency ?? undefined}
                     currencyB={currencyB ?? undefined}
                     mintInfo={mintInfo}
+                    isCompleted={step3}
                 />
 
                 <RouterGuard
@@ -220,6 +253,18 @@ export function NewAddLiquidityPage({
                     disabled={!step1}
                     isCompleted={step2}
                 />
+
+                <RouterGuard
+                    path={`/new-add/${currencyIdA}/${currencyIdB}/initial-price`}
+                    redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
+                    allowance={mintInfo.noLiquidity}
+                    Component={InitialPrice}
+                    currencyA={baseCurrency ?? undefined}
+                    currencyB={currencyB ?? undefined}
+                    mintInfo={mintInfo}
+                    isCompleted={additionalStep}
+                />
+
                 <RouterGuard
                     path={``}
                     redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
@@ -252,6 +297,7 @@ export function NewAddLiquidityPage({
                 ) : (
                     <button
                         className="add-buttons__next f ml-a"
+                        disabled={!steps[currentStep]}
                         onClick={() => {
                             setCurrentStep(currentStep + 1);
                             handleStepChange(stepLinks[currentStep + 1].link);
@@ -300,7 +346,7 @@ export function NewAddLiquidityPage({
                             <div className="add-liquidity-page__step-title ml-1">Set initial price</div>
                         </div>
                         <div className="select-range">
-                            <InitialPrice />
+                            {/* <InitialPrice /> */}
                         </div>
                     </>
                 )}
@@ -316,10 +362,10 @@ export function NewAddLiquidityPage({
                     <div className="add-liquidity-page__step-title ml-1">Enter an amount</div>
                 </div>
                 <div className="enter-ammounts">
-                    <EnterAmounts currencyA={baseCurrency ?? undefined} currencyB={currencyB ?? undefined} mintInfo={mintInfo} />
+                    <EnterAmounts isCompleted={true} currencyA={baseCurrency ?? undefined} currencyB={currencyB ?? undefined} mintInfo={mintInfo} />
                 </div>
                 <div className="add-buttons mt-2">
-                    <Stepper completedSteps={completedSteps} />
+                    {/* <Stepper completedSteps={completedSteps} /> */}
                     <AddLiquidityButton baseCurrency={baseCurrency ?? undefined} quoteCurrency={quoteCurrency ?? undefined} mintInfo={mintInfo} />
                 </div>
             </div>

@@ -72,6 +72,7 @@ export const Brush = ({
     // keep local and external brush extent in sync
     // i.e. snap to ticks on bruhs end
     useEffect(() => {
+        //L-3
         setLocalBrushExtent(brushExtent);
     }, [brushExtent]);
 

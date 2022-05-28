@@ -17,14 +17,16 @@ import { useMemo } from "react";
 import { tryParseAmount } from "state/swap/hooks";
 
 import { MaxUint256 } from "@ethersproject/constants";
+import { Check } from "react-feather";
 
 interface IEnterAmounts {
     currencyA: Currency | undefined;
     currencyB: Currency | undefined;
     mintInfo: IDerivedMintInfo;
+    isCompleted: boolean;
 }
 
-export function EnterAmounts({ currencyA, currencyB, mintInfo }: IEnterAmounts) {
+export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted }: IEnterAmounts) {
     const { chainId } = useActiveWeb3React();
 
     const { independentField, typedValue, startPriceTypedValue } = useV3MintState();
@@ -125,7 +127,12 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo }: IEnterAmounts) 
     }, [mintInfo, currencyB]);
 
     return (
-        <div className="f">
+        <div className="f c">
+                   <div className="f f-ac mb-2">
+                <div className={`add-liquidity-page__step-circle ${isCompleted ? "done" : ""} f f-ac f-jc`}>{isCompleted ? <Check stroke={"white"} strokeWidth={3} size={15} /> : "3"}</div>
+                <div className="add-liquidity-page__step-title ml-1">Enter an amounts</div>
+            </div>
+            <div className="f">
             <div className="f c">
                 <div className="mb-1" style={{ overflow: "hidden", borderRadius: "8px" }}>
                     <TokenAmountCard
@@ -162,6 +169,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo }: IEnterAmounts) 
             </div>
             <div className="full-h ml-2">
                 <TokenRatio currencyA={currencyA} currencyB={currencyB} token0Ratio={token0Ratio} token1Ratio={token1Ratio} />
+            </div>
             </div>
         </div>
     );

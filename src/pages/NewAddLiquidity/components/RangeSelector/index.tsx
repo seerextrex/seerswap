@@ -1,7 +1,13 @@
 import { Price, Token, Currency } from "@uniswap/sdk-core";
 import Input from "components/NumericalInput";
+import { USDC_POLYGON } from "constants/tokens";
+import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
+import { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bound } from "state/mint/v3/actions";
+import { tryParsePrice } from "state/mint/v3/utils";
+import { tryParseAmount } from "state/swap/hooks";
+import { PriceFormats } from "../PriceFomatToggler";
 
 import "./index.scss";
 
@@ -24,6 +30,7 @@ interface IRangeSelector {
     invertPrice: boolean;
     isBeforePrice: boolean;
     isAfterPrice: boolean;
+    priceFormat: PriceFormats
 }
 
 interface IRangePart {
@@ -38,12 +45,13 @@ interface IRangePart {
     width?: string;
     locked?: boolean; // disable input
     // title: ReactNode;
-    tokenA: string | undefined;
-    tokenB: string | undefined;
+    tokenA: Currency | undefined;
+    tokenB: Currency | undefined;
     initial: boolean;
     disabled: boolean;
     // style?: CSSProperties;
     title: string;
+    priceFormat: PriceFormats
 }
 
 export function RangeSelector({
@@ -65,9 +73,13 @@ export function RangeSelector({
     price,
     isBeforePrice,
     isAfterPrice,
+    priceFormat
 }: IRangeSelector) {
     const tokenA = (currencyA ?? undefined)?.wrapped;
     const tokenB = (currencyB ?? undefined)?.wrapped;
+
+    const isUSD = useMemo(() => priceFormat === PriceFormats.USD, [priceFormat])
+    const currentPriceInUSD = useUSDCValue(tryParseAmount(price ? invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5) : undefined, currencyB ?? undefined),)
 
     const isSorted = useMemo(() => {
         return tokenA && tokenB && tokenA.sortsBefore(tokenB);
@@ -83,15 +95,15 @@ export function RangeSelector({
 
     const currentPrice = useMemo(() => {
         if (!price) return;
-
-        const _price = invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5);
+        
+        const _price = isUSD ? currentPriceInUSD?.toSignificant(5) : invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5);
 
         if (Number(_price) <= 0.0001) {
-            return '< 0.0001'
+            return `< ${isUSD ? '$ ' : ''}0.0001${isUSD ? '' : ` ${currencyB?.symbol}`}`
         } else {
-            return Number(_price).toFixed(3);
+            return `${isUSD ? '$ ' : ''}${Number(_price).toFixed(5)}${isUSD ? '' : ` ${currencyB?.symbol}`}`
         }
-    }, [price]);
+    }, [price, isUSD, currentPriceInUSD]);
 
     return (
         <div className="f f-jb">
@@ -105,11 +117,12 @@ export function RangeSelector({
                     decrementDisabled={ticksAtLimit[Bound.LOWER]}
                     incrementDisabled={ticksAtLimit[Bound.LOWER]}
                     label={leftPrice ? `${currencyB?.symbol}` : "-"}
-                    tokenA={currencyA?.symbol}
-                    tokenB={currencyB?.symbol}
+                    tokenA={currencyA ?? undefined}
+                    tokenB={currencyB ?? undefined}
                     initial={initial}
                     disabled={disabled}
                     title={"Min price"}
+                    priceFormat={priceFormat}
                 />
             </div>
             {price && (
@@ -117,7 +130,7 @@ export function RangeSelector({
                     <div className="mb-05" style={{ whiteSpace: "nowrap" }}>
                         Current price
                     </div>
-                    <div className="current-price-tip ta-c">{currentPrice}</div>
+                    <div className="current-price-tip ta-c">{`${currentPrice || 'Loading...'}`}</div>
                 </div>
             )}
             <div className="max-price" style={{ order: isBeforePrice ? 2 : 3 }}>
@@ -129,22 +142,30 @@ export function RangeSelector({
                     incrementDisabled={ticksAtLimit[Bound.UPPER]}
                     decrementDisabled={ticksAtLimit[Bound.UPPER]}
                     label={rightPrice ? `${currencyB?.symbol}` : "-"}
-                    tokenA={currencyA?.symbol}
-                    tokenB={currencyB?.symbol}
+                    tokenA={currencyA ?? undefined}
+                    tokenB={currencyB ?? undefined}
                     initial={initial}
                     disabled={disabled}
                     title={"Max price"}
+                    priceFormat={priceFormat}
                 />
             </div>
         </div>
     );
 }
 
-function RangePart({ value, decrement, increment, decrementDisabled = false, incrementDisabled = false, width, locked, onUserInput, initial, disabled, title }: IRangePart) {
+function RangePart({ value, decrement, increment, decrementDisabled = false, tokenA, tokenB, incrementDisabled = false, width, locked, onUserInput, initial, disabled, title, priceFormat }: IRangePart) {
     // let user type value and only update parent value on blur
     const [localValue, setLocalValue] = useState("");
     const [useLocalValue, setUseLocalValue] = useState(false);
 
+    const isUSD = useMemo(() => {
+        return priceFormat === PriceFormats.USD
+    }, [priceFormat])
+
+    const valueUSD = useUSDCValue(tryParseAmount(value === "∞" || value === "0" ? undefined : value, tokenB))
+    const tokenValue = useBestV3TradeExactIn(tryParseAmount('1', USDC_POLYGON), tokenB)
+    
     // animation if parent value updates local value
     const handleOnFocus = () => {
         setUseLocalValue(true);
@@ -168,18 +189,32 @@ function RangePart({ value, decrement, increment, decrementDisabled = false, inc
     const handleInput = useCallback(
         (val) => {
             setLocalValue(val.trim());
-            onUserInput(val.trim());
+            if (isUSD && tokenValue && tokenValue.trade) {
+                onUserInput(String(val.trim() * +tokenValue.trade.outputAmount.toSignificant(5)));
+            } else if (!isUSD) {
+                onUserInput(val.trim())
+            }
         },
-        [onUserInput]
+        [onUserInput, tokenValue, isUSD]
     );
 
     useEffect(() => {
         if (localValue !== value && !useLocalValue) {
             setTimeout(() => {
-                setLocalValue(value); // reset local value to match parent
+                if (isUSD && valueUSD) {
+                    setLocalValue(valueUSD.toSignificant(5)); // reset local value to match parent
+                } else {
+                    setLocalValue(value)
+                }
             }, 0);
+        } 
+    }, [localValue, useLocalValue, value, isUSD, valueUSD]);
+
+    useEffect(() => {
+        if (value && isUSD && valueUSD) {
+            setLocalValue(valueUSD.toSignificant(5))
         }
-    }, [localValue, useLocalValue, value]);
+    }, [isUSD, valueUSD])
 
     return (
         <div>
@@ -194,7 +229,10 @@ function RangePart({ value, decrement, increment, decrementDisabled = false, inc
                     </button>
                 </div>
             </div>
-            <Input value={localValue} onFocus={handleOnFocus} onBlur={handleOnBlur} className="range-input" disabled={disabled || locked} onUserInput={handleInput} placeholder="0.00" />
+            <div className="f pos-r f-ac">
+                {isUSD && <label htmlFor={title} className="range-input__usd">$</label>}
+                <Input value={localValue} id={title} onFocus={handleOnFocus} onBlur={handleOnBlur} className={`range-input ${isUSD ? 'is-usd' : ''}`} disabled={disabled || locked} onUserInput={handleInput} placeholder="0.00" />
+            </div>
         </div>
     );
 }

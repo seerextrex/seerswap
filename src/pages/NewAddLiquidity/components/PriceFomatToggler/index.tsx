@@ -13,7 +13,7 @@ interface IPriceFormatToggler {
 }
 
 export function PriceFormatToggler({ handlePriceFormat }: IPriceFormatToggler) {
-    const [inputType, setInputType] = useState(PriceFormats.TOKEN);
+    const [inputType, setInputType] = useState(PriceFormats.USD);
 
     return (
         <div className="f price-format-toggler">

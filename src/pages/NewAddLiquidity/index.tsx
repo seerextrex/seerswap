@@ -22,7 +22,7 @@ import { maxAmountSpend } from "utils/maxAmountSpend";
 import { useUSDCValue } from "hooks/useUSDCPrice";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
-import { PriceFormatToggler } from "./components/PriceFomatToggler";
+import { PriceFormats, PriceFormatToggler } from "./components/PriceFomatToggler";
 import { AddLiquidityButton } from "./containers/AddLiquidityButton";
 import { Check, ChevronLeft, ChevronRight } from "react-feather";
 import { PoolState } from "hooks/usePools";
@@ -70,6 +70,8 @@ export function NewAddLiquidityPage({
     const [currentStep, setCurrentStep] = useState(0);
     const [end, setEnd] = useState(false)
 
+    const [priceFormat, setPriceFormat] = useState(PriceFormats.USD)
+
     useEffect(() => {
         onFieldAInput("");
         onFieldBInput("");
@@ -97,7 +99,7 @@ export function NewAddLiquidityPage({
         };
     }, [derivedMintInfo, baseCurrency, quoteCurrency]);
 
-    const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
+    const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
 
     const { startPriceTypedValue } = useV3MintState();
 
@@ -156,6 +158,7 @@ export function NewAddLiquidityPage({
     );
 
     const handleCurrencySwap = useCallback(() => {
+        dispatch(updateSelectedPreset({ preset: null }))
         history.push(`/new-add/${currencyIdB}/${currencyIdA}`);
     }, [history, handleCurrencySelect, currencyIdA, currencyIdB]);
 
@@ -168,7 +171,9 @@ export function NewAddLiquidityPage({
         history.push(`/new-add/${currencyIdA}/${currencyIdB}/${_step}`);
     }, [currencyIdA, currencyIdB, history]);
 
-    const handlePriceFormat = useCallback(() => { }, []);
+    const handlePriceFormat = useCallback((priceFormat: PriceFormats) => { 
+        setPriceFormat(priceFormat)
+    }, []);
 
     const stepLinks = useMemo(() => {
 
@@ -239,7 +244,6 @@ export function NewAddLiquidityPage({
         return Array(currentStep).map((_, i) => i + 1);
     }, [currentStep]);
 
-
     const allowedSlippage = useUserSlippageToleranceWithDefault(mintInfo.outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE);
 
     return (
@@ -256,7 +260,7 @@ export function NewAddLiquidityPage({
                 </div>
             </div>
             <div className="add-liquidity-page__stepper mb-2">
-                <Stepper currencyA={baseCurrency ?? undefined} currencyB={quoteCurrency ?? undefined} mintInfo={mintInfo} stepLinks={stepLinks} completedSteps={completedSteps} end={end} />
+                <Stepper currencyA={baseCurrency ?? undefined} currencyB={quoteCurrency ?? undefined} mintInfo={mintInfo} stepLinks={stepLinks} completedSteps={completedSteps} end={end} priceFormat={priceFormat} />
             </div>
             <Switch>
 
@@ -277,6 +281,7 @@ export function NewAddLiquidityPage({
                     mintInfo={mintInfo}
                     isCompleted={stepAmounts}
                     additionalStep={stepInitialPrice}
+                    priceFormat={priceFormat}
                 />
 
                 <RouterGuard
@@ -290,6 +295,7 @@ export function NewAddLiquidityPage({
                     disabled={!stepPair}
                     isCompleted={stepRange}
                     additionalStep={stepInitialPrice}
+                    priceFormat={priceFormat}
                 />
 
                 <RouterGuard

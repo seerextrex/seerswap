@@ -19,6 +19,7 @@ import { tryParseAmount } from "state/swap/hooks";
 import { MaxUint256 } from "@ethersproject/constants";
 import { Check } from "react-feather";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
+import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 
 interface IEnterAmounts {
     currencyA: Currency | undefined;
@@ -26,9 +27,10 @@ interface IEnterAmounts {
     mintInfo: IDerivedMintInfo;
     isCompleted: boolean;
     additionalStep: boolean;
+    priceFormat: PriceFormats
 }
 
-export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep }: IEnterAmounts) {
+export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat }: IEnterAmounts) {
     const { chainId } = useActiveWeb3React();
 
     const { independentField, typedValue, startPriceTypedValue } = useV3MintState();
@@ -147,6 +149,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                         locked={mintInfo.depositADisabled}
                         isMax={!!atMaxAmounts[Field.CURRENCY_A]}
                         error={currencyAError}
+                        priceFormat={priceFormat}
                     />
                 </div>
                 <div>
@@ -163,6 +166,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                         locked={mintInfo.depositBDisabled}
                         isMax={!!atMaxAmounts[Field.CURRENCY_B]}
                         error={currencyBError}
+                        priceFormat={priceFormat}
                     />
                 </div>
             </div>

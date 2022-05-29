@@ -22,6 +22,7 @@ export function Chart({
     brushLabels,
     onBrushDomainChange,
     zoomLevels,
+    priceFormat
 }: LiquidityChartRangeInputProps) {
     const zoomRef = useRef<SVGRectElement | null>(null);
 
@@ -48,12 +49,12 @@ export function Chart({
         }
 
         return scales;
-    }, [current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom]);
+    }, [priceFormat, current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom]);
 
     useEffect(() => {
         // reset zoom as necessary
         setZoom(null);
-    }, [zoomLevels]);
+    }, [zoomLevels, priceFormat]);
 
     useEffect(() => {
         if (!brushDomain && current) {
@@ -62,7 +63,7 @@ export function Chart({
             // const initialHighPrice = current * 1.5;
             // onBrushDomainChange([initialLowPrice, initialHighPrice], undefined);
         }
-    }, [brushDomain, current, onBrushDomainChange, xScale]);
+    }, [brushDomain, current, onBrushDomainChange, xScale, priceFormat]);
 
     useEffect(() => {
         select(".tick:first-child").attr("transform", "translate(10,0)");
@@ -102,12 +103,12 @@ export function Chart({
 
                 <g transform={`translate(${margins.left},${margins.top})`}>
                     <g clipPath={`url(#${id}-chart-clip)`}>
-                        <Area series={series} xScale={xScale} yScale={yScale} xValue={xAccessor} yValue={yAccessor} />
+                        <Area priceFormat={priceFormat} series={series} xScale={xScale} yScale={yScale} xValue={xAccessor} yValue={yAccessor} />
 
                         {brushDomain && (
                             // duplicate area chart with mask for selected area
                             <g mask={`url(#${id}-chart-area-mask)`}>
-                                <Area series={series} xScale={xScale} yScale={yScale} xValue={xAccessor} yValue={yAccessor} fill={styles.area.selection} />
+                                <Area priceFormat={priceFormat} series={series} xScale={xScale} yScale={yScale} xValue={xAccessor} yValue={yAccessor} fill={styles.area.selection} />
                             </g>
                         )}
 

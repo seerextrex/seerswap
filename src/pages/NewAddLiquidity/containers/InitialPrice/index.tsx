@@ -1,5 +1,6 @@
 import { Currency } from '@uniswap/sdk-core'
 import useUSDCPrice from 'hooks/useUSDCPrice';
+import { PriceFormats } from 'pages/NewAddLiquidity/components/PriceFomatToggler';
 import StartingPrice from 'pages/NewAddLiquidity/components/StartingPrice';
 import { StepTitle } from 'pages/NewAddLiquidity/components/StepTitle';
 import { USDPrices } from 'pages/NewAddLiquidity/components/USDPrices';
@@ -14,10 +15,11 @@ interface IInitialPrice {
     currencyB: Currency | undefined,
     mintInfo: IDerivedMintInfo,
     isCompleted: boolean
+    priceFormat: PriceFormats
 }
 
 
-export function InitialPrice({currencyA, currencyB, mintInfo, isCompleted}: IInitialPrice) {
+export function InitialPrice({currencyA, currencyB, mintInfo, isCompleted, priceFormat}: IInitialPrice) {
 
     const currencyAUSDC = useUSDCPrice(currencyA ?? undefined);
     const currencyBUSDC = useUSDCPrice(currencyB ?? undefined);
@@ -29,7 +31,7 @@ export function InitialPrice({currencyA, currencyB, mintInfo, isCompleted}: IIni
             <div className='f'>
                 <StartingPrice currencyA={currencyA} currencyB={currencyB} startPriceHandler={onStartPriceInput} />
                 <div className="ml-2">
-                    {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} />}
+                    {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} priceFormat={priceFormat} />}
                 </div>
             </div>
     </div>;

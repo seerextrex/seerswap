@@ -1,3 +1,5 @@
+import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler"
+
 export interface ChartEntry {
     activeLiquidity: number
     price0: number
@@ -49,4 +51,6 @@ export interface LiquidityChartRangeInputProps {
     onBrushDomainChange: (domain: any, mode: any) => void
 
     zoomLevels: ZoomLevels
+
+    priceFormat: PriceFormats
 }

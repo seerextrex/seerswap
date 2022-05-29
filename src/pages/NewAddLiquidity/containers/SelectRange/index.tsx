@@ -9,7 +9,7 @@ import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
 import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
-import useUSDCPrice from "hooks/useUSDCPrice";
+import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from "constants/tokens";
 import { useCallback, useMemo } from "react";
 
@@ -19,6 +19,9 @@ import { useActivePreset } from "state/mint/v3/hooks";
 import { Check } from "react-feather";
 import { Presets } from "state/mint/v3/reducer";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
+import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
+import { tryParseAmount } from "state/swap/hooks";
+import { tryParsePrice } from "state/mint/v3/utils";
 
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
@@ -26,10 +29,11 @@ interface IRangeSelector {
     mintInfo: IDerivedMintInfo;
     isCompleted: boolean;
     additionalStep: boolean;
+    priceFormat: PriceFormats;
     disabled: boolean;
 }
 
-export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, disabled }: IRangeSelector) {
+export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, disabled }: IRangeSelector) {
     const { startPriceTypedValue } = useV3MintState();
 
     const dispatch = useAppDispatch()
@@ -37,6 +41,11 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
 
     const currencyAUSDC = useUSDCPrice(currencyA ?? undefined);
     const currencyBUSDC = useUSDCPrice(currencyB ?? undefined);
+
+    //TODO - create one main isUSD 
+    const isUSD = useMemo(() => {
+        return priceFormat === PriceFormats.USD
+    }, [])
 
     const isStablecoinPair = useMemo(() => {
         if (!currencyA || !currencyB) return false;
@@ -80,7 +89,10 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
         if (!mintInfo.price) return;
 
         return mintInfo.invertPrice ? mintInfo.price.invert().toSignificant(5) : mintInfo.price.toSignificant(5);
+
     }, [mintInfo]);
+
+    const currentPriceInUSD = useUSDCValue(tryParseAmount(price, currencyB ?? undefined))
 
     const isBeforePrice = useMemo(() => {
         if (!price || !leftPrice || !rightPrice) return false;
@@ -136,6 +148,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                             invertPrice={mintInfo.invertPrice}
                             isBeforePrice={isBeforePrice}
                             isAfterPrice={isAfterPrice}
+                            priceFormat={priceFormat}
                         />
                     </div>
                     <div className="range__chart">
@@ -144,19 +157,20 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                             currencyB={currencyB ?? undefined}
                             feeAmount={mintInfo.dynamicFee}
                             ticksAtLimit={mintInfo.ticksAtLimit}
-                            price={mintInfo.price ? parseFloat((mintInfo.invertPrice ? mintInfo.price.invert() : mintInfo.price).toSignificant(8)) : undefined}
+                            price={priceFormat === PriceFormats.USD ? (currentPriceInUSD ? parseFloat(currentPriceInUSD.toSignificant(5)) : undefined) : price ? parseFloat(price) : undefined}
                             priceLower={priceLower}
                             priceUpper={priceUpper}
                             onLeftRangeInput={onLeftRangeInput}
                             onRightRangeInput={onRightRangeInput}
                             interactive={false}
+                            priceFormat={priceFormat}
                         />
                         {mintInfo.outOfRange && <div className="range__notification out-of-range">Out of range</div>}
                         {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
                     </div>
                 </div>
                 <div className="ml-2">
-                    {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} />}
+                    {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} priceFormat={priceFormat} />}
                     <PresetRanges isStablecoinPair={isStablecoinPair} activePreset={activePreset} handlePresetRangeSelection={handlePresetRangeSelection} />
                 </div>
             </div>

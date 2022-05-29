@@ -18,6 +18,9 @@ import { ZoomLevels } from "./types";
 import { ChartWrapper } from "./styled";
 
 import ReactGA from "react-ga";
+import { tryParseAmount } from "state/swap/hooks";
+import { useUSDCValue } from "hooks/useUSDCPrice";
+import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 
 const ZOOM_LEVEL: ZoomLevels = {
     initialMin: 0.5,
@@ -50,6 +53,7 @@ export default function LiquidityChartRangeInput({
     onLeftRangeInput,
     onRightRangeInput,
     interactive,
+    priceFormat
 }: {
     currencyA: Currency | undefined;
     currencyB: Currency | undefined;
@@ -61,12 +65,18 @@ export default function LiquidityChartRangeInput({
     onLeftRangeInput: (typedValue: string) => void;
     onRightRangeInput: (typedValue: string) => void;
     interactive: boolean;
+    priceFormat: PriceFormats
 }) {
     const { isLoading, isUninitialized, isError, error, formattedData } = useDensityChartData({
         currencyA,
         currencyB,
         feeAmount,
+        priceFormat
     });
+
+    // const _currentPrice = useMemo(() => {
+    //     if ()
+    // }, [price, priceFormat])
 
     const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
 
@@ -99,12 +109,33 @@ export default function LiquidityChartRangeInput({
 
     interactive = interactive && Boolean(formattedData?.length);
 
-    const brushDomain: [number, number] | undefined = useMemo(() => {
-        const leftPrice = isSorted ? priceLower : priceUpper?.invert();
-        const rightPrice = isSorted ? priceUpper : priceLower?.invert();
+    const leftPrice = useMemo(() => {
+        return isSorted ? priceLower : priceUpper?.invert()
+    }, [isSorted, priceLower, priceUpper, priceFormat])
 
-        return leftPrice && rightPrice ? [parseFloat(leftPrice?.toSignificant(5)), parseFloat(rightPrice?.toSignificant(5))] : undefined;
-    }, [isSorted, priceLower, priceUpper]);
+
+    //TODO
+    const leftPriceUSD = useUSDCValue(tryParseAmount(leftPrice ? (+leftPrice.toSignificant(5) < 0.00000001 ? undefined : leftPrice.toSignificant(5)) : undefined, currencyB))
+
+    const rightPrice = useMemo(() => {
+        return isSorted ? priceUpper : priceLower?.invert()
+    }, [isSorted, priceLower, priceUpper, priceFormat])
+
+    const rightPriceUSD = useUSDCValue(tryParseAmount(rightPrice ? rightPrice.toSignificant(5) : undefined, currencyB))
+
+    const brushDomain: [number, number] | undefined = useMemo(() => {
+
+        console.log('KEFASD', leftPriceUSD?.toSignificant(5), rightPriceUSD?.toSignificant(5))
+
+        if (!leftPrice || !rightPrice) return
+
+        if (priceFormat === PriceFormats.USD && leftPriceUSD && rightPriceUSD) {
+            return [parseFloat(leftPriceUSD.toSignificant(5)), parseFloat(rightPriceUSD.toSignificant(5))];
+        }
+
+        return [parseFloat(leftPrice.toSignificant(5)), parseFloat(rightPrice.toSignificant(5))]
+
+    }, [leftPrice, rightPrice, leftPriceUSD, rightPriceUSD, priceFormat]);
 
     const brushLabelValue = useCallback(
         (d: "w" | "e", x: number) => {
@@ -119,7 +150,7 @@ export default function LiquidityChartRangeInput({
 
             return price ? `${format(Math.abs(percent) > 1 ? ".2~s" : ".2~f")(percent)}%` : "";
         },
-        [price, ticksAtLimit]
+        [price, priceFormat, ticksAtLimit]
     );
 
     if (isError) {
@@ -156,6 +187,7 @@ export default function LiquidityChartRangeInput({
                         brushDomain={brushDomain}
                         onBrushDomainChange={onBrushDomainChangeEnded}
                         zoomLevels={ZOOM_LEVEL}
+                        priceFormat={priceFormat}
                     />
                 </ChartWrapper>
             )}

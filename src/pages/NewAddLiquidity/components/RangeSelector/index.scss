@@ -12,6 +12,10 @@
         border: 1px solid #21cbff !important;
     }
 
+    &.is-usd {
+        padding: 8px 1rem 8px 2rem !important;
+    }
+
     &__btn {
         background-color: transparent;
         color: white;
@@ -34,6 +38,12 @@
             opacity: .6;
             cursor: default;
         }
+    }
+
+    &__usd {
+        position: absolute;
+        left: 13px;
+        z-index: 999;
     }
 }
 

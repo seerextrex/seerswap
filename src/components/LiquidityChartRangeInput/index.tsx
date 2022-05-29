@@ -74,10 +74,6 @@ export default function LiquidityChartRangeInput({
         priceFormat
     });
 
-    // const _currentPrice = useMemo(() => {
-    //     if ()
-    // }, [price, priceFormat])
-
     const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
 
     const onBrushDomainChangeEnded = useCallback(

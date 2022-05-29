@@ -22,3 +22,4 @@ export const updateDynamicFee = createAction<{ dynamicFee: number }>('mintV3/upd
 export const updateSelectedPreset = createAction<{ preset: Presets | null }>('mintV3/updateSelectedPreset')
 export const setAddLiquidityTxHash = createAction<{ txHash: string }>('mintV3/setAddLiquidityTxHash')
 export const setShowNewestPosition = createAction<{ showNewestPosition: boolean }>('mintV3/setShowNewestPosition')
+export const setInitialUSDPrices = createAction<{ field: Field, typedValue: string }>('mintV3/setInitialUSDPrices')

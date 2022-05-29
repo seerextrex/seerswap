@@ -636,3 +636,8 @@ export function useShowNewestPosition(): AppState['mintV3']['showNewestPosition'
     const newestPosition = useAppSelector((state: AppState) => state.mintV3.showNewestPosition)
     return useMemo(() => newestPosition, [newestPosition])
 }
+
+export function useInitialUSDPrices(): AppState['mintV3']['initialUSDPrices'] {
+    const initialUSDPrices = useAppSelector((state: AppState) => state.mintV3.initialUSDPrices)
+    return useMemo(() => initialUSDPrices, [initialUSDPrices])
+}

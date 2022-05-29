@@ -15,7 +15,7 @@ import { Currency, Percent, CurrencyAmount } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import { WMATIC_EXTENDED } from "constants/tokens";
-import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
+import { Bound, setInitialUSDPrices, updateSelectedPreset } from "state/mint/v3/actions";
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { Field } from "state/mint/actions";
 import { maxAmountSpend } from "utils/maxAmountSpend";
@@ -219,6 +219,7 @@ export function NewAddLiquidityPage({
     }, [mintInfo]);
 
     const stepInitialPrice = useMemo(() => {
+        console.log('START PRICE', startPriceTypedValue)
         return mintInfo.noLiquidity ? Boolean(startPriceTypedValue) : false
     }, [mintInfo, startPriceTypedValue])
 
@@ -245,6 +246,15 @@ export function NewAddLiquidityPage({
     }, [currentStep]);
 
     const allowedSlippage = useUserSlippageToleranceWithDefault(mintInfo.outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE);
+
+
+    useEffect(() => {
+        return () => {
+            dispatch(setInitialUSDPrices({field: Field.CURRENCY_A, typedValue: ''}))
+            dispatch(setInitialUSDPrices({field: Field.CURRENCY_B, typedValue: ''}))
+            dispatch(updateSelectedPreset({ preset: null }))
+        }
+    }, [])
 
     return (
         <div className="add-liquidity-page">
@@ -307,6 +317,7 @@ export function NewAddLiquidityPage({
                     currencyB={currencyB ?? undefined}
                     mintInfo={mintInfo}
                     isCompleted={stepInitialPrice}
+                    priceFormat={priceFormat}
                 />
 
                 <RouterGuard

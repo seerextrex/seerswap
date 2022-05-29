@@ -5,6 +5,7 @@ import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
 import { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bound } from "state/mint/v3/actions";
+import { useInitialUSDPrices } from "state/mint/v3/hooks";
 import { tryParsePrice } from "state/mint/v3/utils";
 import { tryParseAmount } from "state/swap/hooks";
 import { PriceFormats } from "../PriceFomatToggler";
@@ -81,6 +82,8 @@ export function RangeSelector({
     const isUSD = useMemo(() => priceFormat === PriceFormats.USD, [priceFormat])
     const currentPriceInUSD = useUSDCValue(tryParseAmount(price ? invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5) : undefined, currencyB ?? undefined),)
 
+    const initialUSDPrices = useInitialUSDPrices()
+
     const isSorted = useMemo(() => {
         return tokenA && tokenB && tokenA.sortsBefore(tokenB);
     }, [tokenA, tokenB]);
@@ -95,15 +98,23 @@ export function RangeSelector({
 
     const currentPrice = useMemo(() => {
         if (!price) return;
-        
-        const _price = isUSD ? currentPriceInUSD?.toSignificant(5) : invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5);
+
+        const isInitialInUSD = initialUSDPrices.CURRENCY_A && initialUSDPrices.CURRENCY_B 
+
+        let _price
+
+        if (!isInitialInUSD) {
+            _price = isUSD && currentPriceInUSD ? currentPriceInUSD?.toSignificant(5) : invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5);
+        } else {
+            _price = +initialUSDPrices.CURRENCY_A / +initialUSDPrices.CURRENCY_B 
+        }
 
         if (Number(_price) <= 0.0001) {
-            return `< ${isUSD ? '$ ' : ''}0.0001${isUSD ? '' : ` ${currencyB?.symbol}`}`
+            return `< ${isUSD && (currentPriceInUSD || isInitialInUSD) ? '$ ' : ''}0.0001${isUSD && (currentPriceInUSD || isInitialInUSD) ? '' : ` ${currencyB?.symbol}`}`
         } else {
-            return `${isUSD ? '$ ' : ''}${Number(_price).toFixed(5)}${isUSD ? '' : ` ${currencyB?.symbol}`}`
+            return `${isUSD && (currentPriceInUSD || isInitialInUSD) ? '$ ' : ''}${Number(_price).toFixed(5)}${isUSD && (currentPriceInUSD || isInitialInUSD) ? '' : ` ${currencyB?.symbol}`}`
         }
-    }, [price, isUSD, currentPriceInUSD]);
+    }, [price, isUSD, initialUSDPrices, currentPriceInUSD]);
 
     return (
         <div className="f f-jb">
@@ -189,13 +200,13 @@ function RangePart({ value, decrement, increment, decrementDisabled = false, tok
     const handleInput = useCallback(
         (val) => {
             setLocalValue(val.trim());
-            if (isUSD && tokenValue && tokenValue.trade) {
+            if (isUSD && valueUSD && tokenValue && tokenValue.trade) {
                 onUserInput(String(val.trim() * +tokenValue.trade.outputAmount.toSignificant(5)));
             } else if (!isUSD) {
                 onUserInput(val.trim())
             }
         },
-        [onUserInput, tokenValue, isUSD]
+        [onUserInput, valueUSD, tokenValue, isUSD]
     );
 
     useEffect(() => {
@@ -230,8 +241,8 @@ function RangePart({ value, decrement, increment, decrementDisabled = false, tok
                 </div>
             </div>
             <div className="f pos-r f-ac">
-                {isUSD && <label htmlFor={title} className="range-input__usd">$</label>}
-                <Input value={localValue} id={title} onFocus={handleOnFocus} onBlur={handleOnBlur} className={`range-input ${isUSD ? 'is-usd' : ''}`} disabled={disabled || locked} onUserInput={handleInput} placeholder="0.00" />
+                {isUSD && valueUSD && <label htmlFor={title} className="range-input__usd">$</label>}
+                <Input value={localValue} id={title} onFocus={handleOnFocus} onBlur={handleOnBlur} className={`range-input ${isUSD && valueUSD ? 'is-usd' : ''}`} disabled={disabled || locked} onUserInput={handleInput} placeholder="0.00" />
             </div>
         </div>
     );

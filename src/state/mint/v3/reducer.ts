@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Field, resetMintState, setAddLiquidityTxHash, setFullRange, setShowNewestPosition, typeInput, typeLeftRangeInput, typeRightRangeInput, typeStartPriceInput, updateDynamicFee, updateSelectedPreset } from './actions'
+import { Field, resetMintState, setAddLiquidityTxHash, setFullRange, setInitialUSDPrices, setShowNewestPosition, typeInput, typeLeftRangeInput, typeRightRangeInput, typeStartPriceInput, updateDynamicFee, updateSelectedPreset } from './actions'
 
 export type FullRange = true
 
@@ -21,6 +21,7 @@ interface MintState {
     readonly preset: Presets | null
     readonly txHash: string
     readonly showNewestPosition: boolean
+    readonly initialUSDPrices: { [Field.CURRENCY_A]: string, [Field.CURRENCY_B]: string }
 }
 
 const initialState: MintState = {
@@ -32,7 +33,8 @@ const initialState: MintState = {
     dynamicFee: 0,
     preset: null,
     txHash: '',
-    showNewestPosition: false
+    showNewestPosition: false,
+    initialUSDPrices: { [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' }
 }
 
 export default createReducer<MintState>(initialState, (builder) =>
@@ -111,6 +113,15 @@ export default createReducer<MintState>(initialState, (builder) =>
             return {
                 ...state,
                 showNewestPosition
+            }
+        })
+        .addCase(setInitialUSDPrices, (state, { payload: { field, typedValue } }) => {
+            return {
+                ...state,
+                initialUSDPrices: {
+                    ...state.initialUSDPrices,
+                    [field]: typedValue
+                }
             }
         })
 )

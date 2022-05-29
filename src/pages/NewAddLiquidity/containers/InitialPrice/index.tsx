@@ -29,7 +29,7 @@ export function InitialPrice({currencyA, currencyB, mintInfo, isCompleted, price
     return <div className='initial-price-wrapper f c'>
             <StepTitle title={'Set initial price'} isCompleted={isCompleted} step={2} />
             <div className='f'>
-                <StartingPrice currencyA={currencyA} currencyB={currencyB} startPriceHandler={onStartPriceInput} />
+                <StartingPrice currencyA={currencyA} currencyB={currencyB} mintInfo={mintInfo} startPriceHandler={onStartPriceInput} priceFormat={priceFormat} />
                 <div className="ml-2">
                     {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} priceFormat={priceFormat} />}
                 </div>

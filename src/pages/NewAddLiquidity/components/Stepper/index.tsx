@@ -59,18 +59,22 @@ export function Stepper({completedSteps, stepLinks, currencyA, currencyB, mintIn
         if (!currencyA || !currencyB || !mintInfo) return _steps
 
         if (currencyA && currencyB && completedSteps.length >= 1) {
-            _steps[0] = `${currencyA.symbol} + ${currencyB.symbol}`
+            _steps[0] = `${currencyA.symbol} / ${currencyB.symbol}`
         }
         
         if (mintInfo.noLiquidity) {
 
-            if (mintInfo.price && completedSteps.length >= 2) {
-                _steps[1] = `Initial price: ${mintInfo.price.toSignificant(8)}`
+            if (mintInfo.price && rangeTokenUSD && completedSteps.length >= 2) {
+                _steps[1] = `Initial price: 1 ${currencyA.symbol} = ${isUSD ? '$' : ''}${isUSD ? ( (isSorted ? +mintInfo.price.toSignificant(8) : +mintInfo.price.invert().toSignificant(8)) * +rangeTokenUSD.toSignificant(8)).toFixed(4) : isSorted ? mintInfo.price.toSignificant(5) : mintInfo.price.invert().toSignificant(5)} ${isUSD ? '' : ` ${currencyB.symbol}`}`
+            }
+
+            if (mintInfo.price && !rangeTokenUSD && completedSteps.length >= 2) {
+                _steps[1] = `Initial price: 1 ${currencyA.symbol} = ${isSorted ? +mintInfo.price.toSignificant(8) : +mintInfo.price.invert().toSignificant(8)} ${currencyB.symbol}`
             }
 
             if (leftPrice && rightPrice && completedSteps.length >= 3) {
                 if (preset !== Presets.FULL) {
-                    _steps[2] = `Range: ${isUSD ? '$ ' : ''}${isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)} — ${isUSD ? '$ ' : ''}${isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`
+                    _steps[2] = `Range: ${isUSD && rangeTokenUSD ? '$ ' : ''}${isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)} — ${isUSD && rangeTokenUSD ? '$ ' : ''}${isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`
                 } else {
                     _steps[2] = 'Range: 0 — ∞'
                 }

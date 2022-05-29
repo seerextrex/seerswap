@@ -108,6 +108,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
 
     const handlePresetRangeSelection = useCallback(
         (preset: IPresetArgs | null) => {
+
             if (!price) return;
 
             dispatch(updateSelectedPreset({preset: preset ? preset.type : null}))

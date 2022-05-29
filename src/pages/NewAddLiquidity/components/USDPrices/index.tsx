@@ -6,7 +6,7 @@ import { Currency, Token, Price } from "@uniswap/sdk-core";
 import "./index.scss";
 import Loader from "components/Loader";
 import { PriceFormats } from "../PriceFomatToggler";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface ISelectRangeUSDC {
     currencyA: Currency;
@@ -21,6 +21,18 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
     const isUSD = useMemo(() => {
         return priceFormat === PriceFormats.USD
     }, [priceFormat])
+
+    const [loadingTimedout, setLoadingTimedout] = useState(false)
+
+    useEffect(() => {
+        
+        setTimeout(() => {
+            if (!currencyAUSDC || !currencyBUSDC) {
+                setLoadingTimedout(true)
+            }
+        }, 5000)
+
+    }, [currencyAUSDC, currencyBUSDC])
 
     return (
         <div className={"preset-ranges-wrapper pl-1 mb-2"}>
@@ -46,9 +58,9 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
                     <div className="mb-05">{`1 ${currencyA.symbol} = $${currencyAUSDC?.toSignificant(5)}`}</div>
                     <div className="mb-05">{`1 ${currencyB.symbol} = $${currencyBUSDC?.toSignificant(5)}`}</div>
                 </div>
-            ) : (
+            ) : !loadingTimedout ? (
                 <Loader stroke="white" />
-            )}
+            ) : <div>Can't fetch prices</div> }
         </div>
     );
 }

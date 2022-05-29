@@ -8,29 +8,34 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import "./index.scss";
 import { Lock } from "react-feather";
+import { PriceFormats } from "../PriceFomatToggler";
+import { IDerivedMintInfo, useInitialUSDPrices } from "state/mint/v3/hooks";
+import { useAppDispatch } from "state/hooks";
+import { Field, setInitialUSDPrices, updateSelectedPreset } from "state/mint/v3/actions";
 
-enum InputType {
-    TOKEN_RATIO,
-    USD,
-}
 
-interface ITokenPrice {
+interface IPrice {
     baseCurrency: Currency | undefined;
     quoteCurrency: Currency | undefined;
     basePrice: Price<Currency, Token> | undefined;
     quotePrice: Price<Currency, Token> | undefined;
     isLocked: boolean;
-    userQuoteCurrencyUSD: string | undefined;
-    changeQuotePriceHandler: any;
     isSelected: boolean;
 }
 
-interface IUSDPrice extends ITokenPrice {
-    userBaseCurrencyUSD: string | undefined;
-    changeBaseCurrencyUSDHandler: any;
+interface ITokenPrice extends IPrice {
+    userQuoteCurrencyToken?: string | undefined;
+    changeQuotePriceHandler?: any;
 }
 
-function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLocked, userQuoteCurrencyUSD, changeQuotePriceHandler, isSelected }: ITokenPrice) {
+interface IUSDPrice extends IPrice {
+    userBaseCurrencyUSD: string | undefined;
+    userQuoteCurrencyUSD: string | undefined;
+    changeBaseCurrencyUSDHandler: any;
+    changeQuoteCurrencyUSDHandler: any;
+}
+
+function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLocked, userQuoteCurrencyToken, changeQuotePriceHandler, isSelected }: ITokenPrice) {
     const baseSymbol = useMemo(() => (baseCurrency ? baseCurrency.symbol : "-"), [baseCurrency]);
     const quoteSymbol = useMemo(() => (quoteCurrency ? quoteCurrency.symbol : "-"), [quoteCurrency]);
 
@@ -52,11 +57,11 @@ function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLock
                 <div>
                     {isLocked ? (
                         <div className="f f-ac">
-                            <span className="pl-1"><Lock size={14}/></span>
+                            <span className="pl-1"><Lock size={14} /></span>
                             <span className="quote-token__auto-fetched">{tokenRatio}</span>
                         </div>
                     ) : isSelected ? (
-                        <input className={`quote-token__input bg-t c-w ol-n`} placeholder={`${quoteCurrency?.symbol} price`} type="text" value={userQuoteCurrencyUSD} onInput={(e: any) => changeQuotePriceHandler(e.target.value)} />
+                        <input className={`quote-token__input bg-t c-w ol-n`} placeholder={`${quoteCurrency?.symbol} price`} type="text" value={userQuoteCurrencyToken} onInput={(e: any) => changeQuotePriceHandler(e.target.value)} />
                     ) : (
                         <span>-</span>
                     )}
@@ -85,7 +90,7 @@ function USDPriceField({
     userUSD: string | undefined;
     changeHandler: (price: number) => void;
 }) {
-    const _price = useMemo(() => (price ? price.toFixed(3) : "Loading..."), [price]);
+    const _price = useMemo(() => (price ? price.toSignificant(5) : "Loading..."), [price]);
 
     return (
         <div className={`usd-price-field f ac ws-no-wrap ${isSelected ? "main" : "side"}`}>
@@ -113,8 +118,8 @@ function USDPrice({
     isLocked,
     userQuoteCurrencyUSD,
     userBaseCurrencyUSD,
-    changeQuotePriceHandler,
     changeBaseCurrencyUSDHandler,
+    changeQuoteCurrencyUSDHandler,
     isSelected,
 }: IUSDPrice) {
     const baseSymbol = useMemo(() => (baseCurrency ? baseCurrency.symbol : "-"), [baseCurrency]);
@@ -123,7 +128,7 @@ function USDPrice({
     return (
         <div className={`f usd-price__wrapper ${isSelected ? "main" : "side"}`}>
             <USDPriceField symbol={baseSymbol} price={basePrice} isSelected={isSelected} userUSD={userBaseCurrencyUSD} changeHandler={changeBaseCurrencyUSDHandler}></USDPriceField>
-            <USDPriceField symbol={quoteSymbol} price={quotePrice} isSelected={isSelected} userUSD={userQuoteCurrencyUSD} changeHandler={changeQuotePriceHandler}></USDPriceField>
+            <USDPriceField symbol={quoteSymbol} price={quotePrice} isSelected={isSelected} userUSD={userQuoteCurrencyUSD} changeHandler={changeQuoteCurrencyUSDHandler}></USDPriceField>
         </div>
     );
 }
@@ -132,66 +137,97 @@ interface IStartingPrice {
     currencyA: Currency | undefined;
     currencyB: Currency | undefined;
     startPriceHandler: (value: string) => void
+    mintInfo: IDerivedMintInfo
+    priceFormat: PriceFormats
 }
 
-export default function StartingPrice({ currencyA, currencyB, startPriceHandler }: IStartingPrice) {
-    const [inputType, setInputType] = useState<InputType>(InputType.TOKEN_RATIO);
+export default function StartingPrice({ currencyA, currencyB, startPriceHandler, mintInfo, priceFormat }: IStartingPrice) {
+
+    const dispatch = useAppDispatch()
+    const initialUSDPrices = useInitialUSDPrices()
 
     const basePriceUSD = useUSDCPrice(currencyA ?? undefined);
     const quotePriceUSD = useUSDCPrice(currencyB ?? undefined);
 
-    // const [curUSDA, curUSDB] = [useUSDCPrice(baseCurrency ?? undefined)?.toFixed(3), useUSDCPrice(quoteCurrency ?? undefined)?.toFixed(3)];
+    const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
 
-    const [userBaseCurrencyUSD, setUserBaseCurrencyUSD] = useState<string | undefined>();
-    const [userQuoteCurrencyUSD, setUserQuoteCurrencyUSD] = useState<string | undefined>();
+    const [userBaseCurrencyUSD, setUserBaseCurrencyUSD] = useState<string | undefined>(initialUSDPrices.CURRENCY_A);
+    const [userQuoteCurrencyUSD, setUserQuoteCurrencyUSD] = useState<string | undefined>(initialUSDPrices.CURRENCY_B);
+
+    const [userQuoteCurrencyToken, setUserQuoteCurrencyToken] = useState<string | undefined>(mintInfo && isSorted ? mintInfo.price?.toSignificant(5) : mintInfo.price?.invert().toSignificant(5) || undefined);
 
     const isLocked = useMemo(() => Boolean(basePriceUSD && quotePriceUSD), [basePriceUSD, quotePriceUSD]);
 
     const handleStartPriceInput = useCallback((v: string) => {
+        console.log('NEW STARTING PRICE', v)
         startPriceHandler(v)
+        dispatch(setInitialUSDPrices({field: Field.CURRENCY_A, typedValue: ''}))
+        dispatch(setInitialUSDPrices({field: Field.CURRENCY_B, typedValue: ''}))
+        setUserBaseCurrencyUSD('')
+        setUserQuoteCurrencyUSD('')
+        dispatch(updateSelectedPreset({ preset: null }))
         // if (inputType === InputType.TOKEN_RATIO) {
-            setUserQuoteCurrencyUSD(v)
+        setUserQuoteCurrencyToken(v)
         // } else {
-            // setUserBaseCurrencyUSD(v)
+        // setUserBaseCurrencyUSD(v)
         // }
     }, [startPriceHandler])
 
+    useEffect(() => {
+        // startPriceHandler('')
+        // setUserQuoteCurrencyUSD('')
+        // setUserQuoteCurrencyToken('')
+    }, [priceFormat])
+
+    useEffect(() => {
+        dispatch(setInitialUSDPrices({field: Field.CURRENCY_A, typedValue: userBaseCurrencyUSD || ''}))
+    }, [userBaseCurrencyUSD])
+
+    useEffect(() => {
+        dispatch(setInitialUSDPrices({field: Field.CURRENCY_B, typedValue: userQuoteCurrencyUSD || ''}))
+    }, [userQuoteCurrencyUSD])
+
+    useEffect(() => {
+        if (userBaseCurrencyUSD && userQuoteCurrencyUSD) {
+            startPriceHandler(String(+userBaseCurrencyUSD / +userQuoteCurrencyUSD))
+            dispatch(updateSelectedPreset({ preset: null }))
+        }
+    }, [userBaseCurrencyUSD, userQuoteCurrencyUSD])
 
     return (
-        <div className={"f starting-price-wrapper c p-1"} style={{width: '542px', backgroundColor: '#26343f'}}>
+        <div className={"f starting-price-wrapper c p-1"} style={{ width: '542px', backgroundColor: '#26343f' }}>
             <div className={"flex-s-between"}>
                 {isLocked ? (
                     <span className={"auto-fetched"}>✨ Prices were auto-fetched</span>
                 ) : (
-                    <span className={"not-auto-fetched"}>{`Can't auto-fetch. Please enter price for ${currencyB?.symbol} per 1 ${currencyA?.symbol}`}</span>
-                    // <Toggle isActive={!!inputType} toggle={() => setInputType(+!inputType)} checked={<Trans>{"USD price"}</Trans>} unchecked={<Trans>{"Token ratio"}</Trans>} />
+                    <span className={"not-auto-fetched"}>{`Can't auto-fetch prices.`}</span>
                 )}
             </div>
-            <div className={"br-8 mt-1 f c fs-085"}>
-                <div className={`f ${inputType === InputType.TOKEN_RATIO ? "reverse" : "c"}`}>
+            <div className={"br-8 mt-1 f c"}>
+                <div className={`f ${priceFormat === PriceFormats.TOKEN ? "reverse" : "c"}`}>
                     {
-                        inputType === InputType.TOKEN_RATIO ?  <TokenPrice
-                        baseCurrency={currencyA}
-                        quoteCurrency={currencyB}
-                        basePrice={basePriceUSD}
-                        quotePrice={quotePriceUSD}
-                        isLocked={isLocked}
-                        userQuoteCurrencyUSD={userQuoteCurrencyUSD}
-                        changeQuotePriceHandler={handleStartPriceInput}
-                        isSelected={inputType === InputType.TOKEN_RATIO}
-                    ></TokenPrice> :  null
-                //     <USDPrice
-                //     baseCurrency={currencyA}
-                //     quoteCurrency={currencyB}
-                //     basePrice={basePriceUSD}
-                //     quotePrice={quotePriceUSD}
-                //     isLocked={isLocked}
-                //     userQuoteCurrencyUSD={userQuoteCurrencyUSD}
-                //     changeQuotePriceHandler={setUserQuoteCurrencyUSD}
-                //     userBaseCurrencyUSD={userBaseCurrencyUSD}
-                //     changeBaseCurrencyUSDHandler={setUserBaseCurrencyUSD}
-                //     isSelected={inputType === InputType.USD}
-                // ></USDPrice> 
+                        priceFormat === PriceFormats.TOKEN ? <TokenPrice
+                            baseCurrency={currencyA}
+                            quoteCurrency={currencyB}
+                            basePrice={basePriceUSD}
+                            quotePrice={quotePriceUSD}
+                            isLocked={isLocked}
+                            userQuoteCurrencyToken={userQuoteCurrencyToken}
+                            changeQuotePriceHandler={handleStartPriceInput}
+                            isSelected={priceFormat === PriceFormats.TOKEN}
+                        ></TokenPrice> :
+                            <USDPrice
+                                baseCurrency={currencyA}
+                                quoteCurrency={currencyB}
+                                basePrice={basePriceUSD}
+                                quotePrice={quotePriceUSD}
+                                isLocked={isLocked}
+                                userBaseCurrencyUSD={userBaseCurrencyUSD}
+                                userQuoteCurrencyUSD={userQuoteCurrencyUSD}
+                                changeBaseCurrencyUSDHandler={setUserBaseCurrencyUSD}
+                                changeQuoteCurrencyUSDHandler={setUserQuoteCurrencyUSD}
+                                isSelected={priceFormat === PriceFormats.USD}
+                            ></USDPrice>
                     }
                 </div>
             </div>

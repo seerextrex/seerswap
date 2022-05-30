@@ -12,6 +12,7 @@ import { PriceFormats } from "../PriceFomatToggler";
 import { IDerivedMintInfo, useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { useAppDispatch } from "state/hooks";
 import { Field, setInitialTokenPrice, setInitialUSDPrices, updateSelectedPreset } from "state/mint/v3/actions";
+import Input from "components/NumericalInput";
 
 interface IPrice {
     baseCurrency: Currency | undefined;
@@ -62,12 +63,11 @@ function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLock
                             <span className="quote-token__auto-fetched">{tokenRatio}</span>
                         </div>
                     ) : isSelected ? (
-                        <input
+                        <Input
                             className={`quote-token__input bg-t c-w ol-n`}
                             placeholder={`${quoteCurrency?.symbol} price`}
-                            type="text"
-                            value={userQuoteCurrencyToken}
-                            onInput={(e: any) => changeQuotePriceHandler(e.target.value)}
+                            value={userQuoteCurrencyToken || ""}
+                            onUserInput={(e: string) => changeQuotePriceHandler(e)}
                         />
                     ) : (
                         <span>-</span>
@@ -95,7 +95,7 @@ function USDPriceField({
     price: Price<Currency, Token> | undefined;
     isSelected: boolean;
     userUSD: string | undefined;
-    changeHandler: (price: number) => void;
+    changeHandler: (price: string) => void;
 }) {
     const _price = useMemo(() => (price ? price.toSignificant(5) : "Loading..."), [price]);
 
@@ -108,7 +108,7 @@ function USDPriceField({
                 {price ? (
                     <span className={`usd-price__price`}>{_price}</span>
                 ) : isSelected ? (
-                    <input className={`ol-n usd-price__input`} type="text" value={userUSD} onInput={(e: any) => changeHandler(e.target.value.trim())} />
+                    <Input className={`ol-n usd-price__input`} value={userUSD || ""} onUserInput={(e: string) => changeHandler(e)} />
                 ) : (
                     <span> - </span>
                 )}
@@ -173,25 +173,29 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
         (field: Field, typedValue: string) => {
             dispatch(setInitialUSDPrices({ field, typedValue }));
 
+            if (!typedValue) return
+
             if (field === Field.CURRENCY_A) {
                 setUserBaseCurrencyUSD(typedValue);
-                if (initialUSDPrices.CURRENCY_B) {
-                    startPriceHandler(String(+typedValue / +initialUSDPrices.CURRENCY_B));
-                    setUserQuoteCurrencyToken(String(+typedValue / +initialUSDPrices.CURRENCY_B));
-                    dispatch(setInitialTokenPrice({ typedValue: String(+typedValue / +initialUSDPrices.CURRENCY_B) }));
+                const priceB = initialUSDPrices.CURRENCY_B || quotePriceUSD?.toSignificant(5)
+                if (priceB) {
+                    startPriceHandler(String(+typedValue / +priceB));
+                    setUserQuoteCurrencyToken(String(+typedValue / +priceB));
+                    dispatch(setInitialTokenPrice({ typedValue: String(+typedValue / +priceB) }));
                 }
             }
 
             if (field === Field.CURRENCY_B) {
                 setUserQuoteCurrencyUSD(typedValue);
-                if (initialUSDPrices.CURRENCY_A) {
-                    startPriceHandler(String(+initialUSDPrices.CURRENCY_A / +typedValue));
-                    setUserQuoteCurrencyToken(String(+initialUSDPrices.CURRENCY_A / +typedValue));
-                    dispatch(setInitialTokenPrice({ typedValue: String(+initialUSDPrices.CURRENCY_A / +typedValue) }));
+                const priceA = initialUSDPrices.CURRENCY_A || basePriceUSD?.toSignificant(5)
+                if (priceA) {
+                    startPriceHandler(String(+priceA / +typedValue));
+                    setUserQuoteCurrencyToken(String(+priceA / +typedValue));
+                    dispatch(setInitialTokenPrice({ typedValue: String(+priceA / +typedValue) }));
                 }
             }
         },
-        [initialUSDPrices]
+        [basePriceUSD, quotePriceUSD, initialUSDPrices]
     );
 
     const handleTokenChange = useCallback(
@@ -204,6 +208,8 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
 
             const usdA = initialUSDPrices.CURRENCY_A;
             const usdB = initialUSDPrices.CURRENCY_B;
+
+            if (!typedValue) return
 
             if (usdA) {
                 const newUSDA = (+usdA * +typedValue) / +initialTokenPrice;

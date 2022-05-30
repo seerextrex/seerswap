@@ -41,8 +41,8 @@ export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleI
     const [localValue, setLocalValue] = useState("");
     const [useLocalValue, setUseLocalValue] = useState(false);
 
-    const valueUSD = useUSDCValue(tryParseAmount(value, currency?.wrapped))
-    const tokenValue = useBestV3TradeExactIn(tryParseAmount('1', USDC_POLYGON), currency?.wrapped)
+    const valueUSD = useUSDCValue(tryParseAmount(value, currency ? (currency.isNative ? currency.wrapped : currency) : undefined))
+    const tokenValue = useBestV3TradeExactIn(tryParseAmount('1', USDC_POLYGON), currency ?? undefined)
 
     const isUSD = useMemo(() => {
         return priceFormat === PriceFormats.USD

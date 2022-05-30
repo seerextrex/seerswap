@@ -229,43 +229,9 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
         }
     }, [initialTokenPrice]);
 
-    // const handleStartPriceInputToken = useCallback(
-    //     (v: string) => {
-    //         startPriceHandler(v);
-    //         dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: "" }));
-    //         dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: "" }));
-    //         setUserBaseCurrencyUSD("");
-    //         setUserQuoteCurrencyUSD("");
-    //         dispatch(updateSelectedPreset({ preset: null }));
-    //         // if (inputType === InputType.TOKEN_RATIO) {
-    //         setUserQuoteCurrencyToken(v);
-    //         dispatch(setInitialTokenPrice({ typedValue: v }));
-    //         // } else {
-    //         // setUserBaseCurrencyUSD(v)
-    //         // }
-    //     },
-    //     [startPriceHandler]
-    // );
-
     useEffect(() => {
         dispatch(updateSelectedPreset({ preset: null }));
     }, [priceFormat]);
-
-    //Auto recalculations
-
-    // useEffect(() => {
-    //     if (initialUSDPrices && isUSD) {
-    //         const tokenRate = String(+initialUSDPrices.CURRENCY_A / +initialUSDPrices.CURRENCY_B);
-    //         dispatch(setInitialTokenPrice({ typedValue: tokenRate }));
-    //         setUserQuoteCurrencyToken(tokenRate);
-    //         startPriceHandler(tokenRate);
-    //     }
-    // }, [initialUSDPrices, priceFormat]);
-
-    // useEffect(() => {
-    //     dispatch(setInitialTokenPrice({ typedValue: userQuoteCurrencyToken || "" }));
-    //     startPriceHandler(userQuoteCurrencyToken || "");
-    // }, [userQuoteCurrencyToken]);
 
     return (
         <div className={"f starting-price-wrapper c p-1"} style={{ width: "542px", backgroundColor: "#26343f" }}>

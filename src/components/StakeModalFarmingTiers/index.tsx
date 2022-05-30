@@ -1,28 +1,35 @@
 import CurrencyLogo from "components/CurrencyLogo";
-import { FARMING_CENTER } from "constants/addresses";
 import { SupportedChainId } from "constants/chains";
-import { ALGEBRA_POLYGON } from "constants/tokens";
-import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { useActiveWeb3React } from "hooks/web3";
 import { WrappedCurrency } from "models/types";
-import { CurrencyDropdown } from "pages/AddLiquidity/styled";
 import { useCallback, useMemo, useState } from "react";
 import { useCurrencyBalance } from "state/wallet/hooks";
 import "./index.scss";
-
-import { CurrencyAmount } from "@uniswap/sdk-core";
 import { formatAmountTokens } from "utils/numbers";
 import { HelpCircle } from "react-feather";
 import { Link } from "react-router-dom";
-
 import { Token } from "@uniswap/sdk-core";
-
 import NoTierIcon from "../../assets/images/no-tier-icon.png";
 import BachelorTierIcon from "../../assets/images/bachelor-tier-icon.png";
 import MasterTierIcon from "../../assets/images/master-tier-icon.png";
 import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
 
-export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; lockedToken: any }) {
+interface StakeModalFarmingTiersProps {
+    tiersLimits: {
+        low: string
+        medium: string
+        high: string
+    }
+    tiersMultipliers: {
+        low: string
+        medium: string
+        high: string
+    }
+    selectTier: any
+    lockedToken: any
+}
+
+export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: StakeModalFarmingTiersProps) {
     const { account } = useActiveWeb3React();
 
     const [selectedTier, setSelectedTier] = useState<number | undefined>(0);
@@ -48,9 +55,9 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
 
         return [
             { img: NoTierIcon, title: "No tier", lock: 0, earn: 0 },
-            { img: BachelorTierIcon, title: "Bachelor", lock: tiersLimits.low, earn: tiersMultipliers.low },
-            { img: MasterTierIcon, title: "Master", lock: tiersLimits.medium, earn: tiersMultipliers.medium },
-            { img: ProfessorTierIcon, title: "Professor", lock: tiersLimits.high, earn: tiersMultipliers.high },
+            { img: BachelorTierIcon, title: "Bachelor", lock: +tiersLimits.low, earn: +tiersMultipliers.low },
+            { img: MasterTierIcon, title: "Master", lock: +tiersLimits.medium, earn: +tiersMultipliers.medium },
+            { img: ProfessorTierIcon, title: "Professor", lock: +tiersLimits.high, earn: +tiersMultipliers.high },
         ];
     }, [tiersLimits, tiersMultipliers, balance]);
 

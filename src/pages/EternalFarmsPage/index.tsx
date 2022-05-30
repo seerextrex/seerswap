@@ -14,6 +14,10 @@ export default function EternalFarmsPage({ data, refreshing, fetchHandler }: {
 }) {
     const [modalForPool, setModalForPool] = useState(null)
 
+
+    useEffect(() => console.log(modalForPool), [modalForPool])
+
+
     useEffect(() => {
         fetchHandler()
     }, [])

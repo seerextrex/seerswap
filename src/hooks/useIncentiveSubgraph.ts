@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from './web3'
 import { Contract, providers } from 'ethers'
 import ERC20_ABI from 'abis/erc20.json'
@@ -642,8 +642,6 @@ export function useIncentiveSubgraph() {
 
             }
 
-            console.log(positionsTransferred)
-
             setPositionsForPool(_positions)
 
         } catch (err) {
@@ -720,11 +718,14 @@ export function useIncentiveSubgraph() {
             const aprs: Aprs = await fetchEternalFarmAPR()
 
             let _eternalFarmings: FormattedEternalFarming[] = []
+                // TODO
+                // .filter(farming => +farming.bonusRewardRate || +farming.rewardRate)
 
-            for (const farming of eternalFarmings.filter(farming => +farming.bonusRewardRate || +farming.rewardRate)) {
+            for (const farming of eternalFarmings) {
                 const pool = await fetchPool(farming.pool)
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)
+                const lockedToken = await fetchToken(farming.multiplierToken)
 
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
 
@@ -735,6 +736,7 @@ export function useIncentiveSubgraph() {
                         ...farming,
                         rewardToken,
                         bonusRewardToken,
+                        lockedToken,
                         //@ts-ignore
                         pool,
                         apr

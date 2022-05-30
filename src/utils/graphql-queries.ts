@@ -511,6 +511,14 @@ export const INFINITE_EVENTS = gql`
             bonusReward
             rewardRate
             bonusRewardRate
+            tokenAmountForLevel1
+            tokenAmountForLevel2
+            tokenAmountForLevel3
+            level1multiplier
+            level2multiplier
+            level3multiplier
+            multiplierToken
+
         }
     }
 `

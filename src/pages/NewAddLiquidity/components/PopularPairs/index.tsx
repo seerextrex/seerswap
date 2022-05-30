@@ -61,16 +61,24 @@ export function PopularPairs({ pairs, farmings, handlePopularPairSelection }: IP
 }
 
 function PopularPair({ pair, farming, handlePopularPairSelection }: { pair: [string, string]; farming: boolean; handlePopularPairSelection: (pair: [string, string]) => void }) {
-    const token0 = useToken(pair[1]);
-    const token1 = useToken(pair[0]);
+    const tokenA = useToken(pair[1]);
+    const tokenB = useToken(pair[0]);
 
-    if (!token0 || !token1) return <div></div>;
+    if (!tokenA || !tokenB) return <div></div>;
 
-    return <div onClick={() => handlePopularPairSelection(pair)} className={`f f-ac f-jc popular-pair ${farming ? "farming" : ""}`}>
-        <span className="popular-pair__logo"><CurrencyLogo currency={token0 as WrappedCurrency} size={'16px'} /></span>
-        <span>{token0.symbol}</span>
-        <span className="popular-pair__plus">+</span>
-        <span className="popular-pair__logo"><CurrencyLogo currency={token1 as WrappedCurrency} size={'16px'} /></span>
-        <span>{token1.symbol}</span>
-    </div>;
+    const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
+
+    return (
+        <div onClick={() => handlePopularPairSelection([token0.address, token1.address])} className={`f f-ac f-jc popular-pair ${farming ? "farming" : ""}`}>
+            <span className="popular-pair__logo">
+                <CurrencyLogo currency={token0 as WrappedCurrency} size={"16px"} />
+            </span>
+            <span>{token0.symbol}</span>
+            <span className="popular-pair__plus">+</span>
+            <span className="popular-pair__logo">
+                <CurrencyLogo currency={token1 as WrappedCurrency} size={"16px"} />
+            </span>
+            <span>{token1.symbol}</span>
+        </div>
+    );
 }

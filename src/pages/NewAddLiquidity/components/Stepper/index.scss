@@ -1,4 +1,19 @@
 .stepper {
+
+    &__step {
+
+        margin: -0.5rem 0;
+        padding: 0.5rem 1rem;
+        user-select: none;
+
+        &.clickable {
+            &:hover {
+                background-color: #344858;
+                cursor: pointer;
+            }
+        }
+    }
+
     &__circle {
         width: 25px;
         height: 25px;

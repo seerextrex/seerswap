@@ -23,3 +23,4 @@ export const updateSelectedPreset = createAction<{ preset: Presets | null }>('mi
 export const setAddLiquidityTxHash = createAction<{ txHash: string }>('mintV3/setAddLiquidityTxHash')
 export const setShowNewestPosition = createAction<{ showNewestPosition: boolean }>('mintV3/setShowNewestPosition')
 export const setInitialUSDPrices = createAction<{ field: Field, typedValue: string }>('mintV3/setInitialUSDPrices')
+export const setInitialTokenPrice = createAction<{ typedValue: string }>('mintV3/setInitialTokenPrice')

@@ -641,3 +641,8 @@ export function useInitialUSDPrices(): AppState['mintV3']['initialUSDPrices'] {
     const initialUSDPrices = useAppSelector((state: AppState) => state.mintV3.initialUSDPrices)
     return useMemo(() => initialUSDPrices, [initialUSDPrices])
 }
+
+export function useInitialTokenPrice(): AppState['mintV3']['initialTokenPrice'] {
+    const initialTokenPrice = useAppSelector((state: AppState) => state.mintV3.initialTokenPrice)
+    return useMemo(() => initialTokenPrice, [initialTokenPrice])
+}

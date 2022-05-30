@@ -460,7 +460,11 @@ export function useIncentiveSubgraph() {
                         createdAtTimestamp: +createdAtTimestamp,
                         incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
-                        lockedToken: _multiplierToken,
+                        lockedToken: {
+                            ..._multiplierToken,
+                            //@ts-ignore
+                            amount: position.tokensLockedIncentive
+                    },
                         tokenAmountForLevel1,
                         tokenAmountForLevel2,
                         tokenAmountForLevel3,
@@ -476,8 +480,6 @@ export function useIncentiveSubgraph() {
                         fetchPolicy: 'network-only'
                     })
 
-                    console.log(incentives)
-
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
                     if (incentives.filter((incentive: any) => Math.round(Date.now() / 1000) < incentive.startTime).length !== 0) {
@@ -490,7 +492,7 @@ export function useIncentiveSubgraph() {
 
                 if (position.eternalFarming) {
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(position.eternalFarming)
+                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, multiplierToken } = await fetchEternalFarming(position.eternalFarming)
 
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],
@@ -507,6 +509,8 @@ export function useIncentiveSubgraph() {
                     const _rewardToken = await fetchToken(rewardToken)
                     const _bonusRewardToken = await fetchToken(bonusRewardToken)
                     const _pool = await fetchPool(pool)
+                    const _multiplierToken = await fetchToken(multiplierToken)
+
 
                     _position = {
                         ..._position,
@@ -514,6 +518,12 @@ export function useIncentiveSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
+
+                        lockedToken: {
+                            ..._multiplierToken,
+                            // @ts-ignore
+                            amount: position.tokensLockedEternal
+                        },
                         //@ts-ignore
                         pool: _pool,
                         eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
@@ -718,10 +728,8 @@ export function useIncentiveSubgraph() {
             const aprs: Aprs = await fetchEternalFarmAPR()
 
             let _eternalFarmings: FormattedEternalFarming[] = []
-                // TODO
-                // .filter(farming => +farming.bonusRewardRate || +farming.rewardRate)
 
-            for (const farming of eternalFarmings) {
+            for (const farming of eternalFarmings.filter(farming => +farming.bonusRewardRate || +farming.rewardRate)) {
                 const pool = await fetchPool(farming.pool)
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)

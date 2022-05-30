@@ -141,8 +141,10 @@ export interface Deposit {
     token0: string
     token1: string
     l2TokenId: string | null
-    algbLocked: string
-    level: string
+    tokensLockedEternal: string
+    tokensLockedIncentive: string
+    levelEternal: string
+    levelIncentive: string
     lockedToken: TokenSubgraph
     oldFarming?: boolean
 }

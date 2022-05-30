@@ -81,6 +81,7 @@ export const FETCH_ETERNAL_FARM = () => gql`
       tokenAmountForLevel1
       tokenAmountForLevel1
       tokenAmountForLevel1
+      multiplierToken
     }
   }
 `

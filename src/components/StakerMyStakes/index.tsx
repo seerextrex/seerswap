@@ -1,24 +1,24 @@
-import { isAddress } from "@ethersproject/address";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Frown } from "react-feather";
-import { useStakerHandlers } from "../../hooks/useStakerHandlers";
-import { useActiveWeb3React } from "../../hooks/web3";
-import { useAllTransactions } from "../../state/transactions/hooks";
-import Loader from "../Loader";
-import Modal from "../Modal";
-import { Deposit, RewardInterface, UnstakingInterface } from "../../models/interfaces";
-import { FarmingType } from "../../models/enums";
-import { getCountdownTime } from "../../utils/time";
-import { getProgress } from "../../utils/getProgress";
-import { CheckOut } from "./CheckOut";
-import { Link, useLocation } from "react-router-dom";
-import { useSortedRecentTransactions } from "../../hooks/useSortedRecentTransactions";
-import "./index.scss";
-import ModalBody from "./ModalBody";
-import PositionHeader from "./PositionHeader";
-import PositionCardBodyHeader from "./PositionCardBodyHeader";
-import PositionCardBodyStat from "./PositionCardBodyStat";
-import { Trans } from "@lingui/macro";
+import { isAddress } from '@ethersproject/address'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Frown } from 'react-feather'
+import { useStakerHandlers } from '../../hooks/useStakerHandlers'
+import { useActiveWeb3React } from '../../hooks/web3'
+import { useAllTransactions } from '../../state/transactions/hooks'
+import Loader from '../Loader'
+import Modal from '../Modal'
+import { Deposit, RewardInterface, UnstakingInterface } from '../../models/interfaces'
+import { FarmingType } from '../../models/enums'
+import { getCountdownTime } from '../../utils/time'
+import { getProgress } from '../../utils/getProgress'
+import { CheckOut } from './CheckOut'
+import { Link, useLocation } from 'react-router-dom'
+import { useSortedRecentTransactions } from '../../hooks/useSortedRecentTransactions'
+import './index.scss'
+import ModalBody from './ModalBody'
+import PositionHeader from './PositionHeader'
+import PositionCardBodyHeader from './PositionCardBodyHeader'
+import PositionCardBodyStat from './PositionCardBodyStat'
+import { Trans } from '@lingui/macro'
 
 interface StakerMyStakesProps {
     data: Deposit[] | null;
@@ -29,9 +29,6 @@ interface StakerMyStakesProps {
 
 export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMyStakesProps) {
     const { account } = useActiveWeb3React();
-
-
-
 
     const {
         getRewardsHash,
@@ -235,7 +232,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                 const date = new Date(+el.enteredInEternalFarming * 1000).toLocaleString();
                                 return (
                                     <div className={"my-stakes__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
-                                        <PositionHeader el={el} setUnstaking={setUnstaking} setSendModal={setSendModal} unstaking={unstaking} withdrawHandler={withdrawHandler} />
+                                        <PositionHeader el={el} setUnstaking={setUnstaking} setSendModal={setSendModal} unstaking={unstaking} withdrawHandler={withdrawHandler}/>
                                         <div className={"f cg-1 rg-1 mxs_fd-c"}>
                                             <div className={"my-stakes__position-card__body w-100 p-1 br-8"}>
                                                 <PositionCardBodyHeader el={el} farmingType={FarmingType.FINITE} date={date} />

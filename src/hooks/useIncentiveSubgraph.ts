@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useActiveWeb3React } from './web3'
 import { Contract, providers } from 'ethers'
 import ERC20_ABI from 'abis/erc20.json'
@@ -39,20 +39,13 @@ import {
     TickFarming,
     TokenSubgraph
 } from '../models/interfaces'
-import { EthereumWindow } from '../models/types'
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
-import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
-import { useEthPrices } from './useEthPrices'
-import { walletconnector } from '../connectors'
+import { fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
 
 export function useIncentiveSubgraph() {
 
-
     const { chainId, account, library } = useActiveWeb3React()
-
     const { dataClient, farmingClient, oldFarmingClient } = useClients()
-
-    const ethPrices = useEthPrices()
 
     const [positionsForPool, setPositionsForPool] = useState<Position[] | null>(null)
     const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
@@ -159,7 +152,6 @@ export function useIncentiveSubgraph() {
     }
 
     async function fetchIncentive(incentiveId: string) {
-
         try {
 
             const { data: { incentives }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
@@ -176,7 +168,6 @@ export function useIncentiveSubgraph() {
             throw new Error('Fetch incentives ' + err)
         }
     }
-
 
     async function fetchEternalFarming(farmId: string) {
 
@@ -351,7 +342,6 @@ export function useIncentiveSubgraph() {
         try {
             setHasTransferredPositionsLoading(true)
 
-
             const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Deposit[]>>({
                 query: HAS_TRANSFERED_POSITIONS(),
                 fetchPolicy: 'network-only',
@@ -432,9 +422,16 @@ export function useIncentiveSubgraph() {
                     )
 
                     const {
-                        rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, multiplierToken, algbAmountForLevel1,
-                        algbAmountForLevel2,
-                        algbAmountForLevel3,
+                        rewardToken,
+                        bonusRewardToken,
+                        pool,
+                        startTime,
+                        endTime,
+                        createdAtTimestamp,
+                        multiplierToken,
+                        tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3,
                         level1multiplier,
                         level2multiplier,
                         level3multiplier
@@ -464,9 +461,9 @@ export function useIncentiveSubgraph() {
                         incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
                         lockedToken: _multiplierToken,
-                        algbAmountForLevel1,
-                        algbAmountForLevel2,
-                        algbAmountForLevel3,
+                        tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3,
                         level1multiplier,
                         level2multiplier,
                         level3multiplier
@@ -478,6 +475,8 @@ export function useIncentiveSubgraph() {
                         query: FETCH_FINITE_FARM_FROM_POOL([position.pool]),
                         fetchPolicy: 'network-only'
                     })
+
+                    console.log(incentives)
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
@@ -544,7 +543,7 @@ export function useIncentiveSubgraph() {
             setTransferredPositions(_positions)
 
         } catch (err: any) {
-            throw new Error('Transferred positions ' + err.code + ' ' + err.message)
+            throw new Error('Transferred positions ' + 'code: ' + err.code + ', ' + err.message)
         } finally {
             setTransferredPositionsLoading(false)
         }
@@ -642,6 +641,8 @@ export function useIncentiveSubgraph() {
                 _positions.push(_position)
 
             }
+
+            console.log(positionsTransferred)
 
             setPositionsForPool(_positions)
 

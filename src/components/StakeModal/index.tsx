@@ -36,9 +36,9 @@ interface StakeModalProps {
         level1multiplier: string;
         level2multiplier: string;
         level3multiplier: string;
-        algbAmountForLevel1: string;
-        algbAmountForLevel2: string;
-        algbAmountForLevel3: string;
+        tokenAmountForLevel1: string;
+        tokenAmountForLevel2: string;
+        tokenAmountForLevel3: string;
         lockedToken: any;
     };
     closeHandler: () => void;
@@ -56,9 +56,9 @@ export function StakeModal({
         level2multiplier,
         level3multiplier,
         lockedToken,
-        algbAmountForLevel1,
-        algbAmountForLevel2,
-        algbAmountForLevel3,
+        tokenAmountForLevel1,
+        tokenAmountForLevel2,
+        tokenAmountForLevel3,
     },
     closeHandler,
     farmingType,
@@ -70,6 +70,8 @@ export function StakeModal({
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn },
     } = useIncentiveSubgraph() || {};
 
+
+    // console.log(positionsForPool)
     const { approveHandler, approvedHash, stakeHandler, stakedHash } = useStakerHandlers() || {};
 
     const [selectedTier, setSelectedTier] = useState<string | null>(null);
@@ -224,16 +226,16 @@ export function StakeModal({
         const _balance = +balance.toSignificant(4);
 
         switch (selectedTier) {
-            case algbAmountForLevel1:
-                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
-            case algbAmountForLevel2:
-                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel2), lockedToken.decimals);
-            case algbAmountForLevel3:
-                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel3), lockedToken.decimals);
+            case tokenAmountForLevel1:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel1), lockedToken.decimals);
+            case tokenAmountForLevel2:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel2), lockedToken.decimals);
+            case tokenAmountForLevel3:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel3), lockedToken.decimals);
             default:
                 return true;
         }
-    }, [balance, selectedTier, algbAmountForLevel1, algbAmountForLevel2, algbAmountForLevel3]);
+    }, [balance, selectedTier, tokenAmountForLevel1, tokenAmountForLevel2, tokenAmountForLevel3]);
 
     const tierSelectionHandler = useCallback(
         (tier) => {
@@ -242,13 +244,13 @@ export function StakeModal({
                     setSelectedTier(null);
                     break;
                 case 1:
-                    setSelectedTier(algbAmountForLevel1);
+                    setSelectedTier(tokenAmountForLevel1);
                     break;
                 case 2:
-                    setSelectedTier(algbAmountForLevel2);
+                    setSelectedTier(tokenAmountForLevel2);
                     break;
                 case 3:
-                    setSelectedTier(algbAmountForLevel3);
+                    setSelectedTier(tokenAmountForLevel3);
                     break;
                 case "":
                     setSelectedTier("");
@@ -300,9 +302,9 @@ export function StakeModal({
                     {farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 && (
                         <StakeModalFarmingTiers
                             tiersLimits={{
-                                low: algbAmountForLevel1,
-                                medium: algbAmountForLevel2,
-                                high: algbAmountForLevel3,
+                                low: tokenAmountForLevel1,
+                                medium: tokenAmountForLevel2,
+                                high: tokenAmountForLevel3,
                             }}
                             tiersMultipliers={{
                                 low: level1multiplier,

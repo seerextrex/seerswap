@@ -30,6 +30,7 @@ interface StakerEventCardProps {
         bonusReward?: number;
         startTime?: number;
         endTime?: number;
+        enterStartTime?: number;
         apr?: number;
         locked?: boolean;
     };
@@ -42,7 +43,7 @@ export function StakerEventCard({
     refreshing,
     stakeHandler,
     now,
-    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, id } = {},
+    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, enterStartTime } = {},
     eternal,
     secret,
 }: StakerEventCardProps) {
@@ -66,9 +67,9 @@ export function StakerEventCard({
     }, [endTime]);
 
     const _enterTime = useMemo(() => {
-        if (!startTime) return [];
+        if (!enterStartTime) return [];
 
-        const date = new Date((+startTime - (3 * 24 + 4) * 60 * 60) * 1000);
+        const date = new Date((+enterStartTime * 1000));
 
         return [convertLocalDate(date), convertDateTime(date)];
     }, [startTime]);

@@ -57,9 +57,10 @@ query fetchIncentive($incentiveId: ID) {
         level1multiplier
         level2multiplier
         level3multiplier
-        algbAmountForLevel1
-        algbAmountForLevel2
-        algbAmountForLevel3
+        tokenAmountForLevel1
+        tokenAmountForLevel1
+        tokenAmountForLevel1
+        enterStartTime
     }
 }`
 
@@ -77,6 +78,9 @@ export const FETCH_ETERNAL_FARM = () => gql`
       rewardRate
       bonusRewardRate
       isDetached
+      tokenAmountForLevel1
+      tokenAmountForLevel1
+      tokenAmountForLevel1
     }
   }
 `
@@ -291,10 +295,11 @@ query futureEvents ($timestamp: BigInt) {
         level1multiplier
         level2multiplier
         level3multiplier
-        algbAmountForLevel1
-        algbAmountForLevel2
-        algbAmountForLevel3
+        tokenAmountForLevel1
+        tokenAmountForLevel2
+        tokenAmountForLevel3
         multiplierToken
+        enterStartTime
     }
 }`
 
@@ -312,9 +317,10 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         level1multiplier
         level2multiplier
         level3multiplier
-        algbAmountForLevel1
-        algbAmountForLevel2
-        algbAmountForLevel3
+        tokenAmountForLevel1
+        tokenAmountForLevel2
+        tokenAmountForLevel3
+        enterStartTime
         multiplierToken
     }
 }`
@@ -339,12 +345,13 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           endTime
           reward
           multiplierToken
-          algbAmountForLevel1
-          algbAmountForLevel2
-          algbAmountForLevel3
+          tokenAmountForLevel1
+          tokenAmountForLevel2
+          tokenAmountForLevel3
           level1multiplier
           level2multiplier
           level3multiplier
+          enterStartTime
         }
       }
       `
@@ -373,9 +380,11 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
             onFarmingCenter
             ${tierFarming ? `
               enteredInEternalFarming
-              algbLocked
-              level` : ''
-  }
+              tokensLockedEternal
+              tokensLockedIncentive
+              levelIncentive
+              levelEternal` : ''
+}
     }
 }
 `
@@ -413,6 +422,10 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
         eternalFarming
         onFarmingCenter
         enteredInEternalFarming
+        tokensLockedIncentive
+        tokensLockedEternal
+        levelIncentive
+        levelEternal
     }
 }`
 

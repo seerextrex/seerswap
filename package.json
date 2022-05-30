@@ -142,7 +142,7 @@
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run --record'",
     "graphql:generate": "graphql-codegen --config codegen.yml",
     "postinstall": "yarn compile-contract-types",
-    "start": "yarn graphql:generate && react-scripts start --host 0.0.0.0",
+    "start": "react-scripts start --host 0.0.0.0",
     "test": "react-scripts test --env=./custom-test-env.js"
   },
   "eslintConfig": {

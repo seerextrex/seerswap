@@ -56,6 +56,8 @@ export default function StakingPage() {
         fetchHasTransferredPositions: { fetchHasTransferredPositionsFn, hasTransferredPositions, hasTransferredPositionsLoading },
     } = useIncentiveSubgraph() || {};
 
+    // console.log(transferredPositions)
+
     const [now, setNow] = useState(Date.now());
 
     const formattedData = useMemo(() => {

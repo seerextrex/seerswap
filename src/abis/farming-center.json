@@ -15,11 +15,6 @@
         "internalType": "contract INonfungiblePositionManager",
         "name": "_nonfungiblePositionManager",
         "type": "address"
-      },
-      {
-        "internalType": "contract IERC20Minimal",
-        "name": "_algbAddress",
-        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -157,19 +152,6 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "algbAddress",
-    "outputs": [
-      {
-        "internalType": "contract IERC20Minimal",
         "name": "",
         "type": "address"
       }
@@ -397,11 +379,6 @@
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "inLimitFarming",
-        "type": "bool"
-      },
-      {
         "internalType": "int24",
         "name": "tickLower",
         "type": "int24"
@@ -422,8 +399,13 @@
         "type": "address"
       },
       {
+        "internalType": "bool",
+        "name": "inLimitFarming",
+        "type": "bool"
+      },
+      {
         "internalType": "uint256",
-        "name": "algbLocked",
+        "name": "tokensLocked",
         "type": "uint256"
       }
     ],
@@ -467,6 +449,11 @@
       {
         "internalType": "uint256",
         "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokensLocked",
         "type": "uint256"
       }
     ],
@@ -516,7 +503,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "algbLocked",
+        "name": "tokensLocked",
         "type": "uint256"
       }
     ],
@@ -634,6 +621,19 @@
     "outputs": [
       {
         "internalType": "contract IAlgebraIncentiveFarming",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "farmingCenterVault",
+    "outputs": [
+      {
+        "internalType": "contract IFarmingCenterVault",
         "name": "",
         "type": "address"
       }

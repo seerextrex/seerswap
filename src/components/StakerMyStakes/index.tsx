@@ -30,6 +30,9 @@ interface StakerMyStakesProps {
 export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMyStakesProps) {
     const { account } = useActiveWeb3React();
 
+
+
+
     const {
         getRewardsHash,
         sendNFTL2Handler,

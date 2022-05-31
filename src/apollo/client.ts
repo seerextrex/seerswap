@@ -6,7 +6,7 @@ export const healthClient = new ApolloClient({
 })
 
 export const blockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/ethereum-blocks',
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/mumbai-blocks',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

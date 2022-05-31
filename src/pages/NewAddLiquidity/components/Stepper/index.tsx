@@ -3,7 +3,7 @@ import { USDC_POLYGON } from "constants/tokens";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { useMemo } from "react";
 import { Bound } from "state/mint/v3/actions";
-import { IDerivedMintInfo, useActivePreset } from "state/mint/v3/hooks";
+import { IDerivedMintInfo, useActivePreset, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { Presets } from "state/mint/v3/reducer";
 import { PriceFormats } from "../PriceFomatToggler";
 
@@ -29,6 +29,8 @@ interface IStepper {
 export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintInfo, end, handleNavigation, priceFormat }: IStepper) {
     const baseTokenUSD = useUSDCPrice(currencyA);
     const rangeTokenUSD = useUSDCPrice(currencyB);
+
+    const initialUSDPrices = useInitialUSDPrices();
 
     const isUSD = useMemo(() => {
         return priceFormat === PriceFormats.USD;
@@ -68,33 +70,33 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
         }
 
         if (mintInfo.noLiquidity) {
-            if (mintInfo.price && rangeTokenUSD && completedSteps.length >= 2) {
+            const rangeUSD = rangeTokenUSD?.toSignificant(8) || initialUSDPrices.CURRENCY_B;
+
+            if (mintInfo.price && rangeUSD && completedSteps.length >= 2) {
                 _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isUSD ? "$" : ""}${
                     isUSD
-                        ? ((isSorted ? +mintInfo.price.toSignificant(8) : +mintInfo.price.invert().toSignificant(8)) * +rangeTokenUSD.toSignificant(8)).toFixed(4)
+                        ? ((isSorted ? +mintInfo.price.toSignificant(8) : +mintInfo.price.invert().toSignificant(8)) * +rangeUSD).toFixed(4)
                         : isSorted
                         ? mintInfo.price.toSignificant(5)
                         : mintInfo.price.invert().toSignificant(5)
                 } ${isUSD ? "" : ` ${currencyB.symbol}`}`;
             }
 
-            if (mintInfo.price && !rangeTokenUSD && completedSteps.length >= 2) {
+            if (mintInfo.price && !rangeUSD && completedSteps.length >= 2) {
                 _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isSorted ? +mintInfo.price.toSignificant(8) : +mintInfo.price.invert().toSignificant(8)} ${currencyB.symbol}`;
             }
 
             if (leftPrice && rightPrice && completedSteps.length >= 3) {
                 if (preset !== Presets.FULL) {
-                    _steps[2].title = `Range: ${isUSD && rangeTokenUSD ? "$" : ""}${
-                        isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)
-                    } — ${isUSD && rangeTokenUSD ? "$" : ""}${
-                        isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)
-                    }`;
+                    _steps[2].title = `Range: ${isUSD && rangeUSD ? "$" : ""}${
+                        isUSD && rangeUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)
+                    } — ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`;
                 } else {
                     _steps[2].title = "Range: 0 — ∞";
                 }
             }
 
-            if (baseTokenUSD && rangeTokenUSD && mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
+            if (baseTokenUSD && rangeUSD && mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
                 const parsedA = Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5));
                 const parsedB = Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5));
 
@@ -103,7 +105,7 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
 
                 if (isUSD) {
                     const tokenAUSD = Number(baseTokenUSD.toSignificant(5));
-                    const tokenBUSD = Number(rangeTokenUSD.toSignificant(5));
+                    const tokenBUSD = Number(rangeUSD);
 
                     tokenA = isUSDCA ? parsedA : parsedA * tokenAUSD;
                     tokenB = isUSDCB ? parsedB : parsedB * tokenBUSD;
@@ -154,7 +156,7 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
         }
 
         return _steps;
-    }, [completedSteps, stepLinks, currencyA, currencyB, mintInfo, isUSD, rangeTokenUSD]);
+    }, [completedSteps, stepLinks, currencyA, currencyB, mintInfo, isUSD, initialUSDPrices, rangeTokenUSD]);
 
     return (
         <div className="f w-100" style={{ justifyContent: "space-between" }}>

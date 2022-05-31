@@ -53,7 +53,7 @@ export default function LiquidityChartRangeInput({
     onLeftRangeInput,
     onRightRangeInput,
     interactive,
-    priceFormat
+    priceFormat,
 }: {
     currencyA: Currency | undefined;
     currencyB: Currency | undefined;
@@ -65,13 +65,13 @@ export default function LiquidityChartRangeInput({
     onLeftRangeInput: (typedValue: string) => void;
     onRightRangeInput: (typedValue: string) => void;
     interactive: boolean;
-    priceFormat: PriceFormats
+    priceFormat: PriceFormats;
 }) {
     const { isLoading, isUninitialized, isError, error, formattedData } = useDensityChartData({
         currencyA,
         currencyB,
         feeAmount,
-        priceFormat
+        priceFormat,
     });
 
     const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
@@ -106,31 +106,32 @@ export default function LiquidityChartRangeInput({
     interactive = interactive && Boolean(formattedData?.length);
 
     const leftPrice = useMemo(() => {
-        return isSorted ? priceLower : priceUpper?.invert()
-    }, [isSorted, priceLower, priceUpper, priceFormat])
-
+        return isSorted ? priceLower : priceUpper?.invert();
+    }, [isSorted, priceLower, priceUpper, priceFormat]);
 
     //TODO
-    const leftPriceUSD = useUSDCValue(tryParseAmount(leftPrice ? (+leftPrice.toSignificant(5) < 0.00000001 ? undefined : leftPrice.toSignificant(5)) : undefined, currencyB))
+    const leftPriceUSD = useUSDCValue(tryParseAmount(leftPrice ? (+leftPrice.toSignificant(5) < 0.00000001 ? undefined : Number(leftPrice.toSignificant(5)).toFixed(5)) : undefined, currencyB));
 
     const rightPrice = useMemo(() => {
-        return isSorted ? priceUpper : priceLower?.invert()
-    }, [isSorted, priceLower, priceUpper, priceFormat])
+        return isSorted ? priceUpper : priceLower?.invert();
+    }, [isSorted, priceLower, priceUpper, priceFormat]);
 
-    const rightPriceUSD = useUSDCValue(tryParseAmount(rightPrice ? rightPrice.toSignificant(5) : undefined, currencyB))
+    //TODO
+    const rightPriceUSD = useUSDCValue(
+        tryParseAmount(
+            rightPrice ? (rightPrice.toSignificant(5) === "338490000000000000000000000000000000000000000000000" ? undefined : Number(rightPrice.toSignificant(5)).toFixed(5)) : undefined,
+            currencyB
+        )
+    );
 
     const brushDomain: [number, number] | undefined = useMemo(() => {
-
-        console.log('KEFASD', leftPriceUSD?.toSignificant(5), rightPriceUSD?.toSignificant(5))
-
-        if (!leftPrice || !rightPrice) return
+        if (!leftPrice || !rightPrice) return;
 
         if (priceFormat === PriceFormats.USD && leftPriceUSD && rightPriceUSD) {
             return [parseFloat(leftPriceUSD.toSignificant(5)), parseFloat(rightPriceUSD.toSignificant(5))];
         }
 
-        return [parseFloat(leftPrice.toSignificant(5)), parseFloat(rightPrice.toSignificant(5))]
-
+        return [parseFloat(leftPrice.toSignificant(5)), parseFloat(rightPrice.toSignificant(5))];
     }, [leftPrice, rightPrice, leftPriceUSD, rightPriceUSD, priceFormat]);
 
     const brushLabelValue = useCallback(

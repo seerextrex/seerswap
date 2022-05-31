@@ -15,7 +15,7 @@ import { Currency, Percent, CurrencyAmount } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import { WMATIC_EXTENDED } from "constants/tokens";
-import { Bound, setInitialUSDPrices, updateSelectedPreset } from "state/mint/v3/actions";
+import { Bound, setInitialTokenPrice, setInitialUSDPrices, updateSelectedPreset } from "state/mint/v3/actions";
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { Field } from "state/mint/actions";
 import { maxAmountSpend } from "utils/maxAmountSpend";
@@ -82,6 +82,8 @@ export function NewAddLiquidityPage({
         if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
             return {
                 ...prevDerivedMintInfo,
+                pricesAtTicks: derivedMintInfo.pricesAtTicks,
+                ticks: derivedMintInfo.ticks,
             };
         }
         return {
@@ -89,7 +91,7 @@ export function NewAddLiquidityPage({
         };
     }, [derivedMintInfo, baseCurrency, quoteCurrency]);
 
-    const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
+    const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
 
     const { startPriceTypedValue } = useV3MintState();
 
@@ -103,7 +105,7 @@ export function NewAddLiquidityPage({
                 chainSymbol = "MATIC";
             }
 
-            dispatch(updateSelectedPreset({ preset: null }));
+            resetState();
 
             if (currencyIdNew.toLowerCase() === currencyIdOther?.toLowerCase()) {
                 // not ideal, but for now clobber the other if the currency ids are equal
@@ -148,13 +150,13 @@ export function NewAddLiquidityPage({
     );
 
     const handleCurrencySwap = useCallback(() => {
-        dispatch(updateSelectedPreset({ preset: null }));
         history.push(`/new-add/${currencyIdB}/${currencyIdA}`);
+        resetState();
     }, [history, handleCurrencySelect, currencyIdA, currencyIdB]);
 
     const handlePopularPairSelection = useCallback((pair: [string, string]) => {
-        dispatch(updateSelectedPreset({ preset: null }));
         history.push(`/new-add/${pair[0]}/${pair[1]}`);
+        resetState();
     }, []);
 
     const handleStepChange = useCallback(
@@ -167,6 +169,14 @@ export function NewAddLiquidityPage({
     const handlePriceFormat = useCallback((priceFormat: PriceFormats) => {
         setPriceFormat(priceFormat);
     }, []);
+
+    function resetState() {
+        dispatch(updateSelectedPreset({ preset: null }));
+        dispatch(setInitialTokenPrice({ typedValue: "" }));
+        dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: "" }));
+        dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: "" }));
+        onStartPriceInput("");
+    }
 
     const stepLinks = useMemo(() => {
         const _stepLinks = [
@@ -212,7 +222,7 @@ export function NewAddLiquidityPage({
     }, [mintInfo]);
 
     const stepInitialPrice = useMemo(() => {
-        return mintInfo.noLiquidity ? Boolean(startPriceTypedValue && account) : false;
+        return mintInfo.noLiquidity ? Boolean(+startPriceTypedValue && account) : false;
     }, [mintInfo, startPriceTypedValue]);
 
     const steps = useMemo(() => {
@@ -231,9 +241,7 @@ export function NewAddLiquidityPage({
 
     useEffect(() => {
         return () => {
-            dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: "" }));
-            dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: "" }));
-            dispatch(updateSelectedPreset({ preset: null }));
+            resetState();
         };
     }, []);
 
@@ -369,13 +377,13 @@ export function NewAddLiquidityPage({
                         </button>
                     )}
                 </div>
-            ) : (
+            ) : !account ? (
                 <div className="add-buttons f f-ac f-jc mt-2">
                     <button className="add-buttons__next f f-jc f-ac ml-a" onClick={toggleWalletModal}>
                         Connect Wallet
                     </button>
                 </div>
-            )}
+            ) : null}
         </div>
     );
 }

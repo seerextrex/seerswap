@@ -28,10 +28,13 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
     const [loadingTimedout, setLoadingTimedout] = useState(false);
 
     const hasUSDPrices = useMemo(() => {
-        return Boolean((userUSDPrices.CURRENCY_A && userUSDPrices.CURRENCY_B) || (currencyAUSDC && currencyBUSDC) || (userUSDPrices.CURRENCY_A && currencyBUSDC) || (userUSDPrices.CURRENCY_B && currencyAUSDC) );
+        return Boolean(
+            (userUSDPrices.CURRENCY_A && userUSDPrices.CURRENCY_B) || (currencyAUSDC && currencyBUSDC) || (userUSDPrices.CURRENCY_A && currencyBUSDC) || (userUSDPrices.CURRENCY_B && currencyAUSDC)
+        );
     }, [userUSDPrices, currencyAUSDC, currencyBUSDC]);
 
     const usdA = useMemo(() => {
+        console.log(userUSDPrices);
         if (userUSDPrices.CURRENCY_A) return userUSDPrices.CURRENCY_A;
         if (currencyAUSDC) return currencyAUSDC.toSignificant(8);
         return;
@@ -51,8 +54,6 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
         }, 5000);
     }, [currencyAUSDC, currencyBUSDC, userUSDPrices]);
 
-    console.log(hasUSDPrices)
-
     return (
         <div className={"preset-ranges-wrapper pl-1 mb-2"}>
             <div className="mb-1 f f-ac">
@@ -71,8 +72,8 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
                     usdB &&
                     hasUSDPrices && (
                         <div className="fs-085">
-                            <div className="mb-05">{`1 ${currencyA.symbol} = ${+usdA / +usdB} ${currencyB.symbol}`}</div>
-                            <div className="mb-05">{`1 ${currencyB.symbol} = ${+usdB / +usdA} ${currencyA.symbol}`}</div>
+                            <div className="mb-05">{`1 ${currencyA.symbol} = ${+usdA / (+usdB || 1)} ${currencyB.symbol}`}</div>
+                            <div className="mb-05">{`1 ${currencyB.symbol} = ${+usdB / (+usdA || 1)} ${currencyA.symbol}`}</div>
                         </div>
                     )
                 )

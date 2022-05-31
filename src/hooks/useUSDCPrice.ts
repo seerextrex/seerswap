@@ -47,8 +47,6 @@ export default function useUSDCPrice(currency?: Currency): Price<Currency, Token
 
 export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null) {
 
-    console.log('err here, CURRENYCE', currencyAmount, currencyAmount?.currency)
-
     const price = useUSDCPrice(currencyAmount?.currency)
 
     return useMemo(() => {

@@ -29,24 +29,24 @@ interface ITokenAmountCard {
     locked: boolean;
     isMax: boolean;
     error: string | undefined;
-    priceFormat: PriceFormats
+    priceFormat: PriceFormats;
 }
 
 export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleInput, showApproval, handleApprove, isApproving, disabled, locked, isMax, error, priceFormat }: ITokenAmountCard) {
     const { account } = useActiveWeb3React();
 
-    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
-    const balanceUSD = useUSDCValue(balance)
+    const balance = useCurrencyBalance(account ?? undefined, currency ? (currency.isNative ? currency.wrapped : currency) : undefined);
+    const balanceUSD = useUSDCValue(balance);
 
     const [localValue, setLocalValue] = useState("");
     const [useLocalValue, setUseLocalValue] = useState(false);
 
-    const valueUSD = useUSDCValue(tryParseAmount(value, currency ? (currency.isNative ? currency.wrapped : currency) : undefined))
-    const tokenValue = useBestV3TradeExactIn(tryParseAmount('1', USDC_POLYGON), currency ?? undefined)
+    const valueUSD = useUSDCValue(tryParseAmount(value, currency ? (currency.isNative ? currency.wrapped : currency) : undefined));
+    const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_POLYGON), currency ?? undefined);
 
     const isUSD = useMemo(() => {
-        return priceFormat === PriceFormats.USD
-    }, [priceFormat])
+        return priceFormat === PriceFormats.USD;
+    }, [priceFormat]);
 
     const handleOnFocus = () => {
         setUseLocalValue(true);
@@ -60,29 +60,28 @@ export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleI
         (val) => {
             setLocalValue(val.trim());
             if (currency && isUSD && tokenValue && tokenValue.trade) {
-
                 if (currency.wrapped.address === USDC_POLYGON.address) {
                     handleInput(val.trim());
                 } else {
                     handleInput(String((val.trim() * +tokenValue.trade.outputAmount.toSignificant(5)).toFixed(3)));
                 }
             } else if (!isUSD) {
-                handleInput(val.trim())
+                handleInput(val.trim());
             }
         },
-        [handleInput, localValue, tokenValue, isUSD]
+        [handleInput, localValue, isUSD]
     );
 
     useEffect(() => {
-        if (localValue && useLocalValue) return 
+        if (localValue && useLocalValue) return;
 
         if (isUSD && valueUSD) {
-            setLocalValue(valueUSD.toSignificant(5))
+            setLocalValue(valueUSD.toSignificant(5));
         }
         if (!isUSD && value) {
-            setLocalValue(value)
+            setLocalValue(value);
         }
-    }, [isUSD, localValue, value, valueUSD])
+    }, [isUSD, localValue, value]);
 
     const balanceString = useMemo(() => {
         if (!balance || !currency) return <Loader stroke={"white"} />;
@@ -90,17 +89,17 @@ export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleI
         const _balance = isUSD && balanceUSD ? balanceUSD.toSignificant(5) : balance.toSignificant(5);
 
         if (_balance.split(".")[0].length > 10) {
-            return `${isUSD ? '$ ' : ''}${_balance.slice(0, 7)}...${isUSD ? '' : ` ${currency.symbol}`}`;
+            return `${isUSD ? "$ " : ""}${_balance.slice(0, 7)}...${isUSD ? "" : ` ${currency.symbol}`}`;
         }
 
         if (+balance.toFixed() === 0) {
-            return `${isUSD ? '$ ' : ''}0${isUSD ? '' : ` ${currency.symbol}`}`;
+            return `${isUSD ? "$ " : ""}0${isUSD ? "" : ` ${currency.symbol}`}`;
         }
         if (+balance.toFixed() < 0.0001) {
-            return `< ${isUSD ? '$ ' : ''}0.0001${ isUSD ? '' : ` ${currency.symbol}`}`;
+            return `< ${isUSD ? "$ " : ""}0.0001${isUSD ? "" : ` ${currency.symbol}`}`;
         }
 
-        return `${isUSD ? '$ ' : ''}${_balance}${ isUSD ? '' : ` ${currency.symbol}`}`;
+        return `${isUSD ? "$ " : ""}${_balance}${isUSD ? "" : ` ${currency.symbol}`}`;
     }, [balance, isUSD, fiatValue, currency]);
 
     return (
@@ -151,8 +150,21 @@ export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleI
                 </div>
             </div>
             <div className="f pos-r f-ac">
-                {isUSD && <label htmlFor={`amount-${currency?.symbol}`} className="token-amount-card__usd">$</label>}
-                <Input value={localValue} id={`amount-${currency?.symbol}`} disabled={locked} onFocus={handleOnFocus} onBlur={handleOnBlur} onUserInput={handleUserInput} className={`token-amount-card__input ${isUSD ? 'is-usd' : ''} mb-05 w-100`} placeholder="Enter an amount" />
+                {isUSD && (
+                    <label htmlFor={`amount-${currency?.symbol}`} className="token-amount-card__usd">
+                        $
+                    </label>
+                )}
+                <Input
+                    value={localValue}
+                    id={`amount-${currency?.symbol}`}
+                    disabled={locked}
+                    onFocus={handleOnFocus}
+                    onBlur={handleOnBlur}
+                    onUserInput={handleUserInput}
+                    className={`token-amount-card__input ${isUSD ? "is-usd" : ""} mb-05 w-100`}
+                    placeholder="Enter an amount"
+                />
             </div>
             {error && <div className="token-amount-card__error mt-05">{error}</div>}
         </div>

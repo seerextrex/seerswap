@@ -42,14 +42,14 @@ function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLock
     const tokenRatio = useMemo(() => {
         if (!basePrice || !quotePrice) return "Loading...";
 
-        return basePrice.divide(quotePrice).toSignificant(5);
+        return String((+basePrice.toSignificant(5) / +quotePrice.toSignificant(5)).toFixed(5));
     }, [basePrice, quotePrice]);
 
-    useEffect(() => {
-        if (basePrice && quotePrice) {
-            changeQuotePriceHandler(tokenRatio);
-        }
-    }, [basePrice, quotePrice, tokenRatio]);
+    // useEffect(() => {
+    //     if (basePrice && quotePrice) {
+    //         changeQuotePriceHandler(tokenRatio);
+    //     }
+    // }, [basePrice, quotePrice, tokenRatio]);
 
     return (
         <div className={`token-price ${isSelected ? "main" : "side"} ws-no-wrap mxs_fs-075`}>
@@ -100,7 +100,7 @@ function USDPriceField({
     const _price = useMemo(() => (price ? price.toSignificant(5) : "Loading..."), [price]);
 
     return (
-        <div className={`usd-price-field f ac ws-no-wrap ${isSelected ? "main" : "side"}`}>
+        <div className={`usd-price-field w-100 f ac ws-no-wrap ${isSelected ? "main" : "side"}`}>
             <div className="usd-price">
                 <span className={"usd-price__amount"}>1 {symbol}</span>
                 <span className={"usd-price__separator"}> = </span>
@@ -108,7 +108,7 @@ function USDPriceField({
                 {price ? (
                     <span className={`usd-price__price`}>{_price}</span>
                 ) : isSelected ? (
-                    <Input className={`ol-n usd-price__input`} value={userUSD || ""} onUserInput={(e: string) => changeHandler(e)} />
+                    <Input className={`ol-n usd-price__input`} value={userUSD || ""} onUserInput={(e: string) => changeHandler(e)} placeholder={`${symbol} in $`} />
                 ) : (
                     <span> - </span>
                 )}
@@ -167,31 +167,70 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
 
     const isLocked = useMemo(() => Boolean(basePriceUSD && quotePriceUSD), [basePriceUSD, quotePriceUSD]);
 
+    useEffect(() => {
+        if (!initialUSDPrices.CURRENCY_A && basePriceUSD) {
+            dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: basePriceUSD.toSignificant(8) }));
+        }
+        if (!initialUSDPrices.CURRENCY_B && quotePriceUSD) {
+            dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: quotePriceUSD.toSignificant(8) }));
+        }
+        if (!initialTokenPrice && basePriceUSD && quotePriceUSD) {
+            dispatch(setInitialTokenPrice({ typedValue: String((+basePriceUSD.toSignificant(8) / +quotePriceUSD.toSignificant(8)).toFixed(5)) }));
+        }
+    }, [basePriceUSD, quotePriceUSD]);
+
     const isUSD = useMemo(() => priceFormat === PriceFormats.USD, [priceFormat]);
 
     const handleUSDChange = useCallback(
-        (field: Field, typedValue: string) => {
+        (field: Field, _typedValue: string) => {
+            if (!_typedValue) {
+                dispatch(setInitialTokenPrice({ typedValue: "" }));
+                dispatch(setInitialUSDPrices({ field, typedValue: "" }));
+                startPriceHandler("");
+                if (field === Field.CURRENCY_A) {
+                    setUserBaseCurrencyUSD("");
+                } else {
+                    setUserQuoteCurrencyUSD("");
+                }
+                setUserQuoteCurrencyToken("");
+                return;
+            }
+
+            const typedValue = String(parseFloat(_typedValue));
+
             dispatch(setInitialUSDPrices({ field, typedValue }));
 
-            if (!typedValue) return
-
             if (field === Field.CURRENCY_A) {
-                setUserBaseCurrencyUSD(typedValue);
-                const priceB = initialUSDPrices.CURRENCY_B || quotePriceUSD?.toSignificant(5)
+                setUserBaseCurrencyUSD(_typedValue);
+                const priceB = initialUSDPrices.CURRENCY_B || quotePriceUSD?.toSignificant(5);
                 if (priceB) {
-                    startPriceHandler(String(+typedValue / +priceB));
-                    setUserQuoteCurrencyToken(String(+typedValue / +priceB));
-                    dispatch(setInitialTokenPrice({ typedValue: String(+typedValue / +priceB) }));
+                    if (!+typedValue) {
+                        startPriceHandler("");
+                        setUserQuoteCurrencyToken("");
+                        dispatch(setInitialTokenPrice({ typedValue: "" }));
+                    } else {
+                        const newPriceA = (+typedValue / (+priceB || 1)).toFixed(8);
+                        startPriceHandler(String(newPriceA));
+                        setUserQuoteCurrencyToken(String(newPriceA));
+                        dispatch(setInitialTokenPrice({ typedValue: String(newPriceA) }));
+                    }
                 }
             }
 
             if (field === Field.CURRENCY_B) {
-                setUserQuoteCurrencyUSD(typedValue);
-                const priceA = initialUSDPrices.CURRENCY_A || basePriceUSD?.toSignificant(5)
+                setUserQuoteCurrencyUSD(_typedValue);
+                const priceA = initialUSDPrices.CURRENCY_A || basePriceUSD?.toSignificant(5);
                 if (priceA) {
-                    startPriceHandler(String(+priceA / +typedValue));
-                    setUserQuoteCurrencyToken(String(+priceA / +typedValue));
-                    dispatch(setInitialTokenPrice({ typedValue: String(+priceA / +typedValue) }));
+                    if (!+typedValue) {
+                        startPriceHandler("");
+                        setUserQuoteCurrencyToken("");
+                        dispatch(setInitialTokenPrice({ typedValue: "" }));
+                    } else {
+                        const newPriceB = (+priceA / +typedValue).toFixed(8);
+                        startPriceHandler(String(newPriceB));
+                        setUserQuoteCurrencyToken(String(newPriceB));
+                        dispatch(setInitialTokenPrice({ typedValue: String(newPriceB) }));
+                    }
                 }
             }
         },
@@ -199,30 +238,49 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
     );
 
     const handleTokenChange = useCallback(
-        (typedValue: string) => {
+        (_typedValue: string) => {
+            if (!_typedValue) {
+                dispatch(setInitialTokenPrice({ typedValue: "" }));
+                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: "" }));
+                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: "" }));
+                startPriceHandler("");
+                setUserBaseCurrencyUSD("");
+                setUserQuoteCurrencyUSD("");
+                setUserQuoteCurrencyToken("");
+                return;
+            }
+
+            setUserQuoteCurrencyToken(_typedValue);
+
+            const typedValue = String(parseFloat(_typedValue));
+
             dispatch(setInitialTokenPrice({ typedValue }));
-            setUserQuoteCurrencyToken(typedValue);
 
             startPriceHandler(typedValue);
-            setUserQuoteCurrencyToken(typedValue);
 
             const usdA = initialUSDPrices.CURRENCY_A;
             const usdB = initialUSDPrices.CURRENCY_B;
 
-            if (!typedValue) return
-
-            if (usdA) {
-                const newUSDA = (+usdA * +typedValue) / +initialTokenPrice;
+            if (usdA !== "0") {
+                const newUSDA = ((+usdA * +typedValue) / (+initialTokenPrice || 1)).toFixed(8);
                 dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: String(newUSDA) }));
                 setUserBaseCurrencyUSD(String(newUSDA));
                 startPriceHandler(String(newUSDA));
+            } else {
+                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: "" }));
+                setUserBaseCurrencyUSD("");
+                startPriceHandler("");
             }
 
-            if (usdB) {
-                const newUSDB = (+usdB * +typedValue) / +initialTokenPrice;
+            if (usdB !== "0") {
+                const newUSDB = ((+usdB * +typedValue) / (+initialTokenPrice || 1)).toFixed(8);
                 dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: String(newUSDB) }));
                 setUserQuoteCurrencyUSD(String(newUSDB));
                 startPriceHandler(String(newUSDB));
+            } else {
+                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: "" }));
+                setUserQuoteCurrencyUSD("");
+                startPriceHandler("");
             }
         },
         [userBaseCurrencyUSD, userQuoteCurrencyUSD, initialTokenPrice, initialUSDPrices, handleUSDChange]
@@ -253,7 +311,7 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
                             basePrice={basePriceUSD}
                             quotePrice={quotePriceUSD}
                             isLocked={isLocked}
-                            userQuoteCurrencyToken={initialTokenPrice}
+                            userQuoteCurrencyToken={userQuoteCurrencyToken}
                             changeQuotePriceHandler={(v: string) => handleTokenChange(v)}
                             isSelected={priceFormat === PriceFormats.TOKEN}
                         ></TokenPrice>
@@ -264,8 +322,8 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
                             basePrice={basePriceUSD}
                             quotePrice={quotePriceUSD}
                             isLocked={isLocked}
-                            userBaseCurrencyUSD={initialUSDPrices.CURRENCY_A}
-                            userQuoteCurrencyUSD={initialUSDPrices.CURRENCY_B}
+                            userBaseCurrencyUSD={userBaseCurrencyUSD}
+                            userQuoteCurrencyUSD={userQuoteCurrencyUSD}
                             changeBaseCurrencyUSDHandler={(v: string) => handleUSDChange(Field.CURRENCY_A, v)}
                             changeQuoteCurrencyUSDHandler={(v: string) => handleUSDChange(Field.CURRENCY_B, v)}
                             isSelected={priceFormat === PriceFormats.USD}

@@ -13,7 +13,7 @@ import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from "constants/tokens";
 import { useCallback, useMemo } from "react";
 
-import { useAppDispatch } from 'state/hooks'
+import { useAppDispatch } from "state/hooks";
 import { useActivePreset } from "state/mint/v3/hooks";
 
 import { Check } from "react-feather";
@@ -36,16 +36,16 @@ interface IRangeSelector {
 export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, disabled }: IRangeSelector) {
     const { startPriceTypedValue } = useV3MintState();
 
-    const dispatch = useAppDispatch()
-    const activePreset = useActivePreset()
+    const dispatch = useAppDispatch();
+    const activePreset = useActivePreset();
 
     const currencyAUSDC = useUSDCPrice(currencyA ?? undefined);
     const currencyBUSDC = useUSDCPrice(currencyB ?? undefined);
 
-    //TODO - create one main isUSD 
+    //TODO - create one main isUSD
     const isUSD = useMemo(() => {
-        return priceFormat === PriceFormats.USD
-    }, [])
+        return priceFormat === PriceFormats.USD;
+    }, []);
 
     const isStablecoinPair = useMemo(() => {
         if (!currencyA || !currencyB) return false;
@@ -56,8 +56,13 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
     }, [currencyA, currencyB]);
 
     // get value and prices at ticks
-    const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = mintInfo.ticks;
-    const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = mintInfo.pricesAtTicks;
+    const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = useMemo(() => {
+        return mintInfo.ticks;
+    }, [mintInfo]);
+
+    const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = useMemo(() => {
+        return mintInfo.pricesAtTicks;
+    }, [mintInfo]);
 
     const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } = useRangeHopCallbacks(
         currencyA ?? undefined,
@@ -89,10 +94,9 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
         if (!mintInfo.price) return;
 
         return mintInfo.invertPrice ? mintInfo.price.invert().toSignificant(5) : mintInfo.price.toSignificant(5);
-
     }, [mintInfo]);
 
-    const currentPriceInUSD = useUSDCValue(tryParseAmount(price, currencyB ?? undefined))
+    const currentPriceInUSD = useUSDCValue(tryParseAmount(Number(price).toFixed(5), currencyB ?? undefined));
 
     const isBeforePrice = useMemo(() => {
         if (!price || !leftPrice || !rightPrice) return false;
@@ -108,25 +112,23 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
 
     const handlePresetRangeSelection = useCallback(
         (preset: IPresetArgs | null) => {
-
             if (!price) return;
 
-            dispatch(updateSelectedPreset({preset: preset ? preset.type : null}))
+            dispatch(updateSelectedPreset({ preset: preset ? preset.type : null }));
 
             if (preset && preset.type === Presets.FULL) {
                 getSetFullRange();
             } else {
-                onLeftRangeInput(preset ? String(+price * preset.min) : '');
-                onRightRangeInput(preset ? String(+price * preset.max) : '');
+                onLeftRangeInput(preset ? String(+price * preset.min) : "");
+                onRightRangeInput(preset ? String(+price * preset.max) : "");
             }
-
         },
         [price]
     );
 
     return (
         <div className="f c">
-            <StepTitle title={'Select a range'} isCompleted={isCompleted} step={additionalStep ? 3 : 2} />
+            <StepTitle title={"Select a range"} isCompleted={isCompleted} step={additionalStep ? 3 : 2} />
             <div className="f">
                 <div className="f c">
                     <div className="mb-1">

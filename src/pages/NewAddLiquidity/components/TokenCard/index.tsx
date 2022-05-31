@@ -21,7 +21,7 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency }: ITo
     }, [toggleSelectModal]);
 
     return (
-        <div className="token-card p-1">
+        <div className="token-card p-1 mxs_w-100">
             {selectModal && (
                 <CurrencySearchModal
                     isOpen={selectModal}

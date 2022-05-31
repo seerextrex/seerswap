@@ -18,7 +18,7 @@ export function TokenRatio({ currencyA, currencyB, token0Ratio, token1Ratio }: I
     }, [token0Ratio, token1Ratio]);
 
     return (
-        <div className={"preset-ranges-wrapper pl-1"}>
+        <div className={"preset-ranges-wrapper pl-1 mxs_pl-0"}>
             <div className="mb-1 f f-ac">
                 <Divide style={{ display: "block", fill: "currentcolor" }} size={15} />
                 <span className="ml-05">

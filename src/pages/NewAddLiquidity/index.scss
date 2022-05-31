@@ -78,7 +78,22 @@
 @media screen and (max-width: 960px) {
   .add-liquidity-page {
     width: 100%;
+    padding: 2rem 1rem 0 1rem;
+
+    &__stepper {
+      overflow: auto;
+      white-space: nowrap;
+      margin-left: -1rem;
+      margin-right: -1rem;
+    }
   }
+
+  .add-buttons {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-top: 6rem !important;
+  }
+
 }
 
 @media screen and (max-width: 720px) {

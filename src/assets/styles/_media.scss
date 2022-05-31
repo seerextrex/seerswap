@@ -984,6 +984,12 @@
       &-c {
         flex-direction: column;
       }
+      &-r {
+        flex-direction: row;
+      }
+      &-cr {
+        flex-direction: column-reverse;
+      }
     }
 
     &_p {

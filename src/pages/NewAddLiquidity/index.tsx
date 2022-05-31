@@ -247,13 +247,13 @@ export function NewAddLiquidityPage({
 
     return (
         <div className="add-liquidity-page">
-            <div className="add-liquidity-page__header f mb-1">
+            <div className="add-liquidity-page__header f mxs_fd-c mb-1">
                 <div className="add-liquidity-page__header-title">Add liquidity</div>
-                <div className="ml-a f f-ac ">
+                <div className="ml-a mxs_ml-0 mxs_mt-1 f f-ac ">
                     <div className="mr-1">
                         <PriceFormatToggler handlePriceFormat={handlePriceFormat} />
                     </div>
-                    <div>
+                    <div className="mxs_ml-a">
                         <SettingsTab placeholderSlippage={allowedSlippage} />
                     </div>
                 </div>
@@ -378,7 +378,7 @@ export function NewAddLiquidityPage({
                     )}
                 </div>
             ) : !account ? (
-                <div className="add-buttons f f-ac f-jc mt-2">
+                <div className="add-buttons f f-ac f-jc mt-2 mxs_mt-1">
                     <button className="add-buttons__next f f-jc f-ac ml-a" onClick={toggleWalletModal}>
                         Connect Wallet
                     </button>

@@ -18,3 +18,11 @@
     }
 
 }
+
+@media screen and (max-width: 960px) {
+    .token-pairs {
+        &-plus {
+            transform: rotate(90deg);
+        }
+    }
+}

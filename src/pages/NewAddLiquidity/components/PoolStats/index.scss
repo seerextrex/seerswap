@@ -39,3 +39,37 @@
         border: 1px solid #31694c;
     }
 }
+
+
+@media screen and (max-width: 960px) {
+    .pool-stats {
+        &-wrapper {
+
+        }
+
+        &__title {
+            border: none;
+        }
+
+        &__fee, &__apr {
+            width: 100%;
+            text-align: center;
+        }
+
+        &__fee {
+            border-radius: 0 0 0 8px;
+        }
+
+        &__apr {
+            border-radius: 0 0 8px 0;
+        }
+    }
+  }
+  
+  @media screen and (max-width: 720px) {
+  
+  }
+  
+  @media screen and (max-width: 500px) {
+  
+  }

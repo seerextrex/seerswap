@@ -25,3 +25,20 @@
         border: 1px solid #233d65;
     }
 }
+
+
+@media screen and (max-width: 960px) {
+    .range {
+        &__chart {
+            width: 100%;
+        }
+    }
+  }
+  
+  @media screen and (max-width: 720px) {
+  
+  }
+  
+  @media screen and (max-width: 500px) {
+  
+  }

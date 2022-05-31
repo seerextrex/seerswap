@@ -129,7 +129,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
     return (
         <div className="f c">
             <StepTitle title={"Select a range"} isCompleted={isCompleted} step={additionalStep ? 3 : 2} />
-            <div className="f">
+            <div className="f mxs_fd-cr">
                 <div className="f c">
                     <div className="mb-1">
                         <RangeSelector
@@ -172,7 +172,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                         {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
                     </div>
                 </div>
-                <div className="ml-2">
+                <div className="ml-2 mxs_ml-0">
                     {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} priceFormat={priceFormat} />}
                     <PresetRanges isStablecoinPair={isStablecoinPair} activePreset={activePreset} handlePresetRangeSelection={handlePresetRangeSelection} />
                 </div>

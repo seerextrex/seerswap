@@ -47,6 +47,10 @@
     }
 }
 
+.current-price {
+    flex-direction: column;
+}
+
 .current-price-tip {
     background-color: #419fe8;
     width: fit-content;
@@ -54,3 +58,4 @@
     border-radius: 10px;
     margin-top: 6px;
 }
+

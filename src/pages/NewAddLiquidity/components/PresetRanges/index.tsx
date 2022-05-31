@@ -8,7 +8,9 @@ import { Presets } from "state/mint/v3/reducer";
 import "./index.scss";
 
 export interface IPresetArgs {
-    type: Presets; min: number; max: number;
+    type: Presets;
+    min: number;
+    max: number;
 }
 
 interface IPresetRanges {
@@ -25,7 +27,6 @@ enum PresetProfits {
 }
 
 export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRangeSelection }: IPresetRanges) {
-
     const ranges = useMemo(() => {
         if (isStablecoinPair)
             return [
@@ -75,9 +76,8 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
         ];
     }, [isStablecoinPair]);
 
-
     return (
-        <div className={"preset-ranges-wrapper pl-1"}>
+        <div className={"preset-ranges-wrapper pl-1 mxs_pl-0 mxs_mb-1"}>
             <div className="mb-1 f f-ac">
                 <Layers style={{ display: "block", transform: "rotate(90deg)" }} size={15} />
                 <span className="ml-05">

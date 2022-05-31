@@ -2,7 +2,7 @@ import { Price, Token, Currency } from "@uniswap/sdk-core";
 import Input from "components/NumericalInput";
 import { USDC_POLYGON } from "constants/tokens";
 import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
-import { useUSDCValue } from "hooks/useUSDCPrice";
+import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bound } from "state/mint/v3/actions";
 import { useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
@@ -124,8 +124,8 @@ export function RangeSelector({
     }, [price, isUSD, initialUSDPrices, initialTokenPrice, currentPriceInUSD]);
 
     return (
-        <div className="f f-jb">
-            <div className={`min-price`} style={{ order: isAfterPrice ? 2 : 1 }}>
+        <div className="f f-jb mxs_fd-c">
+            <div className={`min-price mxs_mb-1`} style={{ order: isAfterPrice ? 2 : 1 }}>
                 <RangePart
                     value={ticksAtLimit[Bound.LOWER] ? "0" : leftPrice?.toSignificant(5) ?? ""}
                     onUserInput={onLeftRangeInput}
@@ -144,14 +144,14 @@ export function RangeSelector({
                 />
             </div>
             {price && (
-                <div className="current-price f c f-ac" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
-                    <div className="mb-05" style={{ whiteSpace: "nowrap" }}>
+                <div className="current-price f f-ac mxs_fd-r" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
+                    <div className="mb-05 mxs_mt-05" style={{ whiteSpace: "nowrap" }}>
                         {initial ? `Initial ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price` : `Current ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price`}
                     </div>
-                    <div className="current-price-tip ta-c">{`${currentPrice || "Loading..."}`}</div>
+                    <div className="current-price-tip mxs_ml-a ta-c">{`${currentPrice || "Loading..."}`}</div>
                 </div>
             )}
-            <div className="max-price" style={{ order: isBeforePrice ? 2 : 3 }}>
+            <div className="max-price mxs_mt-1" style={{ order: isBeforePrice ? 2 : 3 }}>
                 <RangePart
                     value={ticksAtLimit[Bound.UPPER] ? "∞" : rightPrice?.toSignificant(5) ?? ""}
                     onUserInput={onRightRangeInput}
@@ -188,9 +188,8 @@ function RangePart({
     title,
     priceFormat,
 }: IRangePart) {
-    // let user type value and only update parent value on blur
-    const [localValue, setLocalValue] = useState("");
-    const [useLocalValue, setUseLocalValue] = useState(false);
+    const [localUSDValue, setLocalUSDValue] = useState("");
+    const [localTokenValue, setLocalTokenValue] = useState("");
 
     const isUSD = useMemo(() => {
         return priceFormat === PriceFormats.USD;
@@ -198,56 +197,38 @@ function RangePart({
 
     const valueUSD = useUSDCValue(tryParseAmount(value === "∞" || value === "0" ? undefined : Number(value).toFixed(5), tokenB));
     const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_POLYGON), tokenB);
-
-    // animation if parent value updates local value
-    const handleOnFocus = () => {
-        setUseLocalValue(true);
-    };
+    const usdPrice = useUSDCPrice(tokenB ?? undefined);
 
     const handleOnBlur = useCallback(() => {
-        setUseLocalValue(false);
-    }, [localValue, onUserInput]);
+        if (isUSD && usdPrice) {
+            if (tokenB?.wrapped.address === USDC_POLYGON.address) {
+                onUserInput(localUSDValue);
+            } else {
+                if (tokenValue && tokenValue.trade) {
+                    onUserInput(String(+localUSDValue * +tokenValue.trade?.outputAmount.toSignificant(5)));
+                    setLocalTokenValue(String(+localUSDValue * +usdPrice.toSignificant(5)));
+                } else {
+                    onUserInput(localUSDValue);
+                    setLocalTokenValue(localUSDValue);
+                }
+            }
+            setLocalUSDValue(localUSDValue);
+        } else if (!isUSD) {
+            if (usdPrice) {
+                setLocalUSDValue(String(+localTokenValue * +usdPrice.toSignificant(5)));
+            }
+            onUserInput(localTokenValue);
+        }
+    }, [localTokenValue, localUSDValue, tokenValue, valueUSD, usdPrice, onUserInput]);
 
     // for button clicks
     const handleDecrement = useCallback(() => {
-        setUseLocalValue(false);
         onUserInput(decrement());
     }, [decrement, onUserInput]);
 
     const handleIncrement = useCallback(() => {
-        setUseLocalValue(false);
         onUserInput(increment());
     }, [increment, onUserInput]);
-
-    const handleInput = useCallback(
-        (val) => {
-            setLocalValue(val.trim());
-            if (isUSD && valueUSD && tokenValue && tokenValue.trade) {
-                onUserInput(String(val.trim() * +tokenValue.trade.outputAmount.toSignificant(5)));
-            } else if (!isUSD) {
-                onUserInput(val.trim());
-            }
-        },
-        [onUserInput, valueUSD, tokenValue, isUSD]
-    );
-
-    useEffect(() => {
-        if (localValue !== value && !useLocalValue) {
-            setTimeout(() => {
-                if (isUSD && valueUSD) {
-                    setLocalValue(valueUSD.toSignificant(5)); // reset local value to match parent
-                } else {
-                    setLocalValue(value);
-                }
-            }, 0);
-        }
-    }, [localValue, useLocalValue, value, isUSD, valueUSD]);
-
-    useEffect(() => {
-        if (value && isUSD && valueUSD) {
-            setLocalValue(valueUSD.toSignificant(5));
-        }
-    }, [isUSD, valueUSD]);
 
     return (
         <div>
@@ -269,13 +250,12 @@ function RangePart({
                     </label>
                 )}
                 <Input
-                    value={localValue}
+                    value={isUSD ? localUSDValue : localTokenValue}
                     id={title}
-                    onFocus={handleOnFocus}
                     onBlur={handleOnBlur}
                     className={`range-input ${isUSD && valueUSD ? "is-usd" : ""}`}
                     disabled={disabled || locked}
-                    onUserInput={handleInput}
+                    onUserInput={(val) => (isUSD ? setLocalUSDValue(val.trim()) : setLocalTokenValue(val.trim()))}
                     placeholder="0.00"
                 />
             </div>

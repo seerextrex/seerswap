@@ -27,7 +27,7 @@ interface IEnterAmounts {
     mintInfo: IDerivedMintInfo;
     isCompleted: boolean;
     additionalStep: boolean;
-    priceFormat: PriceFormats
+    priceFormat: PriceFormats;
 }
 
 export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat }: IEnterAmounts) {
@@ -132,47 +132,47 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
 
     return (
         <div className="f c">
-            <StepTitle title={'Enter an amounts'} isCompleted={isCompleted} step={additionalStep ? 4 : 3} />
-            <div className="f">
-            <div className="f c">
-                <div className="mb-1" style={{ overflow: "hidden", borderRadius: "8px" }}>
-                    <TokenAmountCard
-                        currency={currencyA}
-                        value={formattedAmounts[Field.CURRENCY_A]}
-                        fiatValue={usdcValues[Field.CURRENCY_A]}
-                        handleInput={onFieldAInput}
-                        handleMax={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? "")}
-                        showApproval={showApprovalA}
-                        isApproving={approvalA === ApprovalState.PENDING}
-                        handleApprove={approveACallback}
-                        disabled={true}
-                        locked={mintInfo.depositADisabled}
-                        isMax={!!atMaxAmounts[Field.CURRENCY_A]}
-                        error={currencyAError}
-                        priceFormat={priceFormat}
-                    />
+            <StepTitle title={"Enter an amounts"} isCompleted={isCompleted} step={additionalStep ? 4 : 3} />
+            <div className="f mxs_fd-cr">
+                <div className="f c mxs_w-100">
+                    <div className="mb-1" style={{ borderRadius: "8px" }}>
+                        <TokenAmountCard
+                            currency={currencyA}
+                            value={formattedAmounts[Field.CURRENCY_A]}
+                            fiatValue={usdcValues[Field.CURRENCY_A]}
+                            handleInput={onFieldAInput}
+                            handleMax={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? "")}
+                            showApproval={showApprovalA}
+                            isApproving={approvalA === ApprovalState.PENDING}
+                            handleApprove={approveACallback}
+                            disabled={true}
+                            locked={mintInfo.depositADisabled}
+                            isMax={!!atMaxAmounts[Field.CURRENCY_A]}
+                            error={currencyAError}
+                            priceFormat={priceFormat}
+                        />
+                    </div>
+                    <div>
+                        <TokenAmountCard
+                            currency={currencyB}
+                            value={formattedAmounts[Field.CURRENCY_B]}
+                            fiatValue={usdcValues[Field.CURRENCY_B]}
+                            handleInput={onFieldBInput}
+                            handleMax={() => onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "")}
+                            showApproval={showApprovalB}
+                            isApproving={approvalB === ApprovalState.PENDING}
+                            handleApprove={approveBCallback}
+                            disabled={false}
+                            locked={mintInfo.depositBDisabled}
+                            isMax={!!atMaxAmounts[Field.CURRENCY_B]}
+                            error={currencyBError}
+                            priceFormat={priceFormat}
+                        />
+                    </div>
                 </div>
-                <div>
-                    <TokenAmountCard
-                        currency={currencyB}
-                        value={formattedAmounts[Field.CURRENCY_B]}
-                        fiatValue={usdcValues[Field.CURRENCY_B]}
-                        handleInput={onFieldBInput}
-                        handleMax={() => onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? "")}
-                        showApproval={showApprovalB}
-                        isApproving={approvalB === ApprovalState.PENDING}
-                        handleApprove={approveBCallback}
-                        disabled={false}
-                        locked={mintInfo.depositBDisabled}
-                        isMax={!!atMaxAmounts[Field.CURRENCY_B]}
-                        error={currencyBError}
-                        priceFormat={priceFormat}
-                    />
+                <div className="full-h ml-2 mxs_ml-0 mxs_mb-2">
+                    <TokenRatio currencyA={currencyA} currencyB={currencyB} token0Ratio={token0Ratio} token1Ratio={token1Ratio} />
                 </div>
-            </div>
-            <div className="full-h ml-2">
-                <TokenRatio currencyA={currencyA} currencyB={currencyB} token0Ratio={token0Ratio} token1Ratio={token1Ratio} />
-            </div>
             </div>
         </div>
     );

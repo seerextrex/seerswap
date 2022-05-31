@@ -230,6 +230,14 @@ function RangePart({
         onUserInput(increment());
     }, [increment, onUserInput]);
 
+    useEffect(() => {
+        if (usdPrice) {
+            setLocalUSDValue(String(+value * +usdPrice.toSignificant(5)));
+            setLocalTokenValue(value);
+        }
+        
+    }, [usdPrice, value])
+
     return (
         <div>
             <div className="mb-05 f f-ac">

@@ -78,9 +78,12 @@ export const FETCH_ETERNAL_FARM = () => gql`
       rewardRate
       bonusRewardRate
       isDetached
+      level1multiplier
+      level2multiplier
+      level3multiplier
       tokenAmountForLevel1
-      tokenAmountForLevel1
-      tokenAmountForLevel1
+      tokenAmountForLevel2
+      tokenAmountForLevel3
       multiplierToken
     }
   }

@@ -230,6 +230,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                         <div>
                             {stakedNFTs.map((el, i) => {
                                 const date = new Date(+el.enteredInEternalFarming * 1000).toLocaleString();
+
                                 return (
                                     <div className={"my-stakes__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
                                         <PositionHeader el={el} setUnstaking={setUnstaking} setSendModal={setSendModal} unstaking={unstaking} withdrawHandler={withdrawHandler}/>
@@ -332,6 +333,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     date={date}
                                                     enteredInEternalFarming={el.enteredInEternalFarming}
                                                     eternalFarming={el.eternalFarming}
+                                                    el={el}
                                                 />
                                                 {el.eternalFarming ? (
                                                     <>

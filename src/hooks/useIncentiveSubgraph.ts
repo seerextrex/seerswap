@@ -460,11 +460,7 @@ export function useIncentiveSubgraph() {
                         createdAtTimestamp: +createdAtTimestamp,
                         incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
-                        lockedToken: {
-                            ..._multiplierToken,
-                            //@ts-ignore
-                            amount: position.tokensLockedIncentive
-                    },
+                        lockedToken: _multiplierToken,
                         tokenAmountForLevel1,
                         tokenAmountForLevel2,
                         tokenAmountForLevel3,
@@ -492,7 +488,22 @@ export function useIncentiveSubgraph() {
 
                 if (position.eternalFarming) {
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime, multiplierToken } = await fetchEternalFarming(position.eternalFarming)
+
+
+                    const {
+                        rewardToken,
+                        bonusRewardToken,
+                        pool,
+                        startTime,
+                        endTime,
+                        multiplierToken,
+                        level1multiplier,
+                        level2multiplier,
+                        level3multiplier,
+                        tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3
+                    } = await fetchEternalFarming(position.eternalFarming)
 
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],
@@ -518,12 +529,13 @@ export function useIncentiveSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
-
-                        lockedToken: {
-                            ..._multiplierToken,
-                            // @ts-ignore
-                            amount: position.tokensLockedEternal
-                        },
+                        lockedToken: _multiplierToken,
+                        level1multiplier,
+                        level2multiplier,
+                        level3multiplier,
+                        tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3,
                         //@ts-ignore
                         pool: _pool,
                         eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),

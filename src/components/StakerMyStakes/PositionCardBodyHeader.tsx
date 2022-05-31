@@ -77,12 +77,6 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
 
     }, [el, farmingType])
 
-    useEffect(() => {
-        console.log(farmingType + ':')
-        console.log(el)
-        // console.log(tierMultiplier)
-    }, [el])
-
     return (
         <>
             <div className={`flex-s-between b mb-1 fs-125 ${farmingType === FarmingType.ETERNAL ? 'farming-card-header ms_fd-c' : ''}`}>
@@ -98,36 +92,37 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                 {(tierLevel && tierName) &&
                     <div className={'f f-ac mxs_ml-0 mxs_mv-1 ms_f-js w-100'}>
                         {/* <CurrencyLogo currency={new Token(137, el.lockedToken.id, 18, el.lockedToken.symbol) as WrappedCurrency} size={"35px"} /> */}
-                        <div style={{ width: '35px', height: '35px', background: '#324e64', borderRadius: '50%' }} className={'f f-ac f-jc'}>
-                            <img src={tierLevel} width={30} height={30} />
+                        <div style={{ width: '30px', height: '30px', background: '#324e64', borderRadius: '50%' }} className={'f f-ac f-jc'}>
+                            <img src={tierLevel} width={25} height={25} />
                         </div>
                         <div className={'ml-05'}>
                             <div className={'b fs-075'} style={{ marginBottom: '2px' }}>TIER</div>
-                            <div>{tierName}</div>
+                            <div className={'fs-1'}>{tierName}</div>
                         </div>
                     </div>
                 }
                 {
                     el?.lockedToken && (+(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal) > 0) &&
                     <div className={'f f-ac f-jc ml-2 ms_ml-0 ms_f-js ms_mv-1 mxs_mv-1 w-100'}>
-                        <CurrencyLogo currency={new Token(80001, el?.lockedToken.id, 18, el?.lockedToken.symbol) as WrappedCurrency} size={'35px'} />
+                        <CurrencyLogo currency={new Token(80001, el?.lockedToken.id, 18, el?.lockedToken.symbol) as WrappedCurrency} size={'30px'} />
                         <div className={'ml-05'}>
                             <div className={'b fs-075'} style={{ marginBottom: '2px' }}>LOCKED</div>
-                            <div>{`${formatAmountTokens(+formatUnits(BigNumber.from(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal), el?.lockedToken.decimals))} ${el?.lockedToken.symbol}`}</div>
+                            <div
+                                className={'fs-1'}>{`${formatAmountTokens(+formatUnits(BigNumber.from(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal), el?.lockedToken.decimals))} ${el?.lockedToken.symbol}`}</div>
                         </div>
                     </div>
                 }
                 {tierMultiplier && (
-                    <span className={'fs-1 l w-100 ms_ta-l ms_ta-l ta-r hide-m'}>
-                    <span>Tier bonus: </span>
-                    <span style={{ color: '#33FF89' }}>{`+${tierMultiplier / 100}%`}</span>
-                </span>
+                    <div className={'fs-095 w-100 pl-2 ms_ta-l ms_ta-l ta-l hide-m'}>
+                        <div className={'b fs-075'} style={{ marginBottom: '2px' }}>TIER BONUS</div>
+                        <div style={{ color: '#33FF89' }}>{`+${tierMultiplier / 100}%`}</div>
+                    </div>
                 )}
             </div>
             {tierMultiplier && (
-                <span className={'fs-1 l w-100 ms_ta-l i-f  mb-1 show-m'}>
-                    <span>Tier bonus: </span>
-                    <span style={{ color: '#33FF89' }}>{`+${tierMultiplier / 100}%`}</span>
+                <span className={'fs-1 l w-100 ms_ta-l n mb-1 show-m'}>
+                    <div>Tier bonus: </div>
+                    <div style={{ color: '#33FF89' }}>{`+${tierMultiplier / 100}%`}</div>
                 </span>
             )}
         </>

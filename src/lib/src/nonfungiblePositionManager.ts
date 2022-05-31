@@ -196,7 +196,6 @@ export abstract class NonfungiblePositionManager extends SelfPermit {
                     {
                         token0: position.pool.token0.address,
                         token1: position.pool.token1.address,
-                        fee: position.pool.fee,
                         tickLower: position.tickLower,
                         tickUpper: position.tickUpper,
                         amount0Desired: toHex(amount0Desired),
@@ -349,7 +348,6 @@ export abstract class NonfungiblePositionManager extends SelfPermit {
         return NonfungiblePositionManager.INTERFACE.encodeFunctionData('createAndInitializePoolIfNecessary', [
             pool.token0.address,
             pool.token1.address,
-            pool.fee,
             toHex(pool.sqrtRatioX96)
         ])
     }

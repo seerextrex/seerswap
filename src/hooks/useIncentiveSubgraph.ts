@@ -740,8 +740,9 @@ export function useIncentiveSubgraph() {
             const aprs: Aprs = await fetchEternalFarmAPR()
 
             let _eternalFarmings: FormattedEternalFarming[] = []
-
-            for (const farming of eternalFarmings.filter(farming => +farming.bonusRewardRate || +farming.rewardRate)) {
+            // TODO
+                // .filter(farming => +farming.bonusRewardRate || +farming.rewardRate)
+            for (const farming of eternalFarmings) {
                 const pool = await fetchPool(farming.pool)
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)

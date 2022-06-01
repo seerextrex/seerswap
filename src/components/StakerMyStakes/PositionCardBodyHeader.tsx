@@ -20,10 +20,13 @@ interface PositionCardBodyHeaderProps {
 }
 
 export default function PositionCardBodyHeader({ el, farmingType, date, enteredInEternalFarming, eternalFarming }: PositionCardBodyHeaderProps) {
-
     const tierLevel = useMemo(() => {
 
         if (!el?.tokensLockedEternal || !el?.levelIncentive || !el?.levelEternal || !el?.tokensLockedIncentive) return
+
+        // console.log(farmingType === FarmingType.FINITE ? +el?.levelIncentive : +el?.levelEternal)
+
+
 
         switch (farmingType === FarmingType.FINITE ? +el?.levelIncentive : +el?.levelEternal) {
             case 0:
@@ -77,9 +80,12 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
 
     }, [el, farmingType])
 
+    const isTier = useMemo(() => Boolean(tierLevel && tierName && tierMultiplier), [tierLevel, tierName, tierMultiplier])
+
+
     return (
         <>
-            <div className={`flex-s-between b mb-1 fs-125 ${farmingType === FarmingType.ETERNAL ? 'farming-card-header ms_fd-c' : ''}`}>
+            <div className={`flex-s-between b ${isTier ? 'mb-1' : 'mb-3'} fs-125 ${farmingType === FarmingType.ETERNAL ? 'farming-card-header ms_fd-c' : ''}`}>
                 <span className={'w-100'}>{farmingType === FarmingType.FINITE ? 'Limit ' : 'Infinite '} Farming</span>
                 {farmingType === FarmingType.ETERNAL && enteredInEternalFarming && eternalFarming && (
                     <span className={'fs-085 l w-100 mm_fs-075 ms_ta-l mxs_ta-l ta-r'}>
@@ -112,14 +118,14 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                         </div>
                     </div>
                 }
-                {tierMultiplier && (
+                {Boolean(+tierMultiplier) && (
                     <div className={'fs-095 w-100 pl-2 ms_ta-l ms_ta-l ta-l hide-m'}>
                         <div className={'b fs-075'} style={{ marginBottom: '2px' }}>TIER BONUS</div>
                         <div style={{ color: '#33FF89' }}>{`+${tierMultiplier / 100}%`}</div>
                     </div>
                 )}
             </div>
-            {tierMultiplier && (
+            {Boolean(+tierMultiplier) && (
                 <span className={'fs-1 l w-100 ms_ta-l n mb-1 show-m'}>
                     <div>Tier bonus: </div>
                     <div style={{ color: '#33FF89' }}>{`+${tierMultiplier / 100}%`}</div>

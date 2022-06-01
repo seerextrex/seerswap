@@ -15,9 +15,11 @@ import { PriceFormats } from "../PriceFomatToggler";
 import { tryParseAmount } from "state/swap/hooks";
 import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
 import { USDC_POLYGON } from "constants/tokens";
+import { useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 
 interface ITokenAmountCard {
     currency: Currency | undefined | null;
+    otherCurrency: Currency | undefined | null;
     value: string;
     fiatValue: CurrencyAmount<Token> | null;
     handleMax: () => void;
@@ -30,58 +32,135 @@ interface ITokenAmountCard {
     isMax: boolean;
     error: string | undefined;
     priceFormat: PriceFormats;
+    isBase: boolean;
 }
 
-export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleInput, showApproval, handleApprove, isApproving, disabled, locked, isMax, error, priceFormat }: ITokenAmountCard) {
+export function TokenAmountCard({
+    currency,
+    otherCurrency,
+    value,
+    fiatValue,
+    handleMax,
+    handleInput,
+    showApproval,
+    handleApprove,
+    isApproving,
+    disabled,
+    locked,
+    isMax,
+    error,
+    priceFormat,
+    isBase,
+}: ITokenAmountCard) {
     const { account } = useActiveWeb3React();
 
     const balance = useCurrencyBalance(account ?? undefined, currency ? (currency.isNative ? currency.wrapped : currency) : undefined);
     const balanceUSD = useUSDCValue(balance);
 
-    const [localValue, setLocalValue] = useState("");
-    const [useLocalValue, setUseLocalValue] = useState(false);
+    const [localUSDValue, setLocalUSDValue] = useState("");
+    const [localTokenValue, setLocalTokenValue] = useState("");
 
     const valueUSD = useUSDCValue(tryParseAmount(value, currency ? (currency.isNative ? currency.wrapped : currency) : undefined));
     const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_POLYGON), currency ?? undefined);
+
+    const currencyPrice = useUSDCPrice(currency ?? undefined);
+    const otherCurrencyPrice = useUSDCPrice(otherCurrency ?? undefined);
+
+    const initialUSDPrices = useInitialUSDPrices();
+    const initialTokenPrice = useInitialTokenPrice();
 
     const isUSD = useMemo(() => {
         return priceFormat === PriceFormats.USD;
     }, [priceFormat]);
 
-    const handleOnFocus = () => {
-        setUseLocalValue(true);
-    };
-
     const handleOnBlur = useCallback(() => {
-        setUseLocalValue(false);
-    }, [localValue, handleInput]);
+        if (currency?.wrapped.address === USDC_POLYGON.address) {
+            handleInput(localUSDValue);
+            return;
+        }
 
-    const handleUserInput = useCallback(
-        (val) => {
-            setLocalValue(val.trim());
-            if (currency && isUSD && tokenValue && tokenValue.trade) {
-                if (currency.wrapped.address === USDC_POLYGON.address) {
-                    handleInput(val.trim());
-                } else {
-                    handleInput(String((val.trim() * +tokenValue.trade.outputAmount.toSignificant(5)).toFixed(3)));
-                }
-            } else if (!isUSD) {
-                handleInput(val.trim());
+        if (isUSD && currencyPrice) {
+            // handleInput(String(+localUSDValue * +tokenValue.trade.outputAmount.toSignificant(5)));
+            handleInput(String(+localUSDValue / +currencyPrice.toSignificant(5)));
+            setLocalTokenValue(String(+localUSDValue / +currencyPrice.toSignificant(5)));
+        } else if (isUSD && isBase && initialTokenPrice && otherCurrencyPrice) {
+            handleInput(String(+localUSDValue * +initialTokenPrice * +otherCurrencyPrice.toSignificant(5)));
+            setLocalTokenValue(String(+localUSDValue * +initialTokenPrice * +otherCurrencyPrice.toSignificant(5)));
+        } else if (isUSD && initialUSDPrices.CURRENCY_A && initialUSDPrices.CURRENCY_B) {
+            const initialUSDPrice = isBase ? initialUSDPrices.CURRENCY_B : initialUSDPrices.CURRENCY_A;
+            handleInput(String(+localUSDValue / +initialUSDPrice));
+            setLocalTokenValue(String(+localUSDValue / +initialUSDPrice));
+        } else if (isUSD && initialTokenPrice && !isBase && otherCurrencyPrice) {
+            handleInput(String(+localUSDValue * +initialTokenPrice * +otherCurrencyPrice.toSignificant(5)));
+            setLocalTokenValue(String(+localUSDValue * +initialTokenPrice * +otherCurrencyPrice.toSignificant(5)));
+        } else if (!isUSD) {
+            if (currencyPrice) {
+                setLocalUSDValue(String(+localTokenValue * +currencyPrice.toSignificant(5)));
+            } else if (isBase && initialUSDPrices.CURRENCY_B) {
+                setLocalUSDValue(String(+localTokenValue * +initialUSDPrices.CURRENCY_B));
+            } else if (!isBase && initialUSDPrices.CURRENCY_A) {
+                setLocalUSDValue(String(+localTokenValue * +initialUSDPrices.CURRENCY_A));
             }
-        },
-        [handleInput, localValue, isUSD]
-    );
+            handleInput(localTokenValue);
+        }
+
+        // if (isUSD && isBase ? usdPriceA : usdPriceB) {
+        //     if (currency?.wrapped.address === USDC_POLYGON.address) {
+        //         handleInput(localUSDValue);
+        //     } else {
+        //         if (tokenValue && tokenValue.trade) {
+        //             handleInput(String(+localUSDValue * +tokenValue.trade?.outputAmount.toSignificant(5)));
+        //             setLocalTokenValue(String(+localUSDValue * +usdPriceA.toSignificant(5)));
+        //         } else {
+        //             handleInput(localUSDValue);
+        //             setLocalTokenValue(localUSDValue);
+        //         }
+        //     }
+        // } else if (isUSD && initialUSDPrices.CURRENCY_B) {
+        //     if (currency?.wrapped.address === USDC_POLYGON.address) {
+        //         handleInput(localUSDValue);
+        //     } else {
+        //         handleInput(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
+        //         setLocalTokenValue(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
+        //     }
+        // } else if (isUSD && initialTokenPrice && usdPriceA) {
+        //     if (currency?.wrapped.address === USDC_POLYGON.address) {
+        //         handleInput(localUSDValue);
+        //     } else {
+        //         handleInput(String(+localUSDValue * +initialTokenPrice * +usdPriceA.toSignificant(5)));
+        //         setLocalTokenValue(String(+localUSDValue * +initialTokenPrice * +usdPriceA.toSignificant(5)));
+        //     }
+        // } else if (!isUSD) {
+        //     if (usdPriceB) {
+        //         setLocalUSDValue(String(+localTokenValue * +usdPriceB.toSignificant(5)));
+        //     } else if (initialUSDPrices.CURRENCY_B) {
+        //         setLocalUSDValue(String(+localTokenValue * +initialUSDPrices.CURRENCY_B));
+        //     }
+        //     handleInput(localTokenValue);
+        // }
+    }, [localTokenValue, localUSDValue, tokenValue, valueUSD, currencyPrice, handleInput]);
 
     useEffect(() => {
-        if (localValue && useLocalValue) return;
+        if (value) {
+            console.log("VALUE", value);
 
-        if (isUSD && valueUSD) {
-            setLocalValue(valueUSD.toSignificant(5));
+            if (currencyPrice) {
+                console.log(currency?.symbol, "here 1");
+                setLocalUSDValue(String(+value * +currencyPrice.toSignificant(5)));
+            } else if (isBase && initialUSDPrices.CURRENCY_B) {
+                console.log(currency?.symbol, "here 2");
+                setLocalUSDValue(String(+value * +initialUSDPrices.CURRENCY_B));
+            } else if (!isBase && initialUSDPrices.CURRENCY_A) {
+                console.log(currency?.symbol, "here 3");
+                setLocalUSDValue(String(+value * +initialUSDPrices.CURRENCY_A));
+            } else if (initialTokenPrice && otherCurrencyPrice) {
+                console.log(currency?.symbol, "here 4");
+                setLocalUSDValue(String(+value * +initialTokenPrice * +otherCurrencyPrice.toSignificant(5)));
+            }
+
+            setLocalTokenValue(value);
         }
-        if (!isUSD && value) {
-            setLocalValue(value);
-        }
-    }, [isUSD, localValue, value]);
+    }, [initialTokenPrice, initialUSDPrices, currencyPrice, otherCurrencyPrice, value]);
 
     const balanceString = useMemo(() => {
         if (!balance || !currency) return <Loader stroke={"white"} />;
@@ -156,12 +235,11 @@ export function TokenAmountCard({ currency, value, fiatValue, handleMax, handleI
                     </label>
                 )}
                 <Input
-                    value={localValue}
+                    value={isUSD ? localUSDValue : localTokenValue}
                     id={`amount-${currency?.symbol}`}
                     disabled={locked}
-                    onFocus={handleOnFocus}
                     onBlur={handleOnBlur}
-                    onUserInput={handleUserInput}
+                    onUserInput={(val) => (isUSD ? setLocalUSDValue(val.trim()) : setLocalTokenValue(val.trim()))}
                     className={`token-amount-card__input ${isUSD ? "is-usd" : ""} mb-05 w-100`}
                     placeholder="Enter an amount"
                 />

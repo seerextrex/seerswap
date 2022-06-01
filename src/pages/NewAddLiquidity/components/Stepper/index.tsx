@@ -70,7 +70,7 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
         }
 
         if (mintInfo.noLiquidity) {
-            const rangeUSD = rangeTokenUSD?.toSignificant(8) || initialUSDPrices.CURRENCY_B;
+            const rangeUSD = initialUSDPrices.CURRENCY_B || rangeTokenUSD?.toSignificant(8);
 
             if (mintInfo.price && rangeUSD && completedSteps.length >= 2) {
                 _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isUSD ? "$" : ""}${
@@ -87,10 +87,10 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
             }
 
             if (leftPrice && rightPrice && completedSteps.length >= 3) {
-                if (preset !== Presets.FULL) {
+                if (preset !== Presets.FULL && rightPrice.toSignificant(5) !== "3384900000000000000000000000000000000000000000000") {
                     _steps[2].title = `Range: ${isUSD && rangeUSD ? "$" : ""}${
                         isUSD && rangeUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)
-                    } — ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`;
+                    } — ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+rightPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`;
                 } else {
                     _steps[2].title = "Range: 0 — ∞";
                 }

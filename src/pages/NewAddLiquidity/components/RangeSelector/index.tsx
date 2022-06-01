@@ -4,7 +4,8 @@ import { USDC_POLYGON } from "constants/tokens";
 import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bound } from "state/mint/v3/actions";
+import { useAppDispatch } from "state/hooks";
+import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
 import { useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { tryParsePrice } from "state/mint/v3/utils";
 import { tryParseAmount } from "state/swap/hooks";
@@ -191,35 +192,56 @@ function RangePart({
     const [localUSDValue, setLocalUSDValue] = useState("");
     const [localTokenValue, setLocalTokenValue] = useState("");
 
+    const dispatch = useAppDispatch();
+
     const isUSD = useMemo(() => {
         return priceFormat === PriceFormats.USD;
     }, [priceFormat]);
 
     const valueUSD = useUSDCValue(tryParseAmount(value === "∞" || value === "0" ? undefined : Number(value).toFixed(5), tokenB));
     const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_POLYGON), tokenB);
-    const usdPrice = useUSDCPrice(tokenB ?? undefined);
+    const usdPriceA = useUSDCPrice(tokenA ?? undefined);
+    const usdPriceB = useUSDCPrice(tokenB ?? undefined);
+
+    const initialUSDPrices = useInitialUSDPrices();
+    const initialTokenPrice = useInitialTokenPrice();
 
     const handleOnBlur = useCallback(() => {
-        if (isUSD && usdPrice) {
+        if (isUSD && usdPriceB) {
             if (tokenB?.wrapped.address === USDC_POLYGON.address) {
                 onUserInput(localUSDValue);
             } else {
                 if (tokenValue && tokenValue.trade) {
                     onUserInput(String(+localUSDValue * +tokenValue.trade?.outputAmount.toSignificant(5)));
-                    setLocalTokenValue(String(+localUSDValue * +usdPrice.toSignificant(5)));
+                    setLocalTokenValue(String(+localUSDValue * +usdPriceB.toSignificant(5)));
                 } else {
                     onUserInput(localUSDValue);
                     setLocalTokenValue(localUSDValue);
                 }
             }
-            setLocalUSDValue(localUSDValue);
+        } else if (isUSD && initialUSDPrices.CURRENCY_B) {
+            if (tokenB?.wrapped.address === USDC_POLYGON.address) {
+                onUserInput(localUSDValue);
+            } else {
+                onUserInput(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
+                setLocalTokenValue(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
+            }
+        } else if (isUSD && initialTokenPrice && usdPriceA) {
+            if (tokenB?.wrapped.address === USDC_POLYGON.address) {
+                onUserInput(localUSDValue);
+            } else {
+                onUserInput(String(+localUSDValue * +initialTokenPrice * +usdPriceA.toSignificant(5)));
+                setLocalTokenValue(String(+localUSDValue * +initialTokenPrice * +usdPriceA.toSignificant(5)));
+            }
         } else if (!isUSD) {
-            if (usdPrice) {
-                setLocalUSDValue(String(+localTokenValue * +usdPrice.toSignificant(5)));
+            if (usdPriceB) {
+                setLocalUSDValue(String(+localTokenValue * +usdPriceB.toSignificant(5)));
+            } else if (initialUSDPrices.CURRENCY_B) {
+                setLocalUSDValue(String(+localTokenValue * +initialUSDPrices.CURRENCY_B));
             }
             onUserInput(localTokenValue);
         }
-    }, [localTokenValue, localUSDValue, tokenValue, valueUSD, usdPrice, onUserInput]);
+    }, [localTokenValue, localUSDValue, tokenValue, valueUSD, usdPriceB, onUserInput]);
 
     // for button clicks
     const handleDecrement = useCallback(() => {
@@ -231,23 +253,35 @@ function RangePart({
     }, [increment, onUserInput]);
 
     useEffect(() => {
-        if (usdPrice) {
-            setLocalUSDValue(String(+value * +usdPrice.toSignificant(5)));
+        if (value) {
             setLocalTokenValue(value);
+            if (value === "∞") {
+                setLocalUSDValue(value);
+                return;
+            }
+            if (usdPriceB) {
+                setLocalUSDValue(String(+value * +usdPriceB.toSignificant(5)));
+            } else if (initialUSDPrices.CURRENCY_B) {
+                setLocalUSDValue(String(+value * +initialUSDPrices.CURRENCY_B));
+            } else if (initialTokenPrice && usdPriceA) {
+                setLocalUSDValue(String(+value * +initialTokenPrice * +usdPriceA.toSignificant(5)));
+            }
+        } else if (value === "") {
+            setLocalTokenValue("");
+            setLocalUSDValue("");
         }
-        
-    }, [usdPrice, value])
+    }, [usdPriceB, initialTokenPrice, initialUSDPrices, value]);
 
     return (
         <div>
             <div className="mb-05 f f-ac">
                 <div>{title}</div>
                 <div className="ml-a">
-                    <button onClick={handleIncrement} disabled={incrementDisabled || disabled} className="range-input__btn">
-                        +
-                    </button>
                     <button onClick={handleDecrement} disabled={decrementDisabled || disabled} className="range-input__btn">
                         -
+                    </button>
+                    <button onClick={handleIncrement} disabled={incrementDisabled || disabled} className="range-input__btn">
+                        +
                     </button>
                 </div>
             </div>
@@ -263,7 +297,10 @@ function RangePart({
                     onBlur={handleOnBlur}
                     className={`range-input ${isUSD && valueUSD ? "is-usd" : ""}`}
                     disabled={disabled || locked}
-                    onUserInput={(val) => (isUSD ? setLocalUSDValue(val.trim()) : setLocalTokenValue(val.trim()))}
+                    onUserInput={(val) => {
+                        isUSD ? setLocalUSDValue(val.trim()) : setLocalTokenValue(val.trim());
+                        dispatch(updateSelectedPreset({ preset: null }));
+                    }}
                     placeholder="0.00"
                 />
             </div>

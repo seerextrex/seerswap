@@ -29,12 +29,11 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
 
     const hasUSDPrices = useMemo(() => {
         return Boolean(
-            (userUSDPrices.CURRENCY_A && userUSDPrices.CURRENCY_B) || (currencyAUSDC && currencyBUSDC) || (userUSDPrices.CURRENCY_A && currencyBUSDC) || (userUSDPrices.CURRENCY_B && currencyAUSDC)
+            userUSDPrices.CURRENCY_A || userUSDPrices.CURRENCY_B || currencyAUSDC || currencyBUSDC || userUSDPrices.CURRENCY_A || currencyBUSDC || userUSDPrices.CURRENCY_B || currencyAUSDC
         );
     }, [userUSDPrices, currencyAUSDC, currencyBUSDC]);
 
     const usdA = useMemo(() => {
-        console.log(userUSDPrices);
         if (userUSDPrices.CURRENCY_A) return userUSDPrices.CURRENCY_A;
         if (currencyAUSDC) return currencyAUSDC.toSignificant(8);
         return;
@@ -64,18 +63,23 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
             {hasUSDPrices ? (
                 !isUSD ? (
                     <div className="fs-085">
-                        {usdA && <div className="mb-05">{`1 ${currencyA.symbol} = $${usdA}`}</div>}
-                        {usdB && <div className="mb-05">{`1 ${currencyB.symbol} = $${usdB}`}</div>}
+                        <div className="mb-05">{`1 ${currencyA.symbol} = $ ${usdA || "???"}`}</div>
+                        <div className="mb-05">{`1 ${currencyB.symbol} = $ ${usdB || "???"}`}</div>
                     </div>
                 ) : (
-                    usdA &&
-                    usdB &&
-                    hasUSDPrices && (
-                        <div className="fs-085">
-                            <div className="mb-05">{`1 ${currencyA.symbol} = ${+usdA / (+usdB || 1)} ${currencyB.symbol}`}</div>
-                            <div className="mb-05">{`1 ${currencyB.symbol} = ${+usdB / (+usdA || 1)} ${currencyA.symbol}`}</div>
-                        </div>
-                    )
+                    <div className="fs-085">
+                        {usdA && usdB ? (
+                            <>
+                                <div className="mb-05">{`1 ${currencyA.symbol} = ${+usdA / (+usdB || 1)} ${currencyB.symbol}`}</div>
+                                <div className="mb-05">{`1 ${currencyB.symbol} = ${+usdB / (+usdA || 1)} ${currencyA.symbol}`}</div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="mb-05">{`1 ${currencyA.symbol} = ${usdA || "???"} ${currencyB.symbol}`}</div>
+                                <div className="mb-05">{`1 ${currencyB.symbol} = ${usdB || "???"} ${currencyA.symbol}`}</div>
+                            </>
+                        )}
+                    </div>
                 )
             ) : !loadingTimedout ? (
                 <Loader stroke="white" />

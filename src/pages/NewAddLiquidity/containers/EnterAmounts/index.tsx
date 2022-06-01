@@ -138,6 +138,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                     <div className="mb-1" style={{ borderRadius: "8px" }}>
                         <TokenAmountCard
                             currency={currencyA}
+                            otherCurrency={currencyB}
                             value={formattedAmounts[Field.CURRENCY_A]}
                             fiatValue={usdcValues[Field.CURRENCY_A]}
                             handleInput={onFieldAInput}
@@ -150,11 +151,13 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                             isMax={!!atMaxAmounts[Field.CURRENCY_A]}
                             error={currencyAError}
                             priceFormat={priceFormat}
+                            isBase={false}
                         />
                     </div>
                     <div>
                         <TokenAmountCard
                             currency={currencyB}
+                            otherCurrency={currencyA}
                             value={formattedAmounts[Field.CURRENCY_B]}
                             fiatValue={usdcValues[Field.CURRENCY_B]}
                             handleInput={onFieldBInput}
@@ -167,6 +170,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                             isMax={!!atMaxAmounts[Field.CURRENCY_B]}
                             error={currencyBError}
                             priceFormat={priceFormat}
+                            isBase={true}
                         />
                     </div>
                 </div>

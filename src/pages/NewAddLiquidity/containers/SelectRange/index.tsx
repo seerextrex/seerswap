@@ -50,7 +50,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
     const isStablecoinPair = useMemo(() => {
         if (!currencyA || !currencyB) return false;
 
-        const stablecoins = [USDC_POLYGON.address, USDT_POLYGON.address, MAI_POLYGON.address];
+        const stablecoins = [USDC_POLYGON.address, USDT_POLYGON.address, MAI_POLYGON.address, "0x4259Abc22981480D81075b0E8C4Bb0b142be8EF8", "0x71118EA77cf5d5D2B06e916C75804419574B6303"];
 
         return stablecoins.includes(currencyA.wrapped.address) && stablecoins.includes(currencyB.wrapped.address);
     }, [currencyA, currencyB]);

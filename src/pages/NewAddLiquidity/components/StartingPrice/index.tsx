@@ -258,28 +258,34 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
 
             startPriceHandler(typedValue);
 
-            const usdA = initialUSDPrices.CURRENCY_A;
-            const usdB = initialUSDPrices.CURRENCY_B;
+            const usdA = basePriceUSD?.toSignificant(5) || initialUSDPrices.CURRENCY_A;
+            const usdB = quotePriceUSD?.toSignificant(5) || initialUSDPrices.CURRENCY_B;
 
-            if (usdA !== "0") {
-                const newUSDA = ((+usdA * +typedValue) / (+initialTokenPrice || 1)).toFixed(8);
-                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: String(newUSDA) }));
-                setUserBaseCurrencyUSD(String(newUSDA));
-                startPriceHandler(String(newUSDA));
+            if (usdA && usdA !== "0") {
+                if (!basePriceUSD) {
+                    const newUSDA = (+usdA * +typedValue) / (+initialTokenPrice || 1);
+                    const fixedA = newUSDA ? newUSDA.toFixed(8) : "0";
+                    dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: String(fixedA) }));
+                    setUserBaseCurrencyUSD(String(fixedA));
+                    startPriceHandler(String(fixedA));
+                }
             } else {
-                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: "" }));
-                setUserBaseCurrencyUSD("");
+                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: String((+usdB * +typedValue) / (+initialTokenPrice || 1)) }));
+                setUserBaseCurrencyUSD(String((+usdB * +typedValue) / (+initialTokenPrice || 1)));
                 startPriceHandler("");
             }
 
-            if (usdB !== "0") {
-                const newUSDB = ((+usdB * +typedValue) / (+initialTokenPrice || 1)).toFixed(8);
-                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: String(newUSDB) }));
-                setUserQuoteCurrencyUSD(String(newUSDB));
-                startPriceHandler(String(newUSDB));
+            if (usdB && usdB !== "0") {
+                if (!quotePriceUSD) {
+                    const newUSDB = (+usdB * +typedValue) / (+initialTokenPrice || 1);
+                    const fixedB = newUSDB ? newUSDB.toFixed(8) : "0";
+                    dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: String(fixedB) }));
+                    setUserQuoteCurrencyUSD(String(fixedB));
+                    startPriceHandler(String(fixedB));
+                }
             } else {
-                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: "" }));
-                setUserQuoteCurrencyUSD("");
+                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: String((+usdA * +typedValue) / (+initialTokenPrice || 1)) }));
+                setUserQuoteCurrencyUSD(String((+usdA * +typedValue) / (+initialTokenPrice || 1)));
                 startPriceHandler("");
             }
         },

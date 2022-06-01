@@ -119,7 +119,7 @@ export default function LiquidityChartRangeInput({
     //TODO
     const rightPriceUSD = useUSDCValue(
         tryParseAmount(
-            rightPrice ? (rightPrice.toSignificant(5) === "338490000000000000000000000000000000000000000000000" ? undefined : Number(rightPrice.toSignificant(5)).toFixed(5)) : undefined,
+            rightPrice ? (rightPrice.toSignificant(5) === "3384900000000000000000000000000000000000000000000" ? undefined : Number(rightPrice.toSignificant(5)).toFixed(5)) : undefined,
             currencyB
         )
     );

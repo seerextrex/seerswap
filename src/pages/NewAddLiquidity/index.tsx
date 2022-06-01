@@ -4,7 +4,7 @@ import usePrevious from "hooks/usePrevious";
 import { useActiveWeb3React } from "hooks/web3";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
-import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useRangeHopCallbacks } from "state/mint/v3/hooks";
+import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useRangeHopCallbacks, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { currencyId } from "utils/currencyId";
 import { Stepper } from "./components/Stepper";
 import { EnterAmounts } from "./containers/EnterAmounts";
@@ -19,7 +19,7 @@ import { Bound, setInitialTokenPrice, setInitialUSDPrices, updateSelectedPreset 
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { Field } from "state/mint/actions";
 import { maxAmountSpend } from "utils/maxAmountSpend";
-import { useUSDCValue } from "hooks/useUSDCPrice";
+import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { PriceFormats, PriceFormatToggler } from "./components/PriceFomatToggler";
@@ -79,17 +79,22 @@ export function NewAddLiquidityPage({
     const prevDerivedMintInfo = usePrevious({ ...derivedMintInfo });
 
     const mintInfo = useMemo(() => {
-        if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
-            return {
-                ...prevDerivedMintInfo,
-                pricesAtTicks: derivedMintInfo.pricesAtTicks,
-                ticks: derivedMintInfo.ticks,
-            };
-        }
+        // if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
+        //     return {
+        //         ...prevDerivedMintInfo,
+        //         pricesAtTicks: derivedMintInfo.pricesAtTicks,
+        //         ticks: derivedMintInfo.ticks,
+        //         parsedAmounts: derivedMintInfo.parsedAmounts,
+        //     };
+        // }
         return {
             ...derivedMintInfo,
         };
     }, [derivedMintInfo, baseCurrency, quoteCurrency]);
+
+    const initialUSDPrices = useInitialUSDPrices();
+    const usdPriceA = useUSDCPrice(baseCurrency ?? undefined);
+    const usdPriceB = useUSDCPrice(quoteCurrency ?? undefined);
 
     const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
 
@@ -239,6 +244,17 @@ export function NewAddLiquidityPage({
 
     const allowedSlippage = useUserSlippageToleranceWithDefault(mintInfo.outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE);
 
+    const hidePriceFormatter = useMemo(
+        () => (mintInfo.noLiquidity ? stepInitialPrice : stepPair) && !initialUSDPrices.CURRENCY_A && !initialUSDPrices.CURRENCY_B && !usdPriceA && !usdPriceB,
+        [mintInfo, stepRange, usdPriceA, usdPriceB, initialUSDPrices]
+    );
+
+    useEffect(() => {
+        if (hidePriceFormatter) {
+            handlePriceFormat(PriceFormats.TOKEN);
+        }
+    }, [hidePriceFormatter]);
+
     useEffect(() => {
         return () => {
             resetState();
@@ -250,9 +266,11 @@ export function NewAddLiquidityPage({
             <div className="add-liquidity-page__header f mxs_fd-c mb-1">
                 <div className="add-liquidity-page__header-title">Add liquidity</div>
                 <div className="ml-a mxs_ml-0 mxs_mt-1 f f-ac ">
-                    <div className="mr-1">
-                        <PriceFormatToggler handlePriceFormat={handlePriceFormat} />
-                    </div>
+                    {!hidePriceFormatter && (
+                        <div className="mr-1">
+                            <PriceFormatToggler handlePriceFormat={handlePriceFormat} />
+                        </div>
+                    )}
                     <div className="mxs_ml-a">
                         <SettingsTab placeholderSlippage={allowedSlippage} />
                     </div>

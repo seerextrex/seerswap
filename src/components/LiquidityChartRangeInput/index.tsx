@@ -19,8 +19,9 @@ import { ChartWrapper } from "./styled";
 
 import ReactGA from "react-ga";
 import { tryParseAmount } from "state/swap/hooks";
-import { useUSDCValue } from "hooks/useUSDCPrice";
+import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
+import { useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 
 const ZOOM_LEVEL: ZoomLevels = {
     initialMin: 0.5,
@@ -73,6 +74,43 @@ export default function LiquidityChartRangeInput({
         feeAmount,
         priceFormat,
     });
+
+    const initialPrice = useInitialTokenPrice()
+    const initialUSDPrices = useInitialUSDPrices()
+    const currencyBUSD = useUSDCPrice(currencyB)
+
+    const mockData = useMemo(() => {
+        if (formattedData) return []
+
+        if (!initialPrice) return []
+ 
+        if (priceFormat === PriceFormats.TOKEN) {
+            return [{activeLiquidity: 0, price0: +initialPrice * ZOOM_LEVEL.initialMin}, { activeLiquidity: 0, price0: +initialPrice * ZOOM_LEVEL.initialMax }]
+        } else {
+            if (currencyBUSD || initialUSDPrices.CURRENCY_B && initialPrice) {
+                const price = currencyBUSD?.toSignificant(8) || initialUSDPrices.CURRENCY_B;
+                return [{activeLiquidity: 0, price0: (+price * +initialPrice) * ZOOM_LEVEL.initialMin}, { activeLiquidity: 0, price0: (+price * +initialPrice ) * ZOOM_LEVEL.initialMax }]
+            }
+            return []
+        }
+
+    }, [initialPrice, initialUSDPrices, currencyBUSD, priceFormat])
+
+    const mockPrice = useMemo(() => {
+        if (formattedData) return 0
+
+        if (!initialPrice) return 0
+
+        if (priceFormat === PriceFormats.TOKEN) {
+            if (initialPrice) return +initialPrice
+        } else {
+            if (currencyBUSD) return +currencyBUSD.toSignificant(5) * +initialPrice
+            if (initialUSDPrices.CURRENCY_B) return +initialUSDPrices.CURRENCY_B * +initialPrice
+        }
+
+        return 0
+
+    }, [initialPrice, initialUSDPrices, currencyBUSD, priceFormat])
 
     const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
 
@@ -134,6 +172,8 @@ export default function LiquidityChartRangeInput({
         return [parseFloat(leftPrice.toSignificant(5)), parseFloat(rightPrice.toSignificant(5))];
     }, [leftPrice, rightPrice, leftPriceUSD, rightPriceUSD, priceFormat]);
 
+    console.log('BRUSH', brushDomain)
+
     const brushLabelValue = useCallback(
         (d: "w" | "e", x: number) => {
             if (!price) return "";
@@ -167,7 +207,25 @@ export default function LiquidityChartRangeInput({
             ) : isError ? (
                 <InfoBox message={<Trans>Liquidity data not available.</Trans>} icon={<CloudOff size={56} />} />
             ) : !formattedData || formattedData === [] || !price ? (
-                <InfoBox message={<Trans>There is no liquidity data.</Trans>} icon={<BarChart2 size={56} />} />
+                // <InfoBox message={<Trans>There is no liquidity data.</Trans>} icon={<BarChart2 size={56} />} />
+                <ChartWrapper>
+                    <Chart
+                        data={{ series: mockData, current: mockPrice }}
+                        dimensions={{ width: 400, height: 175 }}
+                        margins={{ top: 10, right: 0, bottom: 20, left: 0 }}
+                        styles={{
+                            area: {
+                                selection: "#008FFF",
+                            },
+                        }}
+                        interactive={interactive}
+                        brushLabels={brushLabelValue}
+                        brushDomain={brushDomain}
+                        onBrushDomainChange={onBrushDomainChangeEnded}
+                        zoomLevels={ZOOM_LEVEL}
+                        priceFormat={priceFormat}
+                    />
+                </ChartWrapper>
             ) : (
                 <ChartWrapper>
                     <Chart

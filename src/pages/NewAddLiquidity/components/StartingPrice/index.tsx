@@ -220,7 +220,7 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
                         setUserQuoteCurrencyToken("");
                         dispatch(setInitialTokenPrice({ typedValue: "" }));
                     } else {
-                        const newPriceB = parseFloat((+priceA / +typedValue).toFixed(8));
+                        const newPriceB = parseFloat((+priceA / +typedValue).toFixed(5));
                         startPriceHandler(String(newPriceB));
                         setUserQuoteCurrencyToken(String(newPriceB));
                         dispatch(setInitialTokenPrice({ typedValue: String(newPriceB) }));

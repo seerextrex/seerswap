@@ -252,6 +252,7 @@ export function NewAddLiquidityPage({
     useEffect(() => {
         if (hidePriceFormatter) {
             handlePriceFormat(PriceFormats.TOKEN);
+            setPriceFormat(PriceFormats.TOKEN);
         }
     }, [hidePriceFormatter]);
 
@@ -268,7 +269,7 @@ export function NewAddLiquidityPage({
                 <div className="ml-a mxs_ml-0 mxs_mt-1 f f-ac ">
                     {!hidePriceFormatter && (
                         <div className="mr-1">
-                            <PriceFormatToggler handlePriceFormat={handlePriceFormat} />
+                            <PriceFormatToggler currentFormat={priceFormat} handlePriceFormat={handlePriceFormat} />
                         </div>
                     )}
                     <div className="mxs_ml-a">

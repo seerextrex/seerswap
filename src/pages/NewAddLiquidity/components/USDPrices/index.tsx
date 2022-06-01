@@ -34,14 +34,14 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
     }, [userUSDPrices, currencyAUSDC, currencyBUSDC]);
 
     const usdA = useMemo(() => {
-        if (userUSDPrices.CURRENCY_A) return userUSDPrices.CURRENCY_A;
-        if (currencyAUSDC) return currencyAUSDC.toSignificant(8);
+        if (userUSDPrices.CURRENCY_A) return parseFloat(userUSDPrices.CURRENCY_A);
+        if (currencyAUSDC) return parseFloat(currencyAUSDC.toSignificant(8));
         return;
     }, [userUSDPrices, currencyAUSDC]);
 
     const usdB = useMemo(() => {
-        if (userUSDPrices.CURRENCY_B) return userUSDPrices.CURRENCY_B;
-        if (currencyBUSDC) return currencyBUSDC.toSignificant(8);
+        if (userUSDPrices.CURRENCY_B) return parseFloat(userUSDPrices.CURRENCY_B);
+        if (currencyBUSDC) return parseFloat(currencyBUSDC.toSignificant(8));
         return;
     }, [userUSDPrices, currencyBUSDC]);
 
@@ -70,8 +70,8 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
                     <div className="fs-085">
                         {usdA && usdB ? (
                             <>
-                                <div className="mb-05">{`1 ${currencyA.symbol} = ${+usdA / (+usdB || 1)} ${currencyB.symbol}`}</div>
-                                <div className="mb-05">{`1 ${currencyB.symbol} = ${+usdB / (+usdA || 1)} ${currencyA.symbol}`}</div>
+                                <div className="mb-05">{`1 ${currencyA.symbol} = ${parseFloat(String(+usdA / (+usdB || 1)))} ${currencyB.symbol}`}</div>
+                                <div className="mb-05">{`1 ${currencyB.symbol} = ${parseFloat(String(+usdB / (+usdA || 1)))} ${currencyA.symbol}`}</div>
                             </>
                         ) : (
                             <>

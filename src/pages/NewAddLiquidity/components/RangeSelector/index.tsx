@@ -6,7 +6,7 @@ import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch } from "state/hooks";
 import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
-import { useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
+import { IDerivedMintInfo, useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { tryParsePrice } from "state/mint/v3/utils";
 import { tryParseAmount } from "state/swap/hooks";
 import { PriceFormats } from "../PriceFomatToggler";
@@ -24,15 +24,12 @@ interface IRangeSelector {
     getIncrementUpper: () => string;
     currencyA: Currency | null | undefined;
     currencyB: Currency | null | undefined;
-    feeAmount: number;
-    ticksAtLimit: { [bound in Bound]?: boolean | undefined };
     initial: boolean;
     disabled: boolean;
-    price: Price<Token, Token> | undefined;
-    invertPrice: boolean;
     isBeforePrice: boolean;
     isAfterPrice: boolean;
     priceFormat: PriceFormats;
+    mintInfo: IDerivedMintInfo;
 }
 
 interface IRangePart {
@@ -49,7 +46,7 @@ interface IRangePart {
     // title: ReactNode;
     tokenA: Currency | undefined;
     tokenB: Currency | undefined;
-    initial: boolean;
+    initialPrice: Price<Token, Token> | undefined;
     disabled: boolean;
     // style?: CSSProperties;
     title: string;
@@ -67,22 +64,22 @@ export function RangeSelector({
     getIncrementUpper,
     currencyA,
     currencyB,
-    feeAmount,
-    ticksAtLimit,
     initial,
     disabled,
-    invertPrice,
-    price,
     isBeforePrice,
     isAfterPrice,
     priceFormat,
+    mintInfo,
 }: IRangeSelector) {
     const tokenA = (currencyA ?? undefined)?.wrapped;
     const tokenB = (currencyB ?? undefined)?.wrapped;
 
     const isUSD = useMemo(() => priceFormat === PriceFormats.USD, [priceFormat]);
     const currentPriceInUSD = useUSDCValue(
-        tryParseAmount(price ? (invertPrice ? Number(price.invert().toSignificant(5)).toFixed(5) : Number(price.toSignificant(5)).toFixed(5)) : undefined, currencyB ?? undefined)
+        tryParseAmount(
+            mintInfo.price ? (mintInfo.invertPrice ? Number(mintInfo.price.invert().toSignificant(5)).toFixed(5) : Number(mintInfo.price.toSignificant(5)).toFixed(5)) : undefined,
+            currencyB ?? undefined
+        )
     );
 
     const initialUSDPrices = useInitialUSDPrices();
@@ -101,50 +98,55 @@ export function RangeSelector({
     }, [isSorted, priceUpper, priceLower]);
 
     const currentPrice = useMemo(() => {
-        if (!price) return;
+        if (!mintInfo.price) return;
 
         const isInitialInUSD = Boolean(initialUSDPrices.CURRENCY_A && initialUSDPrices.CURRENCY_B);
 
         let _price;
 
         if (!isUSD) {
-            _price = isUSD && currentPriceInUSD ? currentPriceInUSD?.toSignificant(5) : invertPrice ? price.invert().toSignificant(5) : price.toSignificant(5);
+            _price =
+                isUSD && currentPriceInUSD
+                    ? parseFloat(currentPriceInUSD?.toSignificant(5))
+                    : mintInfo.invertPrice
+                    ? parseFloat(mintInfo.price.invert().toSignificant(5))
+                    : parseFloat(mintInfo.price.toSignificant(5));
         } else {
             if (isInitialInUSD) {
-                _price = +initialUSDPrices.CURRENCY_A;
+                _price = parseFloat(initialUSDPrices.CURRENCY_A);
             } else if (currentPriceInUSD) {
-                _price = currentPriceInUSD.toSignificant(5);
+                _price = parseFloat(currentPriceInUSD.toSignificant(5));
             }
         }
 
         if (Number(_price) <= 0.0001) {
             return `< ${isUSD && (currentPriceInUSD || isInitialInUSD) ? "$ " : ""}0.0001${isUSD && (currentPriceInUSD || isInitialInUSD) ? "" : ` ${currencyB?.symbol}`}`;
         } else {
-            return `${isUSD && (currentPriceInUSD || isInitialInUSD) ? "$ " : ""}${Number(_price).toFixed(5)}${isUSD && (currentPriceInUSD || isInitialInUSD) ? "" : ` ${currencyB?.symbol}`}`;
+            return `${isUSD && (currentPriceInUSD || isInitialInUSD) ? "$ " : ""}${_price}${isUSD && (currentPriceInUSD || isInitialInUSD) ? "" : ` ${currencyB?.symbol}`}`;
         }
-    }, [price, isUSD, initialUSDPrices, initialTokenPrice, currentPriceInUSD]);
+    }, [mintInfo.price, isUSD, initialUSDPrices, initialTokenPrice, currentPriceInUSD]);
 
     return (
         <div className="f f-jb mxs_fd-c">
             <div className={`min-price mxs_mb-1`} style={{ order: isAfterPrice ? 2 : 1 }}>
                 <RangePart
-                    value={ticksAtLimit[Bound.LOWER] ? "0" : leftPrice?.toSignificant(5) ?? ""}
+                    value={mintInfo.ticksAtLimit[Bound.LOWER] ? "0" : leftPrice?.toSignificant(5) ?? ""}
                     onUserInput={onLeftRangeInput}
                     width="100%"
                     decrement={isSorted ? getDecrementLower : getIncrementUpper}
                     increment={isSorted ? getIncrementLower : getDecrementUpper}
-                    decrementDisabled={ticksAtLimit[Bound.LOWER]}
-                    incrementDisabled={ticksAtLimit[Bound.LOWER]}
+                    decrementDisabled={mintInfo.ticksAtLimit[Bound.LOWER]}
+                    incrementDisabled={mintInfo.ticksAtLimit[Bound.LOWER]}
                     label={leftPrice ? `${currencyB?.symbol}` : "-"}
                     tokenA={currencyA ?? undefined}
                     tokenB={currencyB ?? undefined}
-                    initial={initial}
+                    initialPrice={mintInfo.price}
                     disabled={disabled}
                     title={"Min price"}
                     priceFormat={priceFormat}
                 />
             </div>
-            {price && (
+            {mintInfo.price && (
                 <div className="current-price f f-ac mxs_fd-r" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
                     <div className="mb-05 mxs_mt-05" style={{ whiteSpace: "nowrap" }}>
                         {initial ? `Initial ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price` : `Current ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price`}
@@ -154,16 +156,16 @@ export function RangeSelector({
             )}
             <div className="max-price mxs_mt-1" style={{ order: isBeforePrice ? 2 : 3 }}>
                 <RangePart
-                    value={ticksAtLimit[Bound.UPPER] ? "∞" : rightPrice?.toSignificant(5) ?? ""}
+                    value={mintInfo.ticksAtLimit[Bound.UPPER] ? "∞" : rightPrice?.toSignificant(5) ?? ""}
                     onUserInput={onRightRangeInput}
                     decrement={isSorted ? getDecrementUpper : getIncrementLower}
                     increment={isSorted ? getIncrementUpper : getDecrementLower}
-                    incrementDisabled={ticksAtLimit[Bound.UPPER]}
-                    decrementDisabled={ticksAtLimit[Bound.UPPER]}
+                    incrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
+                    decrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
                     label={rightPrice ? `${currencyB?.symbol}` : "-"}
                     tokenA={currencyA ?? undefined}
                     tokenB={currencyB ?? undefined}
-                    initial={initial}
+                    initialPrice={mintInfo.price}
                     disabled={disabled}
                     title={"Max price"}
                     priceFormat={priceFormat}
@@ -184,7 +186,7 @@ function RangePart({
     width,
     locked,
     onUserInput,
-    initial,
+    initialPrice,
     disabled,
     title,
     priceFormat,

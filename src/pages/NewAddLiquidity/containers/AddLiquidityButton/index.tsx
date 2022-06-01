@@ -18,7 +18,7 @@ import { useMemo, useState } from "react";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { addTransaction } from "state/transactions/actions";
 import { IDerivedMintInfo, useAddLiquidityTxHash } from "state/mint/v3/hooks";
-import { useApproveCallback } from "hooks/useApproveCallback";
+import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { Field } from "state/mint/actions";
 import { useIsNetworkFailedImmediate } from "hooks/useIsNetworkFailed";
 import { setAddLiquidityTxHash } from "state/mint/v3/actions";
@@ -27,7 +27,7 @@ interface IAddLiquidityButton {
     baseCurrency: Currency | undefined;
     quoteCurrency: Currency | undefined;
     mintInfo: IDerivedMintInfo;
-    handleAddLiquidity: () => void
+    handleAddLiquidity: () => void;
 }
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
@@ -38,9 +38,9 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
 
     const deadline = useTransactionDeadline();
 
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
-    const txHash = useAddLiquidityTxHash()
+    const txHash = useAddLiquidityTxHash();
 
     const isNetworkFailed = useIsNetworkFailedImmediate();
 
@@ -57,8 +57,8 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
     const [approvalB] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_B], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
 
     const isReady = useMemo(() => {
-        return Boolean(approvalA && approvalB && !mintInfo.errorMessage && !mintInfo.outOfRange && !txHash && !isNetworkFailed )
-    }, [mintInfo, approvalA, approvalB])
+        return Boolean(approvalA === ApprovalState.APPROVED && approvalB === ApprovalState.APPROVED && !mintInfo.errorMessage && !mintInfo.outOfRange && !txHash && !isNetworkFailed);
+    }, [mintInfo, approvalA, approvalB]);
 
     async function onAdd() {
         if (!chainId || !library || !account) return;
@@ -104,8 +104,8 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
                                     : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`,
                             });
 
-                            handleAddLiquidity()
-                            dispatch(setAddLiquidityTxHash({txHash: response.hash}))
+                            handleAddLiquidity();
+                            dispatch(setAddLiquidityTxHash({ txHash: response.hash }));
                         });
                 })
                 .catch((error) => {

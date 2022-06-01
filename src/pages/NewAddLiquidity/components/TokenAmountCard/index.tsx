@@ -80,7 +80,6 @@ export function TokenAmountCard({
         }
 
         if (isUSD && currencyPrice) {
-            // handleInput(String(+localUSDValue * +tokenValue.trade.outputAmount.toSignificant(5)));
             handleInput(String(+localUSDValue / +currencyPrice.toSignificant(5)));
             setLocalTokenValue(String(+localUSDValue / +currencyPrice.toSignificant(5)));
         } else if (isUSD && isBase && initialTokenPrice && otherCurrencyPrice) {
@@ -103,58 +102,17 @@ export function TokenAmountCard({
             }
             handleInput(localTokenValue);
         }
-
-        // if (isUSD && isBase ? usdPriceA : usdPriceB) {
-        //     if (currency?.wrapped.address === USDC_POLYGON.address) {
-        //         handleInput(localUSDValue);
-        //     } else {
-        //         if (tokenValue && tokenValue.trade) {
-        //             handleInput(String(+localUSDValue * +tokenValue.trade?.outputAmount.toSignificant(5)));
-        //             setLocalTokenValue(String(+localUSDValue * +usdPriceA.toSignificant(5)));
-        //         } else {
-        //             handleInput(localUSDValue);
-        //             setLocalTokenValue(localUSDValue);
-        //         }
-        //     }
-        // } else if (isUSD && initialUSDPrices.CURRENCY_B) {
-        //     if (currency?.wrapped.address === USDC_POLYGON.address) {
-        //         handleInput(localUSDValue);
-        //     } else {
-        //         handleInput(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
-        //         setLocalTokenValue(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
-        //     }
-        // } else if (isUSD && initialTokenPrice && usdPriceA) {
-        //     if (currency?.wrapped.address === USDC_POLYGON.address) {
-        //         handleInput(localUSDValue);
-        //     } else {
-        //         handleInput(String(+localUSDValue * +initialTokenPrice * +usdPriceA.toSignificant(5)));
-        //         setLocalTokenValue(String(+localUSDValue * +initialTokenPrice * +usdPriceA.toSignificant(5)));
-        //     }
-        // } else if (!isUSD) {
-        //     if (usdPriceB) {
-        //         setLocalUSDValue(String(+localTokenValue * +usdPriceB.toSignificant(5)));
-        //     } else if (initialUSDPrices.CURRENCY_B) {
-        //         setLocalUSDValue(String(+localTokenValue * +initialUSDPrices.CURRENCY_B));
-        //     }
-        //     handleInput(localTokenValue);
-        // }
     }, [localTokenValue, localUSDValue, tokenValue, valueUSD, currencyPrice, handleInput]);
 
     useEffect(() => {
         if (value) {
-            console.log("VALUE", value);
-
             if (currencyPrice) {
-                console.log(currency?.symbol, "here 1");
                 setLocalUSDValue(String(+value * +currencyPrice.toSignificant(5)));
             } else if (isBase && initialUSDPrices.CURRENCY_B) {
-                console.log(currency?.symbol, "here 2");
                 setLocalUSDValue(String(+value * +initialUSDPrices.CURRENCY_B));
             } else if (!isBase && initialUSDPrices.CURRENCY_A) {
-                console.log(currency?.symbol, "here 3");
                 setLocalUSDValue(String(+value * +initialUSDPrices.CURRENCY_A));
             } else if (initialTokenPrice && otherCurrencyPrice) {
-                console.log(currency?.symbol, "here 4");
                 setLocalUSDValue(String(+value * +initialTokenPrice * +otherCurrencyPrice.toSignificant(5)));
             }
 
@@ -199,7 +157,7 @@ export function TokenAmountCard({
                         <span>{balanceString}</span>
                     </div>
                     <div>
-                        <button onClick={handleMax} disabled={isMax} className="token-amount-card__max-btn">
+                        <button onClick={handleMax} disabled={isMax || balance?.toSignificant(5) === "0"} className="token-amount-card__max-btn">
                             MAX
                         </button>
                     </div>

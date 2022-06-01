@@ -6,7 +6,7 @@ import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import "./index.scss";
 import { Field } from "state/mint/actions";
 import { IDerivedMintInfo, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
-import { useUSDCValue } from "hooks/useUSDCPrice";
+import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { maxAmountSpend } from "utils/maxAmountSpend";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
@@ -90,25 +90,33 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
     }, [approvalB]);
 
     const [token0Ratio, token1Ratio] = useMemo(() => {
-        const usdcA = usdcValues[Field.CURRENCY_A];
-        const usdcB = usdcValues[Field.CURRENCY_B];
+        const currentPrice = mintInfo.price?.toSignificant(5);
 
-        if (!usdcA && !usdcB) return ["0", "0"];
+        const left = mintInfo.lowerPrice.toSignificant(5);
+        const right = mintInfo.upperPrice.toSignificant(5);
 
-        if (!usdcA && usdcB) return ["0", "100"];
+        if (!currentPrice) return ["0", "0"];
 
-        if (!usdcB && usdcA) return ["100", "0"];
+        if (!left && !right) return ["0", "0"];
 
-        if (usdcA && usdcB) {
-            const totalSum = usdcA.add(usdcB);
-            const token0 = usdcA.multiply(100000000).divide(totalSum).toSignificant(3);
-            const token1 = usdcB.multiply(100000000).divide(totalSum).toSignificant(3);
+        if (!left && right) return ["0", "100"];
 
-            return [token0, token1];
+        if (!right && left) return ["100", "0"];
+
+        if (left && right && currentPrice) {
+            const leftRange = +currentPrice - +left;
+            const rightRange = +right - +currentPrice;
+
+            const totalSum = +leftRange + +rightRange;
+
+            const leftRate = (+leftRange * 100) / totalSum;
+            const rightRate = (+rightRange * 100) / totalSum;
+
+            return [String(leftRate), String(rightRate)];
         }
 
         return ["0", "0"];
-    }, [currencyA, currencyB, usdcValues]);
+    }, [currencyA, currencyB, mintInfo]);
 
     const currencyAError = useMemo(() => {
         if ((mintInfo.errorCode !== 4 && mintInfo.errorCode !== 5) || !mintInfo.errorMessage || !currencyA) return;

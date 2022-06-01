@@ -10,10 +10,11 @@ export enum PriceFormats {
 
 interface IPriceFormatToggler {
     handlePriceFormat: (format: PriceFormats) => void;
+    currentFormat: PriceFormats;
 }
 
-export function PriceFormatToggler({ handlePriceFormat }: IPriceFormatToggler) {
-    const [inputType, setInputType] = useState(PriceFormats.USD);
+export function PriceFormatToggler({ handlePriceFormat, currentFormat }: IPriceFormatToggler) {
+    const [inputType, setInputType] = useState(currentFormat);
 
     return (
         <div className="f price-format-toggler">

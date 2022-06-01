@@ -45,16 +45,10 @@ function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLock
         return String((+basePrice.toSignificant(5) / +quotePrice.toSignificant(5)).toFixed(5));
     }, [basePrice, quotePrice]);
 
-    // useEffect(() => {
-    //     if (basePrice && quotePrice) {
-    //         changeQuotePriceHandler(tokenRatio);
-    //     }
-    // }, [basePrice, quotePrice, tokenRatio]);
-
     return (
         <div className={`token-price ${isSelected ? "main" : "side"} ws-no-wrap mxs_fs-075`}>
             <div className={"quote-token w-100 f"}>
-                <div>
+                <div className="w-100">
                     {isLocked ? (
                         <div className="f f-ac">
                             <span className="pl-1">
@@ -65,7 +59,7 @@ function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLock
                     ) : isSelected ? (
                         <Input
                             className={`quote-token__input bg-t c-w ol-n`}
-                            placeholder={`${quoteCurrency?.symbol} price`}
+                            placeholder={`${baseCurrency?.symbol} in ${quoteCurrency?.symbol}`}
                             value={userQuoteCurrencyToken || ""}
                             onUserInput={(e: string) => changeQuotePriceHandler(e)}
                         />
@@ -209,7 +203,7 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
                         setUserQuoteCurrencyToken("");
                         dispatch(setInitialTokenPrice({ typedValue: "" }));
                     } else {
-                        const newPriceA = (+typedValue / (+priceB || 1)).toFixed(8);
+                        const newPriceA = parseFloat((+typedValue / (+priceB || 1)).toFixed(8));
                         startPriceHandler(String(newPriceA));
                         setUserQuoteCurrencyToken(String(newPriceA));
                         dispatch(setInitialTokenPrice({ typedValue: String(newPriceA) }));
@@ -226,7 +220,7 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
                         setUserQuoteCurrencyToken("");
                         dispatch(setInitialTokenPrice({ typedValue: "" }));
                     } else {
-                        const newPriceB = (+priceA / +typedValue).toFixed(8);
+                        const newPriceB = parseFloat((+priceA / +typedValue).toFixed(8));
                         startPriceHandler(String(newPriceB));
                         setUserQuoteCurrencyToken(String(newPriceB));
                         dispatch(setInitialTokenPrice({ typedValue: String(newPriceB) }));
@@ -264,28 +258,32 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
             if (usdA && usdA !== "0") {
                 if (!basePriceUSD) {
                     const newUSDA = (+usdA * +typedValue) / (+initialTokenPrice || 1);
-                    const fixedA = newUSDA ? newUSDA.toFixed(8) : "0";
+                    const fixedA = newUSDA ? parseFloat(newUSDA.toFixed(8)) : "0";
                     dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: String(fixedA) }));
                     setUserBaseCurrencyUSD(String(fixedA));
                     startPriceHandler(String(fixedA));
                 }
             } else {
-                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: String((+usdB * +typedValue) / (+initialTokenPrice || 1)) }));
-                setUserBaseCurrencyUSD(String((+usdB * +typedValue) / (+initialTokenPrice || 1)));
+                if (usdB) {
+                    dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: String(parseFloat(String((+usdB * +typedValue) / (+initialTokenPrice || 1)))) }));
+                    setUserBaseCurrencyUSD(String(parseFloat(String((+usdB * +typedValue) / (+initialTokenPrice || 1)))));
+                }
                 startPriceHandler("");
             }
 
             if (usdB && usdB !== "0") {
                 if (!quotePriceUSD) {
                     const newUSDB = (+usdB * +typedValue) / (+initialTokenPrice || 1);
-                    const fixedB = newUSDB ? newUSDB.toFixed(8) : "0";
+                    const fixedB = newUSDB ? parseFloat(newUSDB.toFixed(8)) : "0";
                     dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: String(fixedB) }));
                     setUserQuoteCurrencyUSD(String(fixedB));
                     startPriceHandler(String(fixedB));
                 }
             } else {
-                dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: String((+usdA * +typedValue) / (+initialTokenPrice || 1)) }));
-                setUserQuoteCurrencyUSD(String((+usdA * +typedValue) / (+initialTokenPrice || 1)));
+                if (usdA) {
+                    dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: String(parseFloat(String((+usdA * +typedValue) / (+initialTokenPrice || 1)))) }));
+                    setUserQuoteCurrencyUSD(String(parseFloat(String((+usdA * +typedValue) / (+initialTokenPrice || 1)))));
+                }
                 startPriceHandler("");
             }
         },
@@ -306,7 +304,15 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
     return (
         <div className={"f starting-price-wrapper c p-1"} style={{ width: "542px", backgroundColor: "#26343f" }}>
             <div className={"flex-s-between"}>
-                {isLocked ? <span className={"auto-fetched"}>✨ Prices were auto-fetched</span> : <span className={"not-auto-fetched"}>{`Can't auto-fetch prices.`}</span>}
+                {isLocked ? (
+                    <span className={"auto-fetched"}>✨ Prices were auto-fetched</span>
+                ) : !basePriceUSD && !quotePriceUSD ? (
+                    <span className={"not-auto-fetched"}>{`Can't auto-fetch prices.`}</span>
+                ) : !basePriceUSD ? (
+                    <span className={"not-auto-fetched"}>{`Can't auto-fetch ${currencyA?.symbol} price.`}</span>
+                ) : !quotePriceUSD ? (
+                    <span className={"not-auto-fetched"}>{`Can't auto-fetch ${currencyB?.symbol} price.`}</span>
+                ) : null}
             </div>
             <div className={"br-8 mt-1 f c"}>
                 <div className={`f ${priceFormat === PriceFormats.TOKEN ? "reverse" : "c"}`}>

@@ -536,6 +536,7 @@ export function useRangeHopCallbacks(
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         // use pool current tick as starting tick if we have pool but no tick input
+
         if (!(typeof tickLower === 'number') && baseToken && quoteToken && feeAmount && pool) {
             const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - 60)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)

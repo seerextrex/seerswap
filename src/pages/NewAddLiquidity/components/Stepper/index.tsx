@@ -75,15 +75,19 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
             if (mintInfo.price && rangeUSD && completedSteps.length >= 2) {
                 _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isUSD ? "$" : ""}${
                     isUSD
-                        ? ((isSorted ? +mintInfo.price.toSignificant(8) : +mintInfo.price.invert().toSignificant(8)) * +rangeUSD).toFixed(4)
+                        ? isSorted
+                            ? parseFloat(mintInfo.price.toSignificant(8))
+                            : parseFloat((+mintInfo.price.invert().toSignificant(8) * +rangeUSD).toFixed(4))
                         : isSorted
-                        ? mintInfo.price.toSignificant(5)
-                        : mintInfo.price.invert().toSignificant(5)
+                        ? parseFloat(mintInfo.price.toSignificant(5))
+                        : parseFloat(mintInfo.price.invert().toSignificant(5))
                 } ${isUSD ? "" : ` ${currencyB.symbol}`}`;
             }
 
             if (mintInfo.price && !rangeUSD && completedSteps.length >= 2) {
-                _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isSorted ? +mintInfo.price.toSignificant(8) : +mintInfo.price.invert().toSignificant(8)} ${currencyB.symbol}`;
+                _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isSorted ? parseFloat(mintInfo.price.toSignificant(8)) : parseFloat(mintInfo.price.invert().toSignificant(8))} ${
+                    currencyB.symbol
+                }`;
             }
 
             if (leftPrice && rightPrice && completedSteps.length >= 3) {

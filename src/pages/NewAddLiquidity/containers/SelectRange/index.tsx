@@ -143,12 +143,9 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                             onRightRangeInput={onRightRangeInput}
                             currencyA={currencyA}
                             currencyB={currencyB}
-                            feeAmount={mintInfo.dynamicFee}
-                            ticksAtLimit={mintInfo.ticksAtLimit}
+                            mintInfo={mintInfo}
                             initial={!!mintInfo.noLiquidity}
                             disabled={!startPriceTypedValue && !mintInfo.price}
-                            price={mintInfo.price}
-                            invertPrice={mintInfo.invertPrice}
                             isBeforePrice={isBeforePrice}
                             isAfterPrice={isAfterPrice}
                             priceFormat={priceFormat}

@@ -35,7 +35,7 @@ export function TokenRatio({ currencyA, currencyB, token0Ratio, token1Ratio }: I
                 <div className="f mb-1">
                     <div style={{ width: "16px", height: "16px", borderRadius: "50%", backgroundColor: "#707eff" }}></div>
                     <div className="ml-05">{currencyA?.symbol}</div>
-                    <div className="ml-a">{`${token0Ratio}%`}</div>
+                    <div className="ml-a">{`${Number(token0Ratio).toPrecision(3)}%`}</div>
                 </div>
                 <div className="f">
                     <div style={{ width: "16px", height: "16px", borderRadius: "50%", backgroundColor: "#ec92ff" }}></div>

@@ -4,6 +4,30 @@
     border-radius: 8px;
     width: 240px;
     border: 1px solid #233d65;
+    cursor: pointer;
+    
+    &__balance {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    &:hover {
+        
+        .token-card-selector {
+
+            &-chevron {
+                transition-duration: .3s;
+            }
+            &__btn {
+                background-color: #2a4559;
+                .token-card-selector__btn-chevron {
+                    margin-right: 5px;
+                }
+            }
+        }
+
+    
+    }
 
     &-logo {
         width: 35px;

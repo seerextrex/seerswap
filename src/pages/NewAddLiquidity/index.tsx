@@ -69,6 +69,7 @@ export function NewAddLiquidityPage({
         onRightRangeInput("");
     }, [currencyIdA, currencyIdB]);
 
+
     const baseCurrency = useCurrency(currencyIdA);
     const currencyB = useCurrency(currencyIdB);
     // prevent an error if they input ETH/WETH
@@ -344,7 +345,7 @@ export function NewAddLiquidityPage({
                 <RouterGuard
                     path={``}
                     redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={currentStep === 0}
+                    allowance={true}
                     Component={SelectPair}
                     baseCurrency={baseCurrency}
                     quoteCurrency={quoteCurrency}
@@ -354,6 +355,7 @@ export function NewAddLiquidityPage({
                     handleCurrencyASelect={handleCurrencyASelect}
                     handleCurrencyBSelect={handleCurrencyBSelect}
                     handlePopularPairSelection={handlePopularPairSelection}
+                    priceFormat={priceFormat}
                 />
             </Switch>
             {!end && account ? (

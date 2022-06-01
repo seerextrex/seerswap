@@ -20,10 +20,10 @@ interface IPresetRanges {
 }
 
 enum PresetProfits {
-    VERY_LOW = "Very low",
-    LOW = "Low",
-    MEDIUM = "Medium",
-    HIGH = "High",
+    VERY_LOW,
+    LOW,
+    MEDIUM,
+    HIGH
 }
 
 export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRangeSelection }: IPresetRanges) {
@@ -108,11 +108,19 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
                                 <div className="preset-ranges__description">
                                     <div className="f mb-05">
                                         <span>Risk:</span>
-                                        <span className={`preset-ranges__description-risk ml-a ${color}`}>{range.risk}</span>
+                                        <div className="f f-ac f-jc ml-a">
+                                            {
+                                                [0, 1, 2, 3, 4].map((_, i) => <span style={{ width: '10px', height: '10px', marginLeft: '5px', borderRadius: '50%', background: i <= range.risk ? '#25a0ff' : '#42637b' }}></span>)
+                                            }
+                                        </div>
                                     </div>
                                     <div className="f">
                                         <span>Profit:</span>
-                                        <span className={`preset-ranges__description-profit ml-a ${color}`}>{range.profit}</span>
+                                        <div className="f f-ac f-jc ml-a">
+                                            {
+                                                [0, 1, 2, 3, 4].map((_, i) => <span style={{ width: '10px', height: '10px', marginLeft: '5px', borderRadius: '50%', background: i <= range.profit ? '#25a0ff' : '#42637b' }}></span>)
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             );

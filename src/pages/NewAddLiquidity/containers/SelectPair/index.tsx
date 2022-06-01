@@ -19,19 +19,21 @@ import Loader from "components/Loader";
 import { IDerivedMintInfo } from "state/mint/v3/hooks";
 import { PoolState } from "hooks/usePools";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
+import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 
 interface ISelectPair {
     baseCurrency: Currency | null | undefined;
     quoteCurrency: Currency | null | undefined;
     mintInfo: IDerivedMintInfo;
     isCompleted: boolean;
+    priceFormat: PriceFormats;
     handleCurrencySwap: () => void;
     handleCurrencyASelect: (newCurrency: Currency) => void;
     handleCurrencyBSelect: (newCurrency: Currency) => void;
     handlePopularPairSelection: (pair: [string, string]) => void;
 }
 
-export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, handlePopularPairSelection }: ISelectPair) {
+export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted, priceFormat, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, handlePopularPairSelection }: ISelectPair) {
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 
     const {
@@ -71,7 +73,7 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted,
             <div className="f mxs_fd-cr">
                 <div className="token-pairs-wrapper f c">
                     <div className="f mxs_fd-c">
-                        <TokenCard currency={baseCurrency} otherCurrency={quoteCurrency} handleTokenSelection={handleCurrencyASelect}></TokenCard>
+                        <TokenCard currency={baseCurrency} otherCurrency={quoteCurrency} handleTokenSelection={handleCurrencyASelect} priceFormat={priceFormat} ></TokenCard>
                         <div className={`token-pairs-plus ${baseCurrency && quoteCurrency ? "swap-btn" : ""} mh-1 mt-a mb-a f f-ac f-jc mxs_mt-1 mxs_mb-1 mxs_ml-a mxs_mr-a`}>
                             {baseCurrency && quoteCurrency && (
                                 <div className="f f-ac f-jc full-wh" onClick={handleCurrencySwap}>
@@ -89,7 +91,7 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted,
                             )}
                             {(!baseCurrency || !quoteCurrency) && <Plus size={16} />}
                         </div>
-                        <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect}></TokenCard>
+                        <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect} priceFormat={priceFormat} ></TokenCard>
                     </div>
 
                     <div className="mt-1">

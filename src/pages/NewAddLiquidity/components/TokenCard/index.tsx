@@ -61,9 +61,12 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
                 <div className="token-card-logo">
                     <CurrencyLogo size={"35px"} currency={currency as WrappedCurrency}></CurrencyLogo>
                 </div>
-                <div className={"ml-1"}>
-                    <div className="token-card__balance b">BALANCE</div>
-                    <div>{`${priceFormat === PriceFormats.USD ? '$' : ''} ${currency ? _balance : "Not selected"}`}</div>
+                <div className={"f c f-jc ml-1"}>
+                    {
+                        currency &&
+                        <div className="token-card__balance b">BALANCE</div>
+                    }
+                    <div>{`${priceFormat === PriceFormats.USD && currency ? '$' : ''} ${currency ? _balance : "Not selected"}`}</div>
                 </div>
             </div>
             <div className="token-card-selector">

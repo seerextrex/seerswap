@@ -135,9 +135,9 @@ export function NewAddLiquidityPage({
         (currencyANew: Currency) => {
             const [idA, idB] = handleCurrencySelect(currencyANew, currencyIdB);
             if (idB === undefined) {
-                history.push(`/new-add/${idA}`);
+                history.push(`/add/${idA}`);
             } else {
-                history.push(`/new-add/${idA}/${idB}`);
+                history.push(`/add/${idA}/${idB}`);
             }
         },
         [handleCurrencySelect, currencyIdB, history]
@@ -147,27 +147,27 @@ export function NewAddLiquidityPage({
         (currencyBNew: Currency) => {
             const [idB, idA] = handleCurrencySelect(currencyBNew, currencyIdA);
             if (idA === undefined) {
-                history.push(`/new-add/${idB}`);
+                history.push(`/add/${idB}`);
             } else {
-                history.push(`/new-add/${idA}/${idB}`);
+                history.push(`/add/${idA}/${idB}`);
             }
         },
         [handleCurrencySelect, currencyIdA, history]
     );
 
     const handleCurrencySwap = useCallback(() => {
-        history.push(`/new-add/${currencyIdB}/${currencyIdA}`);
+        history.push(`/add/${currencyIdB}/${currencyIdA}`);
         resetState();
     }, [history, handleCurrencySelect, currencyIdA, currencyIdB]);
 
     const handlePopularPairSelection = useCallback((pair: [string, string]) => {
-        history.push(`/new-add/${pair[0]}/${pair[1]}`);
+        history.push(`/add/${pair[0]}/${pair[1]}`);
         resetState();
     }, []);
 
     const handleStepChange = useCallback(
         (_step) => {
-            history.push(`/new-add/${currencyIdA}/${currencyIdB}/${_step}`);
+            history.push(`/add/${currencyIdA}/${currencyIdB}/${_step}`);
         },
         [currencyIdA, currencyIdB, history]
     );

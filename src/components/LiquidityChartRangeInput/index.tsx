@@ -75,42 +75,46 @@ export default function LiquidityChartRangeInput({
         priceFormat,
     });
 
-    const initialPrice = useInitialTokenPrice()
-    const initialUSDPrices = useInitialUSDPrices()
-    const currencyBUSD = useUSDCPrice(currencyB)
+    const initialPrice = useInitialTokenPrice();
+    const initialUSDPrices = useInitialUSDPrices();
+    const currencyBUSD = useUSDCPrice(currencyB);
 
     const mockData = useMemo(() => {
-        if (formattedData) return []
+        if (formattedData) return [];
 
-        if (!initialPrice) return []
- 
+        if (!initialPrice) return [];
+
         if (priceFormat === PriceFormats.TOKEN) {
-            return [{activeLiquidity: 0, price0: +initialPrice * ZOOM_LEVEL.initialMin}, { activeLiquidity: 0, price0: +initialPrice * ZOOM_LEVEL.initialMax }]
+            return [
+                { activeLiquidity: 0, price0: +initialPrice * ZOOM_LEVEL.initialMin },
+                { activeLiquidity: 0, price0: +initialPrice * ZOOM_LEVEL.initialMax },
+            ];
         } else {
-            if (currencyBUSD || initialUSDPrices.CURRENCY_B && initialPrice) {
+            if (currencyBUSD || (initialUSDPrices.CURRENCY_B && initialPrice)) {
                 const price = currencyBUSD?.toSignificant(8) || initialUSDPrices.CURRENCY_B;
-                return [{activeLiquidity: 0, price0: (+price * +initialPrice) * ZOOM_LEVEL.initialMin}, { activeLiquidity: 0, price0: (+price * +initialPrice ) * ZOOM_LEVEL.initialMax }]
+                return [
+                    { activeLiquidity: 0, price0: +price * +initialPrice * ZOOM_LEVEL.initialMin },
+                    { activeLiquidity: 0, price0: +price * +initialPrice * ZOOM_LEVEL.initialMax },
+                ];
             }
-            return []
+            return [];
         }
-
-    }, [initialPrice, initialUSDPrices, currencyBUSD, priceFormat])
+    }, [initialPrice, initialUSDPrices, currencyBUSD, priceFormat]);
 
     const mockPrice = useMemo(() => {
-        if (formattedData) return 0
+        if (formattedData) return 0;
 
-        if (!initialPrice) return 0
+        if (!initialPrice) return 0;
 
         if (priceFormat === PriceFormats.TOKEN) {
-            if (initialPrice) return +initialPrice
+            if (initialPrice) return +initialPrice;
         } else {
-            if (currencyBUSD) return +currencyBUSD.toSignificant(5) * +initialPrice
-            if (initialUSDPrices.CURRENCY_B) return +initialUSDPrices.CURRENCY_B * +initialPrice
+            if (currencyBUSD) return +currencyBUSD.toSignificant(5) * +initialPrice;
+            if (initialUSDPrices.CURRENCY_B) return +initialUSDPrices.CURRENCY_B * +initialPrice;
         }
 
-        return 0
-
-    }, [initialPrice, initialUSDPrices, currencyBUSD, priceFormat])
+        return 0;
+    }, [initialPrice, initialUSDPrices, currencyBUSD, priceFormat]);
 
     const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
 
@@ -171,8 +175,6 @@ export default function LiquidityChartRangeInput({
 
         return [parseFloat(leftPrice.toSignificant(5)), parseFloat(rightPrice.toSignificant(5))];
     }, [leftPrice, rightPrice, leftPriceUSD, rightPriceUSD, priceFormat]);
-
-    console.log('BRUSH', brushDomain)
 
     const brushLabelValue = useCallback(
         (d: "w" | "e", x: number) => {

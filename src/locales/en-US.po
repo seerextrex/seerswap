@@ -172,6 +172,7 @@ msgstr "Add {0} to Metamask <0/>"
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
+#: src/pages/NewAddLiquidity/containers/AddLiquidityButton/index.tsx
 msgid "Add {0}/{1} liquidity"
 msgstr "Add {0}/{1} liquidity"
 
@@ -484,6 +485,7 @@ msgstr "Create a pair"
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
+#: src/pages/NewAddLiquidity/containers/AddLiquidityButton/index.tsx
 msgid "Create pool and add {0}/{1} liquidity"
 msgstr "Create pool and add {0}/{1} liquidity"
 
@@ -632,8 +634,8 @@ msgstr "Enter valid token address"
 msgid "Error"
 msgstr "Error"
 
-#: src/components/WalletModal/PendingView.tsx
 #: src/components/WalletModal/index.tsx
+#: src/components/WalletModal/PendingView.tsx
 msgid "Error connecting"
 msgstr "Error connecting"
 
@@ -665,6 +667,10 @@ msgstr "Expert mode turns off the confirm transaction prompt and allows high sli
 #: 
 #~ msgid "Farming"
 #~ msgstr "Farming"
+
+#: src/pages/NewAddLiquidity/components/PopularPairs/index.tsx
+msgid "Farms"
+msgstr "Farms"
 
 #: src/utils/convertDate.ts
 msgid "February"
@@ -858,8 +864,8 @@ msgstr "Lists"
 msgid "Loaded"
 msgstr "Loaded"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 #: src/pages/PoolFinder/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Loading"
@@ -912,8 +918,8 @@ msgstr "Maximum sent"
 msgid "May"
 msgstr "May"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Migrate"
 msgstr "Migrate"
 
@@ -1115,15 +1121,15 @@ msgstr "Pool Found!"
 #~ msgid "Pool rate"
 #~ msgstr "Pool rate"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Pool tokens in rewards pool:"
 msgstr "Pool tokens in rewards pool:"
 
-#: src/components/PositionCard/V2.tsx
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/V2.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
@@ -1138,6 +1144,14 @@ msgstr "Pools Overview"
 #: 
 #~ msgid "Pools for staking"
 #~ msgstr "Pools for staking"
+
+#: src/pages/NewAddLiquidity/components/PopularPairs/index.tsx
+msgid "Popular pairs"
+msgstr "Popular pairs"
+
+#: src/pages/NewAddLiquidity/components/PresetRanges/index.tsx
+msgid "Preset ranges"
+msgstr "Preset ranges"
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Preview"
@@ -1311,8 +1325,8 @@ msgstr "Show"
 #~ msgid "Simple"
 #~ msgstr "Simple"
 
-#: src/components/TransactionSettings/index.tsx
 #: src/components/swap/AdvancedSwapDetails.tsx
+#: src/components/TransactionSettings/index.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
@@ -1422,8 +1436,8 @@ msgid "The transaction could not be sent because the deadline has passed. Please
 msgstr "The transaction could not be sent because the deadline has passed. Please check that your transaction deadline is not too low."
 
 #: src/components/LiquidityChartRangeInput/index.tsx
-msgid "There is no liquidity data."
-msgstr "There is no liquidity data."
+#~ msgid "There is no liquidity data."
+#~ msgstr "There is no liquidity data."
 
 #: 
 #~ msgid "These tokens are commonly paired with other tokens."
@@ -1500,7 +1514,16 @@ msgstr "To stake your NFT you should approve Algebra to use it"
 #~ msgid "Toggle Expert Mode"
 #~ msgstr "Toggle Expert Mode"
 
+#: src/pages/NewAddLiquidity/components/USDPrices/index.tsx
+msgid "Token Prices"
+msgstr "Token Prices"
+
+#: src/pages/NewAddLiquidity/components/TokenRatio/index.tsx
+msgid "Token ratio"
+msgstr "Token ratio"
+
 #: src/components/SearchModal/Manage.tsx
+#: src/pages/NewAddLiquidity/components/PriceFomatToggler/index.tsx
 msgid "Tokens"
 msgstr "Tokens"
 
@@ -1539,6 +1562,14 @@ msgstr "Turn On Expert Mode"
 #: 
 #~ msgid "UNI {0}/{1} Burned"
 #~ msgstr "UNI {0}/{1} Burned"
+
+#: src/pages/NewAddLiquidity/components/PriceFomatToggler/index.tsx
+msgid "USD"
+msgstr "USD"
+
+#: src/pages/NewAddLiquidity/components/USDPrices/index.tsx
+msgid "USD Prices"
+msgstr "USD Prices"
 
 #: src/components/earn/ClaimRewardModal.tsx
 #: src/components/earn/UnstakingModal.tsx
@@ -1749,9 +1780,9 @@ msgstr "Your Reward"
 #~ msgid "Your V3 liquidity positions will appear here."
 #~ msgstr "Your V3 liquidity positions will appear here."
 
+#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
 msgid "Your pool share:"
 msgstr "Your pool share:"
 
@@ -1789,8 +1820,8 @@ msgstr "Your positions"
 #~ msgid "Your rate"
 #~ msgstr "Your rate"
 
-#: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/V2.tsx
 msgid "Your total pool tokens:"
 msgstr "Your total pool tokens:"
 

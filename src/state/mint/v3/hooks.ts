@@ -647,3 +647,8 @@ export function useInitialTokenPrice(): AppState['mintV3']['initialTokenPrice'] 
     const initialTokenPrice = useAppSelector((state: AppState) => state.mintV3.initialTokenPrice)
     return useMemo(() => initialTokenPrice, [initialTokenPrice])
 }
+
+export function useCurrentStep(): AppState['mintV3']['currentStep'] {
+    const currentStep = useAppSelector((state: AppState) => state.mintV3.currentStep)
+    return useMemo(() => currentStep, [currentStep])
+}

@@ -33,10 +33,10 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
                 {
                     type: Presets.STABLE,
                     title: "Stablecoins",
-                    min: 0,
-                    max: 100,
+                    min: 0.984,
+                    max: 1.01,
                     risk: PresetProfits.VERY_LOW,
-                    profit: PresetProfits.VERY_LOW,
+                    profit: PresetProfits.HIGH,
                 },
             ];
 
@@ -110,7 +110,7 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
                                         <span>Risk:</span>
                                         <div className="f f-ac f-jc ml-a">
                                             {[0, 1, 2, 3, 4].map((_, i) => (
-                                                <span style={{ width: "10px", height: "10px", marginLeft: "5px", borderRadius: "50%", background: i <= range.risk ? "#25a0ff" : "#42637b" }}></span>
+                                                <span key={i} className="preset-ranges__circle" style={{ background: i <= range.risk ? "#25a0ff" : "#42637b" }}></span>
                                             ))}
                                         </div>
                                     </div>
@@ -118,7 +118,11 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
                                         <span>Profit:</span>
                                         <div className="f f-ac f-jc ml-a">
                                             {[0, 1, 2, 3, 4].map((_, i) => (
-                                                <span style={{ width: "10px", height: "10px", marginLeft: "5px", borderRadius: "50%", background: i <= range.profit ? "#25a0ff" : "#42637b" }}></span>
+                                                <span
+                                                    key={i}
+                                                    className="preset-ranges__circle"
+                                                    style={{ width: "10px", height: "10px", marginLeft: "5px", borderRadius: "50%", background: i <= range.profit ? "#25a0ff" : "#42637b" }}
+                                                ></span>
                                             ))}
                                         </div>
                                     </div>

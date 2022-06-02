@@ -20,6 +20,7 @@ import { IDerivedMintInfo } from "state/mint/v3/hooks";
 import { PoolState } from "hooks/usePools";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
+import { useHistory } from "react-router-dom";
 
 interface ISelectPair {
     baseCurrency: Currency | null | undefined;
@@ -44,6 +45,8 @@ export function SelectPair({
     handleCurrencyBSelect,
     handlePopularPairSelection,
 }: ISelectPair) {
+    const history = useHistory();
+
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 
     const {
@@ -76,6 +79,14 @@ export function SelectPair({
 
         return aprs[poolAddress] ? `${aprs[poolAddress].toFixed(2)}% APR` : undefined;
     }, [baseCurrency, quoteCurrency, aprs]);
+
+    useEffect(() => {
+        return () => {
+            if (history.action === "POP") {
+                history.push("/pool");
+            }
+        };
+    }, []);
 
     return (
         <div className="select-pair-wrapper f c">

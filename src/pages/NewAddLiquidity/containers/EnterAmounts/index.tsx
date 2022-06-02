@@ -12,14 +12,16 @@ import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { useActiveWeb3React } from "hooks/web3";
 import { Position } from "@uniswap/v3-sdk";
-import { Bound } from "state/mint/v3/actions";
-import { useMemo } from "react";
+import { Bound, updateCurrentStep } from "state/mint/v3/actions";
+import { useEffect, useMemo } from "react";
 import { tryParseAmount } from "state/swap/hooks";
 
 import { MaxUint256 } from "@ethersproject/constants";
 import { Check } from "react-feather";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
+import { useHistory } from "react-router-dom";
+import { useAppDispatch } from "state/hooks";
 
 interface IEnterAmounts {
     currencyA: Currency | undefined;
@@ -28,9 +30,10 @@ interface IEnterAmounts {
     isCompleted: boolean;
     additionalStep: boolean;
     priceFormat: PriceFormats;
+    backStep: number;
 }
 
-export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat }: IEnterAmounts) {
+export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, backStep }: IEnterAmounts) {
     const { chainId } = useActiveWeb3React();
 
     const { independentField, typedValue, startPriceTypedValue } = useV3MintState();
@@ -137,6 +140,16 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
 
         return;
     }, [mintInfo, currencyB]);
+
+    const history = useHistory();
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        return () => {
+            if (history.action === "POP") {
+                dispatch(updateCurrentStep({ currentStep: backStep }));
+            }
+        };
+    });
 
     return (
         <div className="f c">

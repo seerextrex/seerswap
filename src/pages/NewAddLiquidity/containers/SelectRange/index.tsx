@@ -5,13 +5,13 @@ import { RangeSelector } from "pages/NewAddLiquidity/components/RangeSelector";
 import { Price, Token, Currency } from "@uniswap/sdk-core";
 
 import "./index.scss";
-import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
+import { Bound, updateCurrentStep, updateSelectedPreset } from "state/mint/v3/actions";
 import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from "constants/tokens";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useAppDispatch } from "state/hooks";
 import { useActivePreset } from "state/mint/v3/hooks";
@@ -22,6 +22,7 @@ import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { tryParseAmount } from "state/swap/hooks";
 import { tryParsePrice } from "state/mint/v3/utils";
+import { useHistory } from "react-router-dom";
 
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
@@ -31,10 +32,12 @@ interface IRangeSelector {
     additionalStep: boolean;
     priceFormat: PriceFormats;
     disabled: boolean;
+    backStep: number;
 }
 
-export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, disabled }: IRangeSelector) {
+export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, backStep, disabled }: IRangeSelector) {
     const { startPriceTypedValue } = useV3MintState();
+    const history = useHistory();
 
     const dispatch = useAppDispatch();
     const activePreset = useActivePreset();
@@ -125,6 +128,14 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
         },
         [price]
     );
+
+    useEffect(() => {
+        return () => {
+            if (history.action === "POP") {
+                dispatch(updateCurrentStep({ currentStep: backStep }));
+            }
+        };
+    }, []);
 
     return (
         <div className="f c">

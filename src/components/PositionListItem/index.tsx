@@ -18,12 +18,12 @@ import { NavLink } from "react-router-dom";
 import Card from "../../shared/components/Card/Card";
 import RangeBadge from "../Badge/RangeBadge";
 import "./index.scss";
-import { useShowNewestPosition } from "state/mint/v3/hooks";
 import { useAppDispatch } from "state/hooks";
 
 interface PositionListItemProps {
     positionDetails: PositionPool;
     newestPosition?: number | undefined;
+    highlightNewest?: boolean;
 }
 
 export function getPriceOrderingFromPositionForUI(position?: Position): {
@@ -83,10 +83,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     };
 }
 
-export default function PositionListItem({ positionDetails, newestPosition }: PositionListItemProps) {
-
-    const dispatch = useAppDispatch()
-    const showNewestPosition = useShowNewestPosition()
+export default function PositionListItem({ positionDetails, newestPosition, highlightNewest }: PositionListItemProps) {
+    const dispatch = useAppDispatch();
 
     const prevPositionDetails = usePrevious({ ...positionDetails });
     const {
@@ -96,7 +94,7 @@ export default function PositionListItem({ positionDetails, newestPosition }: Po
         tickLower: _tickLower,
         tickUpper: _tickUpper,
         onFarming: _onFarming,
-        oldFarming: _oldFarming
+        oldFarming: _oldFarming,
     } = useMemo(() => {
         if (!positionDetails && prevPositionDetails && prevPositionDetails.liquidity) {
             return { ...prevPositionDetails };
@@ -146,19 +144,19 @@ export default function PositionListItem({ positionDetails, newestPosition }: Po
 
     const farmingLink = `/farming/farms#${positionDetails.tokenId}`;
 
-    const isNewest = newestPosition ? newestPosition === +positionDetails.tokenId : undefined
+    const isNewest = newestPosition ? newestPosition === +positionDetails.tokenId : undefined;
 
     const removed = _liquidity?.eq(0);
 
     useEffect(() => {
-        if (newestPosition && true) {
-            dispatch(setShowNewestPosition({showNewestPosition: false}))
-            document.querySelector('#newest')?.scrollIntoView({behavior: 'smooth'})
+        if (newestPosition && highlightNewest) {
+            dispatch(setShowNewestPosition({ showNewestPosition: false }));
+            document.querySelector("#newest")?.scrollIntoView({ behavior: "smooth" });
         }
-    }, [])
+    }, []);
 
     return (
-        <NavLink className={"w-100"} to={positionSummaryLink} style={{backgroundColor: isNewest ? 'red' : ''}} id={isNewest ? 'newest' : ''}>
+        <NavLink className={"w-100"} to={positionSummaryLink} id={isNewest && highlightNewest ? "newest" : ""}>
             <Card isDark={false} classes={"br-24 p-1 mv-05"}>
                 <div className={"position-list-item__header f f-ac"}>
                     <div className={"f f-ac"}>
@@ -175,9 +173,9 @@ export default function PositionListItem({ positionDetails, newestPosition }: Po
                                 <ArrowRight size={14} color={"white"} style={{ marginLeft: "5px" }} />
                             </NavLink>
                         ) : _oldFarming ? (
-                            <span className={"flex-s-between btn primary fs-085 p-025 br-8"} style={{background: '#46210a', borderColor: '#861f1f'}}>
-                            <span>On Old Farming Center</span>
-                        </span>
+                            <span className={"flex-s-between btn primary fs-085 p-025 br-8"} style={{ background: "#46210a", borderColor: "#861f1f" }}>
+                                <span>On Old Farming Center</span>
+                            </span>
                         ) : (
                             <div />
                         )}

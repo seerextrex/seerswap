@@ -3,8 +3,8 @@ import { useIsNetworkFailedImmediate } from "hooks/useIsNetworkFailed";
 import usePrevious from "hooks/usePrevious";
 import { useActiveWeb3React } from "hooks/web3";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
-import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useRangeHopCallbacks, useInitialUSDPrices } from "state/mint/v3/hooks";
+import { Prompt, Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useRangeHopCallbacks, useInitialUSDPrices, useCurrentStep } from "state/mint/v3/hooks";
 import { currencyId } from "utils/currencyId";
 import { Stepper } from "./components/Stepper";
 import { EnterAmounts } from "./containers/EnterAmounts";
@@ -15,7 +15,7 @@ import { Currency, Percent, CurrencyAmount } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import { WMATIC_EXTENDED } from "constants/tokens";
-import { Bound, setInitialTokenPrice, setInitialUSDPrices, updateSelectedPreset } from "state/mint/v3/actions";
+import { Bound, setInitialTokenPrice, setInitialUSDPrices, updateCurrentStep, updateSelectedPreset } from "state/mint/v3/actions";
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { Field } from "state/mint/actions";
 import { maxAmountSpend } from "utils/maxAmountSpend";
@@ -57,10 +57,11 @@ export function NewAddLiquidityPage({
 
     const feeAmount = 100;
 
-    const [currentStep, setCurrentStep] = useState(0);
+    const currentStep = useCurrentStep();
+
     const [end, setEnd] = useState(false);
 
-    const [priceFormat, setPriceFormat] = useState(PriceFormats.USD);
+    const [priceFormat, setPriceFormat] = useState(PriceFormats.TOKEN);
 
     useEffect(() => {
         onFieldAInput("");
@@ -259,8 +260,40 @@ export function NewAddLiquidityPage({
     useEffect(() => {
         return () => {
             resetState();
+            dispatch(updateCurrentStep({ currentStep: 0 }));
         };
     }, []);
+
+    useEffect(() => {
+        switch (currentStep) {
+            case 0: {
+                history.push(`/add/${currencyIdA}/${currencyIdB}/select-pair`);
+                break;
+            }
+            case 1: {
+                if (!mintInfo.noLiquidity) {
+                    history.push(`/add/${currencyIdA}/${currencyIdB}/select-range`);
+                } else {
+                    history.push(`/add/${currencyIdA}/${currencyIdB}/initial-price`);
+                }
+                break;
+            }
+            case 2: {
+                if (!mintInfo.noLiquidity) {
+                    history.push(`/add/${currencyIdA}/${currencyIdB}/enter-an-amounts`);
+                } else {
+                    history.push(`/add/${currencyIdA}/${currencyIdB}/select-range`);
+                }
+                break;
+            }
+            case 3: {
+                if (mintInfo.noLiquidity) {
+                    history.push(`/add/${currencyIdA}/${currencyIdB}/enter-an-amounts`);
+                }
+                break;
+            }
+        }
+    }, [currencyIdA, currencyIdB, history, currentStep, mintInfo.noLiquidity]);
 
     return (
         <div className="add-liquidity-page">
@@ -288,7 +321,7 @@ export function NewAddLiquidityPage({
                     handleNavigation={(step) => {
                         if (step.isEnabled) {
                             handleStepChange(step.link);
-                            setCurrentStep(step.step);
+                            setTimeout(() => dispatch(updateCurrentStep({ currentStep: step.step })), 10);
                         }
                     }}
                     priceFormat={priceFormat}
@@ -313,6 +346,7 @@ export function NewAddLiquidityPage({
                     isCompleted={stepAmounts}
                     additionalStep={stepInitialPrice}
                     priceFormat={priceFormat}
+                    backStep={stepInitialPrice ? 2 : 1}
                 />
 
                 <RouterGuard
@@ -327,6 +361,7 @@ export function NewAddLiquidityPage({
                     isCompleted={stepRange}
                     additionalStep={stepInitialPrice}
                     priceFormat={priceFormat}
+                    backStep={stepInitialPrice ? 1 : 0}
                 />
 
                 <RouterGuard
@@ -339,12 +374,13 @@ export function NewAddLiquidityPage({
                     mintInfo={mintInfo}
                     isCompleted={stepInitialPrice}
                     priceFormat={priceFormat}
+                    backStep={0}
                 />
 
                 <RouterGuard
                     path={``}
                     redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={currentStep === 0}
+                    allowance={true}
                     Component={SelectPair}
                     baseCurrency={baseCurrency}
                     quoteCurrency={quoteCurrency}
@@ -364,7 +400,7 @@ export function NewAddLiquidityPage({
                             <button
                                 className="add-buttons__prev f"
                                 onClick={() => {
-                                    setCurrentStep(currentStep - 1);
+                                    dispatch(updateCurrentStep({ currentStep: currentStep - 1 }));
                                     handleStepChange(stepLinks[currentStep - 1].link);
                                 }}
                             >
@@ -389,7 +425,7 @@ export function NewAddLiquidityPage({
                             className="add-buttons__next f f-jc f-ac ml-a"
                             disabled={!steps[currentStep]}
                             onClick={() => {
-                                setCurrentStep(currentStep + 1);
+                                dispatch(updateCurrentStep({ currentStep: currentStep + 1 }));
                                 handleStepChange(stepLinks[currentStep + 1].link);
                             }}
                         >

@@ -98,6 +98,10 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
         const left = mintInfo.lowerPrice.toSignificant(5);
         const right = mintInfo.upperPrice.toSignificant(5);
 
+        console.log("LEFTTFFF", left, right);
+
+        if (right === "338490000000000000000000000000000000000000000000000" || right === "338490000000000000000000000000000000000") return ["50", "50"];
+
         if (!currentPrice) return ["0", "0"];
 
         if (!left && !right) return ["0", "0"];
@@ -105,6 +109,14 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
         if (!left && right) return ["0", "100"];
 
         if (!right && left) return ["100", "0"];
+
+        if (mintInfo.depositADisabled) {
+            return ["0", "100"];
+        }
+
+        if (mintInfo.depositBDisabled) {
+            return ["100", "0"];
+        }
 
         if (left && right && currentPrice) {
             const leftRange = +currentPrice - +left;

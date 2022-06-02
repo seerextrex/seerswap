@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState } from "react";
 import CurrencySearchModal from "components/SearchModal/CurrencySearchModal";
 import { useActiveWeb3React } from "hooks/web3";
 import { useCurrencyBalance } from "state/wallet/hooks";
-import { useUSDCValue } from "hooks/useUSDCPrice";
+import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { PriceFormats } from "../PriceFomatToggler";
 
 interface ITokenCard {
@@ -23,8 +23,8 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
 
     const { account } = useActiveWeb3React();
 
-    const balance = useCurrencyBalance(account ?? undefined, currency ? (currency.isNative ? currency.wrapped : currency) : undefined);
-    const balanceUSD = useUSDCValue(balance);
+    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
+    const balanceUSD = useUSDCPrice(currency ?? undefined);
 
     const handleDismissSearch = useCallback(() => {
         toggleSelectModal(false);
@@ -32,12 +32,12 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
 
     const _balance = useMemo(() => {
         if (priceFormat === PriceFormats.USD) {
-            if (balanceUSD) {
-                return balanceUSD.toSignificant(5);
+            if (balance && balanceUSD) {
+                return parseFloat(Number(+balance?.toSignificant(5) * +balanceUSD.toSignificant(5)).toFixed(4));
             }
         }
         if (balance) {
-            return balance.toSignificant(5);
+            return parseFloat(balance.toSignificant(5));
         }
 
         return "0";

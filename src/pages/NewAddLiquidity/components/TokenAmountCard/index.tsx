@@ -54,8 +54,8 @@ export function TokenAmountCard({
 }: ITokenAmountCard) {
     const { account } = useActiveWeb3React();
 
-    const balance = useCurrencyBalance(account ?? undefined, currency ? (currency.isNative ? currency.wrapped : currency) : undefined);
-    const balanceUSD = useUSDCValue(balance);
+    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
+    const balanceUSD = useUSDCPrice(currency ?? undefined);
 
     const [localUSDValue, setLocalUSDValue] = useState("");
     const [localTokenValue, setLocalTokenValue] = useState("");
@@ -123,7 +123,7 @@ export function TokenAmountCard({
     const balanceString = useMemo(() => {
         if (!balance || !currency) return <Loader stroke={"white"} />;
 
-        const _balance = isUSD && balanceUSD ? balanceUSD.toSignificant(5) : balance.toSignificant(5);
+        const _balance = isUSD && balanceUSD ? String(+balance.toSignificant(5) * +balanceUSD.toSignificant(5)) : balance.toSignificant(5);
 
         if (_balance.split(".")[0].length > 10) {
             return `${isUSD ? "$ " : ""}${_balance.slice(0, 7)}...${isUSD ? "" : ` ${currency.symbol}`}`;

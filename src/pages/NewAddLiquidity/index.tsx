@@ -69,7 +69,6 @@ export function NewAddLiquidityPage({
         onRightRangeInput("");
     }, [currencyIdA, currencyIdB]);
 
-
     const baseCurrency = useCurrency(currencyIdA);
     const currencyB = useCurrency(currencyIdB);
     // prevent an error if they input ETH/WETH
@@ -297,15 +296,15 @@ export function NewAddLiquidityPage({
             </div>
             <Switch>
                 <RouterGuard
-                    path={`/new-add/${currencyIdA}/${currencyIdB}/aftermath`}
-                    redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
+                    path={`/add/${currencyIdA}/${currencyIdB}/aftermath`}
+                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
                     allowance={stepPair && stepRange && stepAmounts}
                     Component={Aftermath}
                 />
 
                 <RouterGuard
-                    path={`/new-add/${currencyIdA}/${currencyIdB}/enter-an-amounts`}
-                    redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
+                    path={`/add/${currencyIdA}/${currencyIdB}/enter-an-amounts`}
+                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
                     allowance={stepPair && stepRange && currentStep === (stepInitialPrice ? 3 : 2)}
                     Component={EnterAmounts}
                     currencyA={baseCurrency ?? undefined}
@@ -317,8 +316,8 @@ export function NewAddLiquidityPage({
                 />
 
                 <RouterGuard
-                    path={`/new-add/${currencyIdA}/${currencyIdB}/select-range`}
-                    redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
+                    path={`/add/${currencyIdA}/${currencyIdB}/select-range`}
+                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
                     allowance={stepPair && currentStep === (stepInitialPrice ? 2 : 1)}
                     Component={SelectRange}
                     currencyA={baseCurrency}
@@ -331,8 +330,8 @@ export function NewAddLiquidityPage({
                 />
 
                 <RouterGuard
-                    path={`/new-add/${currencyIdA}/${currencyIdB}/initial-price`}
-                    redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
+                    path={`/add/${currencyIdA}/${currencyIdB}/initial-price`}
+                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
                     allowance={mintInfo.noLiquidity}
                     Component={InitialPrice}
                     currencyA={baseCurrency ?? undefined}
@@ -344,8 +343,8 @@ export function NewAddLiquidityPage({
 
                 <RouterGuard
                     path={``}
-                    redirect={`/new-add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={true}
+                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
+                    allowance={currentStep === 0}
                     Component={SelectPair}
                     baseCurrency={baseCurrency}
                     quoteCurrency={quoteCurrency}
@@ -370,7 +369,8 @@ export function NewAddLiquidityPage({
                                 }}
                             >
                                 <ChevronLeft size={18} style={{ marginRight: "5px" }} />
-                                <span>{stepLinks[currentStep - 1].title}</span>
+                                <span className="add-buttons__prev-text">{stepLinks[currentStep - 1].title}</span>
+                                <span className="add-buttons__prev-text--mobile">Back</span>
                             </button>
                         </div>
                     )}

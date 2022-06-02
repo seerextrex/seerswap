@@ -33,7 +33,17 @@ interface ISelectPair {
     handlePopularPairSelection: (pair: [string, string]) => void;
 }
 
-export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted, priceFormat, handleCurrencySwap, handleCurrencyASelect, handleCurrencyBSelect, handlePopularPairSelection }: ISelectPair) {
+export function SelectPair({
+    baseCurrency,
+    quoteCurrency,
+    mintInfo,
+    isCompleted,
+    priceFormat,
+    handleCurrencySwap,
+    handleCurrencyASelect,
+    handleCurrencyBSelect,
+    handlePopularPairSelection,
+}: ISelectPair) {
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 
     const {
@@ -70,11 +80,11 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted,
     return (
         <div className="select-pair-wrapper f c">
             <StepTitle title={"Select a pair"} isCompleted={isCompleted} step={1} />
-            <div className="f mxs_fd-cr">
+            <div className="f mxs_fd-cr mxs_fd-cr ms_fd-cr mm_fd-cr">
                 <div className="token-pairs-wrapper f c">
-                    <div className="f mxs_fd-c">
-                        <TokenCard currency={baseCurrency} otherCurrency={quoteCurrency} handleTokenSelection={handleCurrencyASelect} priceFormat={priceFormat} ></TokenCard>
-                        <div className={`token-pairs-plus ${baseCurrency && quoteCurrency ? "swap-btn" : ""} mh-1 mt-a mb-a f f-ac f-jc mxs_mt-1 mxs_mb-1 mxs_ml-a mxs_mr-a`}>
+                    <div className="f mxs_fd-c ms_fd-cr">
+                        <TokenCard currency={baseCurrency} otherCurrency={quoteCurrency} handleTokenSelection={handleCurrencyASelect} priceFormat={priceFormat}></TokenCard>
+                        <div className={`token-pairs-plus ${baseCurrency && quoteCurrency ? "swap-btn" : ""} mh-1 mt-a mb-a f f-ac f-jc ms_mt-1 ms_mb-1 ms_ml-a ms_mr-a`}>
                             {baseCurrency && quoteCurrency && (
                                 <div className="f f-ac f-jc full-wh" onClick={handleCurrencySwap}>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,7 +101,7 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted,
                             )}
                             {(!baseCurrency || !quoteCurrency) && <Plus size={16} />}
                         </div>
-                        <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect} priceFormat={priceFormat} ></TokenCard>
+                        <TokenCard currency={quoteCurrency} otherCurrency={baseCurrency} handleTokenSelection={handleCurrencyBSelect} priceFormat={priceFormat}></TokenCard>
                     </div>
 
                     <div className="mt-1">
@@ -105,7 +115,7 @@ export function SelectPair({ baseCurrency, quoteCurrency, mintInfo, isCompleted,
                         )}
                     </div>
                 </div>
-                <div className="token-pairs__popular-wrapper mh-2 mxs_ml-0 mxs_mr-0">
+                <div className="token-pairs__popular-wrapper mh-2 mxs_ml-0 mxs_mr-0 mm_ml-0 mm_mr-0">
                     <PopularPairs handlePopularPairSelection={handlePopularPairSelection} pairs={popularPools} farmings={farmings}></PopularPairs>
                 </div>
             </div>

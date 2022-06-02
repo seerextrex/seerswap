@@ -16,7 +16,7 @@ interface IPopularPairs {
 export function PopularPairs({ pairs, farmings, handlePopularPairSelection }: IPopularPairs) {
     return (
         <div>
-            <div className={"pair-list-wrapper pl-1 mxs_pl-0"}>
+            <div className={"pair-list-wrapper pl-1 mm_pl-0"}>
                 <div className="mb-1 f f-ac">
                     <Star style={{ display: "block" }} fill={"white"} size={15} />
                     <span className="ml-05">

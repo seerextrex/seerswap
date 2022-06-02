@@ -147,11 +147,11 @@ export function RangeSelector({
                 />
             </div>
             {mintInfo.price && (
-                <div className="current-price f f-ac mxs_fd-r" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
+                <div className="current-price f f-ac mxs_fd-c" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
                     <div className="mb-05 mxs_mt-05" style={{ whiteSpace: "nowrap" }}>
                         {initial ? `Initial ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price` : `Current ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price`}
                     </div>
-                    <div className="current-price-tip mxs_ml-a ta-c">{`${currentPrice || "Loading..."}`}</div>
+                    <div className="current-price-tip ta-c">{`${currentPrice || "Loading..."}`}</div>
                 </div>
             )}
             <div className="max-price mxs_mt-1" style={{ order: isBeforePrice ? 2 : 3 }}>

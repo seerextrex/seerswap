@@ -45,6 +45,9 @@
       &-c {
         flex-direction: column;
       }
+      &-cr {
+        flex-direction: column-reverse;
+      }
     }
 
     &_p {
@@ -510,6 +513,9 @@
     &_fd {
       &-c {
         flex-direction: column;
+      }
+      &-cr {
+        flex-direction: column-reverse;
       }
     }
 

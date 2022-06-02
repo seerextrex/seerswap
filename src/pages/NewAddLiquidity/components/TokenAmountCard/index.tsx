@@ -152,7 +152,7 @@ export function TokenAmountCard({
                     <CurrencyLogo size={"35px"} currency={currency as WrappedCurrency}></CurrencyLogo>
                 </div>
                 <div className="ml-1">
-                    <div className="f f-ac">
+                    <div className="f f-ac mxs_fd-c">
                         <span className="mr-05">Balance: </span>
                         <span>{balanceString}</span>
                     </div>

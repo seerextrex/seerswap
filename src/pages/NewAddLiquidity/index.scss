@@ -67,6 +67,12 @@
     padding: 0;
     color: white;
 
+    &-text {
+      &--mobile {
+        display: none;
+      }
+    }
+
     &:hover {
       color: #c1c1c1;
     }
@@ -92,6 +98,15 @@
     margin-left: -1rem;
     margin-right: -1rem;
     margin-top: 6rem !important;
+
+    &__prev {
+      &-text {
+        display: none;
+        &--mobile {
+          display: inline;
+        }
+      }
+    }
   }
 
 }

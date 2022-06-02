@@ -15,7 +15,7 @@ interface ITokenCard {
     handleTokenSelection: (currency: Currency) => void;
     currency: Currency | null | undefined;
     otherCurrency: Currency | null | undefined;
-    priceFormat: PriceFormats
+    priceFormat: PriceFormats;
 }
 
 export function TokenCard({ handleTokenSelection, currency, otherCurrency, priceFormat }: ITokenCard) {
@@ -33,18 +33,18 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
     const _balance = useMemo(() => {
         if (priceFormat === PriceFormats.USD) {
             if (balanceUSD) {
-                return balanceUSD.toSignificant(5)
+                return balanceUSD.toSignificant(5);
             }
         }
         if (balance) {
-            return balance.toSignificant(5)
+            return balance.toSignificant(5);
         }
 
-        return '0'
-    }, [priceFormat, balance, balanceUSD])
+        return "0";
+    }, [priceFormat, balance, balanceUSD]);
 
     return (
-        <div className="token-card p-1 mxs_w-100" onClick={() => toggleSelectModal(true)}>
+        <div className="token-card p-1 mxs_w-100 mm_w-100" onClick={() => toggleSelectModal(true)}>
             {selectModal && (
                 <CurrencySearchModal
                     isOpen={selectModal}
@@ -62,11 +62,8 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
                     <CurrencyLogo size={"35px"} currency={currency as WrappedCurrency}></CurrencyLogo>
                 </div>
                 <div className={"f c f-jc ml-1"}>
-                    {
-                        currency &&
-                        <div className="token-card__balance b">BALANCE</div>
-                    }
-                    <div>{`${priceFormat === PriceFormats.USD && currency ? '$' : ''} ${currency ? _balance : "Not selected"}`}</div>
+                    {currency && <div className="token-card__balance b">BALANCE</div>}
+                    <div>{`${priceFormat === PriceFormats.USD && currency ? "$" : ""} ${currency ? _balance : "Not selected"}`}</div>
                 </div>
             </div>
             <div className="token-card-selector">

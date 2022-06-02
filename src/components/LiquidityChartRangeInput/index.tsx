@@ -173,23 +173,29 @@ export default function LiquidityChartRangeInput({
             return [parseFloat(leftPriceUSD.toSignificant(5)), parseFloat(rightPriceUSD.toSignificant(5))];
         }
 
+        if (priceFormat === PriceFormats.USD && initialUSDPrices.CURRENCY_B) {
+            return [parseFloat(String(+leftPrice.toSignificant(5) * +initialUSDPrices.CURRENCY_B)), parseFloat(String(+rightPrice.toSignificant(5) * +initialUSDPrices.CURRENCY_B))];
+        }
+
         return [parseFloat(leftPrice.toSignificant(5)), parseFloat(rightPrice.toSignificant(5))];
     }, [leftPrice, rightPrice, leftPriceUSD, rightPriceUSD, priceFormat]);
 
     const brushLabelValue = useCallback(
         (d: "w" | "e", x: number) => {
-            if (!price) return "";
+            const _price = price || mockPrice;
+
+            if (!_price) return "";
 
             if (d === "w" && ticksAtLimit[Bound.LOWER]) return "0";
             if (d === "e" && ticksAtLimit[Bound.UPPER]) return "∞";
 
             // const percent = (((x < price ? -1 : 1) * (Math.max(x, price) - Math.min(x, price))) / Math.min(x, price)) * 100
 
-            const percent = (x < price ? -1 : 1) * ((Math.max(x, price) - Math.min(x, price)) / price) * 100;
+            const percent = (x < _price ? -1 : 1) * ((Math.max(x, _price) - Math.min(x, _price)) / _price) * 100;
 
-            return price ? `${format(Math.abs(percent) > 1 ? ".2~s" : ".2~f")(percent)}%` : "";
+            return _price ? `${format(Math.abs(percent) > 1 ? ".2~s" : ".2~f")(percent)}%` : "";
         },
-        [price, priceFormat, ticksAtLimit]
+        [price, priceFormat, ticksAtLimit, mockPrice]
     );
 
     if (isError) {
@@ -199,6 +205,8 @@ export default function LiquidityChartRangeInput({
             fatal: false,
         });
     }
+
+    console.log("MOCK PRICE", mockPrice);
 
     return (
         <AutoColumn gap="md" style={{ minHeight: "260px" }}>

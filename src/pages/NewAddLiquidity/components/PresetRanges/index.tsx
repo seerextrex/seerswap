@@ -77,7 +77,7 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
     }, [isStablecoinPair]);
 
     return (
-        <div className={"preset-ranges-wrapper pl-1 mxs_pl-0 mxs_mb-1 ms_pl-0 ms_mb-1"}>
+        <div className={"preset-ranges-wrapper pl-1 mxs_pl-0 mxs_mb-2 ms_pl-0 ms_mb-2"}>
             <div className="mb-1 f f-ac">
                 <Layers style={{ display: "block", transform: "rotate(90deg)" }} size={15} />
                 <span className="ml-05">

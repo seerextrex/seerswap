@@ -101,18 +101,18 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
             }
 
             if (baseTokenUSD && rangeUSD && mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
-                const parsedA = Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5));
-                const parsedB = Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5));
+                const parsedA = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5)).toFixed(4)));
+                const parsedB = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5)).toFixed(4)));
 
                 let tokenA;
                 let tokenB;
 
                 if (isUSD) {
-                    const tokenAUSD = Number(baseTokenUSD.toSignificant(5));
-                    const tokenBUSD = Number(rangeUSD);
+                    const tokenAUSD = Number(baseTokenUSD.toSignificant(5)).toFixed(4);
+                    const tokenBUSD = Number(rangeUSD).toFixed(4);
 
-                    tokenA = isUSDCA ? parsedA : parsedA * tokenAUSD;
-                    tokenB = isUSDCB ? parsedB : parsedB * tokenBUSD;
+                    tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
+                    tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
 
                     _steps[3].title = `Liquidity: $${tokenA + tokenB}`;
                 } else {
@@ -136,18 +136,18 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
             }
 
             if (baseTokenUSD && rangeTokenUSD && mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
-                const parsedA = Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5));
-                const parsedB = Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5));
+                const parsedA = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5)).toFixed(4)));
+                const parsedB = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5)).toFixed(4)));
 
                 let tokenA;
                 let tokenB;
 
                 if (isUSD) {
-                    const tokenAUSD = Number(baseTokenUSD.toSignificant(5));
-                    const tokenBUSD = Number(rangeTokenUSD.toSignificant(5));
+                    const tokenAUSD = Number(baseTokenUSD.toSignificant(5)).toFixed(4);
+                    const tokenBUSD = Number(rangeTokenUSD.toSignificant(5)).toFixed(4);
 
-                    tokenA = isUSDCA ? parsedA : parsedA * tokenAUSD;
-                    tokenB = isUSDCB ? parsedB : parsedB * tokenBUSD;
+                    tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
+                    tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
 
                     _steps[2].title = `Liquidity: $${tokenA + tokenB}`;
                 } else {

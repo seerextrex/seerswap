@@ -140,7 +140,7 @@ export function TokenAmountCard({
     }, [balance, isUSD, fiatValue, currency]);
 
     return (
-        <div className="token-amount-card-wrapper p-1 f c pos-r mxs_w-100">
+        <div className="token-amount-card-wrapper p-1 f c pos-r mxs_w-100 ms_w-100 mm_w-100">
             {locked && (
                 <div className="token-amount-card__locked w-100 full-h pos-a f c f-ac f-jc">
                     <div>Price is outside specified price range.</div>
@@ -152,7 +152,7 @@ export function TokenAmountCard({
                     <CurrencyLogo size={"35px"} currency={currency as WrappedCurrency}></CurrencyLogo>
                 </div>
                 <div className="ml-1">
-                    <div className="f f-ac mxs_fd-c">
+                    <div className="f f-ac mxs_fd-c ms_f-as">
                         <span className="mr-05">Balance: </span>
                         <span>{balanceString}</span>
                     </div>

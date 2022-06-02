@@ -205,8 +205,8 @@ export function NewAddLiquidityPage({
                 title: "Select a range",
             },
             {
-                link: "enter-an-amounts",
-                title: "Enter an amounts",
+                link: "enter-amounts",
+                title: "Enter amounts",
             }
         );
         return _stepLinks;
@@ -266,10 +266,10 @@ export function NewAddLiquidityPage({
 
     useEffect(() => {
         switch (currentStep) {
-            case 0: {
-                history.push(`/add/${currencyIdA}/${currencyIdB}/select-pair`);
-                break;
-            }
+            // case 0: {
+            //     history.push(`/add/${currencyIdA}/${currencyIdB}/select-pair`);
+            //     break;
+            // }
             case 1: {
                 if (!mintInfo.noLiquidity) {
                     history.push(`/add/${currencyIdA}/${currencyIdB}/select-range`);
@@ -280,7 +280,7 @@ export function NewAddLiquidityPage({
             }
             case 2: {
                 if (!mintInfo.noLiquidity) {
-                    history.push(`/add/${currencyIdA}/${currencyIdB}/enter-an-amounts`);
+                    history.push(`/add/${currencyIdA}/${currencyIdB}/enter-amounts`);
                 } else {
                     history.push(`/add/${currencyIdA}/${currencyIdB}/select-range`);
                 }
@@ -288,7 +288,7 @@ export function NewAddLiquidityPage({
             }
             case 3: {
                 if (mintInfo.noLiquidity) {
-                    history.push(`/add/${currencyIdA}/${currencyIdB}/enter-an-amounts`);
+                    history.push(`/add/${currencyIdA}/${currencyIdB}/enter-amounts`);
                 }
                 break;
             }
@@ -336,7 +336,7 @@ export function NewAddLiquidityPage({
                 />
 
                 <RouterGuard
-                    path={`/add/${currencyIdA}/${currencyIdB}/enter-an-amounts`}
+                    path={`/add/${currencyIdA}/${currencyIdB}/enter-amounts`}
                     redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
                     allowance={stepPair && stepRange && currentStep === (stepInitialPrice ? 3 : 2)}
                     Component={EnterAmounts}

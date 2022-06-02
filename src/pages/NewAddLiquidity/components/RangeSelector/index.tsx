@@ -82,6 +82,13 @@ export function RangeSelector({
         )
     );
 
+    const currentPriceInUSDB = useUSDCValue(
+        tryParseAmount(
+            mintInfo.price ? (mintInfo.invertPrice ? Number(mintInfo.price.invert().toSignificant(5)).toFixed(5) : Number(mintInfo.price.toSignificant(5)).toFixed(5)) : undefined,
+            currencyA ?? undefined
+        )
+    );
+
     const initialUSDPrices = useInitialUSDPrices();
     const initialTokenPrice = useInitialTokenPrice();
 
@@ -116,6 +123,8 @@ export function RangeSelector({
                 _price = parseFloat(initialUSDPrices.CURRENCY_A);
             } else if (currentPriceInUSD) {
                 _price = parseFloat(currentPriceInUSD.toSignificant(5));
+            } else if (currentPriceInUSDB) {
+                _price = parseFloat(currentPriceInUSDB.toSignificant(5));
             }
         }
 

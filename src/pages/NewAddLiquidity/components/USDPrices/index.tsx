@@ -54,7 +54,7 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
     }, [currencyAUSDC, currencyBUSDC, userUSDPrices]);
 
     return (
-        <div className={"preset-ranges-wrapper pl-1 mb-2 mxs_pl-0 mxs_mb-1"}>
+        <div className={"preset-ranges-wrapper pl-1 mb-2 mxs_pl-0 mxs_mb-2 ms_pl-0 ms_mb-2"}>
             <div className="mb-1 f f-ac">
                 {isUSD ? <StopCircle style={{ display: "block" }} size={15} /> : <DollarSign style={{ display: "block" }} size={15} />}
                 <span className="ml-05">{isUSD ? <Trans>Token Prices</Trans> : <Trans>USD Prices</Trans>}</span>

@@ -19,7 +19,6 @@ import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
 import { EthereumWindow } from "models/types";
 import { useShowNewestPosition } from "state/mint/v3/hooks";
 
-
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React();
     const toggleWalletModal = useWalletModalToggle();
@@ -63,7 +62,7 @@ export default function Pool() {
     const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions);
 
     const _filteredPositions = useMemo(() => {
-        if (account !== prevAccount) return filteredPositions
+        if (account !== prevAccount) return filteredPositions;
 
         if (filteredPositions.length === 0 && prevFilteredPositions) {
             return prevFilteredPositions;
@@ -71,13 +70,11 @@ export default function Pool() {
         return filteredPositions;
     }, [filteredPositions, account, prevAccount]);
 
-    const showNewestPosition = useShowNewestPosition()
+    const showNewestPosition = useShowNewestPosition();
 
     const newestPosition = useMemo(() => {
-
-        return Math.max(..._filteredPositions.map(position => +position.tokenId))
-
-    }, [showNewestPosition, _filteredPositions])
+        return Math.max(..._filteredPositions.map((position) => +position.tokenId));
+    }, [showNewestPosition, _filteredPositions]);
 
     const showConnectAWallet = Boolean(!account);
 
@@ -114,7 +111,7 @@ export default function Pool() {
                             <NavLink className={"btn primary p-05 br-8 mr-1"} id="join-pool-button" to={`/migrate`}>
                                 <Trans>Migrate Pool</Trans>
                             </NavLink>
-                            <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add/${chainSymbol}`}>
+                            <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>
                                 + <Trans>New Position</Trans>
                             </NavLink>
                         </div>

@@ -18,7 +18,7 @@ export function TokenRatio({ currencyA, currencyB, token0Ratio, token1Ratio }: I
     }, [token0Ratio, token1Ratio]);
 
     return (
-        <div className={"preset-ranges-wrapper pl-1 mxs_pl-0"}>
+        <div className={"preset-ranges-wrapper pl-1 mxs_pl-0 mxs_mb-1 ms_pl-0 ms_mb-1"}>
             <div className="mb-1 f f-ac">
                 <Divide style={{ display: "block", fill: "currentcolor" }} size={15} />
                 <span className="ml-05">
@@ -26,7 +26,7 @@ export function TokenRatio({ currencyA, currencyB, token0Ratio, token1Ratio }: I
                 </span>
             </div>
             <div className="f full-h pos-r">
-                <div className="token-ratio full-h f" style={{ width: "280px", height: "20px", borderRadius: "8px", background: "grey", opacity: isEmpty ? "0.5" : "1" }}>
+                <div className="token-ratio f ms_w-100" style={{ opacity: isEmpty ? "0.5" : "1" }}>
                     <div className="token-ratio__part full-h" style={{ width: `${token0Ratio}%`, background: "#707eff", borderRadius: +token0Ratio === 100 ? "8px" : "8px 0 0 8px" }}></div>
                     <div className="token-ratio__part full-h" style={{ width: `${token1Ratio}%`, background: "#ec92ff", borderRadius: +token1Ratio === 100 ? "8px" : "0 8px 8px 0" }}></div>
                 </div>

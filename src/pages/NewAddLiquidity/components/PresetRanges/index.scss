@@ -87,16 +87,30 @@
 
         &__description {
             left: 0;
-            top: 38rem;
             width: 100%;
+            top: 8rem;
         }
     }
   }
   
   @media screen and (max-width: 720px) {
-  
+    .preset-ranges {
+        &-wrapper {
+            border: none;
+        }
+
+        &__description {
+            left: 0;
+            top: 28.5rem;
+            width: 100%;
+        }
+    }
   }
   
   @media screen and (max-width: 500px) {
-  
+    .preset-ranges {
+        &__description {
+            top: 39rem;
+        }
+    }
   }

@@ -153,8 +153,8 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
 
     return (
         <div className="f c">
-            <StepTitle title={"Enter an amounts"} isCompleted={isCompleted} step={additionalStep ? 4 : 3} />
-            <div className="f mxs_fd-cr">
+            <StepTitle title={"Enter amounts"} isCompleted={isCompleted} step={additionalStep ? 4 : 3} />
+            <div className="f mxs_fd-cr ms_fd-cr mm_fd-cr">
                 <div className="f c mxs_w-100">
                     <div className="mb-1" style={{ borderRadius: "8px" }}>
                         <TokenAmountCard
@@ -195,7 +195,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                         />
                     </div>
                 </div>
-                <div className="full-h ml-2 mxs_ml-0 mxs_mb-2">
+                <div className="full-h ml-2 mxs_ml-0 mxs_mb-2 ms_ml-0 mm_ml-0 mm_mb-1">
                     <TokenRatio currencyA={currencyA} currencyB={currencyB} token0Ratio={token0Ratio} token1Ratio={token1Ratio} />
                 </div>
             </div>

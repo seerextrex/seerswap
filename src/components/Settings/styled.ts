@@ -6,7 +6,7 @@ export const StyledMenuIcon = styled(Settings)`
   width: 20px;
 
   > * {
-    stroke: var(--primary);
+    stroke: white;
   }
 
   :hover {

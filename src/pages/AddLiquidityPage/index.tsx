@@ -494,7 +494,7 @@ export default function AddLiquidityPage({
                                     <div className={"f w-100 mxs_fd-c"}>
                                         {price && baseCurrency && quoteCurrency && !noLiquidity && (
                                             <div className={"price-range-chart h-100 br-12"}>
-                                                <LiquidityChartRangeInput
+                                                {/* <LiquidityChartRangeInput
                                                     currencyA={baseCurrency ?? undefined}
                                                     currencyB={quoteCurrency ?? undefined}
                                                     feeAmount={dynamicFee}
@@ -505,7 +505,8 @@ export default function AddLiquidityPage({
                                                     onLeftRangeInput={onLeftRangeInput}
                                                     onRightRangeInput={onRightRangeInput}
                                                     interactive={!hasExistingPosition}
-                                                />
+                                                    
+                                                /> */}
                                             </div>
                                         )}
                                         <div className={"price-range-inputs h-100 ml-1 mxs_mt-1 mxs_ml-0"} data-initial={!!noLiquidity}>

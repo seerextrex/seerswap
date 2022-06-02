@@ -85,7 +85,7 @@ export const QI_POLYGON = new Token(
 
 export const MAI_POLYGON = new Token(
     SupportedChainId.POLYGON,
-    '0xa3Fa99A148fA48D14Ed51d610c367C61876997F1',
+    '0xa3fa99a148fa48d14ed51d610c367c61876997f1',
     18,
     'MAI',
     'MIMATIC'

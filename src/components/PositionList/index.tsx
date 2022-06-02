@@ -4,12 +4,17 @@ import { Trans } from "@lingui/macro";
 import { PositionPool } from "../../models/interfaces";
 import { AlertCircle } from "react-feather";
 import { OldFarmingWarning } from "./styled";
+import { useLocation } from "react-router-dom";
+import { useShowNewestPosition } from "state/mint/v3/hooks";
 
 type PositionListProps = React.PropsWithChildren<{
     positions: PositionPool[];
+    newestPosition: number | undefined;
 }>;
 
-export default function PositionList({ positions }: PositionListProps) {
+export default function PositionList({ positions, newestPosition }: PositionListProps) {
+    const showNewestPosition = useShowNewestPosition();
+
     const _positions = useMemo(() => {
         if (!positions) {
             return [];
@@ -61,7 +66,7 @@ export default function PositionList({ positions }: PositionListProps) {
                 return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />;
             })}
             {_positions.map((p) => {
-                return <PositionListItem key={p.tokenId.toString()} positionDetails={p} />;
+                return <PositionListItem newestPosition={newestPosition} highlightNewest={showNewestPosition} key={p.tokenId.toString()} positionDetails={p} />;
             })}
         </>
     );

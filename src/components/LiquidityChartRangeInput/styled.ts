@@ -76,9 +76,4 @@ export const Button = styled(ButtonGray)`
 `
 export const ZoomOverlay = styled.rect`
     fill: transparent;
-    cursor: grab;
-
-    &:active {
-        cursor: grabbing;
-    }
 `

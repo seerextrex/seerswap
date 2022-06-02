@@ -4,7 +4,7 @@ import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { useV3Positions } from "hooks/useV3Positions";
 import { useActiveWeb3React } from "hooks/web3";
 import { useCallback, useEffect, useMemo } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useWalletModalToggle } from "state/application/hooks";
 import { useUserHideClosedPositions, useUserHideFarmingPositions } from "state/user/hooks";
 import { Helmet } from "react-helmet";
@@ -17,6 +17,8 @@ import { SwapPoolTabs } from "../../components/NavigationTabs";
 import "./index.scss";
 import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
 import { EthereumWindow } from "models/types";
+import { useShowNewestPosition } from "state/mint/v3/hooks";
+
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React();
@@ -61,13 +63,21 @@ export default function Pool() {
     const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions);
 
     const _filteredPositions = useMemo(() => {
-        if (account !== prevAccount) return filteredPositions;
+        if (account !== prevAccount) return filteredPositions
 
         if (filteredPositions.length === 0 && prevFilteredPositions) {
             return prevFilteredPositions;
         }
         return filteredPositions;
     }, [filteredPositions, account, prevAccount]);
+
+    const showNewestPosition = useShowNewestPosition()
+
+    const newestPosition = useMemo(() => {
+
+        return Math.max(..._filteredPositions.map(position => +position.tokenId))
+
+    }, [showNewestPosition, _filteredPositions])
 
     const showConnectAWallet = Boolean(!account);
 
@@ -120,7 +130,7 @@ export default function Pool() {
                         {positionsLoading ? (
                             <Loader style={{ margin: "auto" }} stroke="white" size={"2rem"} />
                         ) : _filteredPositions && _filteredPositions.length > 0 ? (
-                            <PositionList positions={_filteredPositions} />
+                            <PositionList positions={_filteredPositions.sort((posA, posB) => Number(+posA.tokenId < +posB.tokenId))} newestPosition={newestPosition} />
                         ) : (
                             <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>
                                 <Trans>You do not have any liquidity positions.</Trans>

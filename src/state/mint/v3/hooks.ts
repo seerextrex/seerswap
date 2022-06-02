@@ -15,6 +15,34 @@ import { tryParseTick } from './utils'
 import { usePool } from 'hooks/usePools'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
+export interface IDerivedMintInfo {
+    pool?: Pool | null
+    poolState: PoolState
+    ticks: { [bound in Bound]?: number | undefined }
+    price?: Price<Token, Token>
+    pricesAtTicks: {
+        [bound in Bound]?: Price<Token, Token> | undefined
+    }
+    currencies: { [field in Field]?: Currency }
+    currencyBalances: { [field in Field]?: CurrencyAmount<Currency> }
+    dependentField: Field
+    parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> }
+    position: Position | undefined
+    noLiquidity?: boolean
+    errorMessage?: string
+    errorCode?: number
+    invalidPool: boolean
+    outOfRange: boolean
+    invalidRange: boolean
+    depositADisabled: boolean
+    depositBDisabled: boolean
+    invertPrice: boolean
+    ticksAtLimit: { [bound in Bound]?: boolean | undefined },
+    dynamicFee: number,
+    lowerPrice: any,
+    upperPrice: any
+}
+
 export function useV3MintState(): AppState['mintV3'] {
     return useAppSelector((state) => state.mintV3)
 }
@@ -114,6 +142,7 @@ export function useV3DerivedMintInfo(
     lowerPrice: any,
     upperPrice: any
 } {
+
     const { account } = useActiveWeb3React()
 
     const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } = useV3MintState()
@@ -128,7 +157,7 @@ export function useV3DerivedMintInfo(
                 [Field.CURRENCY_B]: currencyB
             }
         )
-        ,[currencyA, currencyB])
+        , [currencyA, currencyB])
 
     // formatted with tokens
     const [tokenA, tokenB, baseToken] = useMemo(
@@ -230,12 +259,13 @@ export function useV3DerivedMintInfo(
     const ticks: {
         [key: string]: number | undefined
     } = useMemo(() => {
+
         return {
             [Bound.LOWER]:
                 typeof existingPosition?.tickLower === 'number'
                     ? existingPosition.tickLower
                     : (invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-                    (!invertPrice && typeof leftRangeTypedValue === 'boolean')
+                        (!invertPrice && typeof leftRangeTypedValue === 'boolean')
                         ? tickSpaceLimits[Bound.LOWER]
                         : invertPrice
                             ? tryParseTick(token1, token0, feeAmount, rightRangeTypedValue.toString())
@@ -244,7 +274,7 @@ export function useV3DerivedMintInfo(
                 typeof existingPosition?.tickUpper === 'number'
                     ? existingPosition.tickUpper
                     : (!invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-                    (invertPrice && typeof leftRangeTypedValue === 'boolean')
+                        (invertPrice && typeof leftRangeTypedValue === 'boolean')
                         ? tickSpaceLimits[Bound.UPPER]
                         : invertPrice
                             ? tryParseTick(token1, token0, feeAmount, leftRangeTypedValue.toString())
@@ -277,6 +307,7 @@ export function useV3DerivedMintInfo(
 
     // always returns the price with 0 as base token
     const pricesAtTicks = useMemo(() => {
+
         return {
             [Bound.LOWER]: getTickToPrice(token0, token1, ticks[Bound.LOWER]),
             [Bound.UPPER]: getTickToPrice(token0, token1, ticks[Bound.UPPER])
@@ -496,7 +527,6 @@ export function useRangeHopCallbacks(
 ) {
     const dispatch = useAppDispatch()
 
-
     const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency])
     const quoteToken = useMemo(() => quoteCurrency?.wrapped, [quoteCurrency])
 
@@ -506,6 +536,7 @@ export function useRangeHopCallbacks(
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         // use pool current tick as starting tick if we have pool but no tick input
+
         if (!(typeof tickLower === 'number') && baseToken && quoteToken && feeAmount && pool) {
             const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - 60)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
@@ -589,4 +620,35 @@ export function useRangeHopCallbacks(
         getSetRange,
         getSetFullRange
     }
+}
+
+
+export function useActivePreset(): AppState['mintV3']['preset'] {
+    const preset = useAppSelector((state: AppState) => state.mintV3.preset)
+    return useMemo(() => preset, [preset])
+}
+
+export function useAddLiquidityTxHash(): AppState['mintV3']['txHash'] {
+    const txHash = useAppSelector((state: AppState) => state.mintV3.txHash)
+    return useMemo(() => txHash, [txHash])
+}
+
+export function useShowNewestPosition(): AppState['mintV3']['showNewestPosition'] {
+    const newestPosition = useAppSelector((state: AppState) => state.mintV3.showNewestPosition)
+    return useMemo(() => newestPosition, [newestPosition])
+}
+
+export function useInitialUSDPrices(): AppState['mintV3']['initialUSDPrices'] {
+    const initialUSDPrices = useAppSelector((state: AppState) => state.mintV3.initialUSDPrices)
+    return useMemo(() => initialUSDPrices, [initialUSDPrices])
+}
+
+export function useInitialTokenPrice(): AppState['mintV3']['initialTokenPrice'] {
+    const initialTokenPrice = useAppSelector((state: AppState) => state.mintV3.initialTokenPrice)
+    return useMemo(() => initialTokenPrice, [initialTokenPrice])
+}
+
+export function useCurrentStep(): AppState['mintV3']['currentStep'] {
+    const currentStep = useAppSelector((state: AppState) => state.mintV3.currentStep)
+    return useMemo(() => currentStep, [currentStep])
 }

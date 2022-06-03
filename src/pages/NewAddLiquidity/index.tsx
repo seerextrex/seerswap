@@ -245,10 +245,17 @@ export function NewAddLiquidityPage({
 
     const allowedSlippage = useUserSlippageToleranceWithDefault(mintInfo.outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE);
 
-    const hidePriceFormatter = useMemo(
-        () => (mintInfo.noLiquidity ? stepInitialPrice : stepPair) && !initialUSDPrices.CURRENCY_A && !initialUSDPrices.CURRENCY_B && !usdPriceA && !usdPriceB,
-        [mintInfo, stepRange, usdPriceA, usdPriceB, initialUSDPrices]
-    );
+    const hidePriceFormatter = useMemo(() => {
+        if (stepInitialPrice && currentStep < 2) {
+            return false;
+        }
+
+        if (!stepInitialPrice && currentStep < 1) {
+            return false;
+        }
+
+        return Boolean((mintInfo.noLiquidity ? stepInitialPrice : stepPair) && !initialUSDPrices.CURRENCY_A && !initialUSDPrices.CURRENCY_B && !usdPriceA && !usdPriceB);
+    }, [mintInfo, currentStep, stepRange, stepInitialPrice, usdPriceA, usdPriceB, initialUSDPrices]);
 
     useEffect(() => {
         if (hidePriceFormatter) {

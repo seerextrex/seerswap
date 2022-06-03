@@ -57,7 +57,14 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
     const [approvalB] = useApproveCallback(mintInfo.parsedAmounts[Field.CURRENCY_B], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
 
     const isReady = useMemo(() => {
-        return Boolean(approvalA === ApprovalState.APPROVED && approvalB === ApprovalState.APPROVED && !mintInfo.errorMessage && !mintInfo.outOfRange && !txHash && !isNetworkFailed);
+        return Boolean(
+            (mintInfo.depositADisabled ? true : approvalA === ApprovalState.APPROVED) &&
+                (mintInfo.depositBDisabled ? true : approvalB === ApprovalState.APPROVED) &&
+                !mintInfo.errorMessage &&
+                !mintInfo.invalidRange &&
+                !txHash &&
+                !isNetworkFailed
+        );
     }, [mintInfo, approvalA, approvalB]);
 
     async function onAdd() {

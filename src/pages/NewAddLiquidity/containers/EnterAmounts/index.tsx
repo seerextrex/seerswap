@@ -100,6 +100,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
 
         console.log("LEFTTFFF", left, right);
 
+        //TODO
         if (right === "338490000000000000000000000000000000000000000000000" || right === "338490000000000000000000000000000000000") return ["50", "50"];
 
         if (!currentPrice) return ["0", "0"];
@@ -127,7 +128,11 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
             const leftRate = (+leftRange * 100) / totalSum;
             const rightRate = (+rightRange * 100) / totalSum;
 
-            return [String(leftRate), String(rightRate)];
+            if (mintInfo.invertPrice) {
+                return [String(leftRate), String(rightRate)];
+            } else {
+                return [String(rightRate), String(leftRate)];
+            }
         }
 
         return ["0", "0"];

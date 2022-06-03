@@ -123,7 +123,10 @@ export function TokenAmountCard({
     const balanceString = useMemo(() => {
         if (!balance || !currency) return <Loader stroke={"white"} />;
 
-        const _balance = isUSD && balanceUSD ? String(+balance.toSignificant(5) * +balanceUSD.toSignificant(5)) : balance.toSignificant(5);
+        const _balance =
+            isUSD && balanceUSD
+                ? String(parseFloat(String((+balance.toSignificant(5) * +balanceUSD.toSignificant(5)).toFixed(5))))
+                : String(parseFloat(String(Number(balance.toSignificant(5)).toFixed(5))));
 
         if (_balance.split(".")[0].length > 10) {
             return `${isUSD ? "$ " : ""}${_balance.slice(0, 7)}...${isUSD ? "" : ` ${currency.symbol}`}`;

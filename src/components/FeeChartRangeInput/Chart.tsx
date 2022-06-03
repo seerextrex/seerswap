@@ -529,7 +529,6 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
                                 .attr("min", token === ChartToken.TOKEN1 ? pos.token0Range[0] : pos.token1Range[0])
                                 .attr("max", token === ChartToken.TOKEN1 ? pos.token0Range[1] : pos.token1Range[1]);
                             i++;
-                            console.log(posWidth);
                             setTooltipPricePositions(token0Height, token1Height, posWidth, posY, res, halfOfHeight, rect, key);
                         }
                     }

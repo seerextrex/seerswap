@@ -98,8 +98,6 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
         const left = mintInfo.lowerPrice.toSignificant(5);
         const right = mintInfo.upperPrice.toSignificant(5);
 
-        console.log("LEFTTFFF", left, right);
-
         //TODO
         if (right === "338490000000000000000000000000000000000000000000000" || right === "338490000000000000000000000000000000000") return ["50", "50"];
 

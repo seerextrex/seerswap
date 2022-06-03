@@ -206,8 +206,6 @@ export default function LiquidityChartRangeInput({
         });
     }
 
-    console.log("MOCK PRICE", mockPrice);
-
     return (
         <AutoColumn gap="md" style={{ minHeight: "260px" }}>
             {isUninitialized ? (

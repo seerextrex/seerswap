@@ -164,8 +164,6 @@ export default function PositionPage({
 
         if (!feeValue0Wrapped || !feeValue1Wrapped) return null;
 
-        console.log(price0, price1, feeValue0Wrapped, feeValue1Wrapped);
-
         const amount0 = price0.quote(feeValue0Wrapped);
         const amount1 = price1.quote(feeValue1Wrapped);
         return amount0.add(amount1);

@@ -74,8 +74,6 @@ export default function CurrencyInputPanel({
     const [modalOpen, setModalOpen] = useState(false);
     const { account } = useActiveWeb3React();
 
-    console.log("CURRENCY", currency?.symbol, currency);
-
     const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
 
     const currentPrice = useUSDCPrice(currency ?? undefined);

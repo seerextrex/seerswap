@@ -282,7 +282,6 @@ export function useStakerHandlers() {
     }, [account, chainId])
 
     const stakeHandler = useCallback(async (selectedNFT, {
-        id,
         rewardToken,
         bonusRewardToken,
         pool,

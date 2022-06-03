@@ -119,7 +119,7 @@ export default function LiquidityChartRangeInput({
     const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
 
     const onBrushDomainChangeEnded = useCallback(
-        (domain, mode) => {
+        (domain: any[], mode: string) => {
             let leftRangeValue = Number(domain[0]);
             const rightRangeValue = Number(domain[1]);
 

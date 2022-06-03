@@ -17,7 +17,7 @@ export function useInfoTickData() {
 
     async function fetchInitializedTicks(poolAddress: string, tickIdxLowerBound: number, tickIdxUpperBound: number) {
 
-        let surroundingTicks = []
+        let surroundingTicks: any[] = []
         let surroundingTicksResult: Liquidity[] = []
 
         let skip = 0
@@ -134,7 +134,7 @@ export function useInfoTickData() {
 
                 // Iterate outwards (either up or down depending on 'Direction') from the active tick,
                 // building active liquidity for every tick.
-                let processedTicks = []
+                let processedTicks: any[] = []
                 for (let i = 0; i < numSurroundingTicks; i++) {
                     const currentTickIdx =
                         direction == Direction.ASC

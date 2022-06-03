@@ -48,7 +48,7 @@ export default function HeaderMenu() {
 
     const historyStack: MenuState[] = [MenuState.PRIMARY];
 
-    const handleSelect = useCallback((item) => {
+    const handleSelect = useCallback((item: any) => {
         if (item.title in headers) {
             // historyStack.push(item);
             // setMenuState(item);

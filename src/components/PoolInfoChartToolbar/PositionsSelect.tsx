@@ -19,7 +19,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
     const { account } = useActiveWeb3React();
 
     const _opened = useMemo(() => {
-        const res = [];
+        const res: any[] = [];
         for (const key in opened) {
             res.push({
                 id: key,
@@ -30,7 +30,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
     }, [opened, account]);
 
     const _closed = useMemo(() => {
-        const res = [];
+        const res: any[] = [];
         for (const key in closed) {
             res.push({
                 id: key,
@@ -41,7 +41,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
         return res;
     }, [closed, account]);
 
-    const closeHandler = useCallback((e) => {
+    const closeHandler = useCallback((e: any) => {
         const target = e.target.control;
 
         if (!target) return;

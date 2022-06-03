@@ -114,7 +114,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
     const tokenIdsArgs = useMemo(() => {
         if (accountBalance && account) {
-            const tokenRequests = []
+            const tokenRequests: any[] = []
             for (let i = 0; i < accountBalance; i++) {
                 tokenRequests.push([account, i])
             }
@@ -172,7 +172,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         return []
 
     }, [positionsOnFarmer, account])
-    
+
     //@ts-ignore
     const { positions: _positionsOnOldFarmer, loading: _positionsOnOldFarmerLoading } = useV3PositionsFromTokenIds(oldTransferredTokenIds)
 

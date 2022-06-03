@@ -73,7 +73,7 @@ function useSwapCallArguments(
         if (!swapRouterAddress) return []
 
         // if (!routerContract) return []
-        const swapMethods = []
+        const swapMethods: any[] = []
 
         swapMethods.push(
             SwapRouter.swapCallParameters(trade, {

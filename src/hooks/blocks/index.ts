@@ -41,7 +41,7 @@ export function useBlocksFromTimestamps(timestamps: number[], blockClientOverrid
     const blocksFormatted = useMemo(() => {
         if (blocks?.[chainId ?? SupportedChainId.POLYGON]) {
             const networkBlocks = blocks?.[chainId ?? SupportedChainId.POLYGON]
-            const formatted = []
+            const formatted: any[] = []
             for (const t in networkBlocks) {
                 if (networkBlocks[t].length > 0) {
                     formatted.push({

@@ -85,7 +85,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
         const _span = span !== ChartSpan.DAY ? "day" : "hour";
 
         let sameDays: (FormattedFeeChart | undefined)[] = [];
-        let res = [];
+        let res: any[] = [];
 
         if (data.length === 0 || (data[1] && dayjs(data[1].timestamp).isSame(data[0]?.timestamp))) {
             res.push({
@@ -168,7 +168,7 @@ export default function Chart({ feeData: { data, previousData }, span, type, dim
             value: date?.value,
         }));
 
-        let _data = [];
+        let _data: any[] = [];
 
         if (res.length < xTicks) {
             const firstRealDay = dayjs(res[0].timestamp).startOf(_span);

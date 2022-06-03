@@ -1,40 +1,40 @@
-import { Trans } from '@lingui/macro'
-import React, { ErrorInfo } from 'react'
-import { TYPE } from '../../theme'
-import { AutoColumn } from '../Column'
-import ReactGA from 'react-ga'
-import { BodyWrapper, CodeBlockWrapper, FallbackWrapper, SomethingWentWrongWrapper } from './styled'
+import { Trans } from "@lingui/macro";
+import React, { ErrorInfo } from "react";
+import { TYPE } from "../../theme";
+import { AutoColumn } from "../Column";
+import ReactGA from "react-ga";
+import { BodyWrapper, CodeBlockWrapper, FallbackWrapper, SomethingWentWrongWrapper } from "./styled";
 
 type ErrorBoundaryState = {
-    error: Error | null
-}
+    error: Error | null;
+};
 
-export default class ErrorBoundary extends React.Component<unknown, ErrorBoundaryState> {
+export default class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
     constructor(props: unknown) {
-        super(props)
-        this.state = { error: null }
+        super(props);
+        this.state = { error: null };
     }
 
     static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-        return { error }
+        return { error };
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.log(error)
+        console.log(error);
         ReactGA.exception({
             ...error,
             ...errorInfo,
-            fatal: true
-        })
+            fatal: true,
+        });
     }
 
     render() {
-        const { error } = this.state
+        const { error } = this.state;
         if (error !== null) {
             return (
                 <FallbackWrapper>
                     <BodyWrapper>
-                        <AutoColumn gap={'md'}>
+                        <AutoColumn gap={"md"}>
                             <SomethingWentWrongWrapper>
                                 <TYPE.label fontSize={24} fontWeight={600}>
                                     <Trans>Something went wrong</Trans>
@@ -48,8 +48,8 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
                         </AutoColumn>
                     </BodyWrapper>
                 </FallbackWrapper>
-            )
+            );
         }
-        return this.props.children
+        return this.props.children;
     }
 }

@@ -98,7 +98,7 @@ export function useIncentiveSubgraph() {
 
     async function getEvents(events: any[]) {
 
-        const _events = []
+        const _events: any[] = []
 
         for (let i = 0; i < events.length; i++) {
 
@@ -214,7 +214,7 @@ export function useIncentiveSubgraph() {
 
             if (!provider) throw new Error('No provider')
 
-            const newRewards = []
+            const newRewards: any[] = []
 
             for (const reward of rewards) {
 
@@ -395,7 +395,7 @@ export function useIncentiveSubgraph() {
                 return
             }
 
-            const _positions = []
+            const _positions: any[] = []
 
             for (const position of positionsTransferred) {
 

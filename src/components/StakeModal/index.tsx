@@ -128,11 +128,11 @@ export function StakeModal({
         if (typeof approvedHash === "string") {
             setSubmitLoader(false);
         } else if (approvedHash.hash && confirmed.includes(approvedHash.hash)) {
-            const _newChunked = [];
+            const _newChunked: any[] = [];
 
             if (chunkedPositions) {
                 for (const row of chunkedPositions) {
-                    const _newRow = [];
+                    const _newRow: any[] = [];
 
                     for (const position of row) {
                         if (position.id === approvedHash.id) {
@@ -160,11 +160,11 @@ export function StakeModal({
         if (typeof stakedHash === "string") {
             setSubmitLoader(false);
         } else if (stakedHash.hash && confirmed.includes(stakedHash.hash)) {
-            const _newChunked = [];
+            const _newChunked: any[] = [];
 
             if (chunkedPositions) {
                 for (const row of chunkedPositions) {
-                    const _newRow = [];
+                    const _newRow: any[] = [];
 
                     for (const position of row) {
                         if (position.id === stakedHash.id) {

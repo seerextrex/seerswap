@@ -27,12 +27,8 @@ import { getContract } from 'utils'
 import { EnsPublicResolver, EnsRegistrar, Erc20, Weth } from '../abis/types'
 import { WMATIC_EXTENDED } from '../constants/tokens'
 import { useActiveWeb3React } from './web3'
-import { V3Migrator } from '@uniswap/v3-periphery/typechain/V3Migrator'
 import NewQuoterABI from '../abis/quoter.json'
 import { FINITE_FARMING } from '../constants/addresses'
-import { UniswapInterfaceMulticall } from '@uniswap/v3-periphery/typechain/UniswapInterfaceMulticall'
-import { NonfungiblePositionManager } from '@uniswap/v3-periphery/typechain/NonfungiblePositionManager'
-import { Quoter } from '@uniswap/v3-periphery/typechain/Quoter'
 
 // returns null on errors
 export function useContract<T extends Contract = Contract>(
@@ -58,7 +54,7 @@ export function useContract<T extends Contract = Contract>(
 }
 
 export function useV2MigratorContract() {
-    return useContract<V3Migrator>(V3_MIGRATOR_ADDRESSES, V2MigratorABI, true)
+    return useContract(V3_MIGRATOR_ADDRESSES, V2MigratorABI, true)
 }
 
 export function useRealStaker() {
@@ -66,20 +62,20 @@ export function useRealStaker() {
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean) {
-    return useContract<Erc20>(tokenAddress, ERC20_ABI, withSignerIfPossible)
+    return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
 }
 
 export function useWETHContract(withSignerIfPossible?: boolean) {
     const { chainId } = useActiveWeb3React()
-    return useContract<Weth>(chainId ? WMATIC_EXTENDED[chainId]?.address : undefined, WETH_ABI, withSignerIfPossible)
+    return useContract(chainId ? WMATIC_EXTENDED[chainId]?.address : undefined, WETH_ABI, withSignerIfPossible)
 }
 
 export function useENSRegistrarContract(withSignerIfPossible?: boolean) {
-    return useContract<EnsRegistrar>(ENS_REGISTRAR_ADDRESSES, ENS_ABI, withSignerIfPossible)
+    return useContract(ENS_REGISTRAR_ADDRESSES, ENS_ABI, withSignerIfPossible)
 }
 
 export function useENSResolverContract(address: string | undefined, withSignerIfPossible?: boolean) {
-    return useContract<EnsPublicResolver>(address, ENS_PUBLIC_RESOLVER_ABI, withSignerIfPossible)
+    return useContract(address, ENS_PUBLIC_RESOLVER_ABI, withSignerIfPossible)
 }
 
 export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
@@ -99,11 +95,11 @@ export function useV2RouterContract(): Contract | null {
 }
 
 export function useMulticall2Contract() {
-    return useContract<UniswapInterfaceMulticall>(MULTICALL_ADDRESS, MULTICALL_ABI, false) as UniswapInterfaceMulticall
+    return useContract(MULTICALL_ADDRESS, MULTICALL_ABI, false)
 }
 
-export function useV3NFTPositionManagerContract(withSignerIfPossible?: boolean): NonfungiblePositionManager | null {
-    return useContract<NonfungiblePositionManager>(
+export function useV3NFTPositionManagerContract(withSignerIfPossible?: boolean) {
+    return useContract(
         NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
         NFTPosMan,
         withSignerIfPossible
@@ -115,5 +111,5 @@ export function useStaker() {
 }
 
 export function useV3Quoter() {
-    return useContract<Quoter>(QUOTER_ADDRESSES, NewQuoterABI)
+    return useContract(QUOTER_ADDRESSES, NewQuoterABI)
 }

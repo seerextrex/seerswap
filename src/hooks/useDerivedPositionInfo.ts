@@ -13,9 +13,9 @@ export function useDerivedPositionInfo(positionDetails: PositionPool | undefined
     // construct pool data
     const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined)
 
-    let position = undefined
+    let _position: Position | undefined = undefined
     if (pool && positionDetails) {
-        position = new Position({
+        _position = new Position({
             pool,
             liquidity: positionDetails.liquidity.toString(),
             tickLower: positionDetails.tickLower,
@@ -24,7 +24,7 @@ export function useDerivedPositionInfo(positionDetails: PositionPool | undefined
     }
 
     return {
-        position,
+        position: _position,
         pool: pool ?? undefined
     }
 }

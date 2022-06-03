@@ -3,7 +3,7 @@ import { convertDate } from '../utils/convertDate'
 
 export function useGetDaysArray() {
     return useCallback((start, end) => {
-        const arr = []
+        const arr: any[] = []
         const dt = new Date(start)
 
         while (dt <= end) {

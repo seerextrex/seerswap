@@ -10,10 +10,6 @@
     "@graphql-codegen/typescript": "1.22.3",
     "@graphql-codegen/typescript-operations": "^1.18.2",
     "@graphql-codegen/typescript-rtk-query": "^1.1.1",
-    "@lingui/cli": "^3.9.0",
-    "@lingui/loader": "^3.9.0",
-    "@lingui/macro": "^3.9.0",
-    "@lingui/react": "^3.9.0",
     "@metamask/jazzicon": "^2.0.0",
     "@popperjs/core": "^2.4.4",
     "@reach/dialog": "0.16.2",
@@ -176,6 +172,10 @@
     "react-gtm-module": "^2.0.11",
     "react-helmet": "^6.1.0",
     "string-to-color": "^2.2.2",
-    "web-vitals": "^2.1.2"
+    "web-vitals": "^2.1.2",
+    "@lingui/cli": "^3.9.0",
+    "@lingui/loader": "^3.9.0",
+    "@lingui/macro": "^3.9.0",
+    "@lingui/react": "^3.9.0"
   }
 }

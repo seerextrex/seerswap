@@ -1,9 +1,6 @@
 import { IPresetArgs, PresetRanges } from "pages/NewAddLiquidity/components/PresetRanges";
-import { RangeChart } from "pages/NewAddLiquidity/components/RangeChart";
 import { RangeSelector } from "pages/NewAddLiquidity/components/RangeSelector";
-
-import { Price, Token, Currency } from "@uniswap/sdk-core";
-
+import { Currency } from "@uniswap/sdk-core";
 import "./index.scss";
 import { Bound, updateCurrentStep, updateSelectedPreset } from "state/mint/v3/actions";
 import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
@@ -12,16 +9,12 @@ import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from "constants/tokens";
 import { useCallback, useEffect, useMemo } from "react";
-
 import { useAppDispatch } from "state/hooks";
 import { useActivePreset } from "state/mint/v3/hooks";
-
-import { Check } from "react-feather";
 import { Presets } from "state/mint/v3/reducer";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { tryParseAmount } from "state/swap/hooks";
-import { tryParsePrice } from "state/mint/v3/utils";
 import { useHistory } from "react-router-dom";
 
 interface IRangeSelector {
@@ -182,7 +175,15 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                 </div>
                 <div className="ml-2 mxs_ml-0 ms_ml-0">
                     {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} priceFormat={priceFormat} />}
-                    <PresetRanges isStablecoinPair={isStablecoinPair} activePreset={activePreset} handlePresetRangeSelection={handlePresetRangeSelection} />
+                    <PresetRanges
+                        isInvalid={mintInfo.invalidRange}
+                        isStablecoinPair={isStablecoinPair}
+                        activePreset={activePreset}
+                        handlePresetRangeSelection={handlePresetRangeSelection}
+                        priceLower={priceLower?.toSignificant(5)}
+                        priceUpper={priceUpper?.toSignificant(5)}
+                        price={price}
+                    />
                 </div>
             </div>
         </div>

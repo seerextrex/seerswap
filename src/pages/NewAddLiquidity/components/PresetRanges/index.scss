@@ -2,7 +2,7 @@
 
             display: flex;
             flex-wrap: wrap;
-        
+
             &-wrapper {
                 border-left: 1px solid rgb(85, 112, 131);
                 position: relative;
@@ -71,10 +71,17 @@
             }
 
             &__circle {
-                width: 10px; 
+                width: 10px;
                 height: 10px;
                 margin-left: 5px;
-                border-radius: 50%; 
+                border-radius: 50%;
+                overflow: hidden;
+
+              &--active {
+                position: relative;
+                background: #25a0ff;
+                height: 10px;
+              }
             }
 }
 
@@ -92,7 +99,7 @@
         }
     }
   }
-  
+
   @media screen and (max-width: 720px) {
     .preset-ranges {
         &-wrapper {
@@ -106,7 +113,7 @@
         }
     }
   }
-  
+
   @media screen and (max-width: 500px) {
     .preset-ranges {
         &__description {

@@ -7,7 +7,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch } from "state/hooks";
 import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
 import { IDerivedMintInfo, useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
-import { tryParsePrice } from "state/mint/v3/utils";
 import { tryParseAmount } from "state/swap/hooks";
 import { PriceFormats } from "../PriceFomatToggler";
 

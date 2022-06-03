@@ -1,17 +1,11 @@
 import { PoolStats } from "pages/NewAddLiquidity/components/PoolStats";
 import { PopularPairs } from "pages/NewAddLiquidity/components/PopularPairs";
 import { TokenCard } from "pages/NewAddLiquidity/components/TokenCard";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Check, Plus, RefreshCw } from "react-feather";
-
-import { WrappedCurrency } from "models/types";
-import { Token, Currency } from "@uniswap/sdk-core";
-
+import { useEffect, useMemo, useState } from "react";
+import { Plus } from "react-feather";
+import { Currency } from "@uniswap/sdk-core";
 import "./index.scss";
-import CurrencySearchModal from "components/SearchModal/CurrencySearchModal";
-import { useFeeHourDataQuery } from "state/data/generated";
-import { fetchLimitFarmTVL, fetchPoolsAPR } from "utils/api";
-import { Pool } from "lib/src";
+import { fetchPoolsAPR } from "utils/api";
 import { computePoolAddress } from "hooks/computePoolAddress";
 import { POOL_DEPLOYER_ADDRESS } from "constants/addresses";
 import { useInfoLiquidity } from "hooks/subgraph/useInfoLiquidity";

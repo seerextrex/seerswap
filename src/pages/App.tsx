@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import Popups from "../components/Popups";
 import Web3ReactManager from "../components/Web3ReactManager";
 import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
-import { RedirectDuplicateTokenIds, RedirectDuplicateTokenIdsNew } from "./AddLiquidity/redirects";
+import { RedirectDuplicateTokenIdsNew } from "./AddLiquidity/redirects";
 import RemoveLiquidityV3 from "./RemoveLiquidity/V3";
 import Swap from "./Swap";
 import { RedirectPathToSwapOnly, RedirectToSwap } from "./Swap/redirects";

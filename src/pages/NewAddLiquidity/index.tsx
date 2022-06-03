@@ -1,30 +1,25 @@
 import { useCurrency } from "hooks/Tokens";
-import { useIsNetworkFailedImmediate } from "hooks/useIsNetworkFailed";
 import usePrevious from "hooks/usePrevious";
 import { useActiveWeb3React } from "hooks/web3";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Prompt, Redirect, Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
-import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useRangeHopCallbacks, useInitialUSDPrices, useCurrentStep } from "state/mint/v3/hooks";
+import { RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useInitialUSDPrices, useCurrentStep } from "state/mint/v3/hooks";
 import { currencyId } from "utils/currencyId";
 import { Stepper } from "./components/Stepper";
 import { EnterAmounts } from "./containers/EnterAmounts";
 import { SelectPair } from "./containers/SelectPair";
 import { SelectRange } from "./containers/SelectRange";
 
-import { Currency, Percent, CurrencyAmount } from "@uniswap/sdk-core";
+import { Currency, Percent } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import { WMATIC_EXTENDED } from "constants/tokens";
-import { Bound, setInitialTokenPrice, setInitialUSDPrices, updateCurrentStep, updateSelectedPreset } from "state/mint/v3/actions";
-import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
+import { setInitialTokenPrice, setInitialUSDPrices, updateCurrentStep, updateSelectedPreset } from "state/mint/v3/actions";
 import { Field } from "state/mint/actions";
-import { maxAmountSpend } from "utils/maxAmountSpend";
-import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
-import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
+import useUSDCPrice from "hooks/useUSDCPrice";
 import { PriceFormats, PriceFormatToggler } from "./components/PriceFomatToggler";
 import { AddLiquidityButton } from "./containers/AddLiquidityButton";
-import { Check, ChevronLeft, ChevronRight } from "react-feather";
+import { ChevronLeft, ChevronRight } from "react-feather";
 import { PoolState } from "hooks/usePools";
 import { RouterGuard } from "./routing/router-guards";
 import { InitialPrice } from "./containers/InitialPrice";
@@ -39,7 +34,7 @@ const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
 export function NewAddLiquidityPage({
     match: {
-        params: { currencyIdA, currencyIdB, step },
+        params: { currencyIdA, currencyIdB },
     },
     history,
 }: RouteComponentProps<{

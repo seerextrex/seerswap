@@ -3,10 +3,7 @@ import { Trans } from "@lingui/macro";
 import { Currency, Price, Token } from "@uniswap/sdk-core";
 import { AutoColumn, ColumnCenter } from "components/Column";
 import Loader from "components/Loader";
-import { useColor } from "hooks/useColor";
-import useTheme from "hooks/useTheme";
-import { saturate } from "polished";
-import { BarChart2, CloudOff, Inbox } from "react-feather";
+import { CloudOff, Inbox } from "react-feather";
 import { batch } from "react-redux";
 import { TYPE } from "../../theme";
 import { Chart } from "./Chart";
@@ -43,6 +40,20 @@ function InfoBox({ message, icon }: { message?: ReactNode; icon: ReactNode }) {
     );
 }
 
+interface LiquidityChartRangeInputProps {
+    currencyA: Currency | undefined;
+    currencyB: Currency | undefined;
+    feeAmount?: FeeAmount;
+    ticksAtLimit: { [bound in Bound]?: boolean | undefined };
+    price: number | undefined;
+    priceLower?: Price<Token, Token>;
+    priceUpper?: Price<Token, Token>;
+    onLeftRangeInput: (typedValue: string) => void;
+    onRightRangeInput: (typedValue: string) => void;
+    interactive: boolean;
+    priceFormat: PriceFormats;
+}
+
 export default function LiquidityChartRangeInput({
     currencyA,
     currencyB,
@@ -55,19 +66,7 @@ export default function LiquidityChartRangeInput({
     onRightRangeInput,
     interactive,
     priceFormat,
-}: {
-    currencyA: Currency | undefined;
-    currencyB: Currency | undefined;
-    feeAmount?: FeeAmount;
-    ticksAtLimit: { [bound in Bound]?: boolean | undefined };
-    price: number | undefined;
-    priceLower?: Price<Token, Token>;
-    priceUpper?: Price<Token, Token>;
-    onLeftRangeInput: (typedValue: string) => void;
-    onRightRangeInput: (typedValue: string) => void;
-    interactive: boolean;
-    priceFormat: PriceFormats;
-}) {
+}: LiquidityChartRangeInputProps) {
     const { isLoading, isUninitialized, isError, error, formattedData } = useDensityChartData({
         currencyA,
         currencyB,

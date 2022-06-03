@@ -32,7 +32,7 @@
     "@types/node": "^13.13.5",
     "@types/qs": "^6.9.2",
     "@types/random-gradient": "^0.0.0",
-    "@types/react": "^17.0.2",
+    "@types/react": "^17.0.44",
     "@types/react-dom": "^17.0.1",
     "@types/react-gtm-module": "^2.0.1",
     "@types/react-helmet": "^6.1.5",

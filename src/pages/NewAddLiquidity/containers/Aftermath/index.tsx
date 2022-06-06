@@ -27,6 +27,12 @@ export function Aftermath({ done }: IAftermath) {
 
     const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash), [sortedRecentTransactions, allTransactions]);
 
+    const test = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt), [sortedRecentTransactions, allTransactions])
+
+    useEffect(() => {
+            console.log('ttttt', test)
+    }, [test])
+
     useEffect(() => {
         if (confirmed.some((hash) => hash === txHash)) {
             toggleIsConfirmed(true);

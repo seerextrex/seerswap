@@ -180,8 +180,8 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                         isStablecoinPair={isStablecoinPair}
                         activePreset={activePreset}
                         handlePresetRangeSelection={handlePresetRangeSelection}
-                        priceLower={priceLower?.toSignificant(5)}
-                        priceUpper={priceUpper?.toSignificant(5)}
+                        priceLower={leftPrice?.toSignificant(5)}
+                        priceUpper={rightPrice?.toSignificant(5)}
                         price={price}
                     />
                 </div>

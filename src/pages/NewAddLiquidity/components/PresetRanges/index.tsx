@@ -85,6 +85,7 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
 
         const rangePercent = +priceLower > +price && +priceUpper > 0 ? upperPercent - lowerPercent  : upperPercent + lowerPercent
 
+        // console.log(upperPercent, lowerPercent)
 
         if (rangePercent < 7.5) {
            return 5

@@ -530,54 +530,54 @@ export function useRangeHopCallbacks(
     const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency])
     const quoteToken = useMemo(() => quoteCurrency?.wrapped, [quoteCurrency])
 
-    const getDecrementLower = useCallback(() => {
+    const getDecrementLower = useCallback((rate = 1) => {
         if (baseToken && quoteToken && typeof tickLower === 'number' && feeAmount) {
-            const newPrice = tickToPrice(baseToken, quoteToken, tickLower - 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, tickLower - 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         // use pool current tick as starting tick if we have pool but no tick input
 
         if (!(typeof tickLower === 'number') && baseToken && quoteToken && feeAmount && pool) {
-            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         return ''
     }, [baseToken, quoteToken, tickLower, feeAmount, pool])
 
-    const getIncrementLower = useCallback(() => {
+    const getIncrementLower = useCallback((rate = 1) => {
         if (baseToken && quoteToken && typeof tickLower === 'number' && feeAmount) {
-            const newPrice = tickToPrice(baseToken, quoteToken, tickLower + 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, tickLower + 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         // use pool current tick as starting tick if we have pool but no tick input
         if (!(typeof tickLower === 'number') && baseToken && quoteToken && feeAmount && pool) {
-            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent + 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent + 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         return ''
     }, [baseToken, quoteToken, tickLower, feeAmount, pool])
 
-    const getDecrementUpper = useCallback(() => {
+    const getDecrementUpper = useCallback((rate = 1) => {
         if (baseToken && quoteToken && typeof tickUpper === 'number' && feeAmount) {
-            const newPrice = tickToPrice(baseToken, quoteToken, tickUpper - 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, tickUpper - 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         // use pool current tick as starting tick if we have pool but no tick input
         if (!(typeof tickUpper === 'number') && baseToken && quoteToken && feeAmount && pool) {
-            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent - 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         return ''
     }, [baseToken, quoteToken, tickUpper, feeAmount, pool])
 
-    const getIncrementUpper = useCallback(() => {
+    const getIncrementUpper = useCallback((rate = 1) => {
         if (baseToken && quoteToken && typeof tickUpper === 'number' && feeAmount) {
-            const newPrice = tickToPrice(baseToken, quoteToken, tickUpper + 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, tickUpper + 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         // use pool current tick as starting tick if we have pool but no tick input
         if (!(typeof tickUpper === 'number') && baseToken && quoteToken && feeAmount && pool) {
-            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent + 60)
+            const newPrice = tickToPrice(baseToken, quoteToken, pool.tickCurrent + 60 * rate)
             return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP)
         }
         return ''

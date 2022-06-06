@@ -80,7 +80,11 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
     const risk = useMemo(() => {
         if (!priceUpper || !priceLower || !price) return
 
-        const rangePercent = (100 - (+price / +priceUpper * 100)) + Math.abs(100 - (+price / +priceLower * 100))
+        const upperPercent = (100 - (+price / +priceUpper * 100))
+        const lowerPercent = Math.abs(100 - (+price / +priceLower * 100))
+
+        const rangePercent = +priceLower > +price && +priceUpper > 0 ? upperPercent - lowerPercent  : upperPercent + lowerPercent
+
 
         if (rangePercent < 7.5) {
            return 5

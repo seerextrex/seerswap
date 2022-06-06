@@ -1,23 +1,20 @@
 import { TokenAmountCard } from "pages/NewAddLiquidity/components/TokenAmountCard";
 import { TokenRatio } from "pages/NewAddLiquidity/components/TokenRatio";
 
-import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { Currency, CurrencyAmount } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import { Field } from "state/mint/actions";
 import { IDerivedMintInfo, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
-import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
+import  { useUSDCValue } from "hooks/useUSDCPrice";
 import { maxAmountSpend } from "utils/maxAmountSpend";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { useActiveWeb3React } from "hooks/web3";
-import { Position } from "@uniswap/v3-sdk";
-import { Bound, updateCurrentStep } from "state/mint/v3/actions";
+import { updateCurrentStep } from "state/mint/v3/actions";
 import { useEffect, useMemo } from "react";
 import { tryParseAmount } from "state/swap/hooks";
 
-import { MaxUint256 } from "@ethersproject/constants";
-import { Check } from "react-feather";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { useHistory } from "react-router-dom";

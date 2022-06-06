@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "state/hooks"
 import { toggleOntoWrongChainModal } from "state/user/actions"
 import { gnosisSafe, injected, ontoconnector, OntoWalletConnector } from '../connectors'
 import { NetworkContextName } from '../constants/misc'
+import { OntoWindow } from '../models/types/global'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
     const context = useWeb3React<Web3Provider>()
@@ -119,8 +120,8 @@ export function useInactiveListener(suppress = false) {
         if (!error) return
 
         if (error instanceof UnsupportedChainIdError) {
-            // @ts-ignore
-            if (window.onto.selectedAddress !== '') {
+            const _window = window as unknown as OntoWindow
+            if (_window.onto && _window.onto.selectedAddress !== '') {
                 localStorage.setItem('ontoWarning', 'true')
                 window.location.reload()
             }

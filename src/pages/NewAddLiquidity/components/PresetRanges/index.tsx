@@ -1,8 +1,8 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from '@lingui/macro'
 import { useMemo } from 'react'
-import { Layers } from "react-feather";
-import { Presets } from "state/mint/v3/reducer";
-import "./index.scss";
+import { Layers } from 'react-feather'
+import { Presets } from 'state/mint/v3/reducer'
+import './index.scss'
 
 export interface IPresetArgs {
     type: Presets;
@@ -12,6 +12,7 @@ export interface IPresetArgs {
 
 interface IPresetRanges {
     isInvalid: boolean
+    outOfRange: boolean
     isStablecoinPair: boolean;
     activePreset: Presets | null;
     handlePresetRangeSelection: (preset: IPresetArgs | null) => void;
@@ -27,55 +28,55 @@ enum PresetProfits {
     HIGH,
 }
 
-export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRangeSelection, priceLower, price, priceUpper, isInvalid }: IPresetRanges) {
+export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRangeSelection, priceLower, price, priceUpper, isInvalid, outOfRange }: IPresetRanges) {
     const ranges = useMemo(() => {
         if (isStablecoinPair)
             return [
                 {
                     type: Presets.STABLE,
-                    title: "Stablecoins",
+                    title: 'Stablecoins',
                     min: 0.984,
                     max: 1.01,
                     risk: PresetProfits.VERY_LOW,
-                    profit: PresetProfits.HIGH,
-                },
-            ];
+                    profit: PresetProfits.HIGH
+                }
+            ]
 
         return [
             {
                 type: Presets.FULL,
-                title: "Full range",
+                title: 'Full range',
                 min: 0,
                 max: Infinity,
                 risk: PresetProfits.VERY_LOW,
-                profit: PresetProfits.VERY_LOW,
+                profit: PresetProfits.VERY_LOW
             },
             {
                 type: Presets.SAFE,
-                title: "Safe",
+                title: 'Safe',
                 min: 0.8,
                 max: 1.4,
                 risk: PresetProfits.LOW,
-                profit: PresetProfits.LOW,
+                profit: PresetProfits.LOW
             },
             {
                 type: Presets.NORMAL,
-                title: "Common",
+                title: 'Common',
                 min: 0.9,
                 max: 1.2,
                 risk: PresetProfits.MEDIUM,
-                profit: PresetProfits.MEDIUM,
+                profit: PresetProfits.MEDIUM
             },
             {
                 type: Presets.RISK,
-                title: "Expert",
+                title: 'Expert',
                 min: 0.95,
                 max: 1.1,
                 risk: PresetProfits.HIGH,
-                profit: PresetProfits.HIGH,
-            },
-        ];
-    }, [isStablecoinPair]);
+                profit: PresetProfits.HIGH
+            }
+        ]
+    }, [isStablecoinPair])
 
     const risk = useMemo(() => {
         if (!priceUpper || !priceLower || !price) return
@@ -83,18 +84,18 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
         const upperPercent = (100 - (+price / +priceUpper * 100))
         const lowerPercent = Math.abs(100 - (+price / +priceLower * 100))
 
-        const rangePercent = +priceLower > +price && +priceUpper > 0 ? upperPercent - lowerPercent  : upperPercent + lowerPercent
+        const rangePercent = +priceLower > +price && +priceUpper > 0 ? upperPercent - lowerPercent : upperPercent + lowerPercent
 
         // console.log(upperPercent, lowerPercent)
 
         if (rangePercent < 7.5) {
-           return 5
+            return 5
         } else if (rangePercent < 15) {
             return (15 - rangePercent) / 7.5 + 4
         } else if (rangePercent < 30) {
             return (30 - rangePercent) / 15 + 3
         } else if (rangePercent < 60) {
-            return (60 -rangePercent) / 30 + 2
+            return (60 - rangePercent) / 30 + 2
         } else if (rangePercent < 120) {
             return (120 - rangePercent) / 60 + 1
         } else {
@@ -122,59 +123,57 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
     }, [risk])
 
     return (
-        <div className={"preset-ranges-wrapper pl-1 mxs_pl-0 mxs_mb-2 ms_pl-0 ms_mb-2"}>
-            <div className="mb-1 f f-ac">
-                <Layers style={{ display: "block", transform: "rotate(90deg)" }} size={15} />
-                <span className="ml-05">
+        <div className={'preset-ranges-wrapper pl-1 mxs_pl-0 mxs_mb-2 ms_pl-0 ms_mb-2'}>
+            <div className='mb-1 f f-ac'>
+                <Layers style={{ display: 'block', transform: 'rotate(90deg)' }} size={15} />
+                <span className='ml-05'>
                     <Trans>Preset ranges</Trans>
                 </span>
             </div>
             {ranges.map((range, i) => (
-                <div className="i-f" key={i}>
+                <div className='i-f' key={i}>
                     <button
-                        className={`preset-ranges__button ${activePreset === range.type ? "active" : ""} mr-05`}
+                        className={`preset-ranges__button ${activePreset === range.type ? 'active' : ''} mr-05`}
                         onClick={() => {
-                            handlePresetRangeSelection(range);
+                            handlePresetRangeSelection(range)
                             if (activePreset == range.type) {
-                                handlePresetRangeSelection(null);
+                                handlePresetRangeSelection(null)
                             } else {
-                                handlePresetRangeSelection(range);
+                                handlePresetRangeSelection(range)
                             }
                         }}
                         key={i}
                     >
                         <div>{range.title}</div>
                     </button>
-                    {(() => {
-                        if (!_risk || isInvalid || isStablecoinPair) return null
-
-                        return (
-                            <div className="preset-ranges__description">
-                                <div className="f mb-05">
-                                    <span>Risk:</span>
-                                    <div className="f f-ac f-jc ml-a">
-                                        {[1, 2, 3, 4, 5].map((_, i) => (
-                                            <div key={i} className="preset-ranges__circle" style={{ background: "#42637b" }}>
-                                                <div key={i} className="preset-ranges__circle--active" style={{left: `calc(-100% + ${_risk[i]}%)`}}/>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="f">
-                                    <span>Profit:</span>
-                                    <div className="f f-ac f-jc ml-a">
-                                        {[1, 2, 3, 4, 5].map((_, i) => (
-                                            <div key={i} className="preset-ranges__circle" style={{ background: "#42637b" }}>
-                                                <div key={i} className="preset-ranges__circle--active" style={{left: `calc(-100% + ${_risk[i]}%)`}}/>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })()}
                 </div>
             ))}
+            {
+                _risk && !isInvalid && !isStablecoinPair &&
+
+                <div className={`preset-ranges__description ${outOfRange && 'mt-2'}`}>
+                    <div className='f mb-05'>
+                        <span>Risk:</span>
+                        <div className='f f-ac f-jc ml-a'>
+                            {[1, 2, 3, 4, 5].map((_, i) => (
+                                <div key={i} className='preset-ranges__circle' style={{ background: '#42637b' }}>
+                                    <div key={i} className='preset-ranges__circle--active' style={{ left: `calc(-100% + ${_risk[i]}%)` }} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className='f'>
+                        <span>Profit:</span>
+                        <div className='f f-ac f-jc ml-a'>
+                            {[1, 2, 3, 4, 5].map((_, i) => (
+                                <div key={i} className='preset-ranges__circle' style={{ background: '#42637b' }}>
+                                    <div key={i} className='preset-ranges__circle--active' style={{ left: `calc(-100% + ${_risk[i]}%)` }} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-    );
+    )
 }

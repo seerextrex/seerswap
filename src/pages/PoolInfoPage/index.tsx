@@ -174,7 +174,7 @@ export default function PoolInfoPage({
 
     return (
         <div className={"mb-3"}>
-            <NavLink className={"f mb-1 c-p hover-op w-fc"} to={"/info/pools"}>
+            <NavLink className={"f mb-1 c-p hover-op trans-op w-fc"} to={"/info/pools"}>
                 <ArrowLeft className={"mr-05"} size={"1rem"} />
                 <span>Back to pools table</span>
             </NavLink>

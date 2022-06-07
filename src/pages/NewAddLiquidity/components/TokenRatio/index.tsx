@@ -48,15 +48,13 @@ export function TokenRatio(
     const [disableRightDecButton, setRDecButton] = useState(false)
     const [disableLeftIncButton, setLIncButton] = useState(false)
 
-
-    useEffect(() => {
-        console.log(lowerPrice, upperPrice)
-    }, [lowerPrice, upperPrice])
-
     // for button clicks
     const handleDecrementLeft = useCallback(() => {
         if (disableLeftIncButton) {
             setLIncButton(false)
+        }
+        if (disableRightDecButton) {
+            setRDecButton(false)
         }
         onUserLeftInput(decrementLeft())
     }, [disableLeftIncButton, decrementLeft, onUserLeftInput])
@@ -69,8 +67,6 @@ export function TokenRatio(
         if (!lowerPrice) return
 
         const decr = decrementRight(2)
-
-        console.log('here 1')
 
         if (+decr <= +lowerPrice) {
             setRDecButton(true)
@@ -95,12 +91,12 @@ export function TokenRatio(
     }, [handleIncrementLeft, incrementLeft, upperPrice])
 
     const handleIncrementRight = useCallback(() => {
+        if (disableLeftIncButton) {
+            setLIncButton(false)
+        }
         if (disableRightDecButton) {
             setRDecButton(false)
         }
-
-        console.log('Current price', upperPrice, 'After increment', lowerPrice, ' - ', incrementRight())
-
         onUserRightInput(incrementRight())
     }, [disableRightDecButton, upperPrice, lowerPrice, incrementRight, onUserRightInput])
 

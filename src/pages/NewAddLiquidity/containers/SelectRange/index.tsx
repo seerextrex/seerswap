@@ -177,6 +177,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                     {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} priceFormat={priceFormat} />}
                     <PresetRanges
                         isInvalid={mintInfo.invalidRange}
+                        outOfRange={mintInfo.outOfRange}
                         isStablecoinPair={isStablecoinPair}
                         activePreset={activePreset}
                         handlePresetRangeSelection={handlePresetRangeSelection}

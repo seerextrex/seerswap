@@ -237,10 +237,10 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                         currencyB={currencyB}
                         token0Ratio={token0Ratio}
                         token1Ratio={token1Ratio}
-                        decrementLeft={getDecrementLower}
-                        decrementRight={getDecrementUpper}
-                        incrementLeft={getIncrementLower}
-                        incrementRight={getIncrementUpper}
+                        decrementLeft={mintInfo.invertPrice ? getIncrementUpper : getDecrementLower}
+                        decrementRight={mintInfo.invertPrice ? getIncrementLower : getDecrementUpper}
+                        incrementLeft={mintInfo.invertPrice ? getDecrementUpper : getIncrementLower}
+                        incrementRight={mintInfo.invertPrice ? getDecrementLower : getIncrementUpper}
                         incrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
                         decrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
                         onUserLeftInput={onLeftRangeInput}

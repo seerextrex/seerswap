@@ -5,7 +5,6 @@ import StartingPrice from "pages/NewAddLiquidity/components/StartingPrice";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 import { useEffect } from "react";
-import { Check } from "react-feather";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch } from "state/hooks";
 import { updateCurrentStep } from "state/mint/v3/actions";
@@ -38,7 +37,7 @@ export function InitialPrice({ currencyA, currencyB, mintInfo, isCompleted, pric
                 dispatch(updateCurrentStep({ currentStep: backStep }));
             }
         };
-    });
+    }, []);
 
     return (
         <div className="initial-price-wrapper f c">

@@ -18,3 +18,15 @@
         color: #f3a91b;
     }
 }
+
+
+@media screen and (max-width: 500px){
+    .initial-price {
+
+       &-wrapper {
+           .preset-ranges-wrapper {
+               margin-bottom: 0!important;
+           }
+       }
+    }
+}

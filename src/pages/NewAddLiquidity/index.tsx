@@ -268,6 +268,7 @@ export function NewAddLiquidityPage({
     }, [])
 
     useEffect(() => {
+        // console.log(currentStep)
         switch (currentStep) {
             // case 0: {
             //     history.push(`/add/${currencyIdA}/${currencyIdB}/select-pair`);

@@ -236,9 +236,12 @@ export function StakerEventCard({
                             <div className={`staker-event-card__timeline-circle__inner ${!active ? "active" : ""}`}></div>
                         </div>
                         <div className="staker-event-card__timeline-line">
-                            <div className="staker-event-card__timeline-line__inner" style={{ width: active ? "100%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}></div>
+                            {/*@ts-ignore*/}
+                            <div className="staker-event-card__timeline-line__inner" style={{ width: active ? "100%" : (new Date(+enterStartTime * 1000).getTime() >= Date.now()) ? '0%' : `${getProgress(Number(enterStartTime), startTime, now)}%` }}></div>
                         </div>
-                        <div className="f f-ac f-jc staker-event-card__timeline-circle">{active && <div className="staker-event-card__timeline-circle__inner active"></div>}</div>
+                        <div className="f f-ac f-jc staker-event-card__timeline-circle">
+                            {active && <div className="staker-event-card__timeline-circle__inner active"/>}
+                        </div>
                         <div className="staker-event-card__timeline-line">
                             {active && <div className="w-100 staker-event-card__timeline-line__inner" style={{ width: `${getProgress(startTime, endTime, now)}%` }}></div>}
                         </div>
@@ -269,7 +272,8 @@ export function StakerEventCard({
             {account && !active ? (
                 <button
                     style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
-                    disabled={locked}
+                    //@ts-ignore
+                    disabled={locked || (new Date(+enterStartTime * 1000).getTime() >= Date.now())}
                     className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
                     onClick={stakeHandler}
                 >

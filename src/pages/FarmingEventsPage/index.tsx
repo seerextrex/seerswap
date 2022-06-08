@@ -6,7 +6,6 @@ import { FarmingType } from "../../models/enums";
 import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
 import "./index.scss";
-import { log } from 'util'
 
 interface FarmingEventsPageProps {
     data: { currentEvents: any[]; futureEvents: any[] } | null;
@@ -54,7 +53,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
 
                         if (isEnded) return;
 
-                        const active = isStarted && !isEnded;
+                        const active = isStarted && !isEnded && (new Date(1654700400 * 1000).getTime() >= Date.now());
 
                         return (
                             <StakerEventCard

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 //@ts-ignore
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
 import { V2_FACTORY_ADDRESSES } from '../constants/addresses'
 import { useMultipleContractSingleData } from '../state/multicall/hooks'
@@ -8,7 +8,7 @@ import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
 import { computePairAddress, Pair } from '../utils/computePairAddress'
 // import { Pair } from "@uniswap/v2-sdk"
 
-const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
+const PAIR_INTERFACE = new Interface(IUniswapV2PairABI.abi)
 
 export enum PairState {
     LOADING,

@@ -1,8 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
-//@ts-ignore
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import IUniswapV2PairABI from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import V2MigratorABI from 'abis/migrator.json'
-import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
+import IUniswapV2Router02ABI from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
 import NFTPosMan from '../pages/AddLiquidity/abi2.json'
 import ENS_PUBLIC_RESOLVER_ABI from 'abis/ens-public-resolver.json'
 import ENS_ABI from 'abis/ens-registrar.json'
@@ -24,7 +23,6 @@ import {
 } from 'constants/addresses'
 import { useMemo } from 'react'
 import { getContract } from 'utils'
-import { EnsPublicResolver, EnsRegistrar, Erc20, Weth } from '../abis/types'
 import { WMATIC_EXTENDED } from '../constants/tokens'
 import { useActiveWeb3React } from './web3'
 import NewQuoterABI from '../abis/quoter.json'
@@ -87,11 +85,11 @@ export function useEIP2612Contract(tokenAddress?: string): Contract | null {
 }
 
 export function usePairContract(pairAddress?: string, withSignerIfPossible?: boolean): Contract | null {
-    return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
+    return useContract(pairAddress, IUniswapV2PairABI.abi, withSignerIfPossible)
 }
 
 export function useV2RouterContract(): Contract | null {
-    return useContract(V2_ROUTER_ADDRESS, IUniswapV2Router02ABI, true)
+    return useContract(V2_ROUTER_ADDRESS, IUniswapV2Router02ABI.abi, true)
 }
 
 export function useMulticall2Contract() {

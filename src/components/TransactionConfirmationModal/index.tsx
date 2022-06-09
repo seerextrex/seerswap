@@ -30,7 +30,7 @@ function ConfirmationPendingContent({ onDismiss, pendingText, inline }: Confirma
             {!inline && (
                 <div className={'flex-s-between'}>
                     <div />
-                    <X className={'c-w hover-op'} onClick={onDismiss} />
+                    <X className={'c-w hover-op trans-op'} onClick={onDismiss} />
                 </div>
             )}
             <div className={'f c f-ac f-jc mb-1 p-2'}>
@@ -134,7 +134,7 @@ export function ConfirmationModalContent({ title, bottomContent, onDismiss, topC
         <div className={'w-100'}>
             <div className={'flex-s-between mb-1'}>
                 {title}
-                <CloseIcon className={'hover-op'} onClick={onDismiss} />
+                <CloseIcon className={'hover-op trans-op'} onClick={onDismiss} />
             </div>
             {topContent()}
             {bottomContent && <BottomSection gap='12px'>{bottomContent()}</BottomSection>}

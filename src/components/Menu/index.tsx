@@ -30,7 +30,7 @@ const Menu = ({ items, classes, refreshHandler, isLoading, size }: MenuProps) =>
             </ul>
             {refreshHandler && isLoading !== undefined && (
                 <span className={"ml-a pb-1 ph-1"}>
-                    <button className={"menu-list-refresh hover-op"} disabled={isLoading} onClick={() => refreshHandler()} data-refreshing={isLoading}>
+                    <button className={"menu-list-refresh hover-op trans-op"} disabled={isLoading} onClick={() => refreshHandler()} data-refreshing={isLoading}>
                         <RefreshCw style={{ display: "block" }} size={size} stroke={"white"} />
                     </button>
                 </span>

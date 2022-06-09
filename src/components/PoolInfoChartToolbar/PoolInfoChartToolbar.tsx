@@ -21,7 +21,7 @@ export default function PoolInfoChartToolbar({ chartTypes, chartSpans, type, spa
                 <div className={"toolbar-btn-title"}>CHART TYPE</div>
                 <ul className="toolbar-btn__list mt-05">
                     {chartTypes.map((el: any, i: number) => (
-                        <button className={`btn mr-05 toolbar-btn hover-op ${type === el.type && "active c-d"}`} onClick={() => setType(el.type)} key={i}>
+                        <button className={`btn mr-05 toolbar-btn hover-op trans-op ${type === el.type && "active c-d"}`} onClick={() => setType(el.type)} key={i}>
                             {el.title}
                         </button>
                     ))}
@@ -32,7 +32,7 @@ export default function PoolInfoChartToolbar({ chartTypes, chartSpans, type, spa
                 {type !== ChartType.LIQUIDITY && (
                     <ul className={"mt-05 ms_w-100 ms_mt-05 mxs_w-100 mxs_mt-05"}>
                         {chartSpans.map((el: any, i: number) => (
-                            <button className={`btn toolbar-btn hover-op ${span === el.type && "active c-d"}`} onClick={() => setSpan(el.type)} key={i}>
+                            <button className={`btn toolbar-btn hover-op trans-op ${span === el.type && "active c-d"}`} onClick={() => setSpan(el.type)} key={i}>
                                 {el.title}
                             </button>
                         ))}

@@ -1,23 +1,20 @@
 import { TokenAmountCard } from "pages/NewAddLiquidity/components/TokenAmountCard";
 import { TokenRatio } from "pages/NewAddLiquidity/components/TokenRatio";
 
-import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { Currency, CurrencyAmount } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import { Field } from "state/mint/actions";
-import { IDerivedMintInfo, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
-import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
+import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3MintState } from 'state/mint/v3/hooks'
+import  { useUSDCValue } from "hooks/useUSDCPrice";
 import { maxAmountSpend } from "utils/maxAmountSpend";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { useActiveWeb3React } from "hooks/web3";
-import { Position } from "@uniswap/v3-sdk";
-import { Bound, updateCurrentStep } from "state/mint/v3/actions";
-import { useEffect, useMemo } from "react";
+import { Bound, updateCurrentStep } from 'state/mint/v3/actions'
+import { useEffect, useMemo } from 'react'
 import { tryParseAmount } from "state/swap/hooks";
 
-import { MaxUint256 } from "@ethersproject/constants";
-import { Check } from "react-feather";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { useHistory } from "react-router-dom";
@@ -36,9 +33,23 @@ interface IEnterAmounts {
 export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, backStep }: IEnterAmounts) {
     const { chainId } = useActiveWeb3React();
 
-    const { independentField, typedValue, startPriceTypedValue } = useV3MintState();
+    const { independentField, typedValue } = useV3MintState();
 
-    const { onFieldAInput, onFieldBInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
+    const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput } = useV3MintActionHandlers(mintInfo.noLiquidity);
+
+    // get value and prices at ticks
+    const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = useMemo(() => {
+        return mintInfo.ticks;
+    }, [mintInfo]);
+
+    const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper } = useRangeHopCallbacks(
+        currencyA ?? undefined,
+        currencyB ?? undefined,
+        mintInfo.dynamicFee,
+        tickLower,
+        tickUpper,
+        mintInfo.pool
+    );
 
     // get formatted amounts
     const formattedAmounts = {
@@ -158,6 +169,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
 
     const history = useHistory();
     const dispatch = useAppDispatch();
+
     useEffect(() => {
         return () => {
             if (history.action === "POP") {
@@ -166,9 +178,18 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
         };
     });
 
+    const leftPrice = useMemo(() => {
+        return mintInfo.invertPrice ? mintInfo.upperPrice.invert() : mintInfo.lowerPrice
+    },[mintInfo])
+
+    const rightPrice = useMemo(() => {
+        return mintInfo.invertPrice ? mintInfo.lowerPrice.invert() : mintInfo.upperPrice
+    },[mintInfo])
+
     return (
         <div className="f c">
             <StepTitle title={"Enter amounts"} isCompleted={isCompleted} step={additionalStep ? 4 : 3} />
+            {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
             <div className="f mxs_fd-cr ms_fd-cr mm_fd-cr">
                 <div className="f c mxs_w-100">
                     <div className="mb-1" style={{ borderRadius: "8px" }}>
@@ -211,7 +232,22 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                     </div>
                 </div>
                 <div className="full-h ml-2 mxs_ml-0 mxs_mb-2 ms_ml-0 mm_ml-0 mm_mb-1">
-                    <TokenRatio currencyA={currencyA} currencyB={currencyB} token0Ratio={token0Ratio} token1Ratio={token1Ratio} />
+                    <TokenRatio
+                        currencyA={currencyA}
+                        currencyB={currencyB}
+                        token0Ratio={token0Ratio}
+                        token1Ratio={token1Ratio}
+                        decrementLeft={mintInfo.invertPrice ? getIncrementUpper : getDecrementLower}
+                        decrementRight={mintInfo.invertPrice ? getIncrementLower : getDecrementUpper}
+                        incrementLeft={mintInfo.invertPrice ? getDecrementUpper : getIncrementLower}
+                        incrementRight={mintInfo.invertPrice ? getDecrementLower : getIncrementUpper}
+                        incrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
+                        decrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
+                        onUserLeftInput={onLeftRangeInput}
+                        onUserRightInput={onRightRangeInput}
+                        lowerPrice={leftPrice?.toSignificant(5)}
+                        upperPrice={rightPrice?.toSignificant(5)}
+                        disabled={false}/>
                 </div>
             </div>
         </div>

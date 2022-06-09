@@ -26,7 +26,7 @@ export default function CommonBases({ onSelect, selectedCurrency }: CommonBasesP
                 {bases.map((currency) => {
                     const isSelected = selectedCurrency?.equals(currency)
                     return (
-                        <button className={'br-8 bg-t f f-ac c-w p-05 hover-op'}
+                        <button className={'br-8 bg-t f f-ac c-w p-05 hover-op trans-op'}
                                 onClick={() => !isSelected && onSelect(currency)}
                                 disabled={isSelected}
                                 key={currencyId(currency, chainId || SupportedChainId.POLYGON)}

@@ -84,7 +84,7 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
             <div className={"pos-r"}>
                 <div className={"flex-s-between w-100 c-w mb-1"}>
                     <Trans>Account</Trans>
-                    <span className={"cur-p hover-op"} onClick={toggleWalletModal}>
+                    <span className={"cur-p hover-op trans-op"} onClick={toggleWalletModal}>
                         <Close />
                     </span>
                 </div>

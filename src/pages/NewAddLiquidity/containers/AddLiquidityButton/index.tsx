@@ -12,11 +12,10 @@ import { calculateGasMargin } from "utils/calculateGasMargin";
 import { useAppDispatch, useAppSelector } from "state/hooks";
 import { GAS_PRICE_MULTIPLIER } from "hooks/useGasPrice";
 import { t } from "@lingui/macro";
-import { useAllTransactions, useTransactionAdder } from "state/transactions/hooks";
-import { useMemo, useState } from "react";
+import { useTransactionAdder } from "state/transactions/hooks";
+import { useMemo } from "react";
 
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { addTransaction } from "state/transactions/actions";
 import { IDerivedMintInfo, useAddLiquidityTxHash } from "state/mint/v3/hooks";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { Field } from "state/mint/actions";
@@ -28,10 +27,12 @@ interface IAddLiquidityButton {
     quoteCurrency: Currency | undefined;
     mintInfo: IDerivedMintInfo;
     handleAddLiquidity: () => void;
+    title: string
+    setRejected?: (rejected: boolean) => void
 }
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
-export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, handleAddLiquidity }: IAddLiquidityButton) {
+export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, handleAddLiquidity, title, setRejected }: IAddLiquidityButton) {
     const { chainId, library, account } = useActiveWeb3React();
 
     const positionManager = useV3NFTPositionManagerContract();
@@ -91,6 +92,8 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
                 value,
             };
 
+            setRejected && setRejected(false)
+
             library
                 .getSigner()
                 .estimateGas(txn)
@@ -118,6 +121,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
                 .catch((error) => {
                     console.error("Failed to send transaction", error);
                     // we only care if the error is something _other_ than the user rejected the tx
+                    setRejected && setRejected(true)
                     if (error?.code !== 4001) {
                         console.error(error);
                     }
@@ -129,7 +133,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
 
     return (
         <button className="add-buttons__liquidity ml-a" disabled={!isReady} onClick={onAdd}>
-            Add liquidity
+            {title}
         </button>
     );
 }

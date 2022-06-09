@@ -49,15 +49,15 @@ export default function Header() {
 
     return (
         <div className={"header__wrapper flex-s-between w-100 pv-1 pl-2"}>
-            <a className={"header__logo hover-op mxs_mr-1"} href=".">
+            <a className={"header__logo hover-op trans-op mxs_mr-1"} href=".">
                 <img width={"calc(100% - 10px)"} src={Logo} alt="logo" />
             </a>
             <div className={"header__links flex-s-between"}>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
+                <NavLink className={"header__links__link hover-op trans-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
                     Swap
                 </NavLink>
                 <NavLink
-                    className={"header__links__link hover-op"}
+                    className={"header__links__link hover-op trans-op"}
                     id={`pool-nav-link`}
                     to={"/pool"}
                     isActive={(match, { pathname }) =>
@@ -67,14 +67,14 @@ export default function Header() {
                 >
                     Pool
                 </NavLink>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
+                <NavLink className={"header__links__link hover-op trans-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
                     <span>Farming</span>
                     <span className={"header__farming-circle"} />
                 </NavLink>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`staking-nav-link`} to={"/staking"}>
+                <NavLink className={"header__links__link hover-op trans-op"} activeClassName={"header__links__link--active"} id={`staking-nav-link`} to={"/staking"}>
                     Staking
                 </NavLink>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
+                <NavLink className={"header__links__link hover-op trans-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     Info
                 </NavLink>
             </div>

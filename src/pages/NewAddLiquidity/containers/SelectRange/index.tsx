@@ -177,11 +177,12 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                     {currencyA && currencyB && <USDPrices currencyA={currencyA} currencyB={currencyB} currencyAUSDC={currencyAUSDC} currencyBUSDC={currencyBUSDC} priceFormat={priceFormat} />}
                     <PresetRanges
                         isInvalid={mintInfo.invalidRange}
+                        outOfRange={mintInfo.outOfRange}
                         isStablecoinPair={isStablecoinPair}
                         activePreset={activePreset}
                         handlePresetRangeSelection={handlePresetRangeSelection}
-                        priceLower={priceLower?.toSignificant(5)}
-                        priceUpper={priceUpper?.toSignificant(5)}
+                        priceLower={leftPrice?.toSignificant(5)}
+                        priceUpper={rightPrice?.toSignificant(5)}
                         price={price}
                     />
                 </div>

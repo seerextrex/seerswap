@@ -58,6 +58,10 @@
 
         &__fee {
             border-radius: 0 0 0 8px;
+
+            &.single {
+                border-radius: 0 0 8px 8px;
+            }
         }
 
         &__apr {

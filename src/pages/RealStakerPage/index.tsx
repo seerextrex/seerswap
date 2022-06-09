@@ -308,7 +308,7 @@ export default function RealStakerPage({}) {
                 <div>
                     <div className='mb-1 f f-jb f-ac'>
                         <Trans>Calculate Proift</Trans>
-                        <div onClick={() => toggleCalcModal(false)} className={'cur-p hover-op'}>
+                        <div onClick={() => toggleCalcModal(false)} className={'cur-p hover-op trans-op'}>
                             <X />
                         </div>
                     </div>

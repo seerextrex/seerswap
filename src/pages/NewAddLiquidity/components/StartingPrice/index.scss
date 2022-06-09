@@ -17,6 +17,7 @@
                 background: #1c2a35;
                 border-radius: 0 6px 6px 0;
                 border: 2px solid #1c2a35;
+                line-height: normal;
             }
         
             &__separator {
@@ -50,6 +51,7 @@
                 border: 2px solid #1c2a35;
                 background: #1c2a35;
                 border-radius: 6px 0 0 6px;
+                line-height: normal;
             }
         
             &__symbol {
@@ -57,6 +59,7 @@
                 background: #1c2a35;
                 border-radius: 0 6px 6px 0;
                 border: 2px solid #1c2a35;
+                line-height: normal;
             }
         }
     }
@@ -148,6 +151,7 @@
     &-field {
         &:last-of-type {
             margin-left: 10px;
+            margin-bottom: 0;
         }
     }
 

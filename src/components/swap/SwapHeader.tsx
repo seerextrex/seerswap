@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 import SettingsTab from '../Settings'
 import { Percent } from '@uniswap/sdk-core'
 
@@ -17,7 +17,7 @@ export default function SwapHeader({
                 </span>
                 {dynamicFee &&
                     <span className={'bg-p pv-025 ph-05 br-8'}>
-                        <Trans>{`Fee is ${dynamicFee / 10000}%`}</Trans>
+                        {t`Fee is ${dynamicFee / 10000}%`}
                     </span>
                 }
             </div>

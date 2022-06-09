@@ -171,7 +171,6 @@ msgstr "Add {0} to Metamask <0/>"
 #~ msgstr "Add {0}/{1} V3 liquidity"
 
 #: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidityPage/index.tsx
 #: src/pages/NewAddLiquidity/containers/AddLiquidityButton/index.tsx
 msgid "Add {0}/{1} liquidity"
 msgstr "Add {0}/{1} liquidity"
@@ -485,7 +484,6 @@ msgstr "Create a pair"
 #~ msgstr "Create pool and add {0}/{1} V3 liquidity"
 
 #: src/pages/AddLiquidity/index.tsx
-#: src/pages/AddLiquidityPage/index.tsx
 #: src/pages/NewAddLiquidity/containers/AddLiquidityButton/index.tsx
 msgid "Create pool and add {0}/{1} liquidity"
 msgstr "Create pool and add {0}/{1} liquidity"
@@ -635,8 +633,8 @@ msgstr "Enter valid token address"
 msgid "Error"
 msgstr "Error"
 
-#: src/components/WalletModal/index.tsx
 #: src/components/WalletModal/PendingView.tsx
+#: src/components/WalletModal/index.tsx
 msgid "Error connecting"
 msgstr "Error connecting"
 
@@ -791,6 +789,10 @@ msgstr "Input is estimated. You will sell at most <0>{0} {1}</0> or the transact
 msgid "Install Metamask"
 msgstr "Install Metamask"
 
+#: src/components/WalletModal/index.tsx
+msgid "Install ONTO Wallet"
+msgstr "Install ONTO Wallet"
+
 #: src/pages/Swap/index.tsx
 msgid "Insufficient liquidity for this trade."
 msgstr "Insufficient liquidity for this trade."
@@ -865,8 +867,8 @@ msgstr "Lists"
 msgid "Loaded"
 msgstr "Loaded"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 #: src/pages/PoolFinder/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Loading"
@@ -919,8 +921,8 @@ msgstr "Maximum sent"
 msgid "May"
 msgstr "May"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Migrate"
 msgstr "Migrate"
 
@@ -1031,8 +1033,8 @@ msgid "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
 msgstr "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
 
 #: src/components/WalletModal/index.tsx
-msgid "ONTO Wallet"
-msgstr "ONTO Wallet"
+#~ msgid "ONTO Wallet"
+#~ msgstr "ONTO Wallet"
 
 #: src/utils/convertDate.ts
 msgid "October"
@@ -1126,15 +1128,15 @@ msgstr "Pool Found!"
 #~ msgid "Pool rate"
 #~ msgstr "Pool rate"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Pool tokens in rewards pool:"
 msgstr "Pool tokens in rewards pool:"
 
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
@@ -1330,8 +1332,8 @@ msgstr "Show"
 #~ msgid "Simple"
 #~ msgstr "Simple"
 
-#: src/components/swap/AdvancedSwapDetails.tsx
 #: src/components/TransactionSettings/index.tsx
+#: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
@@ -1785,9 +1787,9 @@ msgstr "Your Reward"
 #~ msgid "Your V3 liquidity positions will appear here."
 #~ msgstr "Your V3 liquidity positions will appear here."
 
-#: src/components/PositionCard/index.tsx
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Your pool share:"
 msgstr "Your pool share:"
 
@@ -1825,8 +1827,8 @@ msgstr "Your positions"
 #~ msgid "Your rate"
 #~ msgstr "Your rate"
 
-#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/components/PositionCard/index.tsx
 msgid "Your total pool tokens:"
 msgstr "Your total pool tokens:"
 

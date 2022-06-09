@@ -142,6 +142,8 @@ export function TokenRatio(
                     </div>
                 </div>
             </div>
+            <p className={'mt-1 fs-085'}>Token ratio depends on selected price range.</p>
+            <p className={'mt-05 fs-085'}>Ratio adjustment moves it.</p>
         </div>
     )
 }

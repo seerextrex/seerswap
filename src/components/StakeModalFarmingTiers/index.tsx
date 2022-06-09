@@ -1,16 +1,11 @@
 import CurrencyLogo from "components/CurrencyLogo";
-import { FARMING_CENTER } from "constants/addresses";
 import { SupportedChainId } from "constants/chains";
-import { ALGEBRA_POLYGON } from "constants/tokens";
-import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { useActiveWeb3React } from "hooks/web3";
 import { WrappedCurrency } from "models/types";
-import { CurrencyDropdown } from "pages/AddLiquidity/styled";
 import { useCallback, useMemo, useState } from "react";
 import { useCurrencyBalance } from "state/wallet/hooks";
 import "./index.scss";
 
-import { CurrencyAmount } from "@uniswap/sdk-core";
 import { formatAmountTokens } from "utils/numbers";
 import { HelpCircle } from "react-feather";
 import { Link } from "react-router-dom";

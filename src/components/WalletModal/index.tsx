@@ -206,7 +206,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 // @ts-ignore
                 if (!window.onto) {
                     if (option.name === "ONTO Wallet") {
-                        return <Option id={`connect-${key}`} key={key} color={"#000000"} header={<Trans>ONTO Wallet</Trans>} subheader={null} link={"https://onto.app/"} icon={OntoIcon} />;
+                        return <Option id={`connect-${key}`} key={key} color={"#000000"} header={<Trans>Install ONTO Wallet</Trans>} subheader={null} link={"https://onto.app/"} icon={OntoIcon} />;
                     } else return null;
                 }
             }

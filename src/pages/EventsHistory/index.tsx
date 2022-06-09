@@ -136,6 +136,38 @@ const eventsHistory = [
         type: "Finite",
         apr: "473",
     },
+    {
+        start: new Date("May 3 2022").getTime(),
+        startStr: "May 3",
+        end: "May 10",
+        pool: {
+            token0: { address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", symbol: "MATIC" },
+            token1: { address: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174", symbol: "USDC" },
+        },
+        rewardToken: { address: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174", symbol: "USDC" },
+        reward: 5_000,
+        bonusRewardToken: null,
+        bonusReward: null,
+        participants: 52,
+        type: "Finite",
+        apr: "686",
+    },
+    {
+        start: new Date("May 12 2022").getTime(),
+        startStr: "May 12",
+        end: "May 19",
+        pool: {
+            token0: { address: "0x580a84c73811e1839f75d86d75d88cca0c241ff4", symbol: "QI" },
+            token1: { address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", symbol: "WMATIC" },
+        },
+        rewardToken: { address: "0xa3fa99a148fa48d14ed51d610c367c61876997f1", symbol: "MAI" },
+        reward: 2_500,
+        bonusRewardToken: null,
+        bonusReward: null,
+        participants: 17,
+        type: "Finite",
+        apr: "191",
+    },
 ];
 
 const sortFields = [

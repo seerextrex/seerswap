@@ -16,7 +16,7 @@ export default function SwapHeader({ allowedSlippage, dynamicFee = null }: SwapH
                 </span>
                 {dynamicFee &&
                     <span className={'bg-p pv-025 ph-05 br-8'}>
-                    <Trans>{`Fee sis ${dynamicFee / 10000}%`}</Trans>
+                    <Trans>{`Fee is ${dynamicFee / 10000}%`}</Trans>
                     </span>
                 }
             </div>

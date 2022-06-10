@@ -10,11 +10,11 @@
     "@graphql-codegen/typescript": "1.22.3",
     "@graphql-codegen/typescript-operations": "^1.18.2",
     "@graphql-codegen/typescript-rtk-query": "^1.1.1",
-    "@lingui/cli": "^3.13.3",
-    "@lingui/loader": "^3.13.3",
-    "@lingui/macro": "^3.13.3",
-    "@lingui/react": "^3.13.3",
-    "@lingui/core": "^3.13.3",
+    "@lingui/cli": "^3.9.0",
+    "@lingui/loader": "^3.9.0",
+    "@lingui/macro": "^3.9.0",
+    "@lingui/react": "^3.9.0",
+    "@lingui/core": "^3.9.0",
     "@metamask/jazzicon": "^2.0.0",
     "@popperjs/core": "^2.4.4",
     "@reach/dialog": "0.16.2",
@@ -141,7 +141,8 @@
     "graphql:generate": "graphql-codegen --config codegen.yml",
     "postinstall": "yarn compile-contract-types",
     "start": "yarn graphql:generate && react-scripts start --host 0.0.0.0",
-    "test": "react-scripts test --env=./custom-test-env.js"
+    "test": "react-scripts test --env=./custom-test-env.js",
+    "reinstall": "rm -rf node_modules && yarn"
   },
   "eslintConfig": {
     "extends": "react-app",

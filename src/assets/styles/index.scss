@@ -13,6 +13,10 @@
 
 body {
   overflow-x: hidden !important;
+
+  iframe[style*="z-index: 2147483647"] {
+    display: none!important;
+  }
 }
 
 

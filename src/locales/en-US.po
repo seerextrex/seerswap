@@ -21,6 +21,10 @@ msgstr "$-"
 msgid "${0}"
 msgstr "${0}"
 
+#: src/components/swap/SwapHeader.tsx
+#~ msgid "%"
+#~ msgstr "%"
+
 #: 
 #~ msgid "(Max)"
 #~ msgstr "(Max)"
@@ -684,8 +688,20 @@ msgstr "Fee"
 #~ msgstr "Fee Tier"
 
 #: src/components/swap/SwapHeader.tsx
+#~ msgid "Fee is"
+#~ msgstr "Fee is"
+
+#: src/components/swap/SwapHeader.tsx
+#~ msgid "Fee is ${dynamicFee}%"
+#~ msgstr "Fee is ${dynamicFee}%"
+
+#: src/components/swap/SwapHeader.tsx
 msgid "Fee is {0}%"
 msgstr "Fee is {0}%"
+
+#: src/components/swap/SwapHeader.tsx
+#~ msgid "Fee is {dynamicFee}%"
+#~ msgstr "Fee is {dynamicFee}%"
 
 #: 
 #~ msgid "Fee tier"
@@ -2030,7 +2046,3 @@ msgstr "← Back to Farming"
 #: src/pages/Pool/PositionPage.tsx
 msgid "← Back to Pools Overview"
 msgstr "← Back to Pools Overview"
-
-#: 
-#~ msgid "← Back to Staking"
-#~ msgstr "← Back to Staking"

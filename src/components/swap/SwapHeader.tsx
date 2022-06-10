@@ -2,13 +2,12 @@ import { Trans, t } from '@lingui/macro'
 import SettingsTab from '../Settings'
 import { Percent } from '@uniswap/sdk-core'
 
-export default function SwapHeader({
-    allowedSlippage,
-    dynamicFee = null
-}: {
+interface SwapHeaderProps {
     allowedSlippage: Percent
     dynamicFee: number | null
-}) {
+}
+
+export default function SwapHeader({ allowedSlippage, dynamicFee = null }: SwapHeaderProps) {
     return (
         <div className={'flex-s-between w-100 mb-1'}>
             <div className={'flex-s-between w-100'}>

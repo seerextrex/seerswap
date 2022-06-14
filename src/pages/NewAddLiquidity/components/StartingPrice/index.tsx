@@ -1,5 +1,5 @@
 import { Currency, Token, Price } from "@uniswap/sdk-core";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 
 import Toggle from "components/Toggle";
 
@@ -40,7 +40,7 @@ function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLock
     const quoteSymbol = useMemo(() => (quoteCurrency ? quoteCurrency.symbol : "-"), [quoteCurrency]);
 
     const tokenRatio = useMemo(() => {
-        if (!basePrice || !quotePrice) return "Loading...";
+        if (!basePrice || !quotePrice) return t`Loading...`;
 
         return String((+basePrice.toSignificant(5) / +quotePrice.toSignificant(5)).toFixed(5));
     }, [basePrice, quotePrice]);
@@ -91,7 +91,7 @@ function USDPriceField({
     userUSD: string | undefined;
     changeHandler: (price: string) => void;
 }) {
-    const _price = useMemo(() => (price ? price.toSignificant(5) : "Loading..."), [price]);
+    const _price = useMemo(() => (price ? price.toSignificant(5) : t`Loading...`), [price]);
 
     return (
         <div className={`usd-price-field w-100 f ac ws-no-wrap ${isSelected ? "main" : "side"}`}>
@@ -305,13 +305,15 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
         <div className={"f starting-price-wrapper c p-1"} style={{ width: "542px", backgroundColor: "#26343f" }}>
             <div className={"flex-s-between"}>
                 {isLocked ? (
-                    <span className={"auto-fetched"}>✨ Prices were auto-fetched</span>
+                    <span className={"auto-fetched"}>
+                        <Trans>✨ Prices were auto-fetched</Trans>
+                    </span>
                 ) : !basePriceUSD && !quotePriceUSD ? (
-                    <span className={"not-auto-fetched"}>{`Can't auto-fetch prices.`}</span>
+                    <span className={"not-auto-fetched"}>{t`Can't auto-fetch prices.`}</span>
                 ) : !basePriceUSD ? (
-                    <span className={"not-auto-fetched"}>{`Can't auto-fetch ${currencyA?.symbol} price.`}</span>
+                    <span className={"not-auto-fetched"}>{t`Can't auto-fetch ${currencyA?.symbol} price.`}</span>
                 ) : !quotePriceUSD ? (
-                    <span className={"not-auto-fetched"}>{`Can't auto-fetch ${currencyB?.symbol} price.`}</span>
+                    <span className={"not-auto-fetched"}>{t`Can't auto-fetch ${currencyB?.symbol} price.`}</span>
                 ) : null}
             </div>
             <div className={"br-8 mt-1 f c"}>

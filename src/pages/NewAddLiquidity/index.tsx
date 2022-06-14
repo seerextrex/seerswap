@@ -29,6 +29,7 @@ import { useUserSlippageToleranceWithDefault } from "state/user/hooks";
 import { ZERO_PERCENT } from "constants/misc";
 import { Aftermath } from "./containers/Aftermath";
 import { useWalletModalToggle } from "state/application/hooks";
+import { Trans } from "@lingui/macro";
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
@@ -300,7 +301,9 @@ export function NewAddLiquidityPage({
     return (
         <div className="add-liquidity-page">
             <div className="add-liquidity-page__header f mxs_fd-c mb-1">
-                <div className="add-liquidity-page__header-title">Add liquidity</div>
+                <div className="add-liquidity-page__header-title">
+                    <Trans>Add liquidity</Trans>
+                </div>
                 <div className="ml-a mxs_ml-0 mxs_mt-1 f f-ac ">
                     {!hidePriceFormatter && (
                         <div className="mr-1">
@@ -408,7 +411,9 @@ export function NewAddLiquidityPage({
                             >
                                 <ChevronLeft size={18} style={{ marginRight: "5px" }} />
                                 <span className="add-buttons__prev-text">{stepLinks[currentStep - 1].title}</span>
-                                <span className="add-buttons__prev-text--mobile">Back</span>
+                                <span className="add-buttons__prev-text--mobile">
+                                    <Trans>Back</Trans>
+                                </span>
                             </button>
                         </div>
                     )}
@@ -439,7 +444,7 @@ export function NewAddLiquidityPage({
             ) : !account ? (
                 <div className="add-buttons f f-ac f-jc mt-2 mxs_mt-1">
                     <button className="add-buttons__next f f-jc f-ac ml-a" onClick={toggleWalletModal}>
-                        Connect Wallet
+                        <Trans>Connect Wallet</Trans>
                     </button>
                 </div>
             ) : null}

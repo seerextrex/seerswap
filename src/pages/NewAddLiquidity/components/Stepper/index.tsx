@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { Currency } from "@uniswap/sdk-core";
 import { USDC_POLYGON } from "constants/tokens";
 import useUSDCPrice from "hooks/useUSDCPrice";
@@ -73,7 +74,7 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
             const rangeUSD = initialUSDPrices.CURRENCY_B || rangeTokenUSD?.toSignificant(8);
 
             if (mintInfo.price && rangeUSD && completedSteps.length >= 2) {
-                _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isUSD ? "$" : ""}${
+                _steps[1].title = t`Initial price: 1 ${currencyA.symbol} = ${isUSD ? "$" : ""}${
                     isUSD
                         ? isSorted
                             ? parseFloat(mintInfo.price.toSignificant(8))
@@ -85,18 +86,18 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
             }
 
             if (mintInfo.price && !rangeUSD && completedSteps.length >= 2) {
-                _steps[1].title = `Initial price: 1 ${currencyA.symbol} = ${isSorted ? parseFloat(mintInfo.price.toSignificant(8)) : parseFloat(mintInfo.price.invert().toSignificant(8))} ${
+                _steps[1].title = t`Initial price: 1 ${currencyA.symbol} = ${isSorted ? parseFloat(mintInfo.price.toSignificant(8)) : parseFloat(mintInfo.price.invert().toSignificant(8))} ${
                     currencyB.symbol
                 }`;
             }
 
             if (leftPrice && rightPrice && completedSteps.length >= 3) {
                 if (preset !== Presets.FULL && rightPrice.toSignificant(5) !== "3384900000000000000000000000000000000000000000000") {
-                    _steps[2].title = `Range: ${isUSD && rangeUSD ? "$" : ""}${
+                    _steps[2].title = t`Range: ${isUSD && rangeUSD ? "$" : ""}${
                         isUSD && rangeUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)
                     } — ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+rightPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`;
                 } else {
-                    _steps[2].title = "Range: 0 — ∞";
+                    _steps[2].title = t`Range: 0 — ∞`;
                 }
             }
 
@@ -114,24 +115,24 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
                     tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
                     tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
 
-                    _steps[3].title = `Liquidity: $${tokenA + tokenB}`;
+                    _steps[3].title = t`Liquidity: $${tokenA + tokenB}`;
                 } else {
                     tokenA = parsedA;
                     tokenB = parsedB;
 
-                    _steps[3].title = `Liquidity: ${tokenA} ${currencyA.symbol}, ${tokenB} ${currencyB.symbol}`;
+                    _steps[3].title = t`Liquidity: ${tokenA} ${currencyA.symbol}, ${tokenB} ${currencyB.symbol}`;
                 }
             }
         } else {
             if (leftPrice && rightPrice && completedSteps.length >= 2) {
                 if (preset !== Presets.FULL) {
-                    _steps[1].title = `Range: ${isUSD ? "$" : ""}${
+                    _steps[1].title = t`Range: ${isUSD ? "$" : ""}${
                         isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : Number(leftPrice.toSignificant(8)).toFixed(4)
                     } — ${isUSD ? "$" : ""}${
                         isUSD && rangeTokenUSD && !isUSDCB ? (+rightPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : Number(rightPrice.toSignificant(8)).toFixed(4)
                     }`;
                 } else {
-                    _steps[1].title = "Range: 0 — ∞";
+                    _steps[1].title = t`Range: 0 — ∞`;
                 }
             }
 
@@ -149,12 +150,12 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
                     tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
                     tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
 
-                    _steps[2].title = `Liquidity: $${tokenA + tokenB}`;
+                    _steps[2].title = t`Liquidity: $${tokenA + tokenB}`;
                 } else {
                     tokenA = parsedA;
                     tokenB = parsedB;
 
-                    _steps[2].title = `Liquidity: ${tokenA} ${currencyA.symbol}, ${tokenB} ${currencyB.symbol}`;
+                    _steps[2].title = t`Liquidity: ${tokenA} ${currencyA.symbol}, ${tokenB} ${currencyB.symbol}`;
                 }
             }
         }

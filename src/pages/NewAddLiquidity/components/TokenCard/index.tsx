@@ -10,6 +10,7 @@ import { useActiveWeb3React } from "hooks/web3";
 import { useCurrencyBalance } from "state/wallet/hooks";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { PriceFormats } from "../PriceFomatToggler";
+import { t, Trans } from "@lingui/macro";
 
 interface ITokenCard {
     handleTokenSelection: (currency: Currency) => void;
@@ -62,8 +63,12 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
                     <CurrencyLogo size={"35px"} currency={currency as WrappedCurrency}></CurrencyLogo>
                 </div>
                 <div className={"f c f-jc ml-1"}>
-                    {currency && <div className="token-card__balance b">BALANCE</div>}
-                    <div>{`${priceFormat === PriceFormats.USD && currency ? "$" : ""} ${currency ? _balance : "Not selected"}`}</div>
+                    {currency && (
+                        <div className="token-card__balance b">
+                            <Trans>BALANCE</Trans>
+                        </div>
+                    )}
+                    <div>{`${priceFormat === PriceFormats.USD && currency ? "$" : ""} ${currency ? _balance : t`Not selected`}`}</div>
                 </div>
             </div>
             <div className="token-card-selector">

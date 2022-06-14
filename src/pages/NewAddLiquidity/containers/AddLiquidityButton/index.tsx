@@ -11,7 +11,7 @@ import { Percent, Currency } from "@uniswap/sdk-core";
 import { calculateGasMargin } from "utils/calculateGasMargin";
 import { useAppDispatch, useAppSelector } from "state/hooks";
 import { GAS_PRICE_MULTIPLIER } from "hooks/useGasPrice";
-import { t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { useAllTransactions, useTransactionAdder } from "state/transactions/hooks";
 import { useMemo, useState } from "react";
 
@@ -129,7 +129,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
 
     return (
         <button className="add-buttons__liquidity ml-a" disabled={!isReady} onClick={onAdd}>
-            Add liquidity
+            <Trans>Add liquidity</Trans>
         </button>
     );
 }

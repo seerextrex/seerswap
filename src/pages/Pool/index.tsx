@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import PositionList from "components/PositionList";
 import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { useV3Positions } from "hooks/useV3Positions";

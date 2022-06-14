@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import Loader from "components/Loader";
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle } from "react-feather";
@@ -43,9 +44,11 @@ export function Aftermath({ done }: IAftermath) {
                         {" "}
                         <CheckCircle size={"36px"} stroke={"var(--green)"} />
                     </div>
-                    <div className="mt-1 fs-125">Liquidity added!</div>
+                    <div className="mt-1 fs-125">
+                        <Trans>Liquidity added!</Trans>
+                    </div>
                     <Link to={"/pool"} className="go-to-pools mt-2">
-                        Go to pools
+                        <Trans>Go to pools</Trans>
                     </Link>
                 </>
             ) : (
@@ -53,7 +56,9 @@ export function Aftermath({ done }: IAftermath) {
                     <div>
                         <Loader size={"36px"} stroke={"white"} />
                     </div>
-                    <div className="mt-1 fs-125">Adding liquidity</div>
+                    <div className="mt-1 fs-125">
+                        <Trans>Adding liquidity</Trans>
+                    </div>
                 </>
             )}
         </div>

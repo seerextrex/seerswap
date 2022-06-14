@@ -24,8 +24,8 @@ export function PriceFormatToggler({ handlePriceFormat, currentFormat }: IPriceF
                     handlePriceFormat(+!inputType);
                     setInputType(+!inputType);
                 }}
-                checked={<Trans>{"USD"}</Trans>}
-                unchecked={<Trans>{"Tokens"}</Trans>}
+                checked={<Trans>USD</Trans>}
+                unchecked={<Trans>Tokens</Trans>}
             />
         </div>
     );

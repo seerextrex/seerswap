@@ -15,6 +15,7 @@ import { PoolState } from "hooks/usePools";
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { useHistory } from "react-router-dom";
+import { t } from "@lingui/macro";
 
 interface ISelectPair {
     baseCurrency: Currency | null | undefined;
@@ -57,9 +58,9 @@ export function SelectPair({
     const feeString = useMemo(() => {
         if (mintInfo.poolState === PoolState.INVALID || mintInfo.poolState === PoolState.LOADING) return <Loader stroke="#22cbdc" />;
 
-        if (mintInfo.noLiquidity) return "0.01% fee";
+        if (mintInfo.noLiquidity) return t`0.01% fee`;
 
-        return `${(mintInfo.dynamicFee / 10000).toFixed(3)}% fee`;
+        return t`${(mintInfo.dynamicFee / 10000).toFixed(3)}% fee`;
     }, [mintInfo]);
 
     const aprString = useMemo(() => {

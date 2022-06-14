@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { Price, Token, Currency } from "@uniswap/sdk-core";
 import Input from "components/NumericalInput";
 import { USDC_POLYGON } from "constants/tokens";
@@ -150,16 +151,16 @@ export function RangeSelector({
                     tokenB={currencyB ?? undefined}
                     initialPrice={mintInfo.price}
                     disabled={disabled}
-                    title={"Min price"}
+                    title={t`Min price`}
                     priceFormat={priceFormat}
                 />
             </div>
             {mintInfo.price && (
                 <div className="current-price f f-ac mxs_fd-c" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
                     <div className="mb-05 mxs_mt-05" style={{ whiteSpace: "nowrap" }}>
-                        {initial ? `Initial ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price` : `Current ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price`}
+                        {initial ? t`Initial ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price` : t`Current ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price`}
                     </div>
-                    <div className="current-price-tip ta-c">{`${currentPrice || "Loading..."}`}</div>
+                    <div className="current-price-tip ta-c">{`${currentPrice || t`Loading...`}`}</div>
                 </div>
             )}
             <div className="max-price mxs_mt-1" style={{ order: isBeforePrice ? 2 : 3 }}>
@@ -175,7 +176,7 @@ export function RangeSelector({
                     tokenB={currencyB ?? undefined}
                     initialPrice={mintInfo.price}
                     disabled={disabled}
-                    title={"Max price"}
+                    title={t`Max price`}
                     priceFormat={priceFormat}
                 />
             </div>

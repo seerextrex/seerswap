@@ -84,7 +84,9 @@ export function USDPrices({ currencyA, currencyB, currencyAUSDC, currencyBUSDC, 
             ) : !loadingTimedout ? (
                 <Loader stroke="white" />
             ) : (
-                <div>Can't fetch prices</div>
+                <div>
+                    <Trans>Can't fetch prices</Trans>
+                </div>
             )}
         </div>
     );

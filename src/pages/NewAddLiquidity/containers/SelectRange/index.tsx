@@ -16,6 +16,7 @@ import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { tryParseAmount } from "state/swap/hooks";
 import { useHistory } from "react-router-dom";
+import { t, Trans } from "@lingui/macro";
 
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
@@ -132,7 +133,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
 
     return (
         <div className="f c">
-            <StepTitle title={"Select a range"} isCompleted={isCompleted} step={additionalStep ? 3 : 2} />
+            <StepTitle title={t`Select a range`} isCompleted={isCompleted} step={additionalStep ? 3 : 2} />
             <div className="f mxs_fd-cr ms_fd-cr">
                 <div className="f c">
                     <div className="mb-1">
@@ -169,8 +170,16 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
                             interactive={false}
                             priceFormat={priceFormat}
                         />
-                        {mintInfo.outOfRange && <div className="range__notification out-of-range">Out of range</div>}
-                        {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
+                        {mintInfo.outOfRange && (
+                            <div className="range__notification out-of-range">
+                                <Trans>Out of range</Trans>
+                            </div>
+                        )}
+                        {mintInfo.invalidRange && (
+                            <div className="range__notification error w-100">
+                                <Trans>Invalid range</Trans>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="ml-2 mxs_ml-0 ms_ml-0">

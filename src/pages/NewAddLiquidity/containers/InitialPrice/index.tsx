@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { Currency } from "@uniswap/sdk-core";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
@@ -42,7 +43,7 @@ export function InitialPrice({ currencyA, currencyB, mintInfo, isCompleted, pric
 
     return (
         <div className="initial-price-wrapper f c">
-            <StepTitle title={"Set initial price"} isCompleted={isCompleted} step={2} />
+            <StepTitle title={t`Set initial price`} isCompleted={isCompleted} step={2} />
             <div className="f">
                 <StartingPrice currencyA={currencyA} currencyB={currencyB} mintInfo={mintInfo} startPriceHandler={onStartPriceInput} priceFormat={priceFormat} />
                 <div className="ml-2">

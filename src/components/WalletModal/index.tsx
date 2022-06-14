@@ -212,7 +212,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 // @ts-ignore
                 if (!window.onto) {
                     if (option.name === "ONTO Wallet") {
-                        return <Option id={`connect-${key}`} key={key} color={"#000000"} header={<Trans>ONTO Wallet</Trans>} subheader={null} link={"https://onto.app/"} icon={OntoIcon} />;
+                        return <Option id={`connect-${key}`} key={key} color={"#000000"} header={<Trans>Install ONTO Wallet</Trans>} subheader={null} link={"https://onto.app/"} icon={OntoIcon} />;
                     } else return null;
                 }
             }
@@ -246,7 +246,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                     <div className={"flex-s-between"}>
                         {error instanceof UnsupportedChainIdError ? <Trans>Wrong Network</Trans> : <Trans>Error connecting</Trans>}
 
-                        <div className={"cur-p hover-op"} onClick={toggleWalletModal}>
+                        <div className={"cur-p hover-op trans-op"} onClick={toggleWalletModal}>
                             <Close />
                         </div>
                     </div>
@@ -291,7 +291,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 <div className={"flex-s-between"}>
                     {walletView !== WALLET_VIEWS.ACCOUNT ? (
                         <span
-                            className={"hover-op f cur-p"}
+                            className={"hover-op trans-op f cur-p"}
                             onClick={() => {
                                 setPendingError(false);
                                 setWalletView(WALLET_VIEWS.ACCOUNT);
@@ -306,7 +306,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                             <Trans>Connect Wallet</Trans>
                         </span>
                     )}
-                    <div className={"cur-p hover-op"} onClick={toggleWalletModal}>
+                    <div className={"cur-p hover-op trans-op"} onClick={toggleWalletModal}>
                         <Close />
                     </div>
                 </div>

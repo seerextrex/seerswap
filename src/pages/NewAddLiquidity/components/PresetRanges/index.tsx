@@ -12,6 +12,7 @@ export interface IPresetArgs {
 
 interface IPresetRanges {
     isInvalid: boolean;
+    outOfRange: boolean;
     isStablecoinPair: boolean;
     activePreset: Presets | null;
     handlePresetRangeSelection: (preset: IPresetArgs | null) => void;
@@ -27,7 +28,7 @@ enum PresetProfits {
     HIGH,
 }
 
-export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRangeSelection, priceLower, price, priceUpper, isInvalid }: IPresetRanges) {
+export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRangeSelection, priceLower, price, priceUpper, isInvalid, outOfRange }: IPresetRanges) {
     const ranges = useMemo(() => {
         if (isStablecoinPair)
             return [
@@ -80,7 +81,12 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
     const risk = useMemo(() => {
         if (!priceUpper || !priceLower || !price) return;
 
-        const rangePercent = 100 - (+price / +priceUpper) * 100 + Math.abs(100 - (+price / +priceLower) * 100);
+        const upperPercent = 100 - (+price / +priceUpper) * 100;
+        const lowerPercent = Math.abs(100 - (+price / +priceLower) * 100);
+
+        const rangePercent = +priceLower > +price && +priceUpper > 0 ? upperPercent - lowerPercent : upperPercent + lowerPercent;
+
+        // console.log(upperPercent, lowerPercent)
 
         if (rangePercent < 7.5) {
             return 5;
@@ -140,40 +146,36 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
                     >
                         <div>{range.title}</div>
                     </button>
-                    {(() => {
-                        if (!_risk || isInvalid || isStablecoinPair) return null;
-
-                        return (
-                            <div className="preset-ranges__description">
-                                <div className="f mb-05">
-                                    <span>
-                                        <Trans>Risk:</Trans>
-                                    </span>
-                                    <div className="f f-ac f-jc ml-a">
-                                        {[1, 2, 3, 4, 5].map((_, i) => (
-                                            <div key={i} className="preset-ranges__circle" style={{ background: "#42637b" }}>
-                                                <div key={i} className="preset-ranges__circle--active" style={{ left: `calc(-100% + ${_risk[i]}%)` }} />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="f">
-                                    <span>
-                                        <Trans>Profit:</Trans>
-                                    </span>
-                                    <div className="f f-ac f-jc ml-a">
-                                        {[1, 2, 3, 4, 5].map((_, i) => (
-                                            <div key={i} className="preset-ranges__circle" style={{ background: "#42637b" }}>
-                                                <div key={i} className="preset-ranges__circle--active" style={{ left: `calc(-100% + ${_risk[i]}%)` }} />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })()}
                 </div>
             ))}
+            {_risk && !isInvalid && !isStablecoinPair && (
+                <div className={`preset-ranges__description ${outOfRange && "mt-2"}`}>
+                    <div className="f mb-05">
+                        <span>
+                            <Trans>Risk:</Trans>
+                        </span>
+                        <div className="f f-ac f-jc ml-a">
+                            {[1, 2, 3, 4, 5].map((_, i) => (
+                                <div key={i} className="preset-ranges__circle" style={{ background: "#42637b" }}>
+                                    <div key={i} className="preset-ranges__circle--active" style={{ left: `calc(-100% + ${_risk[i]}%)` }} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="f">
+                        <span>
+                            <Trans>Profit:</Trans>
+                        </span>
+                        <div className="f f-ac f-jc ml-a">
+                            {[1, 2, 3, 4, 5].map((_, i) => (
+                                <div key={i} className="preset-ranges__circle" style={{ background: "#42637b" }}>
+                                    <div key={i} className="preset-ranges__circle--active" style={{ left: `calc(-100% + ${_risk[i]}%)` }} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

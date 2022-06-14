@@ -48,7 +48,7 @@ const sortFields = [
 
 export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
     const [sortField, setSortField] = useState("volumeUSD");
-    const [sortIndex, setSortIndex] = useState(2);
+    const [sortIndex, setSortIndex] = useState(1);
     const [sortDirection, setSortDirection] = useState<boolean>(true);
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex);
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection);

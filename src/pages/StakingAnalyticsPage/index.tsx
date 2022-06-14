@@ -55,7 +55,7 @@ export default function StakingAnalyticsPage() {
 
     return (
         <div className={"w-100 maw-1180 mb-3"}>
-            <NavLink className={"c-p f hover-op w-fc"} to={"/staking"}>
+            <NavLink className={"c-p f hover-op trans-op w-fc"} to={"/staking"}>
                 <ArrowLeft size={"16px"} />
                 <p className={"ml-05"}>
                     <Trans>Staking</Trans>

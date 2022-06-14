@@ -91,6 +91,14 @@
         &-3 {
           padding-top: 3rem;
         }
+
+        &-4 {
+          padding-top: 4rem;
+        }
+
+        &-5 {
+          padding-top: 5rem;
+        }
       }
 
       &r {
@@ -1254,7 +1262,7 @@
 
       &l {
         &-0 {
-          margin-left: 0;
+          margin-left: 0 !important;
         }
 
         &-025 {

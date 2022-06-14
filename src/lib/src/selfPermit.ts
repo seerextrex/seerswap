@@ -1,7 +1,7 @@
 import { BigintIsh, Token } from '@uniswap/sdk-core'
 import { Interface } from '@ethersproject/abi'
 //@ts-ignore
-import { abi } from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
+import abi from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
 import { toHex } from './utils'
 
 export interface StandardPermitArguments {
@@ -27,7 +27,7 @@ function isAllowedPermit(permitOptions: PermitOptions): permitOptions is Allowed
 }
 
 export abstract class SelfPermit {
-    public static INTERFACE: Interface = new Interface(abi)
+    public static INTERFACE: Interface = new Interface(abi.abi)
 
     protected static encodePermit(token: Token, options: PermitOptions) {
         return isAllowedPermit(options)

@@ -32,7 +32,7 @@ export const Pool = ({ token0, token1, fee, address }: any) => {
                 <ExternalLink size={16} color={"var(--white)"} />
             </a>
             <span className={"fee-badge ml-05 mr-05"}>{feeTierPercent(+fee)}</span>
-            <NavLink className={"chart-link hover-op"} to={`/info/pools/${address}`}>
+            <NavLink className={"chart-link hover-op trans-op"} to={`/info/pools/${address}`}>
                 <BarChart2 size={18} stroke={"var(--primary)"} />
             </NavLink>
         </div>

@@ -9,7 +9,7 @@ import "./index.scss";
 export default function Footer() {
     return (
         <footer className={"footer-wrapper f f-jb mt-1"}>
-            <BugReportLink target="_blank" rel="noopener noreferrer" href="https://docs.google.com/forms/d/e/1FAIpQLSdcixQ6rmXSSLhuEzzirladoTD5TXv3q_H9IouGM0CyIGcLBA/viewform">
+            <BugReportLink target="_blank" rel="noopener noreferrer" href="https://algebra.finance/bug-report/">
                 <span>
                     <Trans>Report a bug</Trans>
                 </span>

@@ -2,7 +2,7 @@ import { useCurrency } from "hooks/Tokens";
 import usePrevious from "hooks/usePrevious";
 import { useActiveWeb3React } from "hooks/web3";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import { NavLink, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useInitialUSDPrices, useCurrentStep } from "state/mint/v3/hooks";
 import { currencyId } from "utils/currencyId";
 import { Stepper } from "./components/Stepper";
@@ -19,7 +19,7 @@ import { Field } from "state/mint/actions";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { PriceFormats, PriceFormatToggler } from "./components/PriceFomatToggler";
 import { AddLiquidityButton } from "./containers/AddLiquidityButton";
-import { ChevronLeft, ChevronRight } from "react-feather";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "react-feather";
 import { PoolState } from "hooks/usePools";
 import { RouterGuard } from "./routing/router-guards";
 import { InitialPrice } from "./containers/InitialPrice";
@@ -29,7 +29,8 @@ import { useUserSlippageToleranceWithDefault } from "state/user/hooks";
 import { ZERO_PERCENT } from "constants/misc";
 import { Aftermath } from "./containers/Aftermath";
 import { useWalletModalToggle } from "state/application/hooks";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
+import { isMobileOnly } from "react-device-detect";
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
@@ -43,13 +44,13 @@ export function NewAddLiquidityPage({
     currencyIdB?: string;
     step?: string;
 }>) {
+    const [isRejected, setRejected] = useState(false);
+
     const { account, chainId } = useActiveWeb3React();
 
     const toggleWalletModal = useWalletModalToggle(); // toggle wallet when disconnected
 
     const dispatch = useAppDispatch();
-
-    const { path } = useRouteMatch();
 
     const feeAmount = 100;
 
@@ -184,25 +185,25 @@ export function NewAddLiquidityPage({
         const _stepLinks = [
             {
                 link: "select-pair",
-                title: "Select a pair",
+                title: t`Select a pair`,
             },
         ];
 
         if (mintInfo.noLiquidity && baseCurrency && quoteCurrency) {
             _stepLinks.push({
                 link: "initial-price",
-                title: "Set initial price",
+                title: t`Set initial price`,
             });
         }
 
         _stepLinks.push(
             {
                 link: "select-range",
-                title: "Select a range",
+                title: t`Select a range`,
             },
             {
                 link: "enter-amounts",
-                title: "Enter amounts",
+                title: t`Enter amounts`,
             }
         );
         return _stepLinks;
@@ -268,6 +269,7 @@ export function NewAddLiquidityPage({
     }, []);
 
     useEffect(() => {
+        // console.log(currentStep)
         switch (currentStep) {
             // case 0: {
             //     history.push(`/add/${currencyIdA}/${currencyIdB}/select-pair`);
@@ -299,155 +301,181 @@ export function NewAddLiquidityPage({
     }, [currencyIdA, currencyIdB, history, currentStep, mintInfo.noLiquidity]);
 
     return (
-        <div className="add-liquidity-page">
-            <div className="add-liquidity-page__header f mxs_fd-c mb-1">
-                <div className="add-liquidity-page__header-title">
-                    <Trans>Add liquidity</Trans>
-                </div>
-                <div className="ml-a mxs_ml-0 mxs_mt-1 f f-ac ">
-                    {!hidePriceFormatter && (
-                        <div className="mr-1">
-                            <PriceFormatToggler currentFormat={priceFormat} handlePriceFormat={handlePriceFormat} />
+        <>
+            <NavLink className={"c-p mb-1 f hover-op trans-op w-fc"} to={"/pool"}>
+                <ArrowLeft size={"16px"} />
+                <p className={"ml-05"}>
+                    <Trans>Pools</Trans>
+                </p>
+            </NavLink>
+            <div className="add-liquidity-page">
+                <div className="add-liquidity-page__header f mxs_fd-c mb-1">
+                    <div className="add-liquidity-page__header-title">
+                        <Trans>Add liquidity</Trans>
+                    </div>
+                    <div className="ml-a mxs_ml-0 mxs_mt-1 f f-ac ">
+                        {!hidePriceFormatter && (
+                            <div className="mr-1">
+                                <PriceFormatToggler currentFormat={priceFormat} handlePriceFormat={handlePriceFormat} />
+                            </div>
+                        )}
+                        <div className="mxs_ml-a">
+                            <SettingsTab placeholderSlippage={allowedSlippage} />
                         </div>
-                    )}
-                    <div className="mxs_ml-a">
-                        <SettingsTab placeholderSlippage={allowedSlippage} />
                     </div>
                 </div>
-            </div>
-            <div className="add-liquidity-page__stepper mb-2">
-                <Stepper
-                    currencyA={baseCurrency ?? undefined}
-                    currencyB={quoteCurrency ?? undefined}
-                    mintInfo={mintInfo}
-                    stepLinks={stepLinks}
-                    completedSteps={completedSteps}
-                    end={end}
-                    handleNavigation={(step) => {
-                        if (step.isEnabled) {
-                            handleStepChange(step.link);
-                            setTimeout(() => dispatch(updateCurrentStep({ currentStep: step.step })), 10);
-                        }
-                    }}
-                    priceFormat={priceFormat}
-                />
-            </div>
-            <Switch>
-                <RouterGuard
-                    path={`/add/${currencyIdA}/${currencyIdB}/aftermath`}
-                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={stepPair && stepRange && stepAmounts}
-                    Component={Aftermath}
-                />
+                <div className="add-liquidity-page__stepper mb-2">
+                    <Stepper
+                        currencyA={baseCurrency ?? undefined}
+                        currencyB={quoteCurrency ?? undefined}
+                        mintInfo={mintInfo}
+                        stepLinks={stepLinks}
+                        completedSteps={completedSteps}
+                        end={end}
+                        handleNavigation={(step) => {
+                            if (step.isEnabled) {
+                                handleStepChange(step.link);
+                                setTimeout(() => dispatch(updateCurrentStep({ currentStep: step.step })), 10);
+                            }
+                        }}
+                        priceFormat={priceFormat}
+                    />
+                </div>
+                <Switch>
+                    <RouterGuard
+                        path={`/add/${currencyIdA}/${currencyIdB}/aftermath`}
+                        redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
+                        allowance={stepPair && stepRange && stepAmounts}
+                        Component={Aftermath}
+                        rejected={isRejected}
+                        Button={() => (
+                            <div className={"ml-a mr-a mt-1"}>
+                                <AddLiquidityButton
+                                    baseCurrency={baseCurrency ?? undefined}
+                                    quoteCurrency={quoteCurrency ?? undefined}
+                                    mintInfo={mintInfo}
+                                    handleAddLiquidity={() => {
+                                        setEnd(true);
+                                        handleStepChange("aftermath");
+                                    }}
+                                    title={t`Retry`}
+                                    setRejected={setRejected}
+                                />
+                            </div>
+                        )}
+                    />
 
-                <RouterGuard
-                    path={`/add/${currencyIdA}/${currencyIdB}/enter-amounts`}
-                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={stepPair && stepRange && currentStep === (stepInitialPrice ? 3 : 2)}
-                    Component={EnterAmounts}
-                    currencyA={baseCurrency ?? undefined}
-                    currencyB={currencyB ?? undefined}
-                    mintInfo={mintInfo}
-                    isCompleted={stepAmounts}
-                    additionalStep={stepInitialPrice}
-                    priceFormat={priceFormat}
-                    backStep={stepInitialPrice ? 2 : 1}
-                />
+                    <RouterGuard
+                        path={`/add/${currencyIdA}/${currencyIdB}/enter-amounts`}
+                        redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
+                        allowance={stepPair && stepRange && currentStep === (stepInitialPrice ? 3 : 2)}
+                        Component={EnterAmounts}
+                        currencyA={baseCurrency ?? undefined}
+                        currencyB={currencyB ?? undefined}
+                        mintInfo={mintInfo}
+                        isCompleted={stepAmounts}
+                        additionalStep={stepInitialPrice}
+                        priceFormat={priceFormat}
+                        backStep={stepInitialPrice ? 2 : 1}
+                    />
 
-                <RouterGuard
-                    path={`/add/${currencyIdA}/${currencyIdB}/select-range`}
-                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={stepPair && currentStep === (stepInitialPrice ? 2 : 1)}
-                    Component={SelectRange}
-                    currencyA={baseCurrency}
-                    currencyB={quoteCurrency}
-                    mintInfo={mintInfo}
-                    disabled={!stepPair}
-                    isCompleted={stepRange}
-                    additionalStep={stepInitialPrice}
-                    priceFormat={priceFormat}
-                    backStep={stepInitialPrice ? 1 : 0}
-                />
+                    <RouterGuard
+                        path={`/add/${currencyIdA}/${currencyIdB}/select-range`}
+                        redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
+                        allowance={stepPair && currentStep === (stepInitialPrice ? 2 : 1)}
+                        Component={SelectRange}
+                        currencyA={baseCurrency}
+                        currencyB={quoteCurrency}
+                        mintInfo={mintInfo}
+                        disabled={!stepPair}
+                        isCompleted={stepRange}
+                        additionalStep={stepInitialPrice}
+                        priceFormat={priceFormat}
+                        backStep={stepInitialPrice ? 1 : 0}
+                    />
 
-                <RouterGuard
-                    path={`/add/${currencyIdA}/${currencyIdB}/initial-price`}
-                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={mintInfo.noLiquidity}
-                    Component={InitialPrice}
-                    currencyA={baseCurrency ?? undefined}
-                    currencyB={currencyB ?? undefined}
-                    mintInfo={mintInfo}
-                    isCompleted={stepInitialPrice}
-                    priceFormat={priceFormat}
-                    backStep={0}
-                />
+                    <RouterGuard
+                        path={`/add/${currencyIdA}/${currencyIdB}/initial-price`}
+                        redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
+                        allowance={mintInfo.noLiquidity}
+                        Component={InitialPrice}
+                        currencyA={baseCurrency ?? undefined}
+                        currencyB={currencyB ?? undefined}
+                        mintInfo={mintInfo}
+                        isCompleted={stepInitialPrice}
+                        priceFormat={priceFormat}
+                        backStep={0}
+                    />
 
-                <RouterGuard
-                    path={``}
-                    redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
-                    allowance={true}
-                    Component={SelectPair}
-                    baseCurrency={baseCurrency}
-                    quoteCurrency={quoteCurrency}
-                    mintInfo={mintInfo}
-                    isCompleted={stepPair}
-                    handleCurrencySwap={handleCurrencySwap}
-                    handleCurrencyASelect={handleCurrencyASelect}
-                    handleCurrencyBSelect={handleCurrencyBSelect}
-                    handlePopularPairSelection={handlePopularPairSelection}
-                    priceFormat={priceFormat}
-                />
-            </Switch>
-            {!end && account ? (
-                <div className="add-buttons f f-ac f-jc mt-2">
-                    {currentStep !== 0 && (
-                        <div>
+                    <RouterGuard
+                        path={``}
+                        redirect={`/add/${currencyIdA}/${currencyIdB}/select-pair`}
+                        allowance={true}
+                        Component={SelectPair}
+                        baseCurrency={baseCurrency}
+                        quoteCurrency={quoteCurrency}
+                        mintInfo={mintInfo}
+                        isCompleted={stepPair}
+                        handleCurrencySwap={handleCurrencySwap}
+                        handleCurrencyASelect={handleCurrencyASelect}
+                        handleCurrencyBSelect={handleCurrencyBSelect}
+                        handlePopularPairSelection={handlePopularPairSelection}
+                        priceFormat={priceFormat}
+                    />
+                </Switch>
+                {!end && account ? (
+                    <div className="add-buttons f f-ac f-jc mt-2">
+                        {currentStep !== 0 && (
+                            <div>
+                                <button
+                                    className="add-buttons__prev f"
+                                    onClick={() => {
+                                        dispatch(updateCurrentStep({ currentStep: currentStep - 1 }));
+                                        handleStepChange(stepLinks[currentStep - 1].link);
+                                    }}
+                                >
+                                    <ChevronLeft size={18} style={{ marginRight: "5px" }} />
+                                    <span className="add-buttons__prev-text">{stepLinks[currentStep - 1].title}</span>
+                                    <span className="add-buttons__prev-text--mobile">
+                                        <Trans>Back</Trans>
+                                    </span>
+                                </button>
+                            </div>
+                        )}
+                        {currentStep === (stepInitialPrice ? 3 : 2) ? (
+                            <AddLiquidityButton
+                                baseCurrency={baseCurrency ?? undefined}
+                                quoteCurrency={quoteCurrency ?? undefined}
+                                mintInfo={mintInfo}
+                                handleAddLiquidity={() => {
+                                    setEnd(true);
+                                    handleStepChange("aftermath");
+                                }}
+                                title={t`Add liquidity`}
+                            />
+                        ) : (
                             <button
-                                className="add-buttons__prev f"
+                                className="add-buttons__next f f-jc f-ac ml-a"
+                                disabled={!steps[currentStep]}
                                 onClick={() => {
-                                    dispatch(updateCurrentStep({ currentStep: currentStep - 1 }));
-                                    handleStepChange(stepLinks[currentStep - 1].link);
+                                    dispatch(updateCurrentStep({ currentStep: currentStep + 1 }));
+                                    isMobileOnly && window.scrollTo(0, 0);
+                                    handleStepChange(stepLinks[currentStep + 1].link);
                                 }}
                             >
-                                <ChevronLeft size={18} style={{ marginRight: "5px" }} />
-                                <span className="add-buttons__prev-text">{stepLinks[currentStep - 1].title}</span>
-                                <span className="add-buttons__prev-text--mobile">
-                                    <Trans>Back</Trans>
-                                </span>
+                                <span>{stepLinks[currentStep + 1].title}</span>
+                                <ChevronRight size={18} style={{ marginLeft: "5px" }} />
                             </button>
-                        </div>
-                    )}
-                    {currentStep === (stepInitialPrice ? 3 : 2) ? (
-                        <AddLiquidityButton
-                            baseCurrency={baseCurrency ?? undefined}
-                            quoteCurrency={quoteCurrency ?? undefined}
-                            mintInfo={mintInfo}
-                            handleAddLiquidity={() => {
-                                setEnd(true);
-                                handleStepChange("aftermath");
-                            }}
-                        />
-                    ) : (
-                        <button
-                            className="add-buttons__next f f-jc f-ac ml-a"
-                            disabled={!steps[currentStep]}
-                            onClick={() => {
-                                dispatch(updateCurrentStep({ currentStep: currentStep + 1 }));
-                                handleStepChange(stepLinks[currentStep + 1].link);
-                            }}
-                        >
-                            <span>{stepLinks[currentStep + 1].title}</span>
-                            <ChevronRight size={18} style={{ marginLeft: "5px" }} />
+                        )}
+                    </div>
+                ) : !account ? (
+                    <div className="add-buttons f f-ac f-jc mt-2 mxs_mt-1">
+                        <button className="add-buttons__next f f-jc f-ac ml-a" onClick={toggleWalletModal}>
+                            <Trans>Connect Wallet</Trans>
                         </button>
-                    )}
-                </div>
-            ) : !account ? (
-                <div className="add-buttons f f-ac f-jc mt-2 mxs_mt-1">
-                    <button className="add-buttons__next f f-jc f-ac ml-a" onClick={toggleWalletModal}>
-                        <Trans>Connect Wallet</Trans>
-                    </button>
-                </div>
-            ) : null}
-        </div>
+                    </div>
+                ) : null}
+            </div>
+        </>
     );
 }

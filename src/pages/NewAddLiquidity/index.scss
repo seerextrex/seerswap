@@ -98,7 +98,6 @@
   .add-buttons {
     margin-left: -1rem;
     margin-right: -1rem;
-    margin-top: 6rem !important;
 
     &__prev {
       &-text {
@@ -117,5 +116,10 @@
 }
 
 @media screen and (max-width: 500px) {
+  .add-liquidity-page {
 
+    &__stepper {
+      padding: 1rem;
+    }
+  }
 }

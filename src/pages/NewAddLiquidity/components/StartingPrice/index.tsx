@@ -13,6 +13,7 @@ import { IDerivedMintInfo, useInitialTokenPrice, useInitialUSDPrices } from "sta
 import { useAppDispatch } from "state/hooks";
 import { Field, setInitialTokenPrice, setInitialUSDPrices, updateSelectedPreset } from "state/mint/v3/actions";
 import Input from "components/NumericalInput";
+import { isMobileOnly } from "react-device-detect";
 
 interface IPrice {
     baseCurrency: Currency | undefined;
@@ -94,7 +95,7 @@ function USDPriceField({
     const _price = useMemo(() => (price ? price.toSignificant(5) : t`Loading...`), [price]);
 
     return (
-        <div className={`usd-price-field w-100 f ac ws-no-wrap ${isSelected ? "main" : "side"}`}>
+        <div className={`usd-price-field w-100 f ac ws-no-wrap ${isSelected ? "main" : "side"} mxs_mb-1 mxs_ml-0`}>
             <div className="usd-price">
                 <span className={"usd-price__amount"}>1 {symbol}</span>
                 <span className={"usd-price__separator"}> = </span>
@@ -127,7 +128,7 @@ function USDPrice({
     const quoteSymbol = useMemo(() => (quoteCurrency ? quoteCurrency.symbol : "-"), [quoteCurrency]);
 
     return (
-        <div className={`f usd-price__wrapper ${isSelected ? "main" : "side"}`}>
+        <div className={`f usd-price__wrapper ${isSelected ? "main" : "side"} mxs_fd-c`}>
             <USDPriceField symbol={baseSymbol} price={basePrice} isSelected={isSelected} userUSD={userBaseCurrencyUSD} changeHandler={changeBaseCurrencyUSDHandler}></USDPriceField>
             <USDPriceField symbol={quoteSymbol} price={quotePrice} isSelected={isSelected} userUSD={userQuoteCurrencyUSD} changeHandler={changeQuoteCurrencyUSDHandler}></USDPriceField>
         </div>
@@ -302,7 +303,7 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
     }, [priceFormat]);
 
     return (
-        <div className={"f starting-price-wrapper c p-1"} style={{ width: "542px", backgroundColor: "#26343f" }}>
+        <div className={"f starting-price-wrapper c p-1"} style={{ width: isMobileOnly ? "100%" : "542px", backgroundColor: "#26343f" }}>
             <div className={"flex-s-between"}>
                 {isLocked ? (
                     <span className={"auto-fetched"}>

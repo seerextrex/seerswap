@@ -1,8 +1,9 @@
-import { t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Currency } from "@uniswap/sdk-core";
 import { USDC_POLYGON } from "constants/tokens";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { useMemo } from "react";
+import { isMobileOnly } from "react-device-detect";
 import { Bound } from "state/mint/v3/actions";
 import { IDerivedMintInfo, useActivePreset, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { Presets } from "state/mint/v3/reducer";
@@ -165,16 +166,45 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
 
     return (
         <div className="f w-100" style={{ justifyContent: "space-between" }}>
-            {steps.map((el, i) => (
-                <div
-                    key={i}
-                    className={`stepper__step f f-ac ${completedSteps.length - 1 >= i && !end ? "clickable" : ""}`}
-                    onClick={() => handleNavigation({ isEnabled: completedSteps.length - 1 >= i && !end, step: i, link: el.link })}
-                >
-                    <div className={`stepper__circle mr-1 f f-ac f-jc ${i === completedSteps.length && !end ? "current" : ""} ${completedSteps.length - 1 >= i || end ? "done" : ""} `}>{i + 1}</div>
-                    <div className={`${i === completedSteps.length && !end ? "stepper__circle-current" : ""}`}>{el.title}</div>
+            {isMobileOnly ? (
+                <div className={"f f-ac f-js w-100"}>
+                    <div
+                        className={"progress-circle-wrapper"}
+                        style={{
+                            background: `conic-gradient(rgb(3, 133, 255)${(100 / steps.length) * (completedSteps.length + 1)}%,rgb(242, 242, 242)${
+                                (100 / steps.length) * (completedSteps.length + 1)
+                            }%)`,
+                        }}
+                    >
+                        <div className={"progress-circle fs-085"}>
+                            {completedSteps.length + 1} of {steps.length}
+                        </div>
+                    </div>
+
+                    <div className={"ml-1"}>
+                        <h3 style={{ whiteSpace: "break-spaces", lineHeight: "1.1rem" }} className={"mb-025"}>
+                            {steps[completedSteps.length]?.title}
+                        </h3>
+                        <h4 className={"fs-085 c-lg l"}>
+                            <Trans>Next step: </Trans>
+                            {steps[completedSteps.length + 1] ? steps[completedSteps.length + 1].title : t`Finish`}
+                        </h4>
+                    </div>
                 </div>
-            ))}
+            ) : (
+                steps.map((el, i) => (
+                    <div
+                        key={i}
+                        className={`stepper__step f f-ac ${completedSteps.length - 1 >= i && !end ? "clickable" : ""}`}
+                        onClick={() => handleNavigation({ isEnabled: completedSteps.length - 1 >= i && !end, step: i, link: el.link })}
+                    >
+                        <div className={`stepper__circle mr-1 f f-ac f-jc ${i === completedSteps.length && !end ? "current" : ""} ${completedSteps.length - 1 >= i || end ? "done" : ""} `}>
+                            {i + 1}
+                        </div>
+                        <div className={`${i === completedSteps.length && !end ? "stepper__circle-current" : ""}`}>{el.title}</div>
+                    </div>
+                ))
+            )}
         </div>
     );
 }

@@ -300,7 +300,7 @@ export default function PositionPage({
                 </Card>
             ) : (
                 <>
-                    <NavLink className={"c-p mb-1 f w-fc hover-op"} to="/pool">
+                    <NavLink className={"c-p mb-1 f w-fc hover-op trans-op"} to="/pool">
                         <Trans>← Back to Pools Overview</Trans>
                     </NavLink>
                     <Card classes={"br-24 p-2 mxs_p-1"}>

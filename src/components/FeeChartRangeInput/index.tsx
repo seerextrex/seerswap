@@ -41,6 +41,7 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
 
     const { account } = useActiveWeb3React();
 
+
     const formattedData: FeeChart = useMemo(() => {
         if (!fetchedData || typeof fetchedData === "string")
             return {

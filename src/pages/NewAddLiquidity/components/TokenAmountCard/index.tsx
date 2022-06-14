@@ -161,7 +161,7 @@ export function TokenAmountCard({
                 </div>
                 <div className="ml-1">
                     <div className="f f-ac mxs_fd-c ms_f-as">
-                        <span className="mr-05">
+                        <span className="mr-05 mb-025">
                             <Trans>Balance: </Trans>
                         </span>
                         <span>{balanceString}</span>

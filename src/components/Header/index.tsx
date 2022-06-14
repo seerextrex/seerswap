@@ -50,7 +50,7 @@ export default function Header() {
 
     return (
         <div className={"header__wrapper flex-s-between w-100 pv-1 pl-2"}>
-            <a className={"header__logo hover-op mxs_mr-1"} href=".">
+            <a className={"header__logo hover-op trans-op mxs_mr-1"} href=".">
                 <img width={"calc(100% - 10px)"} src={Logo} alt="logo" />
             </a>
             <div className={"header__links flex-s-between"}>
@@ -58,7 +58,7 @@ export default function Header() {
                     <Trans>Swap</Trans>
                 </NavLink>
                 <NavLink
-                    className={"header__links__link hover-op"}
+                    className={"header__links__link hover-op trans-op"}
                     id={`pool-nav-link`}
                     to={"/pool"}
                     isActive={(match, { pathname }) =>

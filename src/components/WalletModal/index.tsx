@@ -10,7 +10,7 @@ import usePrevious from "../../hooks/usePrevious";
 import { ApplicationModal } from "../../state/application/actions";
 import { useModalOpen, useWalletModalToggle } from "../../state/application/hooks";
 import AccountDetails from "../AccountDetails";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import Modal from "../Modal";
 import Option from "./Option";
 import PendingView from "./PendingView";
@@ -70,7 +70,6 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
     // close modal when a connection is successful
     const activePrevious = usePrevious(active);
     const connectorPrevious = usePrevious(connector);
-
     useEffect(() => {
         if (walletModalOpen && ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))) {
             setWalletView(WALLET_VIEWS.ACCOUNT);
@@ -99,7 +98,6 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
             connector.walletConnectProvider = undefined;
         }
 
-
         connector &&
             activate(connector, undefined, true)
                 .then(async () => {
@@ -111,7 +109,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 .catch((error) => {
                     console.error(error);
                     if (error instanceof UnsupportedChainIdError) {
-                        setErrorMessage("Please connect to the Polygon network.");
+                        setErrorMessage(t`Please connect to the Polygon network.`);
                         setPendingError(true);
                         setError(error);
                     } else if (error instanceof UserRejectedRequestError) {
@@ -153,7 +151,11 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 }
 
                 if (error && error instanceof UnsupportedChainIdError) {
-                    return <div>Please connect to Polygon chain</div>;
+                    return (
+                        <div>
+                            <Trans>Please connect to Polygon chain</Trans>
+                        </div>
+                    );
                 }
 
                 return null;
@@ -198,7 +200,11 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 else if (option.name === "Injected" && isMetamask) {
                     return null;
                 } else if (option.name === "ONTO Wallet") {
-                    return <div>Please select Polygon chain</div>;
+                    return (
+                        <div>
+                            <Trans>Please select Polygon chain</Trans>
+                        </div>
+                    );
                 }
             }
 
@@ -248,14 +254,16 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         {error instanceof UnsupportedChainIdError ? (
                             <>
                                 <h5 className={"mb-1"}>
-                                    <Trans>{isOnto ? "Change your network in ONTO Wallet browser extension" : "Please connect to the Polygon network."}</Trans>
+                                    <Trans>{isOnto ? t`Change your network in ONTO Wallet browser extension` : t`Please connect to the Polygon network.`}</Trans>
                                 </h5>
                                 {isMobile ? (
-                                    <p>Add Polygon network to your metamask app.</p>
+                                    <p>
+                                        <Trans>Add Polygon network to your metamask app.</Trans>
+                                    </p>
                                 ) : (
                                     !isOnto && (
                                         <button className={"btn primary p-1 w-100 b"} onClick={addPolygonNetwork}>
-                                            Connect to Polygon
+                                            <Trans>Connect to Polygon</Trans>
                                         </button>
                                     )
                                 )}

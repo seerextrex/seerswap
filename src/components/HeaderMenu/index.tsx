@@ -1,23 +1,26 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ExternalLink } from "react-feather";
+import { useUserLocaleManager } from "../../state/user/hooks";
 import "./index.scss";
 
-enum MenuState {
-    PRIMARY = "More",
-    LANGUAGE = "Language",
-}
+import { t } from "@lingui/macro";
 
-enum Languages {
-    RUSSIAN = "🇷🇺⠀ Russian",
-    ENGLISH = "🇬🇧⠀ English",
-    SPANISH = "🇪🇸⠀ Spanish",
-}
+const MenuState = {
+    PRIMARY: t`More`,
+    LANGUAGE: t`Language`,
+};
 
-enum Items {
-    LANGUAGE = "Language",
-    ABOUT = "About Us",
-    HELP_CENTER = "Help Center",
-}
+const Languages = {
+    RUSSIAN: t`🇷🇺  Русский`,
+    ENGLISH: t`🇬🇧  English`,
+    SPANISH: t`🇪🇸  Español`,
+};
+
+const Items = {
+    LANGUAGE: t`Language`,
+    ABOUT: t`About Us`,
+    HELP_CENTER: t`Help Center`,
+};
 
 enum ItemType {
     LINK,
@@ -27,33 +30,34 @@ enum ItemType {
 
 export default function HeaderMenu() {
     const [menuState, setMenuState] = useState(MenuState.PRIMARY);
+    const [userLocale, setUserLocale] = useUserLocaleManager();
 
     const headers = {
-        [MenuState.PRIMARY]: "More",
-        [MenuState.LANGUAGE]: "Language",
+        [MenuState.PRIMARY]: t`More`,
+        [MenuState.LANGUAGE]: t`Language`,
     };
 
     const items = {
         [MenuState.PRIMARY]: [
-            { title: "Language", type: ItemType.SUB_MENU },
-            { title: "About us", type: ItemType.LINK, link: "https://algebra.finance" },
-            { title: "Help center", type: ItemType.LINK, link: "https://help.algebra.finance" },
+            { title: t`Language`, type: ItemType.SUB_MENU },
+            { title: t`About us`, type: ItemType.LINK, link: "https://algebra.finance" },
+            { title: t`Help center`, type: ItemType.LINK, link: "https://help.algebra.finance" },
         ],
         [MenuState.LANGUAGE]: [
-            { title: Languages.RUSSIAN, type: ItemType.ACTION },
-            { title: Languages.ENGLISH, type: ItemType.ACTION },
-            { title: Languages.SPANISH, type: ItemType.ACTION },
+            { title: Languages.RUSSIAN, type: ItemType.ACTION, locale: "ru-RU" },
+            { title: Languages.ENGLISH, type: ItemType.ACTION, locale: "en-US" },
+            { title: Languages.SPANISH, type: ItemType.ACTION, locale: "es-ES" },
         ],
     };
 
-    const historyStack: MenuState[] = [MenuState.PRIMARY];
+    const historyStack: any = [MenuState.PRIMARY];
 
-    const handleSelect = useCallback((item: any) => {
+    const handleSelect = useCallback((item) => {
         if (item.title in headers) {
-            // historyStack.push(item);
-            // setMenuState(item);
-        } else {
-            window.open(item.link, "_blank", "noreferrer noopener");
+            historyStack.push(item.title);
+            setMenuState(item.title);
+        } else if (item.locale) {
+            setUserLocale(item.locale);
         }
     }, []);
 
@@ -74,15 +78,15 @@ export default function HeaderMenu() {
             </div>
             <ul className="header-menu__list">
                 {items[menuState].map((item: any, i) => (
-                    <li className={`header-menu__list-item ${item.type === ItemType.SUB_MENU ? "disabled" : ""}`} key={i} onClick={() => handleSelect(item)}>
-                        <span className="ph-1 pv-1 mxs_pv-1 ms_pv-1 w-100 f f-jb f-ac">
+                    <li className="header-menu__list-item" key={i} onClick={() => handleSelect(item)}>
+                        <a href={item.link || null} rel={"noreferrer noopener"} target={"_blank"} className="ph-1 pv-1 mxs_pv-1 ms_pv-1 w-100 f f-jb">
                             <span className="header-menu__list-item__title f">
                                 <span>{item.title}</span>
                                 {/* {item.type === ItemType.LINK && <span className="ml-05">{<ExternalLink size={"18px"} />}</span>} */}
                             </span>
                             {/* {item.type === ItemType.SUB_MENU && <span className="header-menu__list-item__arrrow">→</span>} */}
                             {item.type === ItemType.SUB_MENU && <span style={{ fontSize: "13px", color: "#4fdeff" }}>Coming soon</span>}
-                        </span>
+                        </a>
                     </li>
                 ))}
             </ul>

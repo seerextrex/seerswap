@@ -169,12 +169,16 @@ export default function PositionListItem({ positionDetails, newestPosition, high
                     <div className={"position-list-item__header__badges flex-s-between w-100"}>
                         {_onFarming ? (
                             <NavLink className={"flex-s-between btn primary fs-085 p-025 br-8"} to={farmingLink}>
-                                <span>On Farming</span>
+                                <span>
+                                    <Trans>Farming</Trans>
+                                </span>
                                 <ArrowRight size={14} color={"white"} style={{ marginLeft: "5px" }} />
                             </NavLink>
                         ) : _oldFarming ? (
                             <span className={"flex-s-between btn primary fs-085 p-025 br-8"} style={{ background: "#46210a", borderColor: "#861f1f" }}>
-                                <span>On Old Farming Center</span>
+                                <span>
+                                    <Trans>On Old Farming Center</Trans>
+                                </span>
                             </span>
                         ) : (
                             <div />
@@ -189,18 +193,18 @@ export default function PositionListItem({ positionDetails, newestPosition, high
                             <div className={"position-list-item__prefix mr-025"}>
                                 <Trans>Min:</Trans>
                             </div>
-                            <Trans>
-                                <span className={"position-list-item__amount"}>{`${formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</span>
-                            </Trans>
+                            <span className={"position-list-item__amount"}>
+                                <Trans>{`${formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
+                            </span>
                         </div>
                         <div className={"position-list-item__arrow mh-05"}>⟷</div>
                         <div className={"f"}>
                             <span className={"position-list-item__prefix mh-025"}>
                                 <Trans>Max:</Trans>
                             </span>
-                            <Trans>
-                                <span className={"position-list-item__amount"}>{`${formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</span>
-                            </Trans>
+                            <span className={"position-list-item__amount"}>
+                                <Trans>{`${formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
+                            </span>
                         </div>
                     </div>
                 ) : (

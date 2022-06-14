@@ -321,14 +321,14 @@ export function useSwapCallback(
                         const outputAmount = trade.outputAmount.toSignificant(4)
 
 
-                        const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+                        const base = t`Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
                         const withRecipient =
                             recipient === account
                                 ? base
-                                : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
+                                : t`${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
                                     ? shortenAddress(recipientAddressOrName)
                                     : recipientAddressOrName
-                                }`
+                                    }`
 
                         const tradeVersion = getTradeVersion(trade)
 

@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { GasPrice } from "components/Header/GasPrice";
 import Polling from "components/Header/Polling";
 import Loader from "components/Loader";
@@ -9,7 +10,9 @@ export default function Footer() {
     return (
         <footer className={"footer-wrapper f f-jb mt-1"}>
             <BugReportLink target="_blank" rel="noopener noreferrer" href="https://docs.google.com/forms/d/e/1FAIpQLSdcixQ6rmXSSLhuEzzirladoTD5TXv3q_H9IouGM0CyIGcLBA/viewform">
-                <span>Report a bug</span>
+                <span>
+                    <Trans>Report a bug</Trans>
+                </span>
                 <span className={"ml-05"}>
                     <ExternalLink size={14} stroke={"white"} />
                 </span>

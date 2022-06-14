@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Currency, CurrencyAmount, Token, TradeType } from "@uniswap/sdk-core";
 import { Trade as V3Trade } from "lib/src";
 import { AdvancedSwapDetails } from "components/swap/AdvancedSwapDetails";
@@ -322,15 +322,14 @@ export default function Swap({ history }: RouteComponentProps) {
     return (
         <>
             <Helmet>
+                {/* //TODO */}
                 <meta
                     name={"description"}
-                    content={
-                        "Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
-                    }
+                    content={t`Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees.`}
                 />
-                <meta name={"keywords"} content={"best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"} />
+                <meta name={"keywords"} content={t`best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange`} />
 
-                <title>Algebra — Swap</title>
+                <title>{t`Algebra — Swap`}</title>
             </Helmet>
             <TokenWarningModal
                 isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
@@ -344,8 +343,12 @@ export default function Swap({ history }: RouteComponentProps) {
                         <ContestIMG></ContestIMG>
                         <ContestBannerTitle>
                             <ContestBannerTitleIphone>300% APR</ContestBannerTitleIphone>
-                            <span>&nbsp; only for 1 week</span>
-                            <ContestButton to={"/farming/limit-farms"}>Farm Now</ContestButton>
+                            <span>
+                                <Trans>&nbsp; only for 1 week</Trans>
+                            </span>
+                            <ContestButton to={"/farming/limit-farms"}>
+                                <Trans>Farm Now</Trans>
+                            </ContestButton>
                         </ContestBannerTitle>
                     </div>
                 </ContestBanner> */}

@@ -236,8 +236,8 @@ export default function AddLiquidity({
     const showApprovalB = approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B];
 
     const pendingText = mustCreateSeparately
-        ? `Creating ${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} ${dynamicFee ? dynamicFee / 10000 : ""}% Pool`
-        : `Supplying ${!depositADisabled ? parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) : ""} ${!depositADisabled ? currencies[Field.CURRENCY_A]?.symbol : ""} ${!outOfRange ? "and" : ""} ${
+        ? t`Creating ${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} ${dynamicFee ? dynamicFee / 10000 : ""}% Pool`
+        : t`Supplying ${!depositADisabled ? parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) : ""} ${!depositADisabled ? currencies[Field.CURRENCY_A]?.symbol : ""} ${!outOfRange ? t`and` : ""} ${
               !depositBDisabled ? parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) : ""
           } ${!depositBDisabled ? currencies[Field.CURRENCY_B]?.symbol : ""}`;
 

@@ -63,7 +63,7 @@ export default function StakingModal({ modal, closeModalCallback }: { modal: boo
                             }}
                             onClick={approve}
                         >
-                            Approve
+                            <Trans>Approve</Trans>
                         </button>
                     </>
                 ) : !sent ? (
@@ -90,7 +90,7 @@ export default function StakingModal({ modal, closeModalCallback }: { modal: boo
                             }}
                             onClick={send}
                         >
-                            Send
+                            <Trans>Send</Trans>
                         </button>
                     </>
                 ) : !staked ? (
@@ -117,7 +117,7 @@ export default function StakingModal({ modal, closeModalCallback }: { modal: boo
                             }}
                             onClick={stake}
                         >
-                            Deposit
+                            <Trans>Deposit</Trans>
                         </button>
                     </>
                 ) : (

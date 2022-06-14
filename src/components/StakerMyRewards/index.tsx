@@ -9,6 +9,7 @@ import { useSortedRecentTransactions } from "../../hooks/useSortedRecentTransact
 import { Reward } from "../../models/interfaces";
 import { Token } from "@uniswap/sdk-core";
 import { WrappedCurrency } from "../../models/types";
+import { Trans } from "@lingui/macro";
 
 export function StakerMyRewards({ data, refreshing, fetchHandler }: { data: Reward[]; refreshing: boolean; fetchHandler: () => any }) {
     const allTransactions = useAllTransactions();
@@ -96,8 +97,7 @@ export function StakerMyRewards({ data, refreshing, fetchHandler }: { data: Rewa
                                         claimReward(rew.rewardAddress);
                                     }}
                                 >
-                                    {" "}
-                                    Claim
+                                    <Trans>Claim</Trans>
                                 </RewardClaimButton>
                             )}
                         </RewardWrapper>

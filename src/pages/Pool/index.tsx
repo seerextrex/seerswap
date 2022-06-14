@@ -40,12 +40,12 @@ export default function Pool() {
 
     const filters = [
         {
-            title: "Closed",
+            title: t`Closed`,
             method: setUserHideClosedPositions,
             checkValue: userHideClosedPositions,
         },
         {
-            title: "Farming",
+            title: t`Farming`,
             method: setHideFarmingPositions,
             checkValue: hideFarmingPositions,
         },
@@ -98,7 +98,7 @@ export default function Pool() {
     return (
         <>
             <Helmet>
-                <title>Algebra — Pool</title>
+                <title>{t`Algebra — Pool`}</title>
             </Helmet>
             <Card classes={"br-24 ph-2 pv-1 mxs_ph-1"}>
                 <SwapPoolTabs active={"pool"} />

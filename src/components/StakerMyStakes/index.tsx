@@ -18,7 +18,7 @@ import ModalBody from "./ModalBody";
 import PositionHeader from "./PositionHeader";
 import PositionCardBodyHeader from "./PositionCardBodyHeader";
 import PositionCardBodyStat from "./PositionCardBodyStat";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 
 interface StakerMyStakesProps {
     data: Deposit[] | null;
@@ -216,14 +216,18 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
             ) : shallowPositions && shallowPositions.length === 0 ? (
                 <div className={"my-stakes__loader flex-s-between f c f-jc"}>
                     <Frown size={35} stroke={"white"} />
-                    <div className={"mt-1"}>No farms</div>
+                    <div className={"mt-1"}>
+                        <Trans>No farms</Trans>
+                    </div>
                 </div>
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>
                     <div className={"my-stakes__ad p-05 br-12 f f-ac f-jc mb-1"}>
-                        <div className={"mr-1"}>✨ Earn even more ALGB</div>
+                        <div className={"mr-1"}>
+                            <Trans>✨ Earn even more ALGB</Trans>
+                        </div>
                         <Link className={"my-stakes__ad-link p-05 br-8 hover-cp"} to={"/staking"}>
-                            Stake Rewards
+                            <Trans>Stake Rewards</Trans>
                         </Link>
                     </div>
                     {stakedNFTs && (
@@ -249,10 +253,10 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                 <div className={"f w-100"}>
                                                                     <div className={"w-100"} data-started={el.started || el.incentiveStartTime * 1000 < Date.now()}>
                                                                         {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
-                                                                            <div className={"mb-05 p-r fs-075"}>{`Starts in ${getCountdownTime(el.incentiveStartTime, now)}`}</div>
+                                                                            <div className={"mb-05 p-r fs-075"}>{t`Starts in ${getCountdownTime(el.incentiveStartTime, now)}`}</div>
                                                                         )}
                                                                         {(el.started || el.incentiveStartTime * 1000 < Date.now()) && (
-                                                                            <div className={"mb-05 p-r fs-075"}>{`Ends in ${getCountdownTime(el.incentiveEndTime, now)}`}</div>
+                                                                            <div className={"mb-05 p-r fs-075"}>{t`Ends in ${getCountdownTime(el.incentiveEndTime, now)}`}</div>
                                                                         )}
                                                                         <div className={"my-stakes__position-card__body__event-progress w-100 br-8 p-025 mt-05"}>
                                                                             {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
@@ -283,7 +287,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                                     <Loader size={"13px"} stroke={"white"} style={{ margin: "auto" }} />
                                                                                 </span>
                                                                             ) : (
-                                                                                <span>Undeposit</span>
+                                                                                <span>
+                                                                                    <Trans>Undeposit</Trans>
+                                                                                </span>
                                                                             )}
                                                                         </button>
                                                                     )}
@@ -314,7 +320,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                             <Trans>Collecting</Trans>
                                                                         </div>
                                                                     ) : (
-                                                                        <span>Collect rewards & Undeposit</span>
+                                                                        <span>
+                                                                            <Trans>Collect rewards & Undeposit</Trans>
+                                                                        </span>
                                                                     )}
                                                                 </button>
                                                             )}
@@ -322,7 +330,13 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     </>
                                                 ) : (
                                                     <div className={"my-stakes__position-card__empty f c f-ac f-jc"}>
-                                                        {el.finiteAvailable ? <CheckOut link={"limit-farms"} /> : <span>No limit farms for now</span>}
+                                                        {el.finiteAvailable ? (
+                                                            <CheckOut link={"limit-farms"} />
+                                                        ) : (
+                                                            <span>
+                                                                <Trans>No limit farms for now</Trans>
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>
@@ -362,7 +376,9 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                         <Trans>Collecting</Trans>
                                                                     </div>
                                                                 ) : (
-                                                                    <span>Collect rewards</span>
+                                                                    <span>
+                                                                        <Trans>Collect rewards</Trans>
+                                                                    </span>
                                                                 )}
                                                             </button>
                                                             <button
@@ -383,14 +399,22 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                         <Trans>Undepositing</Trans>
                                                                     </div>
                                                                 ) : (
-                                                                    <span>Undeposit</span>
+                                                                    <span>
+                                                                        <Trans>Undeposit</Trans>
+                                                                    </span>
                                                                 )}
                                                             </button>
                                                         </div>
                                                     </>
                                                 ) : (
                                                     <div className={"my-stakes__position-card__empty f c f-ac f-jc"}>
-                                                        {el.eternalAvailable ? <CheckOut link={"infinite-farms"} /> : <div>No infinite farms for now</div>}
+                                                        {el.eternalAvailable ? (
+                                                            <CheckOut link={"infinite-farms"} />
+                                                        ) : (
+                                                            <div>
+                                                                <Trans>No infinite farms for now</Trans>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>

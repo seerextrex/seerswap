@@ -6229,19 +6229,21 @@ export type PricesQueryVariables = Exact<{
 
 export type PricesQuery = (
   { __typename?: 'Query' }
-  & { current: Array<(
-    { __typename?: 'Bundle' }
-    & Pick<Bundle, 'maticPriceUSD'>
-  )>, oneDay: Array<(
-    { __typename?: 'Bundle' }
-    & Pick<Bundle, 'maticPriceUSD'>
-  )>, twoDay: Array<(
-    { __typename?: 'Bundle' }
-    & Pick<Bundle, 'maticPriceUSD'>
-  )>, oneWeek: Array<(
-    { __typename?: 'Bundle' }
-    & Pick<Bundle, 'maticPriceUSD'>
-  )> }
+  & {
+    current: Array<(
+      { __typename?: 'Bundle' }
+      & Pick<Bundle, 'maticPriceUSD'>
+    )>, oneDay: Array<(
+      { __typename?: 'Bundle' }
+      & Pick<Bundle, 'maticPriceUSD'>
+    )>, twoDay: Array<(
+      { __typename?: 'Bundle' }
+      & Pick<Bundle, 'maticPriceUSD'>
+    )>, oneWeek: Array<(
+      { __typename?: 'Bundle' }
+      & Pick<Bundle, 'maticPriceUSD'>
+    )>
+  }
 );
 
 export type AllV3TicksQueryVariables = Exact<{
@@ -6252,10 +6254,12 @@ export type AllV3TicksQueryVariables = Exact<{
 
 export type AllV3TicksQuery = (
   { __typename?: 'Query' }
-  & { ticks: Array<(
-    { __typename?: 'Tick' }
-    & Pick<Tick, 'tickIdx' | 'liquidityNet' | 'price0' | 'price1'>
-  )> }
+  & {
+    ticks: Array<(
+      { __typename?: 'Tick' }
+      & Pick<Tick, 'tickIdx' | 'liquidityNet' | 'price0' | 'price1'>
+    )>
+  }
 );
 
 export type FeeTierDistributionQueryVariables = Exact<{
@@ -6266,19 +6270,23 @@ export type FeeTierDistributionQueryVariables = Exact<{
 
 export type FeeTierDistributionQuery = (
   { __typename?: 'Query' }
-  & { _meta?: Maybe<(
-    { __typename?: '_Meta_' }
-    & { block: (
-      { __typename?: '_Block_' }
-      & Pick<_Block_, 'number'>
-    ) }
-  )>, asToken0: Array<(
-    { __typename?: 'Pool' }
-    & Pick<Pool, 'fee' | 'totalValueLockedToken0' | 'totalValueLockedToken1'>
-  )>, asToken1: Array<(
-    { __typename?: 'Pool' }
-    & Pick<Pool, 'fee' | 'totalValueLockedToken0' | 'totalValueLockedToken1'>
-  )> }
+  & {
+    _meta?: Maybe<(
+      { __typename?: '_Meta_' }
+      & {
+        block: (
+          { __typename?: '_Block_' }
+          & Pick<_Block_, 'number'>
+        )
+      }
+    )>, asToken0: Array<(
+      { __typename?: 'Pool' }
+      & Pick<Pool, 'fee' | 'totalValueLockedToken0' | 'totalValueLockedToken1'>
+    )>, asToken1: Array<(
+      { __typename?: 'Pool' }
+      & Pick<Pool, 'fee' | 'totalValueLockedToken0' | 'totalValueLockedToken1'>
+    )>
+  }
 );
 
 export type IncentiveQueryVariables = Exact<{
@@ -6288,10 +6296,12 @@ export type IncentiveQueryVariables = Exact<{
 
 export type IncentiveQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'startTime' | 'endTime'>
-  )> }
+  & {
+    incentives: Array<(
+      { __typename?: 'Incentive' }
+      & Pick<Incentive, 'startTime' | 'endTime'>
+    )>
+  }
 );
 
 export type EternalFarmQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6299,10 +6309,12 @@ export type EternalFarmQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type EternalFarmQuery = (
   { __typename?: 'Query' }
-  & { eternalFarmings: Array<(
-    { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'startTime' | 'endTime'>
-  )> }
+  & {
+    eternalFarmings: Array<(
+      { __typename?: 'EternalFarming' }
+      & Pick<EternalFarming, 'startTime' | 'endTime'>
+    )>
+  }
 );
 
 export type FetchRewardsQueryVariables = Exact<{
@@ -6312,10 +6324,12 @@ export type FetchRewardsQueryVariables = Exact<{
 
 export type FetchRewardsQuery = (
   { __typename?: 'Query' }
-  & { rewards: Array<(
-    { __typename?: 'Reward' }
-    & Pick<Reward, 'id' | 'rewardAddress' | 'amount' | 'owner'>
-  )> }
+  & {
+    rewards: Array<(
+      { __typename?: 'Reward' }
+      & Pick<Reward, 'id' | 'rewardAddress' | 'amount' | 'owner'>
+    )>
+  }
 );
 
 export type FetchTokenQueryVariables = Exact<{
@@ -6325,10 +6339,12 @@ export type FetchTokenQueryVariables = Exact<{
 
 export type FetchTokenQuery = (
   { __typename?: 'Query' }
-  & { tokens: Array<(
-    { __typename?: 'Token' }
-    & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
-  )> }
+  & {
+    tokens: Array<(
+      { __typename?: 'Token' }
+      & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
+    )>
+  }
 );
 
 export type FetchIncentiveQueryVariables = Exact<{
@@ -6338,10 +6354,12 @@ export type FetchIncentiveQueryVariables = Exact<{
 
 export type FetchIncentiveQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3'>
-  )> }
+  & {
+    incentives: Array<(
+      { __typename?: 'Incentive' }
+      & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3'>
+    )>
+  }
 );
 
 export type FetchEternalFarmQueryVariables = Exact<{
@@ -6351,10 +6369,12 @@ export type FetchEternalFarmQueryVariables = Exact<{
 
 export type FetchEternalFarmQuery = (
   { __typename?: 'Query' }
-  & { eternalFarmings: Array<(
-    { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached'>
-  )> }
+  & {
+    eternalFarmings: Array<(
+      { __typename?: 'EternalFarming' }
+      & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached'>
+    )>
+  }
 );
 
 export type FetchPoolQueryVariables = Exact<{
@@ -6364,17 +6384,21 @@ export type FetchPoolQueryVariables = Exact<{
 
 export type FetchPoolQuery = (
   { __typename?: 'Query' }
-  & { pools: Array<(
-    { __typename?: 'Pool' }
-    & Pick<Pool, 'id' | 'fee' | 'sqrtPrice' | 'liquidity' | 'tick' | 'feesUSD' | 'untrackedFeesUSD'>
-    & { token0: (
-      { __typename?: 'Token' }
-      & Pick<Token, 'id' | 'decimals' | 'symbol'>
-    ), token1: (
-      { __typename?: 'Token' }
-      & Pick<Token, 'id' | 'decimals' | 'symbol'>
-    ) }
-  )> }
+  & {
+    pools: Array<(
+      { __typename?: 'Pool' }
+      & Pick<Pool, 'id' | 'fee' | 'sqrtPrice' | 'liquidity' | 'tick' | 'feesUSD' | 'untrackedFeesUSD'>
+      & {
+        token0: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'decimals' | 'symbol'>
+        ), token1: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'decimals' | 'symbol'>
+        )
+      }
+    )>
+  }
 );
 
 export type FeeHourDataQueryVariables = Exact<{
@@ -6386,10 +6410,12 @@ export type FeeHourDataQueryVariables = Exact<{
 
 export type FeeHourDataQuery = (
   { __typename?: 'Query' }
-  & { feeHourDatas: Array<(
-    { __typename?: 'FeeHourData' }
-    & Pick<FeeHourData, 'id' | 'pool' | 'fee' | 'changesCount' | 'timestamp' | 'minFee' | 'maxFee' | 'startFee' | 'endFee'>
-  )> }
+  & {
+    feeHourDatas: Array<(
+      { __typename?: 'FeeHourData' }
+      & Pick<FeeHourData, 'id' | 'pool' | 'fee' | 'changesCount' | 'timestamp' | 'minFee' | 'maxFee' | 'startFee' | 'endFee'>
+    )>
+  }
 );
 
 export type LastFeeHourDataQueryVariables = Exact<{
@@ -6399,10 +6425,12 @@ export type LastFeeHourDataQueryVariables = Exact<{
 
 export type LastFeeHourDataQuery = (
   { __typename?: 'Query' }
-  & { feeHourDatas: Array<(
-    { __typename?: 'FeeHourData' }
-    & Pick<FeeHourData, 'id' | 'pool' | 'fee' | 'changesCount' | 'timestamp' | 'minFee' | 'maxFee' | 'startFee' | 'endFee'>
-  )> }
+  & {
+    feeHourDatas: Array<(
+      { __typename?: 'FeeHourData' }
+      & Pick<FeeHourData, 'id' | 'pool' | 'fee' | 'changesCount' | 'timestamp' | 'minFee' | 'maxFee' | 'startFee' | 'endFee'>
+    )>
+  }
 );
 
 export type LastNotEmptyHourDataQueryVariables = Exact<{
@@ -6413,10 +6441,12 @@ export type LastNotEmptyHourDataQueryVariables = Exact<{
 
 export type LastNotEmptyHourDataQuery = (
   { __typename?: 'Query' }
-  & { feeHourDatas: Array<(
-    { __typename?: 'FeeHourData' }
-    & Pick<FeeHourData, 'id' | 'pool' | 'fee' | 'changesCount' | 'timestamp' | 'minFee' | 'maxFee' | 'startFee' | 'endFee'>
-  )> }
+  & {
+    feeHourDatas: Array<(
+      { __typename?: 'FeeHourData' }
+      & Pick<FeeHourData, 'id' | 'pool' | 'fee' | 'changesCount' | 'timestamp' | 'minFee' | 'maxFee' | 'startFee' | 'endFee'>
+    )>
+  }
 );
 
 export type LastNotEmptyPoolHourDataQueryVariables = Exact<{
@@ -6427,10 +6457,12 @@ export type LastNotEmptyPoolHourDataQueryVariables = Exact<{
 
 export type LastNotEmptyPoolHourDataQuery = (
   { __typename?: 'Query' }
-  & { poolHourDatas: Array<(
-    { __typename?: 'PoolHourData' }
-    & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'tvlUSD' | 'feesUSD' | 'untrackedVolumeUSD' | 'token1Price' | 'token0Price'>
-  )> }
+  & {
+    poolHourDatas: Array<(
+      { __typename?: 'PoolHourData' }
+      & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'tvlUSD' | 'feesUSD' | 'untrackedVolumeUSD' | 'token1Price' | 'token0Price'>
+    )>
+  }
 );
 
 export type LastPoolHourDataQueryVariables = Exact<{
@@ -6440,10 +6472,12 @@ export type LastPoolHourDataQueryVariables = Exact<{
 
 export type LastPoolHourDataQuery = (
   { __typename?: 'Query' }
-  & { poolHourDatas: Array<(
-    { __typename?: 'PoolHourData' }
-    & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'tvlUSD' | 'feesUSD' | 'untrackedVolumeUSD'>
-  )> }
+  & {
+    poolHourDatas: Array<(
+      { __typename?: 'PoolHourData' }
+      & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'tvlUSD' | 'feesUSD' | 'untrackedVolumeUSD'>
+    )>
+  }
 );
 
 export type PoolHourDataQueryVariables = Exact<{
@@ -6455,10 +6489,12 @@ export type PoolHourDataQueryVariables = Exact<{
 
 export type PoolHourDataQuery = (
   { __typename?: 'Query' }
-  & { poolHourDatas: Array<(
-    { __typename?: 'PoolHourData' }
-    & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'tvlUSD' | 'feesUSD' | 'untrackedVolumeUSD' | 'token0Price' | 'token1Price'>
-  )> }
+  & {
+    poolHourDatas: Array<(
+      { __typename?: 'PoolHourData' }
+      & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'tvlUSD' | 'feesUSD' | 'untrackedVolumeUSD' | 'token0Price' | 'token1Price'>
+    )>
+  }
 );
 
 export type LastEventQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6466,10 +6502,12 @@ export type LastEventQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type LastEventQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'createdAtTimestamp' | 'id' | 'startTime' | 'endTime'>
-  )> }
+  & {
+    incentives: Array<(
+      { __typename?: 'Incentive' }
+      & Pick<Incentive, 'createdAtTimestamp' | 'id' | 'startTime' | 'endTime'>
+    )>
+  }
 );
 
 export type FutureEventsQueryVariables = Exact<{
@@ -6479,10 +6517,12 @@ export type FutureEventsQueryVariables = Exact<{
 
 export type FutureEventsQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
-  )> }
+  & {
+    incentives: Array<(
+      { __typename?: 'Incentive' }
+      & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
+    )>
+  }
 );
 
 export type CurrentEventsQueryVariables = Exact<{
@@ -6493,10 +6533,12 @@ export type CurrentEventsQueryVariables = Exact<{
 
 export type CurrentEventsQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
-  )> }
+  & {
+    incentives: Array<(
+      { __typename?: 'Incentive' }
+      & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
+    )>
+  }
 );
 
 export type FrozenStakedQueryVariables = Exact<{
@@ -6507,10 +6549,12 @@ export type FrozenStakedQueryVariables = Exact<{
 
 export type FrozenStakedQuery = (
   { __typename?: 'Query' }
-  & { stakeTxes: Array<(
-    { __typename?: 'StakeTx' }
-    & Pick<StakeTx, 'timestamp' | 'stakedALGBAmount' | 'xALGBAmount'>
-  )> }
+  & {
+    stakeTxes: Array<(
+      { __typename?: 'StakeTx' }
+      & Pick<StakeTx, 'timestamp' | 'stakedALGBAmount' | 'xALGBAmount'>
+    )>
+  }
 );
 
 export type TransferedPositionsQueryVariables = Exact<{
@@ -6520,10 +6564,12 @@ export type TransferedPositionsQueryVariables = Exact<{
 
 export type TransferedPositionsQuery = (
   { __typename?: 'Query' }
-  & { deposits: Array<(
-    { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter'>
-  )> }
+  & {
+    deposits: Array<(
+      { __typename?: 'Deposit' }
+      & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter'>
+    )>
+  }
 );
 
 export type HasTransferedPositionsQueryVariables = Exact<{
@@ -6533,10 +6579,12 @@ export type HasTransferedPositionsQueryVariables = Exact<{
 
 export type HasTransferedPositionsQuery = (
   { __typename?: 'Query' }
-  & { deposits: Array<(
-    { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id'>
-  )> }
+  & {
+    deposits: Array<(
+      { __typename?: 'Deposit' }
+      & Pick<Deposit, 'id'>
+    )>
+  }
 );
 
 export type PositionsOnEternalFarmingQueryVariables = Exact<{
@@ -6546,10 +6594,12 @@ export type PositionsOnEternalFarmingQueryVariables = Exact<{
 
 export type PositionsOnEternalFarmingQuery = (
   { __typename?: 'Query' }
-  & { deposits: Array<(
-    { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming'>
-  )> }
+  & {
+    deposits: Array<(
+      { __typename?: 'Deposit' }
+      & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming'>
+    )>
+  }
 );
 
 export type TransferedPositionsForPoolQueryVariables = Exact<{
@@ -6560,10 +6610,12 @@ export type TransferedPositionsForPoolQueryVariables = Exact<{
 
 export type TransferedPositionsForPoolQuery = (
   { __typename?: 'Query' }
-  & { deposits: Array<(
-    { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming'>
-  )> }
+  & {
+    deposits: Array<(
+      { __typename?: 'Deposit' }
+      & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming'>
+    )>
+  }
 );
 
 export type PositionsOnFarmingQueryVariables = Exact<{
@@ -6574,10 +6626,12 @@ export type PositionsOnFarmingQueryVariables = Exact<{
 
 export type PositionsOnFarmingQuery = (
   { __typename?: 'Query' }
-  & { deposits: Array<(
-    { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id'>
-  )> }
+  & {
+    deposits: Array<(
+      { __typename?: 'Deposit' }
+      & Pick<Deposit, 'id'>
+    )>
+  }
 );
 
 export type InfiniteFarmsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6585,10 +6639,12 @@ export type InfiniteFarmsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type InfiniteFarmsQuery = (
   { __typename?: 'Query' }
-  & { eternalFarmings: Array<(
-    { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate'>
-  )> }
+  & {
+    eternalFarmings: Array<(
+      { __typename?: 'EternalFarming' }
+      & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate'>
+    )>
+  }
 );
 
 export type TopPoolsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6596,10 +6652,12 @@ export type TopPoolsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type TopPoolsQuery = (
   { __typename?: 'Query' }
-  & { pools: Array<(
-    { __typename?: 'Pool' }
-    & Pick<Pool, 'id'>
-  )> }
+  & {
+    pools: Array<(
+      { __typename?: 'Pool' }
+      & Pick<Pool, 'id'>
+    )>
+  }
 );
 
 export type TopTokensQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6607,10 +6665,12 @@ export type TopTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type TopTokensQuery = (
   { __typename?: 'Query' }
-  & { tokens: Array<(
-    { __typename?: 'Token' }
-    & Pick<Token, 'id'>
-  )> }
+  & {
+    tokens: Array<(
+      { __typename?: 'Token' }
+      & Pick<Token, 'id'>
+    )>
+  }
 );
 
 export type StakeHistoryQueryVariables = Exact<{
@@ -6620,13 +6680,15 @@ export type StakeHistoryQueryVariables = Exact<{
 
 export type StakeHistoryQuery = (
   { __typename?: 'Query' }
-  & { factories: Array<(
-    { __typename?: 'Factory' }
-    & Pick<Factory, 'currentStakedAmount' | 'earnedForAllTime' | 'ALGBbalance' | 'xALGBtotalSupply'>
-  )>, stakes: Array<(
-    { __typename?: 'Stake' }
-    & Pick<Stake, 'stakedALGBAmount' | 'xALGBAmount'>
-  )> }
+  & {
+    factories: Array<(
+      { __typename?: 'Factory' }
+      & Pick<Factory, 'currentStakedAmount' | 'earnedForAllTime' | 'ALGBbalance' | 'xALGBtotalSupply'>
+    )>, stakes: Array<(
+      { __typename?: 'Stake' }
+      & Pick<Stake, 'stakedALGBAmount' | 'xALGBAmount'>
+    )>
+  }
 );
 
 export type StakeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6634,10 +6696,12 @@ export type StakeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type StakeQuery = (
   { __typename?: 'Query' }
-  & { histories: Array<(
-    { __typename?: 'History' }
-    & Pick<History, 'date' | 'currentStakedAmount' | 'ALGBbalance' | 'xALGBminted' | 'xALGBburned' | 'xALGBtotalSupply' | 'ALGBfromVault'>
-  )> }
+  & {
+    histories: Array<(
+      { __typename?: 'History' }
+      & Pick<History, 'date' | 'currentStakedAmount' | 'ALGBbalance' | 'xALGBminted' | 'xALGBburned' | 'xALGBtotalSupply' | 'ALGBfromVault'>
+    )>
+  }
 );
 
 export type SurroundingTicksQueryVariables = Exact<{
@@ -6650,10 +6714,12 @@ export type SurroundingTicksQueryVariables = Exact<{
 
 export type SurroundingTicksQuery = (
   { __typename?: 'Query' }
-  & { ticks: Array<(
-    { __typename?: 'Tick' }
-    & Pick<Tick, 'tickIdx' | 'liquidityGross' | 'liquidityNet' | 'price0' | 'price1'>
-  )> }
+  & {
+    ticks: Array<(
+      { __typename?: 'Tick' }
+      & Pick<Tick, 'tickIdx' | 'liquidityGross' | 'liquidityNet' | 'price0' | 'price1'>
+    )>
+  }
 );
 
 export type PopularPoolsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6661,16 +6727,20 @@ export type PopularPoolsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type PopularPoolsQuery = (
   { __typename?: 'Query' }
-  & { pools: Array<(
-    { __typename?: 'Pool' }
-    & { token0: (
-      { __typename?: 'Token' }
-      & Pick<Token, 'id'>
-    ), token1: (
-      { __typename?: 'Token' }
-      & Pick<Token, 'id'>
-    ) }
-  )> }
+  & {
+    pools: Array<(
+      { __typename?: 'Pool' }
+      & {
+        token0: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        ), token1: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        )
+      }
+    )>
+  }
 );
 
 

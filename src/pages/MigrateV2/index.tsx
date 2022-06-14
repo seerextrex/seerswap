@@ -20,6 +20,8 @@ import { EmptyState } from "./EmptyState";
 import { toSushiLiquidityToken } from "../../utils/toSushiLiquidityToken";
 import Card from "../../shared/components/Card/Card";
 
+import { Trans, t } from "@lingui/macro";
+
 export default function MigrateV2() {
     const theme = useContext(ThemeContext);
     const { account, chainId } = useActiveWeb3React();
@@ -99,20 +101,28 @@ export default function MigrateV2() {
     return (
         <>
             <Helmet>
-                <title>Algebra — Migrate Liquidity</title>
+                <title>{t`Algebra — Migrate Liquidity`}</title>
             </Helmet>
             <Card classes={"p-2 br-24 w-100 maw-765 mh-a mxs_p-1"}>
                 <AutoColumn gap="16px">
-                    <h3 className={"fs-125"}>Migrate Liquidity</h3>
-                    <span>Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra.</span>
+                    <h3 className={"fs-125"}>
+                        <Trans>Migrate Liquidity</Trans>
+                    </h3>
+                    <span>
+                        <Trans>Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra.</Trans>
+                    </span>
 
                     {!account ? (
                         <Card isDark={false} classes={"p-1 br-12"}>
-                            <div className={"ta-c w-100 b"}>Connect wallet to view your liquidity.</div>
+                            <div className={"ta-c w-100 b"}>
+                                <Trans>Connect wallet to view your liquidity.</Trans>
+                            </div>
                         </Card>
                     ) : v2IsLoading && !networkFailed ? (
                         <Card isDark={false} classes={"p-1 br-12 f f-ac f-jc"}>
-                            <Dots>Loading</Dots>
+                            <Dots>
+                                <Trans>Loading</Trans>
+                            </Dots>
                         </Card>
                     ) : _v2Pairs.filter(([, pair]) => !!pair).length > 0 || _v2SushiPairs.filter(([, pair]) => !!pair).length > 0 ? (
                         <>
@@ -136,13 +146,13 @@ export default function MigrateV2() {
                             )}
                         </>
                     ) : (
-                        <EmptyState message={"No liquidity found."} />
+                        <EmptyState message={t`No liquidity found.`} />
                     )}
                     <AutoColumn justify={"center"} gap="md">
                         <Text textAlign="center" fontSize={14} style={{ padding: ".5rem 0 .5rem 0" }}>
-                            Don’t see one of your pools?{" "}
+                            <Trans>Don’t see one of your pools?</Trans>
                             <StyledInternalLink id="import-pool-link" to={"/pool/find"}>
-                                Find it.
+                                <Trans>Find it.</Trans>
                             </StyledInternalLink>
                         </Text>
                     </AutoColumn>

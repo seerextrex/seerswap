@@ -3,6 +3,7 @@ import { Token } from "@uniswap/sdk-core";
 import DoubleCurrencyLogo from "../../components/DoubleLogo";
 import { SupportedChainId } from "../../constants/chains";
 import "./index.scss";
+import { Trans } from "@lingui/macro";
 
 interface PoolInfoHeaderProps {
     token0: Token | undefined;
@@ -40,7 +41,9 @@ export function PoolInfoHeader({ token0, token1, fee, collectedFees }: PoolInfoH
                 </div>
                 {+collectedFees !== 0 && (
                     <span className={"ml-a mxs_w-100 mxs_mt-1"}>
-                        Total Collected Fees: <span className={"c-p"}>${Math.round(+collectedFees) || " <0.001"}</span>
+                        <Trans>
+                            Total Collected Fees: <span className={"c-p"}>${Math.round(+collectedFees) || " <0.001"}</span>
+                        </Trans>
                     </span>
                 )}
             </div>

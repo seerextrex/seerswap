@@ -3,25 +3,26 @@ import { NavLink } from "react-router-dom";
 import { FarmingInfoLabel } from "../Header/styled";
 import { useAppSelector } from "../../state/hooks";
 import { InfinityIcon, MenuList, MenuListItem, MenuListItemIcon, MenuListItemTitle } from "./styled";
+import { t } from "@lingui/macro";
 
 const stakingMenuList = [
     {
-        title: "My Farms",
+        title: t`My Farms`,
         icon: <AlignJustify size={18} />,
         link: "farms",
     },
     {
-        title: "Infinite Farms",
+        title: t`Infinite Farms`,
         icon: <InfinityIcon size={18} />,
         link: "infinite-farms",
     },
     {
-        title: "Limit Farms",
+        title: t`Limit Farms`,
         icon: <Zap size={18} />,
         link: "limit-farms",
     },
     {
-        title: "Farms History",
+        title: t`Farms History`,
         icon: <Calendar size={18} />,
         link: "farms-history",
     },
@@ -48,7 +49,7 @@ export function StakingMenu() {
                     </MenuListItemTitle>
                     <FarmingInfoLabel isHeader={false} isEvents={true} />
                     {/* {el.title === "Limit Farms" ? <FarmingInfoLabel isEvents={true} isHeader={false} /> : null} */}
-                    {el.title === "Infinite Farms" ? <FarmingInfoLabel isEvents={eternalFarmings} isHeader={false} /> : null}
+                    {el.title === t`Infinite Farms` ? <FarmingInfoLabel isEvents={eternalFarmings} isHeader={false} /> : null}
                 </MenuListItem>
             ))}
         </MenuList>

@@ -25,6 +25,8 @@ import { Token } from "@uniswap/sdk-core";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
 
+import { t, Trans } from "@lingui/macro";
+
 interface StakeModalProps {
     event: {
         pool: any;
@@ -282,7 +284,7 @@ export function StakeModal({
                     </div>
                     <div className={"h-400 f c f-ac f-jc"}>
                         <CheckCircle size={55} stroke={"var(--green)"} />
-                        <p className={"mt-05"}>{`Position #${selectedNFT?.id} deposited succesfully!`}</p>
+                        <p className={"mt-05"}>{t`Position #${selectedNFT?.id} deposited succesfully!`}</p>
                     </div>
                 </div>
             ) : positionsForPoolLoading ? (
@@ -292,7 +294,9 @@ export function StakeModal({
             ) : (
                 <div className={"w-100 c-w"}>
                     <div className={"mb-1 flex-s-between"}>
-                        <div>Select NFT for farming</div>
+                        <div>
+                            <Trans>Select NFT for farming</Trans>
+                        </div>
                         <button className={"bg-t br-0"} onClick={closeHandler}>
                             <X size={18} stroke={"var(--white)"} />
                         </button>
@@ -315,17 +319,21 @@ export function StakeModal({
                     )}
                     {farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 && (
                         <div className="mv-1 f w-100">
-                            <span className="b" style={{ fontSize: "18px" }}>{`${farmingType === FarmingType.FINITE ? "2. " : ""}Select a Position`}</span>
+                            <span className="b" style={{ fontSize: "18px" }}>{t`${farmingType === FarmingType.FINITE ? "2. " : ""}Select a Position`}</span>
                         </div>
                     )}
                     <div style={{ height: farmingType === FarmingType.ETERNAL ? "400px" : "unset", marginLeft: "-1rem", position: "relative", marginRight: "-1rem" }} className="mb-1 pl-1 pr-1">
                         {chunkedPositions && chunkedPositions.length === 0 ? (
                             <div className={"h-400 f c f-ac f-jc"}>
                                 <Frown size={30} stroke={"var(--white)"} />
-                                <p className={"mt-1 mb-05"}>No NFT-s for this pool</p>
-                                <p>To take part in this farming event, you need to</p>
+                                <p className={"mt-1 mb-05"}>
+                                    <Trans>No NFT-s for this pool</Trans>
+                                </p>
+                                <p>
+                                    <Trans>To take part in this farming event, you need to</Trans>
+                                </p>
                                 <NavLink className={"flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1 hover-c-ph"} to={linkToProviding}>
-                                    <span>{`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
+                                    <span>{t`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
                                     <ArrowRight className={"ml-05"} size={16} />
                                 </NavLink>
                             </div>
@@ -356,7 +364,7 @@ export function StakeModal({
                                                 <IsActive el={el} />
                                                 <div className={"stake-modal__nft-position__description"}>
                                                     <a className={"fs-085 c-w hover-cp"} href={`https://app.algebra.finance/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
-                                                        View position
+                                                        <Trans>View position</Trans>
                                                     </a>
                                                 </div>
                                             </div>
@@ -384,10 +392,10 @@ export function StakeModal({
                     </div>
                     {selectedTier === "" && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
                         <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
-                            Select Tier
+                            <Trans>Select Tier</Trans>
                         </button>
                     ) : selectedTier && !isEnoughALGB && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled className="btn primary w-100 p-1">{`Not enough ${lockedToken.symbol}`}</button>
+                        <button disabled className="btn primary w-100 p-1">{t`Not enough ${lockedToken.symbol}`}</button>
                     ) : selectedNFT ? (
                         <div className={"f mxs_fd-c w-100"}>
                             {farmingType === FarmingType.FINITE && selectedTier && (
@@ -400,12 +408,14 @@ export function StakeModal({
                                     {approval === ApprovalState.PENDING ? (
                                         <span className={"f f-ac f-jc"}>
                                             <Loader stroke={"white"} />
-                                            <span className={"ml-05"}>Approving</span>
+                                            <span className={"ml-05"}>
+                                                <Trans>Approving</Trans>
+                                            </span>
                                         </span>
                                     ) : !showApproval ? (
-                                        `${lockedToken.symbol} Approved`
+                                        t`${lockedToken.symbol} Approved`
                                     ) : (
-                                        `Approve ${lockedToken.symbol}`
+                                        t`Approve ${lockedToken.symbol}`
                                     )}
                                 </button>
                             )}
@@ -418,12 +428,14 @@ export function StakeModal({
                                 {submitLoader && submitState === 0 ? (
                                     <span className={"f f-ac f-jc"}>
                                         <Loader stroke={"white"} />
-                                        <span className={"ml-05"}>Approving</span>
+                                        <span className={"ml-05"}>
+                                            <Trans>Approving</Trans>
+                                        </span>
                                     </span>
                                 ) : NFTsForStake && !NFTsForApprove ? (
-                                    "Position Approved"
+                                    t`Position Approved`
                                 ) : (
-                                    "Approve Position"
+                                    t`Approve Position`
                                 )}
                             </button>
                             <button
@@ -435,16 +447,18 @@ export function StakeModal({
                                 {submitLoader && submitState === 2 ? (
                                     <span className={"f f-ac f-jc"}>
                                         <Loader stroke={"white"} />
-                                        <span className={"ml-05"}>Depositing</span>
+                                        <span className={"ml-05"}>
+                                            <Trans>Depositing</Trans>
+                                        </span>
                                     </span>
                                 ) : (
-                                    "Deposit"
+                                    t`Deposit`
                                 )}
                             </button>
                         </div>
                     ) : chunkedPositions && chunkedPositions.length !== 0 ? (
                         <button disabled id={"farming-select-nft"} className={"btn primary w-100 p-1 farming-select-nft"}>
-                            Select Position
+                            <Trans>Select Position</Trans>
                         </button>
                     ) : null}
                 </div>

@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-03-22 16:35+0300\n"
+"POT-Creation-Date: 2022-03-09 14:53+0300\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: en-US\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Language: es-ES\n"
 
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
@@ -25,11 +19,11 @@ msgstr "${0}"
 
 #: src/components/AddressInputPanel/index.tsx
 msgid "(View on Explorer)"
-msgstr "(View on Explorer)"
+msgstr "(Ver en Explorador)"
 
 #: src/components/AccountDetails/index.tsx
 msgid "(clear all)"
-msgstr "(clear all)"
+msgstr "(limpiar todo)"
 
 #: src/components/RangeSelector/PresetsButtons.tsx
 msgid "+/- {label}%"
@@ -37,7 +31,7 @@ msgstr "+/- {label}%"
 
 #: src/pages/Swap/index.tsx
 msgid "- Remove send"
-msgstr "- Remove send"
+msgstr "- Remover envío"
 
 #: src/pages/RealStakerPage/RealStakerRangeButtons.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
@@ -54,88 +48,70 @@ msgstr "50%"
 msgid "75%"
 msgstr "75%"
 
-#: src/components/WalletModal/index.tsx
-msgid "<0/> Back"
-msgstr "<0/> Back"
-
-#: 
-#~ msgid "<0>Back to </0>"
-#~ msgstr "<0>Back to </0>"
-
-#: src/pages/RealStakerPage/index.tsx
-msgid "ALGB Frozen"
-msgstr "ALGB Frozen"
+#: src/pages/StakingAnalyticsPage/index.tsx
+msgid "ALGB Balance"
+msgstr "Balance ALGB"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "ALGB from the Vault"
-msgstr "ALGB from the Vault"
+msgstr "ALGB de la Bóveda"
 
-#: src/pages/EventsHistory/index.tsx
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "APR"
 msgstr "APR"
 
-#: src/components/HeaderMenu/index.tsx
-msgid "About Us"
-msgstr "About Us"
-
-#: src/components/HeaderMenu/index.tsx
-msgid "About us"
-msgstr "About us"
-
 #: src/components/swap/SwapModalHeader.tsx
 msgid "Accept"
-msgstr "Accept"
+msgstr "Aceptar"
 
 #: src/components/AccountDetails/index.tsx
 msgid "Account"
-msgstr "Account"
+msgstr "Cuenta"
 
 #: src/components/SearchModal/ImportRow.tsx
 msgid "Active"
-msgstr "Active"
+msgstr "Activo"
 
 #: src/components/PositionCard/index.tsx
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidity/index.tsx
 msgid "Add"
-msgstr "Add"
+msgstr "Añadir"
 
 #: src/pages/AddLiquidityPage/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Add Liquidity"
-msgstr "Add Liquidity"
+msgstr "Añadir Liquidez"
 
 #: src/components/WalletModal/index.tsx
 msgid "Add Polygon network to your metamask app."
-msgstr "Add Polygon network to your metamask app."
+msgstr "Agregue la red de Polygon a su aplicación de metamask."
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Add more liquidity"
-msgstr "Add more liquidity"
+msgstr "Añadir más liquidez"
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Add {0} to Metamask <0/>"
-msgstr "Add {0} to Metamask <0/>"
+msgstr "Añadir {0} a Metamask <0/>"
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
-#: src/pages/NewAddLiquidity/containers/AddLiquidityButton/index.tsx
 msgid "Add {0}/{1} liquidity"
-msgstr "Add {0}/{1} liquidity"
+msgstr "Añadir {0}/{1} liquidez"
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Added {0}"
-msgstr "Added {0}"
+msgstr "Añadido {0}"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Adding Liquidity..."
-msgstr "Adding Liquidity..."
+msgstr "Añadiendo Liqudez..."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Algebra {0} Price:"
-msgstr "Algebra {0} Price:"
+msgstr "Algebra {0} Precio:"
 
 #: src/pages/Staking/StakingPage.tsx
 msgid "Algebra — Farming"
@@ -143,7 +119,7 @@ msgstr "Algebra — Farming"
 
 #: src/pages/Staking/StakingPage.tsx
 msgid "Algebra — Farming • Farms History history"
-msgstr "Algebra — Farming • Farms History history"
+msgstr "Algebra — Farming • Historial de Farms"
 
 #: src/pages/Staking/StakingPage.tsx
 msgid "Algebra — Farming • Infinite Farms"
@@ -155,27 +131,27 @@ msgstr "Algebra — Farming • Limit Farms"
 
 #: src/pages/Staking/StakingPage.tsx
 msgid "Algebra — Farming • My Farms"
-msgstr "Algebra — Farming • My Farms"
+msgstr "Algebra — Farming • Mis Farms"
 
 #: src/pages/PoolFinder/index.tsx
 msgid "Algebra — Find Pool"
-msgstr "Algebra — Find Pool"
+msgstr "Algebra — Encontrar fondo común"
 
 #: src/pages/InfoPage/index.tsx
 msgid "Algebra — Info"
-msgstr "Algebra — Info"
+msgstr "Algebra — Información"
 
 #: src/pages/InfoPage/index.tsx
 msgid "Algebra — Info • Pools"
-msgstr "Algebra — Info • Pools"
+msgstr "Algebra — Información • Pools"
 
 #: src/pages/InfoPage/index.tsx
 msgid "Algebra — Info • Tokens"
-msgstr "Algebra — Info • Tokens"
+msgstr "Algebra — Información • Tokens"
 
 #: src/pages/MigrateV2/index.tsx
 msgid "Algebra — Migrate Liquidity"
-msgstr "Algebra — Migrate Liquidity"
+msgstr "Algebra — Migrar Liquidez"
 
 #: src/pages/Pool/index.tsx
 msgid "Algebra — Pool"
@@ -187,289 +163,280 @@ msgstr "Algebra — Staking"
 
 #: src/pages/Swap/index.tsx
 msgid "Algebra — Swap"
-msgstr "Algebra — Swap"
+msgstr "Algebra — Intercambio"
 
 #: src/pages/Swap/index.tsx
 msgid "Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
-msgstr "Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
+msgstr "Algebra.Finance es el primer Exchange Descentralizado con liquidez concentrada en Polygon: mejores tarifas para traders y proveedores de liquidez en la red de Polygon, con built-in farming y comisiones adaptables."
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 msgid "All"
-msgstr "All"
+msgstr "Todo"
 
 #: src/pages/Swap/index.tsx
 msgid "Allow Algebra to use your {0}"
-msgstr "Allow Algebra to use your {0}"
+msgstr "Permitir que Algebra use su {0}"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Allow LP token migration"
-msgstr "Allow LP token migration"
+msgstr "Permitir migración de token LP"
 
 #: src/components/Settings/index.tsx
 msgid "Allow high price impact trades and skip the confirm screen. Use at your own risk."
-msgstr "Allow high price impact trades and skip the confirm screen. Use at your own risk."
+msgstr "Permitir operaciones de alto impacto de precio y omitir la pantalla de confirmación. Úselo bajo su propio riesgo."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Allowed"
-msgstr "Allowed"
+msgstr "Permitido"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Amount"
-msgstr "Amount"
+msgstr "Cantidad"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Amount of ALGB fees sent as rewards"
-msgstr "Amount of ALGB fees sent as rewards"
+msgstr "Cantidad de comisiones en ALGB enviadas como recompensas"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Amount of newly-burned xALGB per day"
-msgstr "Amount of newly-burned xALGB per day"
+msgstr "Cantidad de xALGB recientemente quemada por día"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Amount of newly-minted xALGB per day"
-msgstr "Amount of newly-minted xALGB per day"
+msgstr "Cantidad de xALGB recientemente acuñada por día"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Amount of newly-staked ALGB per day"
-msgstr "Amount of newly-staked ALGB per day"
+msgstr "Cantidad de ALGB recientemente depositada en staking"
 
 #: src/hooks/useSwapCallback.ts
 msgid "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Algebra."
-msgstr "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Algebra."
+msgstr "Se produjo un error al intentar ejecutaar este intercambio. Es posible que deba aumentar su tolerancia al deslizamiento. Si eso no funciona, puede haber una incompatibilidad con el token que está comerciando. Nota: los tokens de rebase son incompatibles con Algebra."
 
 #: src/pages/RealStakerPage/RealStakerResBlocks.tsx
 msgid "Any rewards you earned will be automatically restaked (compounded) for you."
-msgstr "Any rewards you earned will be automatically restaked (compounded) for you."
+msgstr "Cualquier recompensa que haya ganado se volvera a depositar en staking automaticamente (compuesto) para usted."
 
 #: src/components/StakeModal/index.tsx
 #: src/components/StakingModal/index.tsx
 msgid "Approve"
-msgstr "Approve"
+msgstr "Aprobar"
 
 #: src/components/StakingModal/index.tsx
 msgid "Approve NFT"
-msgstr "Approve NFT"
+msgstr "Aprobar NFT"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "Approve token"
-msgstr "Approve token"
+msgstr "Aprobar token"
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Approve {0}"
-msgstr "Approve {0}"
+msgstr "Aprobar {0}"
 
 #: src/components/StakeModal/index.tsx
 #: src/hooks/useApproveCallback.ts
 #: src/hooks/useApproveCallback.ts
 msgid "Approved"
-msgstr "Approved"
+msgstr "Aprobado"
 
 #: src/components/StakeModal/index.tsx
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Approving"
-msgstr "Approving"
+msgstr "Aprobando"
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Approving {0}"
-msgstr "Approving {0}"
-
-#: src/utils/convertDate.ts
-msgid "April"
-msgstr "April"
+msgstr "Aprobando {0}"
 
 #: src/components/Settings/index.tsx
 msgid "Are you sure?"
-msgstr "Are you sure?"
+msgstr "¿Está seguro?"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
-msgstr "At least {0} {1} and {2} {3} will be refunded to your wallet due to selected price range."
-
-#: src/utils/convertDate.ts
-msgid "August"
-msgstr "August"
+msgstr "Al menos {0} {1} y {2} {3} serán reembolsados a su cartera debido al rango de precios seleccionado."
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Auto"
 msgstr "Auto"
 
-#: src/components/StakerEventCard/index.tsx
-#: src/components/StakerEventCard/index.tsx
-#~ msgid "BONUS"
-#~ msgstr "BONUS"
-
 #: src/pages/RealStakerPage/index.tsx
 msgid "BUY ALGB"
-msgstr "BUY ALGB"
+msgstr "COMPRAR ALGB"
 
 #: src/components/WalletModal/index.tsx
-#~ msgid "Back"
-#~ msgstr "Back"
+msgid "Back"
+msgstr "Volver"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Back to pools"
-msgstr "Back to pools"
+msgstr "Volver a los fondos comunes"
 
-#: src/pages/PoolInfoPage/index.tsx
+#: src/components/PoolInfoHeader/index.tsx
 msgid "Back to pools table"
-msgstr "Back to pools table"
+msgstr "Volver al tablero de fondos comunes"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "Balance"
 msgstr "Balance"
 
 #: src/components/CurrencyInputPanel/index.tsx
-msgid "Balance: < 0.0001 {0}"
-msgstr "Balance: < 0.0001 {0}"
-
-#: src/components/CurrencyInputPanel/index.tsx
 msgid "Balance: {balanceString} {0}"
 msgstr "Balance: {balanceString} {0}"
 
-#: src/components/InfoPools/AprHeader.tsx
+#: src/components/InfoPoolsTable/index.tsx
 msgid "Based on <0>fees</0> / <1>active liquidity</1>"
-msgstr "Based on <0>fees</0> / <1>active liquidity</1>"
+msgstr "Basado en <0>comisiones</0> / <1>liquidez activa</1>"
 
 #: src/components/CautionModal/index.tsx
 msgid "Before using Algebra, you should review the relevant documentation to make sure you understand how Algebra works."
-msgstr "Before using Algebra, you should review the relevant documentation to make sure you understand how Algebra works."
+msgstr "Antes de usar Algebra, debe revisar la documentación relevante para asegurarse de que comprende cómo funciona Algebra."
 
-#: src/pages/EventsHistory/index.tsx
+#: src/components/FarmsHistoryTable/index.tsx
 msgid "Best APR"
-msgstr "Best APR"
+msgstr "Mejor APR"
 
 #: src/components/Blocklist/index.tsx
 msgid "Blocked address"
-msgstr "Blocked address"
+msgstr "Dirección bloqueada"
 
+#: src/components/FarmsHistoryTable/index.tsx
 #: src/components/StakerEventCard/index.tsx
 #: src/components/StakerEventCard/index.tsx
-#: src/pages/EventsHistory/index.tsx
 msgid "Bonus"
-msgstr "Bonus"
+msgstr "Bonificación"
 
-#: src/pages/EventsHistory/index.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "Bonus Reward"
-msgstr "Bonus Reward"
+msgstr "Recompensa de bonificación"
 
-#: src/components/StakerMyStakes/PositionCardBodyStat.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "Bonus reward"
-msgstr "Bonus reward"
+msgstr "Recompensa de bonificación"
 
 #: src/components/PositionCard/index.tsx
 msgid "By adding liquidity you'll earn 0.3% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity."
-msgstr "By adding liquidity you'll earn 0.3% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity."
+msgstr "Al añadir liquidez, ganará un 0.3% de todas las operaciones con este par de forma proporcional a su participación en el fondo común. Las comisiones se añaden al fondo, se acumulan en tiempo real y se pueden reclamar al retirar su liquidez."
 
 #: src/components/SearchModal/ImportList.tsx
 msgid "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
-msgstr "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
+msgstr "Al añadir esta lista está confiando implícitamente en que los datos son correctos. Cualquiera puede crear una lista; incluso se pueden crear versiones falsas de listas existentes y listas que afirman representar proyectos que no tienen una."
 
-#: src/pages/RealStakerPage/index.tsx
-msgid "Calculate Proift"
-msgstr "Calculate Proift"
+#: src/components/PoolInfoChartToolbar/index.tsx
+msgid "Chart span"
+msgstr "Lapso de gráfico"
 
-#: 
-#~ msgid "Change"
-#~ msgstr "Change"
+#: src/components/PoolInfoChartToolbar/index.tsx
+msgid "Chart type"
+msgstr "Tipo de gráfico"
+
+#: src/pages/AddLiquidityPage/index.tsx
+msgid "Check out how dynamic fee is calculated"
+msgstr "Echale un vistazo a cómo se calcula la comisión dinámica"
 
 #: src/components/CautionModal/index.tsx
 msgid "Check out our <0>Tech Paper</0> and read about what <1>concentrated liquidity is</1>."
-msgstr "Check out our <0>Tech Paper</0> and read about what <1>concentrated liquidity is</1>."
+msgstr "Echale un vistazo a nuestra <0>Hoja técnica</0> y lea sobre qué <1>es la liquidez concentrada</1>."
 
 #: src/components/StakerMyRewards/index.tsx
+#: src/pages/RealStakerPage/index.tsx
+#: src/pages/RealStakerPage/RealStakerResBlocks.tsx
 #: src/pages/RealStakerPage/RealStakerResBlocks.tsx
 msgid "Claim"
-msgstr "Claim"
+msgstr "Reclamar"
+
+#: src/pages/Pool/PositionPage.tsx
+msgid "Claim fees"
+msgstr "Reclamar comisiones"
 
 #: src/hooks/useRealStaker.ts
 msgid "Claimed {0} ALGB"
-msgstr "Claimed {0} ALGB"
-
-#: src/pages/RealStakerPage/RealStakerResBlocks.tsx
-msgid "Claiming"
-msgstr "Claiming"
+msgstr "Reclamados {0} ALGB"
 
 #: src/hooks/useStakerHandlers.ts
 #: src/hooks/useStakerHandlers.ts
 #: src/hooks/useStakerHandlers.ts
 msgid "Claiming reward"
-msgstr "Claiming reward"
+msgstr "Reclamando recompensa"
 
 #: src/components/SearchModal/ManageTokens.tsx
 msgid "Clear all"
-msgstr "Clear all"
+msgstr "Limpiar todo"
 
 #: src/pages/MigrateV2/index.tsx
 msgid "Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra."
-msgstr "Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra."
+msgstr "Haga click en migrar para transferir su liquidez desde Sushiswap o Quickswap a Algebra."
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Close"
-msgstr "Close"
+msgstr "Cerrar"
 
 #: src/components/Badge/RangeBadge.tsx
 #: src/pages/Pool/index.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Closed"
-msgstr "Closed"
+msgstr "Cerrado"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect"
-msgstr "Collect"
+msgstr "Recolectar"
 
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Collect as WMATIC"
-msgstr "Collect as WMATIC"
+msgstr "Recolectar como WMATIC"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect fees"
-msgstr "Collect fees"
+msgstr "Recolectar comisiones"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Collect rewards"
-msgstr "Collect rewards"
+msgstr "Recolectar recompensas"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Collect rewards & Undeposit"
-msgstr "Collect rewards & Undeposit"
+msgstr "Recolectar recompensas y anular el depósito"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect {0}/{1} fees"
-msgstr "Collect {0}/{1} fees"
+msgstr "Recolectar {0}/{1} Comisiones"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collected"
-msgstr "Collected"
+msgstr "Recolectado"
 
-#: src/components/StakerMyStakes/index.tsx
-#: src/components/StakerMyStakes/index.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collecting"
-msgstr "Collecting"
+msgstr "Recolectando"
+
+#: src/pages/Pool/PositionPage.tsx
+msgid "Collecting fees"
+msgstr "Recolectando comisiones"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collecting fees will withdraw currently available fees for you."
-msgstr "Collecting fees will withdraw currently available fees for you."
+msgstr "El cobro de comisiones extrae aquellas que se encuentren disponibles para usted en ese momento."
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Confirm Create"
-msgstr "Confirm Create"
+msgstr "Confirmar Crear"
 
 #: src/components/swap/ConfirmSwapModal.tsx
 #: src/components/swap/SwapModalFooter.tsx
 msgid "Confirm Swap"
-msgstr "Confirm Swap"
+msgstr "Confirmar Intercambio"
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Confirm this transaction in your wallet"
-msgstr "Confirm this transaction in your wallet"
+msgstr "Confirmar esta transacción en su cartera"
 
 #: src/components/StakerEventCard/index.tsx
 #: src/components/WalletModal/index.tsx
@@ -483,206 +450,177 @@ msgstr "Confirm this transaction in your wallet"
 #: src/state/mint/v3/hooks.ts
 #: src/state/swap/hooks.ts
 msgid "Connect Wallet"
-msgstr "Connect Wallet"
+msgstr "Conectar Billetera"
 
 #: src/components/WalletModal/index.tsx
 #: src/components/Web3Status/Web3StatusInner.tsx
-#: src/components/Web3Status/Web3StatusInner.tsx
 msgid "Connect to Polygon"
-msgstr "Connect to Polygon"
+msgstr "Conectar a Polygon"
+
+#: src/pages/MigrateV2/index.tsx
+msgid "Connect to a wallet to view your liquidity."
+msgstr "Conéctese a una cartera para visualizar su liquidez."
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Connect wallet"
-msgstr "Connect wallet"
-
-#: src/pages/MigrateV2/index.tsx
-msgid "Connect wallet to view your liquidity."
-msgstr "Connect wallet to view your liquidity."
+msgstr "Conectar billetera"
 
 #: src/pages/Staking/StakingPage.tsx
 msgid "Connect your account to view farms"
-msgstr "Connect your account to view farms"
+msgstr "Conecte su cuenta para ver los farms"
 
 #: src/components/AccountDetails/index.tsx
 msgid "Connected with {name}"
-msgstr "Connected with {name}"
-
-#: src/pages/App.tsx
-msgid "Connecting to Polygon"
-msgstr "Connecting to Polygon"
+msgstr "Conectado con {name}"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Connecting to network..."
-msgstr "Connecting to network..."
+msgstr "Conectándose a la red..."
 
 #: src/components/AccountDetails/Copy.tsx
 msgid "Copied"
-msgstr "Copied"
+msgstr "Copiado"
 
 #: src/components/AccountDetails/index.tsx
 #: src/components/AccountDetails/index.tsx
 msgid "Copy Address"
-msgstr "Copy Address"
+msgstr "Copiar Dirección"
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Create"
-msgstr "Create"
+msgstr "Crear"
 
 #: src/components/NavigationTabs/AddRemoveTabs.tsx
 msgid "Create a pair"
-msgstr "Create a pair"
+msgstr "Crear un par"
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
-#: src/pages/NewAddLiquidity/containers/AddLiquidityButton/index.tsx
 msgid "Create pool and add {0}/{1} liquidity"
-msgstr "Create pool and add {0}/{1} liquidity"
+msgstr "Crear fondo común y agregar {0}/{1} liquidez"
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Creating {0}/{1} {2}% Pool"
-msgstr "Creating {0}/{1} {2}% Pool"
+msgstr "Creando {0}/{1} {2}% Fondo común"
 
 #: src/components/LiquidityChartRangeInput/Line.tsx
 msgid "Curr. price"
-msgstr "Curr. price"
+msgstr "Precio actual"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Current"
-msgstr "Current"
+msgstr "Actual"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Current Price:"
-msgstr "Current Price:"
+msgstr "Precio Actual:"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Current pool fee."
-msgstr "Current pool fee."
+msgstr "Comisión actual del fondo común."
 
-#: src/components/LiquidityBarChart/BarChart.tsx
 #: src/components/PositionPreview/index.tsx
 #: src/pages/Pool/CurrentPriceCard.tsx
 msgid "Current price"
-msgstr "Current price"
+msgstr "Precio actual"
 
-#: src/pages/AddLiquidity/PoolInfoHeader.tsx
-#~ msgid "Current {0} Price:"
-#~ msgstr "Current {0} Price:"
-
-#: src/utils/convertDate.ts
-msgid "December"
-msgstr "December"
-
-#: 
-#~ msgid "Delegate Votes"
-#~ msgstr "Delegate Votes"
+#: src/components/FarmsHistoryTable/index.tsx
+msgid "Dates"
+msgstr "Fechas"
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Day"
-msgstr "Day"
+msgstr "Día"
 
 #: src/components/StakeModal/index.tsx
 #: src/components/StakingModal/index.tsx
 msgid "Deposit"
-msgstr "Deposit"
+msgstr "Depósito"
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Deposit Amounts"
-msgstr "Deposit Amounts"
+msgstr "Montos de Depósito"
 
 #: src/components/StakingModal/index.tsx
 msgid "Deposit NFT"
-msgstr "Deposit NFT"
+msgstr "Depósito NFT"
 
 #: src/components/StakeModal/index.tsx
 msgid "Depositing"
-msgstr "Depositing"
+msgstr "Depositando"
 
 #: src/components/AccountDetails/index.tsx
 msgid "Disconnect"
-msgstr "Disconnect"
+msgstr "Desconectar"
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Dismiss"
-msgstr "Dismiss"
+msgstr "Descartar"
 
 #: src/components/StakingModal/index.tsx
 msgid "Done!"
-msgstr "Done!"
+msgstr "¡Hecho!"
 
 #: src/pages/MigrateV2/index.tsx
 msgid "Don’t see one of your pools?"
-msgstr "Don’t see one of your pools?"
+msgstr "¿No puede visualizar uno de sus fondos comunes?"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Download .PDF"
-msgstr "Download .PDF"
+msgstr "Descargar .PDF"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "EARNED"
-msgstr "EARNED"
-
-#: src/components/StakerEventCard/index.tsx
-#: src/components/StakerEventCard/index.tsx
-#~ msgid "END"
-#~ msgstr "END"
-
-#: src/components/StakerEventCard/index.tsx
-#~ msgid "ENTRY"
-#~ msgstr "ENTRY"
+msgstr "GANADOS"
 
 #: src/components/StakerEventCard/index.tsx
 #: src/components/StakerEventCard/index.tsx
 msgid "End"
-msgstr "End"
+msgstr "Fin"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Ends in {0}"
-msgstr "Ends in {0}"
+msgstr "Termina en {0}"
 
 #: src/hooks/useWrapCallback.ts
 msgid "Enter W{chainSymbol} amount"
-msgstr "Enter W{chainSymbol} amount"
+msgstr "Ingrese W{chainSymbol} monto"
 
 #: src/state/burn/v3/hooks.ts
 msgid "Enter a percent"
-msgstr "Enter a percent"
+msgstr "Introduzca un porcentaje"
 
-#: src/components/StakerMyStakes/ModalBody.tsx
+#: src/components/StakerMyStakes/index.tsx
 #: src/state/swap/hooks.ts
 msgid "Enter a recipient"
-msgstr "Enter a recipient"
+msgstr "Introduzca un recipiente"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Enter a valid slippage percentage"
-msgstr "Enter a valid slippage percentage"
+msgstr "Ingrese un pocertaje de deslizamiento válido"
 
-#: src/components/NumericalInput/index.tsx
 #: src/state/mint/v3/hooks.ts
 #: src/state/swap/hooks.ts
 msgid "Enter an amount"
-msgstr "Enter an amount"
+msgstr "Introduzca un monto"
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Enter valid list location"
-msgstr "Enter valid list location"
+msgstr "Introduzca una ubicación de lista válida"
 
 #: src/components/SearchModal/ManageTokens.tsx
 msgid "Enter valid token address"
-msgstr "Enter valid token address"
+msgstr "Introduzca una dirección de token válida"
 
 #: src/hooks/useWrapCallback.ts
 msgid "Enter {chainSymbol} amount"
-msgstr "Enter {chainSymbol} amount"
+msgstr "Introduzca {chainSymbol} monto"
 
-#: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "Entered at:"
-msgstr "Entered at:"
-
-#: src/components/StakerEventCard/index.tsx
-msgid "Entry"
-msgstr "Entry"
+msgstr "Ingresado en:"
 
 #: src/components/TransactionConfirmationModal/index.tsx
 #: src/components/Web3Status/Web3StatusInner.tsx
@@ -692,455 +630,428 @@ msgstr "Error"
 #: src/components/WalletModal/index.tsx
 #: src/components/WalletModal/PendingView.tsx
 msgid "Error connecting"
-msgstr "Error connecting"
+msgstr "Error al conectar"
 
 #: src/components/WalletModal/index.tsx
 msgid "Error connecting. Try refreshing the page."
-msgstr "Error connecting. Try refreshing the page."
+msgstr "Error de conexión. Intente actualizar la página."
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Error importing list"
-msgstr "Error importing list"
+msgstr "Error importando lista"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Error: The Min price must be lower than the Max price"
-msgstr "Error: The Min price must be lower than the Max price"
+msgstr "Error: El precio mínimo debe ser inferior al precio máximo"
 
 #: src/components/PositionCard/V2.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Expand"
-msgstr "Expand"
+msgstr "Ampliar"
 
 #: src/components/SearchModal/CurrencyList.tsx
 msgid "Expanded results from inactive Token Lists"
-msgstr "Expanded results from inactive Token Lists"
+msgstr "Resultados ampliados de listas de token inactivas"
 
 #: src/components/Settings/index.tsx
 msgid "Expert Mode"
-msgstr "Expert Mode"
+msgstr "Modo Experto"
 
 #: src/components/Settings/index.tsx
 msgid "Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result in bad rates and lost funds."
-msgstr "Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result in bad rates and lost funds."
+msgstr "El modo experto desactiva el indicador de transaccíon de confirmación y permite operaciones de deslizamiento elevadas que a menudo resultan en malas tasas y fondos perdidos."
 
 #: src/components/StakerEventCard/index.tsx
 msgid "Farm"
 msgstr "Farm"
 
+#: src/pages/Swap/index.tsx
+msgid "Farm Now"
+msgstr "Iniciar Farm"
+
 #: src/components/Header/index.tsx
 #: src/components/PositionListItem/index.tsx
-#: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
 #: src/pages/Pool/index.tsx
 msgid "Farming"
 msgstr "Farming"
 
 #: src/components/StakingMenu/index.tsx
-#: src/pages/Staking/StakingPage.tsx
 msgid "Farms History"
-msgstr "Farms History"
-
-#: src/pages/NewAddLiquidity/components/PopularPairs/index.tsx
-msgid "Farms"
-msgstr "Farms"
-
-#: src/utils/convertDate.ts
-msgid "February"
-msgstr "February"
+msgstr "Historial de Farms"
 
 #: src/components/PositionPreview/index.tsx
 msgid "Fee"
-msgstr "Fee"
+msgstr "Comisión"
 
 #: src/components/swap/SwapHeader.tsx
 msgid "Fee is {0}%"
-msgstr "Fee is {0}%"
+msgstr "La comisión es {0}%"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Fee:"
-msgstr "Fee:"
-
-#: src/components/StakerEventCard/index.tsx
-msgid "Filled"
-msgstr "Filled"
+msgstr "Comisión:"
 
 #: src/pages/MigrateV2/index.tsx
 msgid "Find it."
-msgstr "Find it."
+msgstr "Encuéntralo."
 
 #: src/components/swap/SwapModalHeader.tsx
 #: src/pages/Swap/index.tsx
 msgid "From"
-msgstr "From"
+msgstr "De"
 
 #: src/pages/Swap/index.tsx
 msgid "From (at most)"
-msgstr "From (at most)"
+msgstr "Desde (máximo)"
+
+#: src/pages/RealStakerPage/index.tsx
+msgid "Frozen"
+msgstr "Congelado"
 
 #: src/pages/RealStakerPage/Frozen.tsx
 msgid "Frozen for"
-msgstr "Frozen for"
+msgstr "Congelado para"
 
 #: src/components/RangeSelector/PresetsButtons.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Full Range"
-msgstr "Full Range"
+msgstr "Rango Completo"
 
 #: src/components/Header/GasPrice.tsx
 msgid "Gas price: {0}"
-msgstr "Gas price: {0}"
-
-#: src/components/Popups/TransactionPopup.tsx
-msgid "Hash:"
-msgstr "Hash:"
-
-#: src/components/HeaderMenu/index.tsx
-msgid "Help Center"
-msgstr "Help Center"
-
-#: src/components/HeaderMenu/index.tsx
-msgid "Help center"
-msgstr "Help center"
+msgstr "Precio del Gas: {0}"
 
 #: src/pages/Pool/FilterPanelItem.tsx
 msgid "Hide"
-msgstr "Hide"
+msgstr "Esconder"
 
 #: src/pages/Swap/index.tsx
 msgid "High Price Impact"
-msgstr "High Price Impact"
+msgstr "Impacto de precio alto"
 
 #: src/components/CautionModal/index.tsx
 msgid "I agree"
-msgstr "I agree"
+msgstr "Estoy de acuerdo"
 
 #: src/components/SearchModal/ImportList.tsx
 msgid "I understand"
-msgstr "I understand"
+msgstr "Entiendo"
 
 #: src/components/SearchModal/ImportList.tsx
 msgid "If you purchase a token from this list, you may not be able to sell it back."
-msgstr "If you purchase a token from this list, you may not be able to sell it back."
+msgstr "Si compra un token de esta lista, es posible que no pueda venderlo de nuevo."
 
-#: src/components/StakerMyStakes/ModalBody.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account."
-msgstr "If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account."
+msgstr "Si envía su NFT a otra cuenta, no podrá recuperarlo a menos que tenga acceso a la cuenta del destinatario."
 
 #: src/components/SearchModal/ImportList.tsx
 #: src/components/SearchModal/ImportRow.tsx
 #: src/components/SearchModal/ImportToken.tsx
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Import"
-msgstr "Import"
+msgstr "Importar"
 
 #: src/components/SearchModal/ImportList.tsx
 msgid "Import List"
-msgstr "Import List"
+msgstr "Importar Lista"
 
 #: src/components/SearchModal/ImportList.tsx
 msgid "Import at your own risk"
-msgstr "Import at your own risk"
+msgstr "Importar bajo su propio riesgo"
 
 #: src/components/Badge/RangeBadge.tsx
 #: src/components/StakerMyStakes/IsActive.tsx
 msgid "In range"
-msgstr "In range"
+msgstr "En rango"
 
 #: src/components/NavigationTabs/AddRemoveTabs.tsx
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Increase Liquidity"
-msgstr "Increase Liquidity"
+msgstr "Aumentar liquidez"
 
-#: src/components/StakerMyStakes/PositionCardBodyHeader.tsx
-msgid "Infinite"
-msgstr "Infinite"
+#: src/components/StakerMyStakes/index.tsx
+msgid "Infinite Farming"
+msgstr "Infinite Farming"
 
 #: src/components/StakingMenu/index.tsx
 #: src/pages/Staking/StakingPage.tsx
 msgid "Infinite Farms"
 msgstr "Infinite Farms"
 
-#: src/components/StakerEventCard/index.tsx
-msgid "Infinite WETH farm is available →"
-msgstr "Infinite WETH farm is available →"
-
 #: src/components/Header/index.tsx
 msgid "Info"
-msgstr "Info"
+msgstr "Información"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Initial"
-msgstr "Initial"
+msgstr "Inicial"
 
 #: src/components/WalletModal/PendingView.tsx
 msgid "Initializing..."
-msgstr "Initializing..."
+msgstr "Inicializando..."
 
 #: src/components/swap/SwapModalHeader.tsx
 msgid "Input is estimated. You will sell at most <0>{0} {1}</0> or the transaction will revert."
-msgstr "Input is estimated. You will sell at most <0>{0} {1}</0> or the transaction will revert."
+msgstr "La entrada es estimada. Venderá como máximo <0>{0} {1}</0> o la transacción se revertirá."
 
 #: src/components/WalletModal/index.tsx
 msgid "Install Metamask"
-msgstr "Install Metamask"
+msgstr "Instalar Metamask"
 
 #: src/pages/RealStakerPage/index.tsx
 #: src/pages/RealStakerPage/RealStakerUnstakeModal.tsx
 msgid "Insufficient ALGB balance"
-msgstr "Insufficient ALGB balance"
+msgstr "Saldo ALGB insuficiente"
 
 #: src/hooks/useWrapCallback.ts
 msgid "Insufficient W{chainSymbol} balance"
-msgstr "Insufficient W{chainSymbol} balance"
+msgstr "Saldo W{chainSymbol} insuficiente"
 
 #: src/pages/Swap/index.tsx
 msgid "Insufficient liquidity for this trade."
-msgstr "Insufficient liquidity for this trade."
+msgstr "Liquidez insuficiente para esta operación."
 
 #: src/pages/Swap/index.tsx
 msgid "Insufficient liquidity for this trade. Try enabling multi-hop trades."
-msgstr "Insufficient liquidity for this trade. Try enabling multi-hop trades."
+msgstr "Liquidez insuficiente para esta operación. Intente habilitar intercambios de múltiples saltos."
 
 #: src/state/mint/v3/hooks.ts
 #: src/state/mint/v3/hooks.ts
 #: src/state/swap/hooks.ts
 msgid "Insufficient {0} balance"
-msgstr "Insufficient {0} balance"
+msgstr "Saldo {0} insuficiente"
 
 #: src/hooks/useWrapCallback.ts
 msgid "Insufficient {chainSymbol} balance"
-msgstr "Insufficient {chainSymbol} balance"
+msgstr "Saldo {chainSymbol} insuficiente"
 
 #: src/components/Settings/index.tsx
 msgid "Interface Settings"
-msgstr "Interface Settings"
+msgstr "Ajustes de la interfaz"
 
 #: src/state/mint/v3/hooks.ts
 msgid "Invalid pair"
-msgstr "Invalid pair"
+msgstr "Par inválido"
 
 #: src/pages/PoolFinder/index.tsx
 msgid "Invalid pair."
-msgstr "Invalid pair."
+msgstr "Par inválido."
 
 #: src/state/mint/v3/hooks.ts
 msgid "Invalid price input"
-msgstr "Invalid price input"
+msgstr "Entrada de precio no válida"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Invalid range selected. The min price must be lower than the max price."
-msgstr "Invalid range selected. The min price must be lower than the max price."
+msgstr "Rango seleccionado no válido. El precio mínimo debe ser menor al precio máximo."
 
 #: src/state/swap/hooks.ts
 msgid "Invalid recipient"
-msgstr "Invalid recipient"
+msgstr "Recipiente no válido"
 
-#: src/utils/convertDate.ts
-msgid "January"
-msgstr "January"
+#: src/hooks/useApproveCallback.ts
+#: src/hooks/useApproveCallback.ts
+msgid "LP-tokens"
+msgstr "LP-tokens"
 
-#: src/utils/convertDate.ts
-msgid "July"
-msgstr "July"
+#: src/components/StakerMyStakes/index.tsx
+msgid "Limit Farming"
+msgstr "Limit Farming"
 
-#: src/utils/convertDate.ts
-msgid "June"
-msgstr "June"
+#: src/components/StakingMenu/index.tsx
+#: src/pages/Staking/StakingPage.tsx
+msgid "Limit Farms"
+msgstr "Limit Farms"
 
-#: 
-#~ msgid "Learn more"
-#~ msgstr "Learn more"
+#: src/pages/Staking/StakingPage.tsx
+msgid "Limit Farms History"
+msgstr "Historial de Limit Farms"
 
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Liquidity"
-msgstr "Liquidity"
+msgstr "Liquidez"
 
 #: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Liquidity Provider Fee"
-msgstr "Liquidity Provider Fee"
+msgstr "Tarifa del proveedor de liquidez"
 
 #: src/components/LiquidityChartRangeInput/index.tsx
 msgid "Liquidity data not available."
-msgstr "Liquidity data not available."
+msgstr "No se dispone de datos de liquidez."
 
 #: src/components/SearchModal/Manage.tsx
 msgid "Lists"
-msgstr "Lists"
+msgstr "Listas"
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Loaded"
-msgstr "Loaded"
+msgstr "Cargado"
 
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/pages/MigrateV2/index.tsx
+#: src/pages/MigrateV2/MigrateV2Pair.tsx
 #: src/pages/PoolFinder/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Loading"
-msgstr "Loading"
+msgstr "Cargando"
 
 #: src/components/Web3Status/index.tsx
-#: src/pages/App.tsx
 msgid "Loading..."
-msgstr "Loading..."
+msgstr "Cargando..."
+
+#: src/pages/App.tsx
+msgid "Loading...."
+msgstr "Cargando...."
 
 #: src/pages/RealStakerPage/RealStakerRangeButtons.tsx
 msgid "MAX"
-msgstr "MAX"
+msgstr "MÁX"
 
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/index.tsx
 #: src/components/SearchModal/Manage.tsx
 msgid "Manage"
-msgstr "Manage"
+msgstr "Gestionar"
 
 #: src/components/PositionCard/index.tsx
 msgid "Manage Liquidity in Rewards Pool"
-msgstr "Manage Liquidity in Rewards Pool"
-
-#: src/utils/convertDate.ts
-msgid "March"
-msgstr "March"
+msgstr "Gestionar liquidez en la herramienta de recompensas"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Max"
-msgstr "Max"
+msgstr "Máx"
 
 #: src/components/PositionPreview/index.tsx
 #: src/components/RangeSelector/index.tsx
 msgid "Max Price"
-msgstr "Max Price"
+msgstr "Precio 	Máximo"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Max price"
-msgstr "Max price"
+msgstr "Precio máximo"
 
 #: src/components/PositionListItem/index.tsx
 msgid "Max:"
-msgstr "Max:"
+msgstr "Máx:"
 
 #: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Maximum sent"
-msgstr "Maximum sent"
-
-#: src/utils/convertDate.ts
-msgid "May"
-msgstr "May"
+msgstr "Máximo enviado"
 
 #: src/components/PositionCard/index.tsx
+#: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
+#: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Migrate"
-msgstr "Migrate"
+msgstr "Migrar"
 
 #: src/pages/MigrateV2/index.tsx
 #: src/pages/MigrateV2/MigrateV2Pair.tsx
 msgid "Migrate Liquidity"
-msgstr "Migrate Liquidity"
+msgstr "Migrar Liquidez"
 
 #: src/pages/Pool/index.tsx
 msgid "Migrate Pool"
-msgstr "Migrate Pool"
+msgstr "Migrar fondo común"
 
 #: src/components/NavigationTabs/FindPoolTabs.tsx
 msgid "Migrate from SushiSwap or QuickSwap"
-msgstr "Migrate from SushiSwap or QuickSwap"
+msgstr "Migrar desde SushiSwap o QuickSwap"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Migrating"
-msgstr "Migrating"
+msgstr "Migración"
 
 #: src/components/PositionPreview/index.tsx
 #: src/components/RangeSelector/index.tsx
 msgid "Min Price"
-msgstr "Min Price"
+msgstr "Precio Mínimo"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Min price"
-msgstr "Min price"
+msgstr "Precio mínimo"
 
 #: src/components/PositionListItem/index.tsx
 msgid "Min:"
-msgstr "Min:"
+msgstr "Mín:"
 
 #: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Minimum received"
-msgstr "Minimum received"
+msgstr "Mínimo recibido"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "Minted / Staked Amount / Total Supply →"
-msgstr "Minted / Staked Amount / Total Supply →"
+msgstr "Acuñado / Cantidad en staking / Suministro total →"
 
 #: src/components/WalletModal/index.tsx
 msgid "Mobile devices are not currently supported. Please use your desktop."
-msgstr "Mobile devices are not currently supported. Please use your desktop."
+msgstr "Los dispositivos móviles no son compatibles actualmente. Use su computador de escritorio por favor."
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Month"
-msgstr "Month"
-
-#: src/components/HeaderMenu/index.tsx
-#: src/components/HeaderMenu/index.tsx
-msgid "More"
-msgstr "More"
+msgstr "Mes"
 
 #: src/components/Settings/index.tsx
 msgid "Multihops"
-msgstr "Multihops"
+msgstr "Múltiples saltos"
 
 #: src/components/StakingMenu/index.tsx
 #: src/pages/Staking/StakingPage.tsx
 msgid "My Farms"
-msgstr "My Farms"
+msgstr "Mis Farms"
 
 #: src/components/StakerTabs/index.tsx
 msgid "My farms"
-msgstr "My farms"
+msgstr "Mis farms"
 
 #: src/components/StakerTabs/index.tsx
 msgid "My rewards"
-msgstr "My rewards"
+msgstr "Mis recompensas"
 
 #: src/components/StakeModal/index.tsx
 msgid "NFT #{0} deposited succesfully!"
-msgstr "NFT #{0} deposited succesfully!"
+msgstr "NFT #{0} depositado con éxito!"
 
 #: src/hooks/useStakerHandlers.ts
 msgid "NFT #{0} was approved!"
-msgstr "NFT #{0} was approved!"
+msgstr "NFT #{0} fue aprobado!"
 
 #: src/hooks/useStakerHandlers.ts
 msgid "NFT #{0} was deposited!"
-msgstr "NFT #{0} was deposited!"
+msgstr "NFT #{0} fue depositado!"
 
 #: src/hooks/useStakerHandlers.ts
 msgid "NFT #{0} was transferred!"
-msgstr "NFT #{0} was transferred!"
+msgstr "NFT #{0} fue transferido!"
 
 #: src/hooks/useStakerHandlers.ts
 msgid "NFT #{l2TokenId} was sent!"
-msgstr "NFT #{l2TokenId} was sent!"
+msgstr "NFT #{l2TokenId} fue enviado!"
 
 #: src/hooks/useStakerHandlers.ts
 msgid "NFT #{token} was withdrawn!"
-msgstr "NFT #{token} was withdrawn!"
+msgstr "NFT #{token} fue retirado!"
 
-#: src/components/StakerMyStakes/ModalBody.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "NFT was sent!"
-msgstr "NFT was sent!"
+msgstr "NFT fue enviado!"
 
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTokens/index.tsx
+#: src/components/InfoTokensTable/index.tsx
 msgid "Name"
-msgstr "Name"
+msgstr "Nombre"
 
 #: src/pages/Pool/index.tsx
 msgid "New Position"
-msgstr "New Position"
+msgstr "Nueva Posición"
 
 #: src/components/StakeModal/index.tsx
 msgid "No NFT-s for this pool"
-msgstr "No NFT-s for this pool"
+msgstr "No hay NFT-s para este fondo común"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "No farms"
@@ -1152,7 +1063,7 @@ msgstr "No infinite farms"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "No infinite farms for now"
-msgstr "No infinite farms for now"
+msgstr "No hay infinite farms por ahora"
 
 #: src/pages/FarmingEventsPage/index.tsx
 msgid "No limit farms"
@@ -1160,131 +1071,106 @@ msgstr "No limit farms"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "No limit farms for now"
-msgstr "No limit farms for now"
+msgstr "No hay limit farms por ahora"
 
 #: src/pages/MigrateV2/index.tsx
 msgid "No liquidity found."
-msgstr "No liquidity found."
+msgstr "No se encontró liquidez."
 
 #: src/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
-msgstr "No results found."
-
-#: src/components/FeeSelector/PoolInfoHeader.tsx
-#~ msgid "Not created"
-#~ msgstr "Not created"
-
-#: src/utils/convertDate.ts
-msgid "November"
-msgstr "November"
-
-#: 
-#~ msgid "Now"
-#~ msgstr "Now"
+msgstr "No se han encontrado resultados."
 
 #: src/components/Toggle/ListToggle.tsx
 msgid "OFF"
-msgstr "OFF"
+msgstr "APAGADO"
 
 #: src/components/Toggle/ListToggle.tsx
 msgid "ON"
-msgstr "ON"
+msgstr "ENCENDIDO"
 
 #: src/components/Settings/index.tsx
 msgid "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
-msgstr "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING."
-
-#: src/components/WalletModal/index.tsx
-msgid "ONTO Wallet"
-msgstr "ONTO Wallet"
-
-#: src/utils/convertDate.ts
-msgid "October"
-msgstr "October"
+msgstr "UTILICE ESTE MODO ÚNICAMENTE SI SABE LO QUE ESTÁ HACIENDO."
 
 #: src/components/Toggle/index.tsx
 msgid "Off"
-msgstr "Off"
+msgstr "Apagado"
 
 #: src/components/Toggle/index.tsx
 msgid "On"
-msgstr "On"
+msgstr "Encendido"
 
 #: src/components/Web3ReactManager/index.tsx
 msgid "Oops! An unknown error occurred. Please refresh the page, or visit from another browser or device."
-msgstr "Oops! An unknown error occurred. Please refresh the page, or visit from another browser or device."
+msgstr "¡Ups! Se ha producido un error desconocido. Actualice la página o acceda desde otro navegador o dispositivo por favor."
 
 #: src/components/Badge/RangeBadge.tsx
 #: src/components/StakerMyStakes/IsActive.tsx
 msgid "Out of range"
-msgstr "Out of range"
+msgstr "Fuera de rango"
 
 #: src/components/swap/SwapModalHeader.tsx
 msgid "Output is estimated. You will receive at least <0>{0} {1}</0> or the transaction will revert."
-msgstr "Output is estimated. You will receive at least <0>{0} {1}</0> or the transaction will revert."
+msgstr "La producción es estimada. Recibirá al menos <0>{0} {1}</0> o la transacción se revertirá."
 
 #: src/components/swap/SwapModalHeader.tsx
 msgid "Output will be sent to <0>{0}</0>"
-msgstr "Output will be sent to <0>{0}</0>"
+msgstr "Lo producido se enviará a <0>{0}</0>"
 
 #: src/components/StakerEventCard/index.tsx
-msgid "Overall APR"
-msgstr "Overall APR"
+msgid "Overall APR:"
+msgstr "APR total:"
 
 #: src/components/StakerEventCard/index.tsx
 #: src/components/StakerEventCard/index.tsx
-#~ msgid "POOL"
-#~ msgstr "POOL"
+msgid "POOL"
+msgstr "POOL"
 
-#: src/pages/EventsHistory/index.tsx
-#: src/pages/EventsHistory/index.tsx
+#: src/components/FarmsHistoryTable/index.tsx
 msgid "Participants"
-msgstr "Participants"
+msgstr "Participantes"
 
 #: src/components/CautionModal/index.tsx
 msgid "Please confirm that you agree with the following paragraphs:"
-msgstr "Please confirm that you agree with the following paragraphs:"
+msgstr "Confirme que está de acuerdo con los siguientes párrafos:"
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Please confirm you would like to remove this list by typing REMOVE"
-msgstr "Please confirm you would like to remove this list by typing REMOVE"
+msgstr "Confirme que desea eliminar esta lista escribiendo ELIMINAR"
 
 #: src/components/WalletModal/index.tsx
-#~ msgid "Please connect to the Polygon network."
-#~ msgstr "Please connect to the Polygon network."
+msgid "Please connect to the Polygon network."
+msgstr "Conéctese a la red de Polygon por favor."
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Please select a token pair"
-msgstr "Please select a token pair"
+msgstr "Seleccione un par de token"
 
 #: src/components/Settings/index.tsx
 msgid "Please type the word \"{confirmWord}\" to enable expert mode."
-msgstr "Please type the word \"{confirmWord}\" to enable expert mode."
+msgstr "Escribe la palabra \"{confirmWord}\" para activar el modo experto."
 
+#: src/components/FarmsHistoryTable/index.tsx
 #: src/components/Header/index.tsx
-#: src/components/InfoPools/index.tsx
-#: src/components/InfoPools/index.tsx
+#: src/components/InfoPoolsTable/index.tsx
 #: src/components/NavigationTabs/SwapPoolTabs.tsx
-#: src/components/StakerEventCard/index.tsx
-#: src/components/StakerEventCard/index.tsx
-#: src/components/StakerMyStakes/PositionHeader.tsx
-#: src/pages/EventsHistory/index.tsx
-#: src/pages/EventsHistory/index.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "Pool"
 msgstr "Pool"
 
 #: src/pages/PoolFinder/index.tsx
 msgid "Pool Found!"
-msgstr "Pool Found!"
+msgstr "¡Fondo común encontrado!"
 
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Pool fee"
-msgstr "Pool fee"
+msgstr "Tarifa del fondo común"
 
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Pool tokens in rewards pool:"
-msgstr "Pool tokens in rewards pool:"
+msgstr "Fondo común de tokens en el fondo común de recompensas:"
 
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/index.tsx
@@ -1295,169 +1181,145 @@ msgstr "Pool tokens in rewards pool:"
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Pooled {0}:"
-msgstr "Pooled {0}:"
+msgstr "Conjunto {0}:"
 
 #: src/components/InfoMenu/index.tsx
-#: src/pages/InfoPage/index.tsx
 msgid "Pools"
 msgstr "Pools"
 
 #: src/pages/Pool/index.tsx
 msgid "Pools Overview"
-msgstr "Pools Overview"
-
-#: 
-#~ msgid "Pools for staking"
-#~ msgstr "Pools for staking"
-
-#: src/pages/NewAddLiquidity/components/PopularPairs/index.tsx
-msgid "Popular pairs"
-msgstr "Popular pairs"
-
-#: src/pages/NewAddLiquidity/components/PresetRanges/index.tsx
-msgid "Preset ranges"
-msgstr "Preset ranges"
+msgstr "Vista general del fondo común"
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Preview"
-msgstr "Preview"
+msgstr "Avance"
 
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTokens/index.tsx
+#: src/components/InfoTokensTable/index.tsx
 #: src/components/swap/SwapModalHeader.tsx
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Price"
-msgstr "Price"
+msgstr "Precio"
 
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTokens/index.tsx
+#: src/components/InfoTokensTable/index.tsx
 msgid "Price Change"
-msgstr "Price Change"
+msgstr "Cambio de Precio"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Price Difference:"
-msgstr "Price Difference:"
+msgstr "Diferencia de precios:"
 
 #: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Price Impact"
-msgstr "Price Impact"
+msgstr "Impacto en el precio"
 
 #: src/pages/Swap/index.tsx
 msgid "Price Impact Too High"
-msgstr "Price Impact Too High"
+msgstr "El impacto de precios es muy alto"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Price Range"
-msgstr "Price Range"
+msgstr "Rango de precios"
 
 #: src/components/swap/SwapModalHeader.tsx
 msgid "Price Updated"
-msgstr "Price Updated"
+msgstr "Precio Actualizado"
 
 #: src/components/CurrencyInputPanel/index.tsx
 msgid "Price is outside specified price range. Single-asset deposit only."
-msgstr "Price is outside specified price range. Single-asset deposit only."
+msgstr "El precio está fuera del rango de precios especificado. Depósito de un solo activo."
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Price range"
-msgstr "Price range"
+msgstr "Rango de precios"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Price:"
-msgstr "Price:"
+msgstr "Precio:"
 
 #: src/components/StakeModal/index.tsx
 msgid "Provide liquidity for {0} / {1}"
-msgstr "Provide liquidity for {0} / {1}"
-
-#: src/components/StakerEventCard/index.tsx
-#: src/components/StakerEventCard/index.tsx
-#~ msgid "REWARD"
-#~ msgstr "REWARD"
+msgstr "Proporcionar liquidez para {0} / {1}"
 
 #: src/components/swap/UnsupportedCurrencyFooter.tsx
 msgid "Read more about unsupported assets"
-msgstr "Read more about unsupported assets"
+msgstr "Leer más sobre activos no soportados"
 
 #: src/components/AccountDetails/index.tsx
 msgid "Recent Transactions"
-msgstr "Recent Transactions"
+msgstr "Transacciones recientes"
 
 #: src/components/AddressInputPanel/index.tsx
 msgid "Recipient"
-msgstr "Recipient"
+msgstr "Recipiente"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Remove"
-msgstr "Remove"
+msgstr "Eliminar"
 
 #: src/components/NavigationTabs/AddRemoveTabs.tsx
 #: src/pages/Pool/PositionPage.tsx
+#: src/pages/RemoveLiquidity/V3.tsx
 msgid "Remove Liquidity"
-msgstr "Remove Liquidity"
+msgstr "Quitar Liquidez"
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Remove list"
-msgstr "Remove list"
+msgstr "Eliminar lista"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Remove {0}/{1} liquidity"
-msgstr "Remove {0}/{1} liquidity"
+msgstr "Quitar {0}/{1} liquidez"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Removing {0} {1} and {2} {3}"
-msgstr "Removing {0} {1} and {2} {3}"
+msgstr "Eliminando {0} {1} y {2} {3}"
 
-#: src/components/Footer/index.tsx
+#: src/pages/App.tsx
 msgid "Report a bug"
-msgstr "Report a bug"
+msgstr "Reportar un bug"
 
 #: src/components/Settings/index.tsx
 msgid "Restricts swaps to direct pairs only."
-msgstr "Restricts swaps to direct pairs only."
+msgstr "Restringe los intercambios a pares directos únicamente."
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Return"
-msgstr "Return"
+msgstr "Retorno"
 
+#: src/components/FarmsHistoryTable/index.tsx
 #: src/components/StakerEventCard/index.tsx
 #: src/components/StakerEventCard/index.tsx
-#: src/components/StakerMyStakes/PositionCardBodyStat.tsx
-#: src/pages/EventsHistory/index.tsx
-#: src/pages/EventsHistory/index.tsx
+#: src/components/StakerMyStakes/index.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "Reward"
-msgstr "Reward"
+msgstr "Recompensa"
 
 #: src/hooks/useStakerHandlers.ts
 msgid "Rewards were claimed!"
-msgstr "Rewards were claimed!"
+msgstr "¡Se reclamaron las recompensas!"
 
 #: src/components/swap/AdvancedSwapDetails.tsx
 msgid "Route"
-msgstr "Route"
+msgstr "Ruta"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "STAKED"
 msgstr "STAKED"
 
-#: src/components/StakerEventCard/index.tsx
-#: src/components/StakerEventCard/index.tsx
-#~ msgid "START"
-#~ msgstr "START"
-
 #: src/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or paste address"
-msgstr "Search name or paste address"
+msgstr "Buscar nombre o pegar dirección"
 
 #: src/components/StakeModal/index.tsx
 msgid "Select NFT"
-msgstr "Select NFT"
+msgstr "Seleccione un NFT"
 
 #: src/components/StakeModal/index.tsx
 msgid "Select NFT for farming"
-msgstr "Select NFT for farming"
+msgstr "Seleccione un NFT para el farming"
 
 #: src/components/CurrencyInputPanel/index.tsx
 #: src/components/SearchModal/CurrencySearch.tsx
@@ -1465,64 +1327,55 @@ msgstr "Select NFT for farming"
 #: src/pages/PoolFinder/index.tsx
 #: src/state/swap/hooks.ts
 msgid "Select a token"
-msgstr "Select a token"
+msgstr "Seleccione un token"
 
 #: src/pages/PoolFinder/index.tsx
 msgid "Select a token to find your liquidity on SushiSwap or QuickSwap."
-msgstr "Select a token to find your liquidity on SushiSwap or QuickSwap."
+msgstr "Seleccione un token para encontrar su liquidez en SushiSwap o QuickSwap."
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidity/Review.tsx
 msgid "Selected Range"
-msgstr "Selected Range"
+msgstr "Rango seleccionado"
 
-#: src/components/StakerMyStakes/PositionHeader.tsx
+#: src/components/StakerMyStakes/index.tsx
 #: src/components/StakingModal/index.tsx
 msgid "Send"
-msgstr "Send"
+msgstr "Enviar"
 
-#: src/components/StakerMyStakes/ModalBody.tsx
+#: src/components/StakerMyStakes/index.tsx
 #: src/components/StakingModal/index.tsx
 msgid "Send NFT"
-msgstr "Send NFT"
+msgstr "Enviar NFT"
 
-#: src/utils/convertDate.ts
-msgid "September"
-msgstr "September"
+#: src/components/StakerMyStakes/index.tsx
+msgid "Send NFT to another account"
+msgstr "Enviar NFT a otra cuenta"
 
-#: src/pages/AddLiquidity/PoolInfoHeader.tsx
-#: src/pages/AddLiquidity/PoolInfoHeader.tsx
-#~ msgid "Set Price Range"
-#~ msgstr "Set Price Range"
+#: src/components/StakerMyStakes/index.tsx
+msgid "Sending"
+msgstr "Envío"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Set Price Range"
-msgstr "Set Price Range"
+msgstr "Establecer rango de precio"
 
 #: src/pages/Pool/FilterPanelItem.tsx
 msgid "Show"
-msgstr "Show"
-
-#: 
-#~ msgid "Show closed positions"
-#~ msgstr "Show closed positions"
-
-#: 
-#~ msgid "Simple"
-#~ msgstr "Simple"
+msgstr "Mostrar"
 
 #: src/components/swap/AdvancedSwapDetails.tsx
 #: src/components/TransactionSettings/index.tsx
 msgid "Slippage tolerance"
-msgstr "Slippage tolerance"
+msgstr "Tolerancia de deslizamiento"
 
 #: src/components/swap/UnsupportedCurrencyFooter.tsx
 msgid "Some assets are not available through this interface because they may not work well with the smart contracts or we are unable to allow trading for legal reasons."
-msgstr "Some assets are not available through this interface because they may not work well with the smart contracts or we are unable to allow trading for legal reasons."
+msgstr "Algunos activos no están disponibles a través de esta interfaz porque puede que no funcionen bien con los contratos inteligentes o que no podamos permitir el comercio por razones legales."
 
 #: src/components/ErrorBoundary/index.tsx
 msgid "Something went wrong"
-msgstr "Something went wrong"
+msgstr "Algo salió mal"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "Stake"
@@ -1532,24 +1385,15 @@ msgstr "Stake"
 msgid "Stake ALGB"
 msgstr "Stake ALGB"
 
-#: src/components/StakerMyStakes/index.tsx
-msgid "Stake Rewards"
-msgstr "Stake Rewards"
-
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Staked ALGB"
 msgstr "Staked ALGB"
 
 #: src/hooks/useRealStaker.ts
-#~ msgid "Staked {0} ALGB"
-#~ msgstr "Staked {0} ALGB"
-
-#: src/hooks/useRealStaker.ts
-msgid "Staked {stakedCount} ALGB"
-msgstr "Staked {stakedCount} ALGB"
+msgid "Staked {0} ALGB"
+msgstr "Staked {0} ALGB"
 
 #: src/components/Header/index.tsx
-#: src/pages/RealStakerPage/index.tsx
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Staking"
 msgstr "Staking"
@@ -1557,35 +1401,23 @@ msgstr "Staking"
 #: src/components/StakerEventCard/index.tsx
 #: src/components/StakerEventCard/index.tsx
 msgid "Start"
-msgstr "Start"
-
-#: src/components/StakerEventCard/index.tsx
-msgid "Started!"
-msgstr "Started!"
-
-#: src/pages/AddLiquidityPage/index.tsx
-msgid "Starting Price"
-msgstr "Starting Price"
+msgstr "Iniciar"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Starts in {0}"
-msgstr "Starts in {0}"
+msgstr "Comienza en {0}"
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "Statistics"
-msgstr "Statistics"
+msgstr "Stadísticas"
 
 #: src/components/PositionList/index.tsx
 msgid "Status"
-msgstr "Status"
-
-#: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "Success! View pools"
-msgstr "Success! View pools"
+msgstr "Estado"
 
 #: src/pages/AddLiquidity/index.tsx
 msgid "Supplying {0} {1} {2} {3} {4}"
-msgstr "Supplying {0} {1} {2} {3} {4}"
+msgstr "Suministrando {0} {1} {2} {3} {4}"
 
 #: src/components/Header/index.tsx
 #: src/components/NavigationTabs/SwapPoolTabs.tsx
@@ -1593,202 +1425,139 @@ msgstr "Supplying {0} {1} {2} {3} {4}"
 #: src/pages/Swap/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Swap"
-msgstr "Swap"
+msgstr "Intercambiar"
 
 #: src/pages/Swap/index.tsx
 #: src/pages/Swap/index.tsx
 msgid "Swap Anyway"
-msgstr "Swap Anyway"
-
-#: src/hooks/useSwapCallback.ts
-#: src/hooks/useSwapCallback.ts
-msgid "Swap {inputAmount} {inputSymbol} for {outputAmount} {outputSymbol}"
-msgstr "Swap {inputAmount} {inputSymbol} for {outputAmount} {outputSymbol}"
+msgstr "Intercambiar de todos modos"
 
 #: src/components/swap/ConfirmSwapModal.tsx
 msgid "Swapping {0} {1} for {2} {3}"
-msgstr "Swapping {0} {1} for {2} {3}"
+msgstr "Intercambiando {0} {1} por {2} {3}"
 
-#: src/components/InfoPools/index.tsx
-#: src/components/InfoPools/index.tsx
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTokens/index.tsx
+#: src/components/InfoPoolsTable/index.tsx
+#: src/components/InfoTokensTable/index.tsx
 #: src/pages/PoolInfoPage/index.tsx
 msgid "TVL"
 msgstr "TVL"
 
 #: src/hooks/useSwapCallback.ts
 msgid "The Algebra invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
-msgstr "The Algebra invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
+msgstr "El invariante Algebra x*y=k no estaba satisfecho en el intercambio. Esto generalmente significa que uno de los tokens que está intercambiando incorpora un comportamiento personalizado en la transferencia."
 
 #: src/hooks/useSwapCallback.ts
 msgid "The input token cannot be transferred. There may be an issue with the input token."
-msgstr "The input token cannot be transferred. There may be an issue with the input token."
+msgstr "El token de entrada no se puede transferir. Puede haber un problema con el token de entrada."
 
 #: src/hooks/useSwapCallback.ts
 msgid "The output token cannot be transferred. There may be an issue with the output token."
-msgstr "The output token cannot be transferred. There may be an issue with the output token."
+msgstr "El token de salida no se puede transferir. Puede haber un problema con el token de salida."
 
 #: src/hooks/useSwapCallback.ts
 msgid "The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with Algebra."
-msgstr "The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with Algebra."
+msgstr "El token de salida no se puede transferir. Puede haber un problema con el token de salida. Nota: Los tokens de rebase son incompatibles con Algebra"
 
 #: src/components/Badge/RangeBadge.tsx
 msgid "The price of this pool is outside of your selected range. Your position is not currently earning fees."
-msgstr "The price of this pool is outside of your selected range. Your position is not currently earning fees."
+msgstr "El precio de este fondo común está fuera de su rango seleccionado. Su posición actualmente no está ganando comisiones."
 
 #: src/components/Badge/RangeBadge.tsx
 msgid "The price of this pool is within your selected range. Your position is currently earning fees."
-msgstr "The price of this pool is within your selected range. Your position is currently earning fees."
+msgstr "El precio de este fondo común está dentro de su rango seleccionado. Su posición actualmente está ganando comisiones."
 
 #: src/hooks/useSwapCallback.ts
 msgid "The transaction could not be sent because the deadline has passed. Please check that your transaction deadline is not too low."
-msgstr "The transaction could not be sent because the deadline has passed. Please check that your transaction deadline is not too low."
+msgstr "No se pudo enviar la transacción porque la fecha límite ha pasado. Verifique que el plazo de su transacción no sea demasiado corto."
 
 #: src/components/LiquidityChartRangeInput/index.tsx
-#~ msgid "There is no liquidity data."
-#~ msgstr "There is no liquidity data."
-
-#: src/components/StakerEventCard/index.tsx
-msgid "This farm is filled"
-msgstr "This farm is filled"
+msgid "There is no liquidity data."
+msgstr "No hay datos de liquidez."
 
 #: src/hooks/useSwapCallback.ts
 msgid "This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra"
-msgstr "This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra"
+msgstr "Esta transacción no se realizará correctamente debido al movimiento de precios. Intente aumentar su tolerancia al deslizamiento. Nota: Los tokens de rebase son incompatibles con Algebra"
 
 #: src/hooks/useSwapCallback.ts
 msgid "This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance."
-msgstr "This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance."
+msgstr "Esta transacción no se realizará correctamente debido al movimiento de precios o al cargo por transferencia. Intente aumentar su tolerancia al deslizamiento."
 
 #: src/components/SearchModal/ManageTokens.tsx
 msgid "Tip: Custom tokens are stored locally in your browser"
-msgstr "Tip: Custom tokens are stored locally in your browser"
+msgstr "Consejo: Los tokens personalizados se almacenan localmente en su navegador"
 
 #: src/components/swap/SwapModalHeader.tsx
 #: src/pages/Swap/index.tsx
 msgid "To"
-msgstr "To"
+msgstr "A"
 
 #: src/pages/Swap/index.tsx
 msgid "To (at least)"
-msgstr "To (at least)"
+msgstr "A (al menos)"
 
 #: src/components/StakingModal/index.tsx
 msgid "To stake your NFT you should approve Algebra to use it"
-msgstr "To stake your NFT you should approve Algebra to use it"
+msgstr "Para depositar en staking su NFT, debe aprobar a Algebra para usarlo"
 
 #: src/components/StakeModal/index.tsx
 msgid "To take part in this farming event, you need to"
-msgstr "To take part in this farming event, you need to"
+msgstr "Para participar en este evento farming, debes"
 
-#: src/pages/NewAddLiquidity/components/USDPrices/index.tsx
-msgid "Token Prices"
-msgstr "Token Prices"
-
-#: src/pages/NewAddLiquidity/components/TokenRatio/index.tsx
-msgid "Token ratio"
-msgstr "Token ratio"
-
+#: src/components/InfoMenu/index.tsx
 #: src/components/SearchModal/Manage.tsx
-#: src/pages/NewAddLiquidity/components/PriceFomatToggler/index.tsx
 msgid "Tokens"
 msgstr "Tokens"
 
 #: src/components/SearchModal/CurrencyList.tsx
 msgid "Tokens from inactive lists. Import specific tokens below or click Manage to activate more lists."
-msgstr "Tokens from inactive lists. Import specific tokens below or click Manage to activate more lists."
+msgstr "Tokens de listas inactivas. Importe tokens específicos a continuación o haga click en Gestionar para activar mas listas."
 
 #: src/pages/PoolInfoPage/PoolInfoHeader.tsx
 msgid "Total Collected Fees: <0>${0}</0>"
-msgstr "Total Collected Fees: <0>${0}</0>"
-
-#: src/components/InfoTotalStats/index.tsx
-msgid "Total Value Locked"
-msgstr "Total Value Locked"
+msgstr "Total Comisiones Recolectadas: <0>${0}</0>"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Total amount of minted xALGB"
-msgstr "Total amount of minted xALGB"
+msgstr "Monto total de xALGB acuñado"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Total amount of staked ALGB"
-msgstr "Total amount of staked ALGB"
+msgstr "Monto total de ALGB en staking"
 
 #: src/components/Settings/index.tsx
 msgid "Transaction Settings"
-msgstr "Transaction Settings"
+msgstr "Ajustes de la transacción"
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Transaction Submitted"
-msgstr "Transaction Submitted"
+msgstr "Transacción enviada"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Transaction deadline"
-msgstr "Transaction deadline"
+msgstr "Fecha limite de la transacción"
 
 #: src/components/WalletModal/PendingView.tsx
 msgid "Try Again"
-msgstr "Try Again"
+msgstr "Inténtalo de nuevo"
 
 #: src/components/Settings/index.tsx
 msgid "Turn On Expert Mode"
-msgstr "Turn On Expert Mode"
-
-#: 
-#~ msgid "UNI {0}/{1} Burned"
-#~ msgstr "UNI {0}/{1} Burned"
-
-#: src/pages/NewAddLiquidity/components/PriceFomatToggler/index.tsx
-msgid "USD"
-msgstr "USD"
-
-#: src/pages/NewAddLiquidity/components/USDPrices/index.tsx
-msgid "USD Prices"
-msgstr "USD Prices"
-
-#: src/components/earn/ClaimRewardModal.tsx
-#: src/components/earn/UnstakingModal.tsx
-#~ msgid "Unclaimed UNI"
-#~ msgstr "Unclaimed UNI"
+msgstr "Activar el modo experto"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Unclaimed fees"
-msgstr "Unclaimed fees"
+msgstr "Comisiones no reclamadas"
 
 #: src/components/StakerMyStakes/index.tsx
-msgid "Undepositing"
-msgstr "Undepositing"
-
-#: 
-#~ msgid "Uniswap governance is only available on Layer 1. Switch your network to Ethereum Mainnet to view Proposals and Vote."
-#~ msgstr "Uniswap governance is only available on Layer 1. Switch your network to Ethereum Mainnet to view Proposals and Vote."
-
-#: 
-#~ msgid "Uniswap migration contract↗"
-#~ msgstr "Uniswap migration contract↗"
-
-#: 
-#~ msgid "Uniswap on {0}"
-#~ msgstr "Uniswap on {0}"
-
-#: 
-#~ msgid "Unknown Source"
-#~ msgstr "Unknown Source"
-
-#: 
-#~ msgid "Unknown error{0}. Try increasing your slippage tolerance. Note: fee on transfer and rebase tokens are incompatible with Algebra."
-#~ msgstr "Unknown error{0}. Try increasing your slippage tolerance. Note: fee on transfer and rebase tokens are incompatible with Algebra."
-
 #: src/components/StakerMyStakes/index.tsx
-msgid "Undepositing"
-msgstr "Undepositing"
+msgid "Undeposit"
+msgstr "Anular depósito"
 
 #: src/hooks/useSwapCallback.ts
 msgid "Unknown error{0}. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra."
-msgstr "Unknown error{0}. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra."
+msgstr "Error desconocido{0}. Intente aumentar su tolerancia al deslizamiento. Nota: Los tokens de rebase son incompatibles con Algebra."
 
-#: src/pages/RealStakerPage/RealStakerResBlocks.tsx
+#: src/pages/RealStakerPage/index.tsx
 #: src/pages/RealStakerPage/RealStakerUnstakeModal.tsx
 msgid "Unstake"
 msgstr "Unstake"
@@ -1797,13 +1566,9 @@ msgstr "Unstake"
 msgid "Unstaked {unstakeCount} ALGB"
 msgstr "Unstaked {unstakeCount} ALGB"
 
-#: src/pages/RealStakerPage/RealStakerResBlocks.tsx
-msgid "Unstaking"
-msgstr "Unstaking"
-
 #: src/components/swap/UnsupportedCurrencyFooter.tsx
 msgid "Unsupported Assets"
-msgstr "Unsupported Assets"
+msgstr "Activos no soportados"
 
 #: src/pages/Swap/index.tsx
 msgid "Unwrap"
@@ -1811,219 +1576,200 @@ msgstr "Unwrap"
 
 #: src/hooks/useWrapCallback.ts
 msgid "Unwrap {0} W{chainSymbol} to {chainSymbol}"
-msgstr "Unwrap {0} W{chainSymbol} to {chainSymbol}"
+msgstr "Desenvolver {0} W{chainSymbol} a {chainSymbol}"
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Update list"
-msgstr "Update list"
+msgstr "Actualizar lista"
 
 #: src/components/CurrencyInputPanel/index.tsx
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Updating..."
-msgstr "Updating..."
+msgstr "Actualizando..."
 
 #: src/components/CautionModal/index.tsx
 msgid "Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
-msgstr "Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
+msgstr "El Uso de Algebra implica varios riesgos, incluyendo, entre otros, pérdidas mientras se suministran activos digitales en Algebra y pérdidas debido a la fluctuación de precios de los tokens en un par de comercio o un fondo común de liquidez."
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "View list"
-msgstr "View list"
+msgstr "Ver lista"
 
 #: src/components/AccountDetails/index.tsx
 #: src/components/AccountDetails/index.tsx
 #: src/components/Popups/TransactionPopup.tsx
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "View on Explorer"
-msgstr "View on Explorer"
+msgstr "Ver en el Explorador"
 
 #: src/components/StakeModal/index.tsx
-#: src/components/StakerMyStakes/PositionHeader.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "View position"
-msgstr "View position"
+msgstr "Ver posición"
 
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Volume"
-msgstr "Volume"
+msgstr "Volumen"
 
-#: src/components/InfoPools/index.tsx
-#: src/components/InfoPools/index.tsx
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTotalStats/index.tsx
+#: src/components/InfoPoolsTable/index.tsx
+#: src/components/InfoTokensTable/index.tsx
 msgid "Volume 24H"
-msgstr "Volume 24H"
+msgstr "Volumen de 24H"
 
-#: src/components/InfoPools/index.tsx
-#: src/components/InfoPools/index.tsx
+#: src/components/InfoPoolsTable/index.tsx
 msgid "Volume 7D"
-msgstr "Volume 7D"
+msgstr "Volumen de 7D"
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Waiting For Confirmation"
-msgstr "Waiting For Confirmation"
+msgstr "Esperando por confirmación"
 
 #: src/components/AddressInputPanel/index.tsx
 msgid "Wallet Address or ENS name"
-msgstr "Wallet Address or ENS name"
+msgstr "Dirección de billetera o nombre de ENS"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "Warning: Price is out of range"
-msgstr "Warning: Price is out of range"
+msgstr "Advertencia: El precio está fuera de rango"
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Week"
-msgstr "Week"
+msgstr "Semana"
 
 #: src/components/CautionModal/index.tsx
 msgid "Welcome to Algebra, the first concentrated liquidity DEX on Polygon!"
-msgstr "Welcome to Algebra, the first concentrated liquidity DEX on Polygon!"
+msgstr "Bienvenido a Algebra, el primer Exchange Descentralizado con liquidez concentrada en Polygon!"
 
-#: src/components/StakerMyStakes/PositionHeader.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "Withdraw"
-msgstr "Withdraw"
+msgstr "Retirar"
 
-#: src/components/StakerMyStakes/PositionHeader.tsx
+#: src/components/StakerMyStakes/index.tsx
 msgid "Withdrawing"
-msgstr "Withdrawing"
+msgstr "Retirando"
 
 #: src/pages/Swap/index.tsx
 msgid "Wrap"
-msgstr "Wrap"
+msgstr "Envoltura"
 
 #: src/hooks/useWrapCallback.ts
 msgid "Wrap {0} {chainSymbol} to W{chainSymbol}"
-msgstr "Wrap {0} {chainSymbol} to W{chainSymbol}"
+msgstr "Envuelva {0} {chainSymbol} a W{chainSymbol}"
 
 #: src/components/WalletModal/index.tsx
 msgid "Wrong Network"
-msgstr "Wrong Network"
+msgstr "Red Incorrecta"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "Yearly percentage of profits at the current rate of rewards"
-msgstr "Yearly percentage of profits at the current rate of rewards"
+msgstr "Porcentaje anual de ganancias con la tasa actual de recompensas"
 
 #: src/components/CautionModal/index.tsx
 msgid "You are responsible for completing your own due diligence to understand the risks of trading crypto."
-msgstr "You are responsible for completing your own due diligence to understand the risks of trading crypto."
+msgstr "Usted es responsale de realizar su propia investigación para comprender los riesgos del comercio con criptomonedas."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "You are the first liquidity provider for this Algebra pool. Your liquidity will migrate at the current"
-msgstr "You are the first liquidity provider for this Algebra pool. Your liquidity will migrate at the current"
+msgstr "Usted es el primer proveedor de liquidez para este fondo común de Algebra. Su liquidez migrará al actual"
 
 #: src/pages/Swap/index.tsx
 msgid "You can now trade {0}"
-msgstr "You can now trade {0}"
+msgstr "Ahora puede operar con {0}"
 
 #: src/pages/Pool/index.tsx
 msgid "You do not have any liquidity positions."
-msgstr "You do not have any liquidity positions."
+msgstr "Usted no posee ninguna posición de liquidez."
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "You have {xALGBBalance} xALGB"
-msgstr "You have {xALGBBalance} xALGB"
+msgstr "Usted tiene {xALGBBalance} xALGB"
 
 #: src/pages/MigrateV2/MigrateV2Pair.tsx
 msgid "You must connect an account."
-msgstr "You must connect an account."
+msgstr "Debe conectar una cuenta."
 
 #: src/pages/Swap/index.tsx
 msgid "You must give the Algebra smart contracts permission to use your {0}. You only have to do this once per token."
-msgstr "You must give the Algebra smart contracts permission to use your {0}. You only have to do this once per token."
+msgstr "Debe concedir permiso a los contratos inteligentes de Algebra para usar tu {0}. Solo tienes que hacerlo una vez por token."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "You should only deposit liquidity into Algebra at a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
-msgstr "You should only deposit liquidity into Algebra at a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
+msgstr "Usted solo debe depositar liquidez en Algebra a un precio que usted considere correcto. <0/>Si el precio parece incorrecto, puedes hacer un intercambio para mover el precio o esperar a que alguien lo haga."
 
 #: src/components/CautionModal/index.tsx
 msgid "You use Algebra at your own risk and without warranties of any kind. Algebra is not liable for potential losses."
-msgstr "You use Algebra at your own risk and without warranties of any kind. Algebra is not liable for potential losses."
+msgstr "Usted usa Algebra bajo su propio riesgo y sin garantías de ningun tipo. Algebra no se hace responsable de pérdidas potenciales."
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "You will also collect fees earned from this position."
-msgstr "You will also collect fees earned from this position."
-
-#: 
-#~ msgid "You will receive"
-#~ msgstr "You will receive"
-
-#: src/pages/Staking/StakingPoolPage.tsx
-msgid "Your Reward"
-msgstr "Your Reward"
-
-#: 
-#~ msgid "Your V3 liquidity positions will appear here."
-#~ msgstr "Your V3 liquidity positions will appear here."
+msgstr "Tambien cobrará las comisiones generadas por esta posición."
 
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Your pool share:"
-msgstr "Your pool share:"
+msgstr "Participación en el fondo común:"
 
 #: src/components/PositionCard/index.tsx
 msgid "Your position"
-msgstr "Your position"
+msgstr "Su posición"
 
 #: src/components/Badge/RangeBadge.tsx
 msgid "Your position has 0 liquidity, and is not earning fees."
-msgstr "Your position has 0 liquidity, and is not earning fees."
+msgstr "Su posición tiene 0 liquidez y no está generando comisiones."
 
 #: src/components/LiquidityChartRangeInput/index.tsx
 msgid "Your position will appear here."
-msgstr "Your position will appear here."
+msgstr "Su posición aparecerá aquí."
 
 #: src/components/PositionPreview/index.tsx
 #: src/components/PositionPreview/index.tsx
 msgid "Your position will be 100% composed of {0} at this price"
-msgstr "Your position will be 100% composed of {0} at this price"
+msgstr "Su posición será 100% compuesta por {0} a este precio"
 
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "Your position will be 100% {0} at this price."
-msgstr "Your position will be 100% {0} at this price."
+msgstr "Su posición será 100% {0} a este precio."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Your position will not earn fees or be used in trades until the market price moves into your range."
-msgstr "Your position will not earn fees or be used in trades until the market price moves into your range."
+msgstr "Su posición no ganará comisiones ni se utilizará en operaciones hasta que el precio del mercado se encuentre dentro de su rango."
 
 #: src/components/PositionList/index.tsx
+#: src/components/PositionList/index.tsx
 msgid "Your positions"
-msgstr "Your positions"
-
-#: src/components/earn/PoolCard.tsx
-#~ msgid "Your rate"
-#~ msgstr "Your rate"
+msgstr "Sus posiciones"
 
 #: src/components/PositionCard/index.tsx
 #: src/components/PositionCard/V2.tsx
 msgid "Your total pool tokens:"
-msgstr "Your total pool tokens:"
+msgstr "Su total de tokens del fondo común:"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Your transaction cost will be much higher as it includes the gas to create the pool."
-msgstr "Your transaction cost will be much higher as it includes the gas to create the pool."
+msgstr "Su costo de transacción será más alto ya que incluye el gas para crear el fondo común."
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Your transaction may be frontrun"
-msgstr "Your transaction may be frontrun"
+msgstr "Su transacción puede ser una inversión ventajista"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Your transaction may fail"
-msgstr "Your transaction may fail"
+msgstr "Su transacción puede fallar"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Your transaction will revert if it is pending for more than this period of time."
-msgstr "Your transaction will revert if it is pending for more than this period of time."
+msgstr "Su transacción se revertirá si está pendiente por más de este período de tiempo."
 
 #: src/components/TransactionSettings/index.tsx
 msgid "Your transaction will revert if the price changes unfavorably by more than this percentage."
-msgstr "Your transaction will revert if the price changes unfavorably by more than this percentage."
+msgstr "Su transacción se revertirá si el precio cambia desfavorablemente más de este porcentaje."
 
 #: src/components/AccountDetails/index.tsx
 msgid "Your transactions will appear here..."
-msgstr "Your transactions will appear here..."
+msgstr "Sus transacciones aparecerán aquí..."
 
 #: src/pages/Swap/index.tsx
 msgid "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"
@@ -2031,35 +1777,40 @@ msgstr "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex
 
 #: src/components/Settings/index.tsx
 msgid "confirm"
-msgstr "confirm"
-
-#: src/utils/time.ts
-msgid "d"
-msgstr "d"
+msgstr "confirmar"
 
 #: src/components/StakerEventCard/index.tsx
 msgid "ends in {0}"
-msgstr "ends in {0}"
+msgstr "Termina en {0}"
 
 #: src/components/Web3Status/Sock.tsx
 msgid "has socks emoji"
-msgstr "has socks emoji"
+msgstr "tiene socks emoji"
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "https:// or ipfs:// or ENS name"
-msgstr "https:// or ipfs:// or ENS name"
+msgstr "https:// o ipfs:// o nombre ENS"
 
 #: src/components/TransactionSettings/index.tsx
 msgid "minutes"
-msgstr "minutes"
+msgstr "minutos"
+
+#: src/pages/Swap/index.tsx
+msgid "only for 1 week"
+msgstr "Solo por 1 semana"
+
+#: src/pages/AddLiquidityPage/index.tsx
+#: src/pages/AddLiquidityPage/index.tsx
+msgid "per"
+msgstr "por"
 
 #: src/components/StakerEventCard/index.tsx
 msgid "starts in {0}"
-msgstr "starts in {0}"
+msgstr "Comienza en {0}"
 
 #: src/components/StakerEventCard/index.tsx
 msgid "will be available in {0}"
-msgstr "will be available in {0}"
+msgstr "Estará disponible en {0}"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "xALGB Burned"
@@ -2071,7 +1822,7 @@ msgstr "xALGB Minted"
 
 #: src/pages/StakingAnalyticsPage/index.tsx
 msgid "xALGB Total Supply"
-msgstr "xALGB Total Supply"
+msgstr "Suministro total xALGB"
 
 #: src/components/SearchModal/ImportToken.tsx
 msgid "{0, plural, one {Import token} other {Import tokens}}"
@@ -2079,7 +1830,9 @@ msgstr "{0, plural, one {Import token} other {Import tokens}}"
 
 #: src/components/FeeChartRangeInput/index.tsx
 #: src/components/FeeChartRangeInput/index.tsx
-#: src/components/WalletModal/index.tsx
+#: src/components/RateToggle/index.tsx
+#: src/components/RateToggle/index.tsx
+#: src/pages/Pool/FilterPanelItem.tsx
 msgid "{0}"
 msgstr "{0}"
 
@@ -2087,62 +1840,56 @@ msgstr "{0}"
 msgid "{0} %"
 msgstr "{0} %"
 
+#: src/components/PositionListItem/index.tsx
+#: src/components/PositionListItem/index.tsx
+msgid "{0} <0/> per <1/>"
+msgstr "{0} <0/> por <1/>"
+
 #: src/pages/RealStakerPage/Frozen.tsx
 msgid "{0} ALGB earned"
-msgstr "{0} ALGB earned"
+msgstr "{0} ALGB ganado"
 
 #: src/components/SearchModal/ManageTokens.tsx
 msgid "{0} Custom Tokens"
-msgstr "{0} Custom Tokens"
-
-#: src/pages/AddLiquidityPage/index.tsx
-#~ msgid "{0} Fee:"
-#~ msgstr "{0} Fee:"
+msgstr "{0} Tokens personalizados"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "{0} Fees Earned:"
-msgstr "{0} Fees Earned:"
+msgstr "{0} Comisiones Ganadas:"
 
 #: src/components/LiquidityBarChart/BarChart.tsx
 msgid "{0} Locked: {1} {2}"
-msgstr "{0} Locked: {1} {2}"
+msgstr "{0} Bloqueado: {1} {2}"
 
 #: src/components/Web3Status/Web3StatusInner.tsx
 msgid "{0} Pending"
-msgstr "{0} Pending"
+msgstr "{0} Pendiente"
 
 #: src/components/LiquidityBarChart/BarChart.tsx
 #: src/components/LiquidityBarChart/BarChart.tsx
 msgid "{0} Price: {1} {2}"
-msgstr "{0} Price: {1} {2}"
+msgstr "{0} Precio: {1} {2}"
 
 #: src/components/PositionPreview/index.tsx
 #: src/components/PositionPreview/index.tsx
 #: src/components/PositionPreview/index.tsx
-#: src/pages/AddLiquidityPage/index.tsx
-#: src/pages/AddLiquidityPage/index.tsx
 #: src/pages/Pool/CurrentPriceCard.tsx
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/Pool/PositionPage.tsx
 msgid "{0} per {1}"
-msgstr "{0} per {1}"
+msgstr "{0} por {1}"
 
 #: src/components/SearchModal/ImportList.tsx
 #: src/components/SearchModal/ManageLists.tsx
 msgid "{0} tokens"
 msgstr "{0} tokens"
 
-#: src/components/PositionListItem/index.tsx
-#: src/components/PositionListItem/index.tsx
-msgid "{0} {1} per {2}"
-msgstr "{0} {1} per {2}"
-
 #: src/components/SearchModal/CurrencyList.tsx
 msgid "{0} • Added by user"
-msgstr "{0} • Added by user"
+msgstr "{0} • Agregado por el usuario"
 
 #: src/components/CurrencyInputPanel/FiatValue.tsx
 #: src/components/PositionPreview/index.tsx
@@ -2168,22 +1915,13 @@ msgstr "{0}{1} ALGB"
 msgid "{activeTokensOnThisChain} tokens"
 msgstr "{activeTokensOnThisChain} tokens"
 
-#: src/hooks/useSwapCallback.ts
-#: src/hooks/useSwapCallback.ts
-msgid "{base} to {0}"
-msgstr "{base} to {0}"
-
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "{percentForSlider}%"
 msgstr "{percentForSlider}%"
 
-#: src/pages/Pool/FilterPanelItem.tsx
+#: src/components/InfoTotalStats/StatCard.tsx
 msgid "{title}"
 msgstr "{title}"
-
-#: 
-#~ msgid "{tokenB} per {tokenA}"
-#~ msgstr "{tokenB} per {tokenA}"
 
 #: src/components/CurrencyInputPanel/FiatValue.tsx
 msgid "~$ <0/>"
@@ -2191,54 +1929,24 @@ msgstr "~$ <0/>"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "← Back to Pools Overview"
-msgstr "← Back to Pools Overview"
+msgstr "← Volver a la vista general de los fondos comunes"
 
 #: src/components/StakerEventCard/index.tsx
-msgid "⚡ Upcoming farm"
-msgstr "⚡ Upcoming farm"
-
-#: src/components/StakerMyStakes/index.tsx
-msgid "✨ Earn even more ALGB"
-msgstr "✨ Earn even more ALGB"
+msgid "⚡Upcoming farm"
+msgstr "⚡Próximo farm"
 
 #: src/components/StakerMyStakes/CheckOut.tsx
 msgid "✨ New farm is available →"
-msgstr "✨ New farm is available →"
-
-#: src/components/HeaderMenu/index.tsx
-msgid "🇪🇸  Español"
-msgstr "🇪🇸  Español"
-
-#: src/components/HeaderMenu/index.tsx
-#~ msgid "🇪🇸⠀ Spanish"
-#~ msgstr "🇪🇸⠀ Spanish"
-
-#: src/components/HeaderMenu/index.tsx
-msgid "🇬🇧  English"
-msgstr "🇬🇧  English"
-
-#: src/components/HeaderMenu/index.tsx
-#~ msgid "🇬🇧⠀ English"
-#~ msgstr "🇬🇧⠀ English"
-
-#: src/components/HeaderMenu/index.tsx
-msgid "🇷🇺  Русский"
-msgstr "🇷🇺  Русский"
-
-#: src/components/HeaderMenu/index.tsx
-#~ msgid "🇷🇺⠀ Russian"
-#~ msgstr "🇷🇺⠀ Russian"
+msgstr "✨ Un nuevo farm está disponible →"
 
 #: src/pages/AddLiquidityPage/index.tsx
 msgid "📄 Tech paper"
-msgstr "📄 Tech paper"
+msgstr "📄 Hoja técnica"
 
-#: src/components/InfoPools/index.tsx
-#: src/components/InfoPools/index.tsx
+#: src/components/InfoPoolsTable/index.tsx
 msgid "🔥 Farming"
 msgstr "🔥 Farming"
 
-#: src/components/InfoPools/AprHeader.tsx
-#: src/components/InfoPools/index.tsx
+#: src/components/InfoPoolsTable/index.tsx
 msgid "🚀 APR"
 msgstr "🚀 APR"

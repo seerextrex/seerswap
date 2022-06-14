@@ -15,6 +15,8 @@ import { formatAmountTokens } from "utils/numbers";
 import "./index.scss";
 import { Link } from "react-router-dom";
 
+import { Trans, t } from "@lingui/macro";
+
 interface StakerEventCardProps {
     active?: boolean;
     now?: number;
@@ -95,7 +97,9 @@ export function StakerEventCard({
                         <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", 18, "MATIC") as WrappedCurrency} size={"30px"} />
                     </div>
                     <div>
-                        <h3 className={"fs-075 b"}>POOL</h3>
+                        <h3 className={"fs-075 b"}>
+                            <Trans>POOL</Trans>
+                        </h3>
                         <div style={{ marginTop: "2px" }}>{`QI / WMATIC`}</div>
                     </div>
                     {/* {
@@ -105,7 +109,9 @@ export function StakerEventCard({
                     } */}
                 </div>
                 <div className={"staker-event-card__reward-wrapper mb-05 f c br-8"}>
-                    <div className="staker-event-card__reward-wrapper-header fs-075 b">REWARDS</div>
+                    <div className="staker-event-card__reward-wrapper-header fs-075 b">
+                        <Trans>REWARDS</Trans>
+                    </div>
                     <ul className="staker-event-card__reward-list">
                         {[{ token: { id: "0xa3fa99a148fa48d14ed51d610c367c61876997f1", symbol: "MAI" }, amount: "2500" }].map((reward: any, i) => (
                             <li key={i} className="staker-event-card__reward-list-item f">
@@ -121,9 +127,15 @@ export function StakerEventCard({
                 {!eternal && (
                     <div className="w-100 staker-event-card__timeline">
                         <div className="w-100 f staker-event-card__timeline-dates">
-                            <div className="w-100 b fs-075 ta-l">Enter</div>
-                            <div className="w-100 b fs-075 ta-c">Start</div>
-                            <div className="w-100 b fs-075 ta-r">End</div>
+                            <div className="w-100 b fs-075 ta-l">
+                                <Trans>Enter</Trans>
+                            </div>
+                            <div className="w-100 b fs-075 ta-c">
+                                <Trans>Start</Trans>
+                            </div>
+                            <div className="w-100 b fs-075 ta-r">
+                                <Trans>End</Trans>
+                            </div>
                         </div>
                         <div className="w-100 f mt-05">
                             <div className="f f-ac f-jc staker-event-card__timeline-circle">
@@ -159,7 +171,7 @@ export function StakerEventCard({
                     </div>
                 )}
                 <div className={"mt-1 fs-085 p-05 br-8 ta-c bg-v"} style={{ marginTop: "9px", height: "36px", lineHeight: "19px" }}>
-                    ⚡ Upcoming farm
+                    <Trans>⚡ Upcoming farm</Trans>
                 </div>
             </div>
         );
@@ -179,7 +191,9 @@ export function StakerEventCard({
                             <span className="mr-05">
                                 <Lock size={"16px"} stroke={"black"} />
                             </span>
-                            <span>This farm is filled</span>
+                            <span>
+                                <Trans>This farm is filled</Trans>
+                            </span>
                         </div>
                         <div>
                             <Link
@@ -187,7 +201,7 @@ export function StakerEventCard({
                                 className={"staker-event-card__infinite-farming-available"}
                                 style={{ padding: "6px 10px", borderRadius: "8px", color: "var(--white)", background: "var(--primary)" }}
                             >
-                                Infinite WETH farm is available →
+                                <Trans>Infinite WETH farm is available →</Trans>
                             </Link>
                         </div>
                     </div>
@@ -199,7 +213,9 @@ export function StakerEventCard({
                     <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"30px"} />
                 </div>
                 <div>
-                    <h3 className={"fs-075 b"}>POOL</h3>
+                    <h3 className={"fs-075 b"}>
+                        <Trans>POOL</Trans>
+                    </h3>
                     <div style={{ marginTop: "2px" }}>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
                 {apr && apr > 0 ? (
@@ -210,7 +226,9 @@ export function StakerEventCard({
                 ) : null}
             </div>
             <div className={"staker-event-card__reward-wrapper mb-05 f c br-8"}>
-                <div className="staker-event-card__reward-wrapper-header fs-075 b">REWARDS</div>
+                <div className="staker-event-card__reward-wrapper-header fs-075 b">
+                    <Trans>REWARDS</Trans>
+                </div>
                 <ul className="staker-event-card__reward-list">
                     {rewardList?.map((reward: any, i) => (
                         <li key={i} className="staker-event-card__reward-list-item f">
@@ -226,9 +244,15 @@ export function StakerEventCard({
             {!eternal && (
                 <div className="w-100 staker-event-card__timeline">
                     <div className="w-100 f staker-event-card__timeline-dates">
-                        <div className="w-100 b fs-075 ta-l">Enter</div>
-                        <div className="w-100 b fs-075 ta-c">Start</div>
-                        <div className="w-100 b fs-075 ta-r">End</div>
+                        <div className="w-100 b fs-075 ta-l">
+                            <Trans>Enter</Trans>
+                        </div>
+                        <div className="w-100 b fs-075 ta-c">
+                            <Trans>Start</Trans>
+                        </div>
+                        <div className="w-100 b fs-075 ta-r">
+                            <Trans>End</Trans>
+                        </div>
                     </div>
                     <div className="w-100 f mt-05">
                         <div className="f f-ac f-jc staker-event-card__timeline-circle">
@@ -272,16 +296,15 @@ export function StakerEventCard({
                     className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
                     onClick={stakeHandler}
                 >
-                    <span>{locked ? "Filled" : "Farm"}</span>
+                    <span>{locked ? t`Filled` : t`Farm`}</span>
                 </button>
             ) : active ? (
                 <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}>
-                    Started!
+                    <Trans>Started!</Trans>
                 </div>
             ) : (
                 <button className={`btn primary w-100 b pv-05 ${!eternal ? "mt-05" : ""}`} onClick={toggleWalletModal}>
-                    {" "}
-                    Connect Wallet
+                    <Trans>Connect Wallet</Trans>
                 </button>
             )}
         </div>

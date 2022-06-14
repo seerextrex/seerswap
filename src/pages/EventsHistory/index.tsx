@@ -6,6 +6,7 @@ import { useHandleArrow } from "../../hooks/useHandleArrow";
 import "./index.scss";
 import TokenReward from "./TokenReward";
 import PoolReward from "./PoolReward";
+import { Trans } from "@lingui/macro";
 
 const eventsHistory = [
     {
@@ -209,12 +210,24 @@ export default function EventsHistory() {
             <div className={"w-100 event-table-wrapper"}>
                 <Table gridClass={"event-table"} sortDirection={sortDirection} sortField={sortField} sortIndex={sortIndex} data={data}>
                     <TableHeader gridClass={"event-table"} arrow={arrow} handleSort={handleSort} sortFields={sortFields}>
-                        <span className={"table-header__item"}>Pool</span>
-                        <span className={"table-header__item table-header__item"}>Reward</span>
-                        <span className={"table-header__item table-header__item"}>Bonus</span>
-                        <span className={"table-header__item table-header__item"}>Participants</span>
-                        <span className={"table-header__item table-header__item"}>Best APR</span>
-                        <span className={"table-header__item table-header__item"}>Dates</span>
+                        <span className={"table-header__item"}>
+                            <Trans>Pool</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item"}>
+                            <Trans>Reward</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item"}>
+                            <Trans>Bonus</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item"}>
+                            <Trans>Participants</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item"}>
+                            <Trans>Best APR</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item"}>
+                            <Trans>Dates</Trans>
+                        </span>
                     </TableHeader>
                 </Table>
             </div>

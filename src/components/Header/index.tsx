@@ -15,6 +15,7 @@ import "./index.scss";
 import { NavLink } from "react-router-dom";
 import { Sliders } from "react-feather";
 import HeaderMenu from "components/HeaderMenu";
+import { Trans } from "@lingui/macro";
 
 export default function Header() {
     const { account, chainId } = useActiveWeb3React();
@@ -54,7 +55,7 @@ export default function Header() {
             </a>
             <div className={"header__links flex-s-between"}>
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
-                    Swap
+                    <Trans>Swap</Trans>
                 </NavLink>
                 <NavLink
                     className={"header__links__link hover-op"}
@@ -65,17 +66,19 @@ export default function Header() {
                     }
                     activeClassName={"header__links__link--active"}
                 >
-                    Pool
+                    <Trans>Pool</Trans>
                 </NavLink>
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
-                    <span>Farming</span>
+                    <span>
+                        <Trans>Farming</Trans>
+                    </span>
                     <span className={"header__farming-circle"} />
                 </NavLink>
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`staking-nav-link`} to={"/staking"}>
-                    Staking
+                    <Trans>Staking</Trans>
                 </NavLink>
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
-                    Info
+                    <Trans>Info</Trans>
                 </NavLink>
             </div>
 

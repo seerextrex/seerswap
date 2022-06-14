@@ -11,6 +11,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { FactorySubgraph, Frozen, StakeHash, StakeSubgraph, SubgraphResponse, SubgraphResponseStaking } from '../models/interfaces'
 import { useAppSelector } from "state/hooks"
 import { GAS_PRICE_MULTIPLIER } from "./useGasPrice"
+import { t } from "@lingui/macro"
 
 export function useRealStakerHandlers() {
     const addTransaction = useTransactionAdder()
@@ -49,7 +50,7 @@ export function useRealStakerHandlers() {
             })
 
             addTransaction(result, {
-                summary: `Staked ${stakedCount} ALGB`
+                summary: t`Staked ${stakedCount} ALGB`
             })
             setStakedHash({ hash: result.hash })
 
@@ -79,7 +80,7 @@ export function useRealStakerHandlers() {
             })
 
             addTransaction(result, {
-                summary: `Claimed ${formatEther(claimCount)} ALGB`
+                summary: t`Claimed ${formatEther(claimCount)} ALGB`
             })
             setClaimHash({ hash: result.hash })
 
@@ -110,7 +111,7 @@ export function useRealStakerHandlers() {
             })
 
             addTransaction(result, {
-                summary: `Unstaked ${unstakeCount} ALGB`
+                summary: t`Unstaked ${unstakeCount} ALGB`
             })
             setUnstakeHash({ hash: result.hash })
 
@@ -133,7 +134,7 @@ export function useRealStakerHandlers() {
             setFrozen(stakeTxes)
 
         } catch (e: any) {
-            setFrozen(`Error: ${e.message}`)
+            setFrozen(t`Error: ${e.message}`)
             return
         }
     }, [account])

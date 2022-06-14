@@ -79,14 +79,16 @@ export function RangeSelector({
         tryParseAmount(
             mintInfo.price ? (mintInfo.invertPrice ? Number(mintInfo.price.invert().toSignificant(5)).toFixed(5) : Number(mintInfo.price.toSignificant(5)).toFixed(5)) : undefined,
             currencyB ?? undefined
-        )
+        ),
+        true
     );
 
     const currentPriceInUSDB = useUSDCValue(
         tryParseAmount(
             mintInfo.price ? (mintInfo.invertPrice ? Number(mintInfo.price.invert().toSignificant(5)).toFixed(5) : Number(mintInfo.price.toSignificant(5)).toFixed(5)) : undefined,
             currencyA ?? undefined
-        )
+        ),
+        true
     );
 
     const initialUSDPrices = useInitialUSDPrices();
@@ -209,7 +211,7 @@ function RangePart({
         return priceFormat === PriceFormats.USD;
     }, [priceFormat]);
 
-    const valueUSD = useUSDCValue(tryParseAmount(value === "∞" || value === "0" ? undefined : Number(value).toFixed(5), tokenB));
+    const valueUSD = useUSDCValue(tryParseAmount(value === "∞" || value === "0" ? undefined : Number(value).toFixed(5), tokenB), true);
     const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_POLYGON), tokenB);
     const usdPriceA = useUSDCPrice(tokenA ?? undefined);
     const usdPriceB = useUSDCPrice(tokenB ?? undefined);

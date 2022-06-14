@@ -5,14 +5,14 @@ import { Currency, CurrencyAmount } from "@uniswap/sdk-core";
 
 import "./index.scss";
 import { Field } from "state/mint/actions";
-import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3MintState } from 'state/mint/v3/hooks'
-import  { useUSDCValue } from "hooks/useUSDCPrice";
+import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3MintState } from "state/mint/v3/hooks";
+import { useUSDCValue } from "hooks/useUSDCPrice";
 import { maxAmountSpend } from "utils/maxAmountSpend";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { useActiveWeb3React } from "hooks/web3";
-import { Bound, updateCurrentStep } from 'state/mint/v3/actions'
-import { useEffect, useMemo } from 'react'
+import { Bound, updateCurrentStep } from "state/mint/v3/actions";
+import { useEffect, useMemo } from "react";
 import { tryParseAmount } from "state/swap/hooks";
 
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
@@ -58,8 +58,8 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
     };
 
     const usdcValues = {
-        [Field.CURRENCY_A]: useUSDCValue(mintInfo.parsedAmounts[Field.CURRENCY_A]),
-        [Field.CURRENCY_B]: useUSDCValue(mintInfo.parsedAmounts[Field.CURRENCY_B]),
+        [Field.CURRENCY_A]: useUSDCValue(mintInfo.parsedAmounts[Field.CURRENCY_A], true),
+        [Field.CURRENCY_B]: useUSDCValue(mintInfo.parsedAmounts[Field.CURRENCY_B], true),
     };
 
     // get the max amounts user can add
@@ -179,12 +179,12 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
     });
 
     const leftPrice = useMemo(() => {
-        return mintInfo.invertPrice ? mintInfo.upperPrice.invert() : mintInfo.lowerPrice
-    },[mintInfo])
+        return mintInfo.invertPrice ? mintInfo.upperPrice.invert() : mintInfo.lowerPrice;
+    }, [mintInfo]);
 
     const rightPrice = useMemo(() => {
-        return mintInfo.invertPrice ? mintInfo.lowerPrice.invert() : mintInfo.upperPrice
-    },[mintInfo])
+        return mintInfo.invertPrice ? mintInfo.lowerPrice.invert() : mintInfo.upperPrice;
+    }, [mintInfo]);
 
     return (
         <div className="f c">
@@ -247,7 +247,8 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                         onUserRightInput={onRightRangeInput}
                         lowerPrice={leftPrice?.toSignificant(5)}
                         upperPrice={rightPrice?.toSignificant(5)}
-                        disabled={false}/>
+                        disabled={false}
+                    />
                 </div>
             </div>
         </div>

@@ -93,7 +93,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
         return mintInfo.invertPrice ? mintInfo.price.invert().toSignificant(5) : mintInfo.price.toSignificant(5);
     }, [mintInfo]);
 
-    const currentPriceInUSD = useUSDCValue(tryParseAmount(Number(price).toFixed(5), currencyB ?? undefined));
+    const currentPriceInUSD = useUSDCValue(tryParseAmount(Number(price).toFixed(5), currencyB ?? undefined), true);
 
     const isBeforePrice = useMemo(() => {
         if (!price || !leftPrice || !rightPrice) return false;

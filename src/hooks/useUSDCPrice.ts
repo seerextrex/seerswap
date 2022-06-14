@@ -13,14 +13,18 @@ const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
     [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 1),
 }
 
+function getAmountOut(allLiquidity: boolean | undefined) {
+    return CurrencyAmount.fromRawAmount(USDC_POLYGON, allLiquidity ? 1 : 100_000e1)
+}
+
 /**
  * Returns the price in USDC of the input currency
  * @param currency currency to compute the USDC price of
  */
-export default function useUSDCPrice(currency?: Currency): Price<Currency, Token> | undefined {
+export default function useUSDCPrice(currency?: Currency, allLiquidity?: boolean): Price<Currency, Token> | undefined {
     const { chainId } = useActiveWeb3React()
 
-    const amountOut = chainId ? STABLECOIN_AMOUNT_OUT[chainId] : undefined
+    const amountOut = chainId ? getAmountOut(allLiquidity) : undefined
     const stablecoin = amountOut?.currency
 
     const v3USDCTrade = useBestV3TradeExactOut(currency, amountOut)
@@ -45,9 +49,9 @@ export default function useUSDCPrice(currency?: Currency): Price<Currency, Token
     }, [currency, stablecoin, v3USDCTrade.trade])
 }
 
-export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null) {
+export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null, allLiquidity = false) {
 
-    const price = useUSDCPrice(currencyAmount?.currency)
+    const price = useUSDCPrice(currencyAmount?.currency, allLiquidity)
 
     return useMemo(() => {
         if (!price || !currencyAmount) return null

@@ -151,7 +151,7 @@ export default function LiquidityChartRangeInput({
     }, [isSorted, priceLower, priceUpper, priceFormat]);
 
     //TODO
-    const leftPriceUSD = useUSDCValue(tryParseAmount(leftPrice ? (+leftPrice.toSignificant(5) < 0.00000001 ? undefined : Number(leftPrice.toSignificant(5)).toFixed(5)) : undefined, currencyB));
+    const leftPriceUSD = useUSDCValue(tryParseAmount(leftPrice ? (+leftPrice.toSignificant(5) < 0.00000001 ? undefined : Number(leftPrice.toSignificant(5)).toFixed(5)) : undefined, currencyB), true);
 
     const rightPrice = useMemo(() => {
         return isSorted ? priceUpper : priceLower?.invert();
@@ -162,7 +162,8 @@ export default function LiquidityChartRangeInput({
         tryParseAmount(
             rightPrice ? (rightPrice.toSignificant(5) === "3384900000000000000000000000000000000000000000000" ? undefined : Number(rightPrice.toSignificant(5)).toFixed(5)) : undefined,
             currencyB
-        )
+        ),
+        true
     );
 
     const brushDomain: [number, number] | undefined = useMemo(() => {

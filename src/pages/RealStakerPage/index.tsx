@@ -313,7 +313,7 @@ export default function RealStakerPage({}) {
             <Modal fitContent={true} dangerouslyBypassFocusLock={true} isOpen={calcModal} onHide={() => toggleCalcModal(false)} onDismiss={() => {}}>
                 <div>
                     <div className="mb-1 f f-jb f-ac">
-                        <Trans>Calculate Proift</Trans>
+                        <Trans>Calculate Profit</Trans>
                         <div onClick={() => toggleCalcModal(false)} className={"cur-p hover-op trans-op"}>
                             <X />
                         </div>

@@ -19,6 +19,7 @@ import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch } from "state/hooks";
+import { t, Trans } from "@lingui/macro";
 
 interface IEnterAmounts {
     currencyA: Currency | undefined;
@@ -188,8 +189,12 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
 
     return (
         <div className="f c">
-            <StepTitle title={"Enter amounts"} isCompleted={isCompleted} step={additionalStep ? 4 : 3} />
-            {mintInfo.invalidRange && <div className="range__notification error w-100">Invalid range</div>}
+            <StepTitle title={t`Enter amounts`} isCompleted={isCompleted} step={additionalStep ? 4 : 3} />
+            {mintInfo.invalidRange && (
+                <div className="range__notification error w-100">
+                    <Trans>Invalid range</Trans>
+                </div>
+            )}
             <div className="f mxs_fd-cr ms_fd-cr mm_fd-cr">
                 <div className="f c mxs_w-100">
                     <div className="mb-1" style={{ borderRadius: "8px" }}>

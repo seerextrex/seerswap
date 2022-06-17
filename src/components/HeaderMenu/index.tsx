@@ -39,9 +39,9 @@ export default function HeaderMenu() {
 
     const items = {
         [MenuState.PRIMARY]: [
-            { title: t`Language`, type: ItemType.SUB_MENU },
-            { title: t`About us`, type: ItemType.LINK, link: "https://algebra.finance" },
-            { title: t`Help center`, type: ItemType.LINK, link: "https://help.algebra.finance" },
+            { id: "Language", title: t`Language`, type: ItemType.SUB_MENU },
+            { id: "About us", title: t`About us`, type: ItemType.LINK, link: "https://algebra.finance" },
+            { id: "Help center", title: t`Help center`, type: ItemType.LINK, link: "https://help.algebra.finance" },
         ],
         [MenuState.LANGUAGE]: [
             { title: Languages.RUSSIAN, type: ItemType.ACTION, locale: "ru-RU" },
@@ -53,11 +53,13 @@ export default function HeaderMenu() {
     const historyStack: any = [MenuState.PRIMARY];
 
     const handleSelect = useCallback((item) => {
-        if (item.title in headers) {
+        if (item.id in headers) {
             historyStack.push(item.title);
-            setMenuState(item.title);
+            setMenuState(item.id);
         } else if (item.locale) {
             setUserLocale(item.locale);
+        } else if (item.link) {
+            window.location.href = item.link;
         }
     }, []);
 
@@ -82,10 +84,9 @@ export default function HeaderMenu() {
                         <a href={item.link || null} rel={"noreferrer noopener"} target={"_blank"} className="ph-1 pv-1 mxs_pv-1 ms_pv-1 w-100 f f-jb">
                             <span className="header-menu__list-item__title f">
                                 <span>{item.title}</span>
-                                {/* {item.type === ItemType.LINK && <span className="ml-05">{<ExternalLink size={"18px"} />}</span>} */}
+                                {item.type === ItemType.LINK && <span className="ml-05">{<ExternalLink size={"18px"} />}</span>}
                             </span>
-                            {/* {item.type === ItemType.SUB_MENU && <span className="header-menu__list-item__arrrow">→</span>} */}
-                            {item.type === ItemType.SUB_MENU && <span style={{ fontSize: "13px", color: "#4fdeff" }}>Coming soon</span>}
+                            {item.type === ItemType.SUB_MENU && <span className="header-menu__list-item__arrrow">→</span>}
                         </a>
                     </li>
                 ))}

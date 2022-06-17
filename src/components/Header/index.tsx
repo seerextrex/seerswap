@@ -45,7 +45,7 @@ export default function Header() {
 
         if (!target) return;
 
-        target.checked = false;
+        setTimeout(() => (target.checked = false), 100);
     }, []);
 
     return (

@@ -145,8 +145,7 @@ export default createReducer(initialState, (builder) =>
             state.timestamp = currentTimestamp()
         })
         .addCase(updateUserLocale, (state, action) => {
-            // state.userLocale = action.payload.userLocale
-            state.userLocale = 'en-US'
+            state.userLocale = action.payload.userLocale
             state.timestamp = currentTimestamp()
         })
         .addCase(updateUserSlippageTolerance, (state, action) => {

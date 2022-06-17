@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import React from "react";
 import { TYPE } from "theme";
 import "./index.scss";
@@ -20,9 +20,7 @@ export default function PageButtons({ page, maxPage, setPage }: PageButtonsProps
                 <div className={"table-page-button mt-1"}>←</div>
             </div>
             <div className={"mt-1"}>
-                <TYPE.body>
-                    <Trans>{"Page " + page + " of " + maxPage}</Trans>
-                </TYPE.body>
+                <TYPE.body>{t`Page ${page} of ${maxPage}`}</TYPE.body>
             </div>
             <div
                 onClick={() => {

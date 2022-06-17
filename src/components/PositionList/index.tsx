@@ -1,6 +1,6 @@
 import PositionListItem from "components/PositionListItem";
 import React, { useMemo } from "react";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { PositionPool } from "../../models/interfaces";
 import { AlertCircle } from "react-feather";
 import { OldFarmingWarning } from "./styled";
@@ -44,9 +44,9 @@ export default function PositionList({ positions, newestPosition }: PositionList
             {_positionsOnOldFarming.length ? (
                 <OldFarmingWarning className="f full-w p-1 mb-1">
                     <AlertCircle size={"24px"} />
-                    <span>{`Due to release of Tier Farming, we have updated our contracts.`}</span>
+                    <span>{t`Due to release of Tier Farming, we have updated our contracts.`}</span>
                     <a href="https://old.algebra.finance/#/farming/farms" target={"_blank"} rel={"noreferrer noopener"}>
-                        Withdraw previous positions →
+                        <Trans>Withdraw previous positions →</Trans>
                     </a>
                 </OldFarmingWarning>
             ) : null}

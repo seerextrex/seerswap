@@ -284,7 +284,7 @@ export function StakeModal({
                     </div>
                     <div className={"h-400 f c f-ac f-jc"}>
                         <CheckCircle size={55} stroke={"var(--green)"} />
-                        <p className={"mt-05"}>{t`Position #${selectedNFT?.id} deposited succesfully!`}</p>
+                        <p className={"mt-05"}>{t`Position #${selectedNFT?.id} deposited successfully!`}</p>
                     </div>
                 </div>
             ) : positionsForPoolLoading ? (

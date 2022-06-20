@@ -70,17 +70,19 @@ function PopularPair({ pair, farming, handlePopularPairSelection }: { pair: [str
 
     const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
 
+    const WMATIC = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270";
+
     return (
-        <div onClick={() => handlePopularPairSelection([token0.address, token1.address])} className={`f f-ac f-jc popular-pair ${farming ? "farming" : ""}`}>
+        <div onClick={() => handlePopularPairSelection([token0.address.toLowerCase(), token1.address.toLowerCase()])} className={`f f-ac f-jc popular-pair ${farming ? "farming" : ""}`}>
             <span className="popular-pair__logo">
                 <CurrencyLogo currency={token0 as WrappedCurrency} size={"16px"} />
             </span>
-            <span>{token0.symbol}</span>
+            <span>{token0.address.toLowerCase() === WMATIC ? "MATIC" : token0.symbol}</span>
             <span className="popular-pair__plus">+</span>
             <span className="popular-pair__logo">
                 <CurrencyLogo currency={token1 as WrappedCurrency} size={"16px"} />
             </span>
-            <span>{token1.symbol}</span>
+            <span>{token1.address.toLowerCase() === WMATIC ? "MATIC" : token1.symbol}</span>
         </div>
     );
 }

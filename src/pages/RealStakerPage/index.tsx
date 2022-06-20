@@ -275,8 +275,10 @@ export default function RealStakerPage({}) {
 
         if (typeof stakeHash === "string") {
             setStaking({ id: null, state: null });
+            setStakedHash({ hash: null });
         } else if (confirmed.includes(String(stakeHash.hash))) {
             setStaking({ id: stakeHash.hash, state: "done" });
+            setStakedHash({ hash: null });
         }
     }, [confirmed, stakeHash]);
 

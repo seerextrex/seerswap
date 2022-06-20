@@ -158,7 +158,8 @@ export function NewAddLiquidityPage({
     }, [history, handleCurrencySelect, currencyIdA, currencyIdB]);
 
     const handlePopularPairSelection = useCallback((pair: [string, string]) => {
-        history.push(`/add/${pair[0]}/${pair[1]}`);
+        const WMATIC = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270";
+        history.push(`/add/${pair[0] === WMATIC ? "MATIC" : pair[0]}/${pair[1] === WMATIC ? "MATIC" : pair[1]}`);
         resetState();
     }, []);
 

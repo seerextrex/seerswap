@@ -22,16 +22,10 @@ export function useInfoLiquidity() {
             })
 
             if (error) {
-                // setPopularPools('Failed')
                 return
             }
 
-            setPopularPools(pools.map(({ token0, token1 }) => [token0.id, token1.id]))
-
-            // setPopularPools({
-            //     : parseFloat(stats.totalValueLockedUSD),
-            //     volumeUSD: volumeUSD
-            // })
+            setPopularPools(pools.map(({ token0, token1 }) => [token0.id.toLowerCase(), token1.id.toLowerCase()]))
 
         } catch (err) {
             console.error('total stats failed', err)

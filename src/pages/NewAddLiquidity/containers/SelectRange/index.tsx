@@ -17,6 +17,7 @@ import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler
 import { tryParseAmount } from "state/swap/hooks";
 import { useHistory } from "react-router-dom";
 import { t, Trans } from "@lingui/macro";
+import { Helmet } from "react-helmet";
 
 interface IRangeSelector {
     currencyA: Currency | null | undefined;

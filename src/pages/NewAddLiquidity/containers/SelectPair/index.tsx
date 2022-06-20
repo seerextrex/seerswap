@@ -16,6 +16,7 @@ import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { useHistory } from "react-router-dom";
 import { t } from "@lingui/macro";
+import { Helmet } from "react-helmet";
 
 interface ISelectPair {
     baseCurrency: Currency | null | undefined;

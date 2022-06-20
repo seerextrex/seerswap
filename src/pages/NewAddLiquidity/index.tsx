@@ -77,14 +77,14 @@ export function NewAddLiquidityPage({
     const prevDerivedMintInfo = usePrevious({ ...derivedMintInfo });
 
     const mintInfo = useMemo(() => {
-        // if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
-        //     return {
-        //         ...prevDerivedMintInfo,
-        //         pricesAtTicks: derivedMintInfo.pricesAtTicks,
-        //         ticks: derivedMintInfo.ticks,
-        //         parsedAmounts: derivedMintInfo.parsedAmounts,
-        //     };
-        // }
+        if ((!derivedMintInfo.pool || !derivedMintInfo.price || derivedMintInfo.noLiquidity) && prevDerivedMintInfo) {
+            return {
+                ...prevDerivedMintInfo,
+                pricesAtTicks: derivedMintInfo.pricesAtTicks,
+                ticks: derivedMintInfo.ticks,
+                parsedAmounts: derivedMintInfo.parsedAmounts,
+            };
+        }
         return {
             ...derivedMintInfo,
         };

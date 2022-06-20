@@ -7,15 +7,11 @@ import { useActiveWeb3React } from './web3'
 
 // Stablecoin amounts used when calculating spot price for a given currency.
 // The amount is large enough to filter low liquidity pairs.
-const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
-    //TODO
-    // [SupportedChainId.BINANCE]: CurrencyAmount.fromRawAmount(USDC_BINANCE, 100_000e6),
-    [SupportedChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 1),
-}
 
-function getAmountOut(allLiquidity: boolean | undefined) {
-    return CurrencyAmount.fromRawAmount(USDC_POLYGON, allLiquidity ? 1 : 100_000e1)
-}
+// Two different consts used as a hack for allLiquidity flag in useUSDCPrice fn. 
+// Doing another way makes amounts in EnterAmount stuck somehow.
+const STABLECOIN_AMOUNT_OUT_ALL: CurrencyAmount<Token> = CurrencyAmount.fromRawAmount(USDC_POLYGON, 1)
+const STABLECOIN_AMOUNT_OUT_FILTERED: CurrencyAmount<Token> = CurrencyAmount.fromRawAmount(USDC_POLYGON, 100_000e1)
 
 /**
  * Returns the price in USDC of the input currency
@@ -24,7 +20,7 @@ function getAmountOut(allLiquidity: boolean | undefined) {
 export default function useUSDCPrice(currency?: Currency, allLiquidity?: boolean): Price<Currency, Token> | undefined {
     const { chainId } = useActiveWeb3React()
 
-    const amountOut = chainId ? getAmountOut(allLiquidity) : undefined
+    const amountOut = chainId ? (allLiquidity ? STABLECOIN_AMOUNT_OUT_ALL : STABLECOIN_AMOUNT_OUT_FILTERED) : undefined
     const stablecoin = amountOut?.currency
 
     const v3USDCTrade = useBestV3TradeExactOut(currency, amountOut)

@@ -122,7 +122,7 @@
     "compile-external-abi-types": "typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*[!dbg].json'",
     "compile-v3-contract-types": "typechain --target ethers-v5 --out-dir src/types/v3 './node_modules/@uniswap/v3-core/artifacts/contracts/**/*[!dbg].json'",
     "build": "yarn graphql:generate && yarn i18n:extract && yarn i18n:compile && react-scripts build",
-    "i18n:extract": "lingui extract --locale en-US",
+    "i18n:extract": "lingui extract --locale ru-RU",
     "i18n:compile": "lingui compile",
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run --record'",
     "graphql:generate": "graphql-codegen --config codegen.yml",

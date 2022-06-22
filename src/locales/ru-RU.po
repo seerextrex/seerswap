@@ -410,6 +410,14 @@ msgstr "Добавив ликвидность, вы будете зарабат�
 msgid "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
 msgstr "Добавляя этот список, вы подразумеваете, что доверяете его данным. Любой может создать список, включая создание поддельных версий существующих списков, а также списков, якобы сделанных проектами, у которых нет списков."
 
+#: src/components/PoolInfoChartToolbar/PoolInfoChartToolbar.tsx
+msgid "CHART SPAN"
+msgstr "ИНТЕРВАЛ ГРАФИКА"
+
+#: src/components/PoolInfoChartToolbar/PoolInfoChartToolbar.tsx
+msgid "CHART TYPE"
+msgstr "ТИП ГРАФИКА"
+
 #: src/pages/RealStakerPage/index.tsx
 msgid "Calculate Profit"
 msgstr "Рассчитать Доход"
@@ -434,14 +442,6 @@ msgstr "Цены не были установлены"
 #: src/components/WalletModal/index.tsx
 msgid "Change your network in ONTO Wallet browser extension"
 msgstr "Измените сеть в расширении ONTO Wallet"
-
-#: src/components/PoolInfoChartToolbar/index.tsx
-#~ msgid "Chart span"
-#~ msgstr "Интервал графика"
-
-#: src/components/PoolInfoChartToolbar/index.tsx
-#~ msgid "Chart type"
-#~ msgstr "Тип графика"
 
 #: src/pages/AddLiquidityPage/index.tsx
 #~ msgid "Check out how dynamic fee is calculated"
@@ -491,6 +491,10 @@ msgstr "Закрыть"
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Closed"
 msgstr "Закрытые"
+
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "Closed positions"
+msgstr "Закрытые позиции"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect"
@@ -623,8 +627,8 @@ msgid "Create pool and add {0}/{1} liquidity"
 msgstr "Создать пул и добавить {0}/{1} ликвидность"
 
 #: src/pages/AddLiquidity/index.tsx
-msgid "Creating {0}/{1} {2}% Pool"
-msgstr "Создание {0}/{1} {2}% Пула"
+#~ msgid "Creating {0}/{1} {2}% Pool"
+#~ msgstr "Создание {0}/{1} {2}% Пула"
 
 #: src/components/LiquidityChartRangeInput/Line.tsx
 msgid "Curr. price"
@@ -1313,6 +1317,10 @@ msgstr "Мои фарминги"
 msgid "My farms"
 msgstr "Мои фарминги"
 
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "My positions"
+msgstr "Мои позиции"
+
 #: src/components/StakerTabs/index.tsx
 msgid "My rewards"
 msgstr "Мои награды"
@@ -1390,6 +1398,10 @@ msgstr "В данный момент лимит фарминги отсутст�
 msgid "No liquidity found."
 msgstr "Ликвидность не найдена."
 
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "No positions"
+msgstr "Нет позиций"
+
 #: src/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
 msgstr "Результатов не найдено."
@@ -1442,6 +1454,10 @@ msgstr "На старом фарминге"
 msgid "Oops! An unknown error occurred. Please refresh the page, or visit from another browser or device."
 msgstr "Ой! Произошла неизвестная ошибка. Пожалуйста, обновите страницу или откройте в другом браузере или с другого устройства."
 
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "Open positions"
+msgstr "Открытые позиции"
+
 #: src/components/Badge/RangeBadge.tsx
 #: src/components/StakerMyStakes/IsActive.tsx
 #: src/pages/NewAddLiquidity/containers/SelectRange/index.tsx
@@ -1465,6 +1481,10 @@ msgstr "Сумма к получению будет отправлена на <0
 #: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "POOL"
 msgstr "ПУЛ"
+
+#: src/components/Table/PageButtons.tsx
+msgid "Page {page} of {maxPage}"
+msgstr "Стр. {page} из {maxPage}"
 
 #: src/pages/EventsHistory/index.tsx
 msgid "Participants"
@@ -1870,8 +1890,8 @@ msgid "Success! View pools"
 msgstr "Успех! Перейти к пулам"
 
 #: src/pages/AddLiquidity/index.tsx
-msgid "Supplying {0} {1} {2} {3} {4}"
-msgstr "Внесение {0} {1} {2} {3} {4}"
+#~ msgid "Supplying {0} {1} {2} {3} {4}"
+#~ msgstr "Внесение {0} {1} {2} {3} {4}"
 
 #: src/components/Header/index.tsx
 #: src/components/NavigationTabs/SwapPoolTabs.tsx
@@ -2284,6 +2304,10 @@ msgstr "Ваша транзакция отменится, если цена из
 msgid "Your transactions will appear here..."
 msgstr "Ваши транзакции появятся здесь..."
 
+#: src/components/PoolInfoChartToolbar/PoolInfoChartToolbar.tsx
+msgid "ZOOM"
+msgstr "МАСШТАБ"
+
 #: src/pages/Swap/index.tsx
 msgid "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"
 msgstr "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"
@@ -2347,7 +2371,6 @@ msgstr "{0, plural, one {Import token} other {Import tokens}}"
 
 #: src/components/FeeChartRangeInput/index.tsx
 #: src/components/FeeChartRangeInput/index.tsx
-#: src/components/Table/PageButtons.tsx
 #: src/components/WalletModal/index.tsx
 msgid "{0}"
 msgstr "{0}"

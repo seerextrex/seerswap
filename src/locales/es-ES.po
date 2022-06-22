@@ -403,6 +403,14 @@ msgstr "Al añadir liquidez, ganará un 0.3% de todas las operaciones con este p
 msgid "By adding this list you are implicitly trusting that the data is correct. Anyone can create a list, including creating fake versions of existing lists and lists that claim to represent projects that do not have one."
 msgstr "Al añadir esta lista está confiando implícitamente en que los datos son correctos. Cualquiera puede crear una lista; incluso se pueden crear versiones falsas de listas existentes y listas que afirman representar proyectos que no tienen una."
 
+#: src/components/PoolInfoChartToolbar/PoolInfoChartToolbar.tsx
+msgid "CHART SPAN"
+msgstr "LAPSO DE GRÁFICO"
+
+#: src/components/PoolInfoChartToolbar/PoolInfoChartToolbar.tsx
+msgid "CHART TYPE"
+msgstr "TIPO DE GRÁFICO"
+
 #: src/pages/RealStakerPage/index.tsx
 msgid "Calculate Profit"
 msgstr "Calcular ganancia"
@@ -431,14 +439,6 @@ msgstr "No se puede encontrar precios"
 #: src/components/WalletModal/index.tsx
 msgid "Change your network in ONTO Wallet browser extension"
 msgstr "Cambia tu network en la extensión de ONTO wallet en el buscador"
-
-#: src/components/PoolInfoChartToolbar/index.tsx
-#~ msgid "Chart span"
-#~ msgstr "Lapso de gráfico"
-
-#: src/components/PoolInfoChartToolbar/index.tsx
-#~ msgid "Chart type"
-#~ msgstr "Tipo de gráfico"
 
 #: src/pages/AddLiquidityPage/index.tsx
 #~ msgid "Check out how dynamic fee is calculated"
@@ -489,6 +489,10 @@ msgstr "Cerrar"
 msgid "Closed"
 msgstr "Cerrado"
 
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "Closed positions"
+msgstr "Posiciones cerradas"
+
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect"
 msgstr "Recolectar"
@@ -500,7 +504,7 @@ msgstr "Recolectar como WMATIC"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect fees"
-msgstr "Recolectar comisiones"
+msgstr "Recolectar"
 
 #: src/components/StakerMyStakes/index.tsx
 msgid "Collect rewards"
@@ -620,8 +624,8 @@ msgid "Create pool and add {0}/{1} liquidity"
 msgstr "Crear fondo común y agregar {0}/{1} liquidez"
 
 #: src/pages/AddLiquidity/index.tsx
-msgid "Creating {0}/{1} {2}% Pool"
-msgstr "Creando {0}/{1} {2}% Fondo común"
+#~ msgid "Creating {0}/{1} {2}% Pool"
+#~ msgstr "Creando {0}/{1} {2}% Fondo común"
 
 #: src/components/LiquidityChartRangeInput/Line.tsx
 msgid "Curr. price"
@@ -1310,6 +1314,10 @@ msgstr "Mis Farms"
 msgid "My farms"
 msgstr "Mis farms"
 
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "My positions"
+msgstr "Mis posiciones"
+
 #: src/components/StakerTabs/index.tsx
 msgid "My rewards"
 msgstr "Mis recompensas"
@@ -1387,6 +1395,10 @@ msgstr "No hay límite farms por ahora"
 msgid "No liquidity found."
 msgstr "No se encontró liquidez."
 
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "No positions"
+msgstr "No hay posiciones"
+
 #: src/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
 msgstr "No se han encontrado resultados."
@@ -1425,11 +1437,11 @@ msgstr "Octubre"
 
 #: src/components/Toggle/index.tsx
 msgid "Off"
-msgstr "Apagado"
+msgstr "Off"
 
 #: src/components/Toggle/index.tsx
 msgid "On"
-msgstr "Encendido"
+msgstr "On"
 
 #: src/components/PositionListItem/index.tsx
 msgid "On Old Farming Center"
@@ -1438,6 +1450,10 @@ msgstr "En el antiguo centro de farming"
 #: src/components/Web3ReactManager/index.tsx
 msgid "Oops! An unknown error occurred. Please refresh the page, or visit from another browser or device."
 msgstr "¡Ups! Se ha producido un error desconocido. Actualice la página o acceda desde otro navegador o dispositivo por favor."
+
+#: src/components/PoolInfoChartToolbar/PositionsSelect.tsx
+msgid "Open positions"
+msgstr "Posiciones abiertas"
 
 #: src/components/Badge/RangeBadge.tsx
 #: src/components/StakerMyStakes/IsActive.tsx
@@ -1462,6 +1478,10 @@ msgstr "Lo producido se enviará a <0>{0}</0>"
 #: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "POOL"
 msgstr "POOL"
+
+#: src/components/Table/PageButtons.tsx
+msgid "Page {page} of {maxPage}"
+msgstr "Página {page} de {maxPage}"
 
 #: src/pages/EventsHistory/index.tsx
 msgid "Participants"
@@ -1871,8 +1891,8 @@ msgid "Success! View pools"
 msgstr "Exito! Ver pools"
 
 #: src/pages/AddLiquidity/index.tsx
-msgid "Supplying {0} {1} {2} {3} {4}"
-msgstr "Suministrando {0} {1} {2} {3} {4}"
+#~ msgid "Supplying {0} {1} {2} {3} {4}"
+#~ msgstr "Suministrando {0} {1} {2} {3} {4}"
 
 #: src/components/Header/index.tsx
 #: src/components/NavigationTabs/SwapPoolTabs.tsx
@@ -2285,6 +2305,10 @@ msgstr "Su transacción se revertirá si el precio cambia desfavorablemente más
 msgid "Your transactions will appear here..."
 msgstr "Sus transacciones aparecerán aquí..."
 
+#: src/components/PoolInfoChartToolbar/PoolInfoChartToolbar.tsx
+msgid "ZOOM"
+msgstr "ZOOM"
+
 #: src/pages/Swap/index.tsx
 msgid "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"
 msgstr "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"
@@ -2348,7 +2372,6 @@ msgstr "{0, plural, one {Import token} other {Import tokens}}"
 
 #: src/components/FeeChartRangeInput/index.tsx
 #: src/components/FeeChartRangeInput/index.tsx
-#: src/components/Table/PageButtons.tsx
 #: src/components/WalletModal/index.tsx
 msgid "{0}"
 msgstr "{0}"

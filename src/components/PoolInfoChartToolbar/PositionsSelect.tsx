@@ -5,6 +5,7 @@ import stc from "string-to-color";
 import "./index.scss";
 import { ChevronDown, Layers } from "react-feather";
 import { useActiveWeb3React } from "hooks/web3";
+import { t, Trans } from "@lingui/macro";
 
 interface PositionsSelectProps {
     positions: {
@@ -72,7 +73,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
                     </span>
                     <span className="fs-085">
                         {selected.length === 0 ? (
-                            "My positions"
+                            t`My positions`
                         ) : (
                             <span className="f mxs_fd-c">
                                 {selected.map((id, key, arr) => (
@@ -88,7 +89,9 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
                 <div className="positions-range-input__inner">
                     {_opened.length > 0 ? (
                         <>
-                            <div className="pv-05 ph-1">Open positions</div>
+                            <div className="pv-05 ph-1">
+                                <Trans>Open positions</Trans>
+                            </div>
                             <ul className={"positions-range-input__list"} onClick={(e) => e.preventDefault()}>
                                 {_opened.map((item) => (
                                     <li className="positions-range-input__list-item" key={item.id} onClick={() => updateSelect(item.id)}>
@@ -103,7 +106,9 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
                     ) : null}
                     {_closed.length > 0 ? (
                         <>
-                            <div className="pv-05 ph-1">Closed positions</div>
+                            <div className="pv-05 ph-1">
+                                <Trans>Closed positions</Trans>
+                            </div>
                             <ul className={"positions-range-input__list"} onClick={(e) => e.preventDefault()}>
                                 {_closed.map((item) => (
                                     <li className="positions-range-input__list-item" key={item.id} onClick={() => updateSelect(item.id)}>
@@ -118,7 +123,9 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
                     ) : null}
                     {!_closed.length && !_opened.length ? (
                         <>
-                            <div className="positions-range-input__empty pv-2 ph-1 ta-c">No positions</div>
+                            <div className="positions-range-input__empty pv-2 ph-1 ta-c">
+                                <Trans>No positions</Trans>
+                            </div>
                         </>
                     ) : null}
                 </div>

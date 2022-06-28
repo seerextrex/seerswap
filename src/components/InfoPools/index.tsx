@@ -25,20 +25,16 @@ const sortFields = [
         value: "pool",
     },
     {
-        title: t`Volume 24H`,
-        value: "volumeUSD",
-    },
-    {
         title: t`Volume 7D`,
         value: "volumeUSDWeek",
     },
     {
-        title: t`TVL`,
-        value: "tvlUSD",
+        title: t`Volume 1M`,
+        value: "volumeUSDMonth",
     },
     {
-        title: t`🚀 APR`,
-        value: "apr",
+        title: t`TVL`,
+        value: "tvlUSD",
     },
     {
         title: t`🔥 Farming`,
@@ -46,9 +42,16 @@ const sortFields = [
     },
 ];
 
+const bestFarmingAPRs = {
+    "0x49c1c3ac4f301ad71f788398c0de919c35eaf565": 3404,
+    "0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed": 1504,
+    "0x888d0d1b47dcc0d6cbca9fd1f0e92f31798eb92a": 1802,
+    "0xbdcf2c1e0ffdbcc05d775e2fb7fe3ca46fb83dc4": 840,
+};
+
 export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
-    const [sortField, setSortField] = useState("volumeUSD");
-    const [sortIndex, setSortIndex] = useState(1);
+    const [sortField, setSortField] = useState("tvlUSD");
+    const [sortIndex, setSortIndex] = useState(2);
     const [sortDirection, setSortDirection] = useState<boolean>(true);
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex);
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection);
@@ -65,14 +68,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             data.map((el: any, i: any) => {
                 const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address });
                 const apr = el.apr > 0 ? <span style={{ color: "var(--green)" }}>{formatPercent(el.apr)}</span> : <span>-</span>;
-                const farming =
-                    el.farmingApr > 0 ? (
-                        <NavLink to={`/farming/${el.aprType ? "limit-farms" : "infinite-farms"}`} className={"farming-link"} data-apr={el.farmingApr > 0}>
-                            {formatPercent(el.farmingApr)}
-                        </NavLink>
-                    ) : (
-                        <span>-</span>
-                    );
+                const farming = bestFarmingAPRs[el.address] > 0 ? <span style={{ color: "var(--green)" }}>{bestFarmingAPRs[el.address]}%</span> : <span>-</span>;
 
                 return [
                     {
@@ -80,24 +76,20 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         value: el.address,
                     },
                     {
-                        title: formatDollarAmount(el.volumeUSD),
-                        value: el.volumeUSD,
-                    },
-                    {
                         title: formatDollarAmount(el.volumeUSDWeek),
                         value: el.volumeUSDWeek,
+                    },
+                    {
+                        title: formatDollarAmount(el.volumeUSDMonth),
+                        value: el.volumeUSDMonth,
                     },
                     {
                         title: formatDollarAmount(el.totalValueLockedUSD),
                         value: el.totalValueLockedUSD,
                     },
                     {
-                        title: apr,
-                        value: el.apr,
-                    },
-                    {
                         title: farming,
-                        value: el.farmingApr,
+                        value: bestFarmingAPRs[el.address.toLowerCase()],
                     },
                 ];
             })
@@ -114,25 +106,22 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
     return (
         <div style={{ overflow: "auto" }}>
             <div className={"w-100 pools-table-wrapper"}>
-                <Table gridClass={"grid-pools-table"} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
-                    <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={"grid-pools-table"}>
+                <Table gridClass={"grid-pools-table"} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data.slice(0, 8)}>
+                    <TableHeader arrow={() => {}} sortFields={sortFields} handleSort={() => {}} gridClass={"grid-pools-table"}>
                         <span className={"table-header__item"}>
                             <Trans>Pool</Trans>
-                        </span>
-                        <span className={"table-header__item table-header__item--center"}>
-                            <Trans>Volume 24H</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>Volume 7D</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
+                            <Trans>Volume 1M</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
-                            <Apr />
-                        </span>
-                        <span className={"table-header__item table-header__item--center"}>
-                            <Trans>🔥 Farming</Trans>
+                            <Trans>🔥 Best Farming APR</Trans>
                         </span>
                     </TableHeader>
                 </Table>

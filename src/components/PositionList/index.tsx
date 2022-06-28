@@ -41,7 +41,7 @@ export default function PositionList({ positions, newestPosition }: PositionList
 
     return (
         <>
-            {_positionsOnOldFarming.length ? (
+            {/* {_positionsOnOldFarming.length ? (
                 <OldFarmingWarning className="f full-w p-1 mb-1">
                     <AlertCircle size={"24px"} />
                     <span>{t`Due to release of Tier Farming, we have updated our contracts.`}</span>
@@ -49,7 +49,7 @@ export default function PositionList({ positions, newestPosition }: PositionList
                         <Trans>Withdraw previous positions →</Trans>
                     </a>
                 </OldFarmingWarning>
-            ) : null}
+            ) : null} */}
             <div className={"flex-s-between w-100 pr-2"}>
                 <div>
                     <Trans>Your positions</Trans>

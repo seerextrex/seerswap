@@ -665,7 +665,6 @@ msgid "Dates"
 msgstr "Сроки проведения"
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
-#: src/pages/PoolInfoPage/index.tsx
 msgid "Day"
 msgstr "День"
 
@@ -711,8 +710,12 @@ msgstr "Не видите какую-то из ваших позиций?"
 #~ msgstr "Скачать .PDF"
 
 #: src/components/PositionList/index.tsx
-msgid "Due to release of Tier Farming, we have updated our contracts."
-msgstr "Контракты были обновлены в связи с выпуском Фармингов с Уровнями"
+#~ msgid "Due to release of Tier Farming, we have updated our contracts."
+#~ msgstr "Контракты были обновлены в связи с выпуском Фармингов с Уровнями"
+
+#: src/pages/Pool/index.tsx
+msgid "Due to the audit's results, we’re currently updating our smart-contracts. Please, do not provide liquidity to our pools anytime soon."
+msgstr "В связи с результатами аудита мы сейчас обновляем наши смарт-контракты. Пожалуйста, не предоставляйте ликвидность нашим пулам в ближайшее время."
 
 #: src/pages/RealStakerPage/index.tsx
 msgid "EARNED"
@@ -1299,6 +1302,10 @@ msgstr "Сколько выпущено / Застейкано / Всего то
 msgid "Month"
 msgstr "Месяц"
 
+#: src/components/InfoTotalStats/index.tsx
+msgid "Monthly Volume"
+msgstr "Месячный Объем"
+
 #: src/components/HeaderMenu/index.tsx
 #: src/components/HeaderMenu/index.tsx
 msgid "More"
@@ -1677,7 +1684,7 @@ msgstr "Получатель"
 #: src/pages/RemoveLiquidity/V3.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Remove"
-msgstr "Удалить"
+msgstr "Забрать"
 
 #: src/components/NavigationTabs/AddRemoveTabs.tsx
 #: src/pages/Pool/PositionPage.tsx
@@ -1686,7 +1693,7 @@ msgstr "Забрать"
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "Remove list"
-msgstr "Удалить список"
+msgstr "Забрать список"
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "Remove {0}/{1} liquidity"
@@ -1931,6 +1938,10 @@ msgstr "TVL"
 msgid "The Algebra invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
 msgstr "Инвариант Algebra x * y = k не соблюдается при обмене. Обычно это означает, что один из токенов, которые вы обмениваете, имеет особенности поведения при его передаче."
 
+#: src/components/InfoTotalStats/index.tsx
+msgid "The Subgraph information might be outdated – check all the correct statistics"
+msgstr "Информация о субграфе может быть устаревшей - проверьте все правильные статистические данные"
+
 #: src/hooks/useSwapCallback.ts
 msgid "The input token cannot be transferred. There may be an issue with the input token."
 msgstr "Продаваемый токен не может быть отправлен. Возможно, имеется проблема с этим токеном."
@@ -2139,11 +2150,8 @@ msgstr "Объём"
 
 #: src/components/InfoPools/index.tsx
 #: src/components/InfoPools/index.tsx
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTokens/index.tsx
-#: src/components/InfoTotalStats/index.tsx
-msgid "Volume 24H"
-msgstr "Объём 24 часа"
+msgid "Volume 1M"
+msgstr ""
 
 #: src/components/InfoPools/index.tsx
 #: src/components/InfoPools/index.tsx
@@ -2163,7 +2171,6 @@ msgstr "Адрес кошелька или ENS-имя"
 #~ msgstr "Внимание: цена находится вне диапазона"
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
-#: src/pages/PoolInfoPage/index.tsx
 msgid "Week"
 msgstr "Неделя"
 
@@ -2176,8 +2183,8 @@ msgid "Withdraw"
 msgstr "Забрать"
 
 #: src/components/PositionList/index.tsx
-msgid "Withdraw previous positions →"
-msgstr "Забрать старые позиции →"
+#~ msgid "Withdraw previous positions →"
+#~ msgstr "Забрать старые позиции →"
 
 #: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "Withdrawing"
@@ -2335,6 +2342,10 @@ msgstr "https:// или ipfs:// или ENS имя"
 #: src/components/TransactionSettings/index.tsx
 msgid "minutes"
 msgstr "минут(-ы)"
+
+#: src/components/InfoTotalStats/index.tsx
+msgid "on Dune"
+msgstr "на Dune"
 
 #: src/pages/Swap/index.tsx
 #~ msgid "only for 1 week"
@@ -2538,11 +2549,13 @@ msgstr "🇷🇺  Русский"
 #~ msgstr "📄 Тех документ"
 
 #: src/components/InfoPools/index.tsx
+msgid "🔥 Best Farming APR"
+msgstr 🔥 Лучший Фарминг APR"
+
 #: src/components/InfoPools/index.tsx
 msgid "🔥 Farming"
 msgstr "🔥 Фарминг"
 
 #: src/components/InfoPools/AprHeader.tsx
-#: src/components/InfoPools/index.tsx
 msgid "🚀 APR"
 msgstr "🚀 APR"

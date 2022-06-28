@@ -56,7 +56,7 @@ export default function PoolInfoPage({
         fetchTicksSurroundingPrice: { ticksResult, ticksLoading, fetchTicksSurroundingPriceFn },
     } = useInfoTickData();
 
-    const [span, setSpan] = useState(ChartSpan.DAY);
+    const [span, setSpan] = useState(ChartSpan.MONTH);
     const [type, setType] = useState(ChartType.VOLUME);
     const [token, setToken] = useState(ChartToken.TOKEN0);
     const [selected, setSelected] = useState<string[]>([]);
@@ -105,14 +105,14 @@ export default function PoolInfoPage({
     ];
 
     const chartSpans = [
-        {
-            type: ChartSpan.DAY,
-            title: t`Day`,
-        },
-        {
-            type: ChartSpan.WEEK,
-            title: t`Week`,
-        },
+        // {
+        //     type: ChartSpan.DAY,
+        //     title: t`Day`,
+        // },
+        // {
+        //     type: ChartSpan.WEEK,
+        //     title: t`Week`,
+        // },
         {
             type: ChartSpan.MONTH,
             title: t`Month`,

@@ -18,6 +18,7 @@ export interface FormattedPool {
     volumeUSD: number
     volumeUSDChange: number
     volumeUSDWeek: number
+    volumeUSDMonth: number
 }
 
 export interface FormattedToken {
@@ -157,7 +158,7 @@ export interface PriceRangeClosed {
     [key: string]: {
         position: PositionPriceRange
         timestamp: string
-    } []
+    }[]
 }
 
 

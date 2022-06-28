@@ -1,6 +1,17 @@
 .total-stats-wrapper {
   display: flex;
 
+  &__warning {
+    background-color: #4d2e0e;
+    border-radius: 8px;
+    color: #ffa312;
+
+    &-link {
+      text-decoration: underline !important;
+      color: #2172E5 !important;
+    }
+  }
+
   @media screen and (max-width: 720px) {
     flex-direction: column;
     row-gap: 1rem;

@@ -18,6 +18,8 @@ import "./index.scss";
 import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
 import { EthereumWindow } from "models/types";
 import { useShowNewestPosition } from "state/mint/v3/hooks";
+import { OldFarmingWarning } from "components/PositionList/styled";
+import { AlertCircle } from "react-feather";
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React();
@@ -124,6 +126,10 @@ export default function Pool() {
                         </div>
                     )}
                     <main className={"f c f-ac"}>
+                        <OldFarmingWarning className="f full-w p-1 mb-1">
+                            <AlertCircle size={"24px"} />
+                            <span>{t`Due to the audit's results, we’re currently updating our smart-contracts. Please, do not provide liquidity to our pools anytime soon.`}</span>
+                        </OldFarmingWarning>
                         {positionsLoading ? (
                             <Loader style={{ margin: "auto" }} stroke="white" size={"2rem"} />
                         ) : _filteredPositions && _filteredPositions.length > 0 ? (

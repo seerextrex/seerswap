@@ -22,14 +22,14 @@ export function PoolStats({ fee, apr, noLiquidity, loading }: IPoolStats) {
         <div className="pool-stats-wrapper f f-jb mxs_fd-c w-100">
             <div className="pool-stats__title f w-100">{noLiquidity ? t`New pool` : t`Current pool stats`}</div>
             <div className="f">
-                <div className={`pool-stats__fee ${!apr ? "single" : ""}`}>
+                <div className={`pool-stats__fee single`}>
                     <span>{fee}</span>
                 </div>
-                {apr && (
+                {/* {apr && (
                     <div className="pool-stats__apr">
                         <span>{apr}</span>
                     </div>
-                )}
+                )} */}
             </div>
         </div>
     );

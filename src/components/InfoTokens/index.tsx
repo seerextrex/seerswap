@@ -31,10 +31,6 @@ const sortFields = [
         value: "priceUSDChange",
     },
     {
-        title: t`Volume 24H`,
-        value: "volumeUSD",
-    },
-    {
         title: t`TVL`,
         value: "tvlUSD",
     },
@@ -43,7 +39,7 @@ const sortFields = [
 export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProps) {
     const [sortField, setSortField] = useState<string>("tvlUSD");
     const [sortDirection, setSortDirection] = useState<boolean>(true);
-    const [sortIndex, setSortIndex] = useState<number>(4);
+    const [sortIndex, setSortIndex] = useState<number>(3);
 
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex);
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection);
@@ -74,10 +70,6 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                         value: el.priceUSDChange,
                     },
                     {
-                        title: formatDollarAmount(el.volumeUSD),
-                        value: el.volumeUSD,
-                    },
-                    {
                         title: formatDollarAmount(el.tvlUSD),
                         value: el.tvlUSD,
                     },
@@ -95,8 +87,8 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
     return (
         <div style={{ overflow: "overlay" }}>
             <div className={"tokens-table-wrapper"}>
-                <Table gridClass={"grid-tokens-table"} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data}>
-                    <TableHeader gridClass={"grid-tokens-table"} sortFields={sortFields} handleSort={handleSort} arrow={arrow}>
+                <Table gridClass={"grid-tokens-table"} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data.slice(0, 8)}>
+                    <TableHeader gridClass={"grid-tokens-table"} sortFields={sortFields} handleSort={() => {}} arrow={() => {}}>
                         <span className={"table-header__item"}>
                             <Trans>Name</Trans>
                         </span>
@@ -105,9 +97,6 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>Price Change</Trans>
-                        </span>
-                        <span className={"table-header__item table-header__item--center"}>
-                            <Trans>Volume 24H</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>

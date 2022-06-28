@@ -56,28 +56,28 @@ import { getPositionRangeChart } from '../../utils/getPositionRangeChart'
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-            accum[poolData.id] = poolData
-            return accum
-        }, {})
+        accum[poolData.id] = poolData
+        return accum
+    }, {})
         : {}
 }
 
 function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-            accum[tokenData.id] = tokenData
-            return accum
-        }, {})
+        accum[tokenData.id] = tokenData
+        return accum
+    }, {})
         : {}
 }
 
 export function useInfoSubgraph() {
     const { account } = useActiveWeb3React()
     const { dataClient } = useClients()
-    const [t24, t48, tWeek] = useDeltaTimestamps()
+    const [t24, t48, tWeek, tMonth] = useDeltaTimestamps()
 
-    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek])
-    const [block24, block48, blockWeek] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? []
+    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek, tMonth])
+    const [block24, block48, blockWeek, blockMonth] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? []
 
     const ethPrices = useEthPrices()
 
@@ -133,16 +133,18 @@ export function useInfoSubgraph() {
                 return
             }
 
-            const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
+            const [_block24, _block48, _blockWeek, _blockMonth] = [block24, block48, blockWeek, blockMonth].sort((a, b) => +b.timestamp - +a.timestamp)
 
             const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses)
             const pools48 = await fetchPoolsByTime(_block48.number, poolsAddresses)
             const poolsWeek = await fetchPoolsByTime(_blockWeek.number, poolsAddresses)
+            const poolsMonth = await fetchPoolsByTime(_blockMonth.number, poolsAddresses)
 
             const parsedPools = parsePoolsData(pools)
             const parsedPools24 = parsePoolsData(pools24)
             const parsedPools48 = parsePoolsData(pools48)
             const parsedPoolsWeek = parsePoolsData(poolsWeek)
+            const parsedPoolsMonth = parsePoolsData(poolsMonth)
 
             const aprs = await fetchPoolsAPR()
 
@@ -174,6 +176,7 @@ export function useInfoSubgraph() {
                 const oneDay: PoolSubgraph | undefined = parsedPools24[address]
                 const twoDay: PoolSubgraph | undefined = parsedPools48[address]
                 const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
+                const month: PoolSubgraph | undefined = parsedPoolsMonth[address]
 
                 const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD'
                 const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
@@ -187,6 +190,9 @@ export function useInfoSubgraph() {
                                 : [0, 0]
 
                 const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume])
+                    : current ? parseFloat(current[manageUntrackedVolume]) : 0
+
+                const volumeUSDMonth = current && month ? parseFloat(current[manageUntrackedVolume]) - parseFloat(month[manageUntrackedVolume])
                     : current ? parseFloat(current[manageUntrackedVolume]) : 0
 
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
@@ -203,9 +209,10 @@ export function useInfoSubgraph() {
                     fee: current.fee,
                     exists: !!current,
                     address,
-                    volumeUSD,
+                    volumeUSD: volumeUSDMonth,
                     volumeUSDChange,
                     volumeUSDWeek,
+                    volumeUSDMonth,
                     tvlUSD,
                     tvlUSDChange,
                     totalValueLockedUSD: current[manageUntrackedTVL],
@@ -621,7 +628,7 @@ export function useInfoSubgraph() {
 
             setTotalStatsLoading(true)
 
-            const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
+            const [_block24, _block48, _blockWeek, _blockMonth] = [block24, block48, blockWeek, blockMonth].sort((a, b) => +b.timestamp - +a.timestamp)
 
             const { data: data, error: error } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
                 query: TOTAL_STATS(),
@@ -643,12 +650,34 @@ export function useInfoSubgraph() {
                 return
             }
 
+            const { data: dataWeek, error: errorWeek } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
+                query: TOTAL_STATS(_blockWeek.number),
+                fetchPolicy: 'network-only'
+            })
+
+            if (errorWeek) {
+                setTotalStats('Failed')
+                return
+            }
+
+            const { data: dataMonth, error: errorMonth } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
+                query: TOTAL_STATS(_blockMonth.number),
+                fetchPolicy: 'network-only'
+            })
+
+            if (errorMonth) {
+                setTotalStats('Failed')
+                return
+            }
+
             const stats = data.factories[0]
             const stats24 = data24.factories[0]
+            const statsWeek = dataWeek.factories[0]
+            const statsMonth = dataMonth.factories[0]
 
             const volumeUSD =
-                stats && stats24
-                    ? parseFloat(stats.totalVolumeUSD) - parseFloat(stats24.totalVolumeUSD)
+                stats && statsMonth
+                    ? parseFloat(stats.totalVolumeUSD) - parseFloat(statsMonth.totalVolumeUSD)
                     : parseFloat(stats.totalVolumeUSD)
 
             setTotalStats({

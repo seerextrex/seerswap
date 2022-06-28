@@ -42,6 +42,7 @@ const TableBody = ({ data, maxItems = MAX_ITEMS, sortField, sortIndex, sortDirec
                   .slice(maxItems * (page - 1), page * maxItems)
             : [];
     }, [maxItems, page, data, sortDirection, sortField, sortIndex]);
+
     return (
         <>
             {sortedPools.length > 0 ? (

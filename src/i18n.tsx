@@ -28,7 +28,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
-        console.log("ACTIVATING", locale);
         dynamicActivate(locale)
             .then(() => {
                 setLoaded(true);

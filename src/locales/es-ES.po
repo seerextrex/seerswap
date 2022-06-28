@@ -2152,7 +2152,7 @@ msgstr "Volumen"
 #: src/components/InfoPools/index.tsx
 #: src/components/InfoPools/index.tsx
 msgid "Volume 1M"
-msgstr ""
+msgstr "Volumen de 1M"
 
 #: src/components/InfoPools/index.tsx
 #: src/components/InfoPools/index.tsx

@@ -55,7 +55,7 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
             <div className={"total-stats-wrapper__warning mt-1 p-1 ta-c f f-ac f-jc"}>
                 <AlertCircle />
                 <span className="ml-1">
-                    <Trans>The Subgraph information might be outdated – check all the correct statistics </Trans>
+                    <Trans>The Subgraph information might be outdated – check all the correct statistics </Trans>&nbsp;
                     <a href="https://dune.com/lilchizh/algebra" target={"_blank"} rel={"noopener noreferrer"} className={"total-stats-wrapper__warning-link"}>
                         <Trans>on Dune</Trans>
                     </a>

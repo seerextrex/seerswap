@@ -1940,7 +1940,7 @@ msgstr "Инвариант Algebra x * y = k не соблюдается при 
 
 #: src/components/InfoTotalStats/index.tsx
 msgid "The Subgraph information might be outdated – check all the correct statistics"
-msgstr "Информация о субграфе может быть устаревшей - проверьте все правильные статистические данные"
+msgstr "Информация из Subraph-а может быть устаревшей - проверьте все правильные статистические данные"
 
 #: src/hooks/useSwapCallback.ts
 msgid "The input token cannot be transferred. There may be an issue with the input token."
@@ -2151,7 +2151,7 @@ msgstr "Объём"
 #: src/components/InfoPools/index.tsx
 #: src/components/InfoPools/index.tsx
 msgid "Volume 1M"
-msgstr ""
+msgstr "Объем 1 месяц"
 
 #: src/components/InfoPools/index.tsx
 #: src/components/InfoPools/index.tsx

@@ -96,23 +96,23 @@ export function useIncentiveSubgraph() {
 
     }
 
-    async function getEvents(events: any[]) {
+    async function getEvents(events: any[], farming = false) {
 
         const _events: any[] = []
 
         for (let i = 0; i < events.length; i++) {
 
             const pool = await fetchPool(events[i].pool)
-            const rewardToken = await fetchToken(events[i].rewardToken)
-            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken)
-            const lockedToken = await fetchToken(events[i].multiplierToken)
+            const rewardToken = await fetchToken(events[i].rewardToken, farming)
+            const bonusRewardToken = await fetchToken(events[i].bonusRewardToken, farming)
+            const multiplierToken = await fetchToken(events[i].multiplierToken, farming)
 
             const _event: any = {
                 ...events[i],
                 pool,
                 rewardToken,
                 bonusRewardToken,
-                lockedToken,
+                multiplierToken,
                 reward: formatUnits(BigNumber.from(events[i].reward), rewardToken.decimals),
                 bonusReward: formatUnits(BigNumber.from(events[i].bonusReward), bonusRewardToken.decimals)
             }
@@ -124,11 +124,11 @@ export function useIncentiveSubgraph() {
 
     }
 
-    async function fetchToken(tokenId: string) {
+    async function fetchToken(tokenId: string, farming = false) {
 
         try {
 
-            const { data: { tokens }, error } = (await dataClient.query<SubgraphResponse<TokenSubgraph[]>>({
+            const { data: { tokens }, error } = (await (farming ? farmingClient : dataClient).query<SubgraphResponse<TokenSubgraph[]>>({
                 query: FETCH_TOKEN(),
                 variables: { tokenId }
             }))
@@ -326,12 +326,12 @@ export function useIncentiveSubgraph() {
                     ...el,
                     active: true,
                     apr: aprs[el.id] ? aprs[el.id] : 37
-                }))),
+                })), true),
                 futureEvents: await getEvents(futureEvents.map(el => ({
                     ...el,
                     locked: eventTVL[el.id] === undefined ? false : eventTVL[el.id] * price >= EVENT_LOCK,
                     apr: aprs[el.id] ? aprs[el.id] : 37
-                })))
+                })), true)
             })
 
             setAllEventsLoading(false)
@@ -432,9 +432,9 @@ export function useIncentiveSubgraph() {
                     )
 
                     const {
-                        rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, multiplierToken, algbAmountForLevel1,
-                        algbAmountForLevel2,
-                        algbAmountForLevel3,
+                        rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, multiplierToken, tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3,
                         level1multiplier,
                         level2multiplier,
                         level3multiplier
@@ -445,9 +445,9 @@ export function useIncentiveSubgraph() {
                         +position.id
                     )
 
-                    const _rewardToken = await fetchToken(rewardToken)
-                    const _bonusRewardToken = await fetchToken(bonusRewardToken)
-                    const _multiplierToken = await fetchToken(multiplierToken)
+                    const _rewardToken = await fetchToken(rewardToken, true)
+                    const _bonusRewardToken = await fetchToken(bonusRewardToken, true)
+                    const _multiplierToken = await fetchToken(multiplierToken, true)
                     const _pool = await fetchPool(pool)
 
                     _position = {
@@ -463,10 +463,10 @@ export function useIncentiveSubgraph() {
                         createdAtTimestamp: +createdAtTimestamp,
                         incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
-                        lockedToken: _multiplierToken,
-                        algbAmountForLevel1,
-                        algbAmountForLevel2,
-                        algbAmountForLevel3,
+                        multiplierToken: _multiplierToken,
+                        tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3,
                         level1multiplier,
                         level2multiplier,
                         level3multiplier
@@ -505,8 +505,8 @@ export function useIncentiveSubgraph() {
                         { from: account }
                     )
 
-                    const _rewardToken = await fetchToken(rewardToken)
-                    const _bonusRewardToken = await fetchToken(bonusRewardToken)
+                    const _rewardToken = await fetchToken(rewardToken, true)
+                    const _bonusRewardToken = await fetchToken(bonusRewardToken, true)
                     const _pool = await fetchPool(pool)
 
                     _position = {

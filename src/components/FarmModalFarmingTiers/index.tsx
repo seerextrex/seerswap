@@ -18,12 +18,15 @@ import MasterTierIcon from "../../assets/images/master-tier-icon.png";
 import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
 import { t, Trans } from "@lingui/macro";
 
-export default function FarmModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; lockedToken: any }) {
+export default function FarmModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, multiplierToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; multiplierToken: any }) {
     const { account } = useActiveWeb3React();
 
     const [selectedTier, setSelectedTier] = useState<number | undefined>(0);
 
-    const balance = useCurrencyBalance(account ?? undefined, new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) ?? undefined);
+    const balance = useCurrencyBalance(
+        account ?? undefined,
+        new Token(SupportedChainId.POLYGON, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) ?? undefined
+    );
     const _balance = useMemo(() => (!balance ? "" : balance.toSignificant(4)), [balance]);
 
     const handleTier = useCallback(
@@ -58,12 +61,12 @@ export default function FarmModalFarmingTiers({ tiersLimits, tiersMultipliers, s
                 </div>
                 <div>
                     <div className="f">
-                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) as WrappedCurrency} />
-                        <div className="ml-05" style={{ lineHeight: "24px" }}>{`${_balance} ${lockedToken.symbol}`}</div>
+                        <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) as WrappedCurrency} />
+                        <div className="ml-05" style={{ lineHeight: "24px" }}>{`${_balance} ${multiplierToken.symbol}`}</div>
                     </div>
                 </div>
                 <div className="ml-a mxs_display-none ms_display-none">
-                    <Link to={"/swap"} className="farming-tier__balance-buy b">{t`Buy ${lockedToken.symbol} →`}</Link>
+                    <Link to={"/swap"} className="farming-tier__balance-buy b">{t`Buy ${multiplierToken.symbol} →`}</Link>
                 </div>
             </div>
             <div className="mb-1 f w-100">
@@ -94,7 +97,7 @@ export default function FarmModalFarmingTiers({ tiersLimits, tiersMultipliers, s
                                     <Trans>Lock:</Trans>
                                 </span>
                                 <span className="ml-a farming-tier__locked-value">
-                                    {tier.lock ? `${formatAmountTokens(tier.lock / Math.pow(10, +lockedToken.decimals), true)} ${lockedToken.symbol}` : "-"}
+                                    {tier.lock ? `${formatAmountTokens(tier.lock / Math.pow(10, +multiplierToken.decimals), true)} ${multiplierToken.symbol}` : "-"}
                                 </span>
                             </div>
                             <div className="farming-tier__rewards f">

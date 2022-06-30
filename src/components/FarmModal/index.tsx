@@ -38,10 +38,10 @@ interface FarmModalProps {
         level1multiplier: string;
         level2multiplier: string;
         level3multiplier: string;
-        algbAmountForLevel1: string;
-        algbAmountForLevel2: string;
-        algbAmountForLevel3: string;
-        lockedToken: any;
+        tokenAmountForLevel1: string;
+        tokenAmountForLevel2: string;
+        tokenAmountForLevel3: string;
+        multiplierToken: any;
     };
     closeHandler: () => void;
     farmingType: FarmingType;
@@ -57,10 +57,10 @@ export function FarmModal({
         level1multiplier,
         level2multiplier,
         level3multiplier,
-        lockedToken,
-        algbAmountForLevel1,
-        algbAmountForLevel2,
-        algbAmountForLevel3,
+        multiplierToken,
+        tokenAmountForLevel1,
+        tokenAmountForLevel2,
+        tokenAmountForLevel3,
     },
     closeHandler,
     farmingType,
@@ -215,7 +215,7 @@ export function FarmModal({
 
     const balance = useCurrencyBalance(
         account ?? undefined,
-        lockedToken ? new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) : undefined
+        multiplierToken ? new Token(SupportedChainId.POLYGON, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) : undefined
     );
 
     const isEnoughALGB = useMemo(() => {
@@ -226,16 +226,16 @@ export function FarmModal({
         const _balance = +balance.toSignificant(4);
 
         switch (selectedTier) {
-            case algbAmountForLevel1:
-                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel1), lockedToken.decimals);
-            case algbAmountForLevel2:
-                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel2), lockedToken.decimals);
-            case algbAmountForLevel3:
-                return +_balance >= +formatUnits(BigNumber.from(algbAmountForLevel3), lockedToken.decimals);
+            case tokenAmountForLevel1:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel1), multiplierToken.decimals);
+            case tokenAmountForLevel2:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel2), multiplierToken.decimals);
+            case tokenAmountForLevel3:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel3), multiplierToken.decimals);
             default:
                 return true;
         }
-    }, [balance, selectedTier, algbAmountForLevel1, algbAmountForLevel2, algbAmountForLevel3]);
+    }, [balance, selectedTier, tokenAmountForLevel1, tokenAmountForLevel2, tokenAmountForLevel3]);
 
     const tierSelectionHandler = useCallback(
         (tier) => {
@@ -244,13 +244,13 @@ export function FarmModal({
                     setSelectedTier(null);
                     break;
                 case 1:
-                    setSelectedTier(algbAmountForLevel1);
+                    setSelectedTier(tokenAmountForLevel1);
                     break;
                 case 2:
-                    setSelectedTier(algbAmountForLevel2);
+                    setSelectedTier(tokenAmountForLevel2);
                     break;
                 case 3:
-                    setSelectedTier(algbAmountForLevel3);
+                    setSelectedTier(tokenAmountForLevel3);
                     break;
                 case "":
                     setSelectedTier("");
@@ -262,10 +262,10 @@ export function FarmModal({
     );
 
     const _amountForApprove = useMemo(() => {
-        if (!selectedTier || !lockedToken) return undefined;
+        if (!selectedTier || !multiplierToken) return undefined;
 
-        return CurrencyAmount.fromRawAmount(new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name), selectedTier);
-    }, [selectedTier, lockedToken]);
+        return CurrencyAmount.fromRawAmount(new Token(SupportedChainId.POLYGON, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name), selectedTier);
+    }, [selectedTier, multiplierToken]);
 
     const [approval, approveCallback] = useApproveCallback(_amountForApprove, FARMING_CENTER[SupportedChainId.POLYGON]);
 
@@ -304,16 +304,16 @@ export function FarmModal({
                     {farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 && (
                         <FarmModalFarmingTiers
                             tiersLimits={{
-                                low: algbAmountForLevel1,
-                                medium: algbAmountForLevel2,
-                                high: algbAmountForLevel3,
+                                low: tokenAmountForLevel1,
+                                medium: tokenAmountForLevel2,
+                                high: tokenAmountForLevel3,
                             }}
                             tiersMultipliers={{
                                 low: level1multiplier,
                                 medium: level2multiplier,
                                 high: level3multiplier,
                             }}
-                            lockedToken={lockedToken}
+                            multiplierToken={multiplierToken}
                             selectTier={tierSelectionHandler}
                         />
                     )}
@@ -392,7 +392,7 @@ export function FarmModal({
                             <Trans>Select Tier</Trans>
                         </button>
                     ) : selectedTier && !isEnoughALGB && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled className="btn primary w-100 p-1">{t`Not enough ${lockedToken.symbol}`}</button>
+                        <button disabled className="btn primary w-100 p-1">{t`Not enough ${multiplierToken.symbol}`}</button>
                     ) : selectedNFT ? (
                         <div className={"f mxs_fd-c w-100"}>
                             {farmingType === FarmingType.FINITE && selectedTier && (
@@ -410,9 +410,9 @@ export function FarmModal({
                                             </span>
                                         </span>
                                     ) : !showApproval ? (
-                                        t`${lockedToken.symbol} Approved`
+                                        t`${multiplierToken.symbol} Approved`
                                     ) : (
-                                        t`Approve ${lockedToken.symbol}`
+                                        t`Approve ${multiplierToken.symbol}`
                                     )}
                                 </button>
                             )}

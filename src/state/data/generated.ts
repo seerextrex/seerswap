@@ -461,6 +461,7 @@ export type Burn_Filter = {
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -505,6 +506,7 @@ export type Burn_Filter = {
   timestamp_not?: Maybe<Scalars['BigInt']>;
   timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
   token0?: Maybe<Scalars['String']>;
+  token0_?: Maybe<Token_Filter>;
   token0_contains?: Maybe<Scalars['String']>;
   token0_contains_nocase?: Maybe<Scalars['String']>;
   token0_ends_with?: Maybe<Scalars['String']>;
@@ -525,6 +527,7 @@ export type Burn_Filter = {
   token0_starts_with?: Maybe<Scalars['String']>;
   token0_starts_with_nocase?: Maybe<Scalars['String']>;
   token1?: Maybe<Scalars['String']>;
+  token1_?: Maybe<Token_Filter>;
   token1_contains?: Maybe<Scalars['String']>;
   token1_contains_nocase?: Maybe<Scalars['String']>;
   token1_ends_with?: Maybe<Scalars['String']>;
@@ -545,6 +548,7 @@ export type Burn_Filter = {
   token1_starts_with?: Maybe<Scalars['String']>;
   token1_starts_with_nocase?: Maybe<Scalars['String']>;
   transaction?: Maybe<Scalars['String']>;
+  transaction_?: Maybe<Transaction_Filter>;
   transaction_contains?: Maybe<Scalars['String']>;
   transaction_contains_nocase?: Maybe<Scalars['String']>;
   transaction_ends_with?: Maybe<Scalars['String']>;
@@ -650,6 +654,7 @@ export type Collect_Filter = {
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -694,6 +699,7 @@ export type Collect_Filter = {
   timestamp_not?: Maybe<Scalars['BigInt']>;
   timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
   transaction?: Maybe<Scalars['String']>;
+  transaction_?: Maybe<Transaction_Filter>;
   transaction_contains?: Maybe<Scalars['String']>;
   transaction_contains_nocase?: Maybe<Scalars['String']>;
   transaction_ends_with?: Maybe<Scalars['String']>;
@@ -732,16 +738,18 @@ export enum Collect_OrderBy {
 export type Deposit = {
   __typename?: 'Deposit';
   L2tokenId: Scalars['BigInt'];
-  algbLocked: Scalars['BigInt'];
   enteredInEternalFarming?: Maybe<Scalars['BigInt']>;
   eternalFarming?: Maybe<Scalars['Bytes']>;
   id: Scalars['ID'];
   incentive?: Maybe<Scalars['Bytes']>;
-  level: Scalars['BigInt'];
+  levelEternal: Scalars['BigInt'];
+  levelIncentive: Scalars['BigInt'];
   liquidity: Scalars['BigInt'];
   onFarmingCenter: Scalars['Boolean'];
   owner: Scalars['Bytes'];
   pool: Scalars['Bytes'];
+  tokensLockedEternal: Scalars['BigInt'];
+  tokensLockedIncentive: Scalars['BigInt'];
 };
 
 export type Deposit_Filter = {
@@ -755,14 +763,6 @@ export type Deposit_Filter = {
   L2tokenId_not_in?: Maybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
-  algbLocked?: Maybe<Scalars['BigInt']>;
-  algbLocked_gt?: Maybe<Scalars['BigInt']>;
-  algbLocked_gte?: Maybe<Scalars['BigInt']>;
-  algbLocked_in?: Maybe<Array<Scalars['BigInt']>>;
-  algbLocked_lt?: Maybe<Scalars['BigInt']>;
-  algbLocked_lte?: Maybe<Scalars['BigInt']>;
-  algbLocked_not?: Maybe<Scalars['BigInt']>;
-  algbLocked_not_in?: Maybe<Array<Scalars['BigInt']>>;
   enteredInEternalFarming?: Maybe<Scalars['BigInt']>;
   enteredInEternalFarming_gt?: Maybe<Scalars['BigInt']>;
   enteredInEternalFarming_gte?: Maybe<Scalars['BigInt']>;
@@ -791,14 +791,22 @@ export type Deposit_Filter = {
   incentive_not?: Maybe<Scalars['Bytes']>;
   incentive_not_contains?: Maybe<Scalars['Bytes']>;
   incentive_not_in?: Maybe<Array<Scalars['Bytes']>>;
-  level?: Maybe<Scalars['BigInt']>;
-  level_gt?: Maybe<Scalars['BigInt']>;
-  level_gte?: Maybe<Scalars['BigInt']>;
-  level_in?: Maybe<Array<Scalars['BigInt']>>;
-  level_lt?: Maybe<Scalars['BigInt']>;
-  level_lte?: Maybe<Scalars['BigInt']>;
-  level_not?: Maybe<Scalars['BigInt']>;
-  level_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  levelEternal?: Maybe<Scalars['BigInt']>;
+  levelEternal_gt?: Maybe<Scalars['BigInt']>;
+  levelEternal_gte?: Maybe<Scalars['BigInt']>;
+  levelEternal_in?: Maybe<Array<Scalars['BigInt']>>;
+  levelEternal_lt?: Maybe<Scalars['BigInt']>;
+  levelEternal_lte?: Maybe<Scalars['BigInt']>;
+  levelEternal_not?: Maybe<Scalars['BigInt']>;
+  levelEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  levelIncentive?: Maybe<Scalars['BigInt']>;
+  levelIncentive_gt?: Maybe<Scalars['BigInt']>;
+  levelIncentive_gte?: Maybe<Scalars['BigInt']>;
+  levelIncentive_in?: Maybe<Array<Scalars['BigInt']>>;
+  levelIncentive_lt?: Maybe<Scalars['BigInt']>;
+  levelIncentive_lte?: Maybe<Scalars['BigInt']>;
+  levelIncentive_not?: Maybe<Scalars['BigInt']>;
+  levelIncentive_not_in?: Maybe<Array<Scalars['BigInt']>>;
   liquidity?: Maybe<Scalars['BigInt']>;
   liquidity_gt?: Maybe<Scalars['BigInt']>;
   liquidity_gte?: Maybe<Scalars['BigInt']>;
@@ -823,20 +831,38 @@ export type Deposit_Filter = {
   pool_not?: Maybe<Scalars['Bytes']>;
   pool_not_contains?: Maybe<Scalars['Bytes']>;
   pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  tokensLockedEternal?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_gt?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_gte?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedEternal_lt?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_lte?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_not?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedIncentive?: Maybe<Scalars['BigInt']>;
+  tokensLockedIncentive_gt?: Maybe<Scalars['BigInt']>;
+  tokensLockedIncentive_gte?: Maybe<Scalars['BigInt']>;
+  tokensLockedIncentive_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedIncentive_lt?: Maybe<Scalars['BigInt']>;
+  tokensLockedIncentive_lte?: Maybe<Scalars['BigInt']>;
+  tokensLockedIncentive_not?: Maybe<Scalars['BigInt']>;
+  tokensLockedIncentive_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Deposit_OrderBy {
   L2tokenId = 'L2tokenId',
-  AlgbLocked = 'algbLocked',
   EnteredInEternalFarming = 'enteredInEternalFarming',
   EternalFarming = 'eternalFarming',
   Id = 'id',
   Incentive = 'incentive',
-  Level = 'level',
+  LevelEternal = 'levelEternal',
+  LevelIncentive = 'levelIncentive',
   Liquidity = 'liquidity',
   OnFarmingCenter = 'onFarmingCenter',
   Owner = 'owner',
-  Pool = 'pool'
+  Pool = 'pool',
+  TokensLockedEternal = 'tokensLockedEternal',
+  TokensLockedIncentive = 'tokensLockedIncentive'
 }
 
 export type EternalFarming = {
@@ -847,11 +873,18 @@ export type EternalFarming = {
   endTime: Scalars['BigInt'];
   id: Scalars['ID'];
   isDetached?: Maybe<Scalars['Boolean']>;
+  level1multiplier: Scalars['BigInt'];
+  level2multiplier: Scalars['BigInt'];
+  level3multiplier: Scalars['BigInt'];
+  multiplierToken: Scalars['Bytes'];
   pool: Scalars['Bytes'];
   reward: Scalars['BigInt'];
   rewardRate: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   startTime: Scalars['BigInt'];
+  tokenAmountForLevel1: Scalars['BigInt'];
+  tokenAmountForLevel2: Scalars['BigInt'];
+  tokenAmountForLevel3: Scalars['BigInt'];
   virtualPool: Scalars['Bytes'];
 };
 
@@ -900,6 +933,36 @@ export type EternalFarming_Filter = {
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  level1multiplier?: Maybe<Scalars['BigInt']>;
+  level1multiplier_gt?: Maybe<Scalars['BigInt']>;
+  level1multiplier_gte?: Maybe<Scalars['BigInt']>;
+  level1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  level1multiplier_lt?: Maybe<Scalars['BigInt']>;
+  level1multiplier_lte?: Maybe<Scalars['BigInt']>;
+  level1multiplier_not?: Maybe<Scalars['BigInt']>;
+  level1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  level2multiplier?: Maybe<Scalars['BigInt']>;
+  level2multiplier_gt?: Maybe<Scalars['BigInt']>;
+  level2multiplier_gte?: Maybe<Scalars['BigInt']>;
+  level2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  level2multiplier_lt?: Maybe<Scalars['BigInt']>;
+  level2multiplier_lte?: Maybe<Scalars['BigInt']>;
+  level2multiplier_not?: Maybe<Scalars['BigInt']>;
+  level2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  level3multiplier?: Maybe<Scalars['BigInt']>;
+  level3multiplier_gt?: Maybe<Scalars['BigInt']>;
+  level3multiplier_gte?: Maybe<Scalars['BigInt']>;
+  level3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  level3multiplier_lt?: Maybe<Scalars['BigInt']>;
+  level3multiplier_lte?: Maybe<Scalars['BigInt']>;
+  level3multiplier_not?: Maybe<Scalars['BigInt']>;
+  level3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  multiplierToken?: Maybe<Scalars['Bytes']>;
+  multiplierToken_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  multiplierToken_not?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['Bytes']>;
   pool_contains?: Maybe<Scalars['Bytes']>;
   pool_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -936,6 +999,30 @@ export type EternalFarming_Filter = {
   startTime_lte?: Maybe<Scalars['BigInt']>;
   startTime_not?: Maybe<Scalars['BigInt']>;
   startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel1?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel1_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel2?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel2_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel3?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel3_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_not_in?: Maybe<Array<Scalars['BigInt']>>;
   virtualPool?: Maybe<Scalars['Bytes']>;
   virtualPool_contains?: Maybe<Scalars['Bytes']>;
   virtualPool_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -951,11 +1038,18 @@ export enum EternalFarming_OrderBy {
   EndTime = 'endTime',
   Id = 'id',
   IsDetached = 'isDetached',
+  Level1multiplier = 'level1multiplier',
+  Level2multiplier = 'level2multiplier',
+  Level3multiplier = 'level3multiplier',
+  MultiplierToken = 'multiplierToken',
   Pool = 'pool',
   Reward = 'reward',
   RewardRate = 'rewardRate',
   RewardToken = 'rewardToken',
   StartTime = 'startTime',
+  TokenAmountForLevel1 = 'tokenAmountForLevel1',
+  TokenAmountForLevel2 = 'tokenAmountForLevel2',
+  TokenAmountForLevel3 = 'tokenAmountForLevel3',
   VirtualPool = 'virtualPool'
 }
 
@@ -1351,6 +1445,7 @@ export type Flash_Filter = {
   logIndex_not?: Maybe<Scalars['BigInt']>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -1391,6 +1486,7 @@ export type Flash_Filter = {
   timestamp_not?: Maybe<Scalars['BigInt']>;
   timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
   transaction?: Maybe<Scalars['String']>;
+  transaction_?: Maybe<Transaction_Filter>;
   transaction_contains?: Maybe<Scalars['String']>;
   transaction_contains_nocase?: Maybe<Scalars['String']>;
   transaction_ends_with?: Maybe<Scalars['String']>;
@@ -1521,13 +1617,11 @@ export enum History_OrderBy {
 
 export type Incentive = {
   __typename?: 'Incentive';
-  algbAmountForLevel1: Scalars['BigInt'];
-  algbAmountForLevel2: Scalars['BigInt'];
-  algbAmountForLevel3: Scalars['BigInt'];
   bonusReward: Scalars['BigInt'];
   bonusRewardToken: Scalars['Bytes'];
   createdAtTimestamp: Scalars['BigInt'];
   endTime: Scalars['BigInt'];
+  enterStartTime: Scalars['BigInt'];
   id: Scalars['ID'];
   isDetached?: Maybe<Scalars['Boolean']>;
   level1multiplier: Scalars['BigInt'];
@@ -1538,35 +1632,14 @@ export type Incentive = {
   reward: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   startTime: Scalars['BigInt'];
+  tokenAmountForLevel1: Scalars['BigInt'];
+  tokenAmountForLevel2: Scalars['BigInt'];
+  tokenAmountForLevel3: Scalars['BigInt'];
 };
 
 export type Incentive_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
-  algbAmountForLevel1?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel1_gt?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel1_gte?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel1_in?: Maybe<Array<Scalars['BigInt']>>;
-  algbAmountForLevel1_lt?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel1_lte?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel1_not?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel1_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  algbAmountForLevel2?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel2_gt?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel2_gte?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel2_in?: Maybe<Array<Scalars['BigInt']>>;
-  algbAmountForLevel2_lt?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel2_lte?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel2_not?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel2_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  algbAmountForLevel3?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel3_gt?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel3_gte?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel3_in?: Maybe<Array<Scalars['BigInt']>>;
-  algbAmountForLevel3_lt?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel3_lte?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel3_not?: Maybe<Scalars['BigInt']>;
-  algbAmountForLevel3_not_in?: Maybe<Array<Scalars['BigInt']>>;
   bonusReward?: Maybe<Scalars['BigInt']>;
   bonusRewardToken?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_contains?: Maybe<Scalars['Bytes']>;
@@ -1597,6 +1670,14 @@ export type Incentive_Filter = {
   endTime_lte?: Maybe<Scalars['BigInt']>;
   endTime_not?: Maybe<Scalars['BigInt']>;
   endTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  enterStartTime?: Maybe<Scalars['BigInt']>;
+  enterStartTime_gt?: Maybe<Scalars['BigInt']>;
+  enterStartTime_gte?: Maybe<Scalars['BigInt']>;
+  enterStartTime_in?: Maybe<Array<Scalars['BigInt']>>;
+  enterStartTime_lt?: Maybe<Scalars['BigInt']>;
+  enterStartTime_lte?: Maybe<Scalars['BigInt']>;
+  enterStartTime_not?: Maybe<Scalars['BigInt']>;
+  enterStartTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -1667,16 +1748,38 @@ export type Incentive_Filter = {
   startTime_lte?: Maybe<Scalars['BigInt']>;
   startTime_not?: Maybe<Scalars['BigInt']>;
   startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel1?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel1_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel1_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel2?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel2_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel2_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel3?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForLevel3_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForLevel3_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Incentive_OrderBy {
-  AlgbAmountForLevel1 = 'algbAmountForLevel1',
-  AlgbAmountForLevel2 = 'algbAmountForLevel2',
-  AlgbAmountForLevel3 = 'algbAmountForLevel3',
   BonusReward = 'bonusReward',
   BonusRewardToken = 'bonusRewardToken',
   CreatedAtTimestamp = 'createdAtTimestamp',
   EndTime = 'endTime',
+  EnterStartTime = 'enterStartTime',
   Id = 'id',
   IsDetached = 'isDetached',
   Level1multiplier = 'level1multiplier',
@@ -1686,7 +1789,10 @@ export enum Incentive_OrderBy {
   Pool = 'pool',
   Reward = 'reward',
   RewardToken = 'rewardToken',
-  StartTime = 'startTime'
+  StartTime = 'startTime',
+  TokenAmountForLevel1 = 'tokenAmountForLevel1',
+  TokenAmountForLevel2 = 'tokenAmountForLevel2',
+  TokenAmountForLevel3 = 'tokenAmountForLevel3'
 }
 
 export type Mint = {
@@ -1773,6 +1879,7 @@ export type Mint_Filter = {
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -1823,6 +1930,7 @@ export type Mint_Filter = {
   timestamp_not?: Maybe<Scalars['BigInt']>;
   timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
   token0?: Maybe<Scalars['String']>;
+  token0_?: Maybe<Token_Filter>;
   token0_contains?: Maybe<Scalars['String']>;
   token0_contains_nocase?: Maybe<Scalars['String']>;
   token0_ends_with?: Maybe<Scalars['String']>;
@@ -1843,6 +1951,7 @@ export type Mint_Filter = {
   token0_starts_with?: Maybe<Scalars['String']>;
   token0_starts_with_nocase?: Maybe<Scalars['String']>;
   token1?: Maybe<Scalars['String']>;
+  token1_?: Maybe<Token_Filter>;
   token1_contains?: Maybe<Scalars['String']>;
   token1_contains_nocase?: Maybe<Scalars['String']>;
   token1_ends_with?: Maybe<Scalars['String']>;
@@ -1863,6 +1972,7 @@ export type Mint_Filter = {
   token1_starts_with?: Maybe<Scalars['String']>;
   token1_starts_with_nocase?: Maybe<Scalars['String']>;
   transaction?: Maybe<Scalars['String']>;
+  transaction_?: Maybe<Transaction_Filter>;
   transaction_contains?: Maybe<Scalars['String']>;
   transaction_contains_nocase?: Maybe<Scalars['String']>;
   transaction_ends_with?: Maybe<Scalars['String']>;
@@ -1916,12 +2026,13 @@ export type Pool = {
   collectedFeesToken1: Scalars['BigDecimal'];
   collectedFeesUSD: Scalars['BigDecimal'];
   collects: Array<Collect>;
+  communityFee0: Scalars['BigInt'];
+  communityFee1: Scalars['BigInt'];
   createdAtBlockNumber: Scalars['BigInt'];
   createdAtTimestamp: Scalars['BigInt'];
   fee: Scalars['BigInt'];
   feeGrowthGlobal0X128: Scalars['BigInt'];
   feeGrowthGlobal1X128: Scalars['BigInt'];
-  feeTier: Scalars['BigInt'];
   feesToken0: Scalars['BigDecimal'];
   feesToken1: Scalars['BigDecimal'];
   feesUSD: Scalars['BigDecimal'];
@@ -2143,6 +2254,7 @@ export type PoolDayData_Filter = {
   open_not?: Maybe<Scalars['BigDecimal']>;
   open_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -2443,6 +2555,7 @@ export type PoolHourData_Filter = {
   periodStartUnix_not?: Maybe<Scalars['Int']>;
   periodStartUnix_not_in?: Maybe<Array<Scalars['Int']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -2571,6 +2684,7 @@ export enum PoolHourData_OrderBy {
 export type Pool_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  burns_?: Maybe<Burn_Filter>;
   collectedFeesToken0?: Maybe<Scalars['BigDecimal']>;
   collectedFeesToken0_gt?: Maybe<Scalars['BigDecimal']>;
   collectedFeesToken0_gte?: Maybe<Scalars['BigDecimal']>;
@@ -2595,6 +2709,23 @@ export type Pool_Filter = {
   collectedFeesUSD_lte?: Maybe<Scalars['BigDecimal']>;
   collectedFeesUSD_not?: Maybe<Scalars['BigDecimal']>;
   collectedFeesUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  collects_?: Maybe<Collect_Filter>;
+  communityFee0?: Maybe<Scalars['BigInt']>;
+  communityFee0_gt?: Maybe<Scalars['BigInt']>;
+  communityFee0_gte?: Maybe<Scalars['BigInt']>;
+  communityFee0_in?: Maybe<Array<Scalars['BigInt']>>;
+  communityFee0_lt?: Maybe<Scalars['BigInt']>;
+  communityFee0_lte?: Maybe<Scalars['BigInt']>;
+  communityFee0_not?: Maybe<Scalars['BigInt']>;
+  communityFee0_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  communityFee1?: Maybe<Scalars['BigInt']>;
+  communityFee1_gt?: Maybe<Scalars['BigInt']>;
+  communityFee1_gte?: Maybe<Scalars['BigInt']>;
+  communityFee1_in?: Maybe<Array<Scalars['BigInt']>>;
+  communityFee1_lt?: Maybe<Scalars['BigInt']>;
+  communityFee1_lte?: Maybe<Scalars['BigInt']>;
+  communityFee1_not?: Maybe<Scalars['BigInt']>;
+  communityFee1_not_in?: Maybe<Array<Scalars['BigInt']>>;
   createdAtBlockNumber?: Maybe<Scalars['BigInt']>;
   createdAtBlockNumber_gt?: Maybe<Scalars['BigInt']>;
   createdAtBlockNumber_gte?: Maybe<Scalars['BigInt']>;
@@ -2628,14 +2759,6 @@ export type Pool_Filter = {
   feeGrowthGlobal1X128_lte?: Maybe<Scalars['BigInt']>;
   feeGrowthGlobal1X128_not?: Maybe<Scalars['BigInt']>;
   feeGrowthGlobal1X128_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  feeTier?: Maybe<Scalars['BigInt']>;
-  feeTier_gt?: Maybe<Scalars['BigInt']>;
-  feeTier_gte?: Maybe<Scalars['BigInt']>;
-  feeTier_in?: Maybe<Array<Scalars['BigInt']>>;
-  feeTier_lt?: Maybe<Scalars['BigInt']>;
-  feeTier_lte?: Maybe<Scalars['BigInt']>;
-  feeTier_not?: Maybe<Scalars['BigInt']>;
-  feeTier_not_in?: Maybe<Array<Scalars['BigInt']>>;
   fee_gt?: Maybe<Scalars['BigInt']>;
   fee_gte?: Maybe<Scalars['BigInt']>;
   fee_in?: Maybe<Array<Scalars['BigInt']>>;
@@ -2691,6 +2814,7 @@ export type Pool_Filter = {
   liquidity_lte?: Maybe<Scalars['BigInt']>;
   liquidity_not?: Maybe<Scalars['BigInt']>;
   liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  mints_?: Maybe<Mint_Filter>;
   observationIndex?: Maybe<Scalars['BigInt']>;
   observationIndex_gt?: Maybe<Scalars['BigInt']>;
   observationIndex_gte?: Maybe<Scalars['BigInt']>;
@@ -2699,6 +2823,8 @@ export type Pool_Filter = {
   observationIndex_lte?: Maybe<Scalars['BigInt']>;
   observationIndex_not?: Maybe<Scalars['BigInt']>;
   observationIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  poolDayData_?: Maybe<PoolDayData_Filter>;
+  poolHourData_?: Maybe<PoolHourData_Filter>;
   sqrtPrice?: Maybe<Scalars['BigInt']>;
   sqrtPrice_gt?: Maybe<Scalars['BigInt']>;
   sqrtPrice_gte?: Maybe<Scalars['BigInt']>;
@@ -2707,6 +2833,7 @@ export type Pool_Filter = {
   sqrtPrice_lte?: Maybe<Scalars['BigInt']>;
   sqrtPrice_not?: Maybe<Scalars['BigInt']>;
   sqrtPrice_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  swaps_?: Maybe<Swap_Filter>;
   tick?: Maybe<Scalars['BigInt']>;
   tick_gt?: Maybe<Scalars['BigInt']>;
   tick_gte?: Maybe<Scalars['BigInt']>;
@@ -2715,6 +2842,7 @@ export type Pool_Filter = {
   tick_lte?: Maybe<Scalars['BigInt']>;
   tick_not?: Maybe<Scalars['BigInt']>;
   tick_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  ticks_?: Maybe<Tick_Filter>;
   token0?: Maybe<Scalars['String']>;
   token0Price?: Maybe<Scalars['BigDecimal']>;
   token0Price_gt?: Maybe<Scalars['BigDecimal']>;
@@ -2724,6 +2852,7 @@ export type Pool_Filter = {
   token0Price_lte?: Maybe<Scalars['BigDecimal']>;
   token0Price_not?: Maybe<Scalars['BigDecimal']>;
   token0Price_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  token0_?: Maybe<Token_Filter>;
   token0_contains?: Maybe<Scalars['String']>;
   token0_contains_nocase?: Maybe<Scalars['String']>;
   token0_ends_with?: Maybe<Scalars['String']>;
@@ -2752,6 +2881,7 @@ export type Pool_Filter = {
   token1Price_lte?: Maybe<Scalars['BigDecimal']>;
   token1Price_not?: Maybe<Scalars['BigDecimal']>;
   token1Price_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  token1_?: Maybe<Token_Filter>;
   token1_contains?: Maybe<Scalars['String']>;
   token1_contains_nocase?: Maybe<Scalars['String']>;
   token1_ends_with?: Maybe<Scalars['String']>;
@@ -2867,12 +2997,13 @@ export enum Pool_OrderBy {
   CollectedFeesToken1 = 'collectedFeesToken1',
   CollectedFeesUsd = 'collectedFeesUSD',
   Collects = 'collects',
+  CommunityFee0 = 'communityFee0',
+  CommunityFee1 = 'communityFee1',
   CreatedAtBlockNumber = 'createdAtBlockNumber',
   CreatedAtTimestamp = 'createdAtTimestamp',
   Fee = 'fee',
   FeeGrowthGlobal0X128 = 'feeGrowthGlobal0X128',
   FeeGrowthGlobal1X128 = 'feeGrowthGlobal1X128',
-  FeeTier = 'feeTier',
   FeesToken0 = 'feesToken0',
   FeesToken1 = 'feesToken1',
   FeesUsd = 'feesUSD',
@@ -3031,6 +3162,7 @@ export type PositionSnapshot_Filter = {
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -3051,6 +3183,7 @@ export type PositionSnapshot_Filter = {
   pool_starts_with?: Maybe<Scalars['String']>;
   pool_starts_with_nocase?: Maybe<Scalars['String']>;
   position?: Maybe<Scalars['String']>;
+  position_?: Maybe<Position_Filter>;
   position_contains?: Maybe<Scalars['String']>;
   position_contains_nocase?: Maybe<Scalars['String']>;
   position_ends_with?: Maybe<Scalars['String']>;
@@ -3079,6 +3212,7 @@ export type PositionSnapshot_Filter = {
   timestamp_not?: Maybe<Scalars['BigInt']>;
   timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
   transaction?: Maybe<Scalars['String']>;
+  transaction_?: Maybe<Transaction_Filter>;
   transaction_contains?: Maybe<Scalars['String']>;
   transaction_contains_nocase?: Maybe<Scalars['String']>;
   transaction_ends_with?: Maybe<Scalars['String']>;
@@ -3225,6 +3359,7 @@ export type Position_Filter = {
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -3245,6 +3380,7 @@ export type Position_Filter = {
   pool_starts_with?: Maybe<Scalars['String']>;
   pool_starts_with_nocase?: Maybe<Scalars['String']>;
   tickLower?: Maybe<Scalars['String']>;
+  tickLower_?: Maybe<Tick_Filter>;
   tickLower_contains?: Maybe<Scalars['String']>;
   tickLower_contains_nocase?: Maybe<Scalars['String']>;
   tickLower_ends_with?: Maybe<Scalars['String']>;
@@ -3265,6 +3401,7 @@ export type Position_Filter = {
   tickLower_starts_with?: Maybe<Scalars['String']>;
   tickLower_starts_with_nocase?: Maybe<Scalars['String']>;
   tickUpper?: Maybe<Scalars['String']>;
+  tickUpper_?: Maybe<Tick_Filter>;
   tickUpper_contains?: Maybe<Scalars['String']>;
   tickUpper_contains_nocase?: Maybe<Scalars['String']>;
   tickUpper_ends_with?: Maybe<Scalars['String']>;
@@ -3293,6 +3430,7 @@ export type Position_Filter = {
   token0Tvl_lte?: Maybe<Scalars['BigDecimal']>;
   token0Tvl_not?: Maybe<Scalars['BigDecimal']>;
   token0Tvl_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  token0_?: Maybe<Token_Filter>;
   token0_contains?: Maybe<Scalars['String']>;
   token0_contains_nocase?: Maybe<Scalars['String']>;
   token0_ends_with?: Maybe<Scalars['String']>;
@@ -3321,6 +3459,7 @@ export type Position_Filter = {
   token1Tvl_lte?: Maybe<Scalars['BigDecimal']>;
   token1Tvl_not?: Maybe<Scalars['BigDecimal']>;
   token1Tvl_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  token1_?: Maybe<Token_Filter>;
   token1_contains?: Maybe<Scalars['String']>;
   token1_contains_nocase?: Maybe<Scalars['String']>;
   token1_ends_with?: Maybe<Scalars['String']>;
@@ -3341,6 +3480,7 @@ export type Position_Filter = {
   token1_starts_with?: Maybe<Scalars['String']>;
   token1_starts_with_nocase?: Maybe<Scalars['String']>;
   transaction?: Maybe<Scalars['String']>;
+  transaction_?: Maybe<Transaction_Filter>;
   transaction_contains?: Maybe<Scalars['String']>;
   transaction_contains_nocase?: Maybe<Scalars['String']>;
   transaction_ends_with?: Maybe<Scalars['String']>;
@@ -4857,6 +4997,7 @@ export type Swap_Filter = {
   origin_not_contains?: Maybe<Scalars['Bytes']>;
   origin_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -4913,6 +5054,7 @@ export type Swap_Filter = {
   timestamp_not?: Maybe<Scalars['BigInt']>;
   timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
   token0?: Maybe<Scalars['String']>;
+  token0_?: Maybe<Token_Filter>;
   token0_contains?: Maybe<Scalars['String']>;
   token0_contains_nocase?: Maybe<Scalars['String']>;
   token0_ends_with?: Maybe<Scalars['String']>;
@@ -4933,6 +5075,7 @@ export type Swap_Filter = {
   token0_starts_with?: Maybe<Scalars['String']>;
   token0_starts_with_nocase?: Maybe<Scalars['String']>;
   token1?: Maybe<Scalars['String']>;
+  token1_?: Maybe<Token_Filter>;
   token1_contains?: Maybe<Scalars['String']>;
   token1_contains_nocase?: Maybe<Scalars['String']>;
   token1_ends_with?: Maybe<Scalars['String']>;
@@ -4953,6 +5096,7 @@ export type Swap_Filter = {
   token1_starts_with?: Maybe<Scalars['String']>;
   token1_starts_with_nocase?: Maybe<Scalars['String']>;
   transaction?: Maybe<Scalars['String']>;
+  transaction_?: Maybe<Transaction_Filter>;
   transaction_contains?: Maybe<Scalars['String']>;
   transaction_contains_nocase?: Maybe<Scalars['String']>;
   transaction_ends_with?: Maybe<Scalars['String']>;
@@ -5093,6 +5237,7 @@ export type TickDayData_Filter = {
   liquidityNet_not?: Maybe<Scalars['BigInt']>;
   liquidityNet_not_in?: Maybe<Array<Scalars['BigInt']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -5113,6 +5258,7 @@ export type TickDayData_Filter = {
   pool_starts_with?: Maybe<Scalars['String']>;
   pool_starts_with_nocase?: Maybe<Scalars['String']>;
   tick?: Maybe<Scalars['String']>;
+  tick_?: Maybe<Tick_Filter>;
   tick_contains?: Maybe<Scalars['String']>;
   tick_contains_nocase?: Maybe<Scalars['String']>;
   tick_ends_with?: Maybe<Scalars['String']>;
@@ -5231,6 +5377,7 @@ export type TickHourData_Filter = {
   periodStartUnix_not?: Maybe<Scalars['Int']>;
   periodStartUnix_not_in?: Maybe<Array<Scalars['Int']>>;
   pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -5251,6 +5398,7 @@ export type TickHourData_Filter = {
   pool_starts_with?: Maybe<Scalars['String']>;
   pool_starts_with_nocase?: Maybe<Scalars['String']>;
   tick?: Maybe<Scalars['String']>;
+  tick_?: Maybe<Tick_Filter>;
   tick_contains?: Maybe<Scalars['String']>;
   tick_contains_nocase?: Maybe<Scalars['String']>;
   tick_ends_with?: Maybe<Scalars['String']>;
@@ -5429,6 +5577,7 @@ export type Tick_Filter = {
   poolAddress_not_starts_with_nocase?: Maybe<Scalars['String']>;
   poolAddress_starts_with?: Maybe<Scalars['String']>;
   poolAddress_starts_with_nocase?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
   pool_ends_with?: Maybe<Scalars['String']>;
@@ -5655,6 +5804,7 @@ export type TokenDayData_Filter = {
   priceUSD_not?: Maybe<Scalars['BigDecimal']>;
   priceUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   token?: Maybe<Scalars['String']>;
+  token_?: Maybe<Token_Filter>;
   token_contains?: Maybe<Scalars['String']>;
   token_contains_nocase?: Maybe<Scalars['String']>;
   token_ends_with?: Maybe<Scalars['String']>;
@@ -5819,6 +5969,7 @@ export type TokenHourData_Filter = {
   priceUSD_not?: Maybe<Scalars['BigDecimal']>;
   priceUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   token?: Maybe<Scalars['String']>;
+  token_?: Maybe<Token_Filter>;
   token_contains?: Maybe<Scalars['String']>;
   token_contains_nocase?: Maybe<Scalars['String']>;
   token_ends_with?: Maybe<Scalars['String']>;
@@ -5980,6 +6131,7 @@ export type Token_Filter = {
   symbol_not_starts_with_nocase?: Maybe<Scalars['String']>;
   symbol_starts_with?: Maybe<Scalars['String']>;
   symbol_starts_with_nocase?: Maybe<Scalars['String']>;
+  tokenDayData_?: Maybe<TokenDayData_Filter>;
   totalSupply?: Maybe<Scalars['BigInt']>;
   totalSupply_gt?: Maybe<Scalars['BigInt']>;
   totalSupply_gte?: Maybe<Scalars['BigInt']>;
@@ -6045,6 +6197,7 @@ export type Token_Filter = {
   volume_not?: Maybe<Scalars['BigDecimal']>;
   volume_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   whitelistPools?: Maybe<Array<Scalars['String']>>;
+  whitelistPools_?: Maybe<Pool_Filter>;
   whitelistPools_contains?: Maybe<Array<Scalars['String']>>;
   whitelistPools_contains_nocase?: Maybe<Array<Scalars['String']>>;
   whitelistPools_not?: Maybe<Array<Scalars['String']>>;
@@ -6142,6 +6295,9 @@ export type Transaction_Filter = {
   blockNumber_lte?: Maybe<Scalars['BigInt']>;
   blockNumber_not?: Maybe<Scalars['BigInt']>;
   blockNumber_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  burns_?: Maybe<Burn_Filter>;
+  collects_?: Maybe<Collect_Filter>;
+  flashed_?: Maybe<Flash_Filter>;
   gasLimit?: Maybe<Scalars['BigInt']>;
   gasLimit_gt?: Maybe<Scalars['BigInt']>;
   gasLimit_gte?: Maybe<Scalars['BigInt']>;
@@ -6166,6 +6322,8 @@ export type Transaction_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  mints_?: Maybe<Mint_Filter>;
+  swaps_?: Maybe<Swap_Filter>;
   timestamp?: Maybe<Scalars['BigInt']>;
   timestamp_gt?: Maybe<Scalars['BigInt']>;
   timestamp_gte?: Maybe<Scalars['BigInt']>;
@@ -6340,7 +6498,7 @@ export type FetchIncentiveQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3'>
   )> }
 );
 
@@ -6481,7 +6639,7 @@ export type FutureEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
+    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken'>
   )> }
 );
 
@@ -6495,7 +6653,7 @@ export type CurrentEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'algbAmountForLevel1' | 'algbAmountForLevel2' | 'algbAmountForLevel3' | 'multiplierToken'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken'>
   )> }
 );
 
@@ -6789,9 +6947,9 @@ export const FetchIncentiveDocument = `
     level1multiplier
     level2multiplier
     level3multiplier
-    algbAmountForLevel1
-    algbAmountForLevel2
-    algbAmountForLevel3
+    tokenAmountForLevel1
+    tokenAmountForLevel2
+    tokenAmountForLevel3
   }
 }
     `;
@@ -6975,9 +7133,9 @@ export const FutureEventsDocument = `
     level1multiplier
     level2multiplier
     level3multiplier
-    algbAmountForLevel1
-    algbAmountForLevel2
-    algbAmountForLevel3
+    tokenAmountForLevel1
+    tokenAmountForLevel2
+    tokenAmountForLevel3
     multiplierToken
   }
 }
@@ -7000,9 +7158,9 @@ export const CurrentEventsDocument = `
     level1multiplier
     level2multiplier
     level3multiplier
-    algbAmountForLevel1
-    algbAmountForLevel2
-    algbAmountForLevel3
+    tokenAmountForLevel1
+    tokenAmountForLevel2
+    tokenAmountForLevel3
     multiplierToken
   }
 }

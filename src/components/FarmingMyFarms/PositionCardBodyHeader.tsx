@@ -13,9 +13,9 @@ interface PositionCardBodyHeaderProps {
 
 export default function PositionCardBodyHeader({ el, farmingType, date, enteredInEternalFarming, eternalFarming }: PositionCardBodyHeaderProps) {
     const tierMultiplier = useMemo(() => {
-        if (!el || farmingType !== FarmingType.FINITE || !el.level || !el.lockedToken) return;
+        if (!el || farmingType !== FarmingType.FINITE || !el.levelIncentive || !el.multiplierToken) return;
 
-        switch (+el.level) {
+        switch (+el.levelIncentive) {
             case 0:
                 return;
             case 1:

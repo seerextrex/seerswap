@@ -26,9 +26,9 @@ interface PositionHeaderProps {
 
 export default function PositionHeader({ el, unfarming, setUnfarming, withdrawHandler, setSendModal }: PositionHeaderProps) {
     const tierLevel = useMemo(() => {
-        if (!el.algbLocked || !el.lockedToken || !el.level) return;
+        if (!el.tokensLockedIncentive || !el.multiplierToken || !el.levelIncentive) return;
 
-        switch (+el.level) {
+        switch (+el.levelIncentive) {
             case 0:
                 return;
             case 1:
@@ -43,9 +43,9 @@ export default function PositionHeader({ el, unfarming, setUnfarming, withdrawHa
     }, [el]);
 
     const tierName = useMemo(() => {
-        if (!el.algbLocked || !el.lockedToken || !el.level) return;
+        if (!el.tokensLockedIncentive || !el.multiplierToken || !el.levelIncentive) return;
 
-        switch (+el.level) {
+        switch (+el.levelIncentive) {
             case 0:
                 return;
             case 1:
@@ -89,9 +89,9 @@ export default function PositionHeader({ el, unfarming, setUnfarming, withdrawHa
                         <div>{`${el.pool.token0.symbol} / ${el.pool.token1.symbol}`}</div>
                     </div>
                 </div>
-                {el.lockedToken && Boolean(+el.algbLocked) && (
+                {el.multiplierToken && Boolean(+el.tokensLockedIncentive) && (
                     <div className={"f f-ac ml-2 mxs_ml-0 mxs_mv-1"}>
-                        {/* <CurrencyLogo currency={new Token(137, el.lockedToken.id, 18, el.lockedToken.symbol) as WrappedCurrency} size={"35px"} /> */}
+                        {/* <CurrencyLogo currency={new Token(137, el.multiplierToken.id, 18, el.multiplierToken.symbol) as WrappedCurrency} size={"35px"} /> */}
                         <div style={{ width: "35px", height: "35px", background: "#324e64", borderRadius: "50%" }} className={"f f-ac f-jc"}>
                             <img src={tierLevel} width={30} height={30} />
                         </div>
@@ -103,14 +103,14 @@ export default function PositionHeader({ el, unfarming, setUnfarming, withdrawHa
                         </div>
                     </div>
                 )}
-                {el.lockedToken && Boolean(+el.algbLocked) && (
+                {el.multiplierToken && Boolean(+el.tokensLockedIncentive) && (
                     <div className={"f f-ac ml-2 mxs_ml-0 mxs_mv-1"}>
-                        <CurrencyLogo currency={new Token(137, el.lockedToken.id, 18, el.lockedToken.symbol) as WrappedCurrency} size={"35px"} />
+                        <CurrencyLogo currency={new Token(137, el.multiplierToken.id, 18, el.multiplierToken.symbol) as WrappedCurrency} size={"35px"} />
                         <div className={"ml-05"}>
                             <div className={"b fs-075"} style={{ marginBottom: "2px" }}>
                                 <Trans>LOCKED</Trans>
                             </div>
-                            <div>{`${formatAmountTokens(+formatUnits(BigNumber.from(el.algbLocked), el.lockedToken.decimals))} ${el.lockedToken.symbol}`}</div>
+                            <div>{`${formatAmountTokens(+formatUnits(BigNumber.from(el.tokensLockedIncentive), el.multiplierToken.decimals))} ${el.multiplierToken.symbol}`}</div>
                         </div>
                     </div>
                 )}

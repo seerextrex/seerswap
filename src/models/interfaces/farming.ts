@@ -71,9 +71,9 @@ export interface FarmingEvent extends DefaultFarmingEvent {
     level1multiplier: string
     level2multiplier: string
     level3multiplier: string
-    algbAmountForLevel1: string
-    algbAmountForLevel2: string
-    algbAmountForLevel3: string
+    tokenAmountForLevel1: string
+    tokenAmountForLevel2: string
+    tokenAmountForLevel3: string
 }
 
 export interface FarmingEventString extends DefaultFarmingEvent {
@@ -86,9 +86,9 @@ export interface FarmingEventString extends DefaultFarmingEvent {
 export interface FutureFarmingEvent extends FarmingEventString {
     createdAtTimestamp: string
     multiplierToken: string
-    algbAmountForLevel1: string
-    algbAmountForLevel2: string
-    algbAmountForLevel3: string
+    tokenAmountForLevel1: string
+    tokenAmountForLevel2: string
+    tokenAmountForLevel3: string
     level1multiplier: string
     level2multiplier: string
     level3multiplier: string
@@ -127,9 +127,9 @@ export interface Deposit {
     token0: string
     token1: string
     l2TokenId: string | null
-    algbLocked: string
-    level: string
-    lockedToken: any
+    tokensLockedIncentive: string
+    levelIncentive: string
+    multiplierToken: any
     oldFarming?: boolean
 }
 

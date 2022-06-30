@@ -113,33 +113,6 @@ export const NFTPositionIndex = styled.div<{ skeleton?: boolean }>``
 export const NFTPositionLink = styled.a<{ skeleton?: boolean }>`
     font-size: 13px;
 `
-export const StakeButton = styled.button`
-    background: ${({ theme }) => theme.winterMainButton};
-    border: none;
-    padding: 1rem;
-    font-weight: 600;
-    color: white;
-    border-radius: 8px;
-    width: 100%;
-
-    &:first-of-type {
-        margin-right: 1rem;
-    }
-
-    &:hover {
-        background: ${({ theme }) => darken(0.05, theme.winterMainButton)};
-    }
-
-    &:disabled {
-        background: ${({ theme }) => theme.winterDisabledButton};
-        cursor: default;
-    }
-`
-export const StakeButtonLoader = styled.span`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`
 export const EmptyMock = styled.div`
     display: flex;
     flex-direction: column;

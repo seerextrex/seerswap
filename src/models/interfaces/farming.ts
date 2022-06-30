@@ -133,14 +133,6 @@ export interface Deposit {
     oldFarming?: boolean
 }
 
-export interface StakeDefault {
-    rewardToken: string
-    bonusRewardToken: string
-    pool: string
-    startTime: string
-    endTime: string
-}
-
 export interface DefaultFarming {
     hash: string | null
     id: string | null
@@ -189,6 +181,11 @@ export interface RewardInterface {
     id: string | null
     state: string | null
     farmingType: number | null
+}
+
+export interface UnfarmingInterface {
+    id: string | null
+    state: string | null
 }
 
 export interface UnstakingInterface {

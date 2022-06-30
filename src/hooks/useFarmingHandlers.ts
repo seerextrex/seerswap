@@ -16,7 +16,7 @@ import { FarmingType } from '../models/enums'
 
 import { t } from "@lingui/macro"
 
-export function useStakerHandlers() {
+export function useFarmingHandlers() {
 
     const { chainId, account, library } = useActiveWeb3React()
 
@@ -33,7 +33,7 @@ export function useStakerHandlers() {
 
     const [approvedHash, setApproved] = useState<DefaultFarming | string>({ hash: null, id: null })
     const [transferedHash, setTransfered] = useState<DefaultFarming | string>({ hash: null, id: null })
-    const [stakedHash, setStaked] = useState<DefaultFarming | string>({ hash: null, id: null })
+    const [farmedHash, setFarmed] = useState<DefaultFarming | string>({ hash: null, id: null })
     const [getRewardsHash, setGetRewards] = useState<GetRewardsHashInterface | string>({ hash: null, id: null, farmingType: null })
     const [eternalCollectRewardHash, setEternalCollectReward] = useState<DefaultFarming | string>({ hash: null, id: null })
     const [withdrawnHash, setWithdrawn] = useState<DefaultFarming | string>({ hash: null, id: null })
@@ -283,7 +283,7 @@ export function useStakerHandlers() {
 
     }, [account, chainId])
 
-    const stakeHandler = useCallback(async (selectedNFT, {
+    const farmHandler = useCallback(async (selectedNFT, {
         rewardToken,
         bonusRewardToken,
         pool,
@@ -293,7 +293,7 @@ export function useStakerHandlers() {
 
         if (!account || !provider || !chainId) return
 
-        setStaked({ hash: null, id: null })
+        setFarmed({ hash: null, id: null })
 
         let current
 
@@ -335,12 +335,12 @@ export function useStakerHandlers() {
                     summary: t`NFT #${selectedNFT.id} was deposited!`
                 })
 
-                setStaked({ hash: result.hash, id: selectedNFT.id })
+                setFarmed({ hash: result.hash, id: selectedNFT.id })
             }
         } catch (err) {
-            setStaked('failed')
+            setFarmed('failed')
             if (err instanceof Error) {
-                throw new Error('Staking ' + current + ' ' + err.message)
+                throw new Error('Farming ' + current + ' ' + err.message)
             }
         }
 
@@ -385,7 +385,7 @@ export function useStakerHandlers() {
         } catch (err) {
             setTransfered('failed')
             if (err instanceof Error) {
-                throw new Error('Staking ' + current + ' ' + err.message)
+                throw new Error('Farming ' + current + ' ' + err.message)
             }
         }
 
@@ -497,8 +497,8 @@ export function useStakerHandlers() {
         approvedHash,
         transferHandler,
         transferedHash,
-        stakeHandler,
-        stakedHash,
+        farmHandler,
+        farmedHash,
         exitHandler,
         getRewardsHash,
         withdrawHandler,

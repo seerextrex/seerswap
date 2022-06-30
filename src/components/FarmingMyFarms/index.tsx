@@ -1,12 +1,12 @@
 import { isAddress } from "@ethersproject/address";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Frown } from "react-feather";
-import { useStakerHandlers } from "../../hooks/useStakerHandlers";
+import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
 import { useActiveWeb3React } from "../../hooks/web3";
 import { useAllTransactions } from "../../state/transactions/hooks";
 import Loader from "../Loader";
 import Modal from "../Modal";
-import { Deposit, RewardInterface, UnstakingInterface } from "../../models/interfaces";
+import { Deposit, RewardInterface, UnfarmingInterface } from "../../models/interfaces";
 import { FarmingType } from "../../models/enums";
 import { getCountdownTime } from "../../utils/time";
 import { getProgress } from "../../utils/getProgress";
@@ -20,14 +20,14 @@ import PositionCardBodyHeader from "./PositionCardBodyHeader";
 import PositionCardBodyStat from "./PositionCardBodyStat";
 import { t, Trans } from "@lingui/macro";
 
-interface StakerMyStakesProps {
+interface FarmingMyFarmsProps {
     data: Deposit[] | null;
     refreshing: boolean;
     now: number;
     fetchHandler: () => any;
 }
 
-export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMyStakesProps) {
+export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingMyFarmsProps) {
     const { account } = useActiveWeb3React();
 
     const {
@@ -41,15 +41,15 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
         sendNFTL2Hash,
         eternalCollectRewardHash,
         withdrawnHash,
-    } = useStakerHandlers() || {};
+    } = useFarmingHandlers() || {};
 
     const [sendModal, setSendModal] = useState<string | null>(null);
     const [recipient, setRecipient] = useState<string>("");
-    const [sending, setSending] = useState<UnstakingInterface>({ id: null, state: null });
+    const [sending, setSending] = useState<UnfarmingInterface>({ id: null, state: null });
     const [shallowPositions, setShallowPositions] = useState<Deposit[] | null>(null);
     const [gettingReward, setGettingReward] = useState<RewardInterface>({ id: null, state: null, farmingType: null });
-    const [eternalCollectReward, setEternalCollectReward] = useState<UnstakingInterface>({ id: null, state: null });
-    const [unstaking, setUnstaking] = useState<UnstakingInterface>({ id: null, state: null });
+    const [eternalCollectReward, setEternalCollectReward] = useState<UnfarmingInterface>({ id: null, state: null });
+    const [unfarming, setUnfarming] = useState<UnfarmingInterface>({ id: null, state: null });
 
     const allTransactions = useAllTransactions();
     const sortedRecentTransactions = useSortedRecentTransactions();
@@ -57,7 +57,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
 
     const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash), [sortedRecentTransactions, allTransactions]);
 
-    const stakedNFTs = useMemo(() => {
+    const farmedNFTs = useMemo(() => {
         if (!shallowPositions) return;
         const _positions = shallowPositions.filter((v) => v.onFarmingCenter);
         return _positions.length > 0 ? _positions : [];
@@ -115,12 +115,12 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
     }, [eternalCollectRewardHash, confirmed]);
 
     useEffect(() => {
-        if (!unstaking.state) return;
+        if (!unfarming.state) return;
 
         if (typeof withdrawnHash === "string") {
-            setUnstaking({ id: null, state: null });
+            setUnfarming({ id: null, state: null });
         } else if (withdrawnHash && confirmed.includes(String(withdrawnHash.hash))) {
-            setUnstaking({ id: withdrawnHash.id, state: "done" });
+            setUnfarming({ id: withdrawnHash.id, state: "done" });
             if (!shallowPositions) return;
             setShallowPositions(
                 shallowPositions.map((el) => {
@@ -210,11 +210,11 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                 />
             </Modal>
             {refreshing || !shallowPositions ? (
-                <div className={"my-stakes__loader flex-s-between f-jc"}>
+                <div className={"my-farms__loader flex-s-between f-jc"}>
                     <Loader stroke={"white"} size={"1.5rem"} />
                 </div>
             ) : shallowPositions && shallowPositions.length === 0 ? (
-                <div className={"my-stakes__loader flex-s-between f c f-jc"}>
+                <div className={"my-farms__loader flex-s-between f c f-jc"}>
                     <Frown size={35} stroke={"white"} />
                     <div className={"mt-1"}>
                         <Trans>No farms</Trans>
@@ -222,23 +222,23 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                 </div>
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>
-                    <div className={"my-stakes__ad p-05 br-12 f f-ac f-jc mb-1"}>
+                    <div className={"my-farms__ad p-05 br-12 f f-ac f-jc mb-1"}>
                         <div className={"mr-1"}>
                             <Trans>✨ Earn even more ALGB</Trans>
                         </div>
-                        <Link className={"my-stakes__ad-link p-05 br-8 hover-cp"} to={"/staking"}>
+                        <Link className={"my-farms__ad-link p-05 br-8 hover-cp"} to={"/staking"}>
                             <Trans>Stake Rewards</Trans>
                         </Link>
                     </div>
-                    {stakedNFTs && (
+                    {farmedNFTs && (
                         <div>
-                            {stakedNFTs.map((el, i) => {
+                            {farmedNFTs.map((el, i) => {
                                 const date = new Date(+el.enteredInEternalFarming * 1000).toLocaleString();
                                 return (
-                                    <div className={"my-stakes__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
-                                        <PositionHeader el={el} setUnstaking={setUnstaking} setSendModal={setSendModal} unstaking={unstaking} withdrawHandler={withdrawHandler} />
+                                    <div className={"my-farms__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
+                                        <PositionHeader el={el} setUnfarming={setUnfarming} setSendModal={setSendModal} unfarming={unfarming} withdrawHandler={withdrawHandler} />
                                         <div className={"f cg-1 rg-1 mxs_fd-c"}>
-                                            <div className={"my-stakes__position-card__body w-100 p-1 br-8"}>
+                                            <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
                                                 <PositionCardBodyHeader el={el} farmingType={FarmingType.FINITE} date={date} />
                                                 {el.incentive ? (
                                                     <>
@@ -258,7 +258,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                                         {(el.started || el.incentiveStartTime * 1000 < Date.now()) && (
                                                                             <div className={"mb-05 p-r fs-075"}>{t`Ends in ${getCountdownTime(el.incentiveEndTime, now)}`}</div>
                                                                         )}
-                                                                        <div className={"my-stakes__position-card__body__event-progress w-100 br-8 p-025 mt-05"}>
+                                                                        <div className={"my-farms__position-card__body__event-progress w-100 br-8 p-025 mt-05"}>
                                                                             {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
                                                                                 <div className={"br-8"} style={{ width: `${getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}%` }} />
                                                                             ) : (
@@ -329,7 +329,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={"my-stakes__position-card__empty f c f-ac f-jc"}>
+                                                    <div className={"my-farms__position-card__empty f c f-ac f-jc"}>
                                                         {el.finiteAvailable ? (
                                                             <CheckOut link={"limit-farms"} />
                                                         ) : (
@@ -340,7 +340,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className={"my-stakes__position-card__body w-100 p-1 br-8"}>
+                                            <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
                                                 <PositionCardBodyHeader
                                                     farmingType={FarmingType.ETERNAL}
                                                     date={date}
@@ -407,7 +407,7 @@ export function StakerMyStakes({ data, refreshing, now, fetchHandler }: StakerMy
                                                         </div>
                                                     </>
                                                 ) : (
-                                                    <div className={"my-stakes__position-card__empty f c f-ac f-jc"}>
+                                                    <div className={"my-farms__position-card__empty f c f-ac f-jc"}>
                                                         {el.eternalAvailable ? (
                                                             <CheckOut link={"infinite-farms"} />
                                                         ) : (

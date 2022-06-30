@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useStakerHandlers } from "../../hooks/useStakerHandlers";
+import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
 import { useAllTransactions } from "../../state/transactions/hooks";
 import Loader from "../Loader";
 import CurrencyLogo from "../CurrencyLogo";
@@ -11,13 +11,13 @@ import { Token } from "@uniswap/sdk-core";
 import { WrappedCurrency } from "../../models/types";
 import { Trans } from "@lingui/macro";
 
-export function StakerMyRewards({ data, refreshing, fetchHandler }: { data: Reward[]; refreshing: boolean; fetchHandler: () => any }) {
+export function FarmingMyRewards({ data, refreshing, fetchHandler }: { data: Reward[]; refreshing: boolean; fetchHandler: () => any }) {
     const allTransactions = useAllTransactions();
     const sortedRecentTransactions = useSortedRecentTransactions();
 
     const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash), [sortedRecentTransactions, allTransactions]);
 
-    const { claimHash, claimReward } = useStakerHandlers() || {};
+    const { claimHash, claimReward } = useFarmingHandlers() || {};
 
     const [rewardsLoader, setRewardsLoader] = useState<{ id: string | null; state: boolean }>({ id: null, state: false });
 

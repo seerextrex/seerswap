@@ -30,7 +30,7 @@ const RealStakerPage = React.lazy(() => import("./RealStakerPage"));
 const StakingAnalyticsPage = React.lazy(() => import("./StakingAnalyticsPage"));
 const AddLiquidity = React.lazy(() => import("./AddLiquidity"));
 const PoolPage = React.lazy(() => import("./Pool"));
-const StakingPage = React.lazy(() => import("./Staking/StakingPage"));
+const FarmingPage = React.lazy(() => import("./Farming/FarmingPage"));
 const PositionPage = React.lazy(() => import("./Pool/PositionPage"));
 const InfoPage = React.lazy(() => import("./InfoPage"));
 
@@ -106,7 +106,7 @@ export default function App() {
                                 }
                             >
                                 <Switch>
-                                    <Route strict path="/farming" component={StakingPage} />
+                                    <Route strict path="/farming" component={FarmingPage} />
 
                                     <Route strict path="/info" component={InfoPage} />
 

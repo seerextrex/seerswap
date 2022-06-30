@@ -18,7 +18,7 @@ import MasterTierIcon from "../../assets/images/master-tier-icon.png";
 import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
 import { t, Trans } from "@lingui/macro";
 
-export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; lockedToken: any }) {
+export default function FarmModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: { tiersLimits: any; tiersMultipliers: any; selectTier: any; lockedToken: any }) {
     const { account } = useActiveWeb3React();
 
     const [selectedTier, setSelectedTier] = useState<number | undefined>(0);

@@ -154,8 +154,6 @@
     "@apollo/client": "^3.4.11",
     "@fontsource/montserrat": "^4.5.1",
     "algebra-packeges": "^2.1.4",
-    "bignumber.js": "^9.0.1",
-    "hash-emoji": "^0.0.4",
     "lodash.keyby": "^4.6.0",
     "numbro": "^2.3.5",
     "random-gradient": "^0.0.2",

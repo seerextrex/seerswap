@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Frown } from "react-feather";
 import Loader from "../../components/Loader";
 import Modal from "../../components/Modal";
-import { StakeModal } from "../../components/StakeModal";
-import { StakerEventCard } from "../../components/StakerEventCard";
+import { FarmModal } from "../../components/FarmModal";
+import { FarmingEventCard } from "../../components/FarmingEventCard";
 import { FarmingType } from "../../models/enums";
 import "./index.scss";
 
@@ -19,7 +19,7 @@ export default function EternalFarmsPage({ data, refreshing, fetchHandler }: { d
     return (
         <>
             <Modal isOpen={!!modalForPool} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
-                {modalForPool && <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)} farmingType={FarmingType.ETERNAL} />}
+                {modalForPool && <FarmModal event={modalForPool} closeHandler={() => setModalForPool(null)} farmingType={FarmingType.ETERNAL} />}
             </Modal>
             {refreshing ? (
                 <div className={"eternal-page__loader"}>
@@ -35,7 +35,7 @@ export default function EternalFarmsPage({ data, refreshing, fetchHandler }: { d
             ) : !refreshing && data.length !== 0 ? (
                 <div className={"eternal-page__row mb-1 w-100"}>
                     {data.map((event: any, j: number) => (
-                        <StakerEventCard key={j} stakeHandler={() => setModalForPool(event)} refreshing={refreshing} now={0} eternal event={event} />
+                        <FarmingEventCard key={j} farmHandler={() => setModalForPool(event)} refreshing={refreshing} now={0} eternal event={event} />
                     ))}
                 </div>
             ) : null}

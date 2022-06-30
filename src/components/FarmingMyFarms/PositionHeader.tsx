@@ -6,7 +6,7 @@ import { Token } from "@uniswap/sdk-core";
 import { WrappedCurrency } from "../../models/types";
 import Loader from "../Loader";
 import { ChevronsUp, Send } from "react-feather";
-import { Deposit, UnstakingInterface } from "../../models/interfaces";
+import { Deposit, UnfarmingInterface } from "../../models/interfaces";
 import { t, Trans } from "@lingui/macro";
 import { formatAmountTokens } from "utils/numbers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
@@ -18,13 +18,13 @@ import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
 
 interface PositionHeaderProps {
     el: Deposit;
-    unstaking: UnstakingInterface;
+    unfarming: UnfarmingInterface;
     setSendModal: any;
-    setUnstaking: any;
+    setUnfarming: any;
     withdrawHandler: any;
 }
 
-export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHandler, setSendModal }: PositionHeaderProps) {
+export default function PositionHeader({ el, unfarming, setUnfarming, withdrawHandler, setSendModal }: PositionHeaderProps) {
     const tierLevel = useMemo(() => {
         if (!el.algbLocked || !el.lockedToken || !el.level) return;
 
@@ -60,8 +60,8 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
     }, [el]);
 
     return (
-        <div className={"my-stakes__position-card__header flex-s-between mb-1 br-8 p-1"}>
-            <div className={"my-stakes__position-card__header__row"}>
+        <div className={"my-farms__position-card__header flex-s-between mb-1 br-8 p-1"}>
+            <div className={"my-farms__position-card__header__row"}>
                 <div className={"f f-ac mxs_ml-0 mxs_mb-1"}>
                     <NFTPositionIcon name={el.id}>
                         <span>{el.id}</span>
@@ -115,17 +115,17 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </div>
                 )}
             </div>
-            <div className={"my-stakes__position-card__header__row"}>
+            <div className={"my-farms__position-card__header__row"}>
                 {!el.incentive && !el.eternalFarming && (
                     <button
                         className={"btn c-w f f-ac b pv-05 ph-1 mxs_mv-05 mxs_f-jc"}
-                        disabled={unstaking.id === el.id && unstaking.state !== "done"}
+                        disabled={unfarming.id === el.id && unfarming.state !== "done"}
                         onClick={() => {
-                            setUnstaking({ id: el.id, state: "pending" });
+                            setUnfarming({ id: el.id, state: "pending" });
                             withdrawHandler(el.id);
                         }}
                     >
-                        {unstaking && unstaking.id === el.id && unstaking.state !== "done" ? (
+                        {unfarming && unfarming.id === el.id && unfarming.state !== "done" ? (
                             <>
                                 <Loader size={"1rem"} stroke={"var(--white)"} style={{ margin: "auto" }} />
                                 <span className={"ml-05"}>

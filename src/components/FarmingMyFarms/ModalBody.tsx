@@ -2,11 +2,11 @@ import React from "react";
 import { CheckCircle } from "react-feather";
 import { isAddress } from "@ethersproject/address";
 import Loader from "../Loader";
-import { UnstakingInterface } from "../../models/interfaces";
+import { UnfarmingInterface } from "../../models/interfaces";
 import { t, Trans } from "@lingui/macro";
 
 interface ModalBodyProps {
-    sending: UnstakingInterface;
+    sending: UnfarmingInterface;
     recipient: string;
     setRecipient: any;
     setSending: any;
@@ -24,12 +24,12 @@ export default function ModalBody({ sending, recipient, setRecipient, setSending
                     <div className={"ml-1"}>{t`NFT was sent!`}</div>
                 </div>
             ) : (
-                <div className={"my-stakes__nft-send"}>
+                <div className={"my-farms__nft-send"}>
                     <div className={"mb-1 c-p fs-125 b"}>
                         <Trans>Send NFT to another account</Trans>
                     </div>
                     <div
-                        className={"my-stakes__nft-send__warning br-12 p-05 mb-1 c-dec"}
+                        className={"my-farms__nft-send__warning br-12 p-05 mb-1 c-dec"}
                     >{t`If you send your NFT to another account, you can’t get it back unless you have an access to the recipient’s account.`}</div>
                     <div className={"mb-1"}>
                         <input

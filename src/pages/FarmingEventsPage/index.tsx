@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Frown } from "react-feather";
-import { StakerEventCard } from "../../components/StakerEventCard";
-import { StakeModal } from "../../components/StakeModal";
+import { FarmingEventCard } from "../../components/FarmingEventCard";
+import { FarmModal } from "../../components/FarmModal";
 import { FarmingType } from "../../models/enums";
 import Modal from "../../components/Modal";
 import Loader from "../../components/Loader";
@@ -25,9 +25,8 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
         if (Date.now() < 1652108400000) {
             return [...data?.currentEvents];
         } else {
-           return [...data?.futureEvents, ...data?.currentEvents];
+            return [...data?.futureEvents, ...data?.currentEvents];
         }
-
     }, [data]);
 
     useEffect(() => {
@@ -39,7 +38,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
             <Modal isOpen={Boolean(modalForPool)} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
                 {modalForPool && (
                     <>
-                        <StakeModal event={modalForPool} closeHandler={() => setModalForPool(null)} farmingType={FarmingType.FINITE} />
+                        <FarmModal event={modalForPool} closeHandler={() => setModalForPool(null)} farmingType={FarmingType.FINITE} />
                     </>
                 )}
             </Modal>
@@ -58,23 +57,23 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
                         const active = isStarted && !isEnded;
 
                         return (
-                            <StakerEventCard
+                            <FarmingEventCard
                                 refreshing={refreshing}
                                 active={active}
                                 key={j}
                                 now={now}
                                 event={event}
-                                stakeHandler={() => {
+                                farmHandler={() => {
                                     setModalForPool(event);
                                 }}
                             />
                         );
                     })}
-                    {Date.now() < 1652108400000 && <StakerEventCard secret />}
+                    {Date.now() < 1652108400000 && <FarmingEventCard secret />}
                 </div>
             ) : formattedData && formattedData.length === 0 ? (
                 Date.now() < 1651244400000 ? (
-                    <div className={"farmings-page__row mb-1 rg-1 cg-1 "}>{<StakerEventCard secret />}</div>
+                    <div className={"farmings-page__row mb-1 rg-1 cg-1 "}>{<FarmingEventCard secret />}</div>
                 ) : (
                     <div className={"farmings-page__loader f c f-ac f-jc"}>
                         <Frown size={35} stroke={"white"} className={"mb-1"} />

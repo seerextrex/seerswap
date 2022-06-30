@@ -6,7 +6,7 @@ export const healthClient = new ApolloClient({
 })
 
 export const blockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/ethereum-blocks',
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/mumbai-blocks',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -51,7 +51,11 @@ export const stakerClient = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
+<<<<<<< HEAD
     uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming',
+=======
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming-mumbai',
+>>>>>>> feature/tier-eternal-farming
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

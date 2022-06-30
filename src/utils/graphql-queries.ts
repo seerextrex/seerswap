@@ -60,6 +60,7 @@ query fetchIncentive($incentiveId: ID) {
         tokenAmountForLevel1
         tokenAmountForLevel2
         tokenAmountForLevel3
+        enterStartTime
     }
 }`
 
@@ -77,6 +78,13 @@ export const FETCH_ETERNAL_FARM = () => gql`
       rewardRate
       bonusRewardRate
       isDetached
+      level1multiplier
+      level2multiplier
+      level3multiplier
+      tokenAmountForLevel1
+      tokenAmountForLevel2
+      tokenAmountForLevel3
+      multiplierToken
     }
   }
 `
@@ -295,6 +303,7 @@ query futureEvents ($timestamp: BigInt) {
         tokenAmountForLevel2
         tokenAmountForLevel3
         multiplierToken
+        enterStartTime
     }
 }`
 
@@ -315,6 +324,7 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         tokenAmountForLevel1
         tokenAmountForLevel2
         tokenAmountForLevel3
+        enterStartTime
         multiplierToken
     }
 }`
@@ -345,6 +355,7 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           level1multiplier
           level2multiplier
           level3multiplier
+          enterStartTime
         }
       }
       `
@@ -373,8 +384,10 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
             onFarmingCenter
             ${tierFarming ? `
               enteredInEternalFarming
+              tokensLockedEternal
               tokensLockedIncentive
-              levelIncentive` : ''
+              levelIncentive
+              levelEternal` : ''
   }
     }
 }
@@ -413,6 +426,10 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
         eternalFarming
         onFarmingCenter
         enteredInEternalFarming
+        tokensLockedIncentive
+        tokensLockedEternal
+        levelIncentive
+        levelEternal
     }
 }`
 
@@ -498,6 +515,14 @@ export const INFINITE_EVENTS = gql`
             bonusReward
             rewardRate
             bonusRewardRate
+            tokenAmountForLevel1
+            tokenAmountForLevel2
+            tokenAmountForLevel3
+            level1multiplier
+            level2multiplier
+            level3multiplier
+            multiplierToken
+
         }
     }
 `

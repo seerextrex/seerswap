@@ -315,6 +315,7 @@ export function useFarmingHandlers() {
                     result = await farmingCenterContract.enterEternalFarming(
                         [rewardToken, bonusRewardToken, pool, startTime, endTime],
                         +selectedNFT.id,
+                        selectedTier,
                         {
                             gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                         }

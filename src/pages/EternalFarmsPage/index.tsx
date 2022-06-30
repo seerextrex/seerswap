@@ -12,6 +12,10 @@ import { Trans } from "@lingui/macro";
 export default function EternalFarmsPage({ data, refreshing, fetchHandler }: { data: any; refreshing: boolean; fetchHandler: () => any }) {
     const [modalForPool, setModalForPool] = useState(null);
 
+
+    // useEffect(() => console.log(modalForPool), [modalForPool])
+
+
     useEffect(() => {
         fetchHandler();
     }, []);

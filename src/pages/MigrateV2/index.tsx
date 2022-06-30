@@ -37,7 +37,7 @@ export default function MigrateV2() {
     const tokenPairsWithLiquidityTokens = useMemo(() => {
         return trackedTokenPairs.map((tokens) => {
             // sushi liquidity token or null
-            const sushiLiquidityToken = chainId === 137 || chainId === 42 ? toSushiLiquidityToken(tokens) : null;
+            const sushiLiquidityToken = chainId === 80001 || chainId === 42 ? toSushiLiquidityToken(tokens) : null;
 
             return {
                 v2liquidityToken: v2FactoryAddress ? toV2LiquidityToken(tokens) : undefined,

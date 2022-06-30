@@ -75,7 +75,7 @@ export function FarmingMyRewards({ data, refreshing, fetchHandler }: { data: Rew
                                     <Loader style={{ margin: "auto" }} size={"18px"} stroke={"white"} />
                                 </LoadingShim>
                             )}
-                            <CurrencyLogo currency={new Token(137, rew.rewardAddress, 18, rew.symbol) as WrappedCurrency} size={"35px"} style={{ marginRight: "10px" }} />
+                            <CurrencyLogo currency={new Token(80001, rew.rewardAddress, 18, rew.symbol) as WrappedCurrency} size={"35px"} style={{ marginRight: "10px" }} />
                             <RewardTokenInfo>
                                 <div title={rew.amount}>{formatReward(+rew.amount)}</div>
                                 <div title={rew.symbol}>{rew.symbol}</div>

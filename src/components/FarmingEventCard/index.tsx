@@ -32,6 +32,7 @@ interface FarmingEventCardProps {
         bonusReward?: number;
         startTime?: number;
         endTime?: number;
+        enterStartTime?: number;
         apr?: number;
         locked?: boolean;
     };
@@ -44,7 +45,7 @@ export function FarmingEventCard({
     refreshing,
     farmHandler,
     now,
-    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, id } = {},
+    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, enterStartTime } = {},
     eternal,
     secret,
 }: FarmingEventCardProps) {
@@ -68,9 +69,9 @@ export function FarmingEventCard({
     }, [endTime]);
 
     const _enterTime = useMemo(() => {
-        if (!startTime) return [];
+        if (!enterStartTime) return [];
 
-        const date = new Date((+startTime - (3 * 24 + 4) * 60 * 60) * 1000);
+        const date = new Date(+enterStartTime * 1000);
 
         return [convertLocalDate(date), convertDateTime(date)];
     }, [startTime]);
@@ -258,12 +259,16 @@ export function FarmingEventCard({
                         <div className="f f-ac f-jc farming-event-card__timeline-circle">
                             <div className={`farming-event-card__timeline-circle__inner ${!active ? "active" : ""}`}></div>
                         </div>
-                        <div className="farming-event-card__timeline-line">
-                            <div className="farming-event-card__timeline-line__inner" style={{ width: active ? "100%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}></div>
+                        <div className="staker-event-card__timeline-line">
+                            {/*@ts-ignore*/}
+                            <div
+                                className="staker-event-card__timeline-line__inner"
+                                style={{ width: active ? "100%" : new Date(+enterStartTime * 1000).getTime() >= Date.now() ? "0%" : `${getProgress(Number(enterStartTime), startTime, now)}%` }}
+                            ></div>
                         </div>
-                        <div className="f f-ac f-jc farming-event-card__timeline-circle">{active && <div className="farming-event-card__timeline-circle__inner active"></div>}</div>
-                        <div className="farming-event-card__timeline-line">
-                            {active && <div className="w-100 farming-event-card__timeline-line__inner" style={{ width: `${getProgress(startTime, endTime, now)}%` }}></div>}
+                        <div className="f f-ac f-jc staker-event-card__timeline-circle">{active && <div className="staker-event-card__timeline-circle__inner active" />}</div>
+                        <div className="staker-event-card__timeline-line">
+                            {active && <div className="w-100 staker-event-card__timeline-line__inner" style={{ width: `${getProgress(startTime, endTime, now)}%` }}></div>}
                         </div>
                         <div className="farming-event-card__timeline-circle"></div>
                     </div>
@@ -292,7 +297,8 @@ export function FarmingEventCard({
             {account && !active ? (
                 <button
                     style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
-                    disabled={locked}
+                    //@ts-ignore
+                    disabled={locked || new Date(+enterStartTime * 1000).getTime() >= Date.now()}
                     className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
                     onClick={farmHandler}
                 >

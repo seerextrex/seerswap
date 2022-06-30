@@ -120,8 +120,8 @@ export function useInactiveListener(suppress = false) {
         if (!error) return
 
         if (error instanceof UnsupportedChainIdError) {
-            const _window = window as unknown as OntoWindow
-            if (_window.onto && _window.onto.selectedAddress !== '') {
+            // @ts-ignore
+            if (window.onto && window.onto.selectedAddress !== '') {
                 localStorage.setItem('ontoWarning', 'true')
                 window.location.reload()
             }

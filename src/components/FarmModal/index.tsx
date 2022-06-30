@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowRight, Check, CheckCircle, Frown, X } from "react-feather";
+import { ArrowRight, CheckCircle, Frown, X } from "react-feather";
 import { useIncentiveSubgraph } from "../../hooks/useIncentiveSubgraph";
-import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
+import { useStakerHandlers } from "../../hooks/useStakerHandlers";
 import { useAllTransactions } from "../../state/transactions/hooks";
 import { useChunkedRows } from "../../utils/chunkForRows";
 import Loader from "../Loader";
@@ -11,18 +11,16 @@ import { useSortedRecentTransactions } from "../../hooks/useSortedRecentTransact
 import { NTFInterface } from "../../models/interfaces";
 import { NavLink } from "react-router-dom";
 import "./index.scss";
-import FarmModalFarmingTiers from "components/FarmModalFarmingTiers";
-import { IsActive } from "components/FarmingMyFarms/IsActive";
+import StakeModalFarmingTiers from "components/StakeModalFarmingTiers";
+import { IsActive } from "components/StakerMyStakes/IsActive";
 import { useCurrencyBalance } from "state/wallet/hooks";
-import { ALGEBRA_POLYGON } from "constants/tokens";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { CurrencyAmount } from "@uniswap/sdk-core";
 import { FARMING_CENTER } from "constants/addresses";
 import { SupportedChainId } from "constants/chains";
 import { useActiveWeb3React } from "hooks/web3";
-
 import { Token } from "@uniswap/sdk-core";
-import { formatUnits, parseUnits } from "ethers/lib/utils";
+import { formatUnits } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
 
 import { t, Trans } from "@lingui/macro";
@@ -41,7 +39,7 @@ interface FarmModalProps {
         tokenAmountForLevel1: string;
         tokenAmountForLevel2: string;
         tokenAmountForLevel3: string;
-        multiplierToken: any;
+        lockedToken: any;
     };
     closeHandler: () => void;
     farmingType: FarmingType;
@@ -57,22 +55,27 @@ export function FarmModal({
         level1multiplier,
         level2multiplier,
         level3multiplier,
-        multiplierToken,
+        lockedToken,
         tokenAmountForLevel1,
         tokenAmountForLevel2,
         tokenAmountForLevel3,
     },
     closeHandler,
     farmingType,
-}: FarmModalProps) {
+}: StakeModalProps) {
     const { account } = useActiveWeb3React();
+
+    const isTierFarming = useMemo(
+        () => Boolean(+level1multiplier && +level2multiplier && +level3multiplier && +tokenAmountForLevel1 && +tokenAmountForLevel2 && +tokenAmountForLevel3),
+        [level1multiplier, level2multiplier, level3multiplier, tokenAmountForLevel1, tokenAmountForLevel2, tokenAmountForLevel3]
+    );
 
     const [selectedNFT, setSelectedNFT] = useState<null | NTFInterface>(null);
     const {
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn },
     } = useIncentiveSubgraph() || {};
 
-    const { approveHandler, approvedHash, farmHandler, farmedHash } = useFarmingHandlers() || {};
+    const { approveHandler, approvedHash, stakeHandler, stakedHash } = useStakerHandlers() || {};
 
     const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
@@ -80,7 +83,7 @@ export function FarmModal({
         fetchPositionsForPoolFn(pool);
     }, []);
 
-    const positionsForFarm = useMemo(() => {
+    const positionsForStake = useMemo(() => {
         if (!positionsForPool) return [];
 
         return positionsForPool.filter((position) => {
@@ -96,7 +99,7 @@ export function FarmModal({
     const [chunkedPositions, setChunkedPositions] = useState<any[][] | null | undefined>(null);
 
     //TODO
-    const _chunked = useChunkedRows(positionsForFarm, 1000);
+    const _chunked = useChunkedRows(positionsForStake, 1000);
 
     const [submitState, setSubmitState] = useState(0);
     const [submitLoader, setSubmitLoader] = useState(false);
@@ -122,7 +125,7 @@ export function FarmModal({
 
     const NFTsForApprove = useMemo(() => filterNFTs((v: NTFInterface) => !v.onFarmingCenter), [selectedNFT, submitState]);
 
-    const NFTsForFarm = useMemo(() => filterNFTs((v: NTFInterface) => v.onFarmingCenter), [selectedNFT, submitState]);
+    const NFTsForStake = useMemo(() => filterNFTs((v: NTFInterface) => v.onFarmingCenter), [selectedNFT, submitState]);
 
     useEffect(() => {
         if (!approvedHash || (approvedHash && submitState !== 0)) return;
@@ -130,11 +133,11 @@ export function FarmModal({
         if (typeof approvedHash === "string") {
             setSubmitLoader(false);
         } else if (approvedHash.hash && confirmed.includes(approvedHash.hash)) {
-            const _newChunked: any[] = [];
+            const _newChunked = [];
 
             if (chunkedPositions) {
                 for (const row of chunkedPositions) {
-                    const _newRow: any[] = [];
+                    const _newRow = [];
 
                     for (const position of row) {
                         if (position.id === approvedHash.id) {
@@ -157,19 +160,19 @@ export function FarmModal({
     }, [approvedHash, confirmed]);
 
     useEffect(() => {
-        if (!farmedHash || (farmedHash && submitState !== 2)) return;
+        if (!stakedHash || (stakedHash && submitState !== 2)) return;
 
-        if (typeof farmedHash === "string") {
+        if (typeof stakedHash === "string") {
             setSubmitLoader(false);
-        } else if (farmedHash.hash && confirmed.includes(farmedHash.hash)) {
-            const _newChunked: any[] = [];
+        } else if (stakedHash.hash && confirmed.includes(stakedHash.hash)) {
+            const _newChunked = [];
 
             if (chunkedPositions) {
                 for (const row of chunkedPositions) {
-                    const _newRow: any[] = [];
+                    const _newRow = [];
 
                     for (const position of row) {
-                        if (position.id === farmedHash.id) {
+                        if (position.id === stakedHash.id) {
                             position.onFarmingCenter = true;
                             setSelectedNFT((old) => ({
                                 ...old,
@@ -185,7 +188,7 @@ export function FarmModal({
             setSubmitState(3);
             setSubmitLoader(false);
         }
-    }, [farmedHash, confirmed]);
+    }, [stakedHash, confirmed]);
 
     const approveNFTs = useCallback(() => {
         setSubmitLoader(true);
@@ -193,11 +196,13 @@ export function FarmModal({
         approveHandler(selectedNFT);
     }, [selectedNFT, submitState]);
 
+    useEffect(() => console.log(selectedTier), [selectedTier]);
+
     const farmNFTs = useCallback(
         (eventType: FarmingType) => {
             setSubmitLoader(true);
             setSubmitState(2);
-            farmHandler(
+            stakeHandler(
                 selectedNFT,
                 {
                     pool: pool.id,
@@ -215,10 +220,10 @@ export function FarmModal({
 
     const balance = useCurrencyBalance(
         account ?? undefined,
-        multiplierToken ? new Token(SupportedChainId.POLYGON, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) : undefined
+        lockedToken ? new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name) : undefined
     );
 
-    const isEnoughALGB = useMemo(() => {
+    const isEnoughTokenForLock = useMemo(() => {
         if (farmingType === FarmingType.ETERNAL) return true;
 
         if (!balance) return false;
@@ -227,11 +232,11 @@ export function FarmModal({
 
         switch (selectedTier) {
             case tokenAmountForLevel1:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel1), multiplierToken.decimals);
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel1), lockedToken.decimals);
             case tokenAmountForLevel2:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel2), multiplierToken.decimals);
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel2), lockedToken.decimals);
             case tokenAmountForLevel3:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel3), multiplierToken.decimals);
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel3), lockedToken.decimals);
             default:
                 return true;
         }
@@ -256,16 +261,16 @@ export function FarmModal({
                     setSelectedTier("");
             }
 
-            if (!isEnoughALGB || tier === "") setSelectedNFT(null);
+            if (!isEnoughTokenForLock || tier === "") setSelectedNFT(null);
         },
-        [isEnoughALGB, selectedTier]
+        [isEnoughTokenForLock, selectedTier]
     );
 
     const _amountForApprove = useMemo(() => {
-        if (!selectedTier || !multiplierToken) return undefined;
+        if (!selectedTier || !lockedToken) return undefined;
 
-        return CurrencyAmount.fromRawAmount(new Token(SupportedChainId.POLYGON, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name), selectedTier);
-    }, [selectedTier, multiplierToken]);
+        return CurrencyAmount.fromRawAmount(new Token(SupportedChainId.POLYGON, lockedToken.id, +lockedToken.decimals, lockedToken.symbol, lockedToken.name), selectedTier);
+    }, [selectedTier, lockedToken]);
 
     const [approval, approveCallback] = useApproveCallback(_amountForApprove, FARMING_CENTER[SupportedChainId.POLYGON]);
 
@@ -284,7 +289,7 @@ export function FarmModal({
                     </div>
                     <div className={"h-400 f c f-ac f-jc"}>
                         <CheckCircle size={55} stroke={"var(--green)"} />
-                        <p className={"mt-05"}>{t`Position #${selectedNFT?.id} deposited successfully!`}</p>
+                        <p className={"mt-05"}>{`Position #${selectedNFT?.id} deposited succesfully!`}</p>
                     </div>
                 </div>
             ) : positionsForPoolLoading ? (
@@ -292,17 +297,15 @@ export function FarmModal({
                     <Loader stroke={"var(--white)"} size={"25px"} />
                 </div>
             ) : (
-                <div className={"w-100 c-w"}>
+                <div className={`w-100 c-w ${!isTierFarming && "h-400 pos-r"}`}>
                     <div className={"mb-1 flex-s-between"}>
-                        <div>
-                            <Trans>Select NFT for farming</Trans>
-                        </div>
+                        <div>Select NFT for farming</div>
                         <button className={"bg-t br-0"} onClick={closeHandler}>
                             <X size={18} stroke={"var(--white)"} />
                         </button>
                     </div>
-                    {farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 && (
-                        <FarmModalFarmingTiers
+                    {isTierFarming && chunkedPositions && chunkedPositions.length !== 0 && (
+                        <StakeModalFarmingTiers
                             tiersLimits={{
                                 low: tokenAmountForLevel1,
                                 medium: tokenAmountForLevel2,
@@ -317,36 +320,32 @@ export function FarmModal({
                             selectTier={tierSelectionHandler}
                         />
                     )}
-                    {farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 && (
+                    {isTierFarming && chunkedPositions && chunkedPositions.length !== 0 && (
                         <div className="mv-1 f w-100">
-                            <span className="b" style={{ fontSize: "18px" }}>{t`${farmingType === FarmingType.FINITE ? "2. " : ""}Select a Position`}</span>
+                            <span className="b" style={{ fontSize: "18px" }}>{`${farmingType === FarmingType.FINITE ? "2. " : ""}Select a Position`}</span>
                         </div>
                     )}
-                    <div style={{ height: farmingType === FarmingType.ETERNAL ? "400px" : "unset", marginLeft: "-1rem", position: "relative", marginRight: "-1rem" }} className="mb-1 pl-1 pr-1">
+                    <div style={{ height: "unset", marginLeft: "-1rem", position: "relative", marginRight: "-1rem" }} className="mb-1 pl-1 pr-1">
                         {chunkedPositions && chunkedPositions.length === 0 ? (
-                            <div className={"h-400 f c f-ac f-jc"}>
+                            <div className={`f c f-ac f-jc`}>
                                 <Frown size={30} stroke={"var(--white)"} />
-                                <p className={"mt-1 mb-05"}>
-                                    <Trans>No NFT-s for this pool</Trans>
-                                </p>
-                                <p>
-                                    <Trans>To take part in this farming event, you need to</Trans>
-                                </p>
+                                <p className={"mt-1 mb-05"}>No NFT-s for this pool</p>
+                                <p>To take part in this farming event, you need to</p>
                                 <NavLink className={"flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1 hover-c-ph"} to={linkToProviding}>
-                                    <span>{t`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
+                                    <span>{`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
                                     <ArrowRight className={"ml-05"} size={16} />
                                 </NavLink>
                             </div>
                         ) : chunkedPositions && chunkedPositions.length !== 0 ? (
                             chunkedPositions.map((row, i, arr) => (
-                                <div style={{ opacity: !isEnoughALGB && selectedTier ? "0.5" : "1" }} className="f mb-1 pl-1 pb-1 pr-1 mxs_pb-0 farm-modal__nft-position-row" key={i}>
+                                <div style={{ opacity: !isEnoughTokenForLock && selectedTier ? "0.5" : "1" }} className="f mb-1 pl-1 pb-1 pr-1 mxs_pb-0 stake-modal__nft-position-row" key={i}>
                                     {row.map((el, j) => (
                                         <div
-                                            className={"farm-modal__nft-position p-1 br-8 c-w"}
+                                            className={"stake-modal__nft-position p-1 br-8 c-w"}
                                             key={j}
                                             data-selected={!!selectedNFT && selectedNFT.id === el.id}
                                             onClick={(e: any) => {
-                                                if (!isEnoughALGB && selectedTier) return;
+                                                if (!isEnoughTokenForLock && selectedTier) return;
                                                 if (e.target.tagName !== "A" && !submitLoader) {
                                                     setSelectedNFT((old) =>
                                                         old && old.id === el.id
@@ -362,9 +361,9 @@ export function FarmModal({
                                             <NFTPositionIcon name={el.id}>{el.id}</NFTPositionIcon>
                                             <div className="ml-1">
                                                 <IsActive el={el} />
-                                                <div className={"farm-modal__nft-position__description"}>
+                                                <div className={"stake-modal__nft-position__description"}>
                                                     <a className={"fs-085 c-w hover-cp"} href={`https://app.algebra.finance/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
-                                                        <Trans>View position</Trans>
+                                                        View position
                                                     </a>
                                                 </div>
                                             </div>
@@ -387,15 +386,15 @@ export function FarmModal({
                             </NFTPositionsRow>
                         )}
                     </div>
-                    {selectedTier === "" && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
+                    {selectedTier === "" && chunkedPositions && chunkedPositions.length !== 0 ? (
                         <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
-                            <Trans>Select Tier</Trans>
+                            Select Tier
                         </button>
-                    ) : selectedTier && !isEnoughALGB && farmingType === FarmingType.FINITE && chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled className="btn primary w-100 p-1">{t`Not enough ${multiplierToken.symbol}`}</button>
+                    ) : selectedTier && !isEnoughTokenForLock && chunkedPositions && chunkedPositions.length !== 0 ? (
+                        <button disabled className="btn primary w-100 p-1">{`Not enough ${lockedToken.symbol}`}</button>
                     ) : selectedNFT ? (
-                        <div className={"f mxs_fd-c w-100"}>
-                            {farmingType === FarmingType.FINITE && selectedTier && (
+                        <div className={`f mxs_fd-c w-100 ${!isTierFarming && "pos-a bottom-0"}`}>
+                            {selectedTier && (
                                 <button
                                     disabled={!showApproval || !selectedTier}
                                     onClick={approveCallback}
@@ -405,9 +404,7 @@ export function FarmModal({
                                     {approval === ApprovalState.PENDING ? (
                                         <span className={"f f-ac f-jc"}>
                                             <Loader stroke={"white"} />
-                                            <span className={"ml-05"}>
-                                                <Trans>Approving</Trans>
-                                            </span>
+                                            <span className={"ml-05"}>Approving</span>
                                         </span>
                                     ) : !showApproval ? (
                                         t`${multiplierToken.symbol} Approved`
@@ -425,37 +422,33 @@ export function FarmModal({
                                 {submitLoader && submitState === 0 ? (
                                     <span className={"f f-ac f-jc"}>
                                         <Loader stroke={"white"} />
-                                        <span className={"ml-05"}>
-                                            <Trans>Approving</Trans>
-                                        </span>
+                                        <span className={"ml-05"}>Approving</span>
                                     </span>
-                                ) : NFTsForFarm && !NFTsForApprove ? (
-                                    t`Position Approved`
+                                ) : NFTsForStake && !NFTsForApprove ? (
+                                    "Position Approved"
                                 ) : (
-                                    t`Approve Position`
+                                    "Approve Position"
                                 )}
                             </button>
                             <button
-                                disabled={submitLoader || !NFTsForFarm}
-                                onClick={() => farmNFTs(farmingType)}
+                                disabled={submitLoader || !NFTsForStake}
+                                onClick={() => stakeNFTs(farmingType)}
                                 id={"farming-deposit-nft"}
                                 className={"btn primary w-100 mxs_mb-1 p-1 farming-deposit-nft"}
                             >
                                 {submitLoader && submitState === 2 ? (
                                     <span className={"f f-ac f-jc"}>
                                         <Loader stroke={"white"} />
-                                        <span className={"ml-05"}>
-                                            <Trans>Depositing</Trans>
-                                        </span>
+                                        <span className={"ml-05"}>Depositing</span>
                                     </span>
                                 ) : (
-                                    t`Deposit`
+                                    "Deposit"
                                 )}
                             </button>
                         </div>
                     ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled id={"farming-select-nft"} className={"btn primary w-100 p-1 farming-select-nft"}>
-                            <Trans>Select Position</Trans>
+                        <button disabled id={"farming-select-nft"} className={`btn primary w-100 p-1 farming-select-nft ${!isTierFarming && "pos-a bottom-0"}`}>
+                            Select Position
                         </button>
                     ) : null}
                 </div>

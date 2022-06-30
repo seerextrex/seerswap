@@ -39,20 +39,13 @@ import {
     TickFarming,
     TokenSubgraph
 } from '../models/interfaces'
-import { EthereumWindow } from '../models/types'
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
-import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
-import { useEthPrices } from './useEthPrices'
-import { walletconnector } from '../connectors'
+import { fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
 
 export function useIncentiveSubgraph() {
 
-
     const { chainId, account, library } = useActiveWeb3React()
-
     const { dataClient, farmingClient, oldFarmingClient } = useClients()
-
-    const ethPrices = useEthPrices()
 
     const [positionsForPool, setPositionsForPool] = useState<Position[] | null>(null)
     const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
@@ -159,7 +152,6 @@ export function useIncentiveSubgraph() {
     }
 
     async function fetchIncentive(incentiveId: string) {
-
         try {
 
             const { data: { incentives }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
@@ -176,7 +168,6 @@ export function useIncentiveSubgraph() {
             throw new Error('Fetch incentives ' + err)
         }
     }
-
 
     async function fetchEternalFarming(farmId: string) {
 
@@ -351,7 +342,6 @@ export function useIncentiveSubgraph() {
         try {
             setHasTransferredPositionsLoading(true)
 
-
             const { data: { deposits: positionsTransferred }, error } = (await farmingClient.query<SubgraphResponse<Deposit[]>>({
                 query: HAS_TRANSFERED_POSITIONS(),
                 fetchPolicy: 'network-only',
@@ -432,7 +422,14 @@ export function useIncentiveSubgraph() {
                     )
 
                     const {
-                        rewardToken, bonusRewardToken, pool, startTime, endTime, createdAtTimestamp, multiplierToken, tokenAmountForLevel1,
+                        rewardToken,
+                        bonusRewardToken,
+                        pool,
+                        startTime,
+                        endTime,
+                        createdAtTimestamp,
+                        multiplierToken,
+                        tokenAmountForLevel1,
                         tokenAmountForLevel2,
                         tokenAmountForLevel3,
                         level1multiplier,
@@ -491,7 +488,22 @@ export function useIncentiveSubgraph() {
 
                 if (position.eternalFarming) {
 
-                    const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(position.eternalFarming)
+
+
+                    const {
+                        rewardToken,
+                        bonusRewardToken,
+                        pool,
+                        startTime,
+                        endTime,
+                        multiplierToken,
+                        level1multiplier,
+                        level2multiplier,
+                        level3multiplier,
+                        tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3
+                    } = await fetchEternalFarming(position.eternalFarming)
 
                     const farmingCenterContract = new Contract(
                         FARMING_CENTER[chainId],
@@ -508,6 +520,8 @@ export function useIncentiveSubgraph() {
                     const _rewardToken = await fetchToken(rewardToken, true)
                     const _bonusRewardToken = await fetchToken(bonusRewardToken, true)
                     const _pool = await fetchPool(pool)
+                    const _multiplierToken = await fetchToken(multiplierToken)
+
 
                     _position = {
                         ..._position,
@@ -515,6 +529,13 @@ export function useIncentiveSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
+                        lockedToken: _multiplierToken,
+                        level1multiplier,
+                        level2multiplier,
+                        level3multiplier,
+                        tokenAmountForLevel1,
+                        tokenAmountForLevel2,
+                        tokenAmountForLevel3,
                         //@ts-ignore
                         pool: _pool,
                         eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),
@@ -544,7 +565,7 @@ export function useIncentiveSubgraph() {
             setTransferredPositions(_positions)
 
         } catch (err: any) {
-            throw new Error('Transferred positions ' + err.code + ' ' + err.message)
+            throw new Error('Transferred positions ' + 'code: ' + err.code + ', ' + err.message)
         } finally {
             setTransferredPositionsLoading(false)
         }
@@ -719,11 +740,13 @@ export function useIncentiveSubgraph() {
             const aprs: Aprs = await fetchEternalFarmAPR()
 
             let _eternalFarmings: FormattedEternalFarming[] = []
-
-            for (const farming of eternalFarmings.filter(farming => +farming.bonusRewardRate || +farming.rewardRate)) {
+            // TODO
+            // .filter(farming => +farming.bonusRewardRate || +farming.rewardRate)
+            for (const farming of eternalFarmings) {
                 const pool = await fetchPool(farming.pool)
                 const rewardToken = await fetchToken(farming.rewardToken)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken)
+                const lockedToken = await fetchToken(farming.multiplierToken)
 
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
 
@@ -734,6 +757,7 @@ export function useIncentiveSubgraph() {
                         ...farming,
                         rewardToken,
                         bonusRewardToken,
+                        lockedToken,
                         //@ts-ignore
                         pool,
                         apr

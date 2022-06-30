@@ -406,6 +406,10 @@
   display: flex;
 }
 
+.n {
+  display: none;
+}
+
 .f,
 .i-f {
   &.c {
@@ -504,4 +508,10 @@
     cursor: pointer;
   }
 
+}
+
+.bottom {
+  &-0 {
+    bottom: 0;
+  }
 }

@@ -35,7 +35,7 @@ export default function useWrapCallback(
 
     let chainSymbol: string
 
-    if (chainId === 137) {
+    if (chainId === 80001) {
         chainSymbol = 'MATIC'
     }
 

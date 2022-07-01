@@ -75,7 +75,7 @@ export interface FormattedEternalFarming {
     level1multiplier: string
     level2multiplier: string
     level3multiplier: string
-    lockedToken: TokenSubgraph
+    multiplierToken: TokenSubgraph
 }
 
 export interface FarmingEvent extends DefaultFarmingEvent {
@@ -145,7 +145,7 @@ export interface Deposit {
     tokensLockedIncentive: string
     levelEternal: string
     levelIncentive: string
-    lockedToken: TokenSubgraph
+    multiplierToken: TokenSubgraph
     oldFarming?: boolean
 }
 

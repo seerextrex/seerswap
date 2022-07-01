@@ -262,7 +262,7 @@ export function useIncentiveSubgraph() {
                 return
             }
 
-            setFutureEvents(await getEvents(futureEvents))
+            setFutureEvents(await getEvents(futureEvents, true))
 
         } catch (err) {
             throw new Error('Future incentives fetching ' + err)
@@ -488,8 +488,6 @@ export function useIncentiveSubgraph() {
 
                 if (position.eternalFarming) {
 
-
-
                     const {
                         rewardToken,
                         bonusRewardToken,
@@ -529,7 +527,7 @@ export function useIncentiveSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
-                        lockedToken: _multiplierToken,
+                        multiplierToken: _multiplierToken,
                         level1multiplier,
                         level2multiplier,
                         level3multiplier,
@@ -744,9 +742,9 @@ export function useIncentiveSubgraph() {
             // .filter(farming => +farming.bonusRewardRate || +farming.rewardRate)
             for (const farming of eternalFarmings) {
                 const pool = await fetchPool(farming.pool)
-                const rewardToken = await fetchToken(farming.rewardToken)
-                const bonusRewardToken = await fetchToken(farming.bonusRewardToken)
-                const lockedToken = await fetchToken(farming.multiplierToken)
+                const rewardToken = await fetchToken(farming.rewardToken, true)
+                const bonusRewardToken = await fetchToken(farming.bonusRewardToken, true)
+                const multiplierToken = await fetchToken(farming.multiplierToken, true)
 
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
 
@@ -757,7 +755,7 @@ export function useIncentiveSubgraph() {
                         ...farming,
                         rewardToken,
                         bonusRewardToken,
-                        lockedToken,
+                        multiplierToken,
                         //@ts-ignore
                         pool,
                         apr

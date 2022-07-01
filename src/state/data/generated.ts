@@ -6498,7 +6498,7 @@ export type FetchIncentiveQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'enterStartTime'>
   )> }
 );
 
@@ -6511,7 +6511,7 @@ export type FetchEternalFarmQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken'>
   )> }
 );
 
@@ -6639,7 +6639,7 @@ export type FutureEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken'>
+    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken' | 'enterStartTime'>
   )> }
 );
 
@@ -6653,7 +6653,7 @@ export type CurrentEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'enterStartTime' | 'multiplierToken'>
   )> }
 );
 
@@ -6720,7 +6720,7 @@ export type TransferedPositionsForPoolQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming'>
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'tokensLockedIncentive' | 'tokensLockedEternal' | 'levelIncentive' | 'levelEternal'>
   )> }
 );
 
@@ -6745,7 +6745,7 @@ export type InfiniteFarmsQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'multiplierToken'>
   )> }
 );
 
@@ -6950,6 +6950,7 @@ export const FetchIncentiveDocument = `
     tokenAmountForLevel1
     tokenAmountForLevel2
     tokenAmountForLevel3
+    enterStartTime
   }
 }
     `;
@@ -6967,6 +6968,13 @@ export const FetchEternalFarmDocument = `
     rewardRate
     bonusRewardRate
     isDetached
+    level1multiplier
+    level2multiplier
+    level3multiplier
+    tokenAmountForLevel1
+    tokenAmountForLevel2
+    tokenAmountForLevel3
+    multiplierToken
   }
 }
     `;
@@ -7137,6 +7145,7 @@ export const FutureEventsDocument = `
     tokenAmountForLevel2
     tokenAmountForLevel3
     multiplierToken
+    enterStartTime
   }
 }
     `;
@@ -7161,6 +7170,7 @@ export const CurrentEventsDocument = `
     tokenAmountForLevel1
     tokenAmountForLevel2
     tokenAmountForLevel3
+    enterStartTime
     multiplierToken
   }
 }
@@ -7234,6 +7244,10 @@ export const TransferedPositionsForPoolDocument = `
     eternalFarming
     onFarmingCenter
     enteredInEternalFarming
+    tokensLockedIncentive
+    tokensLockedEternal
+    levelIncentive
+    levelEternal
   }
 }
     `;
@@ -7261,6 +7275,13 @@ export const InfiniteFarmsDocument = `
     bonusReward
     rewardRate
     bonusRewardRate
+    tokenAmountForLevel1
+    tokenAmountForLevel2
+    tokenAmountForLevel3
+    level1multiplier
+    level2multiplier
+    level3multiplier
+    multiplierToken
   }
 }
     `;

@@ -263,7 +263,7 @@ export function FarmingEventCard({
                             {/*@ts-ignore*/}
                             <div
                                 className="staker-event-card__timeline-line__inner"
-                                style={{ width: active ? "100%" : new Date(+enterStartTime * 1000).getTime() >= Date.now() ? "0%" : `${getProgress(Number(enterStartTime), startTime, now)}%` }}
+                                style={{ width: active ? "100%" : new Date(enterStartTime || 0 * 1000).getTime() >= Date.now() ? "0%" : `${getProgress(Number(enterStartTime), startTime, now)}%` }}
                             ></div>
                         </div>
                         <div className="f f-ac f-jc staker-event-card__timeline-circle">{active && <div className="staker-event-card__timeline-circle__inner active" />}</div>

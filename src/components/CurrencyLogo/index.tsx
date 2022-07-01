@@ -16,7 +16,7 @@ export default function CurrencyLogo({ currency, size = "24px", style, ...rest }
 
     let logo;
 
-    if (chainId === 80001) {
+    if (chainId === 137) {
         logo = MaticLogo;
     }
 

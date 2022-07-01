@@ -19,8 +19,8 @@ interface PositionHeaderProps {
 
 export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHandler, setSendModal }: PositionHeaderProps) {
     return (
-        <div className={"my-stakes__position-card__header flex-s-between mb-1 br-8 p-1"}>
-            <div className={"my-stakes__position-card__header__row"}>
+        <div className={"my-farms__position-card__header flex-s-between mb-1 br-8 p-1"}>
+            <div className={"my-farms__position-card__header__row"}>
                 <div className={"f f-ac mxs_ml-0 mxs_mb-1"}>
                     <NFTPositionIcon name={el.id}>
                         <span>{el.id}</span>
@@ -39,8 +39,8 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </div>
                 </div>
                 <div className={"f f-ac ml-2 mxs_ml-0 mxs_mv-1"}>
-                    <CurrencyLogo currency={new Token(80001, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
-                    <CurrencyLogo currency={new Token(80001, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
+                    <CurrencyLogo currency={new Token(137, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
+                    <CurrencyLogo currency={new Token(137, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
                     <div className={"ml-05"}>
                         <div className={"b fs-075"} style={{ marginBottom: "2px" }}>
                             POOL
@@ -49,7 +49,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </div>
                 </div>
             </div>
-            <div className={"my-stakes__position-card__header__row"}>
+            <div className={"my-farms__position-card__header__row"}>
                 {!el.incentive && !el.eternalFarming && (
                     <button
                         className={"btn c-w f f-ac b pv-05 ph-1 mxs_mv-05 mxs_f-jc"}

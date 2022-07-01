@@ -974,7 +974,7 @@ msgstr "Импортировать на свой риск"
 #: src/components/Badge/RangeBadge.tsx
 #: src/components/StakerMyStakes/IsActive.tsx
 msgid "In range"
-msgstr "В диапазоне"
+msgstr "Активна"
 
 #: src/components/NavigationTabs/AddRemoveTabs.tsx
 #: src/pages/AddLiquidity/index.tsx
@@ -1195,7 +1195,7 @@ msgstr "Загрузка..."
 
 #: src/components/StakeModalFarmingTiers/index.tsx
 msgid "Lock:"
-msgstr "Блокируется:"
+msgstr "Блок.:"
 
 #: src/pages/NewAddLiquidity/components/TokenAmountCard/index.tsx
 #: src/pages/RealStakerPage/RealStakerRangeButtons.tsx
@@ -1469,7 +1469,7 @@ msgstr "Открытые позиции"
 #: src/components/StakerMyStakes/IsActive.tsx
 #: src/pages/NewAddLiquidity/containers/SelectRange/index.tsx
 msgid "Out of range"
-msgstr "Вне диапазона"
+msgstr "Неактивна"
 
 #: src/components/swap/SwapModalHeader.tsx
 msgid "Output is estimated. You will receive at least <0>{0} {1}</0> or the transaction will revert."
@@ -2142,7 +2142,7 @@ msgstr "Просмотреть в обозревателе"
 #: src/components/StakeModal/index.tsx
 #: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "View position"
-msgstr "Посмотреть позицию"
+msgstr "Посмотреть"
 
 #: src/pages/PoolInfoPage/index.tsx
 msgid "Volume"

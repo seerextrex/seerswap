@@ -10,6 +10,7 @@ import { BigNumber } from "ethers";
 import BachelorTierIcon from "../../assets/images/bachelor-tier-icon.png";
 import MasterTierIcon from "../../assets/images/master-tier-icon.png";
 import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
+import { t } from "@lingui/macro";
 
 interface PositionCardBodyHeaderProps {
     farmingType: number;
@@ -46,11 +47,11 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
             case 0:
                 return;
             case 1:
-                return "Bachelor";
+                return t`Bachelor`;
             case 2:
-                return "Master";
+                return t`Master`;
             case 3:
-                return "Professor";
+                return t`Professor`;
             default:
                 return;
         }
@@ -59,7 +60,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     const tierMultiplier = useMemo(() => {
         if (!el || farmingType !== FarmingType.FINITE || !el.levelIncentive || !el.multiplierToken) return;
 
-        if (!el || !el.levelIncentive || !el.levelEternal || !el.lockedToken) return;
+        if (!el || !el.levelIncentive || !el.levelEternal || !el.multiplierToken) return;
 
         switch (farmingType === FarmingType.FINITE ? +el.levelIncentive : +el.levelEternal) {
             case 0:
@@ -91,7 +92,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
             <div className={`flex-s-between b mb-1 fs-125 farming-card-header ms_fd-c`}>
                 {tierLevel && tierName && (
                     <div className={"f f-ac mxs_ml-0 mxs_mv-1 ms_f-js w-100"}>
-                        {/* <CurrencyLogo currency={new Token(137, el.lockedToken.id, 18, el.lockedToken.symbol) as WrappedCurrency} size={"35px"} /> */}
+                        {/* <CurrencyLogo currency={new Token(137, el.multiplierToken.id, 18, el.multiplierToken.symbol) as WrappedCurrency} size={"35px"} /> */}
                         <div style={{ width: "30px", height: "30px", background: "#324e64", borderRadius: "50%" }} className={"f f-ac f-jc"}>
                             <img src={tierLevel} width={25} height={25} />
                         </div>
@@ -103,16 +104,16 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                         </div>
                     </div>
                 )}
-                {el?.lockedToken && +(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal) > 0 && (
+                {el?.multiplierToken && +(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal) > 0 && (
                     <div className={"f f-ac f-jc ml-2 ms_ml-0 ms_f-js ms_mv-1 mxs_mv-1 w-100"}>
-                        <CurrencyLogo currency={new Token(80001, el?.lockedToken.id, 18, el?.lockedToken.symbol) as WrappedCurrency} size={"30px"} />
+                        <CurrencyLogo currency={new Token(137, el?.multiplierToken.id, 18, el?.multiplierToken.symbol) as WrappedCurrency} size={"30px"} />
                         <div className={"ml-05"}>
                             <div className={"b fs-075"} style={{ marginBottom: "2px" }}>
                                 LOCKED
                             </div>
                             <div className={"fs-1"}>{`${formatAmountTokens(
-                                +formatUnits(BigNumber.from(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal), el?.lockedToken.decimals)
-                            )} ${el?.lockedToken.symbol}`}</div>
+                                +formatUnits(BigNumber.from(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal), el?.multiplierToken.decimals)
+                            )} ${el?.multiplierToken.symbol}`}</div>
                         </div>
                     </div>
                 )}

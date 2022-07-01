@@ -27,10 +27,10 @@ interface StakeModalFarmingTiersProps {
         high: string;
     };
     selectTier: any;
-    lockedToken: any;
+    multiplierToken: any;
 }
 
-export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, lockedToken }: StakeModalFarmingTiersProps) {
+export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, multiplierToken }: StakeModalFarmingTiersProps) {
     const { account } = useActiveWeb3React();
 
     const [selectedTier, setSelectedTier] = useState<number | undefined>(0);
@@ -58,10 +58,10 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
         if (!tiersLimits || !tiersMultipliers) return [];
 
         return [
-            { img: NoTierIcon, title: "No tier", lock: 0, earn: 0 },
-            { img: BachelorTierIcon, title: "Bachelor", lock: +tiersLimits.low, earn: +tiersMultipliers.low },
-            { img: MasterTierIcon, title: "Master", lock: +tiersLimits.medium, earn: +tiersMultipliers.medium },
-            { img: ProfessorTierIcon, title: "Professor", lock: +tiersLimits.high, earn: +tiersMultipliers.high },
+            { img: NoTierIcon, title: t`No tier`, lock: 0, earn: 0 },
+            { img: BachelorTierIcon, title: t`Bachelor`, lock: +tiersLimits.low, earn: +tiersMultipliers.low },
+            { img: MasterTierIcon, title: t`Master`, lock: +tiersLimits.medium, earn: +tiersMultipliers.medium },
+            { img: ProfessorTierIcon, title: t`Professor`, lock: +tiersLimits.high, earn: +tiersMultipliers.high },
         ];
     }, [tiersLimits, tiersMultipliers, balance]);
 
@@ -113,7 +113,9 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                                 </span>
                             </div>
                             <div className="farming-tier__rewards f">
-                                <span className="b">Earn:</span>
+                                <span className="b">
+                                    <Trans>Earn:</Trans>
+                                </span>
                                 <span className="ml-a farming-tier__rewards-value">{tier.earn ? `${100 + tier.earn / 100}%` : "100%"}</span>
                             </div>
                         </div>

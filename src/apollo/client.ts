@@ -51,11 +51,7 @@ export const stakerClient = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-<<<<<<< HEAD
     uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming',
-=======
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming-mumbai',
->>>>>>> feature/tier-eternal-farming
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

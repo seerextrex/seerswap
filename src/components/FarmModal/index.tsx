@@ -33,12 +33,12 @@ interface FarmModalProps {
         id: string;
         rewardToken: any;
         bonusRewardToken: any;
-        level1multiplier: string;
-        level2multiplier: string;
-        level3multiplier: string;
-        tokenAmountForLevel1: string;
-        tokenAmountForLevel2: string;
-        tokenAmountForLevel3: string;
+        tier1multiplier: string;
+        tier2multiplier: string;
+        tier3multiplier: string;
+        tokenAmountForTier1: string;
+        tokenAmountForTier2: string;
+        tokenAmountForTier3: string;
         multiplierToken: any;
     };
     closeHandler: () => void;
@@ -52,13 +52,13 @@ export function FarmModal({
         endTime,
         rewardToken,
         bonusRewardToken,
-        level1multiplier,
-        level2multiplier,
-        level3multiplier,
+        tier1multiplier,
+        tier2multiplier,
+        tier3multiplier,
         multiplierToken,
-        tokenAmountForLevel1,
-        tokenAmountForLevel2,
-        tokenAmountForLevel3,
+        tokenAmountForTier1,
+        tokenAmountForTier2,
+        tokenAmountForTier3,
     },
     closeHandler,
     farmingType,
@@ -66,8 +66,8 @@ export function FarmModal({
     const { account } = useActiveWeb3React();
 
     const isTierFarming = useMemo(
-        () => Boolean(+level1multiplier && +level2multiplier && +level3multiplier && +tokenAmountForLevel1 && +tokenAmountForLevel2 && +tokenAmountForLevel3),
-        [level1multiplier, level2multiplier, level3multiplier, tokenAmountForLevel1, tokenAmountForLevel2, tokenAmountForLevel3]
+        () => Boolean(+tier1multiplier && +tier2multiplier && +tier3multiplier && +tokenAmountForTier1 && +tokenAmountForTier2 && +tokenAmountForTier3),
+        [tier1multiplier, tier2multiplier, tier3multiplier, tokenAmountForTier1, tokenAmountForTier2, tokenAmountForTier3]
     );
 
     const [selectedNFT, setSelectedNFT] = useState<null | NTFInterface>(null);
@@ -229,16 +229,16 @@ export function FarmModal({
         const _balance = +balance.toSignificant(4);
 
         switch (selectedTier) {
-            case tokenAmountForLevel1:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel1), multiplierToken.decimals);
-            case tokenAmountForLevel2:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel2), multiplierToken.decimals);
-            case tokenAmountForLevel3:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForLevel3), multiplierToken.decimals);
+            case tokenAmountForTier1:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForTier1), multiplierToken.decimals);
+            case tokenAmountForTier2:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForTier2), multiplierToken.decimals);
+            case tokenAmountForTier3:
+                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForTier3), multiplierToken.decimals);
             default:
                 return true;
         }
-    }, [balance, selectedTier, tokenAmountForLevel1, tokenAmountForLevel2, tokenAmountForLevel3]);
+    }, [balance, selectedTier, tokenAmountForTier1, tokenAmountForTier2, tokenAmountForTier3]);
 
     const tierSelectionHandler = useCallback(
         (tier) => {
@@ -247,13 +247,13 @@ export function FarmModal({
                     setSelectedTier(null);
                     break;
                 case 1:
-                    setSelectedTier(tokenAmountForLevel1);
+                    setSelectedTier(tokenAmountForTier1);
                     break;
                 case 2:
-                    setSelectedTier(tokenAmountForLevel2);
+                    setSelectedTier(tokenAmountForTier2);
                     break;
                 case 3:
-                    setSelectedTier(tokenAmountForLevel3);
+                    setSelectedTier(tokenAmountForTier3);
                     break;
                 case "":
                     setSelectedTier("");
@@ -307,14 +307,14 @@ export function FarmModal({
                     {isTierFarming && chunkedPositions && chunkedPositions.length !== 0 && (
                         <FarmModalFarmingTiers
                             tiersLimits={{
-                                low: tokenAmountForLevel1,
-                                medium: tokenAmountForLevel2,
-                                high: tokenAmountForLevel3,
+                                low: tokenAmountForTier1,
+                                medium: tokenAmountForTier2,
+                                high: tokenAmountForTier3,
                             }}
                             tiersMultipliers={{
-                                low: level1multiplier,
-                                medium: level2multiplier,
-                                high: level3multiplier,
+                                low: tier1multiplier,
+                                medium: tier2multiplier,
+                                high: tier3multiplier,
                             }}
                             multiplierToken={multiplierToken}
                             selectTier={tierSelectionHandler}

@@ -22,11 +22,11 @@ interface PositionCardBodyHeaderProps {
 
 export default function PositionCardBodyHeader({ el, farmingType, date, enteredInEternalFarming, eternalFarming }: PositionCardBodyHeaderProps) {
     const tierLevel = useMemo(() => {
-        if (!el?.tokensLockedEternal || !el?.levelIncentive || !el?.levelEternal || !el?.tokensLockedIncentive) return;
+        if (!el?.tokensLockedEternal || !el?.tierIncentive || !el?.tierEternal || !el?.tokensLockedIncentive) return;
 
-        // console.log(farmingType === FarmingType.FINITE ? +el?.levelIncentive : +el?.levelEternal)
+        // console.log(farmingType === FarmingType.FINITE ? +el?.tierIncentive : +el?.tierEternal)
 
-        switch (farmingType === FarmingType.FINITE ? +el?.levelIncentive : +el?.levelEternal) {
+        switch (farmingType === FarmingType.FINITE ? +el?.tierIncentive : +el?.tierEternal) {
             case 0:
                 return;
             case 1:
@@ -41,9 +41,9 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     }, [el]);
 
     const tierName = useMemo(() => {
-        if (!el?.tokensLockedEternal || !el?.levelIncentive || !el?.levelEternal || !el?.tokensLockedIncentive) return;
+        if (!el?.tokensLockedEternal || !el?.tierIncentive || !el?.tierEternal || !el?.tokensLockedIncentive) return;
 
-        switch (farmingType === FarmingType.FINITE ? +el?.levelIncentive : +el?.levelEternal) {
+        switch (farmingType === FarmingType.FINITE ? +el?.tierIncentive : +el?.tierEternal) {
             case 0:
                 return;
             case 1:
@@ -58,19 +58,19 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     }, [el]);
 
     const tierMultiplier = useMemo(() => {
-        if (!el || farmingType !== FarmingType.FINITE || !el.levelIncentive || !el.multiplierToken) return;
+        if (!el || farmingType !== FarmingType.FINITE || !el.tierIncentive || !el.multiplierToken) return;
 
-        if (!el || !el.levelIncentive || !el.levelEternal || !el.multiplierToken) return;
+        if (!el || !el.tierIncentive || !el.tierEternal || !el.multiplierToken) return;
 
-        switch (farmingType === FarmingType.FINITE ? +el.levelIncentive : +el.levelEternal) {
+        switch (farmingType === FarmingType.FINITE ? +el.tierIncentive : +el.tierEternal) {
             case 0:
                 return;
             case 1:
-                return el.level1multiplier;
+                return el.tier1multiplier;
             case 2:
-                return el.level2multiplier;
+                return el.tier2multiplier;
             case 3:
-                return el.level3multiplier;
+                return el.tier3multiplier;
             default:
                 return;
         }

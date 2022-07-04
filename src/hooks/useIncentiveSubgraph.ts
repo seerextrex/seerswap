@@ -429,12 +429,12 @@ export function useIncentiveSubgraph() {
                         endTime,
                         createdAtTimestamp,
                         multiplierToken,
-                        tokenAmountForLevel1,
-                        tokenAmountForLevel2,
-                        tokenAmountForLevel3,
-                        level1multiplier,
-                        level2multiplier,
-                        level3multiplier
+                        tokenAmountForTier1,
+                        tokenAmountForTier2,
+                        tokenAmountForTier3,
+                        tier1multiplier,
+                        tier2multiplier,
+                        tier3multiplier
                     } = await fetchIncentive(position.incentive)
 
                     const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
@@ -461,12 +461,12 @@ export function useIncentiveSubgraph() {
                         incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
                         multiplierToken: _multiplierToken,
-                        tokenAmountForLevel1,
-                        tokenAmountForLevel2,
-                        tokenAmountForLevel3,
-                        level1multiplier,
-                        level2multiplier,
-                        level3multiplier
+                        tokenAmountForTier1,
+                        tokenAmountForTier2,
+                        tokenAmountForTier3,
+                        tier1multiplier,
+                        tier2multiplier,
+                        tier3multiplier
                     }
 
                 } else {
@@ -495,12 +495,12 @@ export function useIncentiveSubgraph() {
                         startTime,
                         endTime,
                         multiplierToken,
-                        level1multiplier,
-                        level2multiplier,
-                        level3multiplier,
-                        tokenAmountForLevel1,
-                        tokenAmountForLevel2,
-                        tokenAmountForLevel3
+                        tier1multiplier,
+                        tier2multiplier,
+                        tier3multiplier,
+                        tokenAmountForTier1,
+                        tokenAmountForTier2,
+                        tokenAmountForTier3
                     } = await fetchEternalFarming(position.eternalFarming)
 
                     const farmingCenterContract = new Contract(
@@ -528,12 +528,12 @@ export function useIncentiveSubgraph() {
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
                         multiplierToken: _multiplierToken,
-                        level1multiplier,
-                        level2multiplier,
-                        level3multiplier,
-                        tokenAmountForLevel1,
-                        tokenAmountForLevel2,
-                        tokenAmountForLevel3,
+                        tier1multiplier,
+                        tier2multiplier,
+                        tier3multiplier,
+                        tokenAmountForTier1,
+                        tokenAmountForTier2,
+                        tokenAmountForTier3,
                         //@ts-ignore
                         pool: _pool,
                         eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),

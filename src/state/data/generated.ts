@@ -742,12 +742,12 @@ export type Deposit = {
   eternalFarming?: Maybe<Scalars['Bytes']>;
   id: Scalars['ID'];
   incentive?: Maybe<Scalars['Bytes']>;
-  levelEternal: Scalars['BigInt'];
-  levelIncentive: Scalars['BigInt'];
   liquidity: Scalars['BigInt'];
   onFarmingCenter: Scalars['Boolean'];
   owner: Scalars['Bytes'];
   pool: Scalars['Bytes'];
+  tierEternal: Scalars['BigInt'];
+  tierIncentive: Scalars['BigInt'];
   tokensLockedEternal: Scalars['BigInt'];
   tokensLockedIncentive: Scalars['BigInt'];
 };
@@ -791,22 +791,6 @@ export type Deposit_Filter = {
   incentive_not?: Maybe<Scalars['Bytes']>;
   incentive_not_contains?: Maybe<Scalars['Bytes']>;
   incentive_not_in?: Maybe<Array<Scalars['Bytes']>>;
-  levelEternal?: Maybe<Scalars['BigInt']>;
-  levelEternal_gt?: Maybe<Scalars['BigInt']>;
-  levelEternal_gte?: Maybe<Scalars['BigInt']>;
-  levelEternal_in?: Maybe<Array<Scalars['BigInt']>>;
-  levelEternal_lt?: Maybe<Scalars['BigInt']>;
-  levelEternal_lte?: Maybe<Scalars['BigInt']>;
-  levelEternal_not?: Maybe<Scalars['BigInt']>;
-  levelEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  levelIncentive?: Maybe<Scalars['BigInt']>;
-  levelIncentive_gt?: Maybe<Scalars['BigInt']>;
-  levelIncentive_gte?: Maybe<Scalars['BigInt']>;
-  levelIncentive_in?: Maybe<Array<Scalars['BigInt']>>;
-  levelIncentive_lt?: Maybe<Scalars['BigInt']>;
-  levelIncentive_lte?: Maybe<Scalars['BigInt']>;
-  levelIncentive_not?: Maybe<Scalars['BigInt']>;
-  levelIncentive_not_in?: Maybe<Array<Scalars['BigInt']>>;
   liquidity?: Maybe<Scalars['BigInt']>;
   liquidity_gt?: Maybe<Scalars['BigInt']>;
   liquidity_gte?: Maybe<Scalars['BigInt']>;
@@ -831,6 +815,22 @@ export type Deposit_Filter = {
   pool_not?: Maybe<Scalars['Bytes']>;
   pool_not_contains?: Maybe<Scalars['Bytes']>;
   pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  tierEternal?: Maybe<Scalars['BigInt']>;
+  tierEternal_gt?: Maybe<Scalars['BigInt']>;
+  tierEternal_gte?: Maybe<Scalars['BigInt']>;
+  tierEternal_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierEternal_lt?: Maybe<Scalars['BigInt']>;
+  tierEternal_lte?: Maybe<Scalars['BigInt']>;
+  tierEternal_not?: Maybe<Scalars['BigInt']>;
+  tierEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierIncentive?: Maybe<Scalars['BigInt']>;
+  tierIncentive_gt?: Maybe<Scalars['BigInt']>;
+  tierIncentive_gte?: Maybe<Scalars['BigInt']>;
+  tierIncentive_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierIncentive_lt?: Maybe<Scalars['BigInt']>;
+  tierIncentive_lte?: Maybe<Scalars['BigInt']>;
+  tierIncentive_not?: Maybe<Scalars['BigInt']>;
+  tierIncentive_not_in?: Maybe<Array<Scalars['BigInt']>>;
   tokensLockedEternal?: Maybe<Scalars['BigInt']>;
   tokensLockedEternal_gt?: Maybe<Scalars['BigInt']>;
   tokensLockedEternal_gte?: Maybe<Scalars['BigInt']>;
@@ -855,12 +855,12 @@ export enum Deposit_OrderBy {
   EternalFarming = 'eternalFarming',
   Id = 'id',
   Incentive = 'incentive',
-  LevelEternal = 'levelEternal',
-  LevelIncentive = 'levelIncentive',
   Liquidity = 'liquidity',
   OnFarmingCenter = 'onFarmingCenter',
   Owner = 'owner',
   Pool = 'pool',
+  TierEternal = 'tierEternal',
+  TierIncentive = 'tierIncentive',
   TokensLockedEternal = 'tokensLockedEternal',
   TokensLockedIncentive = 'tokensLockedIncentive'
 }
@@ -873,18 +873,18 @@ export type EternalFarming = {
   endTime: Scalars['BigInt'];
   id: Scalars['ID'];
   isDetached?: Maybe<Scalars['Boolean']>;
-  level1multiplier: Scalars['BigInt'];
-  level2multiplier: Scalars['BigInt'];
-  level3multiplier: Scalars['BigInt'];
   multiplierToken: Scalars['Bytes'];
   pool: Scalars['Bytes'];
   reward: Scalars['BigInt'];
   rewardRate: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   startTime: Scalars['BigInt'];
-  tokenAmountForLevel1: Scalars['BigInt'];
-  tokenAmountForLevel2: Scalars['BigInt'];
-  tokenAmountForLevel3: Scalars['BigInt'];
+  tier1multiplier: Scalars['BigInt'];
+  tier2multiplier: Scalars['BigInt'];
+  tier3multiplier: Scalars['BigInt'];
+  tokenAmountForTier1: Scalars['BigInt'];
+  tokenAmountForTier2: Scalars['BigInt'];
+  tokenAmountForTier3: Scalars['BigInt'];
   virtualPool: Scalars['Bytes'];
 };
 
@@ -933,30 +933,6 @@ export type EternalFarming_Filter = {
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
-  level1multiplier?: Maybe<Scalars['BigInt']>;
-  level1multiplier_gt?: Maybe<Scalars['BigInt']>;
-  level1multiplier_gte?: Maybe<Scalars['BigInt']>;
-  level1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  level1multiplier_lt?: Maybe<Scalars['BigInt']>;
-  level1multiplier_lte?: Maybe<Scalars['BigInt']>;
-  level1multiplier_not?: Maybe<Scalars['BigInt']>;
-  level1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  level2multiplier?: Maybe<Scalars['BigInt']>;
-  level2multiplier_gt?: Maybe<Scalars['BigInt']>;
-  level2multiplier_gte?: Maybe<Scalars['BigInt']>;
-  level2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  level2multiplier_lt?: Maybe<Scalars['BigInt']>;
-  level2multiplier_lte?: Maybe<Scalars['BigInt']>;
-  level2multiplier_not?: Maybe<Scalars['BigInt']>;
-  level2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  level3multiplier?: Maybe<Scalars['BigInt']>;
-  level3multiplier_gt?: Maybe<Scalars['BigInt']>;
-  level3multiplier_gte?: Maybe<Scalars['BigInt']>;
-  level3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  level3multiplier_lt?: Maybe<Scalars['BigInt']>;
-  level3multiplier_lte?: Maybe<Scalars['BigInt']>;
-  level3multiplier_not?: Maybe<Scalars['BigInt']>;
-  level3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
   multiplierToken?: Maybe<Scalars['Bytes']>;
   multiplierToken_contains?: Maybe<Scalars['Bytes']>;
   multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -999,30 +975,54 @@ export type EternalFarming_Filter = {
   startTime_lte?: Maybe<Scalars['BigInt']>;
   startTime_not?: Maybe<Scalars['BigInt']>;
   startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel1?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_gt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_gte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel1_lt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_lte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_not?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel2?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_gt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_gte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel2_lt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_lte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_not?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel3?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_gt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_gte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel3_lt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_lte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_not?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1multiplier?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2multiplier?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3multiplier?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not_in?: Maybe<Array<Scalars['BigInt']>>;
   virtualPool?: Maybe<Scalars['Bytes']>;
   virtualPool_contains?: Maybe<Scalars['Bytes']>;
   virtualPool_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1038,18 +1038,18 @@ export enum EternalFarming_OrderBy {
   EndTime = 'endTime',
   Id = 'id',
   IsDetached = 'isDetached',
-  Level1multiplier = 'level1multiplier',
-  Level2multiplier = 'level2multiplier',
-  Level3multiplier = 'level3multiplier',
   MultiplierToken = 'multiplierToken',
   Pool = 'pool',
   Reward = 'reward',
   RewardRate = 'rewardRate',
   RewardToken = 'rewardToken',
   StartTime = 'startTime',
-  TokenAmountForLevel1 = 'tokenAmountForLevel1',
-  TokenAmountForLevel2 = 'tokenAmountForLevel2',
-  TokenAmountForLevel3 = 'tokenAmountForLevel3',
+  Tier1multiplier = 'tier1multiplier',
+  Tier2multiplier = 'tier2multiplier',
+  Tier3multiplier = 'tier3multiplier',
+  TokenAmountForTier1 = 'tokenAmountForTier1',
+  TokenAmountForTier2 = 'tokenAmountForTier2',
+  TokenAmountForTier3 = 'tokenAmountForTier3',
   VirtualPool = 'virtualPool'
 }
 
@@ -1624,17 +1624,17 @@ export type Incentive = {
   enterStartTime: Scalars['BigInt'];
   id: Scalars['ID'];
   isDetached?: Maybe<Scalars['Boolean']>;
-  level1multiplier: Scalars['BigInt'];
-  level2multiplier: Scalars['BigInt'];
-  level3multiplier: Scalars['BigInt'];
   multiplierToken: Scalars['Bytes'];
   pool: Scalars['Bytes'];
   reward: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   startTime: Scalars['BigInt'];
-  tokenAmountForLevel1: Scalars['BigInt'];
-  tokenAmountForLevel2: Scalars['BigInt'];
-  tokenAmountForLevel3: Scalars['BigInt'];
+  tier1multiplier: Scalars['BigInt'];
+  tier2multiplier: Scalars['BigInt'];
+  tier3multiplier: Scalars['BigInt'];
+  tokenAmountForTier1: Scalars['BigInt'];
+  tokenAmountForTier2: Scalars['BigInt'];
+  tokenAmountForTier3: Scalars['BigInt'];
 };
 
 export type Incentive_Filter = {
@@ -1690,30 +1690,6 @@ export type Incentive_Filter = {
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
-  level1multiplier?: Maybe<Scalars['BigInt']>;
-  level1multiplier_gt?: Maybe<Scalars['BigInt']>;
-  level1multiplier_gte?: Maybe<Scalars['BigInt']>;
-  level1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  level1multiplier_lt?: Maybe<Scalars['BigInt']>;
-  level1multiplier_lte?: Maybe<Scalars['BigInt']>;
-  level1multiplier_not?: Maybe<Scalars['BigInt']>;
-  level1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  level2multiplier?: Maybe<Scalars['BigInt']>;
-  level2multiplier_gt?: Maybe<Scalars['BigInt']>;
-  level2multiplier_gte?: Maybe<Scalars['BigInt']>;
-  level2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  level2multiplier_lt?: Maybe<Scalars['BigInt']>;
-  level2multiplier_lte?: Maybe<Scalars['BigInt']>;
-  level2multiplier_not?: Maybe<Scalars['BigInt']>;
-  level2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  level3multiplier?: Maybe<Scalars['BigInt']>;
-  level3multiplier_gt?: Maybe<Scalars['BigInt']>;
-  level3multiplier_gte?: Maybe<Scalars['BigInt']>;
-  level3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  level3multiplier_lt?: Maybe<Scalars['BigInt']>;
-  level3multiplier_lte?: Maybe<Scalars['BigInt']>;
-  level3multiplier_not?: Maybe<Scalars['BigInt']>;
-  level3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
   multiplierToken?: Maybe<Scalars['Bytes']>;
   multiplierToken_contains?: Maybe<Scalars['Bytes']>;
   multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1748,30 +1724,54 @@ export type Incentive_Filter = {
   startTime_lte?: Maybe<Scalars['BigInt']>;
   startTime_not?: Maybe<Scalars['BigInt']>;
   startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel1?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_gt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_gte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel1_lt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_lte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_not?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel1_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel2?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_gt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_gte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel2_lt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_lte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_not?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel2_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel3?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_gt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_gte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokenAmountForLevel3_lt?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_lte?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_not?: Maybe<Scalars['BigInt']>;
-  tokenAmountForLevel3_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1multiplier?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2multiplier?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3multiplier?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Incentive_OrderBy {
@@ -1782,17 +1782,17 @@ export enum Incentive_OrderBy {
   EnterStartTime = 'enterStartTime',
   Id = 'id',
   IsDetached = 'isDetached',
-  Level1multiplier = 'level1multiplier',
-  Level2multiplier = 'level2multiplier',
-  Level3multiplier = 'level3multiplier',
   MultiplierToken = 'multiplierToken',
   Pool = 'pool',
   Reward = 'reward',
   RewardToken = 'rewardToken',
   StartTime = 'startTime',
-  TokenAmountForLevel1 = 'tokenAmountForLevel1',
-  TokenAmountForLevel2 = 'tokenAmountForLevel2',
-  TokenAmountForLevel3 = 'tokenAmountForLevel3'
+  Tier1multiplier = 'tier1multiplier',
+  Tier2multiplier = 'tier2multiplier',
+  Tier3multiplier = 'tier3multiplier',
+  TokenAmountForTier1 = 'tokenAmountForTier1',
+  TokenAmountForTier2 = 'tokenAmountForTier2',
+  TokenAmountForTier3 = 'tokenAmountForTier3'
 }
 
 export type Mint = {
@@ -6498,7 +6498,7 @@ export type FetchIncentiveQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'enterStartTime'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime'>
   )> }
 );
 
@@ -6511,7 +6511,7 @@ export type FetchEternalFarmQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken'>
   )> }
 );
 
@@ -6639,7 +6639,7 @@ export type FutureEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'multiplierToken' | 'enterStartTime'>
+    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime'>
   )> }
 );
 
@@ -6653,7 +6653,7 @@ export type CurrentEventsQuery = (
   { __typename?: 'Query' }
   & { incentives: Array<(
     { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'enterStartTime' | 'multiplierToken'>
+    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken'>
   )> }
 );
 
@@ -6720,7 +6720,7 @@ export type TransferedPositionsForPoolQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'tokensLockedIncentive' | 'tokensLockedEternal' | 'levelIncentive' | 'levelEternal'>
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'tokensLockedIncentive' | 'tokensLockedEternal' | 'tierIncentive' | 'tierEternal'>
   )> }
 );
 
@@ -6745,7 +6745,7 @@ export type InfiniteFarmsQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForLevel1' | 'tokenAmountForLevel2' | 'tokenAmountForLevel3' | 'level1multiplier' | 'level2multiplier' | 'level3multiplier' | 'multiplierToken'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'multiplierToken'>
   )> }
 );
 
@@ -6944,12 +6944,12 @@ export const FetchIncentiveDocument = `
     bonusReward
     multiplierToken
     createdAtTimestamp
-    level1multiplier
-    level2multiplier
-    level3multiplier
-    tokenAmountForLevel1
-    tokenAmountForLevel2
-    tokenAmountForLevel3
+    tier1multiplier
+    tier2multiplier
+    tier3multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
     enterStartTime
   }
 }
@@ -6968,12 +6968,12 @@ export const FetchEternalFarmDocument = `
     rewardRate
     bonusRewardRate
     isDetached
-    level1multiplier
-    level2multiplier
-    level3multiplier
-    tokenAmountForLevel1
-    tokenAmountForLevel2
-    tokenAmountForLevel3
+    tier1multiplier
+    tier2multiplier
+    tier3multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
     multiplierToken
   }
 }
@@ -7138,12 +7138,12 @@ export const FutureEventsDocument = `
     startTime
     endTime
     reward
-    level1multiplier
-    level2multiplier
-    level3multiplier
-    tokenAmountForLevel1
-    tokenAmountForLevel2
-    tokenAmountForLevel3
+    tier1multiplier
+    tier2multiplier
+    tier3multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
     multiplierToken
     enterStartTime
   }
@@ -7164,12 +7164,12 @@ export const CurrentEventsDocument = `
     startTime
     endTime
     reward
-    level1multiplier
-    level2multiplier
-    level3multiplier
-    tokenAmountForLevel1
-    tokenAmountForLevel2
-    tokenAmountForLevel3
+    tier1multiplier
+    tier2multiplier
+    tier3multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
     enterStartTime
     multiplierToken
   }
@@ -7246,8 +7246,8 @@ export const TransferedPositionsForPoolDocument = `
     enteredInEternalFarming
     tokensLockedIncentive
     tokensLockedEternal
-    levelIncentive
-    levelEternal
+    tierIncentive
+    tierEternal
   }
 }
     `;
@@ -7275,12 +7275,12 @@ export const InfiniteFarmsDocument = `
     bonusReward
     rewardRate
     bonusRewardRate
-    tokenAmountForLevel1
-    tokenAmountForLevel2
-    tokenAmountForLevel3
-    level1multiplier
-    level2multiplier
-    level3multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    tier1multiplier
+    tier2multiplier
+    tier3multiplier
     multiplierToken
   }
 }

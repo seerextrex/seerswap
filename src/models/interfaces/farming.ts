@@ -31,12 +31,12 @@ export interface EternalFarming {
     bonusReward: string
     rewardRate: string
     bonusRewardRate: string
-    tokenAmountForLevel1: string
-    tokenAmountForLevel2: string
-    tokenAmountForLevel3: string
-    level1multiplier: string
-    level2multiplier: string
-    level3multiplier: string
+    tokenAmountForTier1: string
+    tokenAmountForTier2: string
+    tokenAmountForTier3: string
+    tier1multiplier: string
+    tier2multiplier: string
+    tier3multiplier: string
     multiplierToken: string
 }
 
@@ -69,12 +69,12 @@ export interface FormattedEternalFarming {
     rewardRate: string
     rewardToken: TokenSubgraph
     startTime: string
-    tokenAmountForLevel1: string
-    tokenAmountForLevel2: string
-    tokenAmountForLevel3: string
-    level1multiplier: string
-    level2multiplier: string
-    level3multiplier: string
+    tokenAmountForTier1: string
+    tokenAmountForTier2: string
+    tokenAmountForTier3: string
+    tier1multiplier: string
+    tier2multiplier: string
+    tier3multiplier: string
     multiplierToken: TokenSubgraph
 }
 
@@ -82,12 +82,12 @@ export interface FarmingEvent extends DefaultFarmingEvent {
     pool: PoolSubgraph
     bonusRewardToken: TokenSubgraph
     rewardToken: TokenSubgraph
-    level1multiplier: string
-    level2multiplier: string
-    level3multiplier: string
-    tokenAmountForLevel1: string
-    tokenAmountForLevel2: string
-    tokenAmountForLevel3: string
+    tier1multiplier: string
+    tier2multiplier: string
+    tier3multiplier: string
+    tokenAmountForTier1: string
+    tokenAmountForTier2: string
+    tokenAmountForTier3: string
 }
 
 export interface FarmingEventString extends DefaultFarmingEvent {
@@ -100,12 +100,12 @@ export interface FarmingEventString extends DefaultFarmingEvent {
 export interface FutureFarmingEvent extends FarmingEventString {
     createdAtTimestamp: string
     multiplierToken: string
-    tokenAmountForLevel1: string
-    tokenAmountForLevel2: string
-    tokenAmountForLevel3: string
-    level1multiplier: string
-    level2multiplier: string
-    level3multiplier: string
+    tokenAmountForTier1: string
+    tokenAmountForTier2: string
+    tokenAmountForTier3: string
+    tier1multiplier: string
+    tier2multiplier: string
+    tier3multiplier: string
 }
 
 export interface Deposit {
@@ -143,8 +143,8 @@ export interface Deposit {
     l2TokenId: string | null
     tokensLockedEternal: string
     tokensLockedIncentive: string
-    levelEternal: string
-    levelIncentive: string
+    tierEternal: string
+    tierIncentive: string
     multiplierToken: TokenSubgraph
     oldFarming?: boolean
 }

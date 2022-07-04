@@ -54,12 +54,12 @@ query fetchIncentive($incentiveId: ID) {
         bonusReward
         multiplierToken
         createdAtTimestamp
-        level1multiplier
-        level2multiplier
-        level3multiplier
-        tokenAmountForLevel1
-        tokenAmountForLevel2
-        tokenAmountForLevel3
+        tier1multiplier
+        tier2multiplier
+        tier3multiplier
+        tokenAmountForTier1
+        tokenAmountForTier2
+        tokenAmountForTier3
         enterStartTime
     }
 }`
@@ -78,12 +78,12 @@ export const FETCH_ETERNAL_FARM = () => gql`
       rewardRate
       bonusRewardRate
       isDetached
-      level1multiplier
-      level2multiplier
-      level3multiplier
-      tokenAmountForLevel1
-      tokenAmountForLevel2
-      tokenAmountForLevel3
+      tier1multiplier
+      tier2multiplier
+      tier3multiplier
+      tokenAmountForTier1
+      tokenAmountForTier2
+      tokenAmountForTier3
       multiplierToken
     }
   }
@@ -296,12 +296,12 @@ query futureEvents ($timestamp: BigInt) {
         startTime
         endTime
         reward
-        level1multiplier
-        level2multiplier
-        level3multiplier
-        tokenAmountForLevel1
-        tokenAmountForLevel2
-        tokenAmountForLevel3
+        tier1multiplier
+        tier2multiplier
+        tier3multiplier
+        tokenAmountForTier1
+        tokenAmountForTier2
+        tokenAmountForTier3
         multiplierToken
         enterStartTime
     }
@@ -318,12 +318,12 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         startTime
         endTime
         reward
-        level1multiplier
-        level2multiplier
-        level3multiplier
-        tokenAmountForLevel1
-        tokenAmountForLevel2
-        tokenAmountForLevel3
+        tier1multiplier
+        tier2multiplier
+        tier3multiplier
+        tokenAmountForTier1
+        tokenAmountForTier2
+        tokenAmountForTier3
         enterStartTime
         multiplierToken
     }
@@ -349,12 +349,12 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           endTime
           reward
           multiplierToken
-          tokenAmountForLevel1
-          tokenAmountForLevel2
-          tokenAmountForLevel3
-          level1multiplier
-          level2multiplier
-          level3multiplier
+          tokenAmountForTier1
+          tokenAmountForTier2
+          tokenAmountForTier3
+          tier1multiplier
+          tier2multiplier
+          tier3multiplier
           enterStartTime
         }
       }
@@ -386,8 +386,8 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
               enteredInEternalFarming
               tokensLockedEternal
               tokensLockedIncentive
-              levelIncentive
-              levelEternal` : ''
+              tierIncentive
+              tierEternal` : ''
   }
     }
 }
@@ -428,8 +428,8 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
         enteredInEternalFarming
         tokensLockedIncentive
         tokensLockedEternal
-        levelIncentive
-        levelEternal
+        tierIncentive
+        tierEternal
     }
 }`
 
@@ -515,12 +515,12 @@ export const INFINITE_EVENTS = gql`
             bonusReward
             rewardRate
             bonusRewardRate
-            tokenAmountForLevel1
-            tokenAmountForLevel2
-            tokenAmountForLevel3
-            level1multiplier
-            level2multiplier
-            level3multiplier
+            tokenAmountForTier1
+            tokenAmountForTier2
+            tokenAmountForTier3
+            tier1multiplier
+            tier2multiplier
+            tier3multiplier
             multiplierToken
 
         }

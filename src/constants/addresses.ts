@@ -35,15 +35,15 @@ export const REAL_STAKER_ADDRESS: AddressMap = {
 }
 
 export const FINITE_FARMING: AddressMap = {
-    [SupportedChainId.POLYGON]: '0x03f8B4b140249Dc7B2503C928E7258CCe1d91F1A'
+    [SupportedChainId.POLYGON]: '0x7064C7Bb85979f008212877c4CE41285ddf5374C'
 }
 
 export const INFINITE_FARMING_ADDRESS: AddressMap = {
-    [SupportedChainId.POLYGON]: '0xa77aD9f635a3FB3bCCC5E6d1A87cB269746Aba17'
+    [SupportedChainId.POLYGON]: '0x2650e9EFe6D841622aA627cb9e493a8B8b2f9D7A'
 }
 
 export const FARMING_CENTER: AddressMap = {
-    [SupportedChainId.POLYGON]: '0x04ACde7811F23B69fB1759A3F2fc98bD18D60894'
+    [SupportedChainId.POLYGON]: '0x8FFf6402215870Cbb8CB216C7A587Cb17D524B81'
 }
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {

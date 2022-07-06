@@ -298,7 +298,7 @@ export function FarmingEventCard({
                 <button
                     style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
                     //@ts-ignore
-                    disabled={locked || new Date(+enterStartTime * 1000).getTime() >= Date.now()}
+                    // disabled={locked || new Date(+enterStartTime * 1000).getTime() >= Date.now()}
                     className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
                     onClick={farmHandler}
                 >

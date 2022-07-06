@@ -68,7 +68,7 @@ export function SelectPair({
         if (!aprs || !baseCurrency || !quoteCurrency) return <Loader stroke="#22dc22" />;
 
         const poolAddress = computePoolAddress({
-            poolDeployer: POOL_DEPLOYER_ADDRESS[137],
+            poolDeployer: POOL_DEPLOYER_ADDRESS[97],
             tokenA: baseCurrency.wrapped,
             tokenB: quoteCurrency.wrapped,
         }).toLowerCase();

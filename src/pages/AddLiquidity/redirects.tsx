@@ -15,7 +15,7 @@ export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ curren
     // prevent weth + eth
     let symbol;
 
-    if (chainId === 137) {
+    if (chainId === 97) {
         symbol = "MATIC";
     }
 

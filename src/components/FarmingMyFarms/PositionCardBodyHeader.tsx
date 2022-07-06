@@ -92,7 +92,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
             <div className={`flex-s-between b mb-1 fs-125 farming-card-header ms_fd-c`}>
                 {tierLevel && tierName && (
                     <div className={"f f-ac mxs_ml-0 mxs_mv-1 ms_f-js w-100"}>
-                        {/* <CurrencyLogo currency={new Token(137, el.multiplierToken.id, 18, el.multiplierToken.symbol) as WrappedCurrency} size={"35px"} /> */}
+                        {/* <CurrencyLogo currency={new Token(97, el.multiplierToken.id, 18, el.multiplierToken.symbol) as WrappedCurrency} size={"35px"} /> */}
                         <div style={{ width: "30px", height: "30px", background: "#324e64", borderRadius: "50%" }} className={"f f-ac f-jc"}>
                             <img src={tierLevel} width={25} height={25} />
                         </div>
@@ -106,7 +106,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                 )}
                 {el?.multiplierToken && +(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal) > 0 && (
                     <div className={"f f-ac f-jc ml-2 ms_ml-0 ms_f-js ms_mv-1 mxs_mv-1 w-100"}>
-                        <CurrencyLogo currency={new Token(137, el?.multiplierToken.id, 18, el?.multiplierToken.symbol) as WrappedCurrency} size={"30px"} />
+                        <CurrencyLogo currency={new Token(97, el?.multiplierToken.id, 18, el?.multiplierToken.symbol) as WrappedCurrency} size={"30px"} />
                         <div className={"ml-05"}>
                             <div className={"b fs-075"} style={{ marginBottom: "2px" }}>
                                 LOCKED

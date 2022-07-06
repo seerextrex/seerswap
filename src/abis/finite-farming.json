@@ -110,6 +110,19 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "farmingCenter",
+        "type": "address"
+      }
+    ],
+    "name": "FarmingCenter",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "contract IERC20Minimal",
         "name": "rewardToken",
         "type": "address"
@@ -171,105 +184,6 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "endTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "reward",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "bonusReward",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "tokenAmountForLevel1",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tokenAmountForLevel2",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tokenAmountForLevel3",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "level1multiplier",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "level2multiplier",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "level3multiplier",
-            "type": "uint32"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IAlgebraFarming.Levels",
-        "name": "levels",
-        "type": "tuple"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "multiplierToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint32",
-        "name": "enterStartTime",
-        "type": "uint32"
-      }
-    ],
-    "name": "IncentiveCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "contract IERC20Minimal",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "contract IERC20Minimal",
-        "name": "bonusRewardToken",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "contract IAlgebraPool",
-        "name": "pool",
-        "type": "address"
-      },
-      {
-        "indexed": false,
         "internalType": "address",
         "name": "virtualPool",
         "type": "address"
@@ -298,15 +212,108 @@
         "internalType": "address",
         "name": "incentiveMaker",
         "type": "address"
+      }
+    ],
+    "name": "IncentiveMaker",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "contract IERC20Minimal",
+        "name": "rewardToken",
+        "type": "address"
       },
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "_incentiveMaker",
+        "internalType": "contract IERC20Minimal",
+        "name": "bonusRewardToken",
         "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IAlgebraPool",
+        "name": "pool",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "endTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "reward",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "bonusReward",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "tokenAmountForTier1",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenAmountForTier2",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenAmountForTier3",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "tier1multiplier",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "tier2multiplier",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "tier3multiplier",
+            "type": "uint32"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IAlgebraFarming.Tiers",
+        "name": "tiers",
+        "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "multiplierToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "enterStartTime",
+        "type": "uint32"
       }
     ],
-    "name": "IncentiveMakerChanged",
+    "name": "LimitFarming",
     "type": "event"
   },
   {
@@ -581,37 +588,37 @@
         "components": [
           {
             "internalType": "uint256",
-            "name": "tokenAmountForLevel1",
+            "name": "tokenAmountForTier1",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "tokenAmountForLevel2",
+            "name": "tokenAmountForTier2",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "tokenAmountForLevel3",
+            "name": "tokenAmountForTier3",
             "type": "uint256"
           },
           {
             "internalType": "uint32",
-            "name": "level1multiplier",
+            "name": "tier1multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "level2multiplier",
+            "name": "tier2multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "level3multiplier",
+            "name": "tier3multiplier",
             "type": "uint32"
           }
         ],
-        "internalType": "struct IAlgebraFarming.Levels",
-        "name": "levels",
+        "internalType": "struct IAlgebraFarming.Tiers",
+        "name": "tiers",
         "type": "tuple"
       },
       {
@@ -637,12 +644,12 @@
             "type": "uint32"
           }
         ],
-        "internalType": "struct IAlgebraIncentiveFarming.IncentiveParams",
+        "internalType": "struct IAlgebraLimitFarming.IncentiveParams",
         "name": "params",
         "type": "tuple"
       }
     ],
-    "name": "createIncentive",
+    "name": "createLimitFarming",
     "outputs": [
       {
         "internalType": "address",
@@ -985,16 +992,6 @@
         "type": "address"
       },
       {
-        "internalType": "uint96",
-        "name": "numberOfFarms",
-        "type": "uint96"
-      },
-      {
-        "internalType": "bool",
-        "name": "isPoolCreated",
-        "type": "bool"
-      },
-      {
         "internalType": "uint224",
         "name": "totalLiquidity",
         "type": "uint224"
@@ -1008,37 +1005,37 @@
         "components": [
           {
             "internalType": "uint256",
-            "name": "tokenAmountForLevel1",
+            "name": "tokenAmountForTier1",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "tokenAmountForLevel2",
+            "name": "tokenAmountForTier2",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "tokenAmountForLevel3",
+            "name": "tokenAmountForTier3",
             "type": "uint256"
           },
           {
             "internalType": "uint32",
-            "name": "level1multiplier",
+            "name": "tier1multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "level2multiplier",
+            "name": "tier2multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "level3multiplier",
+            "name": "tier3multiplier",
             "type": "uint32"
           }
         ],
-        "internalType": "struct IAlgebraFarming.Levels",
-        "name": "levels",
+        "internalType": "struct IAlgebraFarming.Tiers",
+        "name": "tiers",
         "type": "tuple"
       }
     ],

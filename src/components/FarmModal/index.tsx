@@ -66,7 +66,7 @@ export function FarmModal({
     const { account } = useActiveWeb3React();
 
     const isTierFarming = useMemo(
-        () => Boolean(+tier1multiplier && +tier2multiplier && +tier3multiplier && +tokenAmountForTier1 && +tokenAmountForTier2 && +tokenAmountForTier3),
+        () => Boolean((+tier1multiplier || +tier2multiplier || +tier3multiplier) && (+tokenAmountForTier1 || +tokenAmountForTier2 || +tokenAmountForTier3)),
         [tier1multiplier, tier2multiplier, tier3multiplier, tokenAmountForTier1, tokenAmountForTier2, tokenAmountForTier3]
     );
 
@@ -195,8 +195,6 @@ export function FarmModal({
         setSubmitState(0);
         approveHandler(selectedNFT);
     }, [selectedNFT, submitState]);
-
-    useEffect(() => console.log(selectedTier), [selectedTier]);
 
     const farmNFTs = useCallback(
         (eventType: FarmingType) => {

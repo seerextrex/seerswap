@@ -80,7 +80,7 @@ export function useFarmingHandlers() {
             if (farmingType === FarmingType.ETERNAL) {
 
                 callDatas = [
-                    farmingCenterInterface.encodeFunctionData('exitEternalFarming', [[eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime], +token])
+                    farmingCenterInterface.encodeFunctionData('exitFarming', [[eternalRewardToken.id, eternalBonusRewardToken.id, pool.id, +eternalStartTime, +eternalEndTime], +token, false])
                 ]
 
                 if (Boolean(+eternalEarned)) {
@@ -95,7 +95,7 @@ export function useFarmingHandlers() {
 
             } else {
                 callDatas = [
-                    farmingCenterInterface.encodeFunctionData('exitFarming', [[incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime], +token])
+                    farmingCenterInterface.encodeFunctionData('exitFarming', [[incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime], +token, true])
                 ]
 
                 if (Boolean(+incentiveEarned)) {
@@ -308,29 +308,15 @@ export function useFarmingHandlers() {
             if (selectedNFT.onFarmingCenter) {
                 current = selectedNFT.id
 
-                let result
-
-                if (eventType === FarmingType.ETERNAL) {
-
-                    result = await farmingCenterContract.enterEternalFarming(
-                        [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +selectedNFT.id,
-                        selectedTier,
-                        {
-                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                        }
-                    )
-                } else {
-
-                    result = await farmingCenterContract.enterFarming(
-                        [rewardToken, bonusRewardToken, pool, startTime, endTime],
-                        +selectedNFT.id,
-                        selectedTier,
-                        {
-                            gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
-                        },
-                    )
-                }
+                const result = await farmingCenterContract.enterFarming(
+                    [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                    +selectedNFT.id,
+                    selectedTier,
+                    eventType === FarmingType.FINITE,
+                    {
+                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
+                    }
+                )
 
                 addTransaction(result, {
                     summary: t`NFT #${selectedNFT.id} was deposited!`
@@ -413,18 +399,13 @@ export function useFarmingHandlers() {
             if (!selectedNFT.onFarmingCenter) {
                 current = selectedNFT.id
 
-                const approveData = nonFunPosManInterface.encodeFunctionData('approve', [
-                    FARMING_CENTER[chainId],
-                    selectedNFT.id
-                ])
-
                 const transferData = nonFunPosManInterface.encodeFunctionData('safeTransferFrom(address,address,uint256)', [
                     account,
                     FARMING_CENTER[chainId],
                     selectedNFT.id
                 ])
 
-                const result = await nonFunPosManContract.multicall([approveData, transferData],
+                const result = await nonFunPosManContract.multicall([transferData],
                     { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER }
                 )
 

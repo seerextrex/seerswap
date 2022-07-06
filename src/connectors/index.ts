@@ -17,7 +17,7 @@ const NETWORK_URLS: { [key in SupportedChainId]: string } = {
 
 export const network = new NetworkConnector({
     urls: NETWORK_URLS,
-    defaultChainId: 137
+    defaultChainId: 97
 })
 
 let networkLibrary: Web3Provider | undefined
@@ -33,10 +33,10 @@ export const injected = new InjectedConnector({
 export const gnosisSafe = new SafeAppConnector()
 
 export const walletconnector = new WalletConnectConnector({
-    rpc: { 137: 'https://rpc-mainnet.matic.network' },
+    rpc: { 97: 'https://rpc-mainnet.matic.network' },
     supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
     qrcode: true,
-    chainId: 137
+    chainId: 97
 })
 
 interface OntoWalletConfig {
@@ -163,5 +163,5 @@ export class OntoWalletConnector extends AbstractConnector {
 }
 
 export const ontoconnector = new OntoWalletConnector({
-    supportedChainIds: [137]
+    supportedChainIds: [97]
 })

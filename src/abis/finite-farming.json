@@ -102,7 +102,7 @@
         "type": "uint256"
       }
     ],
-    "name": "FarmStarted",
+    "name": "FarmEntered",
     "type": "event"
   },
   {
@@ -281,17 +281,17 @@
           },
           {
             "internalType": "uint32",
-            "name": "tier1multiplier",
+            "name": "tier1Multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "tier2multiplier",
+            "name": "tier2Multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "tier3multiplier",
+            "name": "tier3Multiplier",
             "type": "uint32"
           }
         ],
@@ -313,7 +313,7 @@
         "type": "uint32"
       }
     ],
-    "name": "LimitFarming",
+    "name": "LimitFarmingCreated",
     "type": "event"
   },
   {
@@ -603,17 +603,17 @@
           },
           {
             "internalType": "uint32",
-            "name": "tier1multiplier",
+            "name": "tier1Multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "tier2multiplier",
+            "name": "tier2Multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "tier3multiplier",
+            "name": "tier3Multiplier",
             "type": "uint32"
           }
         ],
@@ -696,12 +696,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "reward",
+        "name": "rewardAmount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "bonusReward",
+        "name": "bonusRewardAmount",
         "type": "uint256"
       }
     ],
@@ -1020,17 +1020,17 @@
           },
           {
             "internalType": "uint32",
-            "name": "tier1multiplier",
+            "name": "tier1Multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "tier2multiplier",
+            "name": "tier2Multiplier",
             "type": "uint32"
           },
           {
             "internalType": "uint32",
-            "name": "tier3multiplier",
+            "name": "tier3Multiplier",
             "type": "uint32"
           }
         ],

@@ -22,11 +22,9 @@ interface PositionCardBodyHeaderProps {
 
 export default function PositionCardBodyHeader({ el, farmingType, date, enteredInEternalFarming, eternalFarming }: PositionCardBodyHeaderProps) {
     const tierLevel = useMemo(() => {
-        if (!el?.tokensLockedEternal || !el?.tierIncentive || !el?.tierEternal || !el?.tokensLockedIncentive) return;
+        if (!el?.tokensLockedEternal || !el?.tierLimit || !el?.tierEternal || !el?.tokensLockedLimit) return;
 
-        // console.log(farmingType === FarmingType.FINITE ? +el?.tierIncentive : +el?.tierEternal)
-
-        switch (farmingType === FarmingType.FINITE ? +el?.tierIncentive : +el?.tierEternal) {
+        switch (farmingType === FarmingType.LIMIT ? +el?.tierLimit : +el?.tierEternal) {
             case 0:
                 return;
             case 1:
@@ -41,9 +39,9 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     }, [el]);
 
     const tierName = useMemo(() => {
-        if (!el?.tokensLockedEternal || !el?.tierIncentive || !el?.tierEternal || !el?.tokensLockedIncentive) return;
+        if (!el?.tokensLockedEternal || !el?.tierLimit || !el?.tierEternal || !el?.tokensLockedLimit) return;
 
-        switch (farmingType === FarmingType.FINITE ? +el?.tierIncentive : +el?.tierEternal) {
+        switch (farmingType === FarmingType.LIMIT ? +el?.tierLimit : +el?.tierEternal) {
             case 0:
                 return;
             case 1:
@@ -58,19 +56,19 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     }, [el]);
 
     const tierMultiplier = useMemo(() => {
-        if (!el || farmingType !== FarmingType.FINITE || !el.tierIncentive || !el.multiplierToken) return;
+        if (!el || farmingType !== FarmingType.LIMIT || !el.tierLimit || !el.multiplierToken) return;
 
-        if (!el || !el.tierIncentive || !el.tierEternal || !el.multiplierToken) return;
+        if (!el || !el.tierLimit || !el.tierEternal || !el.multiplierToken) return;
 
-        switch (farmingType === FarmingType.FINITE ? +el.tierIncentive : +el.tierEternal) {
+        switch (farmingType === FarmingType.LIMIT ? +el.tierLimit : +el.tierEternal) {
             case 0:
                 return;
             case 1:
-                return el.tier1multiplier;
+                return el.tier1Multiplier;
             case 2:
-                return el.tier2multiplier;
+                return el.tier2Multiplier;
             case 3:
-                return el.tier3multiplier;
+                return el.tier3Multiplier;
             default:
                 return;
         }
@@ -81,7 +79,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     return (
         <>
             <div className={`flex-s-between b ${isTier ? "mb-1" : "mb-3"} fs-125 ${farmingType === FarmingType.ETERNAL ? "farming-card-header ms_fd-c" : ""}`}>
-                <span className={"w-100"}>{farmingType === FarmingType.FINITE ? "Limit " : "Infinite "} Farming</span>
+                <span className={"w-100"}>{farmingType === FarmingType.LIMIT ? "Limit " : "Infinite "} Farming</span>
                 {farmingType === FarmingType.ETERNAL && enteredInEternalFarming && eternalFarming && (
                     <span className={"fs-085 l w-100 mm_fs-075 ms_ta-l mxs_ta-l ta-r"}>
                         <span>Entered at: </span>
@@ -104,7 +102,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                         </div>
                     </div>
                 )}
-                {el?.multiplierToken && +(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal) > 0 && (
+                {el?.multiplierToken && +(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal) > 0 && (
                     <div className={"f f-ac f-jc ml-2 ms_ml-0 ms_f-js ms_mv-1 mxs_mv-1 w-100"}>
                         <CurrencyLogo currency={new Token(97, el?.multiplierToken.id, 18, el?.multiplierToken.symbol) as WrappedCurrency} size={"30px"} />
                         <div className={"ml-05"}>
@@ -112,7 +110,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                                 LOCKED
                             </div>
                             <div className={"fs-1"}>{`${formatAmountTokens(
-                                +formatUnits(BigNumber.from(farmingType === FarmingType.FINITE ? el?.tokensLockedIncentive : el?.tokensLockedEternal), el?.multiplierToken.decimals)
+                                +formatUnits(BigNumber.from(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal), el?.multiplierToken.decimals)
                             )} ${el?.multiplierToken.symbol}`}</div>
                         </div>
                     </div>

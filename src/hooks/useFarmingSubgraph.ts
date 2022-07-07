@@ -12,7 +12,7 @@ import {
     FETCH_ETERNAL_FARM,
     FETCH_ETERNAL_FARM_FROM_POOL,
     FETCH_FINITE_FARM_FROM_POOL,
-    FETCH_INCENTIVE,
+    FETCH_LIMIT,
     FETCH_POOL,
     FETCH_REWARDS,
     FETCH_TOKEN,
@@ -42,7 +42,7 @@ import {
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
 import { fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
 
-export function useIncentiveSubgraph() {
+export function useFarmingSubgraph() {
 
     const { chainId, account, library } = useActiveWeb3React()
     const { dataClient, farmingClient, oldFarmingClient } = useClients()
@@ -151,21 +151,21 @@ export function useIncentiveSubgraph() {
         }
     }
 
-    async function fetchIncentive(incentiveId: string) {
+    async function fetchLimit(limitFarmingId: string) {
         try {
 
-            const { data: { incentives }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
-                query: FETCH_INCENTIVE(),
-                variables: { incentiveId }
+            const { data: { limitFarmings }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
+                query: FETCH_LIMIT(),
+                variables: { limitFarmingId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            return incentives[0]
+            return limitFarmings[0]
 
 
         } catch (err) {
-            throw new Error('Fetch incentives ' + err)
+            throw new Error('Fetch limit farmings ' + err)
         }
     }
 
@@ -248,7 +248,7 @@ export function useIncentiveSubgraph() {
         try {
             setFutureEventsLoading(true)
 
-            const { data: { incentives: futureEvents }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
+            const { data: { limitFarmings: futureEvents }, error } = (await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
                 query: FUTURE_EVENTS(),
                 fetchPolicy: reload ? 'network-only' : 'cache-first',
                 variables: { timestamp: Math.round(Date.now() / 1000) }
@@ -265,7 +265,7 @@ export function useIncentiveSubgraph() {
             setFutureEvents(await getEvents(futureEvents, true))
 
         } catch (err) {
-            throw new Error('Future incentives fetching ' + err)
+            throw new Error('Future limit farmings fetching ' + err)
         } finally {
             setFutureEventsLoading(false)
         }
@@ -277,7 +277,7 @@ export function useIncentiveSubgraph() {
 
         try {
 
-            const { data: { incentives: currentEvents }, error } = (await farmingClient.query<SubgraphResponse<FarmingEvent[]>>({
+            const { data: { limitFarmings: currentEvents }, error } = (await farmingClient.query<SubgraphResponse<FarmingEvent[]>>({
                 query: CURRENT_EVENTS(),
                 fetchPolicy: reload ? 'network-only' : 'cache-first',
                 variables: {
@@ -288,7 +288,7 @@ export function useIncentiveSubgraph() {
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            const { data: { incentives: futureEvents }, error: _error } = await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
+            const { data: { limitFarmings: futureEvents }, error: _error } = await farmingClient.query<SubgraphResponse<FutureFarmingEvent[]>>({
                 query: FUTURE_EVENTS(),
                 fetchPolicy: reload ? 'network-only' : 'cache-first',
                 variables: { timestamp: Math.round(Date.now() / 1000) }
@@ -328,7 +328,7 @@ export function useIncentiveSubgraph() {
             setAllEventsLoading(false)
 
         } catch (err) {
-            throw new Error('Error while fetching current incentives ' + err)
+            throw new Error('Error while fetching current limit farmings ' + err)
         } finally {
             setAllEventsLoading(false)
         }
@@ -406,14 +406,14 @@ export function useIncentiveSubgraph() {
                     token1
                 }
 
-                if (!position.incentive && !position.eternalFarming && typeof position.pool === 'string') {
+                if (!position.limitFarming && !position.eternalFarming && typeof position.pool === 'string') {
 
                     const _pool = await fetchPool(position.pool)
                     //@ts-ignore
                     _position = { ..._position, pool: _pool }
                 }
 
-                if (position.incentive) {
+                if (position.limitFarming) {
 
                     const finiteFarmingContract = new Contract(
                         FINITE_FARMING[chainId],
@@ -432,10 +432,10 @@ export function useIncentiveSubgraph() {
                         tokenAmountForTier1,
                         tokenAmountForTier2,
                         tokenAmountForTier3,
-                        tier1multiplier,
-                        tier2multiplier,
-                        tier3multiplier
-                    } = await fetchIncentive(position.incentive)
+                        tier1Multiplier,
+                        tier2Multiplier,
+                        tier3Multiplier
+                    } = await fetchLimit(position.limitFarming)
 
                     const rewardInfo = await finiteFarmingContract.callStatic.getRewardInfo(
                         [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
@@ -451,26 +451,26 @@ export function useIncentiveSubgraph() {
                         ..._position,
                         //@ts-ignore
                         pool: _pool,
-                        incentiveRewardToken: _rewardToken,
-                        incentiveBonusRewardToken: _bonusRewardToken,
-                        incentiveStartTime: +startTime,
-                        incentiveEndTime: +endTime,
+                        limitRewardToken: _rewardToken,
+                        limitBonusRewardToken: _bonusRewardToken,
+                        limitStartTime: +startTime,
+                        limitEndTime: +endTime,
                         started: +startTime * 1000 < Date.now(),
                         ended: +endTime * 1000 < Date.now(),
                         createdAtTimestamp: +createdAtTimestamp,
-                        incentiveEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
-                        incentiveBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
+                        limitEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
+                        limitBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
                         multiplierToken: _multiplierToken,
                         tokenAmountForTier1,
                         tokenAmountForTier2,
                         tokenAmountForTier3,
-                        tier1multiplier,
-                        tier2multiplier,
-                        tier3multiplier
+                        tier1Multiplier,
+                        tier2Multiplier,
+                        tier3Multiplier
                     }
 
                 } else {
-                    const { data: { incentives }, error } = await farmingClient.query({
+                    const { data: { limitFarmings }, error } = await farmingClient.query({
                         //@ts-ignore
                         query: FETCH_FINITE_FARM_FROM_POOL([position.pool]),
                         fetchPolicy: 'network-only'
@@ -478,10 +478,10 @@ export function useIncentiveSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (incentives.filter((incentive: any) => Math.round(Date.now() / 1000) < incentive.startTime).length !== 0) {
+                    if (limitFarmings.filter((farm: any) => Math.round(Date.now() / 1000) < farm.startTime).length !== 0) {
                         _position = {
                             ..._position,
-                            finiteAvailable: true
+                            limitAvailable: true
                         }
                     }
                 }
@@ -495,9 +495,9 @@ export function useIncentiveSubgraph() {
                         startTime,
                         endTime,
                         multiplierToken,
-                        tier1multiplier,
-                        tier2multiplier,
-                        tier3multiplier,
+                        tier1Multiplier,
+                        tier2Multiplier,
+                        tier3Multiplier,
                         tokenAmountForTier1,
                         tokenAmountForTier2,
                         tokenAmountForTier3
@@ -528,9 +528,9 @@ export function useIncentiveSubgraph() {
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
                         multiplierToken: _multiplierToken,
-                        tier1multiplier,
-                        tier2multiplier,
-                        tier3multiplier,
+                        tier1Multiplier,
+                        tier2Multiplier,
+                        tier3Multiplier,
                         tokenAmountForTier1,
                         tokenAmountForTier2,
                         tokenAmountForTier3,
@@ -684,15 +684,15 @@ export function useIncentiveSubgraph() {
 
             if (error) throw new Error(`${error.name} ${error.message}`)
 
-            const { data: { deposits: oldPositionsTransferred }, error: _error } = (await oldFarmingClient.query<SubgraphResponse<Deposit[]>>({
-                query: TRANSFERED_POSITIONS(false),
-                fetchPolicy: 'network-only',
-                variables: { account }
-            }))
+            // const { data: { deposits: oldPositionsTransferred }, error: _error } = (await oldFarmingClient.query<SubgraphResponse<Deposit[]>>({
+            //     query: TRANSFERED_POSITIONS(false),
+            //     fetchPolicy: 'network-only',
+            //     variables: { account }
+            // }))
 
-            if (_error) throw new Error(`${_error.name} ${_error.message}`)
+            // if (_error) throw new Error(`${_error.name} ${_error.message}`)
 
-            if (positionsTransferred.length === 0 && oldPositionsTransferred.length === 0) {
+            if (positionsTransferred.length === 0) {
                 setPositionsOnFarmer({
                     transferredPositionsIds: [],
                     oldTransferredPositionsIds: []
@@ -703,7 +703,7 @@ export function useIncentiveSubgraph() {
 
             const transferredPositionsIds = positionsTransferred.map(position => position.id)
 
-            const oldTransferredPositionsIds = oldPositionsTransferred.map(position => position.id)
+            const oldTransferredPositionsIds = []
 
             setPositionsOnFarmer({
                 transferredPositionsIds,

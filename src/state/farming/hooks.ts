@@ -19,7 +19,7 @@ export function useFarmingActionsHandlers(): {
 
     const isFarmingAdd = useCallback(async () => {
         try {
-            const { data: { incentives }, error } = await farmingClient.query({
+            const { data: { limitFarmings }, error } = await farmingClient.query({
                 query: ONE_FARMING_EVENT(),
                 fetchPolicy: 'network-only',
                 variables: {
@@ -41,8 +41,8 @@ export function useFarmingActionsHandlers(): {
             }
 
             dispatch(isFarming({
-                startTime: incentives[0]?.startTime,
-                endTime: incentives[0]?.endTime,
+                startTime: limitFarmings[0]?.startTime,
+                endTime: limitFarmings[0]?.endTime,
                 eternalFarmings: !!eternalFarmings[0]
             }))
         } catch (e) {

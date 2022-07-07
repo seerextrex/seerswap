@@ -44,19 +44,19 @@ export function useFarmingHandlers() {
     //exit from basic farming and claim than
     const claimRewardsHandler = useCallback(async (token,
         {
-            incentiveRewardToken,
-            incentiveBonusRewardToken,
+            limitRewardToken,
+            limitBonusRewardToken,
             pool,
-            incentiveStartTime,
-            incentiveEndTime,
+            limitStartTime,
+            limitEndTime,
             eternalRewardToken,
             eternalBonusRewardToken,
             eternalStartTime,
             eternalEndTime,
             eternalBonusEarned,
             eternalEarned,
-            incentiveBonusEarned,
-            incentiveEarned
+            limitBonusEarned,
+            limitEarned
         },
         farmingType) => {
 
@@ -95,15 +95,15 @@ export function useFarmingHandlers() {
 
             } else {
                 callDatas = [
-                    farmingCenterInterface.encodeFunctionData('exitFarming', [[incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime], +token, true])
+                    farmingCenterInterface.encodeFunctionData('exitFarming', [[limitRewardToken.id, limitBonusRewardToken.id, pool.id, +limitStartTime, +limitEndTime], +token, true])
                 ]
 
-                if (Boolean(+incentiveEarned)) {
-                    callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [incentiveRewardToken.id, account, MaxUint128, 0]))
+                if (Boolean(+limitEarned)) {
+                    callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [limitRewardToken.id, account, MaxUint128, 0]))
                 }
 
-                if (Boolean(+incentiveBonusEarned)) {
-                    callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [incentiveBonusRewardToken.id, account, MaxUint128, 0]))
+                if (Boolean(+limitBonusEarned)) {
+                    callDatas.push(farmingCenterInterface.encodeFunctionData('claimReward', [limitBonusRewardToken.id, account, MaxUint128, 0]))
                 }
 
                 result = await farmingCenterContract.multicall(callDatas, { gasPrice: gasPrice * GAS_PRICE_MULTIPLIER, gasLimit: 350000 })
@@ -203,11 +203,11 @@ export function useFarmingHandlers() {
 
     //exit from basic farming before the start
     const exitHandler = useCallback(async (token, {
-        incentiveRewardToken,
-        incentiveBonusRewardToken,
+        limitRewardToken,
+        limitBonusRewardToken,
         pool,
-        incentiveStartTime,
-        incentiveEndTime
+        limitStartTime,
+        limitEndTime
     }, eventType) => {
 
         if (!account || !provider || !chainId) return
@@ -223,7 +223,7 @@ export function useFarmingHandlers() {
             )
 
             const result: TransactionResponse = await farmingCenterContract.exitFarming(
-                [incentiveRewardToken.id, incentiveBonusRewardToken.id, pool.id, +incentiveStartTime, +incentiveEndTime],
+                [limitRewardToken.id, limitBonusRewardToken.id, pool.id, +limitStartTime, +limitEndTime],
                 +token,
                 {
                     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
@@ -312,7 +312,7 @@ export function useFarmingHandlers() {
                     [rewardToken, bonusRewardToken, pool, startTime, endTime],
                     +selectedNFT.id,
                     selectedTier,
-                    eventType === FarmingType.FINITE,
+                    eventType === FarmingType.LIMIT,
                     {
                         gasPrice: gasPrice * GAS_PRICE_MULTIPLIER
                     }

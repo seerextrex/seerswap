@@ -16,7 +16,6 @@ import multicall from './multicall/reducer'
 import staking from './staking/reducer'
 import farming from './farming/reducer'
 import { api as dataApi } from './data/slice'
-// import { incentiveApi } from "./data/slice"
 import { routingApi } from './routing/slice'
 
 const PERSISTED_KEYS: string[] = ['user', 'lists']
@@ -43,7 +42,7 @@ const store = configureStore({
         getDefaultMiddleware({ thunk: true })
             .concat(dataApi.middleware)
             .concat(routingApi.middleware)
-            .concat(save({ states: ['transactions'], debounce: 1000}))
+            .concat(save({ states: ['transactions'], debounce: 1000 }))
             .concat(save({ states: PERSISTED_KEYS, debounce: 0 })),
     preloadedState: load({
         states: PERSISTED_KEYS,

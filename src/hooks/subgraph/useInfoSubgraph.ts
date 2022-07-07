@@ -201,7 +201,7 @@ export function useInfoSubgraph() {
                 const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0
                 const limitApr = _limitAprs[address] ? +_limitAprs[address] : 0
 
-                const aprType = farmingApr > limitApr ? FarmingType.ETERNAL : FarmingType.FINITE
+                const aprType = farmingApr > limitApr ? FarmingType.ETERNAL : FarmingType.LIMIT
 
                 accum[address] = {
                     token0: current.token0,
@@ -385,12 +385,12 @@ export function useInfoSubgraph() {
 
         try {
 
-            const { data: { incentives }, error } = await farmingClient.query({
+            const { data: { limitFarmings }, error } = await farmingClient.query({
                 query: FETCH_LIMIT_FARM_FROM_POOL(poolAddresses),
                 fetchPolicy: 'network-only'
             })
 
-            return incentives
+            return limitFarmings
 
         } catch (err) {
             throw new Error('Eternal fetch error ' + err)

@@ -4,8 +4,8 @@ import { logDOM } from '@testing-library/react'
 //Farming
 
 export const ONE_FARMING_EVENT = () => gql`
-query incentive ($time: BigInt) {
-   incentives (orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: $time}) {
+query limitFarm ($time: BigInt) {
+  limitFarmings (orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: $time}) {
     startTime,
     endTime
   }
@@ -41,9 +41,9 @@ query fetchToken ($tokenId: ID) {
     }
 }`
 
-export const FETCH_INCENTIVE = () => gql`
-query fetchIncentive($incentiveId: ID) {
-    incentives(where: { id: $incentiveId}) {
+export const FETCH_LIMIT = () => gql`
+query fetchLimit($limitId: ID) {
+    limitFarmings(where: { id: $limitId}) {
         id
         rewardToken
         bonusRewardToken
@@ -54,9 +54,9 @@ query fetchIncentive($incentiveId: ID) {
         bonusReward
         multiplierToken
         createdAtTimestamp
-        tier1multiplier
-        tier2multiplier
-        tier3multiplier
+        tier1Multiplier
+        tier2Multiplier
+        tier3Multiplier
         tokenAmountForTier1
         tokenAmountForTier2
         tokenAmountForTier3
@@ -78,9 +78,9 @@ export const FETCH_ETERNAL_FARM = () => gql`
       rewardRate
       bonusRewardRate
       isDetached
-      tier1multiplier
-      tier2multiplier
-      tier3multiplier
+      tier1Multiplier
+      tier2Multiplier
+      tier3Multiplier
       tokenAmountForTier1
       tokenAmountForTier2
       tokenAmountForTier3
@@ -126,7 +126,7 @@ export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
   const queryString =
     `
     query limitFarmingsFromPools {
-      incentives(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${now}}) {
+      limitFarmings(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${now}}) {
         id
         createdAtTimestamp
         rewardToken
@@ -275,7 +275,7 @@ export const TOTAL_STATS = (block?: number) => {
 
 export const LAST_EVENT = () => gql`
 query lastEvent {
-    incentives (first: 1, orderDirection: desc, orderBy: createdAtTimestamp) {
+    limitFarmings (first: 1, orderDirection: desc, orderBy: createdAtTimestamp) {
         createdAtTimestamp
         id
         startTime
@@ -286,7 +286,7 @@ query lastEvent {
 
 export const FUTURE_EVENTS = () => gql`
 query futureEvents ($timestamp: BigInt) {
-    incentives(orderBy: startTime, orderDirection: asc, where: { startTime_gt: $timestamp}) {
+    limitFarmings(orderBy: startTime, orderDirection: asc, where: { startTime_gt: $timestamp}) {
         id
         createdAtTimestamp
         rewardToken
@@ -296,9 +296,9 @@ query futureEvents ($timestamp: BigInt) {
         startTime
         endTime
         reward
-        tier1multiplier
-        tier2multiplier
-        tier3multiplier
+        tier1Multiplier
+        tier2Multiplier
+        tier3Multiplier
         tokenAmountForTier1
         tokenAmountForTier2
         tokenAmountForTier3
@@ -309,7 +309,7 @@ query futureEvents ($timestamp: BigInt) {
 
 export const CURRENT_EVENTS = () => gql`
 query currentEvents ($startTime: BigInt, $endTime: BigInt) {
-    incentives(orderBy: endTime, orderDirection: desc, where: { startTime_lte: $startTime, endTime_gt: $endTime}) {
+    limitFarmings(orderBy: endTime, orderDirection: desc, where: { startTime_lte: $startTime, endTime_gt: $endTime}) {
         id
         rewardToken
         bonusReward
@@ -318,9 +318,9 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         startTime
         endTime
         reward
-        tier1multiplier
-        tier2multiplier
-        tier3multiplier
+        tier1Multiplier
+        tier2Multiplier
+        tier3Multiplier
         tokenAmountForTier1
         tokenAmountForTier2
         tokenAmountForTier3
@@ -338,7 +338,7 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
   const queryString =
     `
       query finiteFarmingsFromPools {
-        incentives(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${Math.round(Date.now() / 1000)}}) {
+        limitFarmings(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${Math.round(Date.now() / 1000)}}) {
           id
           createdAtTimestamp
           rewardToken
@@ -352,9 +352,9 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           tokenAmountForTier1
           tokenAmountForTier2
           tokenAmountForTier3
-          tier1multiplier
-          tier2multiplier
-          tier3multiplier
+          tier1Multiplier
+          tier2Multiplier
+          tier3Multiplier
           enterStartTime
         }
       }
@@ -379,14 +379,14 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
             owner
             pool
             L2tokenId
-            incentive
+            limitFarming
             eternalFarming
             onFarmingCenter
             ${tierFarming ? `
               enteredInEternalFarming
               tokensLockedEternal
-              tokensLockedIncentive
-              tierIncentive
+              tokensLockedLimit
+              tierLimit
               tierEternal` : ''
   }
     }
@@ -422,13 +422,13 @@ query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
         owner
         pool
         L2tokenId
-        incentive
+        limitFarming
         eternalFarming
         onFarmingCenter
         enteredInEternalFarming
-        tokensLockedIncentive
+        tokensLockedLimit
         tokensLockedEternal
-        tierIncentive
+        tierLimit
         tierEternal
     }
 }`
@@ -518,11 +518,10 @@ export const INFINITE_EVENTS = gql`
             tokenAmountForTier1
             tokenAmountForTier2
             tokenAmountForTier3
-            tier1multiplier
-            tier2multiplier
-            tier3multiplier
+            tier1Multiplier
+            tier2Multiplier
+            tier3Multiplier
             multiplierToken
-
         }
     }
 `

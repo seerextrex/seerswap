@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowRight, CheckCircle, Frown, X } from "react-feather";
-import { useIncentiveSubgraph } from "../../hooks/useIncentiveSubgraph";
+import { useFarmingSubgraph } from "../../hooks/useFarmingSubgraph";
 import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
 import { useAllTransactions } from "../../state/transactions/hooks";
 import { useChunkedRows } from "../../utils/chunkForRows";
@@ -33,9 +33,9 @@ interface FarmModalProps {
         id: string;
         rewardToken: any;
         bonusRewardToken: any;
-        tier1multiplier: string;
-        tier2multiplier: string;
-        tier3multiplier: string;
+        tier1Multiplier: string;
+        tier2Multiplier: string;
+        tier3Multiplier: string;
         tokenAmountForTier1: string;
         tokenAmountForTier2: string;
         tokenAmountForTier3: string;
@@ -52,9 +52,9 @@ export function FarmModal({
         endTime,
         rewardToken,
         bonusRewardToken,
-        tier1multiplier,
-        tier2multiplier,
-        tier3multiplier,
+        tier1Multiplier,
+        tier2Multiplier,
+        tier3Multiplier,
         multiplierToken,
         tokenAmountForTier1,
         tokenAmountForTier2,
@@ -66,14 +66,14 @@ export function FarmModal({
     const { account } = useActiveWeb3React();
 
     const isTierFarming = useMemo(
-        () => Boolean((+tier1multiplier || +tier2multiplier || +tier3multiplier) && (+tokenAmountForTier1 || +tokenAmountForTier2 || +tokenAmountForTier3)),
-        [tier1multiplier, tier2multiplier, tier3multiplier, tokenAmountForTier1, tokenAmountForTier2, tokenAmountForTier3]
+        () => Boolean((+tier1Multiplier || +tier2Multiplier || +tier3Multiplier) && (+tokenAmountForTier1 || +tokenAmountForTier2 || +tokenAmountForTier3)),
+        [tier1Multiplier, tier2Multiplier, tier3Multiplier, tokenAmountForTier1, tokenAmountForTier2, tokenAmountForTier3]
     );
 
     const [selectedNFT, setSelectedNFT] = useState<null | NTFInterface>(null);
     const {
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn },
-    } = useIncentiveSubgraph() || {};
+    } = useFarmingSubgraph() || {};
 
     const { approveHandler, approvedHash, farmHandler, farmedHash } = useFarmingHandlers() || {};
 
@@ -91,7 +91,7 @@ export function FarmModal({
 
             if (farmingType === FarmingType.ETERNAL && position.eternalFarming) return;
 
-            if (farmingType === FarmingType.FINITE && position.incentive) return;
+            if (farmingType === FarmingType.LIMIT && position.limitFarming) return;
 
             return true;
         });
@@ -310,9 +310,9 @@ export function FarmModal({
                                 high: tokenAmountForTier3,
                             }}
                             tiersMultipliers={{
-                                low: tier1multiplier,
-                                medium: tier2multiplier,
-                                high: tier3multiplier,
+                                low: tier1Multiplier,
+                                medium: tier2Multiplier,
+                                high: tier3Multiplier,
                             }}
                             multiplierToken={multiplierToken}
                             selectTier={tierSelectionHandler}

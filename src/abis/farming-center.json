@@ -2,8 +2,8 @@
   {
     "inputs": [
       {
-        "internalType": "contract IAlgebraIncentiveFarming",
-        "name": "_farming",
+        "internalType": "contract IAlgebraLimitFarming",
+        "name": "_limitFarming",
         "type": "address"
       },
       {
@@ -540,19 +540,6 @@
   },
   {
     "inputs": [],
-    "name": "farming",
-    "outputs": [
-      {
-        "internalType": "contract IAlgebraIncentiveFarming",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "farmingCenterVault",
     "outputs": [
       {
@@ -650,6 +637,19 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "limitFarming",
+    "outputs": [
+      {
+        "internalType": "contract IAlgebraLimitFarming",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1050,7 +1050,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "incentiveVP",
+        "name": "limitVP",
         "type": "address"
       },
       {

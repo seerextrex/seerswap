@@ -1,7 +1,7 @@
 import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { forwardRef, useEffect, useMemo, useState } from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import { useIncentiveSubgraph } from "../../hooks/useIncentiveSubgraph";
+import { useFarmingSubgraph } from "../../hooks/useFarmingSubgraph";
 import { AlignJustify, Calendar, Zap } from "react-feather";
 import { useActiveWeb3React } from "../../hooks/web3";
 import { FarmingMyFarms } from "../../components/FarmingMyFarms";
@@ -76,7 +76,7 @@ export default function FarmingPage() {
         fetchTransferredPositions: { fetchTransferredPositionsFn, transferredPositions, transferredPositionsLoading },
         fetchEternalFarms: { fetchEternalFarmsFn, eternalFarms, eternalFarmsLoading },
         fetchHasTransferredPositions: { fetchHasTransferredPositionsFn, hasTransferredPositions, hasTransferredPositionsLoading },
-    } = useIncentiveSubgraph() || {};
+    } = useFarmingSubgraph() || {};
 
     // console.log(transferredPositions)
 

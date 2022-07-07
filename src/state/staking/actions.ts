@@ -5,7 +5,7 @@ export enum TimePart {
     END_TIME = 'END_TIME'
 }
 
-export const incentiveRewardAmount = createAction<{ amount: string }>('farming/incentiveRewardAmount')
-export const incentiveBonusRewardAmount = createAction<{ amount: string }>('farming/incentiveBonusRewardAmount')
-export const incentiveRefundeeAddress = createAction<{ address: string }>('farming/incentiveRefundeeAddress')
-export const incentiveTime = createAction<{ part: TimePart, time: number }>('farming/incentiveTime')
+export const limitRewardAmount = createAction<{ amount: string }>('farming/limitRewardAmount')
+export const limitBonusRewardAmount = createAction<{ amount: string }>('farming/limitBonusRewardAmount')
+export const limitRefundeeAddress = createAction<{ address: string }>('farming/limitRefundeeAddress')
+export const limitTime = createAction<{ part: TimePart, time: number }>('farming/limitTime')

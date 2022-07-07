@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { incentiveRefundeeAddress, incentiveRewardAmount, incentiveTime, TimePart } from './actions'
+import { limitRefundeeAddress, limitRewardAmount, limitTime, TimePart } from './actions'
 
 interface StakingState {
     readonly poolAddress: string
@@ -18,19 +18,19 @@ const initialState: StakingState = {
 }
 
 export default createReducer<StakingState>(initialState, (builder) =>
-    builder.addCase(incentiveRewardAmount, (state, { payload: { amount } }) => {
+    builder.addCase(limitRewardAmount, (state, { payload: { amount } }) => {
         return {
             ...state,
             reward: amount
         }
     })
-        .addCase(incentiveRefundeeAddress, (state, { payload: { address } }) => {
+        .addCase(limitRefundeeAddress, (state, { payload: { address } }) => {
             return {
                 ...state,
                 refundee: address
             }
         })
-        .addCase(incentiveTime, (state, { payload: { part, time } }) => {
+        .addCase(limitTime, (state, { payload: { part, time } }) => {
             return {
                 ...state,
                 [TimePart[part]]: time

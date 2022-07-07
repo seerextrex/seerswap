@@ -1,35 +1,35 @@
 import { useCallback } from 'react'
 import { useAppDispatch } from 'state/hooks'
-import { incentiveBonusRewardAmount, incentiveRefundeeAddress, incentiveRewardAmount, incentiveTime, TimePart } from './actions'
+import { limitBonusRewardAmount, limitRefundeeAddress, limitRewardAmount, limitTime, TimePart } from './actions'
 
-export function useIncentiveHandlers() {
+export function useLimitHandlers() {
 
     const dispatch = useAppDispatch()
 
     const onRewardInput = useCallback(
         (amount: string) => {
-            dispatch(incentiveRewardAmount({ amount }))
+            dispatch(limitRewardAmount({ amount }))
         },
         [dispatch]
     )
 
     const onBonusRewardInput = useCallback(
         (amount: string) => {
-            dispatch(incentiveBonusRewardAmount({ amount }))
+            dispatch(limitBonusRewardAmount({ amount }))
         },
         [dispatch]
     )
 
     const onRefundeeInput = useCallback(
         (address: string) => {
-            dispatch(incentiveRefundeeAddress({ address }))
+            dispatch(limitRefundeeAddress({ address }))
         },
         [dispatch]
     )
 
     const onTimeInput = useCallback(
         (part: TimePart, time: number) => {
-            dispatch(incentiveTime({ part, time }))
+            dispatch(limitTime({ part, time }))
         },
         [dispatch]
     )

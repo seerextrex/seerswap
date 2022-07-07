@@ -50,7 +50,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                 </div>
             </div>
             <div className={"my-farms__position-card__header__row"}>
-                {!el.incentive && !el.eternalFarming && (
+                {!el.limitFarming && !el.eternalFarming && (
                     <button
                         className={"btn c-w f f-ac b pv-05 ph-1 mxs_mv-05 mxs_f-jc"}
                         disabled={unstaking.id === el.id && unstaking.state !== "done"}

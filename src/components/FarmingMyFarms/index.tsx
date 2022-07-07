@@ -148,8 +148,8 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
             setShallowPositions(
                 shallowPositions.map((el) => {
                     if (el.id === claimRewardHash.id) {
-                        if (claimRewardHash.farmingType === FarmingType.FINITE) {
-                            el.incentive = null;
+                        if (claimRewardHash.farmingType === FarmingType.LIMIT) {
+                            el.limitFarming = null;
                         } else {
                             el.eternalFarming = null;
                         }
@@ -175,8 +175,8 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
             setShallowPositions(
                 shallowPositions.map((el) => {
                     if (el.id === getRewardsHash.id) {
-                        if (getRewardsHash.farmingType === FarmingType.FINITE) {
-                            el.incentive = null;
+                        if (getRewardsHash.farmingType === FarmingType.LIMIT) {
+                            el.limitFarming = null;
                         } else {
                             el.eternalFarming = null;
                         }
@@ -240,48 +240,48 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                         <PositionHeader el={el} setUnstaking={setUnfarming} setSendModal={setSendModal} unstaking={unfarming} withdrawHandler={withdrawHandler} />
                                         <div className={"f cg-1 rg-1 mxs_fd-c"}>
                                             <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
-                                                <PositionCardBodyHeader el={el} farmingType={FarmingType.FINITE} date={date} />
-                                                {el.incentive ? (
+                                                <PositionCardBodyHeader el={el} farmingType={FarmingType.LIMIT} date={date} />
+                                                {el.limitFarming ? (
                                                     <>
                                                         <PositionCardBodyStat
-                                                            rewardToken={el.incentiveRewardToken}
-                                                            earned={el.incentiveEarned}
-                                                            bonusEarned={el.incentiveBonusEarned}
-                                                            bonusRewardToken={el.incentiveBonusRewardToken}
+                                                            rewardToken={el.limitRewardToken}
+                                                            earned={el.limitEarned}
+                                                            bonusEarned={el.limitBonusEarned}
+                                                            bonusRewardToken={el.limitBonusRewardToken}
                                                         />
                                                         <div className={"f mxs_fd-c"}>
-                                                            {!el.ended && el.incentiveEndTime * 1000 > Date.now() && (
+                                                            {!el.ended && el.limitEndTime * 1000 > Date.now() && (
                                                                 <div className={"f w-100"}>
-                                                                    <div className={"w-100"} data-started={el.started || el.incentiveStartTime * 1000 < Date.now()}>
-                                                                        {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
-                                                                            <div className={"mb-05 p-r fs-075"}>{t`Starts in ${getCountdownTime(el.incentiveStartTime, now)}`}</div>
+                                                                    <div className={"w-100"} data-started={el.started || el.limitStartTime * 1000 < Date.now()}>
+                                                                        {!el.started && el.limitStartTime * 1000 > Date.now() && (
+                                                                            <div className={"mb-05 p-r fs-075"}>{t`Starts in ${getCountdownTime(el.limitStartTime, now)}`}</div>
                                                                         )}
-                                                                        {(el.started || el.incentiveStartTime * 1000 < Date.now()) && (
-                                                                            <div className={"mb-05 p-r fs-075"}>{t`Ends in ${getCountdownTime(el.incentiveEndTime, now)}`}</div>
+                                                                        {(el.started || el.limitStartTime * 1000 < Date.now()) && (
+                                                                            <div className={"mb-05 p-r fs-075"}>{t`Ends in ${getCountdownTime(el.limitEndTime, now)}`}</div>
                                                                         )}
                                                                         <div className={"my-farms__position-card__body__event-progress w-100 br-8 p-025 mt-05"}>
-                                                                            {!el.started && el.incentiveStartTime * 1000 > Date.now() ? (
-                                                                                <div className={"br-8"} style={{ width: `${getProgress(el.createdAtTimestamp, el.incentiveStartTime, now)}%` }} />
+                                                                            {!el.started && el.limitStartTime * 1000 > Date.now() ? (
+                                                                                <div className={"br-8"} style={{ width: `${getProgress(el.createdAtTimestamp, el.limitStartTime, now)}%` }} />
                                                                             ) : (
-                                                                                <div className={"br-8"} style={{ width: `${getProgress(el.incentiveStartTime, el.incentiveEndTime, now)}%` }} />
+                                                                                <div className={"br-8"} style={{ width: `${getProgress(el.limitStartTime, el.limitEndTime, now)}%` }} />
                                                                             )}
                                                                         </div>
                                                                     </div>
-                                                                    {!el.started && el.incentiveStartTime * 1000 > Date.now() && (
+                                                                    {!el.started && el.limitStartTime * 1000 > Date.now() && (
                                                                         <button
                                                                             className={"btn primary w-100 ml-1 br-8 b pv-075"}
-                                                                            disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.FINITE && gettingReward.state !== "done"}
+                                                                            disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.LIMIT && gettingReward.state !== "done"}
                                                                             onClick={() => {
                                                                                 setGettingReward({
                                                                                     id: el.id,
                                                                                     state: "pending",
-                                                                                    farmingType: FarmingType.FINITE,
+                                                                                    farmingType: FarmingType.LIMIT,
                                                                                 });
-                                                                                exitHandler(el.id, { ...el }, FarmingType.FINITE);
+                                                                                exitHandler(el.id, { ...el }, FarmingType.LIMIT);
                                                                             }}
                                                                         >
                                                                             {gettingReward &&
-                                                                            gettingReward.farmingType === FarmingType.FINITE &&
+                                                                            gettingReward.farmingType === FarmingType.LIMIT &&
                                                                             gettingReward.id === el.id &&
                                                                             gettingReward.state !== "done" ? (
                                                                                 <span>
@@ -296,24 +296,24 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                     )}
                                                                 </div>
                                                             )}
-                                                            {(el.ended || el.incentiveEndTime * 1000 < Date.now()) && (
+                                                            {(el.ended || el.limitEndTime * 1000 < Date.now()) && (
                                                                 <button
                                                                     className={"btn primary b w-100 pv-075 ph-1"}
                                                                     disabled={
-                                                                        (gettingReward.id === el.id && gettingReward.farmingType === FarmingType.FINITE && gettingReward.state !== "done") ||
-                                                                        +el.incentiveReward == 0
+                                                                        (gettingReward.id === el.id && gettingReward.farmingType === FarmingType.LIMIT && gettingReward.state !== "done") ||
+                                                                        +el.limitReward == 0
                                                                     }
                                                                     onClick={() => {
                                                                         setGettingReward({
                                                                             id: el.id,
                                                                             state: "pending",
-                                                                            farmingType: FarmingType.FINITE,
+                                                                            farmingType: FarmingType.LIMIT,
                                                                         });
-                                                                        claimRewardsHandler(el.id, { ...el }, FarmingType.FINITE);
+                                                                        claimRewardsHandler(el.id, { ...el }, FarmingType.LIMIT);
                                                                     }}
                                                                 >
                                                                     {gettingReward &&
-                                                                    gettingReward.farmingType === FarmingType.FINITE &&
+                                                                    gettingReward.farmingType === FarmingType.LIMIT &&
                                                                     gettingReward.id === el.id &&
                                                                     gettingReward.state !== "done" ? (
                                                                         <div className={"f f-jc f-ac cg-05"}>
@@ -331,7 +331,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                     </>
                                                 ) : (
                                                     <div className={"my-farms__position-card__empty f c f-ac f-jc"}>
-                                                        {el.finiteAvailable ? (
+                                                        {el.limitAvailable ? (
                                                             <CheckOut link={"limit-farms"} />
                                                         ) : (
                                                             <span>

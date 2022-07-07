@@ -2,7 +2,7 @@ import { Result, useSingleCallResult, useSingleContractMultipleData } from 'stat
 import { useEffect, useMemo } from 'react'
 import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
-import { useIncentiveSubgraph } from './useIncentiveSubgraph'
+import { useFarmingSubgraph } from './useFarmingSubgraph'
 import { PositionPool } from '../models/interfaces'
 import usePrevious, { usePreviousNonEmptyArray } from './usePrevious'
 import { useActiveWeb3React } from './web3'
@@ -100,7 +100,7 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
     const { loading: balanceLoading, result: balanceResult } = useSingleCallResult(positionManager, 'balanceOf', [account ?? undefined])
 
-    const { fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn } } = useIncentiveSubgraph()
+    const { fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn } } = useFarmingSubgraph()
 
     // we don't expect any account balance to ever exceed the bounds of max safe int
     const accountBalance: number | undefined = balanceResult?.[0]?.toNumber()

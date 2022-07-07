@@ -38,7 +38,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
             <Modal isOpen={Boolean(modalForPool)} onHide={() => setModalForPool(null)} onDismiss={() => console.log()}>
                 {modalForPool && (
                     <>
-                        <FarmModal event={modalForPool} closeHandler={() => setModalForPool(null)} farmingType={FarmingType.FINITE} />
+                        <FarmModal event={modalForPool} closeHandler={() => setModalForPool(null)} farmingType={FarmingType.LIMIT} />
                     </>
                 )}
             </Modal>
@@ -54,7 +54,9 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
 
                         if (isEnded) return;
 
-                        const active = isStarted && !isEnded && (new Date(1654700400 * 1000).getTime() >= Date.now());
+                        console.log(isStarted, isEnded);
+
+                        const active = isStarted && !isEnded && new Date(1654700400 * 1000).getTime() >= Date.now();
 
                         return (
                             <FarmingEventCard

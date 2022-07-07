@@ -741,15 +741,15 @@ export type Deposit = {
   enteredInEternalFarming?: Maybe<Scalars['BigInt']>;
   eternalFarming?: Maybe<Scalars['Bytes']>;
   id: Scalars['ID'];
-  incentive?: Maybe<Scalars['Bytes']>;
+  limitFarming?: Maybe<Scalars['Bytes']>;
   liquidity: Scalars['BigInt'];
   onFarmingCenter: Scalars['Boolean'];
   owner: Scalars['Bytes'];
   pool: Scalars['Bytes'];
   tierEternal: Scalars['BigInt'];
-  tierIncentive: Scalars['BigInt'];
+  tierLimit: Scalars['BigInt'];
   tokensLockedEternal: Scalars['BigInt'];
-  tokensLockedIncentive: Scalars['BigInt'];
+  tokensLockedLimit: Scalars['BigInt'];
 };
 
 export type Deposit_Filter = {
@@ -785,12 +785,12 @@ export type Deposit_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
-  incentive?: Maybe<Scalars['Bytes']>;
-  incentive_contains?: Maybe<Scalars['Bytes']>;
-  incentive_in?: Maybe<Array<Scalars['Bytes']>>;
-  incentive_not?: Maybe<Scalars['Bytes']>;
-  incentive_not_contains?: Maybe<Scalars['Bytes']>;
-  incentive_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  limitFarming?: Maybe<Scalars['Bytes']>;
+  limitFarming_contains?: Maybe<Scalars['Bytes']>;
+  limitFarming_in?: Maybe<Array<Scalars['Bytes']>>;
+  limitFarming_not?: Maybe<Scalars['Bytes']>;
+  limitFarming_not_contains?: Maybe<Scalars['Bytes']>;
+  limitFarming_not_in?: Maybe<Array<Scalars['Bytes']>>;
   liquidity?: Maybe<Scalars['BigInt']>;
   liquidity_gt?: Maybe<Scalars['BigInt']>;
   liquidity_gte?: Maybe<Scalars['BigInt']>;
@@ -823,14 +823,14 @@ export type Deposit_Filter = {
   tierEternal_lte?: Maybe<Scalars['BigInt']>;
   tierEternal_not?: Maybe<Scalars['BigInt']>;
   tierEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tierIncentive?: Maybe<Scalars['BigInt']>;
-  tierIncentive_gt?: Maybe<Scalars['BigInt']>;
-  tierIncentive_gte?: Maybe<Scalars['BigInt']>;
-  tierIncentive_in?: Maybe<Array<Scalars['BigInt']>>;
-  tierIncentive_lt?: Maybe<Scalars['BigInt']>;
-  tierIncentive_lte?: Maybe<Scalars['BigInt']>;
-  tierIncentive_not?: Maybe<Scalars['BigInt']>;
-  tierIncentive_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierLimit?: Maybe<Scalars['BigInt']>;
+  tierLimit_gt?: Maybe<Scalars['BigInt']>;
+  tierLimit_gte?: Maybe<Scalars['BigInt']>;
+  tierLimit_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierLimit_lt?: Maybe<Scalars['BigInt']>;
+  tierLimit_lte?: Maybe<Scalars['BigInt']>;
+  tierLimit_not?: Maybe<Scalars['BigInt']>;
+  tierLimit_not_in?: Maybe<Array<Scalars['BigInt']>>;
   tokensLockedEternal?: Maybe<Scalars['BigInt']>;
   tokensLockedEternal_gt?: Maybe<Scalars['BigInt']>;
   tokensLockedEternal_gte?: Maybe<Scalars['BigInt']>;
@@ -839,14 +839,14 @@ export type Deposit_Filter = {
   tokensLockedEternal_lte?: Maybe<Scalars['BigInt']>;
   tokensLockedEternal_not?: Maybe<Scalars['BigInt']>;
   tokensLockedEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokensLockedIncentive?: Maybe<Scalars['BigInt']>;
-  tokensLockedIncentive_gt?: Maybe<Scalars['BigInt']>;
-  tokensLockedIncentive_gte?: Maybe<Scalars['BigInt']>;
-  tokensLockedIncentive_in?: Maybe<Array<Scalars['BigInt']>>;
-  tokensLockedIncentive_lt?: Maybe<Scalars['BigInt']>;
-  tokensLockedIncentive_lte?: Maybe<Scalars['BigInt']>;
-  tokensLockedIncentive_not?: Maybe<Scalars['BigInt']>;
-  tokensLockedIncentive_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedLimit?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_gt?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_gte?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedLimit_lt?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_lte?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_not?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Deposit_OrderBy {
@@ -854,15 +854,15 @@ export enum Deposit_OrderBy {
   EnteredInEternalFarming = 'enteredInEternalFarming',
   EternalFarming = 'eternalFarming',
   Id = 'id',
-  Incentive = 'incentive',
+  LimitFarming = 'limitFarming',
   Liquidity = 'liquidity',
   OnFarmingCenter = 'onFarmingCenter',
   Owner = 'owner',
   Pool = 'pool',
   TierEternal = 'tierEternal',
-  TierIncentive = 'tierIncentive',
+  TierLimit = 'tierLimit',
   TokensLockedEternal = 'tokensLockedEternal',
-  TokensLockedIncentive = 'tokensLockedIncentive'
+  TokensLockedLimit = 'tokensLockedLimit'
 }
 
 export type EternalFarming = {
@@ -879,9 +879,9 @@ export type EternalFarming = {
   rewardRate: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   startTime: Scalars['BigInt'];
-  tier1multiplier: Scalars['BigInt'];
-  tier2multiplier: Scalars['BigInt'];
-  tier3multiplier: Scalars['BigInt'];
+  tier1Multiplier: Scalars['BigInt'];
+  tier2Multiplier: Scalars['BigInt'];
+  tier3Multiplier: Scalars['BigInt'];
   tokenAmountForTier1: Scalars['BigInt'];
   tokenAmountForTier2: Scalars['BigInt'];
   tokenAmountForTier3: Scalars['BigInt'];
@@ -975,30 +975,30 @@ export type EternalFarming_Filter = {
   startTime_lte?: Maybe<Scalars['BigInt']>;
   startTime_not?: Maybe<Scalars['BigInt']>;
   startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier1multiplier?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_gt?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_gte?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier1multiplier_lt?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_lte?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_not?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier2multiplier?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_gt?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_gte?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier2multiplier_lt?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_lte?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_not?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier3multiplier?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_gt?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_gte?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier3multiplier_lt?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_lte?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_not?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
   tokenAmountForTier1?: Maybe<Scalars['BigInt']>;
   tokenAmountForTier1_gt?: Maybe<Scalars['BigInt']>;
   tokenAmountForTier1_gte?: Maybe<Scalars['BigInt']>;
@@ -1044,9 +1044,9 @@ export enum EternalFarming_OrderBy {
   RewardRate = 'rewardRate',
   RewardToken = 'rewardToken',
   StartTime = 'startTime',
-  Tier1multiplier = 'tier1multiplier',
-  Tier2multiplier = 'tier2multiplier',
-  Tier3multiplier = 'tier3multiplier',
+  Tier1Multiplier = 'tier1Multiplier',
+  Tier2Multiplier = 'tier2Multiplier',
+  Tier3Multiplier = 'tier3Multiplier',
   TokenAmountForTier1 = 'tokenAmountForTier1',
   TokenAmountForTier2 = 'tokenAmountForTier2',
   TokenAmountForTier3 = 'tokenAmountForTier3',
@@ -1615,8 +1615,8 @@ export enum History_OrderBy {
   XAlgBtotalSupply = 'xALGBtotalSupply'
 }
 
-export type Incentive = {
-  __typename?: 'Incentive';
+export type LimitFarming = {
+  __typename?: 'LimitFarming';
   bonusReward: Scalars['BigInt'];
   bonusRewardToken: Scalars['Bytes'];
   createdAtTimestamp: Scalars['BigInt'];
@@ -1629,15 +1629,15 @@ export type Incentive = {
   reward: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   startTime: Scalars['BigInt'];
-  tier1multiplier: Scalars['BigInt'];
-  tier2multiplier: Scalars['BigInt'];
-  tier3multiplier: Scalars['BigInt'];
+  tier1Multiplier: Scalars['BigInt'];
+  tier2Multiplier: Scalars['BigInt'];
+  tier3Multiplier: Scalars['BigInt'];
   tokenAmountForTier1: Scalars['BigInt'];
   tokenAmountForTier2: Scalars['BigInt'];
   tokenAmountForTier3: Scalars['BigInt'];
 };
 
-export type Incentive_Filter = {
+export type LimitFarming_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
   bonusReward?: Maybe<Scalars['BigInt']>;
@@ -1724,30 +1724,30 @@ export type Incentive_Filter = {
   startTime_lte?: Maybe<Scalars['BigInt']>;
   startTime_not?: Maybe<Scalars['BigInt']>;
   startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier1multiplier?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_gt?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_gte?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier1multiplier_lt?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_lte?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_not?: Maybe<Scalars['BigInt']>;
-  tier1multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier2multiplier?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_gt?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_gte?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier2multiplier_lt?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_lte?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_not?: Maybe<Scalars['BigInt']>;
-  tier2multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier3multiplier?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_gt?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_gte?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
-  tier3multiplier_lt?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_lte?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_not?: Maybe<Scalars['BigInt']>;
-  tier3multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
   tokenAmountForTier1?: Maybe<Scalars['BigInt']>;
   tokenAmountForTier1_gt?: Maybe<Scalars['BigInt']>;
   tokenAmountForTier1_gte?: Maybe<Scalars['BigInt']>;
@@ -1774,7 +1774,7 @@ export type Incentive_Filter = {
   tokenAmountForTier3_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
-export enum Incentive_OrderBy {
+export enum LimitFarming_OrderBy {
   BonusReward = 'bonusReward',
   BonusRewardToken = 'bonusRewardToken',
   CreatedAtTimestamp = 'createdAtTimestamp',
@@ -1787,9 +1787,9 @@ export enum Incentive_OrderBy {
   Reward = 'reward',
   RewardToken = 'rewardToken',
   StartTime = 'startTime',
-  Tier1multiplier = 'tier1multiplier',
-  Tier2multiplier = 'tier2multiplier',
-  Tier3multiplier = 'tier3multiplier',
+  Tier1Multiplier = 'tier1Multiplier',
+  Tier2Multiplier = 'tier2Multiplier',
+  Tier3Multiplier = 'tier3Multiplier',
   TokenAmountForTier1 = 'tokenAmountForTier1',
   TokenAmountForTier2 = 'tokenAmountForTier2',
   TokenAmountForTier3 = 'tokenAmountForTier3'
@@ -3568,8 +3568,8 @@ export type Query = {
   flashes: Array<Flash>;
   histories: Array<History>;
   history?: Maybe<History>;
-  incentive?: Maybe<Incentive>;
-  incentives: Array<Incentive>;
+  limitFarming?: Maybe<LimitFarming>;
+  limitFarmings: Array<LimitFarming>;
   mint?: Maybe<Mint>;
   mints: Array<Mint>;
   pool?: Maybe<Pool>;
@@ -3812,21 +3812,21 @@ export type QueryHistoryArgs = {
 };
 
 
-export type QueryIncentiveArgs = {
+export type QueryLimitFarmingArgs = {
   block?: Maybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type QueryIncentivesArgs = {
+export type QueryLimitFarmingsArgs = {
   block?: Maybe<Block_Height>;
   first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Incentive_OrderBy>;
+  orderBy?: Maybe<LimitFarming_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Incentive_Filter>;
+  where?: Maybe<LimitFarming_Filter>;
 };
 
 
@@ -4343,8 +4343,8 @@ export type Subscription = {
   flashes: Array<Flash>;
   histories: Array<History>;
   history?: Maybe<History>;
-  incentive?: Maybe<Incentive>;
-  incentives: Array<Incentive>;
+  limitFarming?: Maybe<LimitFarming>;
+  limitFarmings: Array<LimitFarming>;
   mint?: Maybe<Mint>;
   mints: Array<Mint>;
   pool?: Maybe<Pool>;
@@ -4587,21 +4587,21 @@ export type SubscriptionHistoryArgs = {
 };
 
 
-export type SubscriptionIncentiveArgs = {
+export type SubscriptionLimitFarmingArgs = {
   block?: Maybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type SubscriptionIncentivesArgs = {
+export type SubscriptionLimitFarmingsArgs = {
   block?: Maybe<Block_Height>;
   first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Incentive_OrderBy>;
+  orderBy?: Maybe<LimitFarming_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Incentive_Filter>;
+  where?: Maybe<LimitFarming_Filter>;
 };
 
 
@@ -6439,16 +6439,16 @@ export type FeeTierDistributionQuery = (
   )> }
 );
 
-export type IncentiveQueryVariables = Exact<{
+export type LimitFarmQueryVariables = Exact<{
   time?: Maybe<Scalars['BigInt']>;
 }>;
 
 
-export type IncentiveQuery = (
+export type LimitFarmQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'startTime' | 'endTime'>
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'startTime' | 'endTime'>
   )> }
 );
 
@@ -6489,16 +6489,16 @@ export type FetchTokenQuery = (
   )> }
 );
 
-export type FetchIncentiveQueryVariables = Exact<{
-  incentiveId?: Maybe<Scalars['ID']>;
+export type FetchLimitQueryVariables = Exact<{
+  limitId?: Maybe<Scalars['ID']>;
 }>;
 
 
-export type FetchIncentiveQuery = (
+export type FetchLimitQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime'>
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime'>
   )> }
 );
 
@@ -6511,7 +6511,7 @@ export type FetchEternalFarmQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken'>
   )> }
 );
 
@@ -6624,9 +6624,9 @@ export type LastEventQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type LastEventQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'createdAtTimestamp' | 'id' | 'startTime' | 'endTime'>
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'createdAtTimestamp' | 'id' | 'startTime' | 'endTime'>
   )> }
 );
 
@@ -6637,9 +6637,9 @@ export type FutureEventsQueryVariables = Exact<{
 
 export type FutureEventsQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime'>
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime'>
   )> }
 );
 
@@ -6651,9 +6651,9 @@ export type CurrentEventsQueryVariables = Exact<{
 
 export type CurrentEventsQuery = (
   { __typename?: 'Query' }
-  & { incentives: Array<(
-    { __typename?: 'Incentive' }
-    & Pick<Incentive, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken'>
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken'>
   )> }
 );
 
@@ -6680,7 +6680,7 @@ export type TransferedPositionsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter'>
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'limitFarming' | 'eternalFarming' | 'onFarmingCenter'>
   )> }
 );
 
@@ -6720,7 +6720,7 @@ export type TransferedPositionsForPoolQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'incentive' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'tokensLockedIncentive' | 'tokensLockedEternal' | 'tierIncentive' | 'tierEternal'>
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'limitFarming' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'tokensLockedLimit' | 'tokensLockedEternal' | 'tierLimit' | 'tierEternal'>
   )> }
 );
 
@@ -6745,7 +6745,7 @@ export type InfiniteFarmsQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1multiplier' | 'tier2multiplier' | 'tier3multiplier' | 'multiplierToken'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'multiplierToken'>
   )> }
 );
 
@@ -6890,9 +6890,9 @@ export const FeeTierDistributionDocument = `
   }
 }
     `;
-export const IncentiveDocument = `
-    query incentive($time: BigInt) {
-  incentives(
+export const LimitFarmDocument = `
+    query limitFarm($time: BigInt) {
+  limitFarmings(
     orderBy: createdAtTimestamp
     orderDirection: desc
     first: 1
@@ -6931,9 +6931,9 @@ export const FetchTokenDocument = `
   }
 }
     `;
-export const FetchIncentiveDocument = `
-    query fetchIncentive($incentiveId: ID) {
-  incentives(where: {id: $incentiveId}) {
+export const FetchLimitDocument = `
+    query fetchLimit($limitId: ID) {
+  limitFarmings(where: {id: $limitId}) {
     id
     rewardToken
     bonusRewardToken
@@ -6944,9 +6944,9 @@ export const FetchIncentiveDocument = `
     bonusReward
     multiplierToken
     createdAtTimestamp
-    tier1multiplier
-    tier2multiplier
-    tier3multiplier
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
     tokenAmountForTier1
     tokenAmountForTier2
     tokenAmountForTier3
@@ -6968,9 +6968,9 @@ export const FetchEternalFarmDocument = `
     rewardRate
     bonusRewardRate
     isDetached
-    tier1multiplier
-    tier2multiplier
-    tier3multiplier
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
     tokenAmountForTier1
     tokenAmountForTier2
     tokenAmountForTier3
@@ -7114,7 +7114,7 @@ export const PoolHourDataDocument = `
     `;
 export const LastEventDocument = `
     query lastEvent {
-  incentives(first: 1, orderDirection: desc, orderBy: createdAtTimestamp) {
+  limitFarmings(first: 1, orderDirection: desc, orderBy: createdAtTimestamp) {
     createdAtTimestamp
     id
     startTime
@@ -7124,7 +7124,7 @@ export const LastEventDocument = `
     `;
 export const FutureEventsDocument = `
     query futureEvents($timestamp: BigInt) {
-  incentives(
+  limitFarmings(
     orderBy: startTime
     orderDirection: asc
     where: {startTime_gt: $timestamp}
@@ -7138,9 +7138,9 @@ export const FutureEventsDocument = `
     startTime
     endTime
     reward
-    tier1multiplier
-    tier2multiplier
-    tier3multiplier
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
     tokenAmountForTier1
     tokenAmountForTier2
     tokenAmountForTier3
@@ -7151,7 +7151,7 @@ export const FutureEventsDocument = `
     `;
 export const CurrentEventsDocument = `
     query currentEvents($startTime: BigInt, $endTime: BigInt) {
-  incentives(
+  limitFarmings(
     orderBy: endTime
     orderDirection: desc
     where: {startTime_lte: $startTime, endTime_gt: $endTime}
@@ -7164,9 +7164,9 @@ export const CurrentEventsDocument = `
     startTime
     endTime
     reward
-    tier1multiplier
-    tier2multiplier
-    tier3multiplier
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
     tokenAmountForTier1
     tokenAmountForTier2
     tokenAmountForTier3
@@ -7199,7 +7199,7 @@ export const TransferedPositionsDocument = `
     owner
     pool
     L2tokenId
-    incentive
+    limitFarming
     eternalFarming
     onFarmingCenter
   }
@@ -7240,13 +7240,13 @@ export const TransferedPositionsForPoolDocument = `
     owner
     pool
     L2tokenId
-    incentive
+    limitFarming
     eternalFarming
     onFarmingCenter
     enteredInEternalFarming
-    tokensLockedIncentive
+    tokensLockedLimit
     tokensLockedEternal
-    tierIncentive
+    tierLimit
     tierEternal
   }
 }
@@ -7278,9 +7278,9 @@ export const InfiniteFarmsDocument = `
     tokenAmountForTier1
     tokenAmountForTier2
     tokenAmountForTier3
-    tier1multiplier
-    tier2multiplier
-    tier3multiplier
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
     multiplierToken
   }
 }
@@ -7376,8 +7376,8 @@ const injectedRtkApi = api.injectEndpoints({
     feeTierDistribution: build.query<FeeTierDistributionQuery, FeeTierDistributionQueryVariables>({
       query: (variables) => ({ document: FeeTierDistributionDocument, variables })
     }),
-    incentive: build.query<IncentiveQuery, IncentiveQueryVariables | void>({
-      query: (variables) => ({ document: IncentiveDocument, variables })
+    limitFarm: build.query<LimitFarmQuery, LimitFarmQueryVariables | void>({
+      query: (variables) => ({ document: LimitFarmDocument, variables })
     }),
     eternalFarm: build.query<EternalFarmQuery, EternalFarmQueryVariables | void>({
       query: (variables) => ({ document: EternalFarmDocument, variables })
@@ -7388,8 +7388,8 @@ const injectedRtkApi = api.injectEndpoints({
     fetchToken: build.query<FetchTokenQuery, FetchTokenQueryVariables | void>({
       query: (variables) => ({ document: FetchTokenDocument, variables })
     }),
-    fetchIncentive: build.query<FetchIncentiveQuery, FetchIncentiveQueryVariables | void>({
-      query: (variables) => ({ document: FetchIncentiveDocument, variables })
+    fetchLimit: build.query<FetchLimitQuery, FetchLimitQueryVariables | void>({
+      query: (variables) => ({ document: FetchLimitDocument, variables })
     }),
     fetchEternalFarm: build.query<FetchEternalFarmQuery, FetchEternalFarmQueryVariables | void>({
       query: (variables) => ({ document: FetchEternalFarmDocument, variables })
@@ -7467,5 +7467,5 @@ const injectedRtkApi = api.injectEndpoints({
 });
 
 export { injectedRtkApi as api };
-export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useIncentiveQuery, useLazyIncentiveQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchIncentiveQuery, useLazyFetchIncentiveQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useFrozenStakedQuery, useLazyFrozenStakedQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useStakeHistoryQuery, useLazyStakeHistoryQuery, useStakeQuery, useLazyStakeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery } = injectedRtkApi;
+export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useFrozenStakedQuery, useLazyFrozenStakedQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useStakeHistoryQuery, useLazyStakeHistoryQuery, useStakeQuery, useLazyStakeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery } = injectedRtkApi;
 

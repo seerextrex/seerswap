@@ -42,8 +42,8 @@ query fetchToken ($tokenId: ID) {
 }`
 
 export const FETCH_LIMIT = () => gql`
-query fetchLimit($limitId: ID) {
-    limitFarmings(where: { id: $limitId}) {
+query fetchLimit($limitFarmingId: ID) {
+    limitFarmings(where: { id: $limitFarmingId}) {
         id
         rewardToken
         bonusRewardToken

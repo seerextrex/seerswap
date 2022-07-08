@@ -546,11 +546,6 @@
         "type": "uint16"
       },
       {
-        "internalType": "uint16",
-        "name": "timepointIndexSwap",
-        "type": "uint16"
-      },
-      {
         "internalType": "uint8",
         "name": "communityFeeToken0",
         "type": "uint8"

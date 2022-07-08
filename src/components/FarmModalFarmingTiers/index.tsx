@@ -116,7 +116,7 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                                 <span className="b">
                                     <Trans>Earn:</Trans>
                                 </span>
-                                <span className="ml-a farming-tier__rewards-value">{tier.earn ? `${100 + tier.earn / 100}%` : "100%"}</span>
+                                <span className="ml-a farming-tier__rewards-value">{tier.earn ? `${100 + (tier.earn - 10000) / 100}%` : "100%"}</span>
                             </div>
                         </div>
                     </button>

@@ -518,7 +518,7 @@ export function useFarmingSubgraph() {
                     const _rewardToken = await fetchToken(rewardToken, true)
                     const _bonusRewardToken = await fetchToken(bonusRewardToken, true)
                     const _pool = await fetchPool(pool)
-                    const _multiplierToken = await fetchToken(multiplierToken)
+                    const _multiplierToken = await fetchToken(multiplierToken, true)
 
 
                     _position = {

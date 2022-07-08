@@ -7,7 +7,7 @@ import { AppState } from 'state'
 
 // List of supported subgraphs. Note that the app currently only support one active subgraph at a time
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
-  [SupportedChainId.POLYGON]: 'https://api.thegraph.com/subgraphs/name/cryptoalgebra/info-test'
+  [SupportedChainId.POLYGON]: 'https://api.thegraph.com/subgraphs/name/iliaazhel/info-test'
 }
 
 export const api = createApi({

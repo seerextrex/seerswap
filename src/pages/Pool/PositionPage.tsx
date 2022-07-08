@@ -326,7 +326,7 @@ export default function PositionPage({
                                     <div className={"f ms_w-100"}>
                                         {currency0 && currency1 && tokenId ? (
                                             <NavLink
-                                                to={`/increase/${currencyId(currency0, chainId || 97)}/${currencyId(currency1, chainId || 97)}/${tokenId}`}
+                                                to={`/increase/${currencyId(currency0, chainId || 137)}/${currencyId(currency1, chainId || 137)}/${tokenId}`}
                                                 className={"btn primary pv-025 ph-05 br-8 mr-05"}
                                             >
                                                 <Trans>Increase Liquidity</Trans>

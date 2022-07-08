@@ -251,11 +251,11 @@ export function useUserAddedTokens(): Token[] {
     //         .then(res => {
     //             let stepTokens = {}
     //             res.tokens.map(item => {
-    //                 if (item.chainId === 97) {
+    //                 if (item.chainId === 137) {
     //                     stepTokens = {...stepTokens, [item.address]: item}
     //                 }
     //             })
-    //             setMap({97: stepTokens})
+    //             setMap({137: stepTokens})
     //         })
     // }, [])
 

@@ -94,7 +94,7 @@ export function CurrencySearch({
 
     // let chainSymbol
     //
-    // if (chainId === 97) {
+    // if (chainId === 137) {
     //     chainSymbol = 'MATIC'
     // }
     //

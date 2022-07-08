@@ -251,7 +251,7 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
     const { chainId } = useActiveWeb3React()
     let isETH
-    if (chainId === 97) {
+    if (chainId === 137) {
         isETH = currencyId?.toUpperCase() === 'MATIC'
     }
 

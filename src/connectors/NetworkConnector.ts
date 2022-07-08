@@ -150,7 +150,7 @@ export class NetworkConnector extends AbstractConnector {
 
         //TODO
         this.currentChainId = defaultChainId || Number(Object.keys(urls)[0])
-        // this.currentChainId = 97
+        // this.currentChainId = 137
         this.providers = Object.keys(urls).reduce<{ [chainId: number]: MiniRpcProvider }>((accumulator, chainId) => {
             accumulator[Number(chainId)] = new MiniRpcProvider(Number(chainId), urls[Number(chainId)])
             return accumulator

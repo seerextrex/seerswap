@@ -100,11 +100,11 @@ export function NewAddLiquidityPage({
 
     const handleCurrencySelect = useCallback(
         (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-            const currencyIdNew = currencyId(currencyNew, chainId || 97);
+            const currencyIdNew = currencyId(currencyNew, chainId || 137);
 
             let chainSymbol;
 
-            if (chainId === 97) {
+            if (chainId === 137) {
                 chainSymbol = "MATIC";
             }
 

@@ -82,7 +82,7 @@ export default function Pool() {
 
     let chainSymbol;
 
-    if (chainId === 97) {
+    if (chainId === 137) {
         chainSymbol = "MATIC";
     }
 

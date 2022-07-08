@@ -32,7 +32,7 @@ export default function PositionCardBodyStat({ rewardToken, earned, bonusRewardT
             <div className="f ms_fd-c mxs_fd-c">
                 {rewardList.map((reward: any, i) => (
                     <div key={i} className={"f f-ac mr-1 mxs_mr-0 mxs_mt-1 mxs_mb-0 ms_mr-0 ms_mt-1 ms_mb-0 position-card-body-stat"}>
-                        <CurrencyLogo size={"30px"} currency={new Token(97, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} />
+                        <CurrencyLogo size={"30px"} currency={new Token(137, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} />
                         <div className="ml-05" title={reward.amount.toString()}>{`${formatReward(reward.amount)} ${reward.token.symbol}`}</div>
                     </div>
                 ))}

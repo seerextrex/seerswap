@@ -460,7 +460,7 @@ export function useFarmingSubgraph() {
                         createdAtTimestamp: +createdAtTimestamp,
                         limitEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         limitBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
-                        multiplierToken: _multiplierToken,
+                        limitMultiplierToken: _multiplierToken,
                         tokenAmountForTier1,
                         tokenAmountForTier2,
                         tokenAmountForTier3,
@@ -527,7 +527,7 @@ export function useFarmingSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
-                        multiplierToken: _multiplierToken,
+                        eternalMultiplierToken: _multiplierToken,
                         tier1Multiplier,
                         tier2Multiplier,
                         tier3Multiplier,
@@ -550,7 +550,7 @@ export function useFarmingSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (eternalFarmings.filter((farm: any) => +farm.rewardRate || +farm.bonusRewardRate).length !== 0) {
+                    if (eternalFarmings.filter((farm: any) => (+farm.rewardRate || +farm.bonusRewardRate) && !farm.isDetached).length !== 0) {
                         _position = {
                             ..._position,
                             eternalAvailable: true

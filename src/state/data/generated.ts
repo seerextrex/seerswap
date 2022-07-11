@@ -6498,7 +6498,7 @@ export type FetchLimitQuery = (
   { __typename?: 'Query' }
   & { limitFarmings: Array<(
     { __typename?: 'LimitFarming' }
-    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime'>
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'isDetached'>
   )> }
 );
 
@@ -6639,7 +6639,7 @@ export type FutureEventsQuery = (
   { __typename?: 'Query' }
   & { limitFarmings: Array<(
     { __typename?: 'LimitFarming' }
-    & Pick<LimitFarming, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime'>
+    & Pick<LimitFarming, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime' | 'isDetached'>
   )> }
 );
 
@@ -6653,7 +6653,7 @@ export type CurrentEventsQuery = (
   { __typename?: 'Query' }
   & { limitFarmings: Array<(
     { __typename?: 'LimitFarming' }
-    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken'>
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken' | 'isDetached'>
   )> }
 );
 
@@ -6896,7 +6896,7 @@ export const LimitFarmDocument = `
     orderBy: createdAtTimestamp
     orderDirection: desc
     first: 1
-    where: {startTime_gt: $time}
+    where: {startTime_gt: $time, isDetached: false}
   ) {
     startTime
     endTime
@@ -6951,6 +6951,7 @@ export const FetchLimitDocument = `
     tokenAmountForTier2
     tokenAmountForTier3
     enterStartTime
+    isDetached
   }
 }
     `;
@@ -7114,7 +7115,12 @@ export const PoolHourDataDocument = `
     `;
 export const LastEventDocument = `
     query lastEvent {
-  limitFarmings(first: 1, orderDirection: desc, orderBy: createdAtTimestamp) {
+  limitFarmings(
+    first: 1
+    orderDirection: desc
+    orderBy: createdAtTimestamp
+    where: {isDetached: false}
+  ) {
     createdAtTimestamp
     id
     startTime
@@ -7127,7 +7133,7 @@ export const FutureEventsDocument = `
   limitFarmings(
     orderBy: startTime
     orderDirection: asc
-    where: {startTime_gt: $timestamp}
+    where: {startTime_gt: $timestamp, isDetached: false}
   ) {
     id
     createdAtTimestamp
@@ -7146,6 +7152,7 @@ export const FutureEventsDocument = `
     tokenAmountForTier3
     multiplierToken
     enterStartTime
+    isDetached
   }
 }
     `;
@@ -7154,7 +7161,7 @@ export const CurrentEventsDocument = `
   limitFarmings(
     orderBy: endTime
     orderDirection: desc
-    where: {startTime_lte: $startTime, endTime_gt: $endTime}
+    where: {startTime_lte: $startTime, endTime_gt: $endTime, isDetached: false}
   ) {
     id
     rewardToken
@@ -7172,6 +7179,7 @@ export const CurrentEventsDocument = `
     tokenAmountForTier3
     enterStartTime
     multiplierToken
+    isDetached
   }
 }
     `;

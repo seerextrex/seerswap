@@ -6490,7 +6490,7 @@ export type FetchTokenQuery = (
 );
 
 export type FetchLimitQueryVariables = Exact<{
-  limitId?: Maybe<Scalars['ID']>;
+  limitFarmingId?: Maybe<Scalars['ID']>;
 }>;
 
 
@@ -6932,8 +6932,8 @@ export const FetchTokenDocument = `
 }
     `;
 export const FetchLimitDocument = `
-    query fetchLimit($limitId: ID) {
-  limitFarmings(where: {id: $limitId}) {
+    query fetchLimit($limitFarmingId: ID) {
+  limitFarmings(where: {id: $limitFarmingId}) {
     id
     rewardToken
     bonusRewardToken

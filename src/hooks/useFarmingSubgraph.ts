@@ -550,7 +550,7 @@ export function useFarmingSubgraph() {
 
                     if (error) throw new Error(`${error.name} ${error.message}`)
 
-                    if (eternalFarmings.filter((farm: any) => +farm.rewardRate || +farm.bonusRewardRate).length !== 0) {
+                    if (eternalFarmings.filter((farm: any) => (+farm.rewardRate || +farm.bonusRewardRate) && !farm.isDetached).length !== 0) {
                         _position = {
                             ..._position,
                             eternalAvailable: true

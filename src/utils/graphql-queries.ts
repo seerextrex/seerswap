@@ -5,7 +5,7 @@ import { logDOM } from '@testing-library/react'
 
 export const ONE_FARMING_EVENT = () => gql`
 query limitFarm ($time: BigInt) {
-  limitFarmings (orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: $time}) {
+  limitFarmings (orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: {startTime_gt: $time, isDetached: false}) {
     startTime,
     endTime
   }
@@ -61,6 +61,7 @@ query fetchLimit($limitFarmingId: ID) {
         tokenAmountForTier2
         tokenAmountForTier3
         enterStartTime
+        isDetached
     }
 }`
 
@@ -275,7 +276,7 @@ export const TOTAL_STATS = (block?: number) => {
 
 export const LAST_EVENT = () => gql`
 query lastEvent {
-    limitFarmings (first: 1, orderDirection: desc, orderBy: createdAtTimestamp) {
+    limitFarmings (first: 1, orderDirection: desc, orderBy: createdAtTimestamp, where: { isDetached: false }) {
         createdAtTimestamp
         id
         startTime
@@ -286,7 +287,7 @@ query lastEvent {
 
 export const FUTURE_EVENTS = () => gql`
 query futureEvents ($timestamp: BigInt) {
-    limitFarmings(orderBy: startTime, orderDirection: asc, where: { startTime_gt: $timestamp}) {
+    limitFarmings(orderBy: startTime, orderDirection: asc, where: { startTime_gt: $timestamp, isDetached: false}) {
         id
         createdAtTimestamp
         rewardToken
@@ -304,12 +305,13 @@ query futureEvents ($timestamp: BigInt) {
         tokenAmountForTier3
         multiplierToken
         enterStartTime
+        isDetached
     }
 }`
 
 export const CURRENT_EVENTS = () => gql`
 query currentEvents ($startTime: BigInt, $endTime: BigInt) {
-    limitFarmings(orderBy: endTime, orderDirection: desc, where: { startTime_lte: $startTime, endTime_gt: $endTime}) {
+    limitFarmings(orderBy: endTime, orderDirection: desc, where: { startTime_lte: $startTime, endTime_gt: $endTime, isDetached: false}) {
         id
         rewardToken
         bonusReward
@@ -326,6 +328,7 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         tokenAmountForTier3
         enterStartTime
         multiplierToken
+        isDetached
     }
 }`
 
@@ -356,6 +359,7 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           tier2Multiplier
           tier3Multiplier
           enterStartTime
+          isDetached
         }
       }
       `

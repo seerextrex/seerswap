@@ -54,9 +54,7 @@ export function FarmingEventsPage({ data, now, refreshing, fetchHandler }: Farmi
 
                         if (isEnded) return;
 
-                        console.log(isStarted, isEnded);
-
-                        const active = isStarted && !isEnded && new Date(1654700400 * 1000).getTime() >= Date.now();
+                        const active = isStarted && !isEnded && new Date(+event.enterStartTime * 1000).getTime() < Date.now();
 
                         return (
                             <FarmingEventCard

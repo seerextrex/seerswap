@@ -22,9 +22,9 @@ interface PositionCardBodyHeaderProps {
 
 export default function PositionCardBodyHeader({ el, farmingType, date, enteredInEternalFarming, eternalFarming }: PositionCardBodyHeaderProps) {
     const tierLevel = useMemo(() => {
-        if (!el?.tokensLockedEternal || !el?.tierLimit || !el?.tierEternal || !el?.tokensLockedLimit) return;
+        if (!el || !el.tokensLockedEternal || !el.tierLimit || !el.tierEternal || !el.tokensLockedLimit) return;
 
-        switch (farmingType === FarmingType.LIMIT ? +el?.tierLimit : +el?.tierEternal) {
+        switch (farmingType === FarmingType.LIMIT ? +el.tierLimit : +el.tierEternal) {
             case 0:
                 return;
             case 1:
@@ -39,9 +39,9 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     }, [el]);
 
     const tierName = useMemo(() => {
-        if (!el?.tokensLockedEternal || !el?.tierLimit || !el?.tierEternal || !el?.tokensLockedLimit) return;
+        if (!el || !el.tokensLockedEternal || !el.tierLimit || !el.tierEternal || !el.tokensLockedLimit) return;
 
-        switch (farmingType === FarmingType.LIMIT ? +el?.tierLimit : +el?.tierEternal) {
+        switch (farmingType === FarmingType.LIMIT ? +el.tierLimit : +el.tierEternal) {
             case 0:
                 return;
             case 1:
@@ -56,9 +56,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
     }, [el]);
 
     const tierMultiplier = useMemo(() => {
-        if (!el || farmingType !== FarmingType.LIMIT || !el.tierLimit || !el.multiplierToken) return;
-
-        if (!el || !el.tierLimit || !el.tierEternal || !el.multiplierToken) return;
+        if (!el || !el.tierLimit || !el.tierEternal || !el.limitMultiplierToken || !el.eternalMultiplierToken) return;
 
         switch (farmingType === FarmingType.LIMIT ? +el.tierLimit : +el.tierEternal) {
             case 0:
@@ -72,6 +70,12 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
             default:
                 return;
         }
+    }, [el, farmingType]);
+
+    const tierMultiplierToken = useMemo(() => {
+        if (!el || !el.limitMultiplierToken || !el.eternalMultiplierToken) return;
+
+        return farmingType === FarmingType.LIMIT ? el.limitMultiplierToken : el.eternalMultiplierToken;
     }, [el, farmingType]);
 
     const isTier = useMemo(() => Boolean(tierLevel && tierName && tierMultiplier), [tierLevel, tierName, tierMultiplier]);
@@ -102,16 +106,16 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                         </div>
                     </div>
                 )}
-                {el?.multiplierToken && +(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal) > 0 && (
+                {tierMultiplierToken && +(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal) > 0 && (
                     <div className={"f f-ac f-jc ml-2 ms_ml-0 ms_f-js ms_mv-1 mxs_mv-1 w-100"}>
-                        <CurrencyLogo currency={new Token(97, el?.multiplierToken.id, 18, el?.multiplierToken.symbol) as WrappedCurrency} size={"30px"} />
+                        <CurrencyLogo currency={new Token(97, tierMultiplierToken.id, 18, tierMultiplierToken.symbol) as WrappedCurrency} size={"30px"} />
                         <div className={"ml-05"}>
                             <div className={"b fs-075"} style={{ marginBottom: "2px" }}>
                                 LOCKED
                             </div>
                             <div className={"fs-1"}>{`${formatAmountTokens(
-                                +formatUnits(BigNumber.from(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal), el?.multiplierToken.decimals)
-                            )} ${el?.multiplierToken.symbol}`}</div>
+                                +formatUnits(BigNumber.from(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal), tierMultiplierToken.decimals)
+                            )} ${tierMultiplierToken.symbol}`}</div>
                         </div>
                     </div>
                 )}
@@ -120,14 +124,14 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                         <div className={"b fs-075"} style={{ marginBottom: "2px" }}>
                             TIER BONUS
                         </div>
-                        <div style={{ color: "#33FF89" }}>{`+${tierMultiplier / 100}%`}</div>
+                        <div style={{ color: "#33FF89" }}>{`+${(tierMultiplier - 10_000) / 100}%`}</div>
                     </div>
                 )}
             </div>
             {Boolean(+tierMultiplier) && (
                 <span className={"fs-1 l w-100 ms_ta-l n mb-1 show-m"}>
                     <div>Tier bonus: </div>
-                    <div style={{ color: "#33FF89" }}>{`+${tierMultiplier / 100}%`}</div>
+                    <div style={{ color: "#33FF89" }}>{`+${(tierMultiplier - 10_000) / 100}%`}</div>
                 </span>
             )}
         </>

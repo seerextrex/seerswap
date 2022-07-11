@@ -263,7 +263,7 @@ export function FarmingEventCard({
                             {/*@ts-ignore*/}
                             <div
                                 className="farming-event-card__timeline-line__inner"
-                                style={{ width: active ? "100%" : new Date(enterStartTime! * 1000).getTime() >= Date.now() ? "0%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}
+                                style={{ width: active ? "100%" : new Date(+enterStartTime! * 1000).getTime() >= Date.now() ? "0%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}
                             ></div>
                         </div>
                         <div className="f f-ac f-jc farming-event-card__timeline-circle">{active && <div className="farming-event-card__timeline-circle__inner active" />}</div>
@@ -298,7 +298,7 @@ export function FarmingEventCard({
                 <button
                     style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
                     //@ts-ignore
-                    disabled={locked || new Date(+enterStartTime * 1000).getTime() >= Date.now()}
+                    disabled={locked || new Date(+enterStartTime * 1000).getTime() > Date.now()}
                     className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
                     onClick={farmHandler}
                 >

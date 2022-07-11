@@ -78,8 +78,6 @@ export default function FarmingPage() {
         fetchHasTransferredPositions: { fetchHasTransferredPositionsFn, hasTransferredPositions, hasTransferredPositionsLoading },
     } = useFarmingSubgraph() || {};
 
-    // console.log(transferredPositions)
-
     const [now, setNow] = useState(Date.now());
 
     const formattedData = useMemo(() => {

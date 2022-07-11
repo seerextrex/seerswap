@@ -21,6 +21,8 @@ interface PositionCardBodyHeaderProps {
 }
 
 export default function PositionCardBodyHeader({ el, farmingType, date, enteredInEternalFarming, eternalFarming }: PositionCardBodyHeaderProps) {
+    const prefix = useMemo(() => (farmingType === FarmingType.LIMIT ? "limit" : "eternal"), [el, farmingType]);
+
     const tierLevel = useMemo(() => {
         if (!el || !el.tokensLockedEternal || !el.tierLimit || !el.tierEternal || !el.tokensLockedLimit) return;
 
@@ -62,11 +64,11 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
             case 0:
                 return;
             case 1:
-                return el.tier1Multiplier;
+                return el[`${prefix}Tier1Multiplier`];
             case 2:
-                return el.tier2Multiplier;
+                return el[`${prefix}Tier2Multiplier`];
             case 3:
-                return el.tier3Multiplier;
+                return el[`${prefix}Tier3Multiplier`];
             default:
                 return;
         }

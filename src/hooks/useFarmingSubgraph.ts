@@ -461,12 +461,12 @@ export function useFarmingSubgraph() {
                         limitEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         limitBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
                         limitMultiplierToken: _multiplierToken,
-                        tokenAmountForTier1,
-                        tokenAmountForTier2,
-                        tokenAmountForTier3,
-                        tier1Multiplier,
-                        tier2Multiplier,
-                        tier3Multiplier
+                        limitTokenAmountForTier1: tokenAmountForTier1,
+                        limitTokenAmountForTier2: tokenAmountForTier2,
+                        limitTokenAmountForTier3: tokenAmountForTier3,
+                        limitTier1Multiplier: tier1Multiplier,
+                        limitTier2Multiplier: tier2Multiplier,
+                        limitTier3Multiplier: tier3Multiplier
                     }
 
                 } else {
@@ -528,12 +528,12 @@ export function useFarmingSubgraph() {
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
                         eternalMultiplierToken: _multiplierToken,
-                        tier1Multiplier,
-                        tier2Multiplier,
-                        tier3Multiplier,
-                        tokenAmountForTier1,
-                        tokenAmountForTier2,
-                        tokenAmountForTier3,
+                        eternalTier1Multiplier: tier1Multiplier,
+                        eternalTier2Multiplier: tier2Multiplier,
+                        eternalTier3Multiplier: tier3Multiplier,
+                        eternalTokenAmountForTier1: tokenAmountForTier1,
+                        eternalTokenAmountForTier2: tokenAmountForTier2,
+                        eternalTokenAmountForTier3: tokenAmountForTier3,
                         //@ts-ignore
                         pool: _pool,
                         eternalEarned: formatUnits(BigNumber.from(reward), _rewardToken.decimals),

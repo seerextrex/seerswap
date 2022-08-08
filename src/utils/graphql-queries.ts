@@ -62,6 +62,7 @@ query fetchLimit($limitFarmingId: ID) {
         tokenAmountForTier3
         enterStartTime
         isDetached
+        minRangeLength
     }
 }`
 
@@ -86,6 +87,7 @@ export const FETCH_ETERNAL_FARM = () => gql`
       tokenAmountForTier2
       tokenAmountForTier3
       multiplierToken
+      minRangeLength
     }
   }
 `
@@ -111,6 +113,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
           rewardRate
           bonusRewardRate
           isDetached
+          minRangeLength
         }
       }
       `
@@ -138,6 +141,7 @@ export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
         endTime
         reward
         multiplierToken
+        minRangeLength
       }
     }
     `
@@ -306,6 +310,7 @@ query futureEvents ($timestamp: BigInt) {
         multiplierToken
         enterStartTime
         isDetached
+        minRangeLength
     }
 }`
 
@@ -329,6 +334,7 @@ query currentEvents ($startTime: BigInt, $endTime: BigInt) {
         enterStartTime
         multiplierToken
         isDetached
+        minRangeLength
     }
 }`
 
@@ -360,6 +366,7 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
           tier3Multiplier
           enterStartTime
           isDetached
+          minRangeLength
         }
       }
       `
@@ -386,6 +393,7 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
             limitFarming
             eternalFarming
             onFarmingCenter
+            rangeLength
             ${tierFarming ? `
               enteredInEternalFarming
               tokensLockedEternal
@@ -420,8 +428,8 @@ export const POSITIONS_ON_ETERNAL_FARMING = () => gql`
 `
 
 export const TRANSFERED_POSITIONS_FOR_POOL = () => gql`
-query transferedPositionsForPool ($account: Bytes, $pool: Bytes) {
-    deposits (orderBy: id, orderDirection: desc, where: {owner: $account, pool: $pool, liquidity_not: "0"}) {
+query transferedPositionsForPool ($account: Bytes, $pool: Bytes, $minRangeLength: BigInt) {
+    deposits (orderBy: id, orderDirection: desc, where: {owner: $account, pool: $pool, liquidity_not: "0", rangeLength_gte: $minRangeLength}) {
         id
         owner
         pool
@@ -526,6 +534,7 @@ export const INFINITE_EVENTS = gql`
             tier2Multiplier
             tier3Multiplier
             multiplierToken
+            minRangeLength
         }
     }
 `

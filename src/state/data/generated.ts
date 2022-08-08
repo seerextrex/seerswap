@@ -746,6 +746,7 @@ export type Deposit = {
   onFarmingCenter: Scalars['Boolean'];
   owner: Scalars['Bytes'];
   pool: Scalars['Bytes'];
+  rangeLength: Scalars['BigInt'];
   tierEternal: Scalars['BigInt'];
   tierLimit: Scalars['BigInt'];
   tokensLockedEternal: Scalars['BigInt'];
@@ -815,6 +816,14 @@ export type Deposit_Filter = {
   pool_not?: Maybe<Scalars['Bytes']>;
   pool_not_contains?: Maybe<Scalars['Bytes']>;
   pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  rangeLength?: Maybe<Scalars['BigInt']>;
+  rangeLength_gt?: Maybe<Scalars['BigInt']>;
+  rangeLength_gte?: Maybe<Scalars['BigInt']>;
+  rangeLength_in?: Maybe<Array<Scalars['BigInt']>>;
+  rangeLength_lt?: Maybe<Scalars['BigInt']>;
+  rangeLength_lte?: Maybe<Scalars['BigInt']>;
+  rangeLength_not?: Maybe<Scalars['BigInt']>;
+  rangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
   tierEternal?: Maybe<Scalars['BigInt']>;
   tierEternal_gt?: Maybe<Scalars['BigInt']>;
   tierEternal_gte?: Maybe<Scalars['BigInt']>;
@@ -859,6 +868,7 @@ export enum Deposit_OrderBy {
   OnFarmingCenter = 'onFarmingCenter',
   Owner = 'owner',
   Pool = 'pool',
+  RangeLength = 'rangeLength',
   TierEternal = 'tierEternal',
   TierLimit = 'tierLimit',
   TokensLockedEternal = 'tokensLockedEternal',
@@ -4934,6 +4944,7 @@ export type Swap = {
   amount1: Scalars['BigDecimal'];
   amountUSD: Scalars['BigDecimal'];
   id: Scalars['ID'];
+  liquidity: Scalars['BigInt'];
   logIndex?: Maybe<Scalars['BigInt']>;
   origin: Scalars['Bytes'];
   pool: Pool;
@@ -4982,6 +4993,14 @@ export type Swap_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  liquidity?: Maybe<Scalars['BigInt']>;
+  liquidity_gt?: Maybe<Scalars['BigInt']>;
+  liquidity_gte?: Maybe<Scalars['BigInt']>;
+  liquidity_in?: Maybe<Array<Scalars['BigInt']>>;
+  liquidity_lt?: Maybe<Scalars['BigInt']>;
+  liquidity_lte?: Maybe<Scalars['BigInt']>;
+  liquidity_not?: Maybe<Scalars['BigInt']>;
+  liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
   logIndex?: Maybe<Scalars['BigInt']>;
   logIndex_gt?: Maybe<Scalars['BigInt']>;
   logIndex_gte?: Maybe<Scalars['BigInt']>;
@@ -5123,6 +5142,7 @@ export enum Swap_OrderBy {
   Amount1 = 'amount1',
   AmountUsd = 'amountUSD',
   Id = 'id',
+  Liquidity = 'liquidity',
   LogIndex = 'logIndex',
   Origin = 'origin',
   Pool = 'pool',

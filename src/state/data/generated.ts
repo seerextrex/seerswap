@@ -883,6 +883,7 @@ export type EternalFarming = {
   endTime: Scalars['BigInt'];
   id: Scalars['ID'];
   isDetached?: Maybe<Scalars['Boolean']>;
+  minRangeLength: Scalars['BigInt'];
   multiplierToken: Scalars['Bytes'];
   pool: Scalars['Bytes'];
   reward: Scalars['BigInt'];
@@ -943,6 +944,14 @@ export type EternalFarming_Filter = {
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  minRangeLength?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_in?: Maybe<Array<Scalars['BigInt']>>;
+  minRangeLength_lt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_lte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
   multiplierToken?: Maybe<Scalars['Bytes']>;
   multiplierToken_contains?: Maybe<Scalars['Bytes']>;
   multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1048,6 +1057,7 @@ export enum EternalFarming_OrderBy {
   EndTime = 'endTime',
   Id = 'id',
   IsDetached = 'isDetached',
+  MinRangeLength = 'minRangeLength',
   MultiplierToken = 'multiplierToken',
   Pool = 'pool',
   Reward = 'reward',
@@ -1634,6 +1644,7 @@ export type LimitFarming = {
   enterStartTime: Scalars['BigInt'];
   id: Scalars['ID'];
   isDetached?: Maybe<Scalars['Boolean']>;
+  minRangeLength: Scalars['BigInt'];
   multiplierToken: Scalars['Bytes'];
   pool: Scalars['Bytes'];
   reward: Scalars['BigInt'];
@@ -1700,6 +1711,14 @@ export type LimitFarming_Filter = {
   isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
   isDetached_not?: Maybe<Scalars['Boolean']>;
   isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  minRangeLength?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_in?: Maybe<Array<Scalars['BigInt']>>;
+  minRangeLength_lt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_lte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
   multiplierToken?: Maybe<Scalars['Bytes']>;
   multiplierToken_contains?: Maybe<Scalars['Bytes']>;
   multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1792,6 +1811,7 @@ export enum LimitFarming_OrderBy {
   EnterStartTime = 'enterStartTime',
   Id = 'id',
   IsDetached = 'isDetached',
+  MinRangeLength = 'minRangeLength',
   MultiplierToken = 'multiplierToken',
   Pool = 'pool',
   Reward = 'reward',
@@ -6518,7 +6538,7 @@ export type FetchLimitQuery = (
   { __typename?: 'Query' }
   & { limitFarmings: Array<(
     { __typename?: 'LimitFarming' }
-    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'isDetached'>
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'isDetached' | 'minRangeLength'>
   )> }
 );
 
@@ -6531,7 +6551,7 @@ export type FetchEternalFarmQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'minRangeLength'>
   )> }
 );
 
@@ -6659,7 +6679,7 @@ export type FutureEventsQuery = (
   { __typename?: 'Query' }
   & { limitFarmings: Array<(
     { __typename?: 'LimitFarming' }
-    & Pick<LimitFarming, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime' | 'isDetached'>
+    & Pick<LimitFarming, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime' | 'isDetached' | 'minRangeLength'>
   )> }
 );
 
@@ -6673,7 +6693,7 @@ export type CurrentEventsQuery = (
   { __typename?: 'Query' }
   & { limitFarmings: Array<(
     { __typename?: 'LimitFarming' }
-    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken' | 'isDetached'>
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken' | 'isDetached' | 'minRangeLength'>
   )> }
 );
 
@@ -6700,7 +6720,7 @@ export type TransferedPositionsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'limitFarming' | 'eternalFarming' | 'onFarmingCenter'>
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'limitFarming' | 'eternalFarming' | 'onFarmingCenter' | 'rangeLength'>
   )> }
 );
 
@@ -6733,6 +6753,7 @@ export type PositionsOnEternalFarmingQuery = (
 export type TransferedPositionsForPoolQueryVariables = Exact<{
   account?: Maybe<Scalars['Bytes']>;
   pool?: Maybe<Scalars['Bytes']>;
+  minRangeLength?: Maybe<Scalars['BigInt']>;
 }>;
 
 
@@ -6765,7 +6786,7 @@ export type InfiniteFarmsQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'multiplierToken'>
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'multiplierToken' | 'minRangeLength'>
   )> }
 );
 
@@ -6972,6 +6993,7 @@ export const FetchLimitDocument = `
     tokenAmountForTier3
     enterStartTime
     isDetached
+    minRangeLength
   }
 }
     `;
@@ -6996,6 +7018,7 @@ export const FetchEternalFarmDocument = `
     tokenAmountForTier2
     tokenAmountForTier3
     multiplierToken
+    minRangeLength
   }
 }
     `;
@@ -7173,6 +7196,7 @@ export const FutureEventsDocument = `
     multiplierToken
     enterStartTime
     isDetached
+    minRangeLength
   }
 }
     `;
@@ -7200,6 +7224,7 @@ export const CurrentEventsDocument = `
     enterStartTime
     multiplierToken
     isDetached
+    minRangeLength
   }
 }
     `;
@@ -7230,6 +7255,7 @@ export const TransferedPositionsDocument = `
     limitFarming
     eternalFarming
     onFarmingCenter
+    rangeLength
   }
 }
     `;
@@ -7258,11 +7284,11 @@ export const PositionsOnEternalFarmingDocument = `
 }
     `;
 export const TransferedPositionsForPoolDocument = `
-    query transferedPositionsForPool($account: Bytes, $pool: Bytes) {
+    query transferedPositionsForPool($account: Bytes, $pool: Bytes, $minRangeLength: BigInt) {
   deposits(
     orderBy: id
     orderDirection: desc
-    where: {owner: $account, pool: $pool, liquidity_not: "0"}
+    where: {owner: $account, pool: $pool, liquidity_not: "0", rangeLength_gte: $minRangeLength}
   ) {
     id
     owner
@@ -7310,6 +7336,7 @@ export const InfiniteFarmsDocument = `
     tier2Multiplier
     tier3Multiplier
     multiplierToken
+    minRangeLength
   }
 }
     `;

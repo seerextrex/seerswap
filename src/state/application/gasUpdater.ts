@@ -12,7 +12,7 @@ export default function GasUpdater(): null {
     const { chainId } = useActiveWeb3React()
 
     const block = useAppSelector((state) => {
-        return state.application.blockNumber[chainId ?? SupportedChainId.POLYGON]
+        return state.application.blockNumber[chainId ?? SupportedChainId.DOGECHAIN]
     })
 
     const { fetchGasPrice, gasPrice, gasPriceLoading } = useGasPrice()

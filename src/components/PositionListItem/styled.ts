@@ -4,7 +4,7 @@ import { darken } from 'polished'
 import RangeBadge from '../Badge/RangeBadge'
 import { RowBetween } from 'components/Row'
 
-export const LinkRow = styled(Link)<{ onFarming?: boolean }>`
+export const LinkRow = styled(Link)`
   align-items: center;
   border-radius: 20px;
   display: flex;
@@ -31,37 +31,11 @@ export const LinkRow = styled(Link)<{ onFarming?: boolean }>`
     row-gap: 12px;
     padding: 14px 0;
   `};
-
-  ${({ onFarming }) =>
-    onFarming &&
-    css`
-      border: 1px solid #30b2e6;
-      background-color: rgba(60, 97, 126, 0.5);
-    `}
 `
 export const PositionHeader = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
-`
-export const OnFarmingBadge = styled(Link)`
-  display: flex;
-  align-items: center;
-  padding: 4px 6px;
-  background-color: #30b2e6;
-  color: white;
-  font-size: 14px;
-  border-radius: 6px;
-  text-decoration: none;
-  margin-right: auto;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  margin-right: 1rem;
-  `}
-
-  &:hover {
-    background-color: ${({}) => darken(0.05, '#30b2e6')};
-  }
 `
 const DataLineItem = styled.div`
   font-size: 14px;
@@ -79,7 +53,7 @@ export const RangeLineItem = styled(DataLineItem)`
   width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  background-color: ${({}) => 'transparent'};
+  background-color: ${({ }) => 'transparent'};
     border-radius: 12px;
     padding: 8px 0;
 `};

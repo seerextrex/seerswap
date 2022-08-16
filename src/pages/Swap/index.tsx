@@ -323,13 +323,7 @@ export default function Swap({ history }: RouteComponentProps) {
         <>
             <Helmet>
                 {/* //TODO */}
-                <meta
-                    name={"description"}
-                    content={t`Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees.`}
-                />
-                <meta name={"keywords"} content={t`best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange`} />
-
-                <title>{t`Algebra — Swap`}</title>
+                <title>{t`Quickswap — Swap`}</title>
             </Helmet>
             <TokenWarningModal
                 isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
@@ -338,20 +332,6 @@ export default function Swap({ history }: RouteComponentProps) {
                 onDismiss={handleDismissTokenWarning}
             />
             <div className={"maw-610 mh-a pos-r swap"}>
-                {/* <ContestBanner to={"/farming/limit-farms"}>
-                    <div style={{ width: "100%" }}>
-                        <ContestIMG></ContestIMG>
-                        <ContestBannerTitle>
-                            <ContestBannerTitleIphone>300% APR</ContestBannerTitleIphone>
-                            <span>
-                                <Trans>&nbsp; only for 1 week</Trans>
-                            </span>
-                            <ContestButton to={"/farming/limit-farms"}>
-                                <Trans>Farm Now</Trans>
-                            </ContestButton>
-                        </ContestBannerTitle>
-                    </div>
-                </ContestBanner> */}
                 <Card classes={"p-2 br-24"}>
                     <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
                     <div id="swap-page">
@@ -533,7 +513,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         {approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED ? (
                                                             <Trans>You can now trade {currencies[Field.INPUT]?.symbol}</Trans>
                                                         ) : (
-                                                            <Trans>Allow Algebra to use your {currencies[Field.INPUT]?.symbol}</Trans>
+                                                            <Trans>Allow Quickswap to use your {currencies[Field.INPUT]?.symbol}</Trans>
                                                         )}
                                                     </span>
                                                     {approvalState === ApprovalState.PENDING ? (
@@ -544,7 +524,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         <MouseoverTooltip
                                                             text={
                                                                 <Trans>
-                                                                    You must give the Algebra smart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once
+                                                                    You must give the Quickswap smart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once
                                                                     per token.
                                                                 </Trans>
                                                             }

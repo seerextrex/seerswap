@@ -133,30 +133,3 @@ export interface SmallPoolSubgraph {
     token0: TokenSubgraph
     token1: TokenSubgraph
 }
-
-export interface EternalFarmingByPool {
-    bonusReward: string
-    bonusRewardRate: string
-    bonusRewardToken: string
-    endTime: string
-    id: string
-    isDetached: boolean
-    pool: string
-    reward: string
-    rewardRate: string
-    rewardToken: string
-    startTime: string
-}
-
-
-export interface LimitFarmingByPool {
-    id: string
-    createdAtTimestamp: string
-    rewardToken: string
-    bonusReward: string
-    bonusRewardToken: string
-    pool: string
-    startTime: string
-    endTime: string
-    reward: string
-}

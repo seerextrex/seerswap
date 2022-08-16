@@ -31,12 +31,6 @@ const PERMITTABLE_TOKENS: {
         [checksummedTokenAddress: string]: PermitInfo
     }
 } = {
-    // [137]: {
-    //   [USDC_BINANCE.address]: { type: PermitType.AMOUNT, name: 'USD Coin', version: '2' },
-    // },
-    // [137]: {
-    //   [USDC_POLYGON.address]: { type: PermitType.AMOUNT, name: 'USD Coin', version: '2' },
-    // },
 }
 
 export enum UseERC20PermitState {

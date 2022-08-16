@@ -36,21 +36,6 @@
   cursor: default;
 }
 
-.farming-link {
-  text-decoration: none;
-  &[data-apr=true] {
-    background-color: var(--primary);
-    padding: 4px;
-    border-radius: 3px;
-    color: var(--white);
-    text-decoration: underline;
-    &:hover {
-      background-color: var(--primary-hover);
-      border-color: var(--primary-hover);
-    }
-  }
-}
-
 .chart-link {
   padding: .1rem;
   border-radius: 5px;

@@ -15,8 +15,8 @@ export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ curren
     // prevent weth + eth
     let symbol;
 
-    if (chainId === 137) {
-        symbol = "MATIC";
+    if (chainId === 2000) {
+        symbol = "WDOGE";
     }
 
     const isETHOrWETHA = currencyIdA === symbol || (chainId !== undefined && currencyIdA === WMATIC_EXTENDED[chainId]?.address);

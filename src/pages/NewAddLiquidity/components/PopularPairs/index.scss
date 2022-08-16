@@ -19,13 +19,6 @@
         background-color: #2a4559;
     }
 
-    &.farming {
-        background: linear-gradient(90deg, rgb(88, 105, 241) 0%, rgb(188, 49, 255) 100%);
-
-        &:hover {
-            background: linear-gradient(90deg, rgba(138,151,252,1) 0%, rgba(212,123,255,1) 100%);
-        }
-    }
 }
 
 .pair-list {

@@ -12,12 +12,12 @@ import { getAddress } from 'ethers/lib/utils'
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
 const NETWORK_URLS: { [key in SupportedChainId]: string } = {
-    [SupportedChainId.POLYGON]: `https://polygon-rpc.com`
+    [SupportedChainId.DOGECHAIN]: `https://rpc02-sg.dogechain.dog`
 }
 
 export const network = new NetworkConnector({
     urls: NETWORK_URLS,
-    defaultChainId: 137
+    defaultChainId: 2000
 })
 
 let networkLibrary: Web3Provider | undefined
@@ -33,10 +33,10 @@ export const injected = new InjectedConnector({
 export const gnosisSafe = new SafeAppConnector()
 
 export const walletconnector = new WalletConnectConnector({
-    rpc: { 137: 'https://rpc-mainnet.matic.network' },
+    rpc: { 2000: 'https://rpc02-sg.dogechain.dog' },
     supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
     qrcode: true,
-    chainId: 137
+    chainId: 2000
 })
 
 interface OntoWalletConfig {
@@ -163,5 +163,5 @@ export class OntoWalletConnector extends AbstractConnector {
 }
 
 export const ontoconnector = new OntoWalletConnector({
-    supportedChainIds: [137]
+    supportedChainIds: [2000]
 })

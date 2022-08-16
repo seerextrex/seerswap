@@ -11,9 +11,9 @@ export function useGasPrice() {
         setGasPriceLoading(true)
 
         try {
-            const gasPriceReq = await fetch('https://gasstation-mainnet.matic.network/')
-            const { standard } = await gasPriceReq.json()
-            setGasPrice({ fetched: standard, override: standard < 36 })
+            // const gasPriceReq = await fetch('https://gasstation-mainnet.matic.network/')
+            // const { standard } = await gasPriceReq.json()
+            setGasPrice({ fetched: 50, override: false })
         } catch (err: any) {
             console.error('Gas price fetching failed', err.code, err.message)
         }

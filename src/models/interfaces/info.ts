@@ -1,13 +1,10 @@
 import { FeeSubgraph, LastPoolSubgraph, TokenSubgraph } from './responseSubgraph'
 import JSBI from 'jsbi'
 import { Token } from '@uniswap/sdk-core'
-import { FarmingType } from 'models/enums'
 
 export interface FormattedPool {
     address: string
     apr: number
-    farmingApr: number
-    aprType: FarmingType
     exists: boolean
     fee: string
     token0: TokenSubgraph
@@ -122,10 +119,6 @@ export interface FormattedProcessedData extends ProcessedData {
 export interface FeeChart {
     data: FormattedFeeChart[] | undefined[]
     previousData: FormattedFeeChart[] | undefined[]
-}
-
-export interface FarmingPositions {
-    id: string
 }
 
 interface TickPriceRange {

@@ -1,8 +1,8 @@
 {
   "background_color": "#fff",
   "display": "standalone",
-  "homepage_url": "https://algebra.exchange",
-  "providedBy": { "name": "Algebra", "url": "https://algebra.exchange" },
+  "homepage_url": "https://quickswap.exchange",
+  "providedBy": { "name": "Quickswap", "url": "https://quickswap.exchange" },
   "icons": [
     {
       "src": "./images/192x192_App_Icon.png",
@@ -18,10 +18,10 @@
     }
   ],
   "orientation": "portrait",
-  "name": "Algebra",
-  "description": "Swap, provide liquidity and stake on Algebra",
+  "name": "Quickswap",
+  "description": "Swap and provide liquidity on Quickswap",
   "iconPath": "./images/256x256_App_Icon.svg",
-  "short_name": "Algebra",
+  "short_name": "Quickswap",
   "start_url": ".",
   "theme_color": "#ff007a"
 }

@@ -11,7 +11,6 @@ import {
     toggleOntoWrongChainModal,
     updateArbitrumAlphaAcknowledged,
     updateHideClosedPositions,
-    updateHideFarmingPositions,
     updateMatchesDarkMode,
     updateUserDarkMode,
     updateUserDeadline,
@@ -41,8 +40,6 @@ export interface UserState {
 
     // hides closed (inactive) positions across the app
     userHideClosedPositions: boolean
-
-    userHideFarmingPositions: boolean
 
     // user defined slippage tolerance in bips, used in all txns
     userSlippageTolerance: number | 'auto'
@@ -81,7 +78,6 @@ export const initialState: UserState = {
     userLocale: null,
     userSingleHopOnly: false,
     userHideClosedPositions: false,
-    userHideFarmingPositions: false,
     userSlippageTolerance: 'auto',
     userSlippageToleranceHasBeenMigratedToAuto: true,
     userDeadline: DEFAULT_DEADLINE_FROM_NOW,
@@ -161,9 +157,6 @@ export default createReducer(initialState, (builder) =>
         })
         .addCase(updateHideClosedPositions, (state, action) => {
             state.userHideClosedPositions = action.payload.userHideClosedPositions
-        })
-        .addCase(updateHideFarmingPositions, (state, action) => {
-            state.userHideFarmingPositions = action.payload.userHideFarmingPositions
         })
         .addCase(addSerializedToken, (state, { payload: { serializedToken } }) => {
             if (!state.tokens) {

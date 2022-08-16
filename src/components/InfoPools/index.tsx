@@ -36,18 +36,7 @@ const sortFields = [
         title: t`TVL`,
         value: "tvlUSD",
     },
-    {
-        title: t`🔥 Farming`,
-        value: "farmingApr",
-    },
 ];
-
-const bestFarmingAPRs = {
-    "0x49c1c3ac4f301ad71f788398c0de919c35eaf565": 3404,
-    "0xc3c4074fbc2d504fb8ccd28e3ae46914a1ecc5ed": 1504,
-    "0x888d0d1b47dcc0d6cbca9fd1f0e92f31798eb92a": 1802,
-    "0xbdcf2c1e0ffdbcc05d775e2fb7fe3ca46fb83dc4": 840,
-};
 
 export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
     const [sortField, setSortField] = useState("tvlUSD");
@@ -68,7 +57,6 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             data.map((el: any, i: any) => {
                 const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address });
                 const apr = el.apr > 0 ? <span style={{ color: "var(--green)" }}>{formatPercent(el.apr)}</span> : <span>-</span>;
-                const farming = bestFarmingAPRs[el.address] > 0 ? <span style={{ color: "var(--green)" }}>{bestFarmingAPRs[el.address]}%</span> : <span>-</span>;
 
                 return [
                     {
@@ -86,10 +74,6 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                     {
                         title: formatDollarAmount(el.totalValueLockedUSD),
                         value: el.totalValueLockedUSD,
-                    },
-                    {
-                        title: farming,
-                        value: bestFarmingAPRs[el.address.toLowerCase()],
                     },
                 ];
             })
@@ -119,9 +103,6 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>
-                        </span>
-                        <span className={"table-header__item table-header__item--center"}>
-                            <Trans>🔥 Best Farming APR</Trans>
                         </span>
                     </TableHeader>
                 </Table>

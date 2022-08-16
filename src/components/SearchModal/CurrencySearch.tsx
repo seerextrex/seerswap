@@ -90,25 +90,9 @@ export function CurrencySearch({
 
     const ether = useMemo(() => chainId && ExtendedEther.onChain(chainId), [chainId]);
 
-    //TODO
-
-    // let chainSymbol
-    //
-    // if (chainId === 137) {
-    //     chainSymbol = 'MATIC'
-    // }
-    //
-    // if (ether) {
-    //
-    //     // @ts-ignore
-    //     ether.name = chainSymbol
-    //     // @ts-ignore
-    //     ether.symbol = chainSymbol
-    // }
-
     const filteredSortedTokensWithETH: Currency[] = useMemo(() => {
         const s = debouncedQuery.toLowerCase().trim();
-        if (s === "m" || s === "ma" || s === "mat" || s === "mati" || s === "matic") {
+        if (s === "w" || s === "wd" || s === "wdo" || s === "wdog" || s === "wdoge") {
             return ether ? [ether, ...filteredSortedTokens] : filteredSortedTokens;
         }
         return filteredSortedTokens;
@@ -140,7 +124,7 @@ export function CurrencySearch({
         (e: KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
                 const s = debouncedQuery.toLowerCase().trim();
-                if (s === "matic" && ether) {
+                if (s === "wdoge" && ether) {
                     handleCurrencySelect(ether);
                 } else if (filteredSortedTokensWithETH.length > 0) {
                     if (filteredSortedTokensWithETH[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() || filteredSortedTokensWithETH.length === 1) {

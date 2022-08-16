@@ -1,7 +1,7 @@
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from './chains'
-import { ALGEBRA_POLYGON, ExtendedEther, HSM_POLYGON, IRIS_POLYGON, MAI_POLYGON, KOM_POLYGON, ONE_POLYGON, QI_POLYGON, RUBIC_POLYGON, USDC_POLYGON, USDT_POLYGON, WETH_POLYGON, WMATIC_EXTENDED } from './tokens'
+import { ExtendedEther, OMNOM_DOGECHAIN, WMATIC_EXTENDED } from './tokens'
 
 type ChainTokenList = {
     readonly [chainId: number]: Token[]
@@ -18,7 +18,7 @@ const WETH_ONLY: ChainTokenList = Object.fromEntries(
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
     ...WETH_ONLY,
-    [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON, WETH_POLYGON, IRIS_POLYGON]
+    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN]]
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 /**
@@ -31,30 +31,19 @@ export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[
  * Shows up in the currency select for swap and add liquidity
  */
 export const COMMON_BASES: ChainCurrencyList = {
-    [SupportedChainId.POLYGON]: [
-        ExtendedEther.onChain(SupportedChainId.POLYGON),
-        USDC_POLYGON,
-        WMATIC_EXTENDED[SupportedChainId.POLYGON],
-        ALGEBRA_POLYGON,
-        WETH_POLYGON,
-        USDT_POLYGON,
-        RUBIC_POLYGON,
-        ONE_POLYGON,
-        IRIS_POLYGON,
-        HSM_POLYGON,
-        QI_POLYGON,
-        MAI_POLYGON,
-        KOM_POLYGON
+    [SupportedChainId.DOGECHAIN]: [
+        ExtendedEther.onChain(SupportedChainId.DOGECHAIN),
+        OMNOM_DOGECHAIN,
+        WMATIC_EXTENDED[SupportedChainId.DOGECHAIN],
     ]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
     ...WETH_ONLY,
-    [SupportedChainId.POLYGON]: [...WETH_ONLY[SupportedChainId.POLYGON], USDC_POLYGON, USDT_POLYGON, WETH_POLYGON]
+    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], OMNOM_DOGECHAIN]
 }
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
-    [SupportedChainId.POLYGON]: [
-        [USDC_POLYGON, USDT_POLYGON]
+    [SupportedChainId.DOGECHAIN]: [
     ]
 }

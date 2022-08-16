@@ -1,8 +1,6 @@
 import React from "react";
 // @ts-ignore
-import MaticLogo from "../../assets/images/matic-logo.png";
-// @ts-ignore
-import AlgebraLogo from "../../assets/images/algebra-logo.png";
+import DogeLogo from "../../assets/images/doge-logo.png";
 import { useActiveWeb3React } from "../../hooks/web3";
 import { stringToColour } from "../../utils/stringToColour";
 import { specialTokens } from "./SpecialTokens";
@@ -16,18 +14,14 @@ export default function CurrencyLogo({ currency, size = "24px", style, ...rest }
 
     let logo;
 
-    if (chainId === 137) {
-        logo = MaticLogo;
+    if (chainId === 2000) {
+        logo = DogeLogo;
     }
 
     if (!currency) return <div />;
 
     if (currency.address?.toLowerCase() in specialTokens) {
         return <StyledImgLogo src={specialTokens[currency.address.toLowerCase()].logo} size={size} style={style} {...rest} />;
-    }
-
-    if (currency.wrapped?.address.toLowerCase() === "0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6".toLowerCase()) {
-        return <StyledImgLogo src={AlgebraLogo} size={size} style={style} {...rest} />;
     }
 
     if (currency.isNative) {

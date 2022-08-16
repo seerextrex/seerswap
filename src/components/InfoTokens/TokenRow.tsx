@@ -10,10 +10,10 @@ import { ExternalLink } from "react-feather";
 import React from "react";
 
 export const TokenRow = ({ address, symbol, name }: any) => (
-    <a className={"link"} href={`https://polygonscan.com/address/${address}`} rel="noopener noreferrer" target="_blank">
+    <a className={"link"} href={`https://explorer.dogechain.dog/address/${address}`} rel="noopener noreferrer" target="_blank">
         <span className={"currency-wrapper hover-op trans-op"}>
             <span className={"currency-wrapper__row"}>
-                <CurrencyLogo currency={new Token(SupportedChainId.POLYGON, address, 18, symbol) as WrappedCurrency} size={"20px"} />
+                <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, address, 18, symbol) as WrappedCurrency} size={"20px"} />
             </span>
             <MediumOnly>
                 <Label>{symbol}</Label>

@@ -335,20 +335,6 @@ export const StyledNavLink = styled(NavLink).attrs({
         }
     }
 `
-export const FarmingInfoLabel = styled.span<{ isEvents: boolean; isHeader: boolean }>`
-    padding: 5px;
-    background-color: #ffd967;
-    position: absolute;
-    border-radius: 50%;
-    top: ${({ isHeader }) => isHeader ? ' -.5rem' : '.5rem'};
-    right: ${({ isHeader }) => isHeader ? ' -1rem' : '1.5rem'};
-    display: ${({ isEvents }) => (!isEvents ? 'none' : 'block')};
-
-    ${({ theme, isHeader }) => theme.mediaWidth.upToMedium`
-        top: ${isHeader ? '-.5rem' : '.5rem'};
-        right: ${isHeader ? '-.8rem' : '0'};
-  `}
-`
 
 //NetworkCard
 const BaseWrapper = css`

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
-import Logo from "../../assets/svg/logo.svg";
+import Logo from "../../assets/images/quickswap-logo.png";
 // @ts-ignore
 import Logo_logo from "../../assets/svg/alg-logo-svg.svg";
 import { useActiveWeb3React } from "../../hooks/web3";
@@ -22,6 +22,8 @@ export default function Header() {
 
     const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? ""];
 
+    console.log("USER ETH balacne", userEthBalance);
+
     const prevEthBalance = usePrevious(userEthBalance);
 
     const _userEthBalance = useMemo(() => {
@@ -36,8 +38,8 @@ export default function Header() {
 
     let chainValue;
 
-    if (chainId === 137) {
-        chainValue = "MATIC";
+    if (chainId === 2000) {
+        chainValue = "WDOGE";
     }
 
     const handleBlur = useCallback((e: React.ChangeEvent<HTMLLabelElement>) => {
@@ -68,25 +70,13 @@ export default function Header() {
                 >
                     <Trans>Pool</Trans>
                 </NavLink>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
-                    <span>
-                        <Trans>Farming</Trans>
-                    </span>
-                    <span className={"header__farming-circle"} />
-                </NavLink>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`staking-nav-link`} to={"/staking"}>
-                    <Trans>Staking</Trans>
-                </NavLink>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
-                    <Trans>Info</Trans>
-                </NavLink>
             </div>
 
             <div className={"header__account flex-s-between"}>
                 {account && (
                     <>
                         <NetworkCard />
-                        {(chainId === 137 && account && userEthBalance) || networkFailed ? (
+                        {(chainId === 2000 && account && userEthBalance) || networkFailed ? (
                             <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
                                 {_userEthBalance?.toSignificant(2)} {!isMobile && chainValue}
                             </BalanceText>
@@ -94,13 +84,13 @@ export default function Header() {
                     </>
                 )}
                 <Web3Status />
-                <input id="preferences" type="checkbox" className="preferences-menu__checkbox" />
+                {/* <input id="preferences" type="checkbox" className="preferences-menu__checkbox" />
                 <label htmlFor="preferences" role="button" tabIndex={0} className="preferences-menu__toggler f ml-1 br-8" onBlur={handleBlur}>
                     <Sliders style={{ display: "block" }} />
                     <div className="preferences-menu__inner" onClick={(e) => e.preventDefault()}>
                         <HeaderMenu />
                     </div>
-                </label>
+                </label> */}
             </div>
         </div>
     );

@@ -4,7 +4,7 @@ import { SupportedChainId } from '../constants/chains'
 
 const NETWORK_POLLING_INTERVALS: { [chainId: number]: number } = {
     // [SupportedChainId.BINANCE]: ms`1s`,
-    [SupportedChainId.POLYGON]: ms`1s`
+    [SupportedChainId.DOGECHAIN]: ms`1s`
 }
 
 export default function getLibrary(provider: any): Web3Provider {

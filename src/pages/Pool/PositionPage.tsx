@@ -38,7 +38,7 @@ import usePrevious from "../../hooks/usePrevious";
 import ReactGA from "react-ga";
 import { MouseoverTooltip } from "../../components/Tooltip";
 import { useAppSelector } from "../../state/hooks";
-import { FARMING_CENTER, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../../constants/addresses";
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../../constants/addresses";
 import { useInverter } from "../../hooks/useInverter";
 import { getRatio } from "../../utils/getRatio";
 import { LinkedCurrency } from "./LinkedCurrency";
@@ -60,8 +60,6 @@ export default function PositionPage({
     const { chainId, account, library } = useActiveWeb3React();
 
     const query = useQuery();
-
-    const isOnFarming = useMemo(() => query.get("onFarming"), [tokenIdFromUrl, query]);
 
     const parsedTokenId = tokenIdFromUrl ? BigNumber.from(tokenIdFromUrl) : undefined;
     const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId);
@@ -199,7 +197,7 @@ export default function PositionPage({
 
         setCollecting(true);
 
-        const collectAddress = isOnFarming ? FARMING_CENTER[chainId] : NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId];
+        const collectAddress = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId];
 
         const { calldata, value } = NonfungiblePositionManager.collectCallParameters({
             tokenId: tokenId.toString(),
@@ -289,7 +287,7 @@ export default function PositionPage({
     }
 
     const showCollectAsWeth = Boolean(
-        (ownsNFT || isOnFarming) && (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) && currency0 && currency1 && (currency0.isNative || currency1.isNative) && !collectMigrationHash
+        ownsNFT && (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) && currency0 && currency1 && (currency0.isNative || currency1.isNative) && !collectMigrationHash
     );
 
     return (
@@ -326,7 +324,7 @@ export default function PositionPage({
                                     <div className={"f ms_w-100"}>
                                         {currency0 && currency1 && tokenId ? (
                                             <NavLink
-                                                to={`/increase/${currencyId(currency0, chainId || 137)}/${currencyId(currency1, chainId || 137)}/${tokenId}`}
+                                                to={`/increase/${currencyId(currency0, chainId || 2000)}/${currencyId(currency1, chainId || 2000)}/${tokenId}`}
                                                 className={"btn primary pv-025 ph-05 br-8 mr-05"}
                                             >
                                                 <Trans>Increase Liquidity</Trans>

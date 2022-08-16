@@ -2,7 +2,6 @@ import { Result, useSingleCallResult, useSingleContractMultipleData } from 'stat
 import { useEffect, useMemo } from 'react'
 import { useV3NFTPositionManagerContract } from './useContract'
 import { BigNumber } from '@ethersproject/bignumber'
-import { useFarmingSubgraph } from './useFarmingSubgraph'
 import { PositionPool } from '../models/interfaces'
 import usePrevious, { usePreviousNonEmptyArray } from './usePrevious'
 import { useActiveWeb3React } from './web3'
@@ -100,17 +99,8 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
 
     const { loading: balanceLoading, result: balanceResult } = useSingleCallResult(positionManager, 'balanceOf', [account ?? undefined])
 
-    const { fetchPositionsOnFarmer: { positionsOnFarmer, positionsOnFarmerLoading, fetchPositionsOnFarmerFn } } = useFarmingSubgraph()
-
     // we don't expect any account balance to ever exceed the bounds of max safe int
     const accountBalance: number | undefined = balanceResult?.[0]?.toNumber()
-
-    useEffect(() => {
-        if (account) {
-            fetchPositionsOnFarmerFn(account)
-        }
-    }, [account])
-
 
     const tokenIdsArgs = useMemo(() => {
         if (accountBalance && account) {
@@ -136,64 +126,20 @@ export function useV3Positions(account: string | null | undefined): UseV3Positio
         return []
     }, [account, tokenIdResults])
 
-    // const prevTokenIds = usePreviousNonEmptyArray(tokenIds)
-
-    // const _tokenIds = useMemo(() => {
-
-    //     if (!prevTokenIds) return tokenIds
-
-    //     if (tokenIds.length === 0 && prevTokenIds.length !== 0) return prevTokenIds
-
-    //     return tokenIds
-
-    // }, [tokenIds, account])
-
     const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(tokenIds)
-
-    const transferredTokenIds = useMemo(() => {
-
-        if (positionsOnFarmer && positionsOnFarmer.transferredPositionsIds) {
-            return positionsOnFarmer.transferredPositionsIds
-        }
-
-        return []
-
-    }, [positionsOnFarmer, account])
-
-    //@ts-ignore
-    const { positions: _positionsOnFarmer, loading: _positionsOnFarmerLoading } = useV3PositionsFromTokenIds(transferredTokenIds)
-
-    const oldTransferredTokenIds = useMemo(() => {
-
-        if (positionsOnFarmer && positionsOnFarmer.oldTransferredPositionsIds) {
-            return positionsOnFarmer.oldTransferredPositionsIds
-        }
-
-        return []
-
-    }, [positionsOnFarmer, account])
-
-    //@ts-ignore
-    const { positions: _positionsOnOldFarmer, loading: _positionsOnOldFarmerLoading } = useV3PositionsFromTokenIds(oldTransferredTokenIds)
 
     const combinedPositions = useMemo(() => {
 
-        if (positions && _positionsOnFarmer && _positionsOnOldFarmer) {
-            return [...positions, ..._positionsOnFarmer.map(position => ({
-                ...position,
-                onFarming: true
-            })), ..._positionsOnOldFarmer.map(position => ({
-                ...position,
-                oldFarming: true
-            }))]
+        if (positions) {
+            return positions
         }
 
         return undefined
 
-    }, [positions, _positionsOnFarmer, account])
+    }, [positions, account])
 
     return {
-        loading: someTokenIdsLoading || balanceLoading || positionsLoading || _positionsOnFarmerLoading,
+        loading: someTokenIdsLoading || balanceLoading || positionsLoading,
         positions: combinedPositions
     }
 }

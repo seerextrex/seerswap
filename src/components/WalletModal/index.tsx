@@ -109,7 +109,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 .catch((error) => {
                     console.error(error);
                     if (error instanceof UnsupportedChainIdError) {
-                        setErrorMessage(t`Please connect to the Polygon network.`);
+                        setErrorMessage(t`Please connect to the Dogechain network.`);
                         setPendingError(true);
                         setError(error);
                     } else if (error instanceof UserRejectedRequestError) {
@@ -153,7 +153,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 if (error && error instanceof UnsupportedChainIdError) {
                     return (
                         <div>
-                            <Trans>Please connect to Polygon chain</Trans>
+                            <Trans>Please connect to Dogechain</Trans>
                         </div>
                     );
                 }
@@ -202,7 +202,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 } else if (option.name === "ONTO Wallet") {
                     return (
                         <div>
-                            <Trans>Please select Polygon chain</Trans>
+                            <Trans>Please select Dogechain</Trans>
                         </div>
                     );
                 }
@@ -254,16 +254,16 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         {error instanceof UnsupportedChainIdError ? (
                             <>
                                 <h5 className={"mb-1"}>
-                                    <Trans>{isOnto ? t`Change your network in ONTO Wallet browser extension` : t`Please connect to the Polygon network.`}</Trans>
+                                    <Trans>{isOnto ? t`Change your network in ONTO Wallet browser extension` : t`Please connect to the Dogechain.`}</Trans>
                                 </h5>
                                 {isMobile ? (
                                     <p>
-                                        <Trans>Add Polygon network to your metamask app.</Trans>
+                                        <Trans>Add Dogechain to your metamask app.</Trans>
                                     </p>
                                 ) : (
                                     !isOnto && (
                                         <button className={"btn primary p-1 w-100 b"} onClick={addPolygonNetwork}>
-                                            <Trans>Connect to Polygon</Trans>
+                                            <Trans>Connect to Dogechain</Trans>
                                         </button>
                                     )
                                 )}

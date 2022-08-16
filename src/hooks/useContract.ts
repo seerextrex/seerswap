@@ -9,15 +9,12 @@ import ERC20_ABI from 'abis/erc20.json'
 import ERC20_BYTES32_ABI from 'abis/erc20_bytes32.json'
 import WETH_ABI from 'abis/weth.json'
 import EIP_2612 from 'abis/eip_2612.json'
-import STAKER_ABI from 'abis/staker.json'
 import MULTICALL_ABI from 'abis/multicall.json'
-import REAL_STAKER_ABI from 'abis/real-staker.json'
 import {
     ENS_REGISTRAR_ADDRESSES,
     MULTICALL_ADDRESS,
     NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
     QUOTER_ADDRESSES,
-    REAL_STAKER_ADDRESS,
     V2_ROUTER_ADDRESS,
     V3_MIGRATOR_ADDRESSES
 } from 'constants/addresses'
@@ -26,7 +23,6 @@ import { getContract } from 'utils'
 import { WMATIC_EXTENDED } from '../constants/tokens'
 import { useActiveWeb3React } from './web3'
 import NewQuoterABI from '../abis/quoter.json'
-import { FINITE_FARMING } from '../constants/addresses'
 
 // returns null on errors
 export function useContract<T extends Contract = Contract>(
@@ -53,10 +49,6 @@ export function useContract<T extends Contract = Contract>(
 
 export function useV2MigratorContract() {
     return useContract(V3_MIGRATOR_ADDRESSES, V2MigratorABI, true)
-}
-
-export function useRealStaker() {
-    return useContract(REAL_STAKER_ADDRESS, REAL_STAKER_ABI, true)
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean) {
@@ -102,10 +94,6 @@ export function useV3NFTPositionManagerContract(withSignerIfPossible?: boolean) 
         NFTPosMan,
         withSignerIfPossible
     )
-}
-
-export function useStaker() {
-    return useContract(FINITE_FARMING, STAKER_ABI)
 }
 
 export function useV3Quoter() {

@@ -14,7 +14,7 @@ import Loader from "components/Loader";
 import { PriceFormats } from "../PriceFomatToggler";
 import { tryParseAmount } from "state/swap/hooks";
 import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
-import { USDC_POLYGON } from "constants/tokens";
+import { USDC_DOGECHAIN } from "constants/tokens";
 import { useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { t, Trans } from "@lingui/macro";
 
@@ -62,7 +62,7 @@ export function TokenAmountCard({
     const [localTokenValue, setLocalTokenValue] = useState("");
 
     const valueUSD = useUSDCValue(tryParseAmount(value, currency ? (currency.isNative ? currency.wrapped : currency) : undefined), true);
-    const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_POLYGON), currency ?? undefined);
+    const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_DOGECHAIN), currency ?? undefined);
 
     const currencyPrice = useUSDCPrice(currency ?? undefined);
     const otherCurrencyPrice = useUSDCPrice(otherCurrency ?? undefined);
@@ -75,7 +75,7 @@ export function TokenAmountCard({
     }, [priceFormat]);
 
     const handleOnBlur = useCallback(() => {
-        if (currency?.wrapped.address === USDC_POLYGON.address) {
+        if (currency?.wrapped.address === USDC_DOGECHAIN.address) {
             handleInput(localUSDValue);
             return;
         }

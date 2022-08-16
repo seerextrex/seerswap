@@ -35,8 +35,8 @@ export default function useWrapCallback(
 
     let chainSymbol: string
 
-    if (chainId === 137) {
-        chainSymbol = 'MATIC'
+    if (chainId === 2000) {
+        chainSymbol = 'WDOGE'
     }
 
     return useMemo(() => {

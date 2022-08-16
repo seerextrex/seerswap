@@ -21,13 +21,13 @@ export function useBlocksFromTimestamps(timestamps: number[], blockClientOverrid
     const activeBlockClient = blockClientOverride ?? blockClient
 
     // derive blocks based on active network
-    const networkBlocks = blocks?.[chainId ?? SupportedChainId.POLYGON]
+    const networkBlocks = blocks?.[chainId ?? SupportedChainId.DOGECHAIN]
 
     useEffect(() => {
         async function fetchData() {
             const results = await splitQuery(GET_BLOCKS, activeBlockClient, [], timestamps)
             if (results) {
-                setBlocks({ ...(blocks ?? {}), [chainId ?? SupportedChainId.POLYGON]: results })
+                setBlocks({ ...(blocks ?? {}), [chainId ?? SupportedChainId.DOGECHAIN]: results })
             } else {
                 setError(true)
             }
@@ -39,8 +39,8 @@ export function useBlocksFromTimestamps(timestamps: number[], blockClientOverrid
     })
 
     const blocksFormatted = useMemo(() => {
-        if (blocks?.[chainId ?? SupportedChainId.POLYGON]) {
-            const networkBlocks = blocks?.[chainId ?? SupportedChainId.POLYGON]
+        if (blocks?.[chainId ?? SupportedChainId.DOGECHAIN]) {
+            const networkBlocks = blocks?.[chainId ?? SupportedChainId.DOGECHAIN]
             const formatted: any[] = []
             for (const t in networkBlocks) {
                 if (networkBlocks[t].length > 0) {

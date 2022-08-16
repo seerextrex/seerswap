@@ -13,8 +13,6 @@ import burn from './burn/reducer'
 import burnV3 from './burn/v3/reducer'
 import logs from './logs/slice'
 import multicall from './multicall/reducer'
-import staking from './staking/reducer'
-import farming from './farming/reducer'
 import { api as dataApi } from './data/slice'
 import { routingApi } from './routing/slice'
 
@@ -27,14 +25,12 @@ const store = configureStore({
         transactions,
         swap,
         mint,
-        staking,
         mintV3,
         burn,
         burnV3,
         multicall,
         lists,
         logs,
-        farming,
         [dataApi.reducerPath]: dataApi.reducer,
         [routingApi.reducerPath]: routingApi.reducer,
     },

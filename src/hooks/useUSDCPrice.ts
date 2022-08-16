@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { useMemo } from 'react'
 import { SupportedChainId } from '../constants/chains'
-import { MAI_POLYGON, USDC_POLYGON, USDT_POLYGON } from '../constants/tokens'
+import { USDC_DOGECHAIN } from '../constants/tokens'
 import { useBestV3TradeExactOut } from './useBestV3Trade'
 import { useActiveWeb3React } from './web3'
 
@@ -10,8 +10,8 @@ import { useActiveWeb3React } from './web3'
 
 // Two different consts used as a hack for allLiquidity flag in useUSDCPrice fn. 
 // Doing another way makes amounts in EnterAmount stuck somehow.
-const STABLECOIN_AMOUNT_OUT_ALL: CurrencyAmount<Token> = CurrencyAmount.fromRawAmount(USDC_POLYGON, 1)
-const STABLECOIN_AMOUNT_OUT_FILTERED: CurrencyAmount<Token> = CurrencyAmount.fromRawAmount(USDC_POLYGON, 100_000e1)
+const STABLECOIN_AMOUNT_OUT_ALL: CurrencyAmount<Token> = CurrencyAmount.fromRawAmount(USDC_DOGECHAIN, 1)
+const STABLECOIN_AMOUNT_OUT_FILTERED: CurrencyAmount<Token> = CurrencyAmount.fromRawAmount(USDC_DOGECHAIN, 100_000e1)
 
 /**
  * Returns the price in USDC of the input currency

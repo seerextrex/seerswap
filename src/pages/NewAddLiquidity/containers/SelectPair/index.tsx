@@ -54,8 +54,6 @@ export function SelectPair({
         fetchPopularPoolsFn();
     }, []);
 
-    const farmings: any[] = [];
-
     const feeString = useMemo(() => {
         if (mintInfo.poolState === PoolState.INVALID || mintInfo.poolState === PoolState.LOADING) return <Loader stroke="#22cbdc" />;
 
@@ -68,7 +66,7 @@ export function SelectPair({
         if (!aprs || !baseCurrency || !quoteCurrency) return <Loader stroke="#22dc22" />;
 
         const poolAddress = computePoolAddress({
-            poolDeployer: POOL_DEPLOYER_ADDRESS[137],
+            poolDeployer: POOL_DEPLOYER_ADDRESS[2000],
             tokenA: baseCurrency.wrapped,
             tokenB: quoteCurrency.wrapped,
         }).toLowerCase();
@@ -123,7 +121,7 @@ export function SelectPair({
                     </div>
                 </div>
                 <div className="token-pairs__popular-wrapper mh-2 mxs_ml-0 mxs_mr-0 mm_ml-0 mm_mr-0">
-                    <PopularPairs handlePopularPairSelection={handlePopularPairSelection} pairs={popularPools} farmings={farmings}></PopularPairs>
+                    <PopularPairs handlePopularPairSelection={handlePopularPairSelection} pairs={popularPools}></PopularPairs>
                 </div>
             </div>
         </div>

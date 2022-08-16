@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useActiveWeb3React } from '../web3'
 import { useClients } from './useClients'
 import {
@@ -8,12 +8,7 @@ import {
     CHART_POOL_DATA,
     CHART_POOL_LAST_ENTRY,
     CHART_POOL_LAST_NOT_EMPTY,
-    FETCH_ETERNAL_FARM_FROM_POOL,
-    FETCH_LIMIT_FARM_FROM_POOL, FULL_POSITIONS,
-    GET_STAKE,
-    GET_STAKE_HISTORY,
     POOLS_FROM_ADDRESSES,
-    POSITIONS_ON_FARMING,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
     TOP_TOKENS,
@@ -23,7 +18,6 @@ import { useBlocksFromTimestamps } from '../blocks'
 import { useEthPrices } from '../useEthPrices'
 import { useDeltaTimestamps } from 'utils/queries'
 import { formatTokenName, formatTokenSymbol, get2DayChange, getPercentChange } from 'utils/info'
-import { farmingClient, stakerClient } from 'apollo/client'
 import {
     FactorySubgraph,
     FeeSubgraph,
@@ -37,21 +31,14 @@ import {
     PoolAddressSubgraph,
     PoolSubgraph,
     PriceRangeChart,
-    PriceRangeClosed,
     StakeSubgraph,
-    FarmingPositions,
     SubgraphResponse,
     SubgraphResponseStaking,
     TokenAddressSubgraph,
     TokenInSubgraph,
     TotalStatSubgraph, PositionPriceRange
 } from '../../models/interfaces'
-import { EternalFarmingByPool } from '../../models/interfaces'
-import { fetchEternalFarmAPR, fetchLimitFarmAPR, fetchPoolsAPR } from 'utils/api'
-import { LimitFarmingByPool } from 'models/interfaces/responseSubgraph'
-import { FarmingType } from 'models/enums'
-import dayjs from 'dayjs'
-import { getPositionRangeChart } from '../../utils/getPositionRangeChart'
+import { fetchPoolsAPR } from "utils/api"
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
@@ -148,29 +135,6 @@ export function useInfoSubgraph() {
 
             const aprs = await fetchPoolsAPR()
 
-            const farmAprs = await fetchEternalFarmAPR()
-
-            const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
-            const _farmingAprs: { [type: string]: number } = farmingAprs.reduce((acc, el) => (
-                {
-                    ...acc,
-                    [el.pool]: farmAprs[el.id]
-                }
-            ), {})
-
-            const limitFarms: { [key: string]: number } = await fetchLimitFarmAPR()
-
-            const filteredFarms: { [key: string]: number } = Object.entries(limitFarms).filter((el) => el[1] >= 0).reduce((acc, el) => ({
-                ...acc,
-                [el[0]]: el[1]
-            }), {})
-
-            const limitAprs = await fetchLimitFarmingsAPRByPool(poolsAddresses)
-            const _limitAprs: { [type: string]: number } = limitAprs.reduce((acc, el) => ({
-                ...acc,
-                [el.pool]: filteredFarms[el.id]
-            }), {})
-
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address]
                 const oneDay: PoolSubgraph | undefined = parsedPools24[address]
@@ -198,10 +162,6 @@ export function useInfoSubgraph() {
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
-                const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0
-                const limitApr = _limitAprs[address] ? +_limitAprs[address] : 0
-
-                const aprType = farmingApr > limitApr ? FarmingType.ETERNAL : FarmingType.LIMIT
 
                 accum[address] = {
                     token0: current.token0,
@@ -217,8 +177,6 @@ export function useInfoSubgraph() {
                     tvlUSDChange,
                     totalValueLockedUSD: current[manageUntrackedTVL],
                     apr: aprPercent,
-                    farmingApr: Math.max(farmingApr, limitApr),
-                    aprType
                 }
                 return accum
             }, {})
@@ -381,40 +339,6 @@ export function useInfoSubgraph() {
         }
     }
 
-    async function fetchLimitFarmingsAPRByPool(poolAddresses: string[]): Promise<LimitFarmingByPool[]> {
-
-        try {
-
-            const { data: { limitFarmings }, error } = await farmingClient.query({
-                query: FETCH_LIMIT_FARM_FROM_POOL(poolAddresses),
-                fetchPolicy: 'network-only'
-            })
-
-            return limitFarmings
-
-        } catch (err) {
-            throw new Error('Eternal fetch error ' + err)
-        }
-
-    }
-
-    async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]): Promise<EternalFarmingByPool[]> {
-
-        try {
-
-            const { data: { eternalFarmings }, error } = await farmingClient.query({
-                query: FETCH_ETERNAL_FARM_FROM_POOL(poolAddresses),
-                fetchPolicy: 'network-only'
-            })
-
-            return eternalFarmings
-
-        } catch (err) {
-            throw new Error('Eternal fetch error ' + err)
-        }
-
-    }
-
     async function fetchLastEntry(pool: string): Promise<FeeSubgraph[] | string> {
         try {
             const { data: { feeHourDatas }, error } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
@@ -488,38 +412,6 @@ export function useInfoSubgraph() {
             throw new Error('Fees last failed: ' + err)
         }
     }
-
-    const fetchStaking = useCallback(async (id: string | undefined) => {
-
-        setStakes(null)
-
-        try {
-            setStakesLoading(true)
-
-            const { data: { factories, stakes }, error } = await stakerClient.query<SubgraphResponseStaking<FactorySubgraph[], StakeSubgraph[]>>({
-                query: GET_STAKE(),
-                fetchPolicy: 'network-only',
-                variables: { id: id ? id.toLowerCase() : '' }
-            })
-
-
-            setStakes({ factories: factories, stakes: stakes })
-
-            if (error) {
-                setStakes('failed')
-                return
-            }
-
-
-            setStakes({ factories, stakes })
-
-        } catch (err) {
-
-            setStakes('failed')
-        } finally {
-            setStakesLoading(false)
-        }
-    }, [account])
 
     async function fetchFeePool(pool: string, startTimestamp: number, endTimestamp: number) {
         try {
@@ -598,30 +490,6 @@ export function useInfoSubgraph() {
         }
     }
 
-    async function fetchStakingHistory() {
-        try {
-            setHistoriesLoading(true)
-
-            const {
-                data: { histories },
-                error
-            } = await stakerClient.query<SubgraphResponse<HistoryStakingSubgraph[]>>({
-                query: GET_STAKE_HISTORY(),
-                fetchPolicy: 'network-only'
-            })
-
-            if (error) throw new Error(`${error.name} ${error.message}`)
-
-            setHistories(histories)
-
-        } catch (e) {
-            setHistories('Getting histories failed')
-            return
-        } finally {
-            setHistoriesLoading(false)
-        }
-    }
-
     async function fetchTotalStats() {
 
         try {
@@ -693,62 +561,13 @@ export function useInfoSubgraph() {
         setTotalStatsLoading(false)
     }
 
-    async function fetchPriceRangePositions(pool: string) {
-
-        try {
-            const { data: { deposits }, error: errorDeposits } = await farmingClient.query<SubgraphResponse<FarmingPositions[]>>({
-                query: POSITIONS_ON_FARMING(),
-                fetchPolicy: 'network-only',
-                variables: { account, pool }
-            })
-
-            const ids = deposits.map(item => item.id)
-
-            const { data, error } = await dataClient.query({
-                query: FULL_POSITIONS(ids, account ?? undefined, pool),
-                fetchPolicy: 'network-only'
-            })
-
-            const fullPositions: PositionPriceRange[] = []
-
-            for (const key in data) {
-                fullPositions.push(...data[key])
-            }
-
-            const openPositions: PositionPriceRange[] = []
-            const closedPositions: PositionPriceRange[] = []
-
-            const day = dayjs()
-
-            fullPositions.forEach(item => {
-                if (item.closed === '0') {
-                    openPositions.push(item)
-                } else {
-                    if (+item.closed > day.subtract(1, 'month').unix() && (+item.closed - +item.transaction.timestamp > 86_400)) {
-                        closedPositions.push(item)
-                    }
-                }
-            })
-
-            setPositionsRange({
-                closed: getPositionRangeChart(closedPositions),
-                opened: getPositionRangeChart(openPositions)
-            })
-        } catch (e) {
-            console.error(e)
-        }
-
-    }
 
     return {
         blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
-        getStakes: { stakesResult, stakesLoading, fetchStakingFn: fetchStaking },
-        fetchStakedHistory: { historiesLoading, stakeHistoriesResult, fetchStakingHistoryFn: fetchStakingHistory },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },
         fetchChartPoolData: { chartPoolData, chartPoolDataLoading, fetchChartPoolDataFn: fetchChartPoolData },
         fetchTotalStats: { totalStats, totalStatsLoading, fetchTotalStatsFn: fetchTotalStats },
-        fetchPriceRangePositions: { positionsRange, fetchPriceRangePositionsFn: fetchPriceRangePositions }
     }
 }

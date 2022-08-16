@@ -34,11 +34,11 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing, zo
 
     // parsed tokens
     const _token0 = useMemo(() => {
-        return data && formattedAddress0 && formattedAddress1 ? new Token(SupportedChainId.POLYGON, formattedAddress0, +data.token0.decimals) : undefined;
+        return data && formattedAddress0 && formattedAddress1 ? new Token(SupportedChainId.DOGECHAIN, formattedAddress0, +data.token0.decimals) : undefined;
     }, [formattedAddress0, formattedAddress1, data]);
 
     const _token1 = useMemo(() => {
-        return data && formattedAddress0 && formattedAddress1 ? new Token(SupportedChainId.POLYGON, formattedAddress1, +data.token1.decimals) : undefined;
+        return data && formattedAddress0 && formattedAddress1 ? new Token(SupportedChainId.DOGECHAIN, formattedAddress1, +data.token1.decimals) : undefined;
     }, [formattedAddress1, data]);
 
     useEffect(() => {

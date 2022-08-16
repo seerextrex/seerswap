@@ -156,72 +156,72 @@ msgstr "Добавление ликвидности"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "Algebra {0} Price:"
-msgstr "Цена {0} на Algebra:"
+msgid "Quickswap {0} Price:"
+msgstr "Цена {0} на Quickswap:"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Algebra — Farming"
-msgstr "Algebra — Фарминг"
+msgid "Quickswap — Farming"
+msgstr "Quickswap — Фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Algebra — Farming • Farms History history"
-msgstr "Algebra — Фарминг • Фарминг История история"
+msgid "Quickswap — Farming • Farms History history"
+msgstr "Quickswap — Фарминг • Фарминг История история"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Algebra — Farming • Infinite Farms"
-msgstr "Algebra — Фарминг • Бессрочный фарминг"
+msgid "Quickswap — Farming • Infinite Farms"
+msgstr "Quickswap — Фарминг • Бессрочный фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Algebra — Farming • Limit Farms"
-msgstr "Algebra — Фарминг • Временный фарминг"
+msgid "Quickswap — Farming • Limit Farms"
+msgstr "Quickswap — Фарминг • Временный фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Algebra — Farming • My Farms"
-msgstr "Algebra — Фарминг • Мои фарминги"
+msgid "Quickswap — Farming • My Farms"
+msgstr "Quickswap — Фарминг • Мои фарминги"
 
 #: src/pages/PoolFinder/index.tsx
-msgid "Algebra — Find Pool"
-msgstr "Algebra — Найти пул"
+msgid "Quickswap — Find Pool"
+msgstr "Quickswap — Найти пул"
 
 #: src/pages/InfoPage/index.tsx
-msgid "Algebra — Info"
-msgstr "Algebra — Информация"
+msgid "Quickswap — Info"
+msgstr "Quickswap — Информация"
 
 #: src/pages/InfoPage/index.tsx
-msgid "Algebra — Info • Pools"
-msgstr "Algebra — Информация • Пулы"
+msgid "Quickswap — Info • Pools"
+msgstr "Quickswap — Информация • Пулы"
 
 #: src/pages/InfoPage/index.tsx
-msgid "Algebra — Info • Tokens"
-msgstr "Algebra — Информация • Токены"
+msgid "Quickswap — Info • Tokens"
+msgstr "Quickswap — Информация • Токены"
 
 #: src/pages/MigrateV2/index.tsx
-msgid "Algebra — Migrate Liquidity"
-msgstr "Algebra — Перенести Ликвидность"
+msgid "Quickswap — Migrate Liquidity"
+msgstr "Quickswap — Перенести Ликвидность"
 
 #: src/pages/Pool/index.tsx
-msgid "Algebra — Pool"
-msgstr "Algebra — Пул"
+msgid "Quickswap — Pool"
+msgstr "Quickswap — Пул"
 
 #: src/pages/RealStakerPage/index.tsx
-msgid "Algebra — Staking"
-msgstr "Algebra — Стейкинг"
+msgid "Quickswap — Staking"
+msgstr "Quickswap — Стейкинг"
 
 #: src/pages/Swap/index.tsx
-msgid "Algebra — Swap"
-msgstr "Algebra — Обменять"
+msgid "Quickswap — Swap"
+msgstr "Quickswap — Обменять"
 
 #: src/pages/Swap/index.tsx
-msgid "Algebra.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
-msgstr "Algebra.Finance — первая децентрализованная биржа с концентрированной ликвидностью в сети Полигон: лучшие курсы для поставщиков ликвидности и трейдеров в сети Полигон, со встроенным фармингом и динамическими комиссиями."
+msgid "Quickswap.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
+msgstr "Quickswap.Finance — первая децентрализованная биржа с концентрированной ликвидностью в сети Полигон: лучшие курсы для поставщиков ликвидности и трейдеров в сети Полигон, со встроенным фармингом и динамическими комиссиями."
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 msgid "All"
 msgstr "Все"
 
 #: src/pages/Swap/index.tsx
-msgid "Allow Algebra to use your {0}"
-msgstr "Разрешить Algebra использовать ваши {0}"
+msgid "Allow Quickswap to use your {0}"
+msgstr "Разрешить Quickswap использовать ваши {0}"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Allow LP token migration"
@@ -260,8 +260,8 @@ msgid "Amount of newly-staked ALGB per day"
 msgstr "Застейкано ALGB за день"
 
 #: src/hooks/useSwapCallback.ts
-msgid "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Algebra."
-msgstr "Возникла ошибка при обмене. Возможно нужно увеличить допустимое проскальзывание. Если это не помогло, токен, которым вы торгуете, не совместим. Обратите внимание: ребейз токены несовместимы с Algebra."
+msgid "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Quickswap."
+msgstr "Возникла ошибка при обмене. Возможно нужно увеличить допустимое проскальзывание. Если это не помогло, токен, которым вы торгуете, не совместим. Обратите внимание: ребейз токены несовместимы с Quickswap."
 
 #: src/pages/RealStakerPage/RealStakerResBlocks.tsx
 msgid "Any rewards you earned will be automatically restaked (compounded) for you."
@@ -375,8 +375,8 @@ msgid "Based on <0>fees</0> / <1>active liquidity</1>"
 msgstr "На основе <0>комиссии</0> / <1>активная ликвидность</1>"
 
 #: src/components/CautionModal/index.tsx
-msgid "Before using Algebra, you should review the relevant documentation to make sure you understand how Algebra works."
-msgstr "Перед тем, как начать пользоваться Algebra, ознакомьтесь с необходимой документацией и убедитесь в том, что вы понимаете как работает Algebra."
+msgid "Before using Quickswap, you should review the relevant documentation to make sure you understand how Quickswap works."
+msgstr "Перед тем, как начать пользоваться Quickswap, ознакомьтесь с необходимой документацией и убедитесь в том, что вы понимаете как работает Quickswap."
 
 #: src/pages/EventsHistory/index.tsx
 msgid "Best APR"
@@ -479,8 +479,8 @@ msgid "Clear all"
 msgstr "Очистить всё"
 
 #: src/pages/MigrateV2/index.tsx
-msgid "Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Algebra."
-msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или QuickSwap в Algebra."
+msgid "Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to Quickswap."
+msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или QuickSwap в Quickswap."
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Close"
@@ -1935,8 +1935,8 @@ msgid "TVL"
 msgstr "TVL"
 
 #: src/hooks/useSwapCallback.ts
-msgid "The Algebra invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
-msgstr "Инвариант Algebra x * y = k не соблюдается при обмене. Обычно это означает, что один из токенов, которые вы обмениваете, имеет особенности поведения при его передаче."
+msgid "The Quickswap invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
+msgstr "Инвариант Quickswap x * y = k не соблюдается при обмене. Обычно это означает, что один из токенов, которые вы обмениваете, имеет особенности поведения при его передаче."
 
 #: src/components/InfoTotalStats/index.tsx
 msgid "The Subgraph information might be outdated – check all the correct statistics"
@@ -1951,8 +1951,8 @@ msgid "The output token cannot be transferred. There may be an issue with the ou
 msgstr "Выкупаемый токен не может быть отправлен. Возможно, имеется проблема с этим токеном."
 
 #: src/hooks/useSwapCallback.ts
-msgid "The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with Algebra."
-msgstr "Выкупаемый токен не может быть отправлен. Возможно, имеется проблема с этим токеном. Примечание: ребейз токены несовместимы с Algebra."
+msgid "The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with Quickswap."
+msgstr "Выкупаемый токен не может быть отправлен. Возможно, имеется проблема с этим токеном. Примечание: ребейз токены несовместимы с Quickswap."
 
 #: src/components/Badge/RangeBadge.tsx
 msgid "The price of this pool is outside of your selected range. Your position is not currently earning fees."
@@ -1975,8 +1975,8 @@ msgid "This farm is filled"
 msgstr "Этот фарминг заполнен"
 
 #: src/hooks/useSwapCallback.ts
-msgid "This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra"
-msgstr "Транзакция не может быть выполнена успешно из-за движения цены. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с Algebra"
+msgid "This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Quickswap"
+msgstr "Транзакция не может быть выполнена успешно из-за движения цены. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с Quickswap"
 
 #: src/hooks/useSwapCallback.ts
 msgid "This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance."
@@ -2000,8 +2000,8 @@ msgid "To (at least)"
 msgstr "На (минимум)"
 
 #: src/components/StakingModal/index.tsx
-msgid "To stake your NFT you should approve Algebra to use it"
-msgstr "Чтобы застейкать NFT вы должны одобрить Algebra его использование"
+msgid "To stake your NFT you should approve Quickswap to use it"
+msgstr "Чтобы застейкать NFT вы должны одобрить Quickswap его использование"
 
 #: src/components/StakeModal/index.tsx
 msgid "To take part in this farming event, you need to"
@@ -2088,8 +2088,8 @@ msgid "Undepositing"
 msgstr "Вывод"
 
 #: src/hooks/useSwapCallback.ts
-msgid "Unknown error{0}. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Algebra."
-msgstr "Неизвестная ошибка{0}. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с Algebra."
+msgid "Unknown error{0}. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Quickswap."
+msgstr "Неизвестная ошибка{0}. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с Quickswap."
 
 #: src/pages/RealStakerPage/RealStakerResBlocks.tsx
 #: src/pages/RealStakerPage/RealStakerUnstakeModal.tsx
@@ -2125,8 +2125,8 @@ msgid "Updating..."
 msgstr "Обновление..."
 
 #: src/components/CautionModal/index.tsx
-msgid "Using Algebra involves various risks, including, but not limited to, losses while digital assets are being supplied to Algebra, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
-msgstr "Ипользование Algebra включает различные риски, включая потери цифровых активов во время добавления их на Algebra и потери из-за изменения цен токенов."
+msgid "Using Quickswap involves various risks, including, but not limited to, losses while digital assets are being supplied to Quickswap, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
+msgstr "Ипользование Quickswap включает различные риски, включая потери цифровых активов во время добавления их на Quickswap и потери из-за изменения цен токенов."
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "View list"
@@ -2175,8 +2175,8 @@ msgid "Week"
 msgstr "Неделя"
 
 #: src/components/CautionModal/index.tsx
-msgid "Welcome to Algebra, the first concentrated liquidity DEX on Polygon!"
-msgstr "Добро пожаловать на Algebra, первую децентрализованную биржу с концентрированной ликвидностью в сети Полигон!"
+msgid "Welcome to Quickswap, the first concentrated liquidity DEX on Polygon!"
+msgstr "Добро пожаловать на Quickswap, первую децентрализованную биржу с концентрированной ликвидностью в сети Полигон!"
 
 #: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "Withdraw"
@@ -2211,8 +2211,8 @@ msgid "You are responsible for completing your own due diligence to understand t
 msgstr "Вы несете ответственность за проведение собственной проверки, чтобы понять риски торговли криптовалютами."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "You are the first liquidity provider for this Algebra pool. Your liquidity will migrate at the current"
-msgstr "Вы являетесь первым поставщиком ликвидности для этого пула Algebra. Ваша ликвидность будет перенесена по текущей цене"
+msgid "You are the first liquidity provider for this Quickswap pool. Your liquidity will migrate at the current"
+msgstr "Вы являетесь первым поставщиком ликвидности для этого пула Quickswap. Ваша ликвидность будет перенесена по текущей цене"
 
 #: src/pages/Swap/index.tsx
 msgid "You can now trade {0}"
@@ -2231,16 +2231,16 @@ msgid "You must connect an account."
 msgstr "Вы должны подключить аккаунт."
 
 #: src/pages/Swap/index.tsx
-msgid "You must give the Algebra smart contracts permission to use your {0}. You only have to do this once per token."
-msgstr "Вы должны дать разрешение смарт-контрактам Algebra на использование ваших {0}. Это нужно сделать только один раз для каждого токена."
+msgid "You must give the Quickswap smart contracts permission to use your {0}. You only have to do this once per token."
+msgstr "Вы должны дать разрешение смарт-контрактам Quickswap на использование ваших {0}. Это нужно сделать только один раз для каждого токена."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "You should only deposit liquidity into Algebra at a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
-msgstr "Вносить ликвидность в Algebra следует только по той цене, которую вы считаете правильной. <0/>Если цена кажется неправильной, вы можете либо произвести обмен, чтобы сдвинуть её, либо дождаться, чтобы это сделал кто-то другой."
+msgid "You should only deposit liquidity into Quickswap at a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
+msgstr "Вносить ликвидность в Quickswap следует только по той цене, которую вы считаете правильной. <0/>Если цена кажется неправильной, вы можете либо произвести обмен, чтобы сдвинуть её, либо дождаться, чтобы это сделал кто-то другой."
 
 #: src/components/CautionModal/index.tsx
-msgid "You use Algebra at your own risk and without warranties of any kind. Algebra is not liable for potential losses."
-msgstr "Вы используете Algebra на свой страх и риск и без каких-либо гарантий. Algebra не несет ответственности за возможные убытки\"."
+msgid "You use Quickswap at your own risk and without warranties of any kind. Quickswap is not liable for potential losses."
+msgstr "Вы используете Quickswap на свой страх и риск и без каких-либо гарантий. Quickswap не несет ответственности за возможные убытки\"."
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "You will also collect fees earned from this position."
@@ -2316,8 +2316,8 @@ msgid "ZOOM"
 msgstr "МАСШТАБ"
 
 #: src/pages/Swap/index.tsx
-msgid "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"
-msgstr "best dex, algebra exchange, algebra crypto, algebra finance, algebra dex, defi, polygon dex, exchange on polygon, matic exchange"
+msgid "best dex, Quickswap exchange, Quickswap crypto, Quickswap finance, Quickswap dex, defi, polygon dex, exchange on polygon, matic exchange"
+msgstr "best dex, Quickswap exchange, Quickswap crypto, Quickswap finance, Quickswap dex, defi, polygon dex, exchange on polygon, matic exchange"
 
 #: src/components/Settings/index.tsx
 msgid "confirm"

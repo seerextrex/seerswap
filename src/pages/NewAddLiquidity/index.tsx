@@ -100,12 +100,12 @@ export function NewAddLiquidityPage({
 
     const handleCurrencySelect = useCallback(
         (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-            const currencyIdNew = currencyId(currencyNew, chainId || 137);
+            const currencyIdNew = currencyId(currencyNew, chainId || 2000);
 
             let chainSymbol;
 
-            if (chainId === 137) {
-                chainSymbol = "MATIC";
+            if (chainId === 2000) {
+                chainSymbol = "WDOGE";
             }
 
             resetState();
@@ -158,8 +158,8 @@ export function NewAddLiquidityPage({
     }, [history, handleCurrencySelect, currencyIdA, currencyIdB]);
 
     const handlePopularPairSelection = useCallback((pair: [string, string]) => {
-        const WMATIC = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270";
-        history.push(`/add/${pair[0] === WMATIC ? "MATIC" : pair[0]}/${pair[1] === WMATIC ? "MATIC" : pair[1]}`);
+        const WMATIC = "0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101";
+        history.push(`/add/${pair[0] === WMATIC ? "WDOGE" : pair[0]}/${pair[1] === WMATIC ? "WDOGE" : pair[1]}`);
         resetState();
     }, []);
 
@@ -314,11 +314,7 @@ export function NewAddLiquidityPage({
                         <Trans>Add liquidity</Trans>
                     </div>
                     <div className="ml-a mxs_ml-0 mxs_mt-1 f f-ac ">
-                        {!hidePriceFormatter && (
-                            <div className="mr-1">
-                                <PriceFormatToggler currentFormat={priceFormat} handlePriceFormat={handlePriceFormat} />
-                            </div>
-                        )}
+                        {!hidePriceFormatter && <div className="mr-1">{/* <PriceFormatToggler currentFormat={priceFormat} handlePriceFormat={handlePriceFormat} /> */}</div>}
                         <div className="mxs_ml-a">
                             <SettingsTab placeholderSlippage={allowedSlippage} />
                         </div>

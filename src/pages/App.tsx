@@ -10,27 +10,20 @@ import RemoveLiquidityV3 from "./RemoveLiquidity/V3";
 import Swap from "./Swap";
 import { RedirectPathToSwapOnly, RedirectToSwap } from "./Swap/redirects";
 import { Pool } from "lib/src";
-import MigrateV2Pair from "./MigrateV2/MigrateV2Pair";
-import MigrateV2 from "./MigrateV2";
 import React, { useEffect } from "react";
 import CautionModal from "../components/CautionModal";
-import PoolFinder from "./PoolFinder";
 import { useInternet } from "../hooks/useInternet";
 import { useIsNetworkFailed } from "../hooks/useIsNetworkFailed";
 import Loader from "../components/Loader";
 import GoogleAnalyticsReporter from "../components/analytics/GoogleAnalyticsReporter";
-import { useFarmingActionsHandlers } from "../state/farming/hooks";
 import { useActiveWeb3React } from "../hooks/web3";
 import { GlobalStyle, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
 import { Trans } from "@lingui/macro";
 
 import "./index.scss";
-const RealStakerPage = React.lazy(() => import("./RealStakerPage"));
-const StakingAnalyticsPage = React.lazy(() => import("./StakingAnalyticsPage"));
 const AddLiquidity = React.lazy(() => import("./AddLiquidity"));
 const PoolPage = React.lazy(() => import("./Pool"));
-const FarmingPage = React.lazy(() => import("./Farming/FarmingPage"));
 const PositionPage = React.lazy(() => import("./Pool/PositionPage"));
 const InfoPage = React.lazy(() => import("./InfoPage"));
 
@@ -42,12 +35,7 @@ export default function App() {
     });
     const internet = useInternet();
     const { account } = useActiveWeb3React();
-    const { onIsFarming, hasTransferred } = useFarmingActionsHandlers();
     const networkFailed = useIsNetworkFailed();
-
-    useEffect(() => {
-        onIsFarming();
-    }, []);
 
     useEffect(() => {
         if (!account) return;
@@ -60,8 +48,6 @@ export default function App() {
             event: "userId",
             user_id: account,
         });
-
-        hasTransferred();
     }, [account]);
 
     return (
@@ -91,7 +77,7 @@ export default function App() {
                                         stroke={"white"}
                                     />
                                     <span>
-                                        <Trans>Connecting to Polygon</Trans>
+                                        <Trans>Connecting to Dogechain</Trans>
                                     </span>
                                 </div>
                             </NetworkFailedCard>
@@ -106,15 +92,12 @@ export default function App() {
                                 }
                             >
                                 <Switch>
-                                    <Route strict path="/farming" component={FarmingPage} />
-
                                     <Route strict path="/info" component={InfoPage} />
 
                                     <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                                     <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                                     <Route exact strict path="/swap" component={Swap} />
 
-                                    <Route exact strict path="/pool/find" component={PoolFinder} />
                                     <Route exact strict path="/pool" component={PoolPage} />
                                     <Route exact strict path="/pool/:tokenId" component={PositionPage} />
 
@@ -122,11 +105,6 @@ export default function App() {
 
                                     <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
                                     <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
-                                    <Route exact strict path="/migrate" component={MigrateV2} />
-                                    <Route exact strict path="/migrate/:address" component={MigrateV2Pair} />
-
-                                    <Route exact strict path="/staking" component={RealStakerPage} />
-                                    <Route exact strict path="/staking/analytics" component={StakingAnalyticsPage} />
 
                                     <Route component={RedirectPathToSwapOnly} />
                                 </Switch>

@@ -6,7 +6,7 @@ import { useActiveWeb3React } from "hooks/web3";
 import { useCallback, useEffect, useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWalletModalToggle } from "state/application/hooks";
-import { useUserHideClosedPositions, useUserHideFarmingPositions } from "state/user/hooks";
+import { useUserHideClosedPositions } from "state/user/hooks";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/Loader";
 import FilterPanelItem from "./FilterPanelItem";
@@ -18,7 +18,6 @@ import "./index.scss";
 import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
 import { EthereumWindow } from "models/types";
 import { useShowNewestPosition } from "state/mint/v3/hooks";
-import { OldFarmingWarning } from "components/PositionList/styled";
 import { AlertCircle } from "react-feather";
 
 export default function Pool() {
@@ -26,7 +25,6 @@ export default function Pool() {
     const toggleWalletModal = useWalletModalToggle();
 
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions();
-    const [hideFarmingPositions, setHideFarmingPositions] = useUserHideFarmingPositions();
 
     const { positions, loading: positionsLoading } = useV3Positions(account);
 
@@ -46,19 +44,13 @@ export default function Pool() {
             method: setUserHideClosedPositions,
             checkValue: userHideClosedPositions,
         },
-        {
-            title: t`Farming`,
-            method: setHideFarmingPositions,
-            checkValue: hideFarmingPositions,
-        },
     ];
 
-    const farmingPositions = useMemo(() => positions?.filter((el) => el.onFarming), [positions, account, prevAccount]);
-    const inRangeWithOutFarmingPositions = useMemo(() => openPositions.filter((el) => !el.onFarming), [openPositions, account, prevAccount]);
+    const inRangeWithOutFarmingPositions = useMemo(() => openPositions, [openPositions, account, prevAccount]);
 
     const filteredPositions = useMemo(
-        () => [...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions), ...inRangeWithOutFarmingPositions, ...(userHideClosedPositions ? [] : closedPositions)],
-        [inRangeWithOutFarmingPositions, userHideClosedPositions, hideFarmingPositions, account, prevAccount]
+        () => [...inRangeWithOutFarmingPositions, ...(userHideClosedPositions ? [] : closedPositions)],
+        [inRangeWithOutFarmingPositions, userHideClosedPositions, account, prevAccount]
     );
 
     const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions);
@@ -82,8 +74,8 @@ export default function Pool() {
 
     let chainSymbol;
 
-    if (chainId === 137) {
-        chainSymbol = "MATIC";
+    if (chainId === 2000) {
+        chainSymbol = "WDOGE";
     }
 
     const reload = useCallback(() => window.location.reload(), []);
@@ -100,7 +92,7 @@ export default function Pool() {
     return (
         <>
             <Helmet>
-                <title>{t`Algebra — Pool`}</title>
+                <title>{t`Quickswap — Pool`}</title>
             </Helmet>
             <Card classes={"br-24 ph-2 pv-1 mxs_ph-1"}>
                 <SwapPoolTabs active={"pool"} />
@@ -110,9 +102,6 @@ export default function Pool() {
                             <Trans>Pools Overview</Trans>
                         </span>
                         <div className={"flex-s-between mxs_mv-05"}>
-                            <NavLink className={"btn primary p-05 br-8 mr-1"} id="join-pool-button" to={`/migrate`}>
-                                <Trans>Migrate Pool</Trans>
-                            </NavLink>
                             <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>
                                 + <Trans>New Position</Trans>
                             </NavLink>
@@ -126,10 +115,6 @@ export default function Pool() {
                         </div>
                     )}
                     <main className={"f c f-ac"}>
-                        <OldFarmingWarning className="f full-w p-1 mb-1">
-                            <AlertCircle size={"24px"} />
-                            <span>{t`Due to the audit's results, we’re currently updating our smart-contracts. Please, do not provide liquidity to our pools anytime soon.`}</span>
-                        </OldFarmingWarning>
                         {positionsLoading ? (
                             <Loader style={{ margin: "auto" }} stroke="white" size={"2rem"} />
                         ) : _filteredPositions && _filteredPositions.length > 0 ? (

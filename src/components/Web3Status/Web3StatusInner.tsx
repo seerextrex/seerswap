@@ -22,7 +22,7 @@ export async function addPolygonNetwork() {
             method: "wallet_switchEthereumChain",
             params: [
                 {
-                    chainId: "0x89",
+                    chainId: "0x7D0",
                 },
             ],
         });
@@ -35,15 +35,15 @@ export async function addPolygonNetwork() {
                     method: "wallet_addEthereumChain",
                     params: [
                         {
-                            chainId: "0x89",
-                            chainName: "Polygon Mainnet",
+                            chainId: "0x7D0",
+                            chainName: "Dogechain Mainnet",
                             nativeCurrency: {
-                                name: "MATIC",
-                                symbol: "MATIC",
+                                name: "WDOGE",
+                                symbol: "WDOGE",
                                 decimals: 18,
                             },
-                            blockExplorerUrls: ["https://polygonscan.com/"],
-                            rpcUrls: ["https://polygon-rpc.com"],
+                            blockExplorerUrls: ["https://explorer.dogechain.dog/"],
+                            rpcUrls: ["https://rpc02-sg.dogechain.dog"],
                         },
                     ],
                 });
@@ -96,7 +96,7 @@ export function Web3StatusInner() {
                 <Web3StatusError onClick={() => toggleOntoHelper(true)}>
                     <NetworkIcon />
                     <Text>
-                        <Trans>Connect to Polygon</Trans>
+                        <Trans>Connect to Dogechain</Trans>
                     </Text>
                 </Web3StatusError>
             </>
@@ -105,7 +105,7 @@ export function Web3StatusInner() {
         return (
             <Web3StatusError onClick={addPolygonNetwork}>
                 <NetworkIcon />
-                <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Polygon</Trans> : <Trans>Error</Trans>}</Text>
+                <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Dogechain</Trans> : <Trans>Error</Trans>}</Text>
             </Web3StatusError>
         );
     } else {

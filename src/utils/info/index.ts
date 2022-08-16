@@ -1,6 +1,6 @@
 import { Token } from '@uniswap/sdk-core'
 
-const WETH_ADDRESSES = ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']
+const WETH_ADDRESSES = ['0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101']
 
 /**
  * gets the amount difference plus the % change in change itself (second order change)
@@ -62,14 +62,14 @@ export function deserializeToken(serializedToken: SerializedToken): Token {
 
 export function formatTokenSymbol(address: string, symbol: string) {
     if (WETH_ADDRESSES.includes(address)) {
-        return 'MATIC'
+        return 'WDOGE'
     }
     return symbol
 }
 
 export function formatTokenName(address: string, name: string) {
     if (WETH_ADDRESSES.includes(address)) {
-        return 'Matic'
+        return 'WDoge'
     }
     return name
 }

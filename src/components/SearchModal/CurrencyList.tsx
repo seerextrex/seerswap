@@ -20,7 +20,7 @@ import { WrappedCurrency } from "../../models/types";
 import "./index.scss";
 
 function currencyKey(currency: Currency): string {
-    return currency.isToken ? currency.address : "MATIC";
+    return currency.isToken ? currency.address : "WDOGE";
 }
 
 function TokenTags({ currency }: { currency: Currency }) {
@@ -76,7 +76,7 @@ function CurrencyRow({ currency, onSelect, isSelected, otherSelected, style }: C
                     <Text title={currency.name} fontWeight={500}>
                         {currency.symbol}
                     </Text>
-                    <span className={"fs-075"}>{!currency.isNative && !isOnSelectedList && customAdded ? <Trans>{currency.name} • Added by user</Trans> : "Matic"}</span>
+                    <span className={"fs-075"}>{!currency.isNative && !isOnSelectedList && customAdded ? <Trans>{currency.name} • Added by user</Trans> : "WDOGE"}</span>
                 </div>
             </div>
             <TokenTags currency={currency} />

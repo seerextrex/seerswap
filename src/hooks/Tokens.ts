@@ -14,65 +14,15 @@ import { useActiveWeb3React } from './web3'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 
 const DEFAULT_TOKEN_LIST: any = {
-    ['0x2791bca1f2de4661ed88a30c99a7a9449aa84174']: {
-        name: 'USDC',
-        decimals: 6,
-        symbol: 'USDC'
-    },
-    ['0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6']: {
-        name: 'Algebra',
+    ['0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101']: {
+        name: 'WDOGE',
         decimals: 18,
-        symbol: 'ALGB'
+        symbol: 'WDOGE'
     },
-    ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']: {
-        name: 'WMATIC',
+    ['0xe3fca919883950c5cd468156392a6477ff5d18de']: {
+        name: 'Doge Eat Doge',
         decimals: 18,
-        symbol: 'WMATIC'
-    },
-    ['0x7ceb23fd6bc0add59e62ac25578270cff1b9f619']: {
-        name: 'WETH',
-        decimals: 18,
-        symbol: 'WETH'
-    },
-    ['0xc2132d05d31c914a87c6611c10748aeb04b58e8f']: {
-        name: 'USDT',
-        decimals: 6,
-        symbol: 'USDT'
-    },
-    ['0xc3cffdaf8f3fdf07da6d5e3a89b8723d5e385ff8']: {
-        name: 'Rubic',
-        decimals: 18,
-        symbol: 'RBC'
-    },
-    ['0xdab35042e63e93cc8556c9bae482e5415b5ac4b1']: {
-        name: 'IRIS',
-        decimals: 18,
-        symbol: 'IRIS'
-    },
-    ['0x6b7a87899490ece95443e979ca9485cbe7e71522']: {
-        name: 'Harmony ONE',
-        decimals: 18,
-        symbol: 'ONE'
-    },
-    ['0x77ec58f36f3d1a9cf8694fc5c544b04b8c9639dd']: {
-        name: 'HSM',
-        decimals: 18,
-        symbol: 'HSM'
-    },
-    ['0x580a84c73811e1839f75d86d75d88cca0c241ff4']: {
-        name: 'QiDAO',
-        decimals: 18,
-        symbol: 'QI'
-    },
-    ['0xa3Fa99A148fA48D14Ed51d610c367C61876997F1']: {
-        name: 'MAI',
-        decimals: 18,
-        symbol: 'MIMATIC'
-    },
-    ['0xc004e2318722ea2b15499d6375905d75ee5390b8']: {
-        name: 'Kommunitas',
-        decimals: 8,
-        symbol: 'KOM'
+        symbol: 'OMNOM'
     }
 }
 
@@ -251,8 +201,8 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
     const { chainId } = useActiveWeb3React()
     let isETH
-    if (chainId === 137) {
-        isETH = currencyId?.toUpperCase() === 'MATIC'
+    if (chainId === 2000) {
+        isETH = currencyId?.toUpperCase() === 'WDOGE'
     }
 
     const token = useToken(isETH ? undefined : currencyId)

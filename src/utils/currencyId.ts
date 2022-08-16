@@ -1,10 +1,10 @@
 import { Currency } from '@uniswap/sdk-core'
 
 export function currencyId(currency: Currency, chainId: number): string {
-    let chainSymbol = 'MATIC'
+    let chainSymbol = 'WDOGE'
 
-    if (chainId === 137) {
-        chainSymbol = 'MATIC'
+    if (chainId === 2000) {
+        chainSymbol = 'WDOGE'
     }
 
     if (currency.isNative) return chainSymbol

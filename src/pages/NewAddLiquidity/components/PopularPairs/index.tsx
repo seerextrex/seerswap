@@ -9,11 +9,10 @@ import "./index.scss";
 
 interface IPopularPairs {
     pairs: [string, string][] | undefined;
-    farmings: [string, string][];
     handlePopularPairSelection: (pair: [string, string]) => void;
 }
 
-export function PopularPairs({ pairs, farmings, handlePopularPairSelection }: IPopularPairs) {
+export function PopularPairs({ pairs, handlePopularPairSelection }: IPopularPairs) {
     return (
         <div>
             <div className={"pair-list-wrapper pl-1 mm_pl-0"}>
@@ -28,7 +27,7 @@ export function PopularPairs({ pairs, farmings, handlePopularPairSelection }: IP
                         <ul className="pair-list">
                             {pairs.map((pair, key) => (
                                 <li key={key} className="pair-list-item">
-                                    <PopularPair handlePopularPairSelection={handlePopularPairSelection} pair={pair} farming={false} />
+                                    <PopularPair handlePopularPairSelection={handlePopularPairSelection} pair={pair} />
                                 </li>
                             ))}
                         </ul>
@@ -39,30 +38,11 @@ export function PopularPairs({ pairs, farmings, handlePopularPairSelection }: IP
                     </div>
                 )}
             </div>
-            {farmings.length ? (
-                <div className={"pair-list-wrapper pl-1"}>
-                    <div className="mb-1 f f-ac">
-                        <Zap style={{ display: "block" }} fill={"white"} size={15} />
-                        <span className="ml-05">
-                            <Trans>Farms</Trans>
-                        </span>
-                    </div>
-                    <div>
-                        <ul className="pair-list">
-                            {farmings.map((farming, key) => (
-                                <li key={key} className="pair-list-item">
-                                    <PopularPair handlePopularPairSelection={handlePopularPairSelection} pair={farming} farming={true} />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            ) : null}
         </div>
     );
 }
 
-function PopularPair({ pair, farming, handlePopularPairSelection }: { pair: [string, string]; farming: boolean; handlePopularPairSelection: (pair: [string, string]) => void }) {
+function PopularPair({ pair, handlePopularPairSelection }: { pair: [string, string]; handlePopularPairSelection: (pair: [string, string]) => void }) {
     const tokenA = useToken(pair[1]);
     const tokenB = useToken(pair[0]);
 
@@ -70,19 +50,19 @@ function PopularPair({ pair, farming, handlePopularPairSelection }: { pair: [str
 
     const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
 
-    const WMATIC = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270";
+    const WMATIC = "0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101";
 
     return (
-        <div onClick={() => handlePopularPairSelection([token0.address.toLowerCase(), token1.address.toLowerCase()])} className={`f f-ac f-jc popular-pair ${farming ? "farming" : ""}`}>
+        <div onClick={() => handlePopularPairSelection([token0.address.toLowerCase(), token1.address.toLowerCase()])} className={`f f-ac f-jc popular-pair`}>
             <span className="popular-pair__logo">
                 <CurrencyLogo currency={token0 as WrappedCurrency} size={"16px"} />
             </span>
-            <span>{token0.address.toLowerCase() === WMATIC ? "MATIC" : token0.symbol}</span>
+            <span>{token0.address.toLowerCase() === WMATIC ? "WDOGE" : token0.symbol}</span>
             <span className="popular-pair__plus">+</span>
             <span className="popular-pair__logo">
                 <CurrencyLogo currency={token1 as WrappedCurrency} size={"16px"} />
             </span>
-            <span>{token1.address.toLowerCase() === WMATIC ? "MATIC" : token1.symbol}</span>
+            <span>{token1.address.toLowerCase() === WMATIC ? "WDOGE" : token1.symbol}</span>
         </div>
     );
 }

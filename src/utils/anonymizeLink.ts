@@ -1,5 +1,5 @@
 const EXPLORER_HOSTNAMES: { [hostname: string]: true } = {
-    'polygonscan.com': true
+    'explorer.dogechain.dog': true
 }
 
 /**

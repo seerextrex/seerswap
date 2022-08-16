@@ -35,8 +35,8 @@ export function useSwapActionHandlers(): {
 
     let symbol: string
 
-    if (chainId === 137) {
-        symbol = 'MATIC'
+    if (chainId === 2000) {
+        symbol = 'WDOGE'
     }
 
     const onCurrencySelection = useCallback(
@@ -45,7 +45,7 @@ export function useSwapActionHandlers(): {
             dispatch(
                 selectCurrency({
                     field,
-                    currencyId: currency.isToken ? currency.address : currency.isNative ? 'MATIC' : ''
+                    currencyId: currency.isToken ? currency.address : currency.isNative ? 'WDOGE' : ''
                 })
             )
         },
@@ -124,8 +124,8 @@ export function useDerivedSwapInfo(): {
     } = useSwapState()
 
 
-    const inputCurrency = useCurrency(inputCurrencyId || '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
-    const outputCurrency = useCurrency(outputCurrencyId || '0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6')
+    const inputCurrency = useCurrency(inputCurrencyId || '0xe3fca919883950c5cd468156392a6477ff5d18de')
+    const outputCurrency = useCurrency(outputCurrencyId || '0xe3fca919883950c5cd468156392a6477ff5d18de')
 
     const recipientLookup = useENS(recipient ?? undefined)
     const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
@@ -212,8 +212,8 @@ export function useDerivedSwapInfo(): {
 function parseCurrencyFromURLParameter(urlParam: any, chainId: number): string {
     let chainSymbol
 
-    if (chainId === 137) {
-        chainSymbol = 'MATIC'
+    if (chainId === 2000) {
+        chainSymbol = 'WDOGE'
     }
 
     if (typeof urlParam === 'string') {
@@ -249,8 +249,8 @@ export function queryParametersToSwapState(parsedQs: ParsedQs, chainId: number):
     let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency, chainId)
     if (inputCurrency === '' && outputCurrency === '') {
         // default to ETH input
-        if (chainId === 137) {
-            inputCurrency = 'MATIC'
+        if (chainId === 2000) {
+            inputCurrency = 'WDOGE'
         }
     } else if (inputCurrency === outputCurrency) {
         // clear output if identical

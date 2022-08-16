@@ -29,8 +29,8 @@ interface FeeChartRangeInputProps {
     token0: Token | undefined;
     setToken: (a: number) => void;
     positions: {
-        closed: PriceRangeChart | null;
-        opened: PriceRangeChart | null;
+        closed: PriceRangeChart | null | any;
+        opened: PriceRangeChart | null | any;
     };
     selected: string[];
     setSelected: any;
@@ -40,7 +40,6 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
     const ref = useRef<HTMLDivElement>(null);
 
     const { account } = useActiveWeb3React();
-
 
     const formattedData: FeeChart = useMemo(() => {
         if (!fetchedData || typeof fetchedData === "string")

@@ -22,8 +22,6 @@ export default function Header() {
 
     const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? ""];
 
-    console.log("USER ETH balacne", userEthBalance);
-
     const prevEthBalance = usePrevious(userEthBalance);
 
     const _userEthBalance = useMemo(() => {
@@ -53,9 +51,9 @@ export default function Header() {
     return (
         <div className={"header__wrapper flex-s-between w-100 pv-1 pl-2"}>
             <a className={"header__logo hover-op trans-op mxs_mr-1"} href=".">
-                <img width={"calc(100% - 10px)"} src={Logo} alt="logo" />
+                <img src={Logo} alt="logo" />
             </a>
-            <div className={"header__links flex-s-between"}>
+            <div className={"header__links"}>
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
                     <Trans>Swap</Trans>
                 </NavLink>

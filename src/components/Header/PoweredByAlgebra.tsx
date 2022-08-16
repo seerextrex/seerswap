@@ -5,7 +5,7 @@ export function PoweredByAlgebra() {
     return (
         <div>
             <a href={"https://algebra.finance"} rel={"noopener noreferrer"} target={"_blank"}>
-                <img src={PoweredBy} />
+                <img width="150" src={PoweredBy} />
             </a>
         </div>
     );

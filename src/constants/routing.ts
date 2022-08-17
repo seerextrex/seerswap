@@ -1,7 +1,7 @@
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from './chains'
-import { ExtendedEther, OMNOM_DOGECHAIN, WMATIC_EXTENDED } from './tokens'
+import { ExtendedEther, WMATIC_EXTENDED } from './tokens'
 
 type ChainTokenList = {
     readonly [chainId: number]: Token[]
@@ -33,7 +33,6 @@ export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[
 export const COMMON_BASES: ChainCurrencyList = {
     [SupportedChainId.DOGECHAIN]: [
         ExtendedEther.onChain(SupportedChainId.DOGECHAIN),
-        OMNOM_DOGECHAIN,
         WMATIC_EXTENDED[SupportedChainId.DOGECHAIN],
     ]
 }
@@ -41,7 +40,7 @@ export const COMMON_BASES: ChainCurrencyList = {
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
     ...WETH_ONLY,
-    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], OMNOM_DOGECHAIN]
+    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN]]
 }
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
     [SupportedChainId.DOGECHAIN]: [

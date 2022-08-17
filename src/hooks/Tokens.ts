@@ -19,11 +19,6 @@ const DEFAULT_TOKEN_LIST: any = {
         decimals: 18,
         symbol: 'WDOGE'
     },
-    ['0xe3fca919883950c5cd468156392a6477ff5d18de']: {
-        name: 'Doge Eat Doge',
-        decimals: 18,
-        symbol: 'OMNOM'
-    }
 }
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens

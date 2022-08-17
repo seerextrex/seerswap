@@ -37,7 +37,7 @@ function InfoPage() {
     return (
         <>
             <Helmet>
-                <title>{t`Quickswap — Info`}</title>
+                <title>{t`QuickSwap — Info`}</title>
             </Helmet>
             <div className={"w-100 maw-1180"}>
                 <Switch>
@@ -46,7 +46,7 @@ function InfoPage() {
                     </Route>
                     <Route exact path={`${path}/pools`}>
                         <Helmet>
-                            <title>{t`Quickswap — Info • Pools`}</title>
+                            <title>{t`QuickSwap — Info • Pools`}</title>
                         </Helmet>
                         <Card classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>
@@ -84,7 +84,7 @@ function InfoPage() {
                     />
                     <Route exact path={`${path}/tokens`}>
                         <Helmet>
-                            <title>{t`Quickswap — Info • Tokens`}</title>
+                            <title>{t`QuickSwap — Info • Tokens`}</title>
                         </Helmet>
                         <Card classes={"br-24 pa-2 mb-1 mxs_p-1"}>
                             <div className={"info-page-menu mb-1"}>

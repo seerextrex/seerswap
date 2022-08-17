@@ -172,20 +172,20 @@ function swapErrorToUserReadableMessage(error: any): string {
         case 'UniswapV2: TRANSFER_FAILED':
             return t`The output token cannot be transferred. There may be an issue with the output token.`
         case 'UniswapV2: K':
-            return t`The Quickswap invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer.`
+            return t`The QuickSwap invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer.`
         case 'Too little received':
         case 'Too much requested':
         case 'STF':
-            return t`This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Quickswap`
+            return t`This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with QuickSwap`
         case 'TF':
-            return t`The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with Quickswap.`
+            return t`The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with QuickSwap.`
         default:
             if (reason?.indexOf('undefined is not an object') !== -1) {
                 console.error(error, reason)
-                return t`An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Quickswap.`
+                return t`An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with QuickSwap.`
             }
             return t`Unknown error${reason ? `: "${reason}"` : ''
-                }. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Quickswap.`
+                }. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with QuickSwap.`
     }
 }
 

@@ -74,9 +74,9 @@ export default function Header() {
                     </span>
                     <span className={"header__farming-circle"} />
                 </NavLink>
-                {/* <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     <Trans>Info</Trans>
-                </NavLink> */}
+                </NavLink>
             </div>
 
             <div className={"header__account flex-s-between"}>

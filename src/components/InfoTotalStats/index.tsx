@@ -17,9 +17,9 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
     const { pathname } = useLocation();
 
     useEffect(() => {
-        if (blocksFetched) {
-            refreshHandler();
-        }
+        // if (blocksFetched) {
+        refreshHandler();
+        // }
     }, [blocksFetched]);
 
     const pool = useMemo(() => pathname.split("pools/")[1], [pathname]);

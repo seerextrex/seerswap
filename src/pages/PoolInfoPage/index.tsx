@@ -57,7 +57,7 @@ export default function PoolInfoPage({
     } = useInfoTickData();
 
     const [span, setSpan] = useState(ChartSpan.MONTH);
-    const [type, setType] = useState(ChartType.VOLUME);
+    const [type, setType] = useState(ChartType.LIQUIDITY);
     const [token, setToken] = useState(ChartToken.TOKEN0);
     const [selected, setSelected] = useState<string[]>([]);
 
@@ -82,41 +82,41 @@ export default function PoolInfoPage({
     }, [span]);
 
     const chartTypes = [
-        {
-            type: ChartType.VOLUME,
-            title: t`Volume`,
-        },
-        {
-            type: ChartType.TVL,
-            title: t`TVL`,
-        },
-        {
-            type: ChartType.FEES,
-            title: t`Pool fee`,
-        },
+        // {
+        //     type: ChartType.VOLUME,
+        //     title: t`Volume`,
+        // },
+        // {
+        //     type: ChartType.TVL,
+        //     title: t`TVL`,
+        // },
+        // {
+        //     type: ChartType.FEES,
+        //     title: t`Pool fee`,
+        // },
         {
             type: ChartType.LIQUIDITY,
             title: t`Liquidity`,
         },
-        {
-            type: ChartType.PRICE,
-            title: t`Price`,
-        },
+        // {
+        //     type: ChartType.PRICE,
+        //     title: t`Price`,
+        // },
     ];
 
     const chartSpans = [
-        // {
-        //     type: ChartSpan.DAY,
-        //     title: t`Day`,
-        // },
+        {
+            type: ChartSpan.DAY,
+            title: t`Day`,
+        },
         // {
         //     type: ChartSpan.WEEK,
         //     title: t`Week`,
         // },
-        {
-            type: ChartSpan.MONTH,
-            title: t`Month`,
-        },
+        // {
+        //     type: ChartSpan.MONTH,
+        //     title: t`Month`,
+        // },
     ];
 
     useEffect(() => {

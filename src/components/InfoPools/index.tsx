@@ -28,27 +28,31 @@ const sortFields = [
     //     title: t`Volume 7D`,
     //     value: "volumeUSDWeek",
     // },
-    // {
-    //     title: t`Volume 1M`,
-    //     value: "volumeUSDMonth",
-    // },
+    {
+        title: t`Volume`,
+        value: "volumeUSD",
+    },
     {
         title: t`TVL`,
         value: "tvlUSD",
     },
+    // {
+    //     title: t`APR`,
+    //     value: "apr",
+    // },
 ];
 
 export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
     const [sortField, setSortField] = useState("tvlUSD");
-    const [sortIndex, setSortIndex] = useState(2);
+    const [sortIndex, setSortIndex] = useState(1);
     const [sortDirection, setSortDirection] = useState<boolean>(true);
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex);
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection);
 
     useEffect(() => {
-        if (blocksFetched) {
-            fetchHandler();
-        }
+        // if (blocksFetched) {
+        fetchHandler();
+        // }
     }, [blocksFetched]);
 
     const _data = useMemo(() => {
@@ -67,14 +71,18 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                     //     title: formatDollarAmount(el.volumeUSDWeek),
                     //     value: el.volumeUSDWeek,
                     // },
-                    // {
-                    //     title: formatDollarAmount(el.volumeUSDMonth),
-                    //     value: el.volumeUSDMonth,
-                    // },
                     {
-                        title: formatDollarAmount(el.totalValueLockedUSD),
-                        value: el.totalValueLockedUSD,
+                        title: formatDollarAmount(el.volumeUSD),
+                        value: el.volumeUSD,
                     },
+                    {
+                        title: formatDollarAmount(el.tvlUSD),
+                        value: el.tvlUSD,
+                    },
+                    // {
+                    //     title: el.apr,
+                    //     value: el.apr,
+                    // },
                 ];
             })
         );
@@ -97,13 +105,16 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         </span>
                         {/* <span className={"table-header__item table-header__item--center"}>
                             <Trans>Volume 7D</Trans>
-                        </span>
-                        <span className={"table-header__item table-header__item--center"}>
-                            <Trans>Volume 1M</Trans>
                         </span> */}
+                        <span className={"table-header__item table-header__item--center"}>
+                            <Trans>Volume</Trans>
+                        </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>
                         </span>
+                        {/* <span className={"table-header__item table-header__item--center"}>
+                            <Trans>APR</Trans>
+                        </span> */}
                     </TableHeader>
                 </Table>
             </div>

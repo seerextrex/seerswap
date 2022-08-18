@@ -735,8 +735,350 @@ export enum Collect_OrderBy {
   Transaction = 'transaction'
 }
 
+export type Deposit = {
+  __typename?: 'Deposit';
+  L2tokenId: Scalars['BigInt'];
+  enteredInEternalFarming?: Maybe<Scalars['BigInt']>;
+  eternalFarming?: Maybe<Scalars['Bytes']>;
+  id: Scalars['ID'];
+  limitFarming?: Maybe<Scalars['Bytes']>;
+  liquidity: Scalars['BigInt'];
+  onFarmingCenter: Scalars['Boolean'];
+  owner: Scalars['Bytes'];
+  pool: Scalars['Bytes'];
+  rangeLength: Scalars['BigInt'];
+  tierEternal: Scalars['BigInt'];
+  tierLimit: Scalars['BigInt'];
+  tokensLockedEternal: Scalars['BigInt'];
+  tokensLockedLimit: Scalars['BigInt'];
+};
+
+export type Deposit_Filter = {
+  L2tokenId?: Maybe<Scalars['BigInt']>;
+  L2tokenId_gt?: Maybe<Scalars['BigInt']>;
+  L2tokenId_gte?: Maybe<Scalars['BigInt']>;
+  L2tokenId_in?: Maybe<Array<Scalars['BigInt']>>;
+  L2tokenId_lt?: Maybe<Scalars['BigInt']>;
+  L2tokenId_lte?: Maybe<Scalars['BigInt']>;
+  L2tokenId_not?: Maybe<Scalars['BigInt']>;
+  L2tokenId_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  enteredInEternalFarming?: Maybe<Scalars['BigInt']>;
+  enteredInEternalFarming_gt?: Maybe<Scalars['BigInt']>;
+  enteredInEternalFarming_gte?: Maybe<Scalars['BigInt']>;
+  enteredInEternalFarming_in?: Maybe<Array<Scalars['BigInt']>>;
+  enteredInEternalFarming_lt?: Maybe<Scalars['BigInt']>;
+  enteredInEternalFarming_lte?: Maybe<Scalars['BigInt']>;
+  enteredInEternalFarming_not?: Maybe<Scalars['BigInt']>;
+  enteredInEternalFarming_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  eternalFarming?: Maybe<Scalars['Bytes']>;
+  eternalFarming_contains?: Maybe<Scalars['Bytes']>;
+  eternalFarming_in?: Maybe<Array<Scalars['Bytes']>>;
+  eternalFarming_not?: Maybe<Scalars['Bytes']>;
+  eternalFarming_not_contains?: Maybe<Scalars['Bytes']>;
+  eternalFarming_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  limitFarming?: Maybe<Scalars['Bytes']>;
+  limitFarming_contains?: Maybe<Scalars['Bytes']>;
+  limitFarming_in?: Maybe<Array<Scalars['Bytes']>>;
+  limitFarming_not?: Maybe<Scalars['Bytes']>;
+  limitFarming_not_contains?: Maybe<Scalars['Bytes']>;
+  limitFarming_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  liquidity?: Maybe<Scalars['BigInt']>;
+  liquidity_gt?: Maybe<Scalars['BigInt']>;
+  liquidity_gte?: Maybe<Scalars['BigInt']>;
+  liquidity_in?: Maybe<Array<Scalars['BigInt']>>;
+  liquidity_lt?: Maybe<Scalars['BigInt']>;
+  liquidity_lte?: Maybe<Scalars['BigInt']>;
+  liquidity_not?: Maybe<Scalars['BigInt']>;
+  liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  onFarmingCenter?: Maybe<Scalars['Boolean']>;
+  onFarmingCenter_in?: Maybe<Array<Scalars['Boolean']>>;
+  onFarmingCenter_not?: Maybe<Scalars['Boolean']>;
+  onFarmingCenter_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  owner?: Maybe<Scalars['Bytes']>;
+  owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_not?: Maybe<Scalars['Bytes']>;
+  owner_not_contains?: Maybe<Scalars['Bytes']>;
+  owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool?: Maybe<Scalars['Bytes']>;
+  pool_contains?: Maybe<Scalars['Bytes']>;
+  pool_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool_not?: Maybe<Scalars['Bytes']>;
+  pool_not_contains?: Maybe<Scalars['Bytes']>;
+  pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  rangeLength?: Maybe<Scalars['BigInt']>;
+  rangeLength_gt?: Maybe<Scalars['BigInt']>;
+  rangeLength_gte?: Maybe<Scalars['BigInt']>;
+  rangeLength_in?: Maybe<Array<Scalars['BigInt']>>;
+  rangeLength_lt?: Maybe<Scalars['BigInt']>;
+  rangeLength_lte?: Maybe<Scalars['BigInt']>;
+  rangeLength_not?: Maybe<Scalars['BigInt']>;
+  rangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierEternal?: Maybe<Scalars['BigInt']>;
+  tierEternal_gt?: Maybe<Scalars['BigInt']>;
+  tierEternal_gte?: Maybe<Scalars['BigInt']>;
+  tierEternal_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierEternal_lt?: Maybe<Scalars['BigInt']>;
+  tierEternal_lte?: Maybe<Scalars['BigInt']>;
+  tierEternal_not?: Maybe<Scalars['BigInt']>;
+  tierEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierLimit?: Maybe<Scalars['BigInt']>;
+  tierLimit_gt?: Maybe<Scalars['BigInt']>;
+  tierLimit_gte?: Maybe<Scalars['BigInt']>;
+  tierLimit_in?: Maybe<Array<Scalars['BigInt']>>;
+  tierLimit_lt?: Maybe<Scalars['BigInt']>;
+  tierLimit_lte?: Maybe<Scalars['BigInt']>;
+  tierLimit_not?: Maybe<Scalars['BigInt']>;
+  tierLimit_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedEternal?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_gt?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_gte?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedEternal_lt?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_lte?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_not?: Maybe<Scalars['BigInt']>;
+  tokensLockedEternal_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedLimit?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_gt?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_gte?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokensLockedLimit_lt?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_lte?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_not?: Maybe<Scalars['BigInt']>;
+  tokensLockedLimit_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum Deposit_OrderBy {
+  L2tokenId = 'L2tokenId',
+  EnteredInEternalFarming = 'enteredInEternalFarming',
+  EternalFarming = 'eternalFarming',
+  Id = 'id',
+  LimitFarming = 'limitFarming',
+  Liquidity = 'liquidity',
+  OnFarmingCenter = 'onFarmingCenter',
+  Owner = 'owner',
+  Pool = 'pool',
+  RangeLength = 'rangeLength',
+  TierEternal = 'tierEternal',
+  TierLimit = 'tierLimit',
+  TokensLockedEternal = 'tokensLockedEternal',
+  TokensLockedLimit = 'tokensLockedLimit'
+}
+
+export type EternalFarming = {
+  __typename?: 'EternalFarming';
+  bonusReward: Scalars['BigInt'];
+  bonusRewardRate: Scalars['BigInt'];
+  bonusRewardToken: Scalars['Bytes'];
+  endTime: Scalars['BigInt'];
+  id: Scalars['ID'];
+  isDetached?: Maybe<Scalars['Boolean']>;
+  minRangeLength: Scalars['BigInt'];
+  multiplierToken: Scalars['Bytes'];
+  pool: Scalars['Bytes'];
+  reward: Scalars['BigInt'];
+  rewardRate: Scalars['BigInt'];
+  rewardToken: Scalars['Bytes'];
+  startTime: Scalars['BigInt'];
+  tier1Multiplier: Scalars['BigInt'];
+  tier2Multiplier: Scalars['BigInt'];
+  tier3Multiplier: Scalars['BigInt'];
+  tokenAmountForTier1: Scalars['BigInt'];
+  tokenAmountForTier2: Scalars['BigInt'];
+  tokenAmountForTier3: Scalars['BigInt'];
+  virtualPool: Scalars['Bytes'];
+};
+
+export type EternalFarming_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  bonusReward?: Maybe<Scalars['BigInt']>;
+  bonusRewardRate?: Maybe<Scalars['BigInt']>;
+  bonusRewardRate_gt?: Maybe<Scalars['BigInt']>;
+  bonusRewardRate_gte?: Maybe<Scalars['BigInt']>;
+  bonusRewardRate_in?: Maybe<Array<Scalars['BigInt']>>;
+  bonusRewardRate_lt?: Maybe<Scalars['BigInt']>;
+  bonusRewardRate_lte?: Maybe<Scalars['BigInt']>;
+  bonusRewardRate_not?: Maybe<Scalars['BigInt']>;
+  bonusRewardRate_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  bonusRewardToken?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_contains?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  bonusRewardToken_not?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_not_contains?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  bonusReward_gt?: Maybe<Scalars['BigInt']>;
+  bonusReward_gte?: Maybe<Scalars['BigInt']>;
+  bonusReward_in?: Maybe<Array<Scalars['BigInt']>>;
+  bonusReward_lt?: Maybe<Scalars['BigInt']>;
+  bonusReward_lte?: Maybe<Scalars['BigInt']>;
+  bonusReward_not?: Maybe<Scalars['BigInt']>;
+  bonusReward_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  endTime?: Maybe<Scalars['BigInt']>;
+  endTime_gt?: Maybe<Scalars['BigInt']>;
+  endTime_gte?: Maybe<Scalars['BigInt']>;
+  endTime_in?: Maybe<Array<Scalars['BigInt']>>;
+  endTime_lt?: Maybe<Scalars['BigInt']>;
+  endTime_lte?: Maybe<Scalars['BigInt']>;
+  endTime_not?: Maybe<Scalars['BigInt']>;
+  endTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  isDetached?: Maybe<Scalars['Boolean']>;
+  isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
+  isDetached_not?: Maybe<Scalars['Boolean']>;
+  isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  minRangeLength?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_in?: Maybe<Array<Scalars['BigInt']>>;
+  minRangeLength_lt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_lte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  multiplierToken?: Maybe<Scalars['Bytes']>;
+  multiplierToken_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  multiplierToken_not?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool?: Maybe<Scalars['Bytes']>;
+  pool_contains?: Maybe<Scalars['Bytes']>;
+  pool_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool_not?: Maybe<Scalars['Bytes']>;
+  pool_not_contains?: Maybe<Scalars['Bytes']>;
+  pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  reward?: Maybe<Scalars['BigInt']>;
+  rewardRate?: Maybe<Scalars['BigInt']>;
+  rewardRate_gt?: Maybe<Scalars['BigInt']>;
+  rewardRate_gte?: Maybe<Scalars['BigInt']>;
+  rewardRate_in?: Maybe<Array<Scalars['BigInt']>>;
+  rewardRate_lt?: Maybe<Scalars['BigInt']>;
+  rewardRate_lte?: Maybe<Scalars['BigInt']>;
+  rewardRate_not?: Maybe<Scalars['BigInt']>;
+  rewardRate_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  rewardToken?: Maybe<Scalars['Bytes']>;
+  rewardToken_contains?: Maybe<Scalars['Bytes']>;
+  rewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  rewardToken_not?: Maybe<Scalars['Bytes']>;
+  rewardToken_not_contains?: Maybe<Scalars['Bytes']>;
+  rewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  reward_gt?: Maybe<Scalars['BigInt']>;
+  reward_gte?: Maybe<Scalars['BigInt']>;
+  reward_in?: Maybe<Array<Scalars['BigInt']>>;
+  reward_lt?: Maybe<Scalars['BigInt']>;
+  reward_lte?: Maybe<Scalars['BigInt']>;
+  reward_not?: Maybe<Scalars['BigInt']>;
+  reward_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  startTime?: Maybe<Scalars['BigInt']>;
+  startTime_gt?: Maybe<Scalars['BigInt']>;
+  startTime_gte?: Maybe<Scalars['BigInt']>;
+  startTime_in?: Maybe<Array<Scalars['BigInt']>>;
+  startTime_lt?: Maybe<Scalars['BigInt']>;
+  startTime_lte?: Maybe<Scalars['BigInt']>;
+  startTime_not?: Maybe<Scalars['BigInt']>;
+  startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  virtualPool?: Maybe<Scalars['Bytes']>;
+  virtualPool_contains?: Maybe<Scalars['Bytes']>;
+  virtualPool_in?: Maybe<Array<Scalars['Bytes']>>;
+  virtualPool_not?: Maybe<Scalars['Bytes']>;
+  virtualPool_not_contains?: Maybe<Scalars['Bytes']>;
+  virtualPool_not_in?: Maybe<Array<Scalars['Bytes']>>;
+};
+
+export enum EternalFarming_OrderBy {
+  BonusReward = 'bonusReward',
+  BonusRewardRate = 'bonusRewardRate',
+  BonusRewardToken = 'bonusRewardToken',
+  EndTime = 'endTime',
+  Id = 'id',
+  IsDetached = 'isDetached',
+  MinRangeLength = 'minRangeLength',
+  MultiplierToken = 'multiplierToken',
+  Pool = 'pool',
+  Reward = 'reward',
+  RewardRate = 'rewardRate',
+  RewardToken = 'rewardToken',
+  StartTime = 'startTime',
+  Tier1Multiplier = 'tier1Multiplier',
+  Tier2Multiplier = 'tier2Multiplier',
+  Tier3Multiplier = 'tier3Multiplier',
+  TokenAmountForTier1 = 'tokenAmountForTier1',
+  TokenAmountForTier2 = 'tokenAmountForTier2',
+  TokenAmountForTier3 = 'tokenAmountForTier3',
+  VirtualPool = 'virtualPool'
+}
+
 export type Factory = {
   __typename?: 'Factory';
+  ALGBbalance: Scalars['BigInt'];
+  ALGBfromVault: Scalars['BigInt'];
+  currentStakedAmount: Scalars['BigInt'];
+  earnedForAllTime: Scalars['BigInt'];
   id: Scalars['ID'];
   owner: Scalars['ID'];
   poolCount: Scalars['BigInt'];
@@ -750,11 +1092,45 @@ export type Factory = {
   totalVolumeUSD: Scalars['BigDecimal'];
   txCount: Scalars['BigInt'];
   untrackedVolumeUSD: Scalars['BigDecimal'];
+  xALGBminted: Scalars['BigInt'];
+  xALGBtotalSupply: Scalars['BigInt'];
 };
 
 export type Factory_Filter = {
+  ALGBbalance?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_gt?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_gte?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_in?: Maybe<Array<Scalars['BigInt']>>;
+  ALGBbalance_lt?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_lte?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_not?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  ALGBfromVault?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_gt?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_gte?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_in?: Maybe<Array<Scalars['BigInt']>>;
+  ALGBfromVault_lt?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_lte?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_not?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_not_in?: Maybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  currentStakedAmount?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_gt?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_gte?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_in?: Maybe<Array<Scalars['BigInt']>>;
+  currentStakedAmount_lt?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_lte?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_not?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  earnedForAllTime?: Maybe<Scalars['BigInt']>;
+  earnedForAllTime_gt?: Maybe<Scalars['BigInt']>;
+  earnedForAllTime_gte?: Maybe<Scalars['BigInt']>;
+  earnedForAllTime_in?: Maybe<Array<Scalars['BigInt']>>;
+  earnedForAllTime_lt?: Maybe<Scalars['BigInt']>;
+  earnedForAllTime_lte?: Maybe<Scalars['BigInt']>;
+  earnedForAllTime_not?: Maybe<Scalars['BigInt']>;
+  earnedForAllTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -859,9 +1235,29 @@ export type Factory_Filter = {
   untrackedVolumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
   untrackedVolumeUSD_not?: Maybe<Scalars['BigDecimal']>;
   untrackedVolumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  xALGBminted?: Maybe<Scalars['BigInt']>;
+  xALGBminted_gt?: Maybe<Scalars['BigInt']>;
+  xALGBminted_gte?: Maybe<Scalars['BigInt']>;
+  xALGBminted_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBminted_lt?: Maybe<Scalars['BigInt']>;
+  xALGBminted_lte?: Maybe<Scalars['BigInt']>;
+  xALGBminted_not?: Maybe<Scalars['BigInt']>;
+  xALGBminted_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBtotalSupply?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_gt?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_gte?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBtotalSupply_lt?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_lte?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_not?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Factory_OrderBy {
+  AlgBbalance = 'ALGBbalance',
+  AlgBfromVault = 'ALGBfromVault',
+  CurrentStakedAmount = 'currentStakedAmount',
+  EarnedForAllTime = 'earnedForAllTime',
   Id = 'id',
   Owner = 'owner',
   PoolCount = 'poolCount',
@@ -874,7 +1270,9 @@ export enum Factory_OrderBy {
   TotalVolumeMatic = 'totalVolumeMatic',
   TotalVolumeUsd = 'totalVolumeUSD',
   TxCount = 'txCount',
-  UntrackedVolumeUsd = 'untrackedVolumeUSD'
+  UntrackedVolumeUsd = 'untrackedVolumeUSD',
+  XAlgBminted = 'xALGBminted',
+  XAlgBtotalSupply = 'xALGBtotalSupply'
 }
 
 export type FeeHourData = {
@@ -1143,6 +1541,288 @@ export enum Flash_OrderBy {
   Sender = 'sender',
   Timestamp = 'timestamp',
   Transaction = 'transaction'
+}
+
+export type History = {
+  __typename?: 'History';
+  ALGBbalance: Scalars['BigInt'];
+  ALGBfromVault: Scalars['BigInt'];
+  currentStakedAmount: Scalars['BigInt'];
+  date: Scalars['BigInt'];
+  id: Scalars['ID'];
+  xALGBburned: Scalars['BigInt'];
+  xALGBminted: Scalars['BigInt'];
+  xALGBtotalSupply: Scalars['BigInt'];
+};
+
+export type History_Filter = {
+  ALGBbalance?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_gt?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_gte?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_in?: Maybe<Array<Scalars['BigInt']>>;
+  ALGBbalance_lt?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_lte?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_not?: Maybe<Scalars['BigInt']>;
+  ALGBbalance_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  ALGBfromVault?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_gt?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_gte?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_in?: Maybe<Array<Scalars['BigInt']>>;
+  ALGBfromVault_lt?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_lte?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_not?: Maybe<Scalars['BigInt']>;
+  ALGBfromVault_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  currentStakedAmount?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_gt?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_gte?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_in?: Maybe<Array<Scalars['BigInt']>>;
+  currentStakedAmount_lt?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_lte?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_not?: Maybe<Scalars['BigInt']>;
+  currentStakedAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  date?: Maybe<Scalars['BigInt']>;
+  date_gt?: Maybe<Scalars['BigInt']>;
+  date_gte?: Maybe<Scalars['BigInt']>;
+  date_in?: Maybe<Array<Scalars['BigInt']>>;
+  date_lt?: Maybe<Scalars['BigInt']>;
+  date_lte?: Maybe<Scalars['BigInt']>;
+  date_not?: Maybe<Scalars['BigInt']>;
+  date_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  xALGBburned?: Maybe<Scalars['BigInt']>;
+  xALGBburned_gt?: Maybe<Scalars['BigInt']>;
+  xALGBburned_gte?: Maybe<Scalars['BigInt']>;
+  xALGBburned_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBburned_lt?: Maybe<Scalars['BigInt']>;
+  xALGBburned_lte?: Maybe<Scalars['BigInt']>;
+  xALGBburned_not?: Maybe<Scalars['BigInt']>;
+  xALGBburned_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBminted?: Maybe<Scalars['BigInt']>;
+  xALGBminted_gt?: Maybe<Scalars['BigInt']>;
+  xALGBminted_gte?: Maybe<Scalars['BigInt']>;
+  xALGBminted_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBminted_lt?: Maybe<Scalars['BigInt']>;
+  xALGBminted_lte?: Maybe<Scalars['BigInt']>;
+  xALGBminted_not?: Maybe<Scalars['BigInt']>;
+  xALGBminted_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBtotalSupply?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_gt?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_gte?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBtotalSupply_lt?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_lte?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_not?: Maybe<Scalars['BigInt']>;
+  xALGBtotalSupply_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum History_OrderBy {
+  AlgBbalance = 'ALGBbalance',
+  AlgBfromVault = 'ALGBfromVault',
+  CurrentStakedAmount = 'currentStakedAmount',
+  Date = 'date',
+  Id = 'id',
+  XAlgBburned = 'xALGBburned',
+  XAlgBminted = 'xALGBminted',
+  XAlgBtotalSupply = 'xALGBtotalSupply'
+}
+
+export type LimitFarming = {
+  __typename?: 'LimitFarming';
+  bonusReward: Scalars['BigInt'];
+  bonusRewardToken: Scalars['Bytes'];
+  createdAtTimestamp: Scalars['BigInt'];
+  endTime: Scalars['BigInt'];
+  enterStartTime: Scalars['BigInt'];
+  id: Scalars['ID'];
+  isDetached?: Maybe<Scalars['Boolean']>;
+  minRangeLength: Scalars['BigInt'];
+  multiplierToken: Scalars['Bytes'];
+  pool: Scalars['Bytes'];
+  reward: Scalars['BigInt'];
+  rewardToken: Scalars['Bytes'];
+  startTime: Scalars['BigInt'];
+  tier1Multiplier: Scalars['BigInt'];
+  tier2Multiplier: Scalars['BigInt'];
+  tier3Multiplier: Scalars['BigInt'];
+  tokenAmountForTier1: Scalars['BigInt'];
+  tokenAmountForTier2: Scalars['BigInt'];
+  tokenAmountForTier3: Scalars['BigInt'];
+};
+
+export type LimitFarming_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  bonusReward?: Maybe<Scalars['BigInt']>;
+  bonusRewardToken?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_contains?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  bonusRewardToken_not?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_not_contains?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  bonusReward_gt?: Maybe<Scalars['BigInt']>;
+  bonusReward_gte?: Maybe<Scalars['BigInt']>;
+  bonusReward_in?: Maybe<Array<Scalars['BigInt']>>;
+  bonusReward_lt?: Maybe<Scalars['BigInt']>;
+  bonusReward_lte?: Maybe<Scalars['BigInt']>;
+  bonusReward_not?: Maybe<Scalars['BigInt']>;
+  bonusReward_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  createdAtTimestamp?: Maybe<Scalars['BigInt']>;
+  createdAtTimestamp_gt?: Maybe<Scalars['BigInt']>;
+  createdAtTimestamp_gte?: Maybe<Scalars['BigInt']>;
+  createdAtTimestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  createdAtTimestamp_lt?: Maybe<Scalars['BigInt']>;
+  createdAtTimestamp_lte?: Maybe<Scalars['BigInt']>;
+  createdAtTimestamp_not?: Maybe<Scalars['BigInt']>;
+  createdAtTimestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  endTime?: Maybe<Scalars['BigInt']>;
+  endTime_gt?: Maybe<Scalars['BigInt']>;
+  endTime_gte?: Maybe<Scalars['BigInt']>;
+  endTime_in?: Maybe<Array<Scalars['BigInt']>>;
+  endTime_lt?: Maybe<Scalars['BigInt']>;
+  endTime_lte?: Maybe<Scalars['BigInt']>;
+  endTime_not?: Maybe<Scalars['BigInt']>;
+  endTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  enterStartTime?: Maybe<Scalars['BigInt']>;
+  enterStartTime_gt?: Maybe<Scalars['BigInt']>;
+  enterStartTime_gte?: Maybe<Scalars['BigInt']>;
+  enterStartTime_in?: Maybe<Array<Scalars['BigInt']>>;
+  enterStartTime_lt?: Maybe<Scalars['BigInt']>;
+  enterStartTime_lte?: Maybe<Scalars['BigInt']>;
+  enterStartTime_not?: Maybe<Scalars['BigInt']>;
+  enterStartTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  isDetached?: Maybe<Scalars['Boolean']>;
+  isDetached_in?: Maybe<Array<Scalars['Boolean']>>;
+  isDetached_not?: Maybe<Scalars['Boolean']>;
+  isDetached_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  minRangeLength?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_gte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_in?: Maybe<Array<Scalars['BigInt']>>;
+  minRangeLength_lt?: Maybe<Scalars['BigInt']>;
+  minRangeLength_lte?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not?: Maybe<Scalars['BigInt']>;
+  minRangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  multiplierToken?: Maybe<Scalars['Bytes']>;
+  multiplierToken_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  multiplierToken_not?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool?: Maybe<Scalars['Bytes']>;
+  pool_contains?: Maybe<Scalars['Bytes']>;
+  pool_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool_not?: Maybe<Scalars['Bytes']>;
+  pool_not_contains?: Maybe<Scalars['Bytes']>;
+  pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  reward?: Maybe<Scalars['BigInt']>;
+  rewardToken?: Maybe<Scalars['Bytes']>;
+  rewardToken_contains?: Maybe<Scalars['Bytes']>;
+  rewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  rewardToken_not?: Maybe<Scalars['Bytes']>;
+  rewardToken_not_contains?: Maybe<Scalars['Bytes']>;
+  rewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  reward_gt?: Maybe<Scalars['BigInt']>;
+  reward_gte?: Maybe<Scalars['BigInt']>;
+  reward_in?: Maybe<Array<Scalars['BigInt']>>;
+  reward_lt?: Maybe<Scalars['BigInt']>;
+  reward_lte?: Maybe<Scalars['BigInt']>;
+  reward_not?: Maybe<Scalars['BigInt']>;
+  reward_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  startTime?: Maybe<Scalars['BigInt']>;
+  startTime_gt?: Maybe<Scalars['BigInt']>;
+  startTime_gte?: Maybe<Scalars['BigInt']>;
+  startTime_in?: Maybe<Array<Scalars['BigInt']>>;
+  startTime_lt?: Maybe<Scalars['BigInt']>;
+  startTime_lte?: Maybe<Scalars['BigInt']>;
+  startTime_not?: Maybe<Scalars['BigInt']>;
+  startTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier1Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier1Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier2Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier2Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_gte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_in?: Maybe<Array<Scalars['BigInt']>>;
+  tier3Multiplier_lt?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_lte?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not?: Maybe<Scalars['BigInt']>;
+  tier3Multiplier_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier1_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier1_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier2_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier2_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_gte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokenAmountForTier3_lt?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_lte?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not?: Maybe<Scalars['BigInt']>;
+  tokenAmountForTier3_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum LimitFarming_OrderBy {
+  BonusReward = 'bonusReward',
+  BonusRewardToken = 'bonusRewardToken',
+  CreatedAtTimestamp = 'createdAtTimestamp',
+  EndTime = 'endTime',
+  EnterStartTime = 'enterStartTime',
+  Id = 'id',
+  IsDetached = 'isDetached',
+  MinRangeLength = 'minRangeLength',
+  MultiplierToken = 'multiplierToken',
+  Pool = 'pool',
+  Reward = 'reward',
+  RewardToken = 'rewardToken',
+  StartTime = 'startTime',
+  Tier1Multiplier = 'tier1Multiplier',
+  Tier2Multiplier = 'tier2Multiplier',
+  Tier3Multiplier = 'tier3Multiplier',
+  TokenAmountForTier1 = 'tokenAmountForTier1',
+  TokenAmountForTier2 = 'tokenAmountForTier2',
+  TokenAmountForTier3 = 'tokenAmountForTier3'
 }
 
 export type Mint = {
@@ -2906,12 +3586,20 @@ export type Query = {
   burns: Array<Burn>;
   collect?: Maybe<Collect>;
   collects: Array<Collect>;
+  deposit?: Maybe<Deposit>;
+  deposits: Array<Deposit>;
+  eternalFarming?: Maybe<EternalFarming>;
+  eternalFarmings: Array<EternalFarming>;
   factories: Array<Factory>;
   factory?: Maybe<Factory>;
   feeHourData?: Maybe<FeeHourData>;
   feeHourDatas: Array<FeeHourData>;
   flash?: Maybe<Flash>;
   flashes: Array<Flash>;
+  histories: Array<History>;
+  history?: Maybe<History>;
+  limitFarming?: Maybe<LimitFarming>;
+  limitFarmings: Array<LimitFarming>;
   mint?: Maybe<Mint>;
   mints: Array<Mint>;
   pool?: Maybe<Pool>;
@@ -2926,6 +3614,12 @@ export type Query = {
   positionSnapshot?: Maybe<PositionSnapshot>;
   positionSnapshots: Array<PositionSnapshot>;
   positions: Array<Position>;
+  reward?: Maybe<Reward>;
+  rewards: Array<Reward>;
+  stake?: Maybe<Stake>;
+  stakeTx?: Maybe<StakeTx>;
+  stakeTxes: Array<StakeTx>;
+  stakes: Array<Stake>;
   swap?: Maybe<Swap>;
   swaps: Array<Swap>;
   tick?: Maybe<Tick>;
@@ -3040,6 +3734,42 @@ export type QueryCollectsArgs = {
 };
 
 
+export type QueryDepositArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryDepositsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Deposit_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Deposit_Filter>;
+};
+
+
+export type QueryEternalFarmingArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryEternalFarmingsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<EternalFarming_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<EternalFarming_Filter>;
+};
+
+
 export type QueryFactoriesArgs = {
   block?: Maybe<Block_Height>;
   first?: Maybe<Scalars['Int']>;
@@ -3091,6 +3821,42 @@ export type QueryFlashesArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Flash_Filter>;
+};
+
+
+export type QueryHistoriesArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<History_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<History_Filter>;
+};
+
+
+export type QueryHistoryArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryLimitFarmingArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryLimitFarmingsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<LimitFarming_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<LimitFarming_Filter>;
 };
 
 
@@ -3217,6 +3983,60 @@ export type QueryPositionsArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Position_Filter>;
+};
+
+
+export type QueryRewardArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryRewardsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Reward_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Reward_Filter>;
+};
+
+
+export type QueryStakeArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryStakeTxArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryStakeTxesArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakeTx_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<StakeTx_Filter>;
+};
+
+
+export type QueryStakesArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Stake_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Stake_Filter>;
 };
 
 
@@ -3363,6 +4183,170 @@ export type QueryTransactionsArgs = {
   where?: Maybe<Transaction_Filter>;
 };
 
+export type Reward = {
+  __typename?: 'Reward';
+  amount: Scalars['BigInt'];
+  id: Scalars['ID'];
+  owner: Scalars['Bytes'];
+  rewardAddress: Scalars['Bytes'];
+};
+
+export type Reward_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  amount?: Maybe<Scalars['BigInt']>;
+  amount_gt?: Maybe<Scalars['BigInt']>;
+  amount_gte?: Maybe<Scalars['BigInt']>;
+  amount_in?: Maybe<Array<Scalars['BigInt']>>;
+  amount_lt?: Maybe<Scalars['BigInt']>;
+  amount_lte?: Maybe<Scalars['BigInt']>;
+  amount_not?: Maybe<Scalars['BigInt']>;
+  amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  owner?: Maybe<Scalars['Bytes']>;
+  owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_not?: Maybe<Scalars['Bytes']>;
+  owner_not_contains?: Maybe<Scalars['Bytes']>;
+  owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  rewardAddress?: Maybe<Scalars['Bytes']>;
+  rewardAddress_contains?: Maybe<Scalars['Bytes']>;
+  rewardAddress_in?: Maybe<Array<Scalars['Bytes']>>;
+  rewardAddress_not?: Maybe<Scalars['Bytes']>;
+  rewardAddress_not_contains?: Maybe<Scalars['Bytes']>;
+  rewardAddress_not_in?: Maybe<Array<Scalars['Bytes']>>;
+};
+
+export enum Reward_OrderBy {
+  Amount = 'amount',
+  Id = 'id',
+  Owner = 'owner',
+  RewardAddress = 'rewardAddress'
+}
+
+export type Stake = {
+  __typename?: 'Stake';
+  id: Scalars['ID'];
+  stakedALGBAmount: Scalars['BigInt'];
+  xALGBAmount: Scalars['BigInt'];
+};
+
+export type StakeTx = {
+  __typename?: 'StakeTx';
+  id: Scalars['ID'];
+  owner?: Maybe<Scalars['String']>;
+  stakedALGBAmount: Scalars['BigInt'];
+  timestamp: Scalars['Int'];
+  xALGBAmount: Scalars['BigInt'];
+};
+
+export type StakeTx_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  owner?: Maybe<Scalars['String']>;
+  owner_contains?: Maybe<Scalars['String']>;
+  owner_contains_nocase?: Maybe<Scalars['String']>;
+  owner_ends_with?: Maybe<Scalars['String']>;
+  owner_ends_with_nocase?: Maybe<Scalars['String']>;
+  owner_gt?: Maybe<Scalars['String']>;
+  owner_gte?: Maybe<Scalars['String']>;
+  owner_in?: Maybe<Array<Scalars['String']>>;
+  owner_lt?: Maybe<Scalars['String']>;
+  owner_lte?: Maybe<Scalars['String']>;
+  owner_not?: Maybe<Scalars['String']>;
+  owner_not_contains?: Maybe<Scalars['String']>;
+  owner_not_contains_nocase?: Maybe<Scalars['String']>;
+  owner_not_ends_with?: Maybe<Scalars['String']>;
+  owner_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  owner_not_in?: Maybe<Array<Scalars['String']>>;
+  owner_not_starts_with?: Maybe<Scalars['String']>;
+  owner_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  owner_starts_with?: Maybe<Scalars['String']>;
+  owner_starts_with_nocase?: Maybe<Scalars['String']>;
+  stakedALGBAmount?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_gt?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_gte?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
+  stakedALGBAmount_lt?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_lte?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_not?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp?: Maybe<Scalars['Int']>;
+  timestamp_gt?: Maybe<Scalars['Int']>;
+  timestamp_gte?: Maybe<Scalars['Int']>;
+  timestamp_in?: Maybe<Array<Scalars['Int']>>;
+  timestamp_lt?: Maybe<Scalars['Int']>;
+  timestamp_lte?: Maybe<Scalars['Int']>;
+  timestamp_not?: Maybe<Scalars['Int']>;
+  timestamp_not_in?: Maybe<Array<Scalars['Int']>>;
+  xALGBAmount?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_gt?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_gte?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBAmount_lt?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_lte?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_not?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum StakeTx_OrderBy {
+  Id = 'id',
+  Owner = 'owner',
+  StakedAlgbAmount = 'stakedALGBAmount',
+  Timestamp = 'timestamp',
+  XAlgbAmount = 'xALGBAmount'
+}
+
+export type Stake_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  stakedALGBAmount?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_gt?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_gte?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
+  stakedALGBAmount_lt?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_lte?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_not?: Maybe<Scalars['BigInt']>;
+  stakedALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBAmount?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_gt?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_gte?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
+  xALGBAmount_lt?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_lte?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_not?: Maybe<Scalars['BigInt']>;
+  xALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum Stake_OrderBy {
+  Id = 'id',
+  StakedAlgbAmount = 'stakedALGBAmount',
+  XAlgbAmount = 'xALGBAmount'
+}
+
 export type Subscription = {
   __typename?: 'Subscription';
   /** Access to subgraph metadata */
@@ -3377,12 +4361,20 @@ export type Subscription = {
   burns: Array<Burn>;
   collect?: Maybe<Collect>;
   collects: Array<Collect>;
+  deposit?: Maybe<Deposit>;
+  deposits: Array<Deposit>;
+  eternalFarming?: Maybe<EternalFarming>;
+  eternalFarmings: Array<EternalFarming>;
   factories: Array<Factory>;
   factory?: Maybe<Factory>;
   feeHourData?: Maybe<FeeHourData>;
   feeHourDatas: Array<FeeHourData>;
   flash?: Maybe<Flash>;
   flashes: Array<Flash>;
+  histories: Array<History>;
+  history?: Maybe<History>;
+  limitFarming?: Maybe<LimitFarming>;
+  limitFarmings: Array<LimitFarming>;
   mint?: Maybe<Mint>;
   mints: Array<Mint>;
   pool?: Maybe<Pool>;
@@ -3397,6 +4389,12 @@ export type Subscription = {
   positionSnapshot?: Maybe<PositionSnapshot>;
   positionSnapshots: Array<PositionSnapshot>;
   positions: Array<Position>;
+  reward?: Maybe<Reward>;
+  rewards: Array<Reward>;
+  stake?: Maybe<Stake>;
+  stakeTx?: Maybe<StakeTx>;
+  stakeTxes: Array<StakeTx>;
+  stakes: Array<Stake>;
   swap?: Maybe<Swap>;
   swaps: Array<Swap>;
   tick?: Maybe<Tick>;
@@ -3511,6 +4509,42 @@ export type SubscriptionCollectsArgs = {
 };
 
 
+export type SubscriptionDepositArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionDepositsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Deposit_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Deposit_Filter>;
+};
+
+
+export type SubscriptionEternalFarmingArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionEternalFarmingsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<EternalFarming_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<EternalFarming_Filter>;
+};
+
+
 export type SubscriptionFactoriesArgs = {
   block?: Maybe<Block_Height>;
   first?: Maybe<Scalars['Int']>;
@@ -3562,6 +4596,42 @@ export type SubscriptionFlashesArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Flash_Filter>;
+};
+
+
+export type SubscriptionHistoriesArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<History_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<History_Filter>;
+};
+
+
+export type SubscriptionHistoryArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionLimitFarmingArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionLimitFarmingsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<LimitFarming_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<LimitFarming_Filter>;
 };
 
 
@@ -3688,6 +4758,60 @@ export type SubscriptionPositionsArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Position_Filter>;
+};
+
+
+export type SubscriptionRewardArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionRewardsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Reward_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Reward_Filter>;
+};
+
+
+export type SubscriptionStakeArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionStakeTxArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionStakeTxesArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakeTx_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<StakeTx_Filter>;
+};
+
+
+export type SubscriptionStakesArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Stake_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Stake_Filter>;
 };
 
 
@@ -5355,6 +6479,43 @@ export type FeeTierDistributionQuery = (
   )> }
 );
 
+export type LimitFarmQueryVariables = Exact<{
+  time?: Maybe<Scalars['BigInt']>;
+}>;
+
+
+export type LimitFarmQuery = (
+  { __typename?: 'Query' }
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'startTime' | 'endTime'>
+  )> }
+);
+
+export type EternalFarmQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EternalFarmQuery = (
+  { __typename?: 'Query' }
+  & { eternalFarmings: Array<(
+    { __typename?: 'EternalFarming' }
+    & Pick<EternalFarming, 'startTime' | 'endTime'>
+  )> }
+);
+
+export type FetchRewardsQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+}>;
+
+
+export type FetchRewardsQuery = (
+  { __typename?: 'Query' }
+  & { rewards: Array<(
+    { __typename?: 'Reward' }
+    & Pick<Reward, 'id' | 'rewardAddress' | 'amount' | 'owner'>
+  )> }
+);
+
 export type FetchTokenQueryVariables = Exact<{
   tokenId?: Maybe<Scalars['ID']>;
 }>;
@@ -5365,6 +6526,32 @@ export type FetchTokenQuery = (
   & { tokens: Array<(
     { __typename?: 'Token' }
     & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
+  )> }
+);
+
+export type FetchLimitQueryVariables = Exact<{
+  limitFarmingId?: Maybe<Scalars['ID']>;
+}>;
+
+
+export type FetchLimitQuery = (
+  { __typename?: 'Query' }
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'multiplierToken' | 'createdAtTimestamp' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'isDetached'>
+  )> }
+);
+
+export type FetchEternalFarmQueryVariables = Exact<{
+  farmId?: Maybe<Scalars['ID']>;
+}>;
+
+
+export type FetchEternalFarmQuery = (
+  { __typename?: 'Query' }
+  & { eternalFarmings: Array<(
+    { __typename?: 'EternalFarming' }
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken'>
   )> }
 );
 
@@ -5472,6 +6659,136 @@ export type PoolHourDataQuery = (
   )> }
 );
 
+export type LastEventQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LastEventQuery = (
+  { __typename?: 'Query' }
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'createdAtTimestamp' | 'id' | 'startTime' | 'endTime'>
+  )> }
+);
+
+export type FutureEventsQueryVariables = Exact<{
+  timestamp?: Maybe<Scalars['BigInt']>;
+}>;
+
+
+export type FutureEventsQuery = (
+  { __typename?: 'Query' }
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken' | 'enterStartTime' | 'isDetached'>
+  )> }
+);
+
+export type CurrentEventsQueryVariables = Exact<{
+  startTime?: Maybe<Scalars['BigInt']>;
+  endTime?: Maybe<Scalars['BigInt']>;
+}>;
+
+
+export type CurrentEventsQuery = (
+  { __typename?: 'Query' }
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'id' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'enterStartTime' | 'multiplierToken' | 'isDetached'>
+  )> }
+);
+
+export type FrozenStakedQueryVariables = Exact<{
+  account?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type FrozenStakedQuery = (
+  { __typename?: 'Query' }
+  & { stakeTxes: Array<(
+    { __typename?: 'StakeTx' }
+    & Pick<StakeTx, 'timestamp' | 'stakedALGBAmount' | 'xALGBAmount'>
+  )> }
+);
+
+export type TransferedPositionsQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+}>;
+
+
+export type TransferedPositionsQuery = (
+  { __typename?: 'Query' }
+  & { deposits: Array<(
+    { __typename?: 'Deposit' }
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'limitFarming' | 'eternalFarming' | 'onFarmingCenter'>
+  )> }
+);
+
+export type HasTransferedPositionsQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+}>;
+
+
+export type HasTransferedPositionsQuery = (
+  { __typename?: 'Query' }
+  & { deposits: Array<(
+    { __typename?: 'Deposit' }
+    & Pick<Deposit, 'id'>
+  )> }
+);
+
+export type PositionsOnEternalFarmingQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+}>;
+
+
+export type PositionsOnEternalFarmingQuery = (
+  { __typename?: 'Query' }
+  & { deposits: Array<(
+    { __typename?: 'Deposit' }
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming'>
+  )> }
+);
+
+export type TransferedPositionsForPoolQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+  pool?: Maybe<Scalars['Bytes']>;
+}>;
+
+
+export type TransferedPositionsForPoolQuery = (
+  { __typename?: 'Query' }
+  & { deposits: Array<(
+    { __typename?: 'Deposit' }
+    & Pick<Deposit, 'id' | 'owner' | 'pool' | 'L2tokenId' | 'limitFarming' | 'eternalFarming' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'tokensLockedLimit' | 'tokensLockedEternal' | 'tierLimit' | 'tierEternal'>
+  )> }
+);
+
+export type PositionsOnFarmingQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+  pool?: Maybe<Scalars['Bytes']>;
+}>;
+
+
+export type PositionsOnFarmingQuery = (
+  { __typename?: 'Query' }
+  & { deposits: Array<(
+    { __typename?: 'Deposit' }
+    & Pick<Deposit, 'id'>
+  )> }
+);
+
+export type InfiniteFarmsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type InfiniteFarmsQuery = (
+  { __typename?: 'Query' }
+  & { eternalFarmings: Array<(
+    { __typename?: 'EternalFarming' }
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'multiplierToken'>
+  )> }
+);
+
 export type TopPoolsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5491,6 +6808,33 @@ export type TopTokensQuery = (
   & { tokens: Array<(
     { __typename?: 'Token' }
     & Pick<Token, 'id'>
+  )> }
+);
+
+export type StakeHistoryQueryVariables = Exact<{
+  id?: Maybe<Scalars['ID']>;
+}>;
+
+
+export type StakeHistoryQuery = (
+  { __typename?: 'Query' }
+  & { factories: Array<(
+    { __typename?: 'Factory' }
+    & Pick<Factory, 'currentStakedAmount' | 'earnedForAllTime' | 'ALGBbalance' | 'xALGBtotalSupply'>
+  )>, stakes: Array<(
+    { __typename?: 'Stake' }
+    & Pick<Stake, 'stakedALGBAmount' | 'xALGBAmount'>
+  )> }
+);
+
+export type StakeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StakeQuery = (
+  { __typename?: 'Query' }
+  & { histories: Array<(
+    { __typename?: 'History' }
+    & Pick<History, 'date' | 'currentStakedAmount' | 'ALGBbalance' | 'xALGBminted' | 'xALGBburned' | 'xALGBtotalSupply' | 'ALGBfromVault'>
   )> }
 );
 
@@ -5586,6 +6930,37 @@ export const FeeTierDistributionDocument = `
   }
 }
     `;
+export const LimitFarmDocument = `
+    query limitFarm($time: BigInt) {
+  limitFarmings(
+    orderBy: createdAtTimestamp
+    orderDirection: desc
+    first: 1
+    where: {startTime_gt: $time, isDetached: false}
+  ) {
+    startTime
+    endTime
+  }
+}
+    `;
+export const EternalFarmDocument = `
+    query eternalFarm {
+  eternalFarmings(where: {isDetached: false}, first: 1) {
+    startTime
+    endTime
+  }
+}
+    `;
+export const FetchRewardsDocument = `
+    query fetchRewards($account: Bytes) {
+  rewards(orderBy: amount, orderDirection: desc, where: {owner: $account}) {
+    id
+    rewardAddress
+    amount
+    owner
+  }
+}
+    `;
 export const FetchTokenDocument = `
     query fetchToken($tokenId: ID) {
   tokens(where: {id: $tokenId}) {
@@ -5593,6 +6968,54 @@ export const FetchTokenDocument = `
     symbol
     name
     decimals
+  }
+}
+    `;
+export const FetchLimitDocument = `
+    query fetchLimit($limitFarmingId: ID) {
+  limitFarmings(where: {id: $limitFarmingId}) {
+    id
+    rewardToken
+    bonusRewardToken
+    pool
+    startTime
+    endTime
+    reward
+    bonusReward
+    multiplierToken
+    createdAtTimestamp
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    enterStartTime
+    isDetached
+  }
+}
+    `;
+export const FetchEternalFarmDocument = `
+    query fetchEternalFarm($farmId: ID) {
+  eternalFarmings(where: {id: $farmId}) {
+    id
+    rewardToken
+    bonusRewardToken
+    pool
+    startTime
+    endTime
+    reward
+    bonusReward
+    rewardRate
+    bonusRewardRate
+    isDetached
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    multiplierToken
   }
 }
     `;
@@ -5730,6 +7153,186 @@ export const PoolHourDataDocument = `
   }
 }
     `;
+export const LastEventDocument = `
+    query lastEvent {
+  limitFarmings(
+    first: 1
+    orderDirection: desc
+    orderBy: createdAtTimestamp
+    where: {isDetached: false}
+  ) {
+    createdAtTimestamp
+    id
+    startTime
+    endTime
+  }
+}
+    `;
+export const FutureEventsDocument = `
+    query futureEvents($timestamp: BigInt) {
+  limitFarmings(
+    orderBy: startTime
+    orderDirection: asc
+    where: {startTime_gt: $timestamp, isDetached: false}
+  ) {
+    id
+    createdAtTimestamp
+    rewardToken
+    bonusReward
+    bonusRewardToken
+    pool
+    startTime
+    endTime
+    reward
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    multiplierToken
+    enterStartTime
+    isDetached
+  }
+}
+    `;
+export const CurrentEventsDocument = `
+    query currentEvents($startTime: BigInt, $endTime: BigInt) {
+  limitFarmings(
+    orderBy: endTime
+    orderDirection: desc
+    where: {startTime_lte: $startTime, endTime_gt: $endTime, isDetached: false}
+  ) {
+    id
+    rewardToken
+    bonusReward
+    bonusRewardToken
+    pool
+    startTime
+    endTime
+    reward
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    enterStartTime
+    multiplierToken
+    isDetached
+  }
+}
+    `;
+export const FrozenStakedDocument = `
+    query frozenStaked($account: String, $timestamp: Int) {
+  stakeTxes(
+    where: {owner: $account, timestamp_gte: $timestamp}
+    orderBy: timestamp
+    orderDirection: asc
+  ) {
+    timestamp
+    stakedALGBAmount
+    xALGBAmount
+  }
+}
+    `;
+export const TransferedPositionsDocument = `
+    query transferedPositions($account: Bytes) {
+  deposits(
+    orderBy: id
+    orderDirection: desc
+    where: {owner: $account, onFarmingCenter: true}
+  ) {
+    id
+    owner
+    pool
+    L2tokenId
+    limitFarming
+    eternalFarming
+    onFarmingCenter
+  }
+}
+    `;
+export const HasTransferedPositionsDocument = `
+    query hasTransferedPositions($account: Bytes) {
+  deposits(first: 1, where: {owner: $account, onFarmingCenter: true}) {
+    id
+  }
+}
+    `;
+export const PositionsOnEternalFarmingDocument = `
+    query positionsOnEternalFarming($account: Bytes) {
+  deposits(
+    orderBy: id
+    orderDirection: desc
+    where: {owner: $account, onFarmingCenter: true, eternalFarming_not: null}
+  ) {
+    id
+    owner
+    pool
+    L2tokenId
+    eternalFarming
+    onFarmingCenter
+    enteredInEternalFarming
+  }
+}
+    `;
+export const TransferedPositionsForPoolDocument = `
+    query transferedPositionsForPool($account: Bytes, $pool: Bytes) {
+  deposits(
+    orderBy: id
+    orderDirection: desc
+    where: {owner: $account, pool: $pool, liquidity_not: "0"}
+  ) {
+    id
+    owner
+    pool
+    L2tokenId
+    limitFarming
+    eternalFarming
+    onFarmingCenter
+    enteredInEternalFarming
+    tokensLockedLimit
+    tokensLockedEternal
+    tierLimit
+    tierEternal
+  }
+}
+    `;
+export const PositionsOnFarmingDocument = `
+    query positionsOnFarming($account: Bytes, $pool: Bytes) {
+  deposits(
+    orderBy: id
+    orderDirection: desc
+    where: {owner: $account, pool: $pool, onFarmingCenter: true}
+  ) {
+    id
+  }
+}
+    `;
+export const InfiniteFarmsDocument = `
+    query infiniteFarms {
+  eternalFarmings(where: {isDetached: false}) {
+    id
+    rewardToken
+    bonusRewardToken
+    pool
+    startTime
+    endTime
+    reward
+    bonusReward
+    rewardRate
+    bonusRewardRate
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+    multiplierToken
+  }
+}
+    `;
 export const TopPoolsDocument = `
     query topPools {
   pools(
@@ -5751,6 +7354,33 @@ export const TopTokensDocument = `
     subgraphError: allow
   ) {
     id
+  }
+}
+    `;
+export const StakeHistoryDocument = `
+    query stakeHistory($id: ID) {
+  factories {
+    currentStakedAmount
+    earnedForAllTime
+    ALGBbalance
+    xALGBtotalSupply
+  }
+  stakes(where: {id: $id}) {
+    stakedALGBAmount
+    xALGBAmount
+  }
+}
+    `;
+export const StakeDocument = `
+    query stake {
+  histories(first: 1000, where: {date_gte: 1642626000}) {
+    date
+    currentStakedAmount
+    ALGBbalance
+    xALGBminted
+    xALGBburned
+    xALGBtotalSupply
+    ALGBfromVault
   }
 }
     `;
@@ -5794,8 +7424,23 @@ const injectedRtkApi = api.injectEndpoints({
     feeTierDistribution: build.query<FeeTierDistributionQuery, FeeTierDistributionQueryVariables>({
       query: (variables) => ({ document: FeeTierDistributionDocument, variables })
     }),
+    limitFarm: build.query<LimitFarmQuery, LimitFarmQueryVariables | void>({
+      query: (variables) => ({ document: LimitFarmDocument, variables })
+    }),
+    eternalFarm: build.query<EternalFarmQuery, EternalFarmQueryVariables | void>({
+      query: (variables) => ({ document: EternalFarmDocument, variables })
+    }),
+    fetchRewards: build.query<FetchRewardsQuery, FetchRewardsQueryVariables | void>({
+      query: (variables) => ({ document: FetchRewardsDocument, variables })
+    }),
     fetchToken: build.query<FetchTokenQuery, FetchTokenQueryVariables | void>({
       query: (variables) => ({ document: FetchTokenDocument, variables })
+    }),
+    fetchLimit: build.query<FetchLimitQuery, FetchLimitQueryVariables | void>({
+      query: (variables) => ({ document: FetchLimitDocument, variables })
+    }),
+    fetchEternalFarm: build.query<FetchEternalFarmQuery, FetchEternalFarmQueryVariables | void>({
+      query: (variables) => ({ document: FetchEternalFarmDocument, variables })
     }),
     fetchPool: build.query<FetchPoolQuery, FetchPoolQueryVariables | void>({
       query: (variables) => ({ document: FetchPoolDocument, variables })
@@ -5818,11 +7463,47 @@ const injectedRtkApi = api.injectEndpoints({
     poolHourData: build.query<PoolHourDataQuery, PoolHourDataQueryVariables | void>({
       query: (variables) => ({ document: PoolHourDataDocument, variables })
     }),
+    lastEvent: build.query<LastEventQuery, LastEventQueryVariables | void>({
+      query: (variables) => ({ document: LastEventDocument, variables })
+    }),
+    futureEvents: build.query<FutureEventsQuery, FutureEventsQueryVariables | void>({
+      query: (variables) => ({ document: FutureEventsDocument, variables })
+    }),
+    currentEvents: build.query<CurrentEventsQuery, CurrentEventsQueryVariables | void>({
+      query: (variables) => ({ document: CurrentEventsDocument, variables })
+    }),
+    frozenStaked: build.query<FrozenStakedQuery, FrozenStakedQueryVariables | void>({
+      query: (variables) => ({ document: FrozenStakedDocument, variables })
+    }),
+    transferedPositions: build.query<TransferedPositionsQuery, TransferedPositionsQueryVariables | void>({
+      query: (variables) => ({ document: TransferedPositionsDocument, variables })
+    }),
+    hasTransferedPositions: build.query<HasTransferedPositionsQuery, HasTransferedPositionsQueryVariables | void>({
+      query: (variables) => ({ document: HasTransferedPositionsDocument, variables })
+    }),
+    positionsOnEternalFarming: build.query<PositionsOnEternalFarmingQuery, PositionsOnEternalFarmingQueryVariables | void>({
+      query: (variables) => ({ document: PositionsOnEternalFarmingDocument, variables })
+    }),
+    transferedPositionsForPool: build.query<TransferedPositionsForPoolQuery, TransferedPositionsForPoolQueryVariables | void>({
+      query: (variables) => ({ document: TransferedPositionsForPoolDocument, variables })
+    }),
+    positionsOnFarming: build.query<PositionsOnFarmingQuery, PositionsOnFarmingQueryVariables | void>({
+      query: (variables) => ({ document: PositionsOnFarmingDocument, variables })
+    }),
+    infiniteFarms: build.query<InfiniteFarmsQuery, InfiniteFarmsQueryVariables | void>({
+      query: (variables) => ({ document: InfiniteFarmsDocument, variables })
+    }),
     topPools: build.query<TopPoolsQuery, TopPoolsQueryVariables | void>({
       query: (variables) => ({ document: TopPoolsDocument, variables })
     }),
     topTokens: build.query<TopTokensQuery, TopTokensQueryVariables | void>({
       query: (variables) => ({ document: TopTokensDocument, variables })
+    }),
+    stakeHistory: build.query<StakeHistoryQuery, StakeHistoryQueryVariables | void>({
+      query: (variables) => ({ document: StakeHistoryDocument, variables })
+    }),
+    stake: build.query<StakeQuery, StakeQueryVariables | void>({
+      query: (variables) => ({ document: StakeDocument, variables })
     }),
     surroundingTicks: build.query<SurroundingTicksQuery, SurroundingTicksQueryVariables>({
       query: (variables) => ({ document: SurroundingTicksDocument, variables })
@@ -5834,5 +7515,5 @@ const injectedRtkApi = api.injectEndpoints({
 });
 
 export { injectedRtkApi as api };
-export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery } = injectedRtkApi;
+export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useFrozenStakedQuery, useLazyFrozenStakedQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useStakeHistoryQuery, useLazyStakeHistoryQuery, useStakeQuery, useLazyStakeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery } = injectedRtkApi;
 

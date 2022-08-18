@@ -23,6 +23,7 @@ import { Trans } from "@lingui/macro";
 
 import "./index.scss";
 const AddLiquidity = React.lazy(() => import("./AddLiquidity"));
+const FarmingPage = React.lazy(() => import("./Farming/FarmingPage"));
 const PoolPage = React.lazy(() => import("./Pool"));
 const PositionPage = React.lazy(() => import("./Pool/PositionPage"));
 const InfoPage = React.lazy(() => import("./InfoPage"));
@@ -93,6 +94,8 @@ export default function App() {
                             >
                                 <Switch>
                                     <Route strict path="/info" component={InfoPage} />
+
+                                    <Route strict path="/farming" component={FarmingPage} />
 
                                     <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                                     <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />

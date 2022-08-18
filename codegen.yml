@@ -2,6 +2,8 @@ overrideExisting: true
 schema:
   [
       'https://api.thegraph.com/subgraphs/name/iliaazhel/info-test',
+      'https://api.thegraph.com/subgraphs/name/iliaazhel/farming-test',
+      'https://api.thegraph.com/subgraphs/name/iliaazhel/staker',
       'https://api.thegraph.com/subgraphs/name/iliaazhel/ethereum-blocks'
   ]
 documents: 'src/**/!(*.d).{ts,tsx}'

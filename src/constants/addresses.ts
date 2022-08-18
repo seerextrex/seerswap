@@ -30,6 +30,18 @@ export const V3_MIGRATOR_ADDRESSES: AddressMap = {
     [SupportedChainId.DOGECHAIN]: '0xD87E1Bd21050d35751dA96A253F932C423185d23'
 }
 
+export const FINITE_FARMING: AddressMap = {
+    [SupportedChainId.DOGECHAIN]: '0xdA323D105970Fe5bCD0E480a27D4bbD04Ae8dCa9'
+}
+
+export const INFINITE_FARMING_ADDRESS: AddressMap = {
+    [SupportedChainId.DOGECHAIN]: '0xA8dca28065cDA20d92a8fD6F560da6F72640fCac'
+}
+
+export const FARMING_CENTER: AddressMap = {
+    [SupportedChainId.DOGECHAIN]: '0x3A1017b5C8e5bb5B768A7f39548C0D528a9bE115'
+}
+
 export const V2_FACTORY_ADDRESSES: AddressMap = {
     [SupportedChainId.DOGECHAIN]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32'
 }

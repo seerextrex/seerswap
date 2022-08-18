@@ -19,10 +19,10 @@ export default function Footer() {
                 </span>
             </BugReportLink> */}
             <div className={"f w-100 f-jb f-ac"}>
-                <span className={"mr-1"}>
+                {/* <span className={"mr-1"}>
                     <GasPrice />
-                </span>
-                <span>
+                </span> */}
+                <span className={"ml-a mr-a"}>
                     <PoweredByAlgebra />
                 </span>
                 <span>

@@ -52,15 +52,6 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
                 <StatCard isLoading={isLoading} data={_data?.tvlUSD} title={t`Total Value Locked`} style={"mr-f-05 mxs_m-0"} />
                 <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={t`Monthly Volume`} style={"ml-l-05 mxs_m-0"} />
             </div>
-            <div className={"total-stats-wrapper__warning mt-1 p-1 ta-c f f-ac f-jc"}>
-                <AlertCircle />
-                <span className="ml-1">
-                    <Trans>The Subgraph information might be outdated – check all the correct statistics </Trans>&nbsp;
-                    <a href="https://dune.com/lilchizh/algebra" target={"_blank"} rel={"noopener noreferrer"} className={"total-stats-wrapper__warning-link"}>
-                        <Trans>on Dune</Trans>
-                    </a>
-                </span>
-            </div>
         </div>
     );
 }

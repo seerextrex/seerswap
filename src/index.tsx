@@ -12,7 +12,6 @@ import { NetworkContextName } from "./constants/misc";
 import { LanguageProvider } from "./i18n";
 import App from "./pages/App";
 import store from "./state";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ApplicationUpdater from "./state/application/updater";
 import ListsUpdater from "./state/lists/updater";
 import MulticallUpdater from "./state/multicall/updater";
@@ -35,7 +34,7 @@ if (_window.ethereum) {
 }
 
 const client = new ApolloClient({
-    uri: "https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-dev",
+    uri: "http://192.168.88.83:8000/subgraphs/name/cryptoalgebra/algebra",
     cache: new InMemoryCache(),
 });
 
@@ -77,4 +76,3 @@ ReactDOM.render(
     </StrictMode>,
     document.getElementById("root")
 );
-serviceWorkerRegistration.unregister();

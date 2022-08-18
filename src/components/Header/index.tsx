@@ -68,6 +68,9 @@ export default function Header() {
                 >
                     <Trans>Pool</Trans>
                 </NavLink>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
+                    <Trans>Info</Trans>
+                </NavLink>
             </div>
 
             <div className={"header__account flex-s-between"}>

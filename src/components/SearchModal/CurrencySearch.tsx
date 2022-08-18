@@ -145,7 +145,7 @@ export function CurrencySearch({
     const filteredInactiveTokens = useSearchInactiveTokenLists(filteredTokens.length === 0 || (debouncedQuery.length > 2 && !isAddressSearch) ? debouncedQuery : undefined);
 
     return (
-        <div>
+        <div className={"w-100"}>
             <div>
                 <div className={"flex-s-between mb-1"}>
                     <Trans>Select a token</Trans>

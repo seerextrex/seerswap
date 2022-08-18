@@ -34,7 +34,7 @@ if (_window.ethereum) {
 }
 
 const client = new ApolloClient({
-    uri: "http://192.168.88.83:8000/subgraphs/name/cryptoalgebra/algebra",
+    uri: "https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-dev",
     cache: new InMemoryCache(),
 });
 

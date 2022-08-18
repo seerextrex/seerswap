@@ -3,31 +3,31 @@ import { SupportedChainId } from './chains'
 type AddressMap = { [chainId: number]: string }
 
 export const V3_CORE_FACTORY_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0xd2480162Aa7F02Ead7BF4C127465446150D58452'
+    [SupportedChainId.DOGECHAIN]: '0xe18efa058A8C8170fa82b00562FaDb1Ce3855419'
 }
 
 export const POOL_DEPLOYER_ADDRESS: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x56c2162254b0E4417288786eE402c2B41d4e181e'
+    [SupportedChainId.DOGECHAIN]: '0x6C478CE4ec6AbdF178726c55439a18AbF60D93C6'
 }
 
 export const QUOTER_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0xd8E1E7009802c914b0d39B31Fc1759A865b727B1'
+    [SupportedChainId.DOGECHAIN]: '0x6300FA6e6115f31f76ECc965d37a672A6fB4D93A'
 }
 
 export const SWAP_ROUTER_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x4aE2bD0666c76C7f39311b9B3e39b53C8D7C43Ea'
+    [SupportedChainId.DOGECHAIN]: '0x6f6ee2AEe74CB5E0d740a3369f9DadA647A78592'
 }
 
 export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x0b012055F770AE7BB7a8303968A7Fb6088A2296e'
+    [SupportedChainId.DOGECHAIN]: '0xBF4B86A53E4f0Bf2EEEe083820f0f1c2363DF157'
 }
 
 export const MULTICALL_ADDRESS: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x23602819a9E2B1C8eC7605356D5b0F1FBB10ddA5'
+    [SupportedChainId.DOGECHAIN]: '0xDA8db60c929171B794AAa78fe8976368F3791C8c'
 }
 
 export const V3_MIGRATOR_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0xB9aFAa5c407DdebA5098193F31CE23D21cFD9657'
+    [SupportedChainId.DOGECHAIN]: '0xD87E1Bd21050d35751dA96A253F932C423185d23'
 }
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {

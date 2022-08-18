@@ -18,7 +18,10 @@ const WETH_ONLY: ChainTokenList = Object.fromEntries(
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
     ...WETH_ONLY,
-    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN]]
+    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], USDC_DOGECHAIN,
+        USDT_DOGECHAIN,
+        WBTC_DOGECHAIN,
+        ETH_DOGECHAIN]
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 /**

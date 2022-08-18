@@ -15,6 +15,7 @@ export type {
     SmallPoolSubgraph,
     PoolChartSubgraph,
     PoolHourData,
+    EternalFarmingByPool
 } from './responseSubgraph'
 export type {
     FormattedPool,
@@ -31,8 +32,35 @@ export type {
     LiquidityChartData,
     FormattedProcessedData,
     FeeChart,
+    FarmingPositions,
     PriceRangeClosed,
     PriceRangeChart,
     PositionPriceRange
 } from './info'
+export type {
+    Deposit,
+    DefaultFarming,
+    EternalCollectRewardHandlerInterface,
+    GetRewardsHandlerInterface,
+    DefaultNFT,
+    DefaultFarmingWithError,
+    GetRewardsHashInterface,
+    ApprovedNFT,
+    RewardInterface,
+    UnfarmingInterface,
+    UnstakingInterface,
+    FormattedRewardInterface,
+    GetRewardsHashInterfaceWithError,
+    Position,
+    EternalFarming,
+    FormattedEternalFarming,
+    DetachedEternalFarming,
+    TickFarming,
+    FarmingEvent,
+    FutureFarmingEvent,
+    Reward,
+    FarmingEventString,
+    Aprs,
+    NTFInterface
+} from './farming'
 export type { PositionPool } from './pool'

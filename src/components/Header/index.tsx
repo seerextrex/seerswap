@@ -68,6 +68,12 @@ export default function Header() {
                 >
                     <Trans>Pool</Trans>
                 </NavLink>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
+                    <span>
+                        <Trans>Farming</Trans>
+                    </span>
+                    <span className={"header__farming-circle"} />
+                </NavLink>
                 {/* <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     <Trans>Info</Trans>
                 </NavLink> */}
@@ -79,7 +85,7 @@ export default function Header() {
                         <NetworkCard />
                         {(chainId === 2000 && account && userEthBalance) || networkFailed ? (
                             <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
-                                {_userEthBalance?.toSignificant(2)} {!isMobile && chainValue}
+                                {_userEthBalance?.toFixed(5)} {!isMobile && chainValue}
                             </BalanceText>
                         ) : null}
                     </>

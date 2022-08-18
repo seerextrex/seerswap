@@ -18,6 +18,7 @@ import {
     SerializedPair,
     SerializedToken,
     updateHideClosedPositions,
+    updateHideFarmingPositions,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -179,6 +180,21 @@ export function useUserHideClosedPositions(): [boolean, (newHideClosedPositions:
     );
 
     return [hideClosedPositions, setHideClosedPositions];
+}
+
+export function useUserHideFarmingPositions(): [boolean, (newHideFarmingPositions: boolean) => void] {
+    const dispatch = useAppDispatch();
+
+    const hideFarmingPositions = useAppSelector((state) => state.user.userHideFarmingPositions);
+
+    const setHideFarmingPositions = useCallback(
+        (newHideFarmingPositions: boolean) => {
+            dispatch(updateHideFarmingPositions({ userHideFarmingPositions: newHideFarmingPositions }));
+        },
+        [dispatch]
+    );
+
+    return [hideFarmingPositions, setHideFarmingPositions];
 }
 
 /**

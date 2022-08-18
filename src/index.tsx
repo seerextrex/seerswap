@@ -34,7 +34,7 @@ if (_window.ethereum) {
 }
 
 const client = new ApolloClient({
-    uri: "http://192.168.88.83:8000/subgraphs/name/cryptoalgebra/algebra",
+    uri: "https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-info",
     cache: new InMemoryCache(),
 });
 

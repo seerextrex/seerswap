@@ -116,6 +116,10 @@ export interface FormattedProcessedData extends ProcessedData {
     tickIdx: number
 }
 
+export interface FarmingPositions {
+    id: string
+}
+
 export interface FeeChart {
     data: FormattedFeeChart[] | undefined[]
     previousData: FormattedFeeChart[] | undefined[]

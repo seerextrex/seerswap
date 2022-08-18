@@ -7,7 +7,7 @@ import { AppState } from 'state'
 
 // List of supported subgraphs. Note that the app currently only support one active subgraph at a time
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
-  [SupportedChainId.DOGECHAIN]: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-dev'
+  [SupportedChainId.DOGECHAIN]: 'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-info'
 }
 
 export const api = createApi({

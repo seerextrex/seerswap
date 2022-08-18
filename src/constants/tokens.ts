@@ -11,6 +11,31 @@ export const USDC_DOGECHAIN = new Token(
     'USDC'
 )
 
+export const ETH_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0xb44a9b6905af7c801311e8f4e76932ee959c663c',
+    18,
+    'ETH',
+    'Ether'
+)
+
+export const USDT_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0xE3F5a90F9cb311505cd691a46596599aA1A0AD7D',
+    18,
+    'USDT',
+    'USDT'
+)
+
+export const WBTC_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
+    18,
+    'WBTC',
+    'Wrapped Bitcoin'
+)
+
+
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WDOGE
 }

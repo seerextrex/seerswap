@@ -35,6 +35,14 @@ export const WBTC_DOGECHAIN = new Token(
     'Wrapped Bitcoin'
 )
 
+export const DOGEDRAGON_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0x582DaEF1F36D6009f64b74519cFD612a8467Be18',
+    18,
+    'DD',
+    'Doge Dragon'
+)
+
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WDOGE

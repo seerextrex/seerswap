@@ -38,6 +38,11 @@ const DEFAULT_TOKEN_LIST: any = {
         name: 'Wrapped Bitcoin',
         decimals: 18,
         symbol: 'WBTC'
+    },
+    ['0x582daef1f36d6009f64b74519cfd612a8467be18']: {
+        name: 'Doge Dragon',
+        decimals: 18,
+        symbol: 'DD'
     }
 }
 

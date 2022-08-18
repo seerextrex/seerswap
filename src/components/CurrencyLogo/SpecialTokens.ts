@@ -3,6 +3,7 @@ import EthLogo from '../../assets/images/ether-logo.png'
 import USDTLogo from '../../assets/images/USDT-logo.png'
 import USDCLogo from '../../assets/svg/usd-coin-usdc-logo.svg'
 import WBTCLogo from '../../assets/images/wbtc-logo.png'
+import DDLogo from '../../assets/images/doge-dragon-logo.jpg'
 
 interface SpecialTokensInterface {
     [key: string]: {
@@ -32,4 +33,8 @@ export const specialTokens: SpecialTokensInterface = {
         name: 'WBTC',
         logo: WBTCLogo
     },
+    ['0x582daef1f36d6009f64b74519cfd612a8467be18']: {
+        name: 'DD',
+        logo: DDLogo
+    }
 }

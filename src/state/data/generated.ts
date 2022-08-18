@@ -1075,10 +1075,6 @@ export enum EternalFarming_OrderBy {
 
 export type Factory = {
   __typename?: 'Factory';
-  ALGBbalance: Scalars['BigInt'];
-  ALGBfromVault: Scalars['BigInt'];
-  currentStakedAmount: Scalars['BigInt'];
-  earnedForAllTime: Scalars['BigInt'];
   id: Scalars['ID'];
   owner: Scalars['ID'];
   poolCount: Scalars['BigInt'];
@@ -1092,45 +1088,11 @@ export type Factory = {
   totalVolumeUSD: Scalars['BigDecimal'];
   txCount: Scalars['BigInt'];
   untrackedVolumeUSD: Scalars['BigDecimal'];
-  xALGBminted: Scalars['BigInt'];
-  xALGBtotalSupply: Scalars['BigInt'];
 };
 
 export type Factory_Filter = {
-  ALGBbalance?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_gt?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_gte?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_in?: Maybe<Array<Scalars['BigInt']>>;
-  ALGBbalance_lt?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_lte?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_not?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  ALGBfromVault?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_gt?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_gte?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_in?: Maybe<Array<Scalars['BigInt']>>;
-  ALGBfromVault_lt?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_lte?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_not?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_not_in?: Maybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
-  currentStakedAmount?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_gt?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_gte?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_in?: Maybe<Array<Scalars['BigInt']>>;
-  currentStakedAmount_lt?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_lte?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_not?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  earnedForAllTime?: Maybe<Scalars['BigInt']>;
-  earnedForAllTime_gt?: Maybe<Scalars['BigInt']>;
-  earnedForAllTime_gte?: Maybe<Scalars['BigInt']>;
-  earnedForAllTime_in?: Maybe<Array<Scalars['BigInt']>>;
-  earnedForAllTime_lt?: Maybe<Scalars['BigInt']>;
-  earnedForAllTime_lte?: Maybe<Scalars['BigInt']>;
-  earnedForAllTime_not?: Maybe<Scalars['BigInt']>;
-  earnedForAllTime_not_in?: Maybe<Array<Scalars['BigInt']>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -1235,29 +1197,9 @@ export type Factory_Filter = {
   untrackedVolumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
   untrackedVolumeUSD_not?: Maybe<Scalars['BigDecimal']>;
   untrackedVolumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
-  xALGBminted?: Maybe<Scalars['BigInt']>;
-  xALGBminted_gt?: Maybe<Scalars['BigInt']>;
-  xALGBminted_gte?: Maybe<Scalars['BigInt']>;
-  xALGBminted_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBminted_lt?: Maybe<Scalars['BigInt']>;
-  xALGBminted_lte?: Maybe<Scalars['BigInt']>;
-  xALGBminted_not?: Maybe<Scalars['BigInt']>;
-  xALGBminted_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBtotalSupply?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_gt?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_gte?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBtotalSupply_lt?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_lte?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_not?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Factory_OrderBy {
-  AlgBbalance = 'ALGBbalance',
-  AlgBfromVault = 'ALGBfromVault',
-  CurrentStakedAmount = 'currentStakedAmount',
-  EarnedForAllTime = 'earnedForAllTime',
   Id = 'id',
   Owner = 'owner',
   PoolCount = 'poolCount',
@@ -1270,9 +1212,7 @@ export enum Factory_OrderBy {
   TotalVolumeMatic = 'totalVolumeMatic',
   TotalVolumeUsd = 'totalVolumeUSD',
   TxCount = 'txCount',
-  UntrackedVolumeUsd = 'untrackedVolumeUSD',
-  XAlgBminted = 'xALGBminted',
-  XAlgBtotalSupply = 'xALGBtotalSupply'
+  UntrackedVolumeUsd = 'untrackedVolumeUSD'
 }
 
 export type FeeHourData = {
@@ -1541,98 +1481,6 @@ export enum Flash_OrderBy {
   Sender = 'sender',
   Timestamp = 'timestamp',
   Transaction = 'transaction'
-}
-
-export type History = {
-  __typename?: 'History';
-  ALGBbalance: Scalars['BigInt'];
-  ALGBfromVault: Scalars['BigInt'];
-  currentStakedAmount: Scalars['BigInt'];
-  date: Scalars['BigInt'];
-  id: Scalars['ID'];
-  xALGBburned: Scalars['BigInt'];
-  xALGBminted: Scalars['BigInt'];
-  xALGBtotalSupply: Scalars['BigInt'];
-};
-
-export type History_Filter = {
-  ALGBbalance?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_gt?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_gte?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_in?: Maybe<Array<Scalars['BigInt']>>;
-  ALGBbalance_lt?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_lte?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_not?: Maybe<Scalars['BigInt']>;
-  ALGBbalance_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  ALGBfromVault?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_gt?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_gte?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_in?: Maybe<Array<Scalars['BigInt']>>;
-  ALGBfromVault_lt?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_lte?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_not?: Maybe<Scalars['BigInt']>;
-  ALGBfromVault_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  /** Filter for the block changed event. */
-  _change_block?: Maybe<BlockChangedFilter>;
-  currentStakedAmount?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_gt?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_gte?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_in?: Maybe<Array<Scalars['BigInt']>>;
-  currentStakedAmount_lt?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_lte?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_not?: Maybe<Scalars['BigInt']>;
-  currentStakedAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  date?: Maybe<Scalars['BigInt']>;
-  date_gt?: Maybe<Scalars['BigInt']>;
-  date_gte?: Maybe<Scalars['BigInt']>;
-  date_in?: Maybe<Array<Scalars['BigInt']>>;
-  date_lt?: Maybe<Scalars['BigInt']>;
-  date_lte?: Maybe<Scalars['BigInt']>;
-  date_not?: Maybe<Scalars['BigInt']>;
-  date_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  id?: Maybe<Scalars['ID']>;
-  id_gt?: Maybe<Scalars['ID']>;
-  id_gte?: Maybe<Scalars['ID']>;
-  id_in?: Maybe<Array<Scalars['ID']>>;
-  id_lt?: Maybe<Scalars['ID']>;
-  id_lte?: Maybe<Scalars['ID']>;
-  id_not?: Maybe<Scalars['ID']>;
-  id_not_in?: Maybe<Array<Scalars['ID']>>;
-  xALGBburned?: Maybe<Scalars['BigInt']>;
-  xALGBburned_gt?: Maybe<Scalars['BigInt']>;
-  xALGBburned_gte?: Maybe<Scalars['BigInt']>;
-  xALGBburned_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBburned_lt?: Maybe<Scalars['BigInt']>;
-  xALGBburned_lte?: Maybe<Scalars['BigInt']>;
-  xALGBburned_not?: Maybe<Scalars['BigInt']>;
-  xALGBburned_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBminted?: Maybe<Scalars['BigInt']>;
-  xALGBminted_gt?: Maybe<Scalars['BigInt']>;
-  xALGBminted_gte?: Maybe<Scalars['BigInt']>;
-  xALGBminted_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBminted_lt?: Maybe<Scalars['BigInt']>;
-  xALGBminted_lte?: Maybe<Scalars['BigInt']>;
-  xALGBminted_not?: Maybe<Scalars['BigInt']>;
-  xALGBminted_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBtotalSupply?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_gt?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_gte?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBtotalSupply_lt?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_lte?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_not?: Maybe<Scalars['BigInt']>;
-  xALGBtotalSupply_not_in?: Maybe<Array<Scalars['BigInt']>>;
-};
-
-export enum History_OrderBy {
-  AlgBbalance = 'ALGBbalance',
-  AlgBfromVault = 'ALGBfromVault',
-  CurrentStakedAmount = 'currentStakedAmount',
-  Date = 'date',
-  Id = 'id',
-  XAlgBburned = 'xALGBburned',
-  XAlgBminted = 'xALGBminted',
-  XAlgBtotalSupply = 'xALGBtotalSupply'
 }
 
 export type LimitFarming = {
@@ -3596,8 +3444,6 @@ export type Query = {
   feeHourDatas: Array<FeeHourData>;
   flash?: Maybe<Flash>;
   flashes: Array<Flash>;
-  histories: Array<History>;
-  history?: Maybe<History>;
   limitFarming?: Maybe<LimitFarming>;
   limitFarmings: Array<LimitFarming>;
   mint?: Maybe<Mint>;
@@ -3616,10 +3462,6 @@ export type Query = {
   positions: Array<Position>;
   reward?: Maybe<Reward>;
   rewards: Array<Reward>;
-  stake?: Maybe<Stake>;
-  stakeTx?: Maybe<StakeTx>;
-  stakeTxes: Array<StakeTx>;
-  stakes: Array<Stake>;
   swap?: Maybe<Swap>;
   swaps: Array<Swap>;
   tick?: Maybe<Tick>;
@@ -3824,24 +3666,6 @@ export type QueryFlashesArgs = {
 };
 
 
-export type QueryHistoriesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<History_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<History_Filter>;
-};
-
-
-export type QueryHistoryArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
 export type QueryLimitFarmingArgs = {
   block?: Maybe<Block_Height>;
   id: Scalars['ID'];
@@ -4001,42 +3825,6 @@ export type QueryRewardsArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Reward_Filter>;
-};
-
-
-export type QueryStakeArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QueryStakeTxArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QueryStakeTxesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<StakeTx_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<StakeTx_Filter>;
-};
-
-
-export type QueryStakesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Stake_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Stake_Filter>;
 };
 
 
@@ -4231,122 +4019,6 @@ export enum Reward_OrderBy {
   RewardAddress = 'rewardAddress'
 }
 
-export type Stake = {
-  __typename?: 'Stake';
-  id: Scalars['ID'];
-  stakedALGBAmount: Scalars['BigInt'];
-  xALGBAmount: Scalars['BigInt'];
-};
-
-export type StakeTx = {
-  __typename?: 'StakeTx';
-  id: Scalars['ID'];
-  owner?: Maybe<Scalars['String']>;
-  stakedALGBAmount: Scalars['BigInt'];
-  timestamp: Scalars['Int'];
-  xALGBAmount: Scalars['BigInt'];
-};
-
-export type StakeTx_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: Maybe<BlockChangedFilter>;
-  id?: Maybe<Scalars['ID']>;
-  id_gt?: Maybe<Scalars['ID']>;
-  id_gte?: Maybe<Scalars['ID']>;
-  id_in?: Maybe<Array<Scalars['ID']>>;
-  id_lt?: Maybe<Scalars['ID']>;
-  id_lte?: Maybe<Scalars['ID']>;
-  id_not?: Maybe<Scalars['ID']>;
-  id_not_in?: Maybe<Array<Scalars['ID']>>;
-  owner?: Maybe<Scalars['String']>;
-  owner_contains?: Maybe<Scalars['String']>;
-  owner_contains_nocase?: Maybe<Scalars['String']>;
-  owner_ends_with?: Maybe<Scalars['String']>;
-  owner_ends_with_nocase?: Maybe<Scalars['String']>;
-  owner_gt?: Maybe<Scalars['String']>;
-  owner_gte?: Maybe<Scalars['String']>;
-  owner_in?: Maybe<Array<Scalars['String']>>;
-  owner_lt?: Maybe<Scalars['String']>;
-  owner_lte?: Maybe<Scalars['String']>;
-  owner_not?: Maybe<Scalars['String']>;
-  owner_not_contains?: Maybe<Scalars['String']>;
-  owner_not_contains_nocase?: Maybe<Scalars['String']>;
-  owner_not_ends_with?: Maybe<Scalars['String']>;
-  owner_not_ends_with_nocase?: Maybe<Scalars['String']>;
-  owner_not_in?: Maybe<Array<Scalars['String']>>;
-  owner_not_starts_with?: Maybe<Scalars['String']>;
-  owner_not_starts_with_nocase?: Maybe<Scalars['String']>;
-  owner_starts_with?: Maybe<Scalars['String']>;
-  owner_starts_with_nocase?: Maybe<Scalars['String']>;
-  stakedALGBAmount?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_gt?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_gte?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
-  stakedALGBAmount_lt?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_lte?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_not?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  timestamp?: Maybe<Scalars['Int']>;
-  timestamp_gt?: Maybe<Scalars['Int']>;
-  timestamp_gte?: Maybe<Scalars['Int']>;
-  timestamp_in?: Maybe<Array<Scalars['Int']>>;
-  timestamp_lt?: Maybe<Scalars['Int']>;
-  timestamp_lte?: Maybe<Scalars['Int']>;
-  timestamp_not?: Maybe<Scalars['Int']>;
-  timestamp_not_in?: Maybe<Array<Scalars['Int']>>;
-  xALGBAmount?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_gt?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_gte?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBAmount_lt?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_lte?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_not?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
-};
-
-export enum StakeTx_OrderBy {
-  Id = 'id',
-  Owner = 'owner',
-  StakedAlgbAmount = 'stakedALGBAmount',
-  Timestamp = 'timestamp',
-  XAlgbAmount = 'xALGBAmount'
-}
-
-export type Stake_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: Maybe<BlockChangedFilter>;
-  id?: Maybe<Scalars['ID']>;
-  id_gt?: Maybe<Scalars['ID']>;
-  id_gte?: Maybe<Scalars['ID']>;
-  id_in?: Maybe<Array<Scalars['ID']>>;
-  id_lt?: Maybe<Scalars['ID']>;
-  id_lte?: Maybe<Scalars['ID']>;
-  id_not?: Maybe<Scalars['ID']>;
-  id_not_in?: Maybe<Array<Scalars['ID']>>;
-  stakedALGBAmount?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_gt?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_gte?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
-  stakedALGBAmount_lt?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_lte?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_not?: Maybe<Scalars['BigInt']>;
-  stakedALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBAmount?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_gt?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_gte?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_in?: Maybe<Array<Scalars['BigInt']>>;
-  xALGBAmount_lt?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_lte?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_not?: Maybe<Scalars['BigInt']>;
-  xALGBAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
-};
-
-export enum Stake_OrderBy {
-  Id = 'id',
-  StakedAlgbAmount = 'stakedALGBAmount',
-  XAlgbAmount = 'xALGBAmount'
-}
-
 export type Subscription = {
   __typename?: 'Subscription';
   /** Access to subgraph metadata */
@@ -4371,8 +4043,6 @@ export type Subscription = {
   feeHourDatas: Array<FeeHourData>;
   flash?: Maybe<Flash>;
   flashes: Array<Flash>;
-  histories: Array<History>;
-  history?: Maybe<History>;
   limitFarming?: Maybe<LimitFarming>;
   limitFarmings: Array<LimitFarming>;
   mint?: Maybe<Mint>;
@@ -4391,10 +4061,6 @@ export type Subscription = {
   positions: Array<Position>;
   reward?: Maybe<Reward>;
   rewards: Array<Reward>;
-  stake?: Maybe<Stake>;
-  stakeTx?: Maybe<StakeTx>;
-  stakeTxes: Array<StakeTx>;
-  stakes: Array<Stake>;
   swap?: Maybe<Swap>;
   swaps: Array<Swap>;
   tick?: Maybe<Tick>;
@@ -4599,24 +4265,6 @@ export type SubscriptionFlashesArgs = {
 };
 
 
-export type SubscriptionHistoriesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<History_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<History_Filter>;
-};
-
-
-export type SubscriptionHistoryArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
 export type SubscriptionLimitFarmingArgs = {
   block?: Maybe<Block_Height>;
   id: Scalars['ID'];
@@ -4776,42 +4424,6 @@ export type SubscriptionRewardsArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Reward_Filter>;
-};
-
-
-export type SubscriptionStakeArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionStakeTxArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionStakeTxesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<StakeTx_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<StakeTx_Filter>;
-};
-
-
-export type SubscriptionStakesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Stake_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Stake_Filter>;
 };
 
 
@@ -6697,20 +6309,6 @@ export type CurrentEventsQuery = (
   )> }
 );
 
-export type FrozenStakedQueryVariables = Exact<{
-  account?: Maybe<Scalars['String']>;
-  timestamp?: Maybe<Scalars['Int']>;
-}>;
-
-
-export type FrozenStakedQuery = (
-  { __typename?: 'Query' }
-  & { stakeTxes: Array<(
-    { __typename?: 'StakeTx' }
-    & Pick<StakeTx, 'timestamp' | 'stakedALGBAmount' | 'xALGBAmount'>
-  )> }
-);
-
 export type TransferedPositionsQueryVariables = Exact<{
   account?: Maybe<Scalars['Bytes']>;
 }>;
@@ -6808,33 +6406,6 @@ export type TopTokensQuery = (
   & { tokens: Array<(
     { __typename?: 'Token' }
     & Pick<Token, 'id'>
-  )> }
-);
-
-export type StakeHistoryQueryVariables = Exact<{
-  id?: Maybe<Scalars['ID']>;
-}>;
-
-
-export type StakeHistoryQuery = (
-  { __typename?: 'Query' }
-  & { factories: Array<(
-    { __typename?: 'Factory' }
-    & Pick<Factory, 'currentStakedAmount' | 'earnedForAllTime' | 'ALGBbalance' | 'xALGBtotalSupply'>
-  )>, stakes: Array<(
-    { __typename?: 'Stake' }
-    & Pick<Stake, 'stakedALGBAmount' | 'xALGBAmount'>
-  )> }
-);
-
-export type StakeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type StakeQuery = (
-  { __typename?: 'Query' }
-  & { histories: Array<(
-    { __typename?: 'History' }
-    & Pick<History, 'date' | 'currentStakedAmount' | 'ALGBbalance' | 'xALGBminted' | 'xALGBburned' | 'xALGBtotalSupply' | 'ALGBfromVault'>
   )> }
 );
 
@@ -7223,19 +6794,6 @@ export const CurrentEventsDocument = `
   }
 }
     `;
-export const FrozenStakedDocument = `
-    query frozenStaked($account: String, $timestamp: Int) {
-  stakeTxes(
-    where: {owner: $account, timestamp_gte: $timestamp}
-    orderBy: timestamp
-    orderDirection: asc
-  ) {
-    timestamp
-    stakedALGBAmount
-    xALGBAmount
-  }
-}
-    `;
 export const TransferedPositionsDocument = `
     query transferedPositions($account: Bytes) {
   deposits(
@@ -7357,33 +6915,6 @@ export const TopTokensDocument = `
   }
 }
     `;
-export const StakeHistoryDocument = `
-    query stakeHistory($id: ID) {
-  factories {
-    currentStakedAmount
-    earnedForAllTime
-    ALGBbalance
-    xALGBtotalSupply
-  }
-  stakes(where: {id: $id}) {
-    stakedALGBAmount
-    xALGBAmount
-  }
-}
-    `;
-export const StakeDocument = `
-    query stake {
-  histories(first: 1000, where: {date_gte: 1642626000}) {
-    date
-    currentStakedAmount
-    ALGBbalance
-    xALGBminted
-    xALGBburned
-    xALGBtotalSupply
-    ALGBfromVault
-  }
-}
-    `;
 export const SurroundingTicksDocument = `
     query surroundingTicks($poolAddress: String!, $tickIdxLowerBound: BigInt!, $tickIdxUpperBound: BigInt!, $skip: Int!) {
   ticks(
@@ -7472,9 +7003,6 @@ const injectedRtkApi = api.injectEndpoints({
     currentEvents: build.query<CurrentEventsQuery, CurrentEventsQueryVariables | void>({
       query: (variables) => ({ document: CurrentEventsDocument, variables })
     }),
-    frozenStaked: build.query<FrozenStakedQuery, FrozenStakedQueryVariables | void>({
-      query: (variables) => ({ document: FrozenStakedDocument, variables })
-    }),
     transferedPositions: build.query<TransferedPositionsQuery, TransferedPositionsQueryVariables | void>({
       query: (variables) => ({ document: TransferedPositionsDocument, variables })
     }),
@@ -7499,12 +7027,6 @@ const injectedRtkApi = api.injectEndpoints({
     topTokens: build.query<TopTokensQuery, TopTokensQueryVariables | void>({
       query: (variables) => ({ document: TopTokensDocument, variables })
     }),
-    stakeHistory: build.query<StakeHistoryQuery, StakeHistoryQueryVariables | void>({
-      query: (variables) => ({ document: StakeHistoryDocument, variables })
-    }),
-    stake: build.query<StakeQuery, StakeQueryVariables | void>({
-      query: (variables) => ({ document: StakeDocument, variables })
-    }),
     surroundingTicks: build.query<SurroundingTicksQuery, SurroundingTicksQueryVariables>({
       query: (variables) => ({ document: SurroundingTicksDocument, variables })
     }),
@@ -7515,5 +7037,5 @@ const injectedRtkApi = api.injectEndpoints({
 });
 
 export { injectedRtkApi as api };
-export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useFrozenStakedQuery, useLazyFrozenStakedQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useStakeHistoryQuery, useLazyStakeHistoryQuery, useStakeQuery, useLazyStakeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery } = injectedRtkApi;
+export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery } = injectedRtkApi;
 

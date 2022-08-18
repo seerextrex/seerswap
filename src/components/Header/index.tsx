@@ -85,7 +85,7 @@ export default function Header() {
                         <NetworkCard />
                         {(chainId === 2000 && account && userEthBalance) || networkFailed ? (
                             <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
-                                {_userEthBalance?.toSignificant(2)} {!isMobile && chainValue}
+                                {_userEthBalance?.toFixed(5)} {!isMobile && chainValue}
                             </BalanceText>
                         ) : null}
                     </>

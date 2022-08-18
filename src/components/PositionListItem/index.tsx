@@ -7,10 +7,11 @@ import { Price, Token } from "@uniswap/sdk-core";
 import { formatTickPrice } from "utils/formatTickPrice";
 import Loader from "components/Loader";
 import { unwrappedToken } from "utils/unwrappedToken";
-import { USDC_DOGECHAIN, WMATIC_EXTENDED } from "../../constants/tokens";
+import { USDC_DOGECHAIN, USDT_DOGECHAIN, WMATIC_EXTENDED } from "../../constants/tokens";
 import { Trans } from "@lingui/macro";
 import useIsTickAtLimit from "hooks/useIsTickAtLimit";
 import { Bound, setShowNewestPosition } from "state/mint/v3/actions";
+import { ArrowRight } from "react-feather";
 import usePrevious from "../../hooks/usePrevious";
 import { PositionPool } from "../../models/interfaces";
 import { NavLink } from "react-router-dom";
@@ -40,7 +41,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
 
     // if token0 is a dollar-stable asset, set it as the quote token
     // const stables = [USDC_BINANCE, USDC_KOVAN]
-    const stables = [USDC_DOGECHAIN];
+    const stables = [USDC_DOGECHAIN, USDT_DOGECHAIN];
     if (stables.some((stable) => stable.equals(token0))) {
         return {
             priceLower: position.token0PriceUpper.invert(),
@@ -92,6 +93,7 @@ export default function PositionListItem({ positionDetails, newestPosition, high
         liquidity: _liquidity,
         tickLower: _tickLower,
         tickUpper: _tickUpper,
+        onFarming: _onFarming,
     } = useMemo(() => {
         if (!positionDetails && prevPositionDetails && prevPositionDetails.liquidity) {
             return { ...prevPositionDetails };
@@ -137,7 +139,9 @@ export default function PositionListItem({ positionDetails, newestPosition, high
     // check if price is within range
     const outOfRange: boolean = _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false;
 
-    const positionSummaryLink = `/pool/${positionDetails.tokenId}`;
+    const positionSummaryLink = `/pool/${positionDetails.tokenId}${_onFarming ? "?onFarming=true" : ""}`;
+
+    const farmingLink = `/farming/farms#${positionDetails.tokenId}`;
 
     const isNewest = newestPosition ? newestPosition === +positionDetails.tokenId : undefined;
 
@@ -162,6 +166,16 @@ export default function PositionListItem({ positionDetails, newestPosition, high
                         &nbsp;
                     </div>
                     <div className={"position-list-item__header__badges flex-s-between w-100"}>
+                        {_onFarming ? (
+                            <NavLink className={"flex-s-between btn primary fs-085 p-025 br-8"} to={farmingLink}>
+                                <span>
+                                    <Trans>Farming</Trans>
+                                </span>
+                                <ArrowRight size={14} color={"white"} style={{ marginLeft: "5px" }} />
+                            </NavLink>
+                        ) : (
+                            <div />
+                        )}
                         <RangeBadge removed={removed} inRange={!outOfRange} />
                     </div>
                 </div>

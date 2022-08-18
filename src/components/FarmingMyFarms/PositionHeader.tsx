@@ -30,7 +30,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                         <a
                             style={{ textDecoration: "underline" }}
                             className={"c-w fs-075"}
-                            href={`https://app.algebra.finance/#/pool/${+el.id}?onFarming=true`}
+                            href={`https://dogechain.quickswap.exchange/#/pool/${+el.id}?onFarming=true`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >

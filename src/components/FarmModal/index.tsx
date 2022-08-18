@@ -366,7 +366,7 @@ export function FarmModal({
                                             <div className="ml-1">
                                                 <IsActive el={el} />
                                                 <div className={"farm-modal__nft-position__description"}>
-                                                    <a className={"fs-085 c-w hover-cp"} href={`https://app.algebra.finance/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
+                                                    <a className={"fs-085 c-w hover-cp"} href={`https://dogechain.quickswap.exchange/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
                                                         <Trans>View position</Trans>
                                                     </a>
                                                 </div>

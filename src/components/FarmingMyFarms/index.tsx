@@ -222,14 +222,6 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                 </div>
             ) : shallowPositions && shallowPositions.length !== 0 ? (
                 <>
-                    <div className={"my-farms__ad p-05 br-12 f f-ac f-jc mb-1"}>
-                        <div className={"mr-1"}>
-                            <Trans>✨ Earn even more ALGB</Trans>
-                        </div>
-                        <Link className={"my-farms__ad-link p-05 br-8 hover-cp"} to={"/staking"}>
-                            <Trans>Stake Rewards</Trans>
-                        </Link>
-                    </div>
                     {farmedNFTs && (
                         <div>
                             {farmedNFTs.map((el, i) => {
@@ -239,7 +231,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                     <div className={"my-farms__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
                                         <PositionHeader el={el} setUnstaking={setUnfarming} setSendModal={setSendModal} unstaking={unfarming} withdrawHandler={withdrawHandler} />
                                         <div className={"f cg-1 rg-1 mxs_fd-c"}>
-                                            <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
+                                            {/* <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
                                                 <PositionCardBodyHeader el={el} farmingType={FarmingType.LIMIT} date={date} />
                                                 {el.limitFarming ? (
                                                     <>
@@ -340,7 +332,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                         )}
                                                     </div>
                                                 )}
-                                            </div>
+                                            </div> */}
                                             <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
                                                 <PositionCardBodyHeader
                                                     farmingType={FarmingType.ETERNAL}

@@ -45,7 +45,7 @@ import { fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
 export function useFarmingSubgraph() {
 
     const { chainId, account, library } = useActiveWeb3React()
-    const { dataClient, farmingClient, oldFarmingClient } = useClients()
+    const { dataClient, farmingClient } = useClients()
 
     const [positionsForPool, setPositionsForPool] = useState<Position[] | null>(null)
     const [positionsForPoolLoading, setPositionsForPoolLoading] = useState<boolean>(false)
@@ -78,7 +78,7 @@ export function useFarmingSubgraph() {
 
     async function fetchEternalFarmAPR() {
 
-        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/'
+        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/?network=Dogechain-Quickswap'
 
         try {
             return await fetch(apiURL).then(v => v.json())

@@ -366,16 +366,6 @@ export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
   return gql(queryString)
 }
 
-export const FROZEN_STAKED = () => gql`
-   query frozenStaked ($account: String, $timestamp: Int) {
-     stakeTxes (where: {owner: $account, timestamp_gte: $timestamp}, orderBy: timestamp, orderDirection: asc) {
-     timestamp
-     stakedALGBAmount
-     xALGBAmount
-   }
-}
-`
-
 export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
     query transferedPositions ($account: Bytes) {
         deposits (orderBy: id, orderDirection: desc, where: {owner: $account, onFarmingCenter: true}) {
@@ -623,35 +613,6 @@ export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: s
 
   return gql(queryString)
 }
-
-export const GET_STAKE = () => gql`
-query stakeHistory ($id: ID) {
-  factories {
-    currentStakedAmount
-    earnedForAllTime
-    ALGBbalance
-    xALGBtotalSupply
-  }
-  stakes (where:{id: $id}) {
-    stakedALGBAmount
-    xALGBAmount
-  }
-}
-`
-
-export const GET_STAKE_HISTORY = () => gql`
-query stake {
-  histories(first: 1000, where: { date_gte: 1642626000 }) {
-  date
-  currentStakedAmount
-  ALGBbalance
-  xALGBminted
-  xALGBburned
-  xALGBtotalSupply
-  ALGBfromVault
-}
-}
-`
 
 //Blocklytics
 

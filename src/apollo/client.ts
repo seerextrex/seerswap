@@ -6,7 +6,7 @@ export const healthClient = new ApolloClient({
 })
 
 export const blockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/ethereum-blocks',
+    uri: 'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -21,22 +21,7 @@ export const blockClient = new ApolloClient({
 })
 
 export const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/info-test',
-    cache: new InMemoryCache(),
-    queryDeduplication: true,
-    defaultOptions: {
-        watchQuery: {
-            fetchPolicy: 'no-cache'
-        },
-        query: {
-            fetchPolicy: 'no-cache',
-            errorPolicy: 'all'
-        }
-    }
-})
-
-export const stakerClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/staker',
+    uri: 'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-info',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -51,22 +36,7 @@ export const stakerClient = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/farming-test',
-    cache: new InMemoryCache(),
-    queryDeduplication: true,
-    defaultOptions: {
-        watchQuery: {
-            fetchPolicy: 'no-cache'
-        },
-        query: {
-            fetchPolicy: 'no-cache',
-            errorPolicy: 'all'
-        }
-    }
-})
-
-export const oldFarmingClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/algebra-farming-t',
+    uri: 'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-farming',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

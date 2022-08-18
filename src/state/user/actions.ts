@@ -21,6 +21,7 @@ export const updateUserExpertMode = createAction<{ userExpertMode: boolean }>('u
 export const updateUserLocale = createAction<{ userLocale: SupportedLocale }>('user/updateUserLocale')
 export const updateUserSingleHopOnly = createAction<{ userSingleHopOnly: boolean }>('user/updateUserSingleHopOnly')
 export const updateHideClosedPositions = createAction<{ userHideClosedPositions: boolean }>('user/hideClosedPositions')
+export const updateHideFarmingPositions = createAction<{ userHideFarmingPositions: boolean }>('user/hideFarmingPositions')
 export const updateUserSlippageTolerance = createAction<{ userSlippageTolerance: number | 'auto' }>('user/updateUserSlippageTolerance')
 export const updateUserDeadline = createAction<{ userDeadline: number }>('user/updateUserDeadline')
 export const addSerializedToken = createAction<{ serializedToken: SerializedToken }>('user/addSerializedToken')

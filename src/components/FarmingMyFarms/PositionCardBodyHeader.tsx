@@ -84,7 +84,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
 
     return (
         <>
-            <div className={`flex-s-between b ${isTier ? "mb-1" : "mb-3"} fs-125 ${farmingType === FarmingType.ETERNAL ? "farming-card-header ms_fd-c" : ""}`}>
+            <div className={`flex-s-between b ${isTier ? "mb-1" : "mb-1"} fs-125 ${farmingType === FarmingType.ETERNAL ? "farming-card-header ms_fd-c" : ""}`}>
                 <span className={"w-100"}>{farmingType === FarmingType.LIMIT ? "Limit " : "Infinite "} Farming</span>
                 {farmingType === FarmingType.ETERNAL && enteredInEternalFarming && eternalFarming && (
                     <span className={"fs-085 l w-100 mm_fs-075 ms_ta-l mxs_ta-l ta-r"}>

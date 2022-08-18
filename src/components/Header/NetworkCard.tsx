@@ -5,6 +5,7 @@ import { ApplicationModal } from "state/application/actions";
 import { useModalOpen, useToggleModal } from "state/application/hooks";
 import { switchToNetwork } from "utils/switchToNetwork";
 import { CHAIN_INFO, SupportedChainId } from "../../constants/chains";
+import DogeLogo from "../../assets/images/doge-logo.png";
 
 export default function NetworkCard() {
     const { chainId, library } = useActiveWeb3React();
@@ -30,6 +31,17 @@ export default function NetworkCard() {
     const info = chainId ? CHAIN_INFO[chainId] : undefined;
     if (!chainId || !info || !library || !library?.provider?.isMetaMask) {
         return null;
+    }
+
+    if (chainId == SupportedChainId.DOGECHAIN) {
+        return (
+            <div className="f">
+                <img src={DogeLogo} width="20" />
+                <div className="ml-05" title={info.label}>
+                    {info.label}
+                </div>
+            </div>
+        );
     }
 
     return <div title={info.label}>{info.label}</div>;

@@ -19,7 +19,28 @@ const DEFAULT_TOKEN_LIST: any = {
         decimals: 18,
         symbol: 'WDOGE'
     },
+    ['0xb44a9b6905af7c801311e8f4e76932ee959c663c']: {
+        name: 'Ether',
+        decimals: 18,
+        symbol: 'ETH'
+    },
+    ['0x765277eebeca2e31912c9946eae1021199b39c61']: {
+        name: 'USDC',
+        decimals: 6,
+        symbol: 'USDC'
+    },
+    ['0xe3f5a90f9cb311505cd691a46596599aa1a0ad7d']: {
+        name: 'USDT',
+        decimals: 6,
+        symbol: 'USDT'
+    },
+    ['0xfa9343c3897324496a05fc75abed6bac29f8a40f']: {
+        name: 'Wrapped Bitcoin',
+        decimals: 18,
+        symbol: 'WBTC'
+    }
 }
+
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {

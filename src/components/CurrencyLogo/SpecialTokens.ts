@@ -3,7 +3,7 @@ import EthLogo from '../../assets/images/ether-logo.png'
 import USDTLogo from '../../assets/images/USDT-logo.png'
 import USDCLogo from '../../assets/svg/usd-coin-usdc-logo.svg'
 import WBTCLogo from '../../assets/images/wbtc-logo.png'
-import DDLogo from '../../assets/images/doge-dragon-logo.jpg'
+import DDLogo from '../../assets/svg/dragon-doge-logo.svg'
 
 interface SpecialTokensInterface {
     [key: string]: {

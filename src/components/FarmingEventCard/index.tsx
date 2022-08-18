@@ -16,6 +16,8 @@ import "./index.scss";
 import { Link } from "react-router-dom";
 
 import { Trans, t } from "@lingui/macro";
+import { formatUnits, parseEther, parseUnits } from "ethers/lib/utils";
+import { BigNumber } from "ethers";
 
 interface FarmingEventCardProps {
     active?: boolean;
@@ -80,7 +82,7 @@ export function FarmingEventCard({
         if (!reward || !bonusReward) return;
 
         if (rewardToken.id === bonusRewardToken.id) {
-            return [{ token: rewardToken, amount: +reward + +bonusReward }];
+            return [{ token: rewardToken, amount: formatUnits(BigNumber.from(reward).add(BigNumber.from(bonusReward)), 18) }];
         }
 
         return [
@@ -236,7 +238,7 @@ export function FarmingEventCard({
                             <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                             <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                             <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                {eternal ? <span /> : <span>{formatAmountTokens(reward.amount, false)}</span>}
+                                <span>{formatAmountTokens(reward.amount, false)}</span>
                             </div>
                         </li>
                     ))}

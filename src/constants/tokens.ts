@@ -3,14 +3,6 @@ import { Matic } from '../lib/src/entities/matic'
 import { SupportedChainId } from './chains'
 import { WDOGE } from '../lib/src/entities/wmatic'
 
-export const OMNOM_DOGECHAIN = new Token(
-    SupportedChainId.DOGECHAIN,
-    '0xe3fca919883950c5cd468156392a6477ff5d18de',
-    18,
-    'OMNOM',
-    'Doge Eat Doge'
-)
-
 export const USDC_DOGECHAIN = new Token(
     SupportedChainId.DOGECHAIN,
     '0x765277EebeCA2e31912C9946eAe1021199B39C61',

@@ -98,7 +98,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
     return (
         <div style={{ overflow: "auto" }}>
             <div className={"w-100 pools-table-wrapper"}>
-                <Table gridClass={"grid-pools-table"} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data.slice(0, 8)}>
+                <Table gridClass={"grid-pools-table"} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
                     <TableHeader arrow={() => {}} sortFields={sortFields} handleSort={() => {}} gridClass={"grid-pools-table"}>
                         <span className={"table-header__item"}>
                             <Trans>Pool</Trans>

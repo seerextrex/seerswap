@@ -87,7 +87,7 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
     return (
         <div style={{ overflow: "overlay" }}>
             <div className={"tokens-table-wrapper"}>
-                <Table gridClass={"grid-tokens-table"} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data.slice(0, 8)}>
+                <Table gridClass={"grid-tokens-table"} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data}>
                     <TableHeader gridClass={"grid-tokens-table"} sortFields={sortFields} handleSort={() => {}} arrow={() => {}}>
                         <span className={"table-header__item"}>
                             <Trans>Name</Trans>

@@ -6,7 +6,7 @@
 }
 
 .grid-pools-table {
-  grid-template-columns: 20px 2.3fr repeat(4, 1fr);
+  grid-template-columns: 20px 2.3fr repeat(5, 1fr);
 }
 
 .link {
@@ -42,7 +42,20 @@
   background-color: var(--primary-disabled);
 }
 
-
+.farming-link {
+  text-decoration: none;
+  &[data-apr=true] {
+    background-color: var(--primary);
+    padding: 4px;
+    border-radius: 3px;
+    color: var(--white);
+    text-decoration: underline;
+    &:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+  }
+}
 
 @media screen and (max-width: 960px) {
   .pools-table-wrapper {

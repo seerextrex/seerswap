@@ -8,6 +8,7 @@ import {
     CHART_POOL_DATA,
     CHART_POOL_LAST_ENTRY,
     CHART_POOL_LAST_NOT_EMPTY,
+    FETCH_ETERNAL_FARM_FROM_POOL,
     POOLS_FROM_ADDRESSES,
     TOKENS_FROM_ADDRESSES,
     TOP_POOLS,
@@ -36,9 +37,10 @@ import {
     SubgraphResponseStaking,
     TokenAddressSubgraph,
     TokenInSubgraph,
-    TotalStatSubgraph, PositionPriceRange
+    TotalStatSubgraph, PositionPriceRange, EternalFarmingByPool
 } from '../../models/interfaces'
-import { fetchPoolsAPR } from "utils/api"
+import { fetchEternalFarmAPR, fetchPoolsAPR } from "utils/api"
+import { farmingClient } from 'apollo/client'
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
@@ -61,10 +63,10 @@ function parseTokensData(tokenData: TokenInSubgraph[] | string) {
 export function useInfoSubgraph() {
     const { account } = useActiveWeb3React()
     const { dataClient } = useClients()
-    const [t24, t48, tWeek, tMonth] = useDeltaTimestamps()
+    const [t24, t48] = useDeltaTimestamps()
 
-    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek, tMonth])
-    const [block24, block48, blockWeek, blockMonth] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? []
+    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48])
+    const [block24, block48] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? []
 
     const ethPrices = useEthPrices()
 
@@ -93,7 +95,7 @@ export function useInfoSubgraph() {
 
     async function fetchInfoPools() {
 
-        // if (!blocks || blockError || !ethPrices) return
+        if (!blocks || blockError || !ethPrices) return
 
         try {
             setPoolsLoading(true)
@@ -108,10 +110,10 @@ export function useInfoSubgraph() {
                 return
             }
 
-            const poolsAddresses = topPools.map(el => el.id).filter(id => !['0x5e54a796674cf3d0a73afb654f39af2eae0c312b'].includes(id.toLowerCase()))
+            const _poolsAddresses = topPools.map(el => el.id)
 
-            const { data: { pools }, error: _error2 } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
-                query: POOLS_FROM_ADDRESSES(undefined, poolsAddresses),
+            const { data: { pools: rawPools }, error: _error2 } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
+                query: POOLS_FROM_ADDRESSES(undefined, _poolsAddresses),
                 fetchPolicy: 'network-only'
             })
 
@@ -120,48 +122,78 @@ export function useInfoSubgraph() {
                 return
             }
 
-            // const [_block24, _block48, _blockWeek, _blockMonth] = [block24, block48, blockWeek, blockMonth].sort((a, b) => +b.timestamp - +a.timestamp)
 
-            // const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses)
-            // const pools48 = await fetchPoolsByTime(_block48.number, poolsAddresses)
+            const pools = rawPools.filter(pool => {
+                
+                if (pool.token0.symbol.toUpperCase() === 'DD' || pool.token0.name === 'Doge Dragon' || pool.token0.name === 'DogeDragon' || pool.token0.name === 'Dragon Doge' || pool.token0.name === 'DragonDoge' ) {
+                    return pool.token0.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
+                }
+
+                if (pool.token1.symbol.toUpperCase() === 'DD' || pool.token1.name === 'Doge Dragon' || pool.token1.name === 'DogeDragon' || pool.token1.name === 'Dragon Doge' || pool.token1.name === 'DragonDoge' ) {
+                    return pool.token1.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
+                }
+
+                return true
+
+            })
+
+            const poolsAddresses = pools.map(pool => pool.id)
+            
+            const [_block24, _block48] = [block24, block48].sort((a, b) => +b.timestamp - +a.timestamp)
+
+            const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses)
+            const pools48 = await fetchPoolsByTime(_block48.number, poolsAddresses)
             // const poolsWeek = await fetchPoolsByTime(_blockWeek.number, poolsAddresses)
             // const poolsMonth = await fetchPoolsByTime(_blockMonth.number, poolsAddresses)
 
             const parsedPools = parsePoolsData(pools)
-            // const parsedPools24 = parsePoolsData(pools24)
-            // const parsedPools48 = parsePoolsData(pools48)
+            const parsedPools24 = parsePoolsData(pools24)
+            const parsedPools48 = parsePoolsData(pools48)
             // const parsedPoolsWeek = parsePoolsData(poolsWeek)
             // const parsedPoolsMonth = parsePoolsData(poolsMonth)
 
             const aprs = await fetchPoolsAPR()
 
+            const farmAprs = await fetchEternalFarmAPR()
+
+            const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses)
+            const _farmingAprs: { [type: string]: number } = farmingAprs.reduce((acc, el) => (
+                {
+                    ...acc,
+                    [el.pool]: farmAprs[el.id]
+                }
+            ), {})
+
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool | any }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address]
-                // const oneDay: PoolSubgraph | undefined = parsedPools24[address]
-                // const twoDay: PoolSubgraph | undefined = parsedPools48[address]
+                const oneDay: PoolSubgraph | undefined = parsedPools24[address]
+                const twoDay: PoolSubgraph | undefined = parsedPools48[address]
                 // const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
                 // const month: PoolSubgraph | undefined = parsedPoolsMonth[address]
 
                 const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD'
                 const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
 
-                // const [volumeUSD, volumeUSDChange] =
-                //     current && oneDay && twoDay
-                //         ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
-                //         : current && oneDay ?
-                //             [parseFloat(current[manageUntrackedVolume]) - parseFloat(oneDay[manageUntrackedVolume]), 0] : current
-                //                 ? [parseFloat(current[manageUntrackedVolume]), 0]
-                //                 : [0, 0]
+                const [volumeUSD, volumeUSDChange] =
+                    current && oneDay && twoDay
+                        ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
+                        : current && oneDay ?
+                            [parseFloat(current[manageUntrackedVolume]) - parseFloat(oneDay[manageUntrackedVolume]), 0] : current
+                                ? [parseFloat(current[manageUntrackedVolume]), 0]
+                                : [0, 0]
 
                 // const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume])
                 //     : current ? parseFloat(current[manageUntrackedVolume]) : 0
 
+                const volumeUSDWeek = current ? parseFloat(current[manageUntrackedVolume]) : 0
+
                 // const volumeUSDMonth = current && month ? parseFloat(current[manageUntrackedVolume]) - parseFloat(month[manageUntrackedVolume])
                 //     : current ? parseFloat(current[manageUntrackedVolume]) : 0
 
-                // const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
-                // const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
+                const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
+                const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0
+                const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0
 
                 accum[address] = {
                     token0: current.token0,
@@ -169,15 +201,13 @@ export function useInfoSubgraph() {
                     fee: current.fee,
                     exists: !!current,
                     address,
-                    // volumeUSD: volumeUSDMonth,
-                    // volumeUSDChange,
-                    // volumeUSDWeek,
-                    // volumeUSDMonth,
-                    // tvlUSD,
-                    // tvlUSDChange,
-                    tvlUSD: current[manageUntrackedTVL],
-                    volumeUSD: current[manageUntrackedVolume],
+                    volumeUSD,
+                    volumeUSDChange,
+                    volumeUSDWeek,
+                    tvlUSD,
+                    tvlUSDChange,
                     apr: aprPercent,
+                    farmingApr
                 }
                 return accum
             }, {})
@@ -195,7 +225,7 @@ export function useInfoSubgraph() {
 
     async function fetchInfoTokens() {
 
-        if (!ethPrices) return
+        if (!blocks || blockError || !ethPrices) return
 
         try {
             setTokensLoading(true)
@@ -210,10 +240,10 @@ export function useInfoSubgraph() {
                 return
             }
 
-            const tokenAddresses: string[] = topTokens.map(el => el.id).filter(id => !['0xe2f2af2972457ca27f5cce3b9c91bae053ff7285'].includes(id.toLowerCase()))
+            const _tokenAddresses: string[] = topTokens.map(el => el.id)
 
-            const { data: { tokens }, error: _error } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
-                query: TOKENS_FROM_ADDRESSES(undefined, tokenAddresses),
+            const { data: { tokens: rawTokens }, error: _error } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
+                query: TOKENS_FROM_ADDRESSES(undefined, _tokenAddresses),
                 fetchPolicy: 'network-only'
             })
 
@@ -222,43 +252,54 @@ export function useInfoSubgraph() {
                 return
             }
 
-            // const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
+            const tokens = rawTokens.filter(token => {
+                if (token.symbol.toUpperCase() === 'DD' || token.name === 'Doge Dragon' || token.name === 'DogeDragon' || token.name === 'Dragon Doge' || token.name === 'DragonDoge' ) {
+                    return token.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
+                }
+                return true
 
-            // const tokens24 = await fetchTokensByTime(_block24.number, tokenAddresses)
-            // const tokens48 = await fetchTokensByTime(_block48.number, tokenAddresses)
+            })
+
+            const tokenAddresses = tokens.map(token => token.id)
+
+            const [_block24, _block48] = [block24, block48].sort((a, b) => +b.timestamp - +a.timestamp)
+
+            const tokens24 = await fetchTokensByTime(_block24.number, tokenAddresses)
+            const tokens48 = await fetchTokensByTime(_block48.number, tokenAddresses)
             // const tokensWeek = await fetchTokensByTime(_blockWeek.number, tokenAddresses)
 
             const parsedTokens = parseTokensData(tokens)
-            // const parsedTokens24 = parseTokensData(tokens24)
-            // const parsedTokens48 = parseTokensData(tokens48)
+            const parsedTokens24 = parseTokensData(tokens24)
+            const parsedTokens48 = parseTokensData(tokens48)
             // const parsedTokensWeek = parseTokensData(tokensWeek)
 
             const formatted = tokenAddresses.reduce((accum: { [address: string]: FormattedToken | any }, address) => {
                 const current: TokenInSubgraph | undefined = parsedTokens[address]
-                // const oneDay: TokenInSubgraph | undefined = parsedTokens24[address]
-                // const twoDay: TokenInSubgraph | undefined = parsedTokens48[address]
+                const oneDay: TokenInSubgraph | undefined = parsedTokens24[address]
+                const twoDay: TokenInSubgraph | undefined = parsedTokens48[address]
                 // const week: TokenInSubgraph | undefined = parsedTokensWeek[address]
 
-                console.log('ETH', ethPrices)
                 const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD'
                 const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
 
-                // const [volumeUSD, volumeUSDChange] =
-                //     current && oneDay && twoDay
-                //         ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
-                //         : current
-                //             ? [parseFloat(current[manageUntrackedVolume]), 0]
-                //             : [0, 0]
+                const [volumeUSD, volumeUSDChange] =
+                    current && oneDay && twoDay
+                        ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
+                        : current
+                            ? [parseFloat(current[manageUntrackedVolume]), 0]
+                            : [0, 0]
 
                 // const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume]) : current ? parseFloat(current[manageUntrackedVolume]) : 0
+                const volumeUSDWeek = current ? parseFloat(current[manageUntrackedVolume]) : 0
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
-                // const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
+                const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
                 const tvlToken = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices!.current : 0
-                // const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
+                const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0
                 // const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
-                // const priceUSDChange =
-                // priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
+
+                const priceUSDChange =
+                priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
                 // const priceUSDChangeWeek =
                 // priceUSD && priceUSDWeek ? getPercentChange(priceUSD.toString(), priceUSDWeek.toString()) : 0
                 // const txCount =
@@ -279,16 +320,16 @@ export function useInfoSubgraph() {
                     address,
                     name: current ? formatTokenName(address, current.name) : '',
                     symbol: current ? formatTokenSymbol(address, current.symbol) : '',
-                    // volumeUSD,
-                    // volumeUSDChange,
+                    volumeUSD,
+                    volumeUSDChange,
                     // volumeUSDWeek,
                     // txCount,
                     tvlUSD,
                     // feesUSD,
-                    // tvlUSDChange,
+                    tvlUSDChange,
                     tvlToken,
                     priceUSD,
-                    // priceUSDChange,
+                    priceUSDChange,
                     // priceUSDChangeWeek
                 }
 
@@ -565,8 +606,25 @@ export function useInfoSubgraph() {
     }
 
 
+    async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]): Promise<EternalFarmingByPool[]> {
+
+        try {
+
+            const { data: { eternalFarmings }, error } = await farmingClient.query({
+                query: FETCH_ETERNAL_FARM_FROM_POOL(poolAddresses),
+                fetchPolicy: 'network-only'
+            })
+
+            return eternalFarmings
+
+        } catch (err) {
+            throw new Error('Eternal fetch error ' + err)
+        }
+
+    }
+
     return {
-        blocksFetched: !!ethPrices,
+        blocksFetched: blockError ? false : !!ethPrices && !!blocks,
         fetchInfoPools: { poolsResult, poolsLoading, fetchInfoPoolsFn: fetchInfoPools },
         fetchInfoTokens: { tokensResult, tokensLoading, fetchInfoTokensFn: fetchInfoTokens },
         fetchChartFeesData: { feesResult, feesLoading, fetchFeePoolFn: fetchFeePool },

@@ -6030,12 +6030,21 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny'
 }
 
-export type PricesQueryVariables = Exact<{ [key: string]: never; }>;
+export type PricesQueryVariables = Exact<{
+  block24: Scalars['Int'];
+  block48: Scalars['Int'];
+}>;
 
 
 export type PricesQuery = (
   { __typename?: 'Query' }
   & { current: Array<(
+    { __typename?: 'Bundle' }
+    & Pick<Bundle, 'maticPriceUSD'>
+  )>, oneDay: Array<(
+    { __typename?: 'Bundle' }
+    & Pick<Bundle, 'maticPriceUSD'>
+  )>, twoDay: Array<(
     { __typename?: 'Bundle' }
     & Pick<Bundle, 'maticPriceUSD'>
   )> }
@@ -6431,8 +6440,14 @@ export type PopularPoolsQuery = (
 
 
 export const PricesDocument = `
-    query prices {
+    query prices($block24: Int!, $block48: Int!) {
   current: bundles(first: 1, subgraphError: allow) {
+    maticPriceUSD
+  }
+  oneDay: bundles(first: 1, block: {number: $block24}, subgraphError: allow) {
+    maticPriceUSD
+  }
+  twoDay: bundles(first: 1, block: {number: $block48}, subgraphError: allow) {
     maticPriceUSD
   }
 }
@@ -6924,7 +6939,7 @@ export const PopularPoolsDocument = `
 
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
-    prices: build.query<PricesQuery, PricesQueryVariables | void>({
+    prices: build.query<PricesQuery, PricesQueryVariables>({
       query: (variables) => ({ document: PricesDocument, variables })
     }),
     allV3Ticks: build.query<AllV3TicksQuery, AllV3TicksQueryVariables>({

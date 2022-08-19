@@ -50,7 +50,7 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
         <div>
             <div className={"total-stats-wrapper"}>
                 <StatCard isLoading={isLoading} data={_data?.tvlUSD} title={t`Total Value Locked`} style={"mr-f-05 mxs_m-0"} />
-                <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={t`Monthly Volume`} style={"ml-l-05 mxs_m-0"} />
+                <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={t`Volume`} style={"ml-l-05 mxs_m-0"} />
             </div>
         </div>
     );

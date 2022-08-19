@@ -71,6 +71,7 @@ export default function FarmingPage() {
     const hasTransferred = useAppSelector((state) => state.farming.hasTransferred);
 
     const {
+        ethPricesFecthed,
         fetchRewards: { rewardsResult, fetchRewardsFn, rewardsLoading },
         fetchAllEvents: { fetchAllEventsFn, allEvents, allEventsLoading },
         fetchTransferredPositions: { fetchTransferredPositionsFn, transferredPositions, transferredPositionsLoading },
@@ -149,7 +150,7 @@ export default function FarmingPage() {
                             <title>{t`Algebra — Farming • Infinite Farms`}</title>
                         </Helmet>
 
-                        <EternalFarmsPage data={eternalFarms} refreshing={eternalFarmsLoading} fetchHandler={() => fetchEternalFarmsFn(true)} />
+                        <EternalFarmsPage data={eternalFarms} refreshing={eternalFarmsLoading} priceFetched={ethPricesFecthed} fetchHandler={() => fetchEternalFarmsFn(true)} />
                     </Route>
                     {/* <Route exact strict path={`${path}/farms-history`}>
                         <Helmet>

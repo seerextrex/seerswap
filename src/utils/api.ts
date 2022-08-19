@@ -37,6 +37,19 @@ export async function fetchLimitFarmTVL() {
 
 }
 
+export async function fetchEternalFarmTVL() {
+
+    const apiURL = 'https://api.algebra.finance/api/TVL/eternalFarmings/?network=Dogechain-Quickswap'
+
+    try {
+        return await fetch(apiURL).then(v => v.json())
+
+    } catch (error: any) {
+        return {}
+    }
+
+}
+
 export async function fetchPoolsAPR() {
     const apiURL = 'https://api.algebra.finance/api/APR/pools/?network=Dogechain-Quickswap'
 

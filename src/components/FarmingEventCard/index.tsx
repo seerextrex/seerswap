@@ -11,7 +11,7 @@ import { convertLocalDate } from "../../utils/convertDate";
 import { Token } from "@uniswap/sdk-core";
 import { SupportedChainId } from "../../constants/chains";
 import { WrappedCurrency } from "../../models/types";
-import { formatAmountTokens } from "utils/numbers";
+import { formatAmount, formatAmountTokens, formatDollarAmount } from "utils/numbers";
 import "./index.scss";
 import { Link } from "react-router-dom";
 
@@ -36,6 +36,7 @@ interface FarmingEventCardProps {
         endTime?: number;
         enterStartTime?: number;
         apr?: number;
+        tvl?: number;
         locked?: boolean;
     };
     eternal?: boolean;
@@ -47,7 +48,7 @@ export function FarmingEventCard({
     refreshing,
     farmHandler,
     now,
-    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, enterStartTime } = {},
+    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, enterStartTime, tvl } = {},
     eternal,
     secret,
 }: FarmingEventCardProps) {
@@ -297,15 +298,21 @@ export function FarmingEventCard({
                 </div>
             )}
             {account && !active ? (
-                <button
-                    style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
-                    //@ts-ignore
-                    disabled={locked || new Date(+enterStartTime * 1000).getTime() > Date.now()}
-                    className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
-                    onClick={farmHandler}
-                >
-                    <span>{locked ? t`Filled` : t`Farm`}</span>
-                </button>
+                <>
+                    <div style={{ marginTop: "9px", border: "none", lineHeight: "19px" }} className={`w-100 b br-8 fs-085 ${!eternal ? "mt-05" : ""}`}>
+                        <span>TVL : </span>
+                        <span>{formatDollarAmount(tvl)}</span>
+                    </div>
+                    <button
+                        style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
+                        //@ts-ignore
+                        disabled={locked || new Date(+enterStartTime * 1000).getTime() > Date.now()}
+                        className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
+                        onClick={farmHandler}
+                    >
+                        <span>{locked ? t`Filled` : t`Farm`}</span>
+                    </button>
+                </>
             ) : active ? (
                 <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}>
                     <Trans>Started!</Trans>

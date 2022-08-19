@@ -124,12 +124,12 @@ export function useInfoSubgraph() {
 
 
             const pools = rawPools.filter(pool => {
-                
-                if (pool.token0.symbol.toUpperCase() === 'DD' || pool.token0.name === 'Doge Dragon' || pool.token0.name === 'DogeDragon' || pool.token0.name === 'Dragon Doge' || pool.token0.name === 'DragonDoge' ) {
+
+                if (pool.token0.symbol.toUpperCase() === 'DD' || pool.token0.name === 'Doge Dragon' || pool.token0.name === 'DogeDragon' || pool.token0.name === 'Dragon Doge' || pool.token0.name === 'DragonDoge') {
                     return pool.token0.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
                 }
 
-                if (pool.token1.symbol.toUpperCase() === 'DD' || pool.token1.name === 'Doge Dragon' || pool.token1.name === 'DogeDragon' || pool.token1.name === 'Dragon Doge' || pool.token1.name === 'DragonDoge' ) {
+                if (pool.token1.symbol.toUpperCase() === 'DD' || pool.token1.name === 'Doge Dragon' || pool.token1.name === 'DogeDragon' || pool.token1.name === 'Dragon Doge' || pool.token1.name === 'DragonDoge') {
                     return pool.token1.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
                 }
 
@@ -138,7 +138,7 @@ export function useInfoSubgraph() {
             })
 
             const poolsAddresses = pools.map(pool => pool.id)
-            
+
             const [_block24, _block48] = [block24, block48].sort((a, b) => +b.timestamp - +a.timestamp)
 
             const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses)
@@ -171,8 +171,8 @@ export function useInfoSubgraph() {
                 // const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
                 // const month: PoolSubgraph | undefined = parsedPoolsMonth[address]
 
-                const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD'
-                const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+                const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'volumeUSD' : 'volumeUSD'
+                const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSD' : 'totalValueLockedUSD'
 
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
@@ -253,7 +253,7 @@ export function useInfoSubgraph() {
             }
 
             const tokens = rawTokens.filter(token => {
-                if (token.symbol.toUpperCase() === 'DD' || token.name === 'Doge Dragon' || token.name === 'DogeDragon' || token.name === 'Dragon Doge' || token.name === 'DragonDoge' ) {
+                if (token.symbol.toUpperCase() === 'DD' || token.name === 'Doge Dragon' || token.name === 'DogeDragon' || token.name === 'Dragon Doge' || token.name === 'DragonDoge') {
                     return token.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
                 }
                 return true
@@ -279,8 +279,8 @@ export function useInfoSubgraph() {
                 const twoDay: TokenInSubgraph | undefined = parsedTokens48[address]
                 // const week: TokenInSubgraph | undefined = parsedTokensWeek[address]
 
-                const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'untrackedVolumeUSD' : 'volumeUSD'
-                const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSDUntracked' : 'totalValueLockedUSD'
+                const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'volumeUSD' : 'volumeUSD'
+                const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? 'totalValueLockedUSD' : 'totalValueLockedUSD'
 
                 const [volumeUSD, volumeUSDChange] =
                     current && oneDay && twoDay
@@ -299,7 +299,7 @@ export function useInfoSubgraph() {
                 // const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
 
                 const priceUSDChange =
-                priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
+                    priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
                 // const priceUSDChangeWeek =
                 // priceUSD && priceUSDWeek ? getPercentChange(priceUSD.toString(), priceUSDWeek.toString()) : 0
                 // const txCount =

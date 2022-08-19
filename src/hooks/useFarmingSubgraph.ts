@@ -40,7 +40,8 @@ import {
     TokenSubgraph
 } from '../models/interfaces'
 import { Aprs, FutureFarmingEvent } from '../models/interfaces'
-import { fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
+import { fetchEternalFarmTVL, fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
+import { useEthPrices } from "./useEthPrices"
 
 export function useFarmingSubgraph() {
 
@@ -75,6 +76,8 @@ export function useFarmingSubgraph() {
     const [positionsEternalLoading, setPositionsEternalLoading] = useState<boolean>(false)
 
     const provider = library ? new providers.Web3Provider(library.provider) : undefined
+
+    const ethPrices = useEthPrices()
 
     async function fetchEternalFarmAPR() {
 
@@ -718,6 +721,8 @@ export function useFarmingSubgraph() {
 
     async function fetchEternalFarms(reload: boolean) {
 
+        if (!ethPrices) return
+
         setEternalFarmsLoading(true)
 
         try {
@@ -736,6 +741,7 @@ export function useFarmingSubgraph() {
             }
 
             const aprs: Aprs = await fetchEternalFarmAPR()
+            const eventTVL = await fetchEternalFarmTVL()
 
             let _eternalFarmings: FormattedEternalFarming[] = []
             // TODO
@@ -747,6 +753,7 @@ export function useFarmingSubgraph() {
                 const multiplierToken = await fetchToken(farming.multiplierToken, true)
 
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
+                const tvl = eventTVL[farming.id] ? Math.round(eventTVL[farming.id] * ethPrices.current) : 0
 
                 _eternalFarmings = [
                     //@ts-ignore
@@ -758,7 +765,8 @@ export function useFarmingSubgraph() {
                         multiplierToken,
                         //@ts-ignore
                         pool,
-                        apr
+                        apr,
+                        tvl
                     }
                 ]
 
@@ -777,6 +785,7 @@ export function useFarmingSubgraph() {
     }
 
     return {
+        ethPricesFecthed: !!ethPrices,
         fetchRewards: { rewardsResult, rewardsLoading, fetchRewardsFn: fetchRewards },
         fetchFutureEvents: {
             futureEvents,

@@ -108,7 +108,7 @@ export function useInfoSubgraph() {
                 return
             }
 
-            const poolsAddresses = topPools.map(el => el.id).filter(id => !['0x5e54a796674cf3d0a73afb654f39af2eae0c312b'].includes(id.toLowerCase()))
+            const poolsAddresses = topPools.map(el => el.id).filter(id => !['0x5e54a796674cf3d0a73afb654f39af2eae0c312b', '0xa6f5c4af5d96e364126377c8f5338df3b6f36671', '0x28178733439c3bc01f9cabeac416cc569643efb4', '0x0f0929a77ad7f402ca5a852b60465671e36ecece', '0xf494f2c215602087150121e2da6dea57b06703e8', '0xdd79d438c2a99e4db8fdcfa10f480c03c9f93501', '0xf494f2c215602087150121e2da6dea57b06703e8'].includes(id.toLowerCase()))
 
             const { data: { pools }, error: _error2 } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
                 query: POOLS_FROM_ADDRESSES(undefined, poolsAddresses),

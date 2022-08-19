@@ -24,7 +24,7 @@ import {
     TRANSFERED_POSITIONS_FOR_POOL
 } from '../utils/graphql-queries'
 import { useClients } from './subgraph/useClients'
-import { formatUnits } from '@ethersproject/units'
+import { formatUnits, parseUnits } from '@ethersproject/units'
 import {
     Deposit,
     DetachedEternalFarming,
@@ -752,6 +752,12 @@ export function useFarmingSubgraph() {
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken, true)
                 const multiplierToken = await fetchToken(farming.multiplierToken, true)
 
+                const _rewardRate = formatUnits(BigNumber.from(farming.rewardRate), rewardToken.decimals)
+                const _bonusRewardRate = formatUnits(BigNumber.from(farming.bonusRewardRate), bonusRewardToken.decimals)
+
+                const dailyRewardRate = Math.round(+_rewardRate * 86_400)
+                const dailyBonusRewardRate = Math.round(+_bonusRewardRate * 86_400)
+
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
                 const tvl = eventTVL[farming.id] ? Math.round(eventTVL[farming.id] * ethPrices.current) : 0
 
@@ -763,6 +769,8 @@ export function useFarmingSubgraph() {
                         rewardToken,
                         bonusRewardToken,
                         multiplierToken,
+                        dailyRewardRate,
+                        dailyBonusRewardRate,
                         //@ts-ignore
                         pool,
                         apr,

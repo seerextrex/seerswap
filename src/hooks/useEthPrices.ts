@@ -43,6 +43,7 @@ async function fetchEthPrices(
     client: ApolloClient<NormalizedCacheObject>
 ): Promise<{ data: EthPrices | undefined; error: boolean }> {
     try {
+
         const { data, error } = await client.query<PricesResponse>({
             query: ETH_PRICES,
             variables: {
@@ -88,8 +89,8 @@ export function useEthPrices(): EthPrices | undefined {
     const [error, setError] = useState(false)
     const { dataClient } = useClients()
 
-    const [t24, t48, tWeek] = useDeltaTimestamps()
-    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek])
+    const [t24, t48] = useDeltaTimestamps()
+    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48])
 
     // index on active network
     const { chainId } = useActiveWeb3React()

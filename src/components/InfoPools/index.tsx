@@ -33,9 +33,17 @@ const sortFields = [
         value: "volumeUSDWeek",
     },
     {
+        title: t`Volume 1M`,
+        value: "volumeUSDMonth",
+    },
+    {
         title: t`TVL`,
         value: "tvlUSD",
     },
+    // {
+    //     title: t`Txs 24H`,
+    //     value: "txCount",
+    // },
     {
         title: t`🚀 APR`,
         value: "apr",
@@ -55,7 +63,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
 
     useEffect(() => {
         if (blocksFetched) {
-        fetchHandler();
+            fetchHandler();
         }
     }, [blocksFetched]);
 
@@ -88,9 +96,17 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         value: el.volumeUSDWeek,
                     },
                     {
+                        title: formatDollarAmount(el.volumeUSDMonth),
+                        value: el.volumeUSDMonth,
+                    },
+                    {
                         title: formatDollarAmount(el.tvlUSD),
                         value: el.tvlUSD,
                     },
+                    // {
+                    //     title: el.txCount,
+                    //     value: el.txCount,
+                    // },
                     {
                         title: apr,
                         value: el.apr,
@@ -115,7 +131,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
         <div style={{ overflow: "auto" }}>
             <div className={"w-100 pools-table-wrapper"}>
                 <Table gridClass={"grid-pools-table"} sortIndex={sortIndex} sortDirection={sortDirection} sortField={sortField} data={_data}>
-                <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={"grid-pools-table"}>
+                    <TableHeader arrow={arrow} sortFields={sortFields} handleSort={handleSort} gridClass={"grid-pools-table"}>
                         <span className={"table-header__item"}>
                             <Trans>Pool</Trans>
                         </span>
@@ -126,8 +142,14 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                             <Trans>Volume 7D</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
+                            <Trans>Volume 1M</Trans>
+                        </span>
+                        <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>
                         </span>
+                        {/* <span className={"table-header__item table-header__item--center"}>
+                            <Trans>Txs 24H</Trans>
+                        </span> */}
                         <span className={"table-header__item table-header__item--center"}>
                             <Apr />
                         </span>

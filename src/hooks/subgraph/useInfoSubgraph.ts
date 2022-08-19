@@ -189,6 +189,13 @@ export function useInfoSubgraph() {
 
                 // const volumeUSDMonth = current && month ? parseFloat(current[manageUntrackedVolume]) - parseFloat(month[manageUntrackedVolume])
                 //     : current ? parseFloat(current[manageUntrackedVolume]) : 0
+                const volumeUSDMonth = current ? parseFloat(current[manageUntrackedVolume]) : 0
+
+                const txCount = current && oneDay
+                    ? parseFloat(current.txCount) - parseFloat(oneDay.txCount)
+                    : current
+                        ? parseFloat(current.txCount)
+                        : 0
 
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
@@ -204,7 +211,9 @@ export function useInfoSubgraph() {
                     volumeUSD,
                     volumeUSDChange,
                     volumeUSDWeek,
+                    volumeUSDMonth,
                     tvlUSD,
+                    txCount,
                     tvlUSDChange,
                     apr: aprPercent,
                     farmingApr
@@ -302,18 +311,20 @@ export function useInfoSubgraph() {
                     priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
                 // const priceUSDChangeWeek =
                 // priceUSD && priceUSDWeek ? getPercentChange(priceUSD.toString(), priceUSDWeek.toString()) : 0
-                // const txCount =
-                //     current && oneDay
-                //         ? parseFloat(current.txCount) - parseFloat(oneDay.txCount)
-                //         : current
-                //             ? parseFloat(current.txCount)
-                //             : 0
+                const txCount =
+                    current && oneDay
+                        ? parseFloat(current.txCount) - parseFloat(oneDay.txCount)
+                        : current
+                            ? parseFloat(current.txCount)
+                            : 0
                 // const feesUSD =
                 //     current && oneDay
                 //         ? parseFloat(current.feesUSD) - parseFloat(oneDay.feesUSD)
                 //         : current
                 //             ? parseFloat(current.feesUSD)
                 //             : 0
+
+                console.log('TX COUNT', txCount)
 
                 accum[address] = {
                     exists: !!current,
@@ -323,7 +334,7 @@ export function useInfoSubgraph() {
                     volumeUSD,
                     volumeUSDChange,
                     // volumeUSDWeek,
-                    // txCount,
+                    txCount,
                     tvlUSD,
                     // feesUSD,
                     tvlUSDChange,

@@ -69,6 +69,8 @@ export interface FormattedEternalFarming {
     reward: string
     rewardRate: string
     rewardToken: TokenSubgraph
+    dailyRewardRate: number
+    dailyBonusRewardRate: number
     startTime: string
     tokenAmountForTier1: string
     tokenAmountForTier2: string

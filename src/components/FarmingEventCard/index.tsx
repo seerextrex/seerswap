@@ -16,7 +16,7 @@ import "./index.scss";
 import { Link } from "react-router-dom";
 
 import { Trans, t } from "@lingui/macro";
-import { formatUnits, parseEther, parseUnits } from "ethers/lib/utils";
+import { formatUnits } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
 
 interface FarmingEventCardProps {
@@ -38,6 +38,8 @@ interface FarmingEventCardProps {
         apr?: number;
         tvl?: number;
         locked?: boolean;
+        dailyRewardRate?: number;
+        dailyBonusRewardRate?: number;
     };
     eternal?: boolean;
     secret?: boolean;
@@ -48,7 +50,7 @@ export function FarmingEventCard({
     refreshing,
     farmHandler,
     now,
-    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, enterStartTime, tvl } = {},
+    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, enterStartTime, tvl, dailyRewardRate, dailyBonusRewardRate } = {},
     eternal,
     secret,
 }: FarmingEventCardProps) {
@@ -80,15 +82,17 @@ export function FarmingEventCard({
     }, [startTime]);
 
     const rewardList = useMemo(() => {
-        if (!reward || !bonusReward) return;
+        if (!eternal && (!reward || !bonusReward)) return;
+
+        if (eternal && (!dailyRewardRate || !dailyBonusRewardRate)) return;
 
         if (rewardToken.id === bonusRewardToken.id) {
-            return [{ token: rewardToken, amount: formatUnits(BigNumber.from(reward).add(BigNumber.from(bonusReward)), 18) }];
+            return [{ token: rewardToken, rewardRate: (dailyRewardRate || 0) + (dailyBonusRewardRate || 0), amount: formatUnits(BigNumber.from(reward).add(BigNumber.from(bonusReward)), 18) }];
         }
 
         return [
-            { token: rewardToken, amount: reward },
-            { token: bonusRewardToken, amount: bonusReward },
+            { token: rewardToken, amount: reward, rewardRate: dailyRewardRate },
+            { token: bonusRewardToken, amount: bonusReward, rewardRate: dailyBonusRewardRate },
         ];
     }, [reward, bonusReward, rewardToken, bonusRewardToken]);
 
@@ -122,7 +126,7 @@ export function FarmingEventCard({
                                 <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                                 <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                                 <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                    <span>{formatAmountTokens(reward.amount, false)}</span>
+                                    {eternal ? <span>{reward.rewardRate} per day</span> : <span>{formatAmountTokens(reward.amount, false)}</span>}
                                 </div>
                             </li>
                         ))}
@@ -239,7 +243,7 @@ export function FarmingEventCard({
                             <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                             <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                             <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                <span>{formatAmountTokens(reward.amount, false)}</span>
+                                {eternal ? <span>{formatAmountTokens(reward.rewardRate, false)} per day</span> : <span>{formatAmountTokens(reward.amount, false)}</span>}
                             </div>
                         </li>
                     ))}

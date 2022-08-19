@@ -31,6 +31,10 @@ const sortFields = [
         value: "priceUSDChange",
     },
     {
+        title: t`Volume 24H`,
+        value: "volumeUSD",
+    },
+    {
         title: t`TVL`,
         value: "tvlUSD",
     },
@@ -39,7 +43,7 @@ const sortFields = [
 export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProps) {
     const [sortField, setSortField] = useState<string>("tvlUSD");
     const [sortDirection, setSortDirection] = useState<boolean>(true);
-    const [sortIndex, setSortIndex] = useState<number>(1);
+    const [sortIndex, setSortIndex] = useState<number>(4);
 
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex);
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection);
@@ -65,10 +69,14 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                         title: formatDollarAmount(el.priceUSD, 3),
                         value: el.priceUSD,
                     },
-                    // {
-                    //     title: <Percent key={i} value={el.priceUSDChange} fontWeight={400} />,
-                    //     value: el.priceUSDChange,
-                    // },
+                    {
+                        title: <Percent key={i} value={el.priceUSDChange} fontWeight={400} />,
+                        value: el.priceUSDChange,
+                    },
+                    {
+                        title: formatDollarAmount(el.volumeUSD),
+                        value: el.volumeUSD,
+                    },
                     {
                         title: formatDollarAmount(el.tvlUSD),
                         value: el.tvlUSD,
@@ -88,16 +96,19 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
         <div style={{ overflow: "overlay" }}>
             <div className={"tokens-table-wrapper"}>
                 <Table gridClass={"grid-tokens-table"} sortIndex={sortIndex} sortField={sortField} sortDirection={sortDirection} data={_data}>
-                    <TableHeader gridClass={"grid-tokens-table"} sortFields={sortFields} handleSort={() => {}} arrow={() => {}}>
+                <TableHeader gridClass={"grid-tokens-table"} sortFields={sortFields} handleSort={handleSort} arrow={arrow}>
                         <span className={"table-header__item"}>
                             <Trans>Name</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>Price</Trans>
                         </span>
-                        {/* <span className={"table-header__item table-header__item--center"}>
+                        <span className={"table-header__item table-header__item--center"}>
                             <Trans>Price Change</Trans>
-                        </span> */}
+                        </span>
+                        <span className={"table-header__item table-header__item--center"}>
+                            <Trans>Volume 24H</Trans>
+                        </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>
                         </span>

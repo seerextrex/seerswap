@@ -8,31 +8,19 @@ import { SupportedChainId } from '../constants/chains'
 
 export interface EthPrices {
     current: number
-    // oneDay: number
-    // twoDay: number
-    // week: number
+    oneDay: number
+    twoDay: number
 }
 
-// export const ETH_PRICES = gql`
-//   query prices($block24: Int!, $block48: Int!, $blockWeek: Int!) {
-//     current: bundles(first: 1, subgraphError: allow) {
-//       maticPriceUSD
-//     }
-//     oneDay: bundles(first: 1, block: { number: $block24 }, subgraphError: allow) {
-//       maticPriceUSD
-//     }
-//     twoDay: bundles(first: 1, block: { number: $block48 }, subgraphError: allow) {
-//       maticPriceUSD
-//     }
-//     oneWeek: bundles(first: 1, block: { number: $blockWeek }, subgraphError: allow) {
-//       maticPriceUSD
-//     }
-//   }
-// `
-
 export const ETH_PRICES = gql`
-  query prices {
+  query prices($block24: Int!, $block48: Int!) {
     current: bundles(first: 1, subgraphError: allow) {
+      maticPriceUSD
+    }
+    oneDay: bundles(first: 1, block: { number: $block24 }, subgraphError: allow) {
+      maticPriceUSD
+    }
+    twoDay: bundles(first: 1, block: { number: $block48 }, subgraphError: allow) {
       maticPriceUSD
     }
   }
@@ -42,15 +30,12 @@ interface PricesResponse {
     current: {
         maticPriceUSD: string
     }[]
-    // oneDay: {
-    //     maticPriceUSD: string
-    // }[]
-    // twoDay: {
-    //     maticPriceUSD: string
-    // }[]
-    // oneWeek: {
-    //     maticPriceUSD: string
-    // }[]
+    oneDay: {
+        maticPriceUSD: string
+    }[]
+    twoDay: {
+        maticPriceUSD: string
+    }[]
 }
 
 async function fetchEthPrices(
@@ -60,11 +45,10 @@ async function fetchEthPrices(
     try {
         const { data, error } = await client.query<PricesResponse>({
             query: ETH_PRICES,
-            // variables: {
-            //     block24: blocks[0],
-            //     block48: blocks[1],
-            //     blockWeek: blocks[2] ?? 1
-            // }
+            variables: {
+                block24: blocks[0],
+                block48: blocks[1],
+            }
         })
 
         if (error) {
@@ -76,9 +60,8 @@ async function fetchEthPrices(
             return {
                 data: {
                     current: parseFloat(data.current[0].maticPriceUSD ?? 0),
-                    // oneDay: parseFloat(data.oneDay[0]?.maticPriceUSD ?? 0),
-                    // twoDay: parseFloat(data.twoDay[0]?.maticPriceUSD ?? 0),
-                    // week: parseFloat(data.oneWeek[0]?.maticPriceUSD ?? 0)
+                    oneDay: parseFloat(data.oneDay[0]?.maticPriceUSD ?? 0),
+                    twoDay: parseFloat(data.twoDay[0]?.maticPriceUSD ?? 0),
                 },
                 error: false
             }

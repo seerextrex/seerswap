@@ -98,7 +98,7 @@ export default function Pool() {
     return (
         <>
             <Helmet>
-                <title>{t`Algebra — Pool`}</title>
+                <title>{t`QuickSwap — Pool`}</title>
             </Helmet>
             <Card classes={"br-24 ph-2 pv-1 mxs_ph-1"}>
                 <SwapPoolTabs active={"pool"} />

@@ -49,6 +49,8 @@ export interface FormattedChartPool {
 export interface FormattedTotalStats {
     tvlUSD: number
     volumeUSD: number
+    txCount: number
+    volumeUSDMonth: number
 }
 
 export interface Liquidity {

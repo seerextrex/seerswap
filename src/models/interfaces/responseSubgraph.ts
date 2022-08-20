@@ -121,6 +121,7 @@ export interface HistoryStakingSubgraph {
 export interface TotalStatSubgraph {
     totalVolumeUSD: string
     totalValueLockedUSD: string
+    txCount: string
 }
 
 export interface SmallPoolSubgraph {

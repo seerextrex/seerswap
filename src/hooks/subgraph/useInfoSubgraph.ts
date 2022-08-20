@@ -550,7 +550,7 @@ export function useInfoSubgraph() {
 
             setTotalStatsLoading(true)
 
-            // const [_block24, _block48, _blockWeek, _blockMonth] = [block24, block48, blockWeek, blockMonth].sort((a, b) => +b.timestamp - +a.timestamp)
+            const [_block24, _block48, _blockWeek, _blockMonth] = [block24, block48].sort((a, b) => +b.timestamp - +a.timestamp)
 
             const { data: data, error: error } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
                 query: TOTAL_STATS(),
@@ -562,15 +562,15 @@ export function useInfoSubgraph() {
                 return
             }
 
-            // const { data: data24, error: error24 } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
-            //     query: TOTAL_STATS(_block24.number),
-            //     fetchPolicy: 'network-only'
-            // })
+            const { data: data24, error: error24 } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
+                query: TOTAL_STATS(_block24.number),
+                fetchPolicy: 'network-only'
+            })
 
-            // if (error24) {
-            //     setTotalStats('Failed')
-            //     return
-            // }
+            if (error24) {
+                setTotalStats('Failed')
+                return
+            }
 
             // const { data: dataWeek, error: errorWeek } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
             //     query: TOTAL_STATS(_blockWeek.number),
@@ -593,19 +593,23 @@ export function useInfoSubgraph() {
             // }
 
             const stats = data.factories[0]
-            // const stats24 = data24.factories[0]
+            const stats24 = data24.factories[0]
             // const statsWeek = dataWeek.factories[0]
             // const statsMonth = dataMonth.factories[0]
 
-            // const volumeUSD =
-            //     stats && statsMonth
-            //         ? parseFloat(stats.totalVolumeUSD) - parseFloat(statsMonth.totalVolumeUSD)
-            //         : parseFloat(stats.totalVolumeUSD)
+            const volumeUSD =
+                stats && stats24
+                    ? parseFloat(stats.totalVolumeUSD) - parseFloat(stats24.totalVolumeUSD)
+                    : parseFloat(stats.totalVolumeUSD)
+
+            const txCount = stats && stats24 ? parseFloat(stats.txCount) - parseFloat(stats24.txCount)
+            : parseFloat(stats.txCount)
 
             setTotalStats({
                 tvlUSD: parseFloat(stats.totalValueLockedUSD),
-                // volumeUSD: volumeUSD
-                volumeUSD: parseFloat(stats.totalVolumeUSD)
+                volumeUSD,
+                volumeUSDMonth: parseFloat(stats.totalVolumeUSD),
+                txCount
             })
 
         } catch (err) {

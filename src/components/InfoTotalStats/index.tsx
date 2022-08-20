@@ -17,9 +17,9 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
     const { pathname } = useLocation();
 
     useEffect(() => {
-        // if (blocksFetched) {
+        if (blocksFetched) {
         refreshHandler();
-        // }
+        }
     }, [blocksFetched]);
 
     const pool = useMemo(() => pathname.split("pools/")[1], [pathname]);
@@ -29,12 +29,16 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
             let res = {
                 tvlUSD: undefined,
                 volumeUSD: undefined,
+                txCount: undefined,
+                volumeUSDMonth: undefined
             };
             poolsStat?.forEach((item: any) => {
                 if (item.address.toLowerCase() === pool.toLowerCase()) {
                     res = {
                         tvlUSD: item.tvlUSD,
                         volumeUSD: item.volumeUSD,
+                        volumeUSDMonth: item.volumeUSDMonth,
+                        txCount: item.txCount
                     };
                 }
             });
@@ -43,14 +47,18 @@ export function InfoTotalStats({ data, isLoading, refreshHandler, blocksFetched,
         return {
             tvlUSD: data?.tvlUSD,
             volumeUSD: data?.volumeUSD,
+            volumeUSDMonth: data?.volumeUSDMonth,
+            txCount: data?.txCount
         };
     }, [data, poolsStat, pool]);
 
     return (
         <div>
             <div className={"total-stats-wrapper"}>
-                <StatCard isLoading={isLoading} data={_data?.tvlUSD} title={t`Total Value Locked`} style={"mr-f-05 mxs_m-0"} />
-                <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={t`Volume 24H`} style={"ml-l-05 mxs_m-0"} />
+                <StatCard isLoading={isLoading} data={_data?.tvlUSD} title={t`Total Value Locked`} format style={"ms_m-0 mxs_m-0"} />
+                <StatCard isLoading={isLoading} data={_data?.volumeUSD} title={t`Volume 24H`} format style={"ml-1 ms_m-0 mxs_m-0"} />
+                <StatCard isLoading={isLoading} data={_data?.volumeUSDMonth} title={t`Volume 1M`} format style={"ml-1 ms_m-0 mxs_m-0"} />
+                <StatCard isLoading={isLoading} data={_data?.txCount} title={t`Transactions 24H`} style={"ml-1 ms_m-0 mxs_m-0"} />
             </div>
         </div>
     );

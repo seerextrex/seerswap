@@ -43,6 +43,22 @@ export const DOGEDRAGON_DOGECHAIN = new Token(
     'Doge Dragon'
 )
 
+export const QUICKNEW_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0xb12c13e66AdE1F72f71834f2FC5082Db8C091358',
+    18,
+    'QUICK',
+    'QuickSwap'
+)
+
+export const MATIC_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0xDC42728B0eA910349ed3c6e1c9Dc06b5FB591f98',
+    18,
+    'MATIC',
+    'Matic'
+)
+
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WDOGE

@@ -32,10 +32,10 @@ const sortFields = [
         title: t`Volume 7D`,
         value: "volumeUSDWeek",
     },
-    {
-        title: t`Volume 1M`,
-        value: "volumeUSDMonth",
-    },
+    // {
+    //     title: t`Volume 1M`,
+    //     value: "volumeUSDMonth",
+    // },
     {
         title: t`TVL`,
         value: "tvlUSD",
@@ -95,10 +95,10 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         title: formatDollarAmount(el.volumeUSDWeek),
                         value: el.volumeUSDWeek,
                     },
-                    {
-                        title: formatDollarAmount(el.volumeUSDMonth),
-                        value: el.volumeUSDMonth,
-                    },
+                    // {
+                    //     title: formatDollarAmount(el.volumeUSDMonth),
+                    //     value: el.volumeUSDMonth,
+                    // },
                     {
                         title: formatDollarAmount(el.tvlUSD),
                         value: el.tvlUSD,
@@ -141,9 +141,9 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>Volume 7D</Trans>
                         </span>
-                        <span className={"table-header__item table-header__item--center"}>
+                        {/* <span className={"table-header__item table-header__item--center"}>
                             <Trans>Volume 1M</Trans>
-                        </span>
+                        </span> */}
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>
                         </span>

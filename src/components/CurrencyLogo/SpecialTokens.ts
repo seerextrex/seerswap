@@ -4,6 +4,8 @@ import USDTLogo from '../../assets/images/USDT-logo.png'
 import USDCLogo from '../../assets/svg/usd-coin-usdc-logo.svg'
 import WBTCLogo from '../../assets/images/wbtc-logo.png'
 import DDLogo from '../../assets/svg/dragon-doge-logo.svg'
+import QuickNewLogo from '../../assets/svg/quick-new-logo.svg'
+import MaticLogo from '../../assets/images/matic-logo.png'
 
 interface SpecialTokensInterface {
     [key: string]: {
@@ -36,5 +38,13 @@ export const specialTokens: SpecialTokensInterface = {
     ['0x582daef1f36d6009f64b74519cfd612a8467be18']: {
         name: 'DD',
         logo: DDLogo
+    },
+    ['0xb12c13e66ade1f72f71834f2fc5082db8c091358']: {
+        name: 'QUICK',
+        logo: QuickNewLogo
+    },
+    ['0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98']: {
+        name: 'MATIC',
+        logo: MaticLogo
     }
 }

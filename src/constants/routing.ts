@@ -1,7 +1,7 @@
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from './chains'
-import { DOGEDRAGON_DOGECHAIN, ETH_DOGECHAIN, ExtendedEther, USDC_DOGECHAIN, USDT_DOGECHAIN, WBTC_DOGECHAIN, WMATIC_EXTENDED } from './tokens'
+import { DOGEDRAGON_DOGECHAIN, ETH_DOGECHAIN, ExtendedEther, MATIC_DOGECHAIN, QUICKNEW_DOGECHAIN, USDC_DOGECHAIN, USDT_DOGECHAIN, WBTC_DOGECHAIN, WMATIC_EXTENDED } from './tokens'
 
 type ChainTokenList = {
     readonly [chainId: number]: Token[]
@@ -21,7 +21,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
     [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], DOGEDRAGON_DOGECHAIN, USDC_DOGECHAIN,
         USDT_DOGECHAIN,
         WBTC_DOGECHAIN,
-        ETH_DOGECHAIN]
+        ETH_DOGECHAIN,
+        QUICKNEW_DOGECHAIN,
+        MATIC_DOGECHAIN
+    ]
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 /**
@@ -41,14 +44,16 @@ export const COMMON_BASES: ChainCurrencyList = {
         USDC_DOGECHAIN,
         USDT_DOGECHAIN,
         WBTC_DOGECHAIN,
-        ETH_DOGECHAIN
+        ETH_DOGECHAIN,
+        QUICKNEW_DOGECHAIN,
+        MATIC_DOGECHAIN
     ]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
     ...WETH_ONLY,
-    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], DOGEDRAGON_DOGECHAIN, USDC_DOGECHAIN, USDT_DOGECHAIN, WBTC_DOGECHAIN, ETH_DOGECHAIN]
+    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], MATIC_DOGECHAIN, QUICKNEW_DOGECHAIN, DOGEDRAGON_DOGECHAIN, USDC_DOGECHAIN, USDT_DOGECHAIN, WBTC_DOGECHAIN, ETH_DOGECHAIN]
 }
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
     [SupportedChainId.DOGECHAIN]: [

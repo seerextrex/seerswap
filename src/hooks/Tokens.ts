@@ -43,6 +43,16 @@ const DEFAULT_TOKEN_LIST: any = {
         name: 'Doge Dragon',
         decimals: 18,
         symbol: 'DD'
+    },
+    ['0xb12c13e66ade1f72f71834f2fc5082db8c091358']: {
+        name: 'QuickSwap',
+        decimals: 18,
+        symbol: 'QUICK',
+    },
+    ['0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98']: {
+        name: 'Matic',
+        decimals: 18,
+        symbol: 'MATIC',
     }
 }
 

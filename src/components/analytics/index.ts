@@ -3,10 +3,10 @@ import TagManager from 'react-gtm-module'
 
 import { isMobile } from 'utils/userAgent'
 
-const GOOGLE_ANALYTICS_ID: string | undefined = 'UA-213558502-3'
+const GOOGLE_ANALYTICS_ID: string | undefined = 'UA-238335198-1'
 
 const tagManagerArgs = {
-    gtmId: 'GTM-MD63ZMK'
+    gtmId: 'GTM-5544TNR'
 }
 
 if (typeof GOOGLE_ANALYTICS_ID === 'string') {

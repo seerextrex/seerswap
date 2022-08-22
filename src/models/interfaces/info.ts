@@ -50,7 +50,7 @@ export interface FormattedTotalStats {
     tvlUSD: number
     volumeUSD: number
     txCount: number
-    volumeUSDMonth: number
+    feesCollected: number
 }
 
 export interface Liquidity {

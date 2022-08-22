@@ -12,7 +12,7 @@ import { getAddress } from 'ethers/lib/utils'
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
 const NETWORK_URLS: { [key in SupportedChainId]: string } = {
-    [SupportedChainId.DOGECHAIN]: `https://rpc02-sg.dogechain.dog`
+    [SupportedChainId.DOGECHAIN]: `https://rpc03-sg.dogechain.dog`
 }
 
 export const network = new NetworkConnector({
@@ -33,7 +33,7 @@ export const injected = new InjectedConnector({
 export const gnosisSafe = new SafeAppConnector()
 
 export const walletconnector = new WalletConnectConnector({
-    rpc: { 2000: 'https://rpc02-sg.dogechain.dog' },
+    rpc: { 2000: 'https://rpc03-sg.dogechain.dog' },
     supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
     qrcode: true,
     chainId: 2000

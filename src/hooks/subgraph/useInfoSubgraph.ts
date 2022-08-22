@@ -324,8 +324,6 @@ export function useInfoSubgraph() {
                 //             ? parseFloat(current.feesUSD)
                 //             : 0
 
-                console.log('TX COUNT', txCount)
-
                 accum[address] = {
                     exists: !!current,
                     address,
@@ -603,13 +601,17 @@ export function useInfoSubgraph() {
                     : parseFloat(stats.totalVolumeUSD)
 
             const txCount = stats && stats24 ? parseFloat(stats.txCount) - parseFloat(stats24.txCount)
-            : parseFloat(stats.txCount)
+                : stats ? parseFloat(stats.txCount) : 0
+
+            const feesCollected = stats && stats24 ? parseFloat(stats.totalFeesUSD) - parseFloat(stats24.totalFeesUSD) : stats ? parseFloat(stats.totalFeesUSD) : 0
+
+            console.log(stats, stats24)
 
             setTotalStats({
                 tvlUSD: parseFloat(stats.totalValueLockedUSD),
                 volumeUSD,
-                volumeUSDMonth: parseFloat(stats.totalVolumeUSD),
-                txCount
+                txCount,
+                feesCollected
             })
 
         } catch (err) {

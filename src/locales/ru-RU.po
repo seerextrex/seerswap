@@ -502,8 +502,8 @@ msgstr "Получить"
 
 #: src/pages/Pool/PositionPage.tsx
 #: src/pages/RemoveLiquidity/V3.tsx
-msgid "Collect as WMATIC"
-msgstr "Забрать как WMATIC"
+msgid "Collect as WDOGE"
+msgstr "Забрать как WDOGE"
 
 #: src/pages/Pool/PositionPage.tsx
 msgid "Collect fees"

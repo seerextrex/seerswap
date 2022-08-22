@@ -269,6 +269,7 @@ export const TOTAL_STATS = (block?: number) => {
       totalValueLockedUSD
       totalValueLockedUSDUntracked
       txCount
+      totalFeesUSD
     }
   }
 `

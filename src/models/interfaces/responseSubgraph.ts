@@ -122,6 +122,7 @@ export interface TotalStatSubgraph {
     totalVolumeUSD: string
     totalValueLockedUSD: string
     txCount: string
+    totalFeesUSD: string
 }
 
 export interface SmallPoolSubgraph {

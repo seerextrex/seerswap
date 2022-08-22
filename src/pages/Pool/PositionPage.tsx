@@ -432,7 +432,7 @@ export default function PositionPage({
                                 </Card>
                                 {showCollectAsWeth && (
                                     <div className={"flex-s-between mt-075"}>
-                                        <Trans>Collect as WMATIC</Trans>
+                                        <Trans>Collect as WDOGE</Trans>
                                         <Toggle id="receive-as-weth" isActive={receiveWETH} toggle={() => setReceiveWETH((receiveWETH) => !receiveWETH)} />
                                     </div>
                                 )}

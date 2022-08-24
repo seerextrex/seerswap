@@ -59,6 +59,22 @@ export const MATIC_DOGECHAIN = new Token(
     'Matic'
 )
 
+export const DC_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0x7b4328c127b85369d9f82ca0503b000d09cf9180',
+    18,
+    'DC',
+    'Dogechain Token'
+)
+
+export const DOGIRA = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0xf480f38c366daac4305dc484b2ad7a496ff00cea',
+    9,
+    'DOGIRA',
+    'Dogira'
+)
+
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WDOGE

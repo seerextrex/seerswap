@@ -6,6 +6,8 @@ import WBTCLogo from '../../assets/images/wbtc-logo.png'
 import DDLogo from '../../assets/svg/dragon-doge-logo.svg'
 import QuickNewLogo from '../../assets/svg/quick-new-logo.svg'
 import MaticLogo from '../../assets/images/matic-logo.png'
+import DCLogo from '../../assets/images/doge-logo.png'
+import DogiraLogo from '../../assets/images/dogira.jpg'
 
 interface SpecialTokensInterface {
     [key: string]: {
@@ -46,5 +48,13 @@ export const specialTokens: SpecialTokensInterface = {
     ['0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98']: {
         name: 'MATIC',
         logo: MaticLogo
+    },
+    ['0x7b4328c127b85369d9f82ca0503b000d09cf9180']: {
+        name: 'Dogechain Token',
+        logo: DCLogo
+    },
+    ['0xf480f38c366daac4305dc484b2ad7a496ff00cea']: {
+        name: 'Dogira',
+        logo: DogiraLogo
     }
 }

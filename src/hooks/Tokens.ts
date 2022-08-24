@@ -53,7 +53,18 @@ const DEFAULT_TOKEN_LIST: any = {
         name: 'Matic',
         decimals: 18,
         symbol: 'MATIC',
+    },
+    ['0x7b4328c127b85369d9f82ca0503b000d09cf9180']: {
+        name: 'Dogechain Token',
+        decimals: 18,
+        symbol: 'DC'
+    },
+    ['0xf480f38c366daac4305dc484b2ad7a496ff00cea']: {
+        name: 'Dogira',
+        decimals: 9,
+        symbol: 'DOGIRA'
     }
+    
 }
 
 

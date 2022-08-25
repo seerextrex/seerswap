@@ -93,6 +93,22 @@ export function useInfoSubgraph() {
 
     const [positionsRange, setPositionsRange] = useState<{ closed: PriceRangeChart | null, opened: PriceRangeChart | null }>({ closed: null, opened: null })
 
+    const addressForCheck = {
+        ['DD']: '0x582daef1f36d6009f64b74519cfd612a8467be18',
+        ['DC']: '0x7b4328c127b85369d9f82ca0503b000d09cf9180'
+    }
+
+    const possibleNames = [
+        {
+            names: ['Doge Dragon', 'DogeDragon', 'Dragon Doge', 'DragonDoge'],
+            realAddress: addressForCheck.DD
+        }, 
+        {
+            names: ['Dogechain Token', 'DogeChain Token', 'Dogechain', 'DogeChain'],
+            realAddresses: addressForCheck.DC
+        }
+    ]
+
     async function fetchInfoPools() {
 
         if (!blocks || blockError || !ethPrices) return
@@ -125,12 +141,15 @@ export function useInfoSubgraph() {
 
             const pools = rawPools.filter(pool => {
 
-                if (pool.token0.symbol.toUpperCase() === 'DD' || pool.token0.name === 'Doge Dragon' || pool.token0.name === 'DogeDragon' || pool.token0.name === 'Dragon Doge' || pool.token0.name === 'DragonDoge') {
-                    return pool.token0.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
+                const { symbol: token0Symbol, name: token0Name, id: token0Id } = pool.token0
+                const { symbol: token1Symbol, name: token1Name, id: token1Id } = pool.token1
+
+                if ((token0Symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token0Name)) ) {
+                    return token0Id.toLowerCase() === addressForCheck[token0Symbol.toUpperCase()]
                 }
 
-                if (pool.token1.symbol.toUpperCase() === 'DD' || pool.token1.name === 'Doge Dragon' || pool.token1.name === 'DogeDragon' || pool.token1.name === 'Dragon Doge' || pool.token1.name === 'DragonDoge') {
-                    return pool.token1.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
+                if ((token1Symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token1Name)) ) {
+                    return token1Id.toLowerCase() === addressForCheck[token1Symbol.toUpperCase()]
                 }
 
                 return true
@@ -262,9 +281,11 @@ export function useInfoSubgraph() {
             }
 
             const tokens = rawTokens.filter(token => {
-                if (token.symbol.toUpperCase() === 'DD' || token.name === 'Doge Dragon' || token.name === 'DogeDragon' || token.name === 'Dragon Doge' || token.name === 'DragonDoge') {
-                    return token.id.toLowerCase() === '0x582daef1f36d6009f64b74519cfd612a8467be18'
+
+                if ((token.symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token.name)) ) {
+                    return token.id.toLowerCase() === addressForCheck[token.symbol.toUpperCase()]
                 }
+
                 return true
 
             })

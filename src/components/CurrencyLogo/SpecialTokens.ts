@@ -1,4 +1,4 @@
-import WdogeLogo from '../../assets/images/doge-logo.png'
+import WdogeLogo from '../../assets/images/doge.png'
 import EthLogo from '../../assets/images/ether-logo.png'
 import USDTLogo from '../../assets/images/USDT-logo.png'
 import USDCLogo from '../../assets/svg/usd-coin-usdc-logo.svg'

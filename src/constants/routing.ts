@@ -41,14 +41,15 @@ export const COMMON_BASES: ChainCurrencyList = {
     [SupportedChainId.DOGECHAIN]: [
         ExtendedEther.onChain(SupportedChainId.DOGECHAIN),
         DOGEDRAGON_DOGECHAIN,
+        DC_DOGECHAIN,
         USDC_DOGECHAIN,
         USDT_DOGECHAIN,
         WBTC_DOGECHAIN,
         ETH_DOGECHAIN,
         QUICKNEW_DOGECHAIN,
         MATIC_DOGECHAIN,
-        DC_DOGECHAIN,
         DOGIRA
+        
     ]
 }
 

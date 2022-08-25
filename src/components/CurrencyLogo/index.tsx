@@ -1,6 +1,6 @@
 import React from "react";
 // @ts-ignore
-import DogeLogo from "../../assets/images/doge-logo.png";
+import DogeLogo from "../../assets/images/doge.png";
 import { useActiveWeb3React } from "../../hooks/web3";
 import { stringToColour } from "../../utils/stringToColour";
 import { specialTokens } from "./SpecialTokens";

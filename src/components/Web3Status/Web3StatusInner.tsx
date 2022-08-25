@@ -43,7 +43,7 @@ export async function addPolygonNetwork() {
                                 decimals: 18,
                             },
                             blockExplorerUrls: ["https://explorer.dogechain.dog/"],
-                            rpcUrls: ["https://rpc03-sg.dogechain.dog"],
+                            rpcUrls: ["https://dogechain.ankr.com"],
                         },
                     ],
                 });

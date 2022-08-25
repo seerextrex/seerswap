@@ -5,7 +5,7 @@ import { ApplicationModal } from "state/application/actions";
 import { useModalOpen, useToggleModal } from "state/application/hooks";
 import { switchToNetwork } from "utils/switchToNetwork";
 import { CHAIN_INFO, SupportedChainId } from "../../constants/chains";
-import DogeLogo from "../../assets/images/doge-logo.png";
+import DogeLogo from "../../assets/images/doge.png";
 
 export default function NetworkCard() {
     const { chainId, library } = useActiveWeb3React();

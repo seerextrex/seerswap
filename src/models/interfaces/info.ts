@@ -16,6 +16,7 @@ export interface FormattedPool {
     volumeUSDChange: number
     volumeUSDWeek: number
     volumeUSDMonth: number
+    totalFeesUSD: number
 }
 
 export interface FormattedToken {

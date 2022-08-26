@@ -63,10 +63,10 @@ function parseTokensData(tokenData: TokenInSubgraph[] | string) {
 export function useInfoSubgraph() {
     const { account } = useActiveWeb3React()
     const { dataClient } = useClients()
-    const [t24, t48] = useDeltaTimestamps()
+    const [t24, t48, tWeek] = useDeltaTimestamps()
 
-    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48])
-    const [block24, block48] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? []
+    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek])
+    const [block24, block48, blockWeek] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? []
 
     const ethPrices = useEthPrices()
 
@@ -102,7 +102,7 @@ export function useInfoSubgraph() {
         {
             names: ['Doge Dragon', 'DogeDragon', 'Dragon Doge', 'DragonDoge'],
             realAddress: addressForCheck.DD
-        }, 
+        },
         {
             names: ['Dogechain Token', 'DogeChain Token', 'Dogechain', 'DogeChain'],
             realAddresses: addressForCheck.DC
@@ -138,17 +138,16 @@ export function useInfoSubgraph() {
                 return
             }
 
-
             const pools = rawPools.filter(pool => {
 
                 const { symbol: token0Symbol, name: token0Name, id: token0Id } = pool.token0
                 const { symbol: token1Symbol, name: token1Name, id: token1Id } = pool.token1
 
-                if ((token0Symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token0Name)) ) {
+                if ((token0Symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token0Name))) {
                     return token0Id.toLowerCase() === addressForCheck[token0Symbol.toUpperCase()]
                 }
 
-                if ((token1Symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token1Name)) ) {
+                if ((token1Symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token1Name))) {
                     return token1Id.toLowerCase() === addressForCheck[token1Symbol.toUpperCase()]
                 }
 
@@ -158,17 +157,17 @@ export function useInfoSubgraph() {
 
             const poolsAddresses = pools.map(pool => pool.id)
 
-            const [_block24, _block48] = [block24, block48].sort((a, b) => +b.timestamp - +a.timestamp)
+            const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp)
 
             const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses)
             const pools48 = await fetchPoolsByTime(_block48.number, poolsAddresses)
-            // const poolsWeek = await fetchPoolsByTime(_blockWeek.number, poolsAddresses)
+            const poolsWeek = await fetchPoolsByTime(_blockWeek.number, poolsAddresses)
             // const poolsMonth = await fetchPoolsByTime(_blockMonth.number, poolsAddresses)
 
             const parsedPools = parsePoolsData(pools)
             const parsedPools24 = parsePoolsData(pools24)
             const parsedPools48 = parsePoolsData(pools48)
-            // const parsedPoolsWeek = parsePoolsData(poolsWeek)
+            const parsedPoolsWeek = parsePoolsData(poolsWeek)
             // const parsedPoolsMonth = parsePoolsData(poolsMonth)
 
             const aprs = await fetchPoolsAPR()
@@ -187,7 +186,7 @@ export function useInfoSubgraph() {
                 const current: PoolSubgraph | undefined = parsedPools[address]
                 const oneDay: PoolSubgraph | undefined = parsedPools24[address]
                 const twoDay: PoolSubgraph | undefined = parsedPools48[address]
-                // const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
+                const week: PoolSubgraph | undefined = parsedPoolsWeek[address]
                 // const month: PoolSubgraph | undefined = parsedPoolsMonth[address]
 
                 const manageUntrackedVolume = +current.volumeUSD <= 1 ? 'volumeUSD' : 'volumeUSD'
@@ -201,10 +200,8 @@ export function useInfoSubgraph() {
                                 ? [parseFloat(current[manageUntrackedVolume]), 0]
                                 : [0, 0]
 
-                // const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume])
-                //     : current ? parseFloat(current[manageUntrackedVolume]) : 0
-
-                const volumeUSDWeek = current ? parseFloat(current[manageUntrackedVolume]) : 0
+                const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume])
+                    : current ? parseFloat(current[manageUntrackedVolume]) : 0
 
                 // const volumeUSDMonth = current && month ? parseFloat(current[manageUntrackedVolume]) - parseFloat(month[manageUntrackedVolume])
                 //     : current ? parseFloat(current[manageUntrackedVolume]) : 0
@@ -215,6 +212,8 @@ export function useInfoSubgraph() {
                     : current
                         ? parseFloat(current.txCount)
                         : 0
+
+                const feesCollected = current && oneDay ? parseFloat(current.feesUSD) - parseFloat(oneDay.feesUSD) : current ? parseFloat(current.feesUSD) : 0
 
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined)
@@ -235,7 +234,8 @@ export function useInfoSubgraph() {
                     txCount,
                     tvlUSDChange,
                     apr: aprPercent,
-                    farmingApr
+                    farmingApr,
+                    feesCollected
                 }
                 return accum
             }, {})
@@ -282,7 +282,7 @@ export function useInfoSubgraph() {
 
             const tokens = rawTokens.filter(token => {
 
-                if ((token.symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token.name)) ) {
+                if ((token.symbol.toUpperCase() in addressForCheck) || possibleNames.some(el => el.names.includes(token.name))) {
                     return token.id.toLowerCase() === addressForCheck[token.symbol.toUpperCase()]
                 }
 
@@ -625,8 +625,6 @@ export function useInfoSubgraph() {
                 : stats ? parseFloat(stats.txCount) : 0
 
             const feesCollected = stats && stats24 ? parseFloat(stats.totalFeesUSD) - parseFloat(stats24.totalFeesUSD) : stats ? parseFloat(stats.totalFeesUSD) : 0
-
-            console.log(stats, stats24)
 
             setTotalStats({
                 tvlUSD: parseFloat(stats.totalValueLockedUSD),

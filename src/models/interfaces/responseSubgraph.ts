@@ -16,6 +16,7 @@ export interface PoolSubgraph {
     volumeUSD: string
     untrackedVolumeUSD: string
     totalValueLockedUSDUntracked: string
+    totalFeesUSD: string
 }
 
 export interface PoolAddressSubgraph {

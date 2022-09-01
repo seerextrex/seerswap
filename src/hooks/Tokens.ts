@@ -63,8 +63,12 @@ const DEFAULT_TOKEN_LIST: any = {
         name: 'Dogira',
         decimals: 9,
         symbol: 'DOGIRA'
+    },
+    ['0x91cd28e57b92e34124c4540ee376c581d188b53e']: {
+        name: 'DCGod',
+        decimals: 18,
+        symbol: 'DCGOD'
     }
-    
 }
 
 

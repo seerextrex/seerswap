@@ -75,6 +75,13 @@ export const DOGIRA = new Token(
     'Dogira'
 )
 
+export const DCGOD_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0x91cd28e57b92e34124c4540ee376c581d188b53e',
+    18,
+    'DCGOD',
+    'DCGod'
+)
 
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WDOGE

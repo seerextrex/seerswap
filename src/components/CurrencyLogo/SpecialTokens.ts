@@ -8,6 +8,7 @@ import QuickNewLogo from '../../assets/svg/quick-new-logo.svg'
 import MaticLogo from '../../assets/images/matic-logo.png'
 import DCLogo from '../../assets/images/doge-logo.png'
 import DogiraLogo from '../../assets/images/dogira.jpg'
+import DCGODLogo from '../../assets/images/dcgod-logo.png'
 
 interface SpecialTokensInterface {
     [key: string]: {
@@ -56,5 +57,9 @@ export const specialTokens: SpecialTokensInterface = {
     ['0xf480f38c366daac4305dc484b2ad7a496ff00cea']: {
         name: 'Dogira',
         logo: DogiraLogo
+    },
+    ['0x91cd28e57b92e34124c4540ee376c581d188b53e']: {
+        name: 'DCGod',
+        logo: DCGODLogo,
     }
 }

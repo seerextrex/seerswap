@@ -6033,6 +6033,7 @@ export enum _SubgraphErrorPolicy_ {
 export type PricesQueryVariables = Exact<{
   block24: Scalars['Int'];
   block48: Scalars['Int'];
+  blockWeek: Scalars['Int'];
 }>;
 
 
@@ -6045,6 +6046,9 @@ export type PricesQuery = (
     { __typename?: 'Bundle' }
     & Pick<Bundle, 'maticPriceUSD'>
   )>, twoDay: Array<(
+    { __typename?: 'Bundle' }
+    & Pick<Bundle, 'maticPriceUSD'>
+  )>, oneWeek: Array<(
     { __typename?: 'Bundle' }
     & Pick<Bundle, 'maticPriceUSD'>
   )> }
@@ -6440,7 +6444,7 @@ export type PopularPoolsQuery = (
 
 
 export const PricesDocument = `
-    query prices($block24: Int!, $block48: Int!) {
+    query prices($block24: Int!, $block48: Int!, $blockWeek: Int!) {
   current: bundles(first: 1, subgraphError: allow) {
     maticPriceUSD
   }
@@ -6448,6 +6452,9 @@ export const PricesDocument = `
     maticPriceUSD
   }
   twoDay: bundles(first: 1, block: {number: $block48}, subgraphError: allow) {
+    maticPriceUSD
+  }
+  oneWeek: bundles(first: 1, block: {number: $blockWeek}, subgraphError: allow) {
     maticPriceUSD
   }
 }

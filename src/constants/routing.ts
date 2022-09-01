@@ -1,7 +1,7 @@
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
 import { SupportedChainId } from './chains'
-import { DOGEDRAGON_DOGECHAIN, ETH_DOGECHAIN, ExtendedEther, MATIC_DOGECHAIN, QUICKNEW_DOGECHAIN, DC_DOGECHAIN, USDC_DOGECHAIN, USDT_DOGECHAIN, WBTC_DOGECHAIN, WMATIC_EXTENDED, DOGIRA } from './tokens'
+import { DOGEDRAGON_DOGECHAIN, ETH_DOGECHAIN, ExtendedEther, MATIC_DOGECHAIN, QUICKNEW_DOGECHAIN, DC_DOGECHAIN, USDC_DOGECHAIN, USDT_DOGECHAIN, WBTC_DOGECHAIN, WMATIC_EXTENDED, DOGIRA, DCGOD_DOGECHAIN } from './tokens'
 
 type ChainTokenList = {
     readonly [chainId: number]: Token[]
@@ -24,7 +24,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
         ETH_DOGECHAIN,
         QUICKNEW_DOGECHAIN,
         MATIC_DOGECHAIN,
-        DC_DOGECHAIN
+        DC_DOGECHAIN,
+        DOGIRA,
+        DCGOD_DOGECHAIN
     ]
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
@@ -48,8 +50,8 @@ export const COMMON_BASES: ChainCurrencyList = {
         ETH_DOGECHAIN,
         QUICKNEW_DOGECHAIN,
         MATIC_DOGECHAIN,
-        DOGIRA
-        
+        DOGIRA,
+        DCGOD_DOGECHAIN
     ]
 }
 

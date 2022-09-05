@@ -68,6 +68,11 @@ const DEFAULT_TOKEN_LIST: any = {
         name: 'DCGod',
         decimals: 18,
         symbol: 'DCGOD'
+    },
+    ['0xb84df10966a5d7e1ab46d9276f55d57bd336afc7']: {
+        name: 'Mai Stablecoin',
+        decimals: 18,
+        symbol: 'MAI'
     }
 }
 

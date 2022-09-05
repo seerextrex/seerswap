@@ -83,6 +83,14 @@ export const DCGOD_DOGECHAIN = new Token(
     'DCGod'
 )
 
+export const MAI_DOGECHAIN = new Token(
+    SupportedChainId.DOGECHAIN,
+    '0xb84df10966a5d7e1ab46d9276f55d57bd336afc7',
+    18,
+    'MAI',
+    'Mai Stablecoin'
+)
+
 export const WMATIC_EXTENDED: { [chainId: number]: Token } = {
     ...WDOGE
 }

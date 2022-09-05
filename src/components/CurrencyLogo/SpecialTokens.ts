@@ -9,6 +9,7 @@ import MaticLogo from '../../assets/images/matic-logo.png'
 import DCLogo from '../../assets/images/doge-logo.png'
 import DogiraLogo from '../../assets/images/dogira.jpg'
 import DCGODLogo from '../../assets/images/dcgod-logo.png'
+import MAILogo from '../../assets/images/mai.png'
 
 interface SpecialTokensInterface {
     [key: string]: {
@@ -61,5 +62,9 @@ export const specialTokens: SpecialTokensInterface = {
     ['0x91cd28e57b92e34124c4540ee376c581d188b53e']: {
         name: 'DCGod',
         logo: DCGODLogo,
+    },
+    ['0xb84df10966a5d7e1ab46d9276f55d57bd336afc7']: {
+        name: 'MAI',
+        logo: MAILogo,
     }
 }

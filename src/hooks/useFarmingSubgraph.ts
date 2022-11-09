@@ -721,7 +721,7 @@ export function useFarmingSubgraph() {
 
     async function fetchEternalFarms(reload: boolean) {
 
-        if (!ethPrices) return
+        // if (!ethPrices) return
 
         setEternalFarmsLoading(true)
 
@@ -759,7 +759,7 @@ export function useFarmingSubgraph() {
                 const dailyBonusRewardRate = Math.round(+_bonusRewardRate * 86_400)
 
                 const apr = aprs[farming.id] ? aprs[farming.id] : 200
-                const tvl = eventTVL[farming.id] ? Math.round(eventTVL[farming.id] * ethPrices.current) : 0
+                // const tvl = eventTVL[farming.id] ? Math.round(eventTVL[farming.id] * ethPrices.current) : 0
 
                 _eternalFarmings = [
                     //@ts-ignore
@@ -774,7 +774,7 @@ export function useFarmingSubgraph() {
                         //@ts-ignore
                         pool,
                         apr,
-                        tvl
+                        tvl: 0
                     }
                 ]
 

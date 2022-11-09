@@ -9,13 +9,13 @@ import "./index.scss";
 
 import { Trans } from "@lingui/macro";
 
-export default function EternalFarmsPage({ data, refreshing, priceFetched, fetchHandler }: { data: any; refreshing: boolean; priceFetched: boolean, fetchHandler: () => any }) {
+export default function EternalFarmsPage({ data, refreshing, priceFetched, fetchHandler }: { data: any; refreshing: boolean; priceFetched: boolean; fetchHandler: () => any }) {
     const [modalForPool, setModalForPool] = useState(null);
 
     useEffect(() => {
-        if (priceFetched) {
-            fetchHandler();
-        }
+        // if (priceFetched) {
+        fetchHandler();
+        // }
     }, [priceFetched]);
 
     return (

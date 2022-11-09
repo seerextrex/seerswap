@@ -84,7 +84,7 @@ export function FarmingEventCard({
     const rewardList = useMemo(() => {
         if (!eternal && (!reward || !bonusReward)) return;
 
-        if (eternal && (!dailyRewardRate && !dailyBonusRewardRate)) return;
+        if (eternal && !dailyRewardRate && !dailyBonusRewardRate) return;
 
         if (rewardToken.id === bonusRewardToken.id) {
             return [{ token: rewardToken, rewardRate: (dailyRewardRate || 0) + (dailyBonusRewardRate || 0), amount: formatUnits(BigNumber.from(reward).add(BigNumber.from(bonusReward)), 18) }];
@@ -238,15 +238,17 @@ export function FarmingEventCard({
                     <Trans>REWARDS</Trans>
                 </div>
                 <ul className="farming-event-card__reward-list">
-                    {rewardList?.map((reward: any, i) => reward.rewardRate ? (
-                        <li key={i} className="farming-event-card__reward-list-item f">
-                            <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
-                            <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
-                            <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                {eternal ? <span>{formatAmountTokens(reward.rewardRate, false)} per day</span> : <span>{formatAmountTokens(reward.amount, false)}</span>}
-                            </div>
-                        </li>
-                    ) : null)}
+                    {rewardList?.map((reward: any, i) =>
+                        reward.rewardRate ? (
+                            <li key={i} className="farming-event-card__reward-list-item f">
+                                <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
+                                <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
+                                <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
+                                    {eternal ? <span>{formatAmountTokens(reward.rewardRate, false)} per day</span> : <span>{formatAmountTokens(reward.amount, false)}</span>}
+                                </div>
+                            </li>
+                        ) : null
+                    )}
                 </ul>
             </div>
             {!eternal && (
@@ -303,10 +305,10 @@ export function FarmingEventCard({
             )}
             {account && !active ? (
                 <>
-                    <div style={{ marginTop: "9px", border: "none", lineHeight: "19px" }} className={`w-100 b br-8 fs-085 ${!eternal ? "mt-05" : ""}`}>
+                    {/* <div style={{ marginTop: "9px", border: "none", lineHeight: "19px" }} className={`w-100 b br-8 fs-085 ${!eternal ? "mt-05" : ""}`}>
                         <span>TVL : </span>
                         <span>{formatDollarAmount(tvl)}</span>
-                    </div>
+                    </div> */}
                     <button
                         style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
                         //@ts-ignore

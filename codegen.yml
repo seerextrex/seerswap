@@ -1,9 +1,9 @@
 overrideExisting: true
 schema:
   [
-      'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-info',
-      'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-farming',
-      'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics'
+      'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-info',
+      'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-farming',
+      'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics'
   ]
 documents: 'src/**/!(*.d).{ts,tsx}'
 generates:

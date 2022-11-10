@@ -6,7 +6,7 @@ export const healthClient = new ApolloClient({
 })
 
 export const blockClient = new ApolloClient({
-    uri: 'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics',
+    uri: 'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -21,7 +21,7 @@ export const blockClient = new ApolloClient({
 })
 
 export const client = new ApolloClient({
-    uri: 'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-info',
+    uri: 'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-info',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -36,7 +36,7 @@ export const client = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-    uri: 'https://api-dogechain.algebra.finance/subgraphs/name/quickswap/dogechain-farming',
+    uri: 'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-farming',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

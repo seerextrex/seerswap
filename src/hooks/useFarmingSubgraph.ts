@@ -412,6 +412,8 @@ export function useFarmingSubgraph() {
                 if (!position.limitFarming && !position.eternalFarming && typeof position.pool === 'string') {
 
                     const _pool = await fetchPool(position.pool)
+
+                    if (!_pool) continue
                     //@ts-ignore
                     _position = { ..._position, pool: _pool }
                 }
@@ -449,6 +451,8 @@ export function useFarmingSubgraph() {
                     const _bonusRewardToken = await fetchToken(bonusRewardToken, true)
                     const _multiplierToken = await fetchToken(multiplierToken, true)
                     const _pool = await fetchPool(pool)
+
+                    if (!_pool || !_rewardToken || !_bonusRewardToken || !_multiplierToken) continue
 
                     _position = {
                         ..._position,
@@ -523,6 +527,7 @@ export function useFarmingSubgraph() {
                     const _pool = await fetchPool(pool)
                     const _multiplierToken = await fetchToken(multiplierToken, true)
 
+                    if (!_pool || !_rewardToken || !_bonusRewardToken || !_multiplierToken) continue
 
                     _position = {
                         ..._position,
@@ -615,6 +620,8 @@ export function useFarmingSubgraph() {
                 const _pool = await fetchPool(pool)
                 const _rewardToken = await fetchToken(rewardToken)
                 const _bonusRewardToken = await fetchToken(bonusRewardToken)
+
+                if (!_pool || !_rewardToken || !_bonusRewardToken) continue
 
                 _position = {
                     ..._position,
@@ -751,6 +758,8 @@ export function useFarmingSubgraph() {
                 const rewardToken = await fetchToken(farming.rewardToken, true)
                 const bonusRewardToken = await fetchToken(farming.bonusRewardToken, true)
                 const multiplierToken = await fetchToken(farming.multiplierToken, true)
+
+                if (!pool || !rewardToken || !bonusRewardToken || !multiplierToken) continue
 
                 const _rewardRate = formatUnits(BigNumber.from(farming.rewardRate), rewardToken.decimals)
                 const _bonusRewardRate = formatUnits(BigNumber.from(farming.bonusRewardRate), bonusRewardToken.decimals)

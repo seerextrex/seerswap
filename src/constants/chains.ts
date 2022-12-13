@@ -1,9 +1,7 @@
-export enum SupportedChainId {
-    DOGECHAIN = 2000
-}
+import AlgebraConfig from "algebra.config"
 
-export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = [
-    SupportedChainId.DOGECHAIN
+export const ALL_SUPPORTED_CHAIN_IDS: number[] = [
+    AlgebraConfig.CHAIN_PARAMS.chainId
 ]
 
 export const L1_CHAIN_IDS = [] as const
@@ -29,7 +27,7 @@ type ChainInfo = { readonly [chainId: number]: L1ChainInfo | L2ChainInfo } & {
     { readonly [chainId in SupportedL1ChainId]: L1ChainInfo }
 
 export const CHAIN_INFO: ChainInfo = {
-    [SupportedChainId.DOGECHAIN]: {
-        label: 'Dogechain'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: {
+        label: AlgebraConfig.CHAIN_PARAMS.chainName
     }
 }

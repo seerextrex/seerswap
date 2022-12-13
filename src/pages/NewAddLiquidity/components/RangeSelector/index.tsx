@@ -1,7 +1,7 @@
 import { t } from "@lingui/macro";
 import { Price, Token, Currency } from "@uniswap/sdk-core";
 import Input from "components/NumericalInput";
-import { USDC_DOGECHAIN } from "constants/tokens";
+import { STABLE_TOKEN_FOR_USD_PRICE } from "constants/tokens";
 import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -212,7 +212,7 @@ function RangePart({
     }, [priceFormat]);
 
     const valueUSD = useUSDCValue(tryParseAmount(value === "∞" || value === "0" ? undefined : Number(value).toFixed(5), tokenB), true);
-    const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", USDC_DOGECHAIN), tokenB);
+    const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", STABLE_TOKEN_FOR_USD_PRICE), tokenB);
     const usdPriceA = useUSDCPrice(tokenA ?? undefined);
     const usdPriceB = useUSDCPrice(tokenB ?? undefined);
 
@@ -221,7 +221,7 @@ function RangePart({
 
     const handleOnBlur = useCallback(() => {
         if (isUSD && usdPriceB) {
-            if (tokenB?.wrapped.address === USDC_DOGECHAIN.address) {
+            if (tokenB?.wrapped.address === STABLE_TOKEN_FOR_USD_PRICE.address) {
                 onUserInput(localUSDValue);
             } else {
                 if (tokenValue && tokenValue.trade) {
@@ -233,14 +233,14 @@ function RangePart({
                 }
             }
         } else if (isUSD && initialUSDPrices.CURRENCY_B) {
-            if (tokenB?.wrapped.address === USDC_DOGECHAIN.address) {
+            if (tokenB?.wrapped.address === STABLE_TOKEN_FOR_USD_PRICE.address) {
                 onUserInput(localUSDValue);
             } else {
                 onUserInput(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
                 setLocalTokenValue(String(+localUSDValue / +initialUSDPrices.CURRENCY_B));
             }
         } else if (isUSD && initialTokenPrice && usdPriceA) {
-            if (tokenB?.wrapped.address === USDC_DOGECHAIN.address) {
+            if (tokenB?.wrapped.address === STABLE_TOKEN_FOR_USD_PRICE.address) {
                 onUserInput(localUSDValue);
             } else {
                 onUserInput(String(+localUSDValue * +initialTokenPrice * +usdPriceA.toSignificant(5)));

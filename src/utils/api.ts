@@ -1,6 +1,8 @@
+import AlgebraConfig from "algebra.config"
+
 export async function fetchEternalFarmAPR() {
 
-    const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/?network=Dogechain-Quickswap'
+    const apiURL = AlgebraConfig.API.eternalFarmsAPR
 
     try {
         return await fetch(apiURL).then(v => v.json())
@@ -13,7 +15,7 @@ export async function fetchEternalFarmAPR() {
 
 export async function fetchLimitFarmAPR() {
 
-    const apiURL = 'https://api.algebra.finance/api/APR/limitFarmings/'
+    const apiURL = AlgebraConfig.API.limitFarmsAPR
 
     try {
         return await fetch(apiURL).then(v => v.json())
@@ -26,7 +28,7 @@ export async function fetchLimitFarmAPR() {
 
 export async function fetchLimitFarmTVL() {
 
-    const apiURL = 'https://api.algebra.finance/api/TVL/limitFarmings/'
+    const apiURL = AlgebraConfig.API.limitFarmsTVL
 
     try {
         return await fetch(apiURL).then(v => v.json())
@@ -39,7 +41,7 @@ export async function fetchLimitFarmTVL() {
 
 export async function fetchEternalFarmTVL() {
 
-    const apiURL = 'https://api.algebra.finance/api/TVL/eternalFarmings/?network=Dogechain-Quickswap'
+    const apiURL = AlgebraConfig.API.eternalFarmsTVL
 
     try {
         return await fetch(apiURL).then(v => v.json())
@@ -51,7 +53,7 @@ export async function fetchEternalFarmTVL() {
 }
 
 export async function fetchPoolsAPR() {
-    const apiURL = 'https://api.algebra.finance/api/APR/pools/?network=Dogechain-Quickswap'
+    const apiURL = AlgebraConfig.API.poolsAPR
 
     try {
         return await fetch(apiURL).then(v => v.json())

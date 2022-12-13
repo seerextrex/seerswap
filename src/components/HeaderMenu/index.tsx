@@ -5,6 +5,8 @@ import "./index.scss";
 
 import { t } from "@lingui/macro";
 
+import AlgebraConfig from "algebra.config";
+
 const MenuState = {
     PRIMARY: t`More`,
     LANGUAGE: t`Language`,
@@ -40,7 +42,7 @@ export default function HeaderMenu() {
     const items = {
         [MenuState.PRIMARY]: [
             { id: "Language", title: t`Language`, type: ItemType.SUB_MENU },
-            { id: "About us", title: t`About us`, type: ItemType.LINK, link: "https://dogechain.quickswap.exchange" },
+            { id: "About us", title: t`About us`, type: ItemType.LINK, link: AlgebraConfig.MISC.appURL },
             { id: "Help center", title: t`Help center`, type: ItemType.LINK, link: "https://help.algebra.finance" },
         ],
         [MenuState.LANGUAGE]: [

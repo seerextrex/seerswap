@@ -19,6 +19,8 @@ import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies
 import { SwapState } from './reducer'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
+import AlgebraConfig from "algebra.config"
+
 export function useSwapState(): AppState['swap'] {
     return useAppSelector((state) => state.swap)
 }
@@ -35,8 +37,8 @@ export function useSwapActionHandlers(): {
 
     let symbol: string
 
-    if (chainId === 2000) {
-        symbol = 'WDOGE'
+    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+        symbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol
     }
 
     const onCurrencySelection = useCallback(
@@ -45,7 +47,7 @@ export function useSwapActionHandlers(): {
             dispatch(
                 selectCurrency({
                     field,
-                    currencyId: currency.isToken ? currency.address : currency.isNative ? 'WDOGE' : ''
+                    currencyId: currency.isToken ? currency.address : currency.isNative ? AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol : ''
                 })
             )
         },
@@ -212,8 +214,8 @@ export function useDerivedSwapInfo(): {
 function parseCurrencyFromURLParameter(urlParam: any, chainId: number): string {
     let chainSymbol
 
-    if (chainId === 2000) {
-        chainSymbol = 'WDOGE'
+    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+        chainSymbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol
     }
 
     if (typeof urlParam === 'string') {
@@ -249,8 +251,8 @@ export function queryParametersToSwapState(parsedQs: ParsedQs, chainId: number):
     let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency, chainId)
     if (inputCurrency === '' && outputCurrency === '') {
         // default to ETH input
-        if (chainId === 2000) {
-            inputCurrency = 'WDOGE'
+        if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+            inputCurrency = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol
         }
     } else if (inputCurrency === outputCurrency) {
         // clear output if identical

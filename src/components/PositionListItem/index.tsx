@@ -7,7 +7,7 @@ import { Price, Token } from "@uniswap/sdk-core";
 import { formatTickPrice } from "utils/formatTickPrice";
 import Loader from "components/Loader";
 import { unwrappedToken } from "utils/unwrappedToken";
-import { USDC_DOGECHAIN, USDT_DOGECHAIN, WMATIC_EXTENDED } from "../../constants/tokens";
+import { STABLE_TOKENS, WMATIC_EXTENDED } from "../../constants/tokens";
 import { Trans } from "@lingui/macro";
 import useIsTickAtLimit from "hooks/useIsTickAtLimit";
 import { Bound, setShowNewestPosition } from "state/mint/v3/actions";
@@ -40,8 +40,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     const token1 = position.amount1.currency;
 
     // if token0 is a dollar-stable asset, set it as the quote token
-    // const stables = [USDC_BINANCE, USDC_KOVAN]
-    const stables = [USDC_DOGECHAIN, USDT_DOGECHAIN];
+    const stables = [...STABLE_TOKENS];
     if (stables.some((stable) => stable.equals(token0))) {
         return {
             priceLower: position.token0PriceUpper.invert(),

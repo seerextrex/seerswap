@@ -9,7 +9,6 @@ import { LoadingShim } from "./styled";
 import { useMemo } from "react";
 import { convertLocalDate } from "../../utils/convertDate";
 import { Token } from "@uniswap/sdk-core";
-import { SupportedChainId } from "../../constants/chains";
 import { WrappedCurrency } from "../../models/types";
 import { formatAmount, formatAmountTokens, formatDollarAmount } from "utils/numbers";
 import "./index.scss";
@@ -18,6 +17,8 @@ import { Link } from "react-router-dom";
 import { Trans, t } from "@lingui/macro";
 import { formatUnits } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
+
+import AlgebraConfig from "algebra.config";
 
 interface FarmingEventCardProps {
     active?: boolean;
@@ -101,8 +102,8 @@ export function FarmingEventCard({
             <div className={"farming-event-card p-1 br-12"} data-refreshing={refreshing}>
                 <div className={"f mb-1"}>
                     <div className={"f mr-1"}>
-                        <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, "0x580a84c73811e1839f75d86d75d88cca0c241ff4", 18, "QI") as WrappedCurrency} size={"30px"} />
-                        <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", 18, "MATIC") as WrappedCurrency} size={"30px"} />
+                        <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, "0x580a84c73811e1839f75d86d75d88cca0c241ff4", 18, "QI") as WrappedCurrency} size={"30px"} />
+                        <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", 18, "MATIC") as WrappedCurrency} size={"30px"} />
                     </div>
                     <div>
                         <h3 className={"fs-075 b"}>
@@ -123,7 +124,7 @@ export function FarmingEventCard({
                     <ul className="farming-event-card__reward-list">
                         {[{ token: { id: "0xa3fa99a148fa48d14ed51d610c367c61876997f1", symbol: "MAI" }, amount: "2500" }].map((reward: any, i) => (
                             <li key={i} className="farming-event-card__reward-list-item f">
-                                <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
+                                <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                                 <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                                 <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
                                     {eternal ? <span>{reward.rewardRate} per day</span> : <span>{formatAmountTokens(reward.amount, false)}</span>}
@@ -217,8 +218,8 @@ export function FarmingEventCard({
             )}
             <div className={"f mb-1"}>
                 <div className={"f mr-1"}>
-                    <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency} size={"30px"} />
-                    <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"30px"} />
+                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency} size={"30px"} />
+                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"30px"} />
                 </div>
                 <div>
                     <h3 className={"fs-075 b"}>
@@ -241,7 +242,7 @@ export function FarmingEventCard({
                     {rewardList?.map((reward: any, i) =>
                         reward.rewardRate ? (
                             <li key={i} className="farming-event-card__reward-list-item f">
-                                <CurrencyLogo currency={new Token(SupportedChainId.DOGECHAIN, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
+                                <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
                                 <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
                                 <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
                                     {eternal ? <span>{formatAmountTokens(reward.rewardRate, false)} per day</span> : <span>{formatAmountTokens(reward.amount, false)}</span>}

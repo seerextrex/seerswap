@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { ApplicationModal } from "state/application/actions";
 import { useModalOpen, useToggleModal } from "state/application/hooks";
 import { switchToNetwork } from "utils/switchToNetwork";
-import { CHAIN_INFO, SupportedChainId } from "../../constants/chains";
+import { CHAIN_INFO } from "../../constants/chains";
 import DogeLogo from "../../assets/images/doge.png";
+
+import AlgebraConfig from "algebra.config";
 
 export default function NetworkCard() {
     const { chainId, library } = useActiveWeb3React();
@@ -33,7 +35,7 @@ export default function NetworkCard() {
         return null;
     }
 
-    if (chainId == SupportedChainId.DOGECHAIN) {
+    if (chainId == AlgebraConfig.CHAIN_PARAMS.chainId) {
         return (
             <div className="f">
                 <img src={DogeLogo} width="20" />

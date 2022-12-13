@@ -25,7 +25,8 @@ import { Pair } from "../../utils/computePairAddress";
 import { ButtonPrimaryStyled, FixedHeightRow, FixedHeightRowCurrency, MigrateShortcut, RowFixedLogo, RowFixedPrice, StyledPositionCard } from "./styled";
 import { isMobile } from "react-device-detect";
 import { WrappedCurrency } from "../../models/types";
-import { SupportedChainId } from "../../constants/chains";
+
+import AlgebraConfig from "algebra.config";
 
 interface PositionCardProps {
     pair: Pair;
@@ -320,7 +321,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                                     padding="8px"
                                     $borderRadius="8px"
                                     as={Link}
-                                    to={`/add/${currencyId(currency0, chainId || SupportedChainId.DOGECHAIN)}/${currencyId(currency1, chainId || SupportedChainId.DOGECHAIN)}`}
+                                    to={`/add/${currencyId(currency0, chainId || AlgebraConfig.CHAIN_PARAMS.chainId)}/${currencyId(currency1, chainId || AlgebraConfig.CHAIN_PARAMS.chainId)}`}
                                     width="32%"
                                 >
                                     <Trans>Add</Trans>
@@ -332,7 +333,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                                 padding="8px"
                                 $borderRadius="8px"
                                 as={Link}
-                                to={`/uni/${currencyId(currency0, chainId || SupportedChainId.DOGECHAIN)}/${currencyId(currency1, chainId || SupportedChainId.DOGECHAIN)}`}
+                                to={`/uni/${currencyId(currency0, chainId || AlgebraConfig.CHAIN_PARAMS.chainId)}/${currencyId(currency1, chainId || AlgebraConfig.CHAIN_PARAMS.chainId)}`}
                                 width="100%"
                             >
                                 <Trans>Manage Liquidity in Rewards Pool</Trans>

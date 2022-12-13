@@ -9,11 +9,10 @@ import { isAddress } from "../../utils";
 import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { Pool } from "../../lib/src";
 import { BigNumber } from "@ethersproject/bignumber";
-import { POOL_DEPLOYER_ADDRESS } from "../../constants/addresses";
-import { MockLoading, Wrapper, ZoomButton, ZoomButtonsWrapper } from "./styled";
-import { SupportedChainId } from "../../constants/chains";
 import { LiquidityChartData, ProcessedData } from "../../models/interfaces";
 import "./index.scss";
+
+import AlgebraConfig from "algebra.config";
 
 interface LiquidityBarChartProps {
     data: LiquidityChartData;
@@ -34,11 +33,11 @@ export default function LiquidityBarChart({ data, token0, token1, refreshing, zo
 
     // parsed tokens
     const _token0 = useMemo(() => {
-        return data && formattedAddress0 && formattedAddress1 ? new Token(SupportedChainId.DOGECHAIN, formattedAddress0, +data.token0.decimals) : undefined;
+        return data && formattedAddress0 && formattedAddress1 ? new Token(AlgebraConfig.CHAIN_PARAMS.chainId, formattedAddress0, +data.token0.decimals) : undefined;
     }, [formattedAddress0, formattedAddress1, data]);
 
     const _token1 = useMemo(() => {
-        return data && formattedAddress0 && formattedAddress1 ? new Token(SupportedChainId.DOGECHAIN, formattedAddress1, +data.token1.decimals) : undefined;
+        return data && formattedAddress0 && formattedAddress1 ? new Token(AlgebraConfig.CHAIN_PARAMS.chainId, formattedAddress1, +data.token1.decimals) : undefined;
     }, [formattedAddress1, data]);
 
     useEffect(() => {

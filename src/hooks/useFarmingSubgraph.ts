@@ -43,6 +43,8 @@ import { Aprs, FutureFarmingEvent } from '../models/interfaces'
 import { fetchEternalFarmTVL, fetchLimitFarmAPR, fetchLimitFarmTVL } from 'utils/api'
 import { useEthPrices } from "./useEthPrices"
 
+import AlgebraConfig from "algebra.config"
+
 export function useFarmingSubgraph() {
 
     const { chainId, account, library } = useActiveWeb3React()
@@ -81,7 +83,7 @@ export function useFarmingSubgraph() {
 
     async function fetchEternalFarmAPR() {
 
-        const apiURL = 'https://api.algebra.finance/api/APR/eternalFarmings/?network=Dogechain-Quickswap'
+        const apiURL = AlgebraConfig.API.eternalFarmsAPR
 
         try {
             return await fetch(apiURL).then(v => v.json())

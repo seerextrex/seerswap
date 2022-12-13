@@ -42,6 +42,8 @@ import {
 import { fetchEternalFarmAPR, fetchPoolsAPR } from "utils/api"
 import { farmingClient } from 'apollo/client'
 
+import AlgebraConfig from "algebra.config"
+
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === 'string') return {}
     return tokenData ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
@@ -93,21 +95,9 @@ export function useInfoSubgraph() {
 
     const [positionsRange, setPositionsRange] = useState<{ closed: PriceRangeChart | null, opened: PriceRangeChart | null }>({ closed: null, opened: null })
 
-    const addressForCheck = {
-        ['DD']: '0x582daef1f36d6009f64b74519cfd612a8467be18',
-        ['DC']: '0x7b4328c127b85369d9f82ca0503b000d09cf9180'
-    }
+    const addressForCheck = AlgebraConfig.DEFAULT_TOKEN_LIST.filterForScamTokens.tokensForCheck
 
-    const possibleNames = [
-        {
-            names: ['Doge Dragon', 'DogeDragon', 'Dragon Doge', 'DragonDoge'],
-            realAddress: addressForCheck.DD
-        },
-        {
-            names: ['Dogechain Token', 'DogeChain Token', 'Dogechain', 'DogeChain'],
-            realAddresses: addressForCheck.DC
-        }
-    ]
+    const possibleNames = AlgebraConfig.DEFAULT_TOKEN_LIST.filterForScamTokens.possibleFakeNames
 
     async function fetchInfoPools() {
 

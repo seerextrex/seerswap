@@ -1,5 +1,4 @@
 import CurrencyLogo from "components/CurrencyLogo";
-import { SupportedChainId } from "constants/chains";
 import { useActiveWeb3React } from "hooks/web3";
 import { WrappedCurrency } from "models/types";
 import { useCallback, useMemo, useState } from "react";
@@ -14,6 +13,8 @@ import BachelorTierIcon from "../../assets/images/bachelor-tier-icon.png";
 import MasterTierIcon from "../../assets/images/master-tier-icon.png";
 import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
 import { t, Trans } from "@lingui/macro";
+
+import AlgebraConfig from "algebra.config";
 
 interface StakeModalFarmingTiersProps {
     tiersLimits: {
@@ -37,7 +38,7 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
 
     const balance = useCurrencyBalance(
         account ?? undefined,
-        new Token(SupportedChainId.DOGECHAIN, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) ?? undefined
+        new Token(AlgebraConfig.CHAIN_PARAMS.chainId, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) ?? undefined
     );
     const _balance = useMemo(() => (!balance ? "" : balance.toSignificant(4)), [balance]);
 
@@ -74,7 +75,7 @@ export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, 
                 <div>
                     <div className="f">
                         <CurrencyLogo
-                            currency={new Token(SupportedChainId.DOGECHAIN, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) as WrappedCurrency}
+                            currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) as WrappedCurrency}
                         />
                         <div className="ml-05" style={{ lineHeight: "24px" }}>{`${_balance} ${multiplierToken.symbol}`}</div>
                     </div>

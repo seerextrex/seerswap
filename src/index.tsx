@@ -24,6 +24,8 @@ import "@fontsource/montserrat";
 import GasUpdater from "./state/application/gasUpdater";
 import "./assets/styles/index.scss";
 
+import AlgebraConfig from "algebra.config";
+
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
 type __window = Window & { ethereum: any };
 
@@ -34,7 +36,7 @@ if (_window.ethereum) {
 }
 
 const client = new ApolloClient({
-    uri: "https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-info",
+    uri: AlgebraConfig.SUBGRAPH.infoURL,
     cache: new InMemoryCache(),
 });
 

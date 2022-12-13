@@ -16,7 +16,8 @@ import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
 import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler";
 import { useHistory } from "react-router-dom";
 import { t } from "@lingui/macro";
-import { Helmet } from "react-helmet";
+
+import AlgebraConfig from "algebra.config";
 
 interface ISelectPair {
     baseCurrency: Currency | null | undefined;
@@ -66,7 +67,7 @@ export function SelectPair({
         if (!aprs || !baseCurrency || !quoteCurrency) return <Loader stroke="#22dc22" />;
 
         const poolAddress = computePoolAddress({
-            poolDeployer: POOL_DEPLOYER_ADDRESS[2000],
+            poolDeployer: POOL_DEPLOYER_ADDRESS[AlgebraConfig.CHAIN_PARAMS.chainId],
             tokenA: baseCurrency.wrapped,
             tokenB: quoteCurrency.wrapped,
         }).toLowerCase();

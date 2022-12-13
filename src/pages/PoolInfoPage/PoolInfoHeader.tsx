@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { Token } from "@uniswap/sdk-core";
 import DoubleCurrencyLogo from "../../components/DoubleLogo";
-import { SupportedChainId } from "../../constants/chains";
 import "./index.scss";
 import { Trans } from "@lingui/macro";
+
+import AlgebraConfig from "algebra.config";
 
 interface PoolInfoHeaderProps {
     token0: Token | undefined;
@@ -28,8 +29,8 @@ export function PoolInfoHeader({ token0, token1, fee, collectedFees }: PoolInfoH
                     <span className={"fs-15 flex-s-between ml-15"}>
                         <span className={"mr-05"}>
                             <DoubleCurrencyLogo
-                                currency0={token0 && new Token(SupportedChainId.DOGECHAIN, token0.address, 18, token0?.symbol)}
-                                currency1={token1 && new Token(SupportedChainId.DOGECHAIN, token1.address, 18, token1?.symbol)}
+                                currency0={token0 && new Token(AlgebraConfig.CHAIN_PARAMS.chainId, token0.address, 18, token0?.symbol)}
+                                currency1={token1 && new Token(AlgebraConfig.CHAIN_PARAMS.chainId, token1.address, 18, token1?.symbol)}
                                 size={30}
                             />
                         </span>

@@ -1,7 +1,8 @@
 // a list of tokens by chain
 import { Currency, Token } from '@uniswap/sdk-core'
-import { SupportedChainId } from './chains'
-import { DOGEDRAGON_DOGECHAIN, ETH_DOGECHAIN, ExtendedEther, MATIC_DOGECHAIN, QUICKNEW_DOGECHAIN, DC_DOGECHAIN, USDC_DOGECHAIN, USDT_DOGECHAIN, WBTC_DOGECHAIN, WMATIC_EXTENDED, DOGIRA, DCGOD_DOGECHAIN, MAI_DOGECHAIN } from './tokens'
+import { DEFAULT_TOKENS, TOKENS_FOR_MULTIHOP, ExtendedEther, WMATIC_EXTENDED } from './tokens'
+
+import AlgebraConfig from "algebra.config"
 
 type ChainTokenList = {
     readonly [chainId: number]: Token[]
@@ -18,7 +19,7 @@ const WETH_ONLY: ChainTokenList = Object.fromEntries(
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
     ...WETH_ONLY,
-    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], USDC_DOGECHAIN
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: [...WETH_ONLY[AlgebraConfig.CHAIN_PARAMS.chainId], ...TOKENS_FOR_MULTIHOP
     ]
 }
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
@@ -32,28 +33,18 @@ export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[
  * Shows up in the currency select for swap and add liquidity
  */
 export const COMMON_BASES: ChainCurrencyList = {
-    [SupportedChainId.DOGECHAIN]: [
-        ExtendedEther.onChain(SupportedChainId.DOGECHAIN),
-        DOGEDRAGON_DOGECHAIN,
-        DC_DOGECHAIN,
-        USDC_DOGECHAIN,
-        USDT_DOGECHAIN,
-        WBTC_DOGECHAIN,
-        ETH_DOGECHAIN,
-        QUICKNEW_DOGECHAIN,
-        MATIC_DOGECHAIN,
-        MAI_DOGECHAIN,
-        DOGIRA,
-        DCGOD_DOGECHAIN
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: [
+        ExtendedEther.onChain(AlgebraConfig.CHAIN_PARAMS.chainId),
+        ...DEFAULT_TOKENS,
     ]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
     ...WETH_ONLY,
-    [SupportedChainId.DOGECHAIN]: [...WETH_ONLY[SupportedChainId.DOGECHAIN], USDC_DOGECHAIN]
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: [...WETH_ONLY[AlgebraConfig.CHAIN_PARAMS.chainId], ...TOKENS_FOR_MULTIHOP]
 }
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
-    [SupportedChainId.DOGECHAIN]: [
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: [
     ]
 }

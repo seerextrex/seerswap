@@ -17,6 +17,8 @@ import { Sliders } from "react-feather";
 import HeaderMenu from "components/HeaderMenu";
 import { Trans } from "@lingui/macro";
 
+import AlgebraConfig from "algebra.config";
+
 export default function Header() {
     const { account, chainId } = useActiveWeb3React();
 
@@ -36,8 +38,8 @@ export default function Header() {
 
     let chainValue;
 
-    if (chainId === 2000) {
-        chainValue = "WDOGE";
+    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+        chainValue = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol;
     }
 
     const handleBlur = useCallback((e: React.ChangeEvent<HTMLLabelElement>) => {
@@ -83,7 +85,7 @@ export default function Header() {
                 {account && (
                     <>
                         <NetworkCard />
-                        {(chainId === 2000 && account && userEthBalance) || networkFailed ? (
+                        {(chainId === AlgebraConfig.CHAIN_PARAMS.chainId && account && userEthBalance) || networkFailed ? (
                             <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
                                 {_userEthBalance?.toFixed(5)} {!isMobile && chainValue}
                             </BalanceText>

@@ -1,59 +1,59 @@
-import { SupportedChainId } from './chains'
+import AlgebraConfig from "algebra.config"
 
 type AddressMap = { [chainId: number]: string }
 
 export const V3_CORE_FACTORY_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0xd2480162Aa7F02Ead7BF4C127465446150D58452'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.FACTORY_ADDRESS
 }
 
 export const POOL_DEPLOYER_ADDRESS: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x56c2162254b0E4417288786eE402c2B41d4e181e'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.POOL_DEPLOYER_ADDRESS
 }
 
 export const QUOTER_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0xd8E1E7009802c914b0d39B31Fc1759A865b727B1'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.QUOTER_ADDRESS
 }
 
 export const SWAP_ROUTER_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x4aE2bD0666c76C7f39311b9B3e39b53C8D7C43Ea'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.SWAP_ROUTER_ADDRESS
 }
 
 export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x0b012055F770AE7BB7a8303968A7Fb6088A2296e'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.NONFUNGIBLE_POSITION_MANAGER_ADDRESS
 }
 
 export const MULTICALL_ADDRESS: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x23602819a9E2B1C8eC7605356D5b0F1FBB10ddA5'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.MULTICALL_ADDRESS
 }
 
 export const V3_MIGRATOR_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0xB9aFAa5c407DdebA5098193F31CE23D21cFD9657'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.MIGRATOR_ADDRESS
 }
 
 export const FINITE_FARMING: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x481FcFa00Ee6b2384FF0B3c3b5b29aD911c1AAA7'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.LIMIT_FARMING_ADDRESS
 }
 
 export const INFINITE_FARMING_ADDRESS: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0xC712F63E4D57ED1684FB4b428a1DFF10e3338F25'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.ETERNAL_FARMING_ADDRESS
 }
 
 export const FARMING_CENTER: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x82831E9565cb574375596eFc090da465283E22A4'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.FARMING_CENTER_ADDRESS
 }
 
 export const V2_FACTORY_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32'
 }
 
 export const V2_ROUTER_ADDRESS: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506'
 }
 
 export const ENS_REGISTRAR_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 }
 
 export const SOCKS_CONTROLLER_ADDRESSES: AddressMap = {
-    [SupportedChainId.DOGECHAIN]: '0x65770b5283117639760beA3F867b69b3697a91dd'
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x65770b5283117639760beA3F867b69b3697a91dd'
 }

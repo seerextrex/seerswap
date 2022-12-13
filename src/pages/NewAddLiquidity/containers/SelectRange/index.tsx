@@ -7,7 +7,7 @@ import { IDerivedMintInfo, useRangeHopCallbacks, useV3MintActionHandlers, useV3M
 import LiquidityChartRangeInput from "components/LiquidityChartRangeInput";
 import { USDPrices } from "pages/NewAddLiquidity/components/USDPrices";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
-import { USDC_DOGECHAIN } from "constants/tokens";
+import { STABLE_TOKEN_FOR_USD_PRICE } from "constants/tokens";
 import { useCallback, useEffect, useMemo } from "react";
 import { useAppDispatch } from "state/hooks";
 import { useActivePreset } from "state/mint/v3/hooks";
@@ -48,7 +48,7 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
     const isStablecoinPair = useMemo(() => {
         if (!currencyA || !currencyB) return false;
 
-        const stablecoins = [USDC_DOGECHAIN.address];
+        const stablecoins = [STABLE_TOKEN_FOR_USD_PRICE.address];
 
         return stablecoins.includes(currencyA.wrapped.address) && stablecoins.includes(currencyB.wrapped.address);
     }, [currencyA, currencyB]);

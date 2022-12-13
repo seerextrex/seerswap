@@ -32,6 +32,8 @@ import { useWalletModalToggle } from "state/application/hooks";
 import { t, Trans } from "@lingui/macro";
 import { isMobileOnly } from "react-device-detect";
 
+import AlgebraConfig from "algebra.config";
+
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
 export function NewAddLiquidityPage({
@@ -100,12 +102,12 @@ export function NewAddLiquidityPage({
 
     const handleCurrencySelect = useCallback(
         (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
-            const currencyIdNew = currencyId(currencyNew, chainId || 2000);
+            const currencyIdNew = currencyId(currencyNew, chainId || AlgebraConfig.CHAIN_PARAMS.chainId);
 
             let chainSymbol;
 
-            if (chainId === 2000) {
-                chainSymbol = "WDOGE";
+            if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+                chainSymbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol;
             }
 
             resetState();

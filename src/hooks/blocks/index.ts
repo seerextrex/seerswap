@@ -4,7 +4,8 @@ import { GET_BLOCKS } from '../../utils/graphql-queries'
 import { splitQuery } from '../../utils/queries'
 import { useClients } from '../subgraph/useClients'
 import { useActiveWeb3React } from '../web3'
-import { SupportedChainId } from '../../constants/chains'
+
+import AlgebraConfig from "algebra.config"
 
 export function useBlocksFromTimestamps(timestamps: number[], blockClientOverride?: ApolloClient<NormalizedCacheObject>): {
     blocks: | {
@@ -21,13 +22,13 @@ export function useBlocksFromTimestamps(timestamps: number[], blockClientOverrid
     const activeBlockClient = blockClientOverride ?? blockClient
 
     // derive blocks based on active network
-    const networkBlocks = blocks?.[chainId ?? SupportedChainId.DOGECHAIN]
+    const networkBlocks = blocks?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]
 
     useEffect(() => {
         async function fetchData() {
             const results = await splitQuery(GET_BLOCKS, activeBlockClient, [], timestamps)
             if (results) {
-                setBlocks({ ...(blocks ?? {}), [chainId ?? SupportedChainId.DOGECHAIN]: results })
+                setBlocks({ ...(blocks ?? {}), [chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]: results })
             } else {
                 setError(true)
             }
@@ -39,8 +40,8 @@ export function useBlocksFromTimestamps(timestamps: number[], blockClientOverrid
     })
 
     const blocksFormatted = useMemo(() => {
-        if (blocks?.[chainId ?? SupportedChainId.DOGECHAIN]) {
-            const networkBlocks = blocks?.[chainId ?? SupportedChainId.DOGECHAIN]
+        if (blocks?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]) {
+            const networkBlocks = blocks?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]
             const formatted: any[] = []
             for (const t in networkBlocks) {
                 if (networkBlocks[t].length > 0) {

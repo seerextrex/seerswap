@@ -11,6 +11,8 @@ import { Token } from "@uniswap/sdk-core";
 import { WrappedCurrency } from "../../models/types";
 import { Trans } from "@lingui/macro";
 
+import AlgebraConfig from "algebra.config";
+
 export function FarmingMyRewards({ data, refreshing, fetchHandler }: { data: Reward[]; refreshing: boolean; fetchHandler: () => any }) {
     const allTransactions = useAllTransactions();
     const sortedRecentTransactions = useSortedRecentTransactions();
@@ -75,7 +77,11 @@ export function FarmingMyRewards({ data, refreshing, fetchHandler }: { data: Rew
                                     <Loader style={{ margin: "auto" }} size={"18px"} stroke={"white"} />
                                 </LoadingShim>
                             )}
-                            <CurrencyLogo currency={new Token(2000, rew.rewardAddress, 18, rew.symbol) as WrappedCurrency} size={"35px"} style={{ marginRight: "10px" }} />
+                            <CurrencyLogo
+                                currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, rew.rewardAddress, 18, rew.symbol) as WrappedCurrency}
+                                size={"35px"}
+                                style={{ marginRight: "10px" }}
+                            />
                             <RewardTokenInfo>
                                 <div title={rew.amount}>{formatReward(+rew.amount)}</div>
                                 <div title={rew.symbol}>{rew.symbol}</div>

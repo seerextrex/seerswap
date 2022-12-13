@@ -11,60 +11,13 @@ import DogiraLogo from '../../assets/images/dogira.jpg'
 import DCGODLogo from '../../assets/images/dcgod-logo.png'
 import MAILogo from '../../assets/images/mai.png'
 
+import AlgebraConfig from "algebra.config"
+
 interface SpecialTokensInterface {
-    [key: string]: {
-        name: string
-        logo: string
-    }
+    [key: string]: string
 }
 
-export const specialTokens: SpecialTokensInterface = {
-    ['0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101']: {
-        name: 'WDOGE',
-        logo: WdogeLogo
-    },
-    ['0xb44a9b6905af7c801311e8f4e76932ee959c663c']: {
-        name: 'Ether',
-        logo: EthLogo
-    },
-    ['0x765277eebeca2e31912c9946eae1021199b39c61']: {
-        name: 'USDC',
-        logo: USDCLogo
-    },
-    ['0xe3f5a90f9cb311505cd691a46596599aa1a0ad7d']: {
-        name: 'USDT',
-        logo: USDTLogo
-    },
-    ['0xfa9343c3897324496a05fc75abed6bac29f8a40f']: {
-        name: 'WBTC',
-        logo: WBTCLogo
-    },
-    ['0x582daef1f36d6009f64b74519cfd612a8467be18']: {
-        name: 'DD',
-        logo: DDLogo
-    },
-    ['0xb12c13e66ade1f72f71834f2fc5082db8c091358']: {
-        name: 'QUICK',
-        logo: QuickNewLogo
-    },
-    ['0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98']: {
-        name: 'MATIC',
-        logo: MaticLogo
-    },
-    ['0x7b4328c127b85369d9f82ca0503b000d09cf9180']: {
-        name: 'Dogechain Token',
-        logo: DCLogo
-    },
-    ['0xf480f38c366daac4305dc484b2ad7a496ff00cea']: {
-        name: 'Dogira',
-        logo: DogiraLogo
-    },
-    ['0x91cd28e57b92e34124c4540ee376c581d188b53e']: {
-        name: 'DCGod',
-        logo: DCGODLogo,
-    },
-    ['0xb84df10966a5d7e1ab46d9276f55d57bd336afc7']: {
-        name: 'MAI',
-        logo: MAILogo,
-    }
-}
+export const specialTokens: SpecialTokensInterface = Object.entries(AlgebraConfig.DEFAULT_TOKEN_LIST.tokensLogos).reduce((acc, [address, logo]) => ({
+    ...acc,
+    [address]: logo
+}), {})

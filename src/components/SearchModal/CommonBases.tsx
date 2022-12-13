@@ -5,9 +5,10 @@ import { currencyId } from "../../utils/currencyId";
 import { AutoRow } from "../Row";
 import CurrencyLogo from "../CurrencyLogo";
 import { useActiveWeb3React } from "../../hooks/web3";
-import { SupportedChainId } from "../../constants/chains";
 import { WrappedCurrency } from "../../models/types";
 import "./index.scss";
+
+import AlgebraConfig from "algebra.config";
 
 interface CommonBasesProps {
     selectedCurrency?: Currency | null;
@@ -15,7 +16,7 @@ interface CommonBasesProps {
 }
 
 export default function CommonBases({ onSelect, selectedCurrency }: CommonBasesProps) {
-    const bases = COMMON_BASES[SupportedChainId.DOGECHAIN] as WrappedCurrency[];
+    const bases = COMMON_BASES[AlgebraConfig.CHAIN_PARAMS.chainId] as WrappedCurrency[];
 
     const { chainId } = useActiveWeb3React();
 
@@ -29,7 +30,7 @@ export default function CommonBases({ onSelect, selectedCurrency }: CommonBasesP
                             className={"br-8 bg-t f f-ac c-w p-05 hover-op trans-op"}
                             onClick={() => !isSelected && onSelect(currency)}
                             disabled={isSelected}
-                            key={currencyId(currency, chainId || SupportedChainId.DOGECHAIN)}
+                            key={currencyId(currency, chainId || AlgebraConfig.CHAIN_PARAMS.chainId)}
                         >
                             <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
                             <span>{currency.symbol}</span>

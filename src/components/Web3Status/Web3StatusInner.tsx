@@ -5,7 +5,7 @@ import { useHasSocks } from "../../hooks/useSocksBalance";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import { NetworkIcon, Text, Web3StatusConnect, Web3StatusConnected, Web3StatusError } from "./styled";
 import { RowBetween } from "../Row";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import Loader from "../Loader";
 import { Sock } from "./Sock";
 import { shortenAddress } from "../../utils";
@@ -13,6 +13,8 @@ import { StatusIcon } from "./StatusIcon";
 import { EthereumWindow } from "models/types";
 import { OntoWrongChainModal } from "components/OntoWrongChainModal";
 import { useState } from "react";
+
+import AlgebraConfig from "algebra.config";
 
 export async function addPolygonNetwork() {
     const _window = window as EthereumWindow;
@@ -22,7 +24,7 @@ export async function addPolygonNetwork() {
             method: "wallet_switchEthereumChain",
             params: [
                 {
-                    chainId: "0x7D0",
+                    chainId: AlgebraConfig.CHAIN_PARAMS.chainIdHex,
                 },
             ],
         });
@@ -35,15 +37,15 @@ export async function addPolygonNetwork() {
                     method: "wallet_addEthereumChain",
                     params: [
                         {
-                            chainId: "0x7D0",
-                            chainName: "Dogechain Mainnet",
+                            chainId: AlgebraConfig.CHAIN_PARAMS.chainIdHex,
+                            chainName: AlgebraConfig.CHAIN_PARAMS.chainName,
                             nativeCurrency: {
-                                name: "WDOGE",
-                                symbol: "WDOGE",
-                                decimals: 18,
+                                name: AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.name,
+                                symbol: AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol,
+                                decimals: AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.decimals,
                             },
-                            blockExplorerUrls: ["https://explorer.dogechain.dog/"],
-                            rpcUrls: ["https://dogechain.ankr.com"],
+                            blockExplorerUrls: [AlgebraConfig.CHAIN_PARAMS.blockExplorerURL],
+                            rpcUrls: [AlgebraConfig.CHAIN_PARAMS.rpcURL],
                         },
                     ],
                 });
@@ -95,9 +97,7 @@ export function Web3StatusInner() {
                 {ontoHelper && <OntoWrongChainModal handleClose={() => toggleOntoHelper(false)} />}
                 <Web3StatusError onClick={() => toggleOntoHelper(true)}>
                     <NetworkIcon />
-                    <Text>
-                        <Trans>Connect to Dogechain</Trans>
-                    </Text>
+                    <Text>{t`Connect to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</Text>
                 </Web3StatusError>
             </>
         );
@@ -105,7 +105,7 @@ export function Web3StatusInner() {
         return (
             <Web3StatusError onClick={addPolygonNetwork}>
                 <NetworkIcon />
-                <Text>{error instanceof UnsupportedChainIdError ? <Trans>Connect to Dogechain</Trans> : <Trans>Error</Trans>}</Text>
+                <Text>{error instanceof UnsupportedChainIdError ? <span>{t`Connect to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</span> : <Trans>Error</Trans>}</Text>
             </Web3StatusError>
         );
     } else {

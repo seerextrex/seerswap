@@ -22,6 +22,8 @@ import { ReactComponent as Close } from "../../assets/images/x.svg";
 import { UserRejectedRequestError, WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { ArrowLeft } from "react-feather";
 
+import AlgebraConfig from "algebra.config";
+
 const WALLET_VIEWS = {
     OPTIONS: "options",
     OPTIONS_SECONDARY: "options_secondary",
@@ -109,7 +111,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 .catch((error) => {
                     console.error(error);
                     if (error instanceof UnsupportedChainIdError) {
-                        setErrorMessage(t`Please connect to the Dogechain network.`);
+                        setErrorMessage(t`Please connect to the ${AlgebraConfig.CHAIN_PARAMS.chainName} network.`);
                         setPendingError(true);
                         setError(error);
                     } else if (error instanceof UserRejectedRequestError) {
@@ -151,11 +153,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 }
 
                 if (error && error instanceof UnsupportedChainIdError) {
-                    return (
-                        <div>
-                            <Trans>Please connect to Dogechain</Trans>
-                        </div>
-                    );
+                    return <div>{t`Please connect to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</div>;
                 }
 
                 return null;
@@ -200,11 +198,7 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                 else if (option.name === "Injected" && isMetamask) {
                     return null;
                 } else if (option.name === "ONTO Wallet") {
-                    return (
-                        <div>
-                            <Trans>Please select Dogechain</Trans>
-                        </div>
-                    );
+                    return <div>{t`Please select ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</div>;
                 }
             }
 
@@ -254,16 +248,14 @@ export default function WalletModal({ pendingTransactions, confirmedTransactions
                         {error instanceof UnsupportedChainIdError ? (
                             <>
                                 <h5 className={"mb-1"}>
-                                    <Trans>{isOnto ? t`Change your network in ONTO Wallet browser extension` : t`Please connect to the Dogechain.`}</Trans>
+                                    <Trans>{isOnto ? t`Change your network in ONTO Wallet browser extension` : t`Please connect to the ${AlgebraConfig.CHAIN_PARAMS.chainName}.`}</Trans>
                                 </h5>
                                 {isMobile ? (
-                                    <p>
-                                        <Trans>Add Dogechain to your metamask app.</Trans>
-                                    </p>
+                                    <p>{t`Add ${AlgebraConfig.CHAIN_PARAMS.chainName} to your metamask app.`}</p>
                                 ) : (
                                     !isOnto && (
                                         <button className={"btn primary p-1 w-100 b"} onClick={addPolygonNetwork}>
-                                            <Trans>Connect to Dogechain</Trans>
+                                            {t`Connect to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}
                                         </button>
                                     )
                                 )}

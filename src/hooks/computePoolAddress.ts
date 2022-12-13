@@ -3,9 +3,11 @@ import { getCreate2Address } from '@ethersproject/address'
 import { keccak256 } from '@ethersproject/solidity'
 import { Token } from '@uniswap/sdk-core'
 
+import AlgebraConfig from "algebra.config"
+
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
-export const POOL_INIT_CODE_HASH = '0x6ec6c9c8091d160c0aa74b2b14ba9c1717e95093bd3ac085cee99a49aab294a4'
+export const POOL_INIT_CODE_HASH = AlgebraConfig.V3_CONTRACTS.POOL_INIT_CODE_HASH
 
 /**
  * The default factory enabled fee amounts, denominated in hundredths of bips.

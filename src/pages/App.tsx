@@ -19,9 +19,12 @@ import GoogleAnalyticsReporter from "../components/analytics/GoogleAnalyticsRepo
 import { useActiveWeb3React } from "../hooks/web3";
 import { GlobalStyle, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 
 import "./index.scss";
+
+import AlgebraConfig from "algebra.config";
+
 const AddLiquidity = React.lazy(() => import("./AddLiquidity"));
 const FarmingPage = React.lazy(() => import("./Farming/FarmingPage"));
 const PoolPage = React.lazy(() => import("./Pool"));
@@ -77,9 +80,7 @@ export default function App() {
                                         }}
                                         stroke={"white"}
                                     />
-                                    <span>
-                                        <Trans>Connecting to Dogechain</Trans>
-                                    </span>
+                                    <span>{t`Connecting to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</span>
                                 </div>
                             </NetworkFailedCard>
                         )}

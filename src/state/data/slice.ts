@@ -1,13 +1,14 @@
 import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/baseQueryTypes'
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { SupportedChainId } from 'constants/chains'
 import { DocumentNode } from 'graphql'
 import { ClientError, gql, GraphQLClient } from 'graphql-request'
 import { AppState } from 'state'
 
+import AlgebraConfig from "algebra.config"
+
 // List of supported subgraphs. Note that the app currently only support one active subgraph at a time
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
-  [SupportedChainId.DOGECHAIN]: 'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-info'
+  [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.SUBGRAPH.infoURL
 }
 
 export const api = createApi({

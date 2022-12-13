@@ -1,10 +1,12 @@
 import { Currency } from '@uniswap/sdk-core'
 
-export function currencyId(currency: Currency, chainId: number): string {
-    let chainSymbol = 'WDOGE'
+import AlgebraConfig from "algebra.config"
 
-    if (chainId === 2000) {
-        chainSymbol = 'WDOGE'
+export function currencyId(currency: Currency, chainId: number): string {
+    let chainSymbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol
+
+    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+        chainSymbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol
     }
 
     if (currency.isNative) return chainSymbol

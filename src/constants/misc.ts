@@ -1,5 +1,6 @@
 import { Percent } from '@uniswap/sdk-core'
 import JSBI from 'jsbi'
+import AlgebraConfig from "algebra.config"
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -32,4 +33,4 @@ export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), BIP
 export const ZERO_PERCENT = new Percent('0')
 export const ONE_HUNDRED_PERCENT = new Percent('1')
 
-export const IS_ON_APP_URL = window && window.location.hostname === 'dogechain.quickswap.exchange'
+export const IS_ON_APP_URL = window && window.location.hostname === AlgebraConfig.MISC.appURL

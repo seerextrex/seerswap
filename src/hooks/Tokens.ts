@@ -13,69 +13,7 @@ import { isAddress } from '../utils'
 import { useActiveWeb3React } from './web3'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 
-const DEFAULT_TOKEN_LIST: any = {
-    ['0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101']: {
-        name: 'WDOGE',
-        decimals: 18,
-        symbol: 'WDOGE'
-    },
-    ['0xb44a9b6905af7c801311e8f4e76932ee959c663c']: {
-        name: 'Ether',
-        decimals: 18,
-        symbol: 'ETH'
-    },
-    ['0x765277eebeca2e31912c9946eae1021199b39c61']: {
-        name: 'USDC',
-        decimals: 6,
-        symbol: 'USDC'
-    },
-    ['0xe3f5a90f9cb311505cd691a46596599aa1a0ad7d']: {
-        name: 'USDT',
-        decimals: 6,
-        symbol: 'USDT'
-    },
-    ['0xfa9343c3897324496a05fc75abed6bac29f8a40f']: {
-        name: 'Wrapped Bitcoin',
-        decimals: 18,
-        symbol: 'WBTC'
-    },
-    ['0x582daef1f36d6009f64b74519cfd612a8467be18']: {
-        name: 'Doge Dragon',
-        decimals: 18,
-        symbol: 'DD'
-    },
-    ['0xb12c13e66ade1f72f71834f2fc5082db8c091358']: {
-        name: 'QuickSwap',
-        decimals: 18,
-        symbol: 'QUICK',
-    },
-    ['0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98']: {
-        name: 'Matic',
-        decimals: 18,
-        symbol: 'MATIC',
-    },
-    ['0x7b4328c127b85369d9f82ca0503b000d09cf9180']: {
-        name: 'Dogechain Token',
-        decimals: 18,
-        symbol: 'DC'
-    },
-    ['0xf480f38c366daac4305dc484b2ad7a496ff00cea']: {
-        name: 'Dogira',
-        decimals: 9,
-        symbol: 'DOGIRA'
-    },
-    ['0x91cd28e57b92e34124c4540ee376c581d188b53e']: {
-        name: 'DCGod',
-        decimals: 18,
-        symbol: 'DCGOD'
-    },
-    ['0xb84df10966a5d7e1ab46d9276f55d57bd336afc7']: {
-        name: 'Mai Stablecoin',
-        decimals: 18,
-        symbol: 'MAI'
-    }
-}
-
+import AlgebraConfig from "algebra.config"
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -216,12 +154,12 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
     return useMemo(() => {
         if (token) return token
         if (!chainId || !address || !_lowkeyAddress) return undefined
-        if (_lowkeyAddress in DEFAULT_TOKEN_LIST) return new Token(
+        if (_lowkeyAddress in AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens) return new Token(
             chainId,
             address,
-            DEFAULT_TOKEN_LIST[_lowkeyAddress].decimals,
-            DEFAULT_TOKEN_LIST[_lowkeyAddress].symbol,
-            DEFAULT_TOKEN_LIST[_lowkeyAddress].name
+            AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress].decimals,
+            AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress].symbol,
+            AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress].name
         )
         if (decimals.loading || symbol.loading || tokenName.loading) return null
         if (decimals.result) {
@@ -252,8 +190,8 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
     const { chainId } = useActiveWeb3React()
     let isETH
-    if (chainId === 2000) {
-        isETH = currencyId?.toUpperCase() === 'WDOGE'
+    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+        isETH = currencyId?.toUpperCase() === AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol
     }
 
     const token = useToken(isETH ? undefined : currencyId)

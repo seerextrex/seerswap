@@ -1,10 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers'
 import ms from 'ms.macro'
-import { SupportedChainId } from '../constants/chains'
+import AlgebraConfig from "algebra.config"
 
 const NETWORK_POLLING_INTERVALS: { [chainId: number]: number } = {
-    // [SupportedChainId.BINANCE]: ms`1s`,
-    [SupportedChainId.DOGECHAIN]: ms`1s`
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: ms`1s`
 }
 
 export default function getLibrary(provider: any): Web3Provider {

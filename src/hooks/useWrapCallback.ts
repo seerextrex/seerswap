@@ -8,6 +8,8 @@ import { useActiveWeb3React } from './web3'
 import { useWETHContract } from './useContract'
 import { t } from "@lingui/macro"
 
+import AlgebraConfig from "algebra.config"
+
 export enum WrapType {
     NOT_APPLICABLE,
     WRAP,
@@ -35,8 +37,8 @@ export default function useWrapCallback(
 
     let chainSymbol: string
 
-    if (chainId === 2000) {
-        chainSymbol = 'WDOGE'
+    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+        chainSymbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol
     }
 
     return useMemo(() => {

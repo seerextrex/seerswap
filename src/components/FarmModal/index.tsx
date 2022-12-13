@@ -17,13 +17,14 @@ import { useCurrencyBalance } from "state/wallet/hooks";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { CurrencyAmount } from "@uniswap/sdk-core";
 import { FARMING_CENTER } from "constants/addresses";
-import { SupportedChainId } from "constants/chains";
 import { useActiveWeb3React } from "hooks/web3";
 import { Token } from "@uniswap/sdk-core";
 import { formatUnits } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
 
 import { t, Trans } from "@lingui/macro";
+
+import AlgebraConfig from "algebra.config";
 
 interface FarmModalProps {
     event: {
@@ -220,7 +221,7 @@ export function FarmModal({
 
     const balance = useCurrencyBalance(
         account ?? undefined,
-        multiplierToken ? new Token(SupportedChainId.DOGECHAIN, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) : undefined
+        multiplierToken ? new Token(AlgebraConfig.CHAIN_PARAMS.chainId, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name) : undefined
     );
 
     const isEnoughTokenForLock = useMemo(() => {
@@ -267,10 +268,10 @@ export function FarmModal({
     const _amountForApprove = useMemo(() => {
         if (!selectedTier || !multiplierToken) return undefined;
 
-        return CurrencyAmount.fromRawAmount(new Token(SupportedChainId.DOGECHAIN, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name), selectedTier);
+        return CurrencyAmount.fromRawAmount(new Token(AlgebraConfig.CHAIN_PARAMS.chainId, multiplierToken.id, +multiplierToken.decimals, multiplierToken.symbol, multiplierToken.name), selectedTier);
     }, [selectedTier, multiplierToken]);
 
-    const [approval, approveCallback] = useApproveCallback(_amountForApprove, FARMING_CENTER[SupportedChainId.DOGECHAIN]);
+    const [approval, approveCallback] = useApproveCallback(_amountForApprove, AlgebraConfig.V3_CONTRACTS.FARMING_CENTER_ADDRESS);
 
     const showApproval = approval !== ApprovalState.APPROVED && !!_amountForApprove;
 
@@ -366,7 +367,7 @@ export function FarmModal({
                                             <div className="ml-1">
                                                 <IsActive el={el} />
                                                 <div className={"farm-modal__nft-position__description"}>
-                                                    <a className={"fs-085 c-w hover-cp"} href={`https://dogechain.quickswap.exchange/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
+                                                    <a className={"fs-085 c-w hover-cp"} href={`${AlgebraConfig.MISC.appURL}/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
                                                         <Trans>View position</Trans>
                                                     </a>
                                                 </div>

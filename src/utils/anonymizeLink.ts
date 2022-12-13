@@ -1,5 +1,7 @@
+import AlgebraConfig from "algebra.config"
+
 const EXPLORER_HOSTNAMES: { [hostname: string]: true } = {
-    'explorer.dogechain.dog': true
+    [AlgebraConfig.MISC.appURL]: true
 }
 
 /**

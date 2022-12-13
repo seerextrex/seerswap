@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { ApolloClient, gql, NormalizedCacheObject } from '@apollo/client'
 import { useClients } from './subgraph/useClients'
 import { useActiveWeb3React } from './web3'
-import { SupportedChainId } from '../constants/chains'
+
+import AlgebraConfig from "algebra.config"
 
 export interface EthPrices {
     current: number
@@ -103,7 +104,7 @@ export function useEthPrices(): EthPrices | undefined {
 
     // index on active network
     const { chainId } = useActiveWeb3React()
-    const indexedPrices = prices?.[chainId ?? SupportedChainId.DOGECHAIN]
+    const indexedPrices = prices?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]
 
     const formattedBlocks = useMemo(() => {
         if (blocks) {
@@ -122,7 +123,7 @@ export function useEthPrices(): EthPrices | undefined {
                 setError(true)
             } else if (data) {
                 setPrices({
-                    [chainId ?? SupportedChainId.DOGECHAIN]: data
+                    [chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]: data
                 })
             }
         }
@@ -132,5 +133,5 @@ export function useEthPrices(): EthPrices | undefined {
         }
     }, [error, prices, formattedBlocks, blockError, dataClient, indexedPrices, chainId])
 
-    return prices?.[chainId ?? SupportedChainId.DOGECHAIN]
+    return prices?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]
 }

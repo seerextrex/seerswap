@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
+import AlgebraConfig from 'algebra.config'
 
 export const healthClient = new ApolloClient({
     uri: 'https://api.thegraph.com/index-node/graphql',
@@ -6,7 +7,7 @@ export const healthClient = new ApolloClient({
 })
 
 export const blockClient = new ApolloClient({
-    uri: 'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics',
+    uri: AlgebraConfig.SUBGRAPH.blocklyticsURL,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -21,7 +22,7 @@ export const blockClient = new ApolloClient({
 })
 
 export const client = new ApolloClient({
-    uri: 'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-info',
+    uri: AlgebraConfig.SUBGRAPH.infoURL,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -36,7 +37,7 @@ export const client = new ApolloClient({
 })
 
 export const farmingClient = new ApolloClient({
-    uri: 'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-farming',
+    uri: AlgebraConfig.SUBGRAPH.farmingURL,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

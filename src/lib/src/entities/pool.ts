@@ -1,6 +1,5 @@
 import { BigintIsh, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
 import { POOL_DEPLOYER_ADDRESS } from "constants/addresses"
-import { SupportedChainId } from "constants/chains"
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 import { FeeAmount } from '../constants'
@@ -12,6 +11,7 @@ import { TickMath } from '../utils/tickMath'
 import { Tick, TickConstructorArgs } from './tick'
 import { NoTickDataProvider, TickDataProvider } from './tickDataProvider'
 import { TickListDataProvider } from './tickListDataProvider'
+import AlgebraConfig from "algebra.config"
 
 interface StepComputations {
     sqrtPriceStartX96: JSBI
@@ -124,7 +124,7 @@ export class Pool {
 
     public static getAddress(tokenA: Token, tokenB: Token, fee: FeeAmount, initCodeHashManualOverride?: string): string {
         return computePoolAddress({
-            factoryAddress: POOL_DEPLOYER_ADDRESS[SupportedChainId.DOGECHAIN],
+            factoryAddress: POOL_DEPLOYER_ADDRESS[AlgebraConfig.CHAIN_PARAMS.chainId],
             fee,
             tokenA,
             tokenB,

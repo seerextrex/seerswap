@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react'
 import { InjectedConnector } from '@web3-react/injected-connector'
-import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from '../constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS } from '../constants/chains'
 import getLibrary from '../utils/getLibrary'
 import { NetworkConnector } from './NetworkConnector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
@@ -10,14 +10,16 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { ConnectorUpdate } from '@web3-react/types'
 import { getAddress } from 'ethers/lib/utils'
 
+import AlgebraConfig from "algebra.config"
+
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
-const NETWORK_URLS: { [key in SupportedChainId]: string } = {
-    [SupportedChainId.DOGECHAIN]: `https://dogechain.ankr.com`
+const NETWORK_URLS: { [chainId: number]: string } = {
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.CHAIN_PARAMS.rpcURL
 }
 
 export const network = new NetworkConnector({
     urls: NETWORK_URLS,
-    defaultChainId: 2000
+    defaultChainId: AlgebraConfig.CHAIN_PARAMS.chainId
 })
 
 let networkLibrary: Web3Provider | undefined
@@ -33,10 +35,10 @@ export const injected = new InjectedConnector({
 export const gnosisSafe = new SafeAppConnector()
 
 export const walletconnector = new WalletConnectConnector({
-    rpc: { 2000: 'https://dogechain.ankr.com' },
+    rpc: { [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.CHAIN_PARAMS.rpcURL },
     supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
     qrcode: true,
-    chainId: 2000
+    chainId: AlgebraConfig.CHAIN_PARAMS.chainId
 })
 
 interface OntoWalletConfig {
@@ -163,5 +165,5 @@ export class OntoWalletConnector extends AbstractConnector {
 }
 
 export const ontoconnector = new OntoWalletConnector({
-    supportedChainIds: [2000]
+    supportedChainIds: [AlgebraConfig.CHAIN_PARAMS.chainId]
 })

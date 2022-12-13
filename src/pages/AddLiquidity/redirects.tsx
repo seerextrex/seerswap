@@ -3,6 +3,8 @@ import { NewAddLiquidityPage } from "pages/NewAddLiquidity";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { WMATIC_EXTENDED } from "../../constants/tokens";
 
+import AlgebraConfig from "algebra.config";
+
 export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ currencyIdA: string; currencyIdB: string; step: string }>) {
     const {
         match: {
@@ -15,8 +17,8 @@ export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ curren
     // prevent weth + eth
     let symbol;
 
-    if (chainId === 2000) {
-        symbol = "WDOGE";
+    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+        symbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol;
     }
 
     const isETHOrWETHA = currencyIdA === symbol || (chainId !== undefined && currencyIdA === WMATIC_EXTENDED[chainId]?.address);

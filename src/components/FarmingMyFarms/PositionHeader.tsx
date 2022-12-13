@@ -9,6 +9,8 @@ import { ChevronsUp, Send } from "react-feather";
 import { Deposit, UnstakingInterface } from "../../models/interfaces";
 import { t } from "@lingui/macro";
 
+import AlgebraConfig from "algebra.config";
+
 interface PositionHeaderProps {
     el: Deposit;
     unstaking: UnstakingInterface;
@@ -30,7 +32,7 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                         <a
                             style={{ textDecoration: "underline" }}
                             className={"c-w fs-075"}
-                            href={`https://dogechain.quickswap.exchange/#/pool/${+el.id}?onFarming=true`}
+                            href={`${AlgebraConfig.MISC.appURL}/#/pool/${+el.id}?onFarming=true`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
@@ -39,8 +41,8 @@ export default function PositionHeader({ el, unstaking, setUnstaking, withdrawHa
                     </div>
                 </div>
                 <div className={"f f-ac ml-2 mxs_ml-0 mxs_mv-1"}>
-                    <CurrencyLogo currency={new Token(2000, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
-                    <CurrencyLogo currency={new Token(2000, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
+                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, el.token0, 18, el.pool.token0.symbol) as WrappedCurrency} size={"35px"} />
+                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, el.token1, 18, el.pool.token1.symbol) as WrappedCurrency} size={"35px"} style={{ marginLeft: "-1rem" }} />
                     <div className={"ml-05"}>
                         <div className={"b fs-075"} style={{ marginBottom: "2px" }}>
                             POOL

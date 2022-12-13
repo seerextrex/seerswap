@@ -3,7 +3,8 @@ import { useGasPrice } from '../../hooks/useGasPrice'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { updateGasPrice } from './actions'
-import { SupportedChainId } from '../../constants/chains'
+
+import AlgebraConfig from "algebra.config"
 
 export default function GasUpdater(): null {
 
@@ -12,7 +13,7 @@ export default function GasUpdater(): null {
     const { chainId } = useActiveWeb3React()
 
     const block = useAppSelector((state) => {
-        return state.application.blockNumber[chainId ?? SupportedChainId.DOGECHAIN]
+        return state.application.blockNumber[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]
     })
 
     const { fetchGasPrice, gasPrice, gasPriceLoading } = useGasPrice()

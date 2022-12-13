@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Currency } from "@uniswap/sdk-core";
-import { USDC_DOGECHAIN } from "constants/tokens";
+import { STABLE_TOKEN_FOR_USD_PRICE } from "constants/tokens";
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { useMemo } from "react";
 import { isMobileOnly } from "react-device-detect";
@@ -39,11 +39,11 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
     }, [priceFormat]);
 
     const isUSDCB = useMemo(() => {
-        return currencyB && currencyB.wrapped.address === USDC_DOGECHAIN.address;
+        return currencyB && currencyB.wrapped.address === STABLE_TOKEN_FOR_USD_PRICE.address;
     }, [currencyB]);
 
     const isUSDCA = useMemo(() => {
-        return currencyA && currencyA.wrapped.address === USDC_DOGECHAIN.address;
+        return currencyA && currencyA.wrapped.address === STABLE_TOKEN_FOR_USD_PRICE.address;
     }, [currencyA]);
 
     const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = mintInfo.pricesAtTicks;

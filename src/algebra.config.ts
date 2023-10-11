@@ -1,13 +1,18 @@
-import WDOGE_LOGO from "./assets/images/doge-logo.png";
-import USDC_LOGO from "./assets/svg/usd-coin-usdc-logo.svg";
-import ETH_LOGO from "./assets/images/ether-logo.png";
+import WXDAI_LOGO from "./assets/images/wxdai.png";
+import XDAI_LOGO from "./assets/images/xdai.png";
+import USDC_LOGO from "./assets/images/usdc.png";
+import WETH_LOGO from "./assets/images/weth.png";
+import SWAPR_LOGO from "./assets/images/swapr.png";
+import WBTC_LOGO from "./assets/images/wbtc.png";
+import GNO_LOGO from "./assets/images/gno.png";
 
 export default {
     CHAIN_PARAMS: {
         chainId: 100,
         chainIdHex: "0x64",
         chainName: "Gnosis Chain",
-        wrappedNativeCurrency: { name: "Wrapped XDAI", symbol: "WXDAI", decimals: 18, address: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d", logo: WDOGE_LOGO },
+        nativeCurrency: { name: "XDAI", symbol: "XDAI", decimals: 18, logo: XDAI_LOGO },
+        wrappedNativeCurrency: { name: "Wrapped XDAI", symbol: "WXDAI", decimals: 18, address: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d", logo: WXDAI_LOGO },
         rpcURL: "https://rpc.gnosis.gateway.fm",
         blockExplorerURL: "gnosisscan.io",
     },
@@ -61,8 +66,12 @@ export default {
             },
         },
         tokensLogos: {
-            ["0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1"]: ETH_LOGO,
-            ["0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"]: USDC_LOGO,
+            ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: WXDAI_LOGO,
+            ["0x532801ed6f82fffd2dab70a19fc2d7b2772c4f4b"]: SWAPR_LOGO,
+            ["0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1"]: WETH_LOGO,
+            ["0x9c58bacc331c9aa871afd802db6379a98e80cedb"]: GNO_LOGO,
+            ["0x8e5bbbb09ed1ebde8674cda39a0c169401db4252"]: WBTC_LOGO,
+            ["0xddafbb505ad214d7b80b1f830fccc89b60fb7a83"]: USDC_LOGO,
         },
         stableTokens: {
             ["0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"]: { name: "USD//C on Gnosis", symbol: "USDC", decimals: 6 },
@@ -102,9 +111,9 @@ export default {
     },
 
     SUBGRAPH: {
-        infoURL: "https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-info",
-        farmingURL: "https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-farming",
-        blocklyticsURL: "https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics",
+        infoURL: "https://api.thegraph.com/subgraphs/name/swaprhq/algebra-v19",
+        farmingURL: "https://api.thegraph.com/subgraphs/name/swaprhq/algebrafarming-v19",
+        blocklyticsURL: "https://api.thegraph.com/subgraphs/name/swaprhq/algebrablocks-v19",
     },
 
     API: {

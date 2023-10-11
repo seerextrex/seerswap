@@ -5,7 +5,7 @@ import { ApplicationModal } from "state/application/actions";
 import { useModalOpen, useToggleModal } from "state/application/hooks";
 import { switchToNetwork } from "utils/switchToNetwork";
 import { CHAIN_INFO } from "../../constants/chains";
-import DogeLogo from "../../assets/images/doge.png";
+import GnosisLogo from "../../assets/svg/gnosis-logo.svg";
 
 import AlgebraConfig from "algebra.config";
 
@@ -37,8 +37,8 @@ export default function NetworkCard() {
 
     if (chainId == AlgebraConfig.CHAIN_PARAMS.chainId) {
         return (
-            <div className="f">
-                <img src={DogeLogo} width="20" />
+            <div className="f" style={{ display: "flex", alignItems: "center" }}>
+                <img src={GnosisLogo} width="20" height="20" style={{ borderRadius: "50%" }} />
                 <div className="ml-05" title={info.label}>
                     {info.label}
                 </div>

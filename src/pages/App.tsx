@@ -8,7 +8,7 @@ import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
 import { RedirectDuplicateTokenIdsNew } from "./AddLiquidity/redirects";
 import RemoveLiquidityV3 from "./RemoveLiquidity/V3";
 import Swap from "./Swap";
-import { RedirectPathToSwapOnly, RedirectToSwap } from "./Swap/redirects";
+import { RedirectPathToPoolOnly, RedirectToSwap } from "./Swap/redirects";
 import { Pool } from "lib/src";
 import React, { useEffect } from "react";
 import CautionModal from "../components/CautionModal";
@@ -98,9 +98,9 @@ export default function App() {
 
                                     <Route strict path="/farming" component={FarmingPage} />
 
-                                    <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
-                                    <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
-                                    <Route exact strict path="/swap" component={Swap} />
+                                    <Route exact strict path="/send" component={RedirectPathToPoolOnly} />
+                                    {/* <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
+                                    <Route exact strict path="/swap" component={Swap} /> */}
 
                                     <Route exact strict path="/pool" component={PoolPage} />
                                     <Route exact strict path="/pool/:tokenId" component={PositionPage} />
@@ -110,7 +110,7 @@ export default function App() {
                                     <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
                                     <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
 
-                                    <Route component={RedirectPathToSwapOnly} />
+                                    <Route component={RedirectPathToPoolOnly} />
                                 </Switch>
                             </React.Suspense>
                             <Marginer />

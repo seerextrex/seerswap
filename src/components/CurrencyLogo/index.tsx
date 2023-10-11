@@ -10,23 +10,27 @@ import AlgebraConfig from "algebra.config";
 
 export const getTokenLogoURL = (address: string) => `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`;
 
-export default function CurrencyLogo({ currency, size = "24px", style, ...rest }: { currency?: WrappedCurrency; size?: string; style?: React.CSSProperties }) {
+export default function CurrencyLogo({ currency, size = "24px", style, ...rest }: { currency?: WrappedCurrency & { logoURI?: string; logo?: string }; size?: string; style?: React.CSSProperties }) {
     const { chainId } = useActiveWeb3React();
 
     let logo;
 
     if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
-        logo = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.logo;
+        logo = AlgebraConfig.CHAIN_PARAMS.nativeCurrency.logo;
     }
 
     if (!currency) return <div />;
 
-    if (currency.address?.toLowerCase() in specialTokens) {
-        return <StyledImgLogo src={specialTokens[currency.address.toLowerCase()]} size={size} style={style} {...rest} />;
+    if (currency.address?.toLowerCase() in specialTokens || currency.address in specialTokens) {
+        return <StyledImgLogo src={specialTokens[currency.address.toLowerCase()] || specialTokens[currency.address]} size={size} style={style} {...rest} />;
     }
 
     if (currency.isNative) {
         return <StyledImgLogo src={logo} size={size} style={style} {...rest} />;
+    }
+
+    if (currency.logoURI) {
+        return <StyledImgLogo src={currency.logoURI} size={size} style={style} {...rest} />;
     }
 
     return (

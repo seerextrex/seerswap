@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
-import Logo from "../../assets/images/quickswap-logo.png";
-// @ts-ignore
-import Logo_logo from "../../assets/svg/alg-logo-svg.svg";
+import Logo from "../../assets/images/swapr-logo.svg";
 import { useActiveWeb3React } from "../../hooks/web3";
 import Web3Status from "../Web3Status";
 import NetworkCard from "./NetworkCard";
@@ -39,7 +37,7 @@ export default function Header() {
     let chainValue;
 
     if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
-        chainValue = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol;
+        chainValue = AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol;
     }
 
     const handleBlur = useCallback((e: React.ChangeEvent<HTMLLabelElement>) => {
@@ -56,9 +54,9 @@ export default function Header() {
                 <img src={Logo} alt="logo" />
             </a>
             <div className={"header__links"}>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
+                {/* <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
                     <Trans>Swap</Trans>
-                </NavLink>
+                </NavLink> */}
                 <NavLink
                     className={"header__links__link hover-op trans-op"}
                     id={`pool-nav-link`}

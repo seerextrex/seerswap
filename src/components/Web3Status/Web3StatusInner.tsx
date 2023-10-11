@@ -40,9 +40,9 @@ export async function addPolygonNetwork() {
                             chainId: AlgebraConfig.CHAIN_PARAMS.chainIdHex,
                             chainName: AlgebraConfig.CHAIN_PARAMS.chainName,
                             nativeCurrency: {
-                                name: AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.name,
-                                symbol: AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol,
-                                decimals: AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.decimals,
+                                name: AlgebraConfig.CHAIN_PARAMS.nativeCurrency.name,
+                                symbol: AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol,
+                                decimals: AlgebraConfig.CHAIN_PARAMS.nativeCurrency.decimals,
                             },
                             blockExplorerUrls: [AlgebraConfig.CHAIN_PARAMS.blockExplorerURL],
                             rpcUrls: [AlgebraConfig.CHAIN_PARAMS.rpcURL],

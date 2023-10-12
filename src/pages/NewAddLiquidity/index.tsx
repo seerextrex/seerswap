@@ -13,7 +13,7 @@ import { SelectRange } from "./containers/SelectRange";
 import { Currency, Percent } from "@uniswap/sdk-core";
 
 import "./index.scss";
-import { WMATIC_EXTENDED } from "constants/tokens";
+import { WXDAI_EXTENDED } from "constants/tokens";
 import { setInitialTokenPrice, setInitialUSDPrices, updateCurrentStep, updateSelectedPreset } from "state/mint/v3/actions";
 import { Field } from "state/mint/actions";
 import useUSDCPrice from "hooks/useUSDCPrice";
@@ -107,7 +107,7 @@ export function NewAddLiquidityPage({
             let chainSymbol;
 
             if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
-                chainSymbol = AlgebraConfig.CHAIN_PARAMS.wrappedNativeCurrency.symbol;
+                chainSymbol = AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol;
             }
 
             resetState();
@@ -117,8 +117,8 @@ export function NewAddLiquidityPage({
                 return [currencyIdNew, undefined];
             } else {
                 // prevent weth + eth
-                const isETHOrWETHNew = currencyIdNew === chainSymbol || (chainId !== undefined && currencyIdNew === WMATIC_EXTENDED[chainId]?.address);
-                const isETHOrWETHOther = currencyIdOther !== undefined && (currencyIdOther === chainSymbol || (chainId !== undefined && currencyIdOther === WMATIC_EXTENDED[chainId]?.address));
+                const isETHOrWETHNew = currencyIdNew === chainSymbol || (chainId !== undefined && currencyIdNew === WXDAI_EXTENDED[chainId]?.address);
+                const isETHOrWETHOther = currencyIdOther !== undefined && (currencyIdOther === chainSymbol || (chainId !== undefined && currencyIdOther === WXDAI_EXTENDED[chainId]?.address));
 
                 if (isETHOrWETHNew && isETHOrWETHOther) {
                     return [currencyIdNew, undefined];

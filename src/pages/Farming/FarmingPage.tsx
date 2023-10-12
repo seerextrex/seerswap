@@ -97,7 +97,7 @@ export default function FarmingPage() {
     return (
         <>
             <Helmet>
-                <title>{t`QuickSwap — Farming`}</title>
+                <title>{t`Swapr — Farming`}</title>
             </Helmet>
             <Card classes={"br-24 p-2 mm_p-1"}>
                 <Menu
@@ -113,7 +113,7 @@ export default function FarmingPage() {
                     </Route>
                     <Route exact path={`${path}/farms`}>
                         <Helmet>
-                            <title>{t`QuickSwap — Farming • My Farms`}</title>
+                            <title>{t`Swapr — Farming • My Farms`}</title>
                         </Helmet>
                         {account ? (
                             <>
@@ -141,20 +141,20 @@ export default function FarmingPage() {
                     </Route>
                     {/* <Route exact path={`${path}/limit-farms`}>
                         <Helmet>
-                            <title>{t`QuickSwap — Farming • Limit Farms`}</title>
+                            <title>{t`Swapr — Farming • Limit Farms`}</title>
                         </Helmet>
                         <FarmingEventsPage data={allEvents} refreshing={allEventsLoading} fetchHandler={() => fetchAllEventsFn(true)} now={now} />
                     </Route> */}
                     <Route exact path={`${path}/infinite-farms`}>
                         <Helmet>
-                            <title>{t`QuickSwap — Farming • Infinite Farms`}</title>
+                            <title>{t`Swapr — Farming • Infinite Farms`}</title>
                         </Helmet>
 
                         <EternalFarmsPage data={eternalFarms} refreshing={eternalFarmsLoading} priceFetched={ethPricesFecthed} fetchHandler={() => fetchEternalFarmsFn(true)} />
                     </Route>
                     {/* <Route exact strict path={`${path}/farms-history`}>
                         <Helmet>
-                            <title>{t`QuickSwap — Farming • Farms History history`}</title>
+                            <title>{t`Swapr — Farming • Farms History history`}</title>
                         </Helmet>
                         <EventsHistory />
                     </Route> */}

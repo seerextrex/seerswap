@@ -92,7 +92,7 @@ export function CurrencySearch({
 
     const filteredSortedTokensWithETH: Currency[] = useMemo(() => {
         const s = debouncedQuery.toLowerCase().trim();
-        if (s === "w" || s === "wd" || s === "wdo" || s === "wdog" || s === "wdoge") {
+        if (s === "x" || s === "xd" || s === "xda" || s === "xdai") {
             return ether ? [ether, ...filteredSortedTokens] : filteredSortedTokens;
         }
         return filteredSortedTokens;
@@ -124,7 +124,7 @@ export function CurrencySearch({
         (e: KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
                 const s = debouncedQuery.toLowerCase().trim();
-                if (s === "wdoge" && ether) {
+                if (s === "xdai" && ether) {
                     handleCurrencySelect(ether);
                 } else if (filteredSortedTokensWithETH.length > 0) {
                     if (filteredSortedTokensWithETH[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() || filteredSortedTokensWithETH.length === 1) {
@@ -170,7 +170,7 @@ export function CurrencySearch({
             ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
                 <div className={"h-200"} style={{ overflow: "auto" }}>
                     <CurrencyList
-                        height={200}
+                        height={Infinity}
                         currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
                         otherListTokens={filteredInactiveTokens}
                         onCurrencySelect={handleCurrencySelect}

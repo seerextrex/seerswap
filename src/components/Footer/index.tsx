@@ -18,13 +18,10 @@ export default function Footer() {
                     <ExternalLink size={14} stroke={"white"} />
                 </span>
             </BugReportLink> */}
-            <div className={"f w-100 f-jb f-ac"}>
+            <div className={"f w-100 f-jb f-ac"} style={{ justifyContent: "flex-end" }}>
                 {/* <span className={"mr-1"}>
                     <GasPrice />
                 </span> */}
-                <span className={"ml-a mr-a"}>
-                    <PoweredByAlgebra />
-                </span>
                 <span>
                     <Polling />
                 </span>

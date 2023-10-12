@@ -323,7 +323,7 @@ export default function Swap({ history }: RouteComponentProps) {
         <>
             <Helmet>
                 {/* //TODO */}
-                <title>{t`QuickSwap — Swap`}</title>
+                <title>{t`Swapr — Swap`}</title>
             </Helmet>
             <TokenWarningModal
                 isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}

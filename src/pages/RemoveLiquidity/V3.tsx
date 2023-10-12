@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useV3PositionFromTokenId } from "hooks/useV3Positions";
 import { Redirect, RouteComponentProps } from "react-router-dom";
-import { WMATIC_EXTENDED } from "../../constants/tokens";
+import { WXDAI_EXTENDED } from "../../constants/tokens";
 import { calculateGasMargin } from "../../utils/calculateGasMargin";
 import { BigNumber } from "@ethersproject/bignumber";
 import useDebouncedChangeHandler from "hooks/useDebouncedChangeHandler";
@@ -256,8 +256,8 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
             liquidityValue1?.currency &&
             (liquidityValue0.currency.isNative ||
                 liquidityValue1.currency.isNative ||
-                liquidityValue0.currency.wrapped.equals(WMATIC_EXTENDED[liquidityValue0.currency.chainId]) ||
-                liquidityValue1.currency.wrapped.equals(WMATIC_EXTENDED[liquidityValue1.currency.chainId]))
+                liquidityValue0.currency.wrapped.equals(WXDAI_EXTENDED[liquidityValue0.currency.chainId]) ||
+                liquidityValue1.currency.wrapped.equals(WXDAI_EXTENDED[liquidityValue1.currency.chainId]))
     );
     return (
         <div className={"maw-765 mh-a"}>

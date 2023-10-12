@@ -7,7 +7,7 @@ import { Price, Token } from "@uniswap/sdk-core";
 import { formatTickPrice } from "utils/formatTickPrice";
 import Loader from "components/Loader";
 import { unwrappedToken } from "utils/unwrappedToken";
-import { STABLE_TOKENS, WMATIC_EXTENDED } from "../../constants/tokens";
+import { STABLE_TOKENS, WXDAI_EXTENDED } from "../../constants/tokens";
 import { Trans } from "@lingui/macro";
 import useIsTickAtLimit from "hooks/useIsTickAtLimit";
 import { Bound, setShowNewestPosition } from "state/mint/v3/actions";
@@ -53,7 +53,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     // if token1 is an ETH-/BTC-stable asset, set it as the base token
     //TODO
     // const bases = [...Object.values(WMATIC_EXTENDED), WBTC]
-    const bases = [...Object.values(WMATIC_EXTENDED)];
+    const bases = [...Object.values(WXDAI_EXTENDED)];
     if (bases.some((base) => base.equals(token1))) {
         return {
             priceLower: position.token0PriceUpper.invert(),

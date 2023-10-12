@@ -18,15 +18,13 @@ export default function Web3Status() {
     const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash);
 
     if (!contextNetwork.active && !active) {
-        return <Web3StatusConnect
-        id="connect-wallet"
-        faded={!account}
-        disabled
-    >
-        <Text>
-            <Trans>Loading...</Trans>
-        </Text>
-    </Web3StatusConnect>;
+        return (
+            <Web3StatusConnect id="connect-wallet" faded={!account} disabled>
+                <Text>
+                    <Trans>Loading...</Trans>
+                </Text>
+            </Web3StatusConnect>
+        );
     }
 
     return (

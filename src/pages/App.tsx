@@ -95,7 +95,7 @@ export default function App() {
                                 <Switch>
                                     <Route strict path="/info" component={InfoPage} />
 
-                                    <Route strict path="/farming" component={FarmingPage} />
+                                    {/* <Route strict path="/farming" component={FarmingPage} /> */}
 
                                     <Route exact strict path="/send" component={RedirectPathToPoolOnly} />
                                     {/* <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />

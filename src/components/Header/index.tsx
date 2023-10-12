@@ -68,12 +68,12 @@ export default function Header() {
                 >
                     <Trans>Pool</Trans>
                 </NavLink>
-                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
+                {/* <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
                     <span>
                         <Trans>Farming</Trans>
                     </span>
                     <span className={"header__farming-circle"} />
-                </NavLink>
+                </NavLink> */}
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     <Trans>Info</Trans>
                 </NavLink>

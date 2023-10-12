@@ -64,7 +64,6 @@ export default function App() {
                 <>
                     <Header />
                     <div className={"app-body w-100 maw-1180 ph-1 pt-3 mh-a pb-4 mm_pt-5"} style={{ zIndex: 3, marginBottom: "5rem" }}>
-                        <CautionModal />
                         {/* {!internet && (
                             <InternetError>
                                 <h2>Network ERROR</h2>

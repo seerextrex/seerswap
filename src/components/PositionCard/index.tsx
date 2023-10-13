@@ -88,11 +88,11 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, sushi }: Posi
                                     <Badge
                                         style={{
                                             backgroundColor: "white",
-                                            color: sushi ? "#ed1185" : "#48b9cd",
+                                            color: sushi ? "#ed1185" : "#6F58F6",
                                             minWidth: "100px",
                                         }}
                                     >
-                                        {sushi ? "SushiSwap" : "QuickSwap"}
+                                        {sushi ? "SushiSwap" : "Swapr"}
                                     </Badge>
                                 )}
                             </RowFixedLogo>
@@ -104,11 +104,11 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, sushi }: Posi
                                     <Badge
                                         style={{
                                             backgroundColor: "white",
-                                            color: sushi ? "#ed1185" : "#48b9cd",
+                                            color: sushi ? "#ed1185" : "#6F58F6",
                                             minWidth: "100px",
                                         }}
                                     >
-                                        {sushi ? "SushiSwap" : "QuickSwap"}
+                                        {sushi ? "SushiSwap" : "Swapr"}
                                     </Badge>
                                 )}
                             </RowFixedPrice>
@@ -215,7 +215,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                                 `${currency0.symbol}/${currency1.symbol}`
                             )}
                         </Text>
-                        <Badge variant={BadgeVariant.WARNING}>QuickSwap</Badge>
+                        <Badge variant={BadgeVariant.WARNING}>Swapr</Badge>
                     </AutoRow>
                     <RowFixed gap="8px" style={{ marginRight: "4px" }}>
                         <ButtonEmpty padding="6px 8px" $borderRadius="12px" width="100%" onClick={() => setShowMore(!showMore)}>

@@ -513,7 +513,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         {approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED ? (
                                                             <Trans>You can now trade {currencies[Field.INPUT]?.symbol}</Trans>
                                                         ) : (
-                                                            <Trans>Allow QuickSwap to use your {currencies[Field.INPUT]?.symbol}</Trans>
+                                                            <Trans>Allow Swapr to use your {currencies[Field.INPUT]?.symbol}</Trans>
                                                         )}
                                                     </span>
                                                     {approvalState === ApprovalState.PENDING ? (
@@ -524,8 +524,8 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         <MouseoverTooltip
                                                             text={
                                                                 <Trans>
-                                                                    You must give the QuickSwap smart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once
-                                                                    per token.
+                                                                    You must give the Swapr smart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once per
+                                                                    token.
                                                                 </Trans>
                                                             }
                                                         >

@@ -117,11 +117,11 @@ export default {
     },
 
     API: {
-        eternalFarmsAPR: "https://api.algebra.finance/api/APR/eternalFarmings/?network=Dogechain-Quickswap",
-        limitFarmsAPR: "https://api.algebra.finance/api/APR/limitFarmings/",
-        eternalFarmsTVL: "https://api.algebra.finance/api/TVL/eternalFarmings/?network=Dogechain-Quickswap",
-        limitFarmsTVL: "https://api.algebra.finance/api/TVL/limitFarmings/",
-        poolsAPR: "https://api.algebra.finance/api/APR/pools/?network=Dogechain-Quickswap",
+        eternalFarmsAPR: "https://api.swaprhq.io/APR/eternalFarmings/",
+        limitFarmsAPR: "https://api.swaprhq.io/APR/limitFarmings/",
+        eternalFarmsTVL: "https://api.swaprhq.io/TVL/eternalFarmings/",
+        limitFarmsTVL: "https://api.swaprhq.io/TVL/limitFarmings/",
+        poolsAPR: "https://api.algebra.finance/APR/pools/",
     },
 
     MISC: {

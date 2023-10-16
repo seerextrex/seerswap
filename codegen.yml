@@ -1,16 +1,16 @@
 overrideExisting: true
 schema:
   [
-      'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-info',
-      'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-farming',
-      'https://dogechain-graph.algebra.finance/subgraphs/name/quickswap/dogechain-blocklytics'
+    "https://swaprhq.io/subgraphs/name/swapr/dogechain-info",
+    "https://swaprhq.io/subgraphs/name/swapr/dogechain-farming",
+    "https://swaprhq.io/subgraphs/name/swapr/dogechain-blocklytics",
   ]
-documents: 'src/**/!(*.d).{ts,tsx}'
+documents: "src/**/!(*.d).{ts,tsx}"
 generates:
   ./src/state/data/generated.ts:
     plugins:
       - typescript
       - typescript-operations
       - typescript-rtk-query:
-          importBaseApiFrom: './slice'
+          importBaseApiFrom: "./slice"
           exportHooks: true

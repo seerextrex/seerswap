@@ -86,8 +86,8 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
             tokenB,
         }),
         18,
-        "QUICKSWAP-V2",
-        "QUICKSWAP V2"
+        "Swapr-V2",
+        "Swapr V2"
     );
 }
 
@@ -243,21 +243,6 @@ export function useRemoveUserAddedToken(): (chainId: number, address: string) =>
 export function useUserAddedTokens(): Token[] {
     const { chainId } = useActiveWeb3React();
     const serializedTokensMap = useAppSelector(({ user: { tokens } }) => tokens);
-
-    // console.log(serializedTokensMap, 'tokMapppp')
-
-    // useEffect(() => {
-    //     fetchList('https://unpkg.com/quickswap-default-token-list@1.0.39/build/quickswap-default.tokenlist.json')
-    //         .then(res => {
-    //             let stepTokens = {}
-    //             res.tokens.map(item => {
-    //                 if (item.chainId === 137) {
-    //                     stepTokens = {...stepTokens, [item.address]: item}
-    //                 }
-    //             })
-    //             setMap({137: stepTokens})
-    //         })
-    // }, [])
 
     return useMemo(() => {
         if (!chainId) return [];

@@ -4,9 +4,9 @@ import Modal from "../Modal";
 import { AgreeButton, CautionList, CautionListItem, CautionModalInner } from "./styled";
 
 const agreementItems = [
-    t`Using QuickSwap involves various risks, including, but not limited to, losses while digital assets are being supplied to QuickSwap, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool.`,
-    t`You use QuickSwap at your own risk and without warranties of any kind. QuickSwap is not liable for potential losses.`,
-    t`Before using QuickSwap, you should review the relevant documentation to make sure you understand how QuickSwap works.`,
+    t`Using Swapr involves various risks, including, but not limited to, losses while digital assets are being supplied to Swapr, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool.`,
+    t`You use Swapr at your own risk and without warranties of any kind. Swapr is not liable for potential losses.`,
+    t`Before using Swapr, you should review the relevant documentation to make sure you understand how Swapr works.`,
     t`You are responsible for completing your own due diligence to understand the risks of trading crypto.`,
 ];
 

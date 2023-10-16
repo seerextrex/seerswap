@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
 import Logo from "../../assets/images/swapr-logo.svg";
@@ -11,8 +11,6 @@ import { isMobile } from "react-device-detect";
 import { BalanceText } from "./styled";
 import "./index.scss";
 import { NavLink } from "react-router-dom";
-import { Sliders } from "react-feather";
-import HeaderMenu from "components/HeaderMenu";
 import { Trans } from "@lingui/macro";
 
 import AlgebraConfig from "algebra.config";
@@ -54,9 +52,6 @@ export default function Header() {
                 <img src={Logo} alt="logo" />
             </a>
             <div className={"header__links"}>
-                {/* <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
-                    <Trans>Swap</Trans>
-                </NavLink> */}
                 <NavLink
                     className={"header__links__link hover-op trans-op"}
                     id={`pool-nav-link`}
@@ -68,12 +63,6 @@ export default function Header() {
                 >
                     <Trans>Pool</Trans>
                 </NavLink>
-                {/* <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`farming-nav-link`} to={"/farming"}>
-                    <span>
-                        <Trans>Farming</Trans>
-                    </span>
-                    <span className={"header__farming-circle"} />
-                </NavLink> */}
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     <Trans>Info</Trans>
                 </NavLink>
@@ -91,13 +80,6 @@ export default function Header() {
                     </>
                 )}
                 <Web3Status />
-                {/* <input id="preferences" type="checkbox" className="preferences-menu__checkbox" />
-                <label htmlFor="preferences" role="button" tabIndex={0} className="preferences-menu__toggler f ml-1 br-8" onBlur={handleBlur}>
-                    <Sliders style={{ display: "block" }} />
-                    <div className="preferences-menu__inner" onClick={(e) => e.preventDefault()}>
-                        <HeaderMenu />
-                    </div>
-                </label> */}
             </div>
         </div>
     );

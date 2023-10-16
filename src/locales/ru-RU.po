@@ -156,72 +156,72 @@ msgstr "Добавление ликвидности"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "QuickSwap {0} Price:"
-msgstr "Цена {0} на QuickSwap:"
+msgid "Swapr {0} Price:"
+msgstr "Цена {0} на Swapr:"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "QuickSwap — Farming"
-msgstr "QuickSwap — Фарминг"
+msgid "Swapr — Farming"
+msgstr "Swapr — Фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "QuickSwap — Farming • Farms History history"
-msgstr "QuickSwap — Фарминг • Фарминг История история"
+msgid "Swapr — Farming • Farms History history"
+msgstr "Swapr — Фарминг • Фарминг История история"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "QuickSwap — Farming • Infinite Farms"
-msgstr "QuickSwap — Фарминг • Бессрочный фарминг"
+msgid "Swapr — Farming • Infinite Farms"
+msgstr "Swapr — Фарминг • Бессрочный фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "QuickSwap — Farming • Limit Farms"
-msgstr "QuickSwap — Фарминг • Временный фарминг"
+msgid "Swapr — Farming • Limit Farms"
+msgstr "Swapr — Фарминг • Временный фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "QuickSwap — Farming • My Farms"
-msgstr "QuickSwap — Фарминг • Мои фарминги"
+msgid "Swapr — Farming • My Farms"
+msgstr "Swapr — Фарминг • Мои фарминги"
 
 #: src/pages/PoolFinder/index.tsx
-msgid "QuickSwap — Find Pool"
-msgstr "QuickSwap — Найти пул"
+msgid "Swapr — Find Pool"
+msgstr "Swapr — Найти пул"
 
 #: src/pages/InfoPage/index.tsx
-msgid "QuickSwap — Info"
-msgstr "QuickSwap — Информация"
+msgid "Swapr — Info"
+msgstr "Swapr — Информация"
 
 #: src/pages/InfoPage/index.tsx
-msgid "QuickSwap — Info • Pools"
-msgstr "QuickSwap — Информация • Пулы"
+msgid "Swapr — Info • Pools"
+msgstr "Swapr — Информация • Пулы"
 
 #: src/pages/InfoPage/index.tsx
-msgid "QuickSwap — Info • Tokens"
-msgstr "QuickSwap — Информация • Токены"
+msgid "Swapr — Info • Tokens"
+msgstr "Swapr — Информация • Токены"
 
 #: src/pages/MigrateV2/index.tsx
-msgid "QuickSwap — Migrate Liquidity"
-msgstr "QuickSwap — Перенести Ликвидность"
+msgid "Swapr — Migrate Liquidity"
+msgstr "Swapr — Перенести Ликвидность"
 
 #: src/pages/Pool/index.tsx
-msgid "QuickSwap — Pool"
-msgstr "QuickSwap — Пул"
+msgid "Swapr — Pool"
+msgstr "Swapr — Пул"
 
 #: src/pages/RealStakerPage/index.tsx
-msgid "QuickSwap — Staking"
-msgstr "QuickSwap — Стейкинг"
+msgid "Swapr — Staking"
+msgstr "Swapr — Стейкинг"
 
 #: src/pages/Swap/index.tsx
-msgid "QuickSwap — Swap"
-msgstr "QuickSwap — Обменять"
+msgid "Swapr — Swap"
+msgstr "Swapr — Обменять"
 
 #: src/pages/Swap/index.tsx
-msgid "QuickSwap.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
-msgstr "QuickSwap.Finance — первая децентрализованная биржа с концентрированной ликвидностью в сети Полигон: лучшие курсы для поставщиков ликвидности и трейдеров в сети Полигон, со встроенным фармингом и динамическими комиссиями."
+msgid "Swapr.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
+msgstr "Swapr.Finance — первая децентрализованная биржа с концентрированной ликвидностью в сети Полигон: лучшие курсы для поставщиков ликвидности и трейдеров в сети Полигон, со встроенным фармингом и динамическими комиссиями."
 
 #: src/components/StakingAnalyticsChart/RangeButtons.tsx
 msgid "All"
 msgstr "Все"
 
 #: src/pages/Swap/index.tsx
-msgid "Allow QuickSwap to use your {0}"
-msgstr "Разрешить QuickSwap использовать ваши {0}"
+msgid "Allow Swapr to use your {0}"
+msgstr "Разрешить Swapr использовать ваши {0}"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Allow LP token migration"
@@ -260,8 +260,8 @@ msgid "Amount of newly-staked ALGB per day"
 msgstr "Застейкано ALGB за день"
 
 #: src/hooks/useSwapCallback.ts
-msgid "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with QuickSwap."
-msgstr "Возникла ошибка при обмене. Возможно нужно увеличить допустимое проскальзывание. Если это не помогло, токен, которым вы торгуете, не совместим. Обратите внимание: ребейз токены несовместимы с QuickSwap."
+msgid "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note: rebase tokens are incompatible with Swapr."
+msgstr "Возникла ошибка при обмене. Возможно нужно увеличить допустимое проскальзывание. Если это не помогло, токен, которым вы торгуете, не совместим. Обратите внимание: ребейз токены несовместимы с Swapr."
 
 #: src/pages/RealStakerPage/RealStakerResBlocks.tsx
 msgid "Any rewards you earned will be automatically restaked (compounded) for you."
@@ -375,8 +375,8 @@ msgid "Based on <0>fees</0> / <1>active liquidity</1>"
 msgstr "На основе <0>комиссии</0> / <1>активная ликвидность</1>"
 
 #: src/components/CautionModal/index.tsx
-msgid "Before using QuickSwap, you should review the relevant documentation to make sure you understand how QuickSwap works."
-msgstr "Перед тем, как начать пользоваться QuickSwap, ознакомьтесь с необходимой документацией и убедитесь в том, что вы понимаете как работает QuickSwap."
+msgid "Before using Swapr, you should review the relevant documentation to make sure you understand how Swapr works."
+msgstr "Перед тем, как начать пользоваться Swapr, ознакомьтесь с необходимой документацией и убедитесь в том, что вы понимаете как работает Swapr."
 
 #: src/pages/EventsHistory/index.tsx
 msgid "Best APR"
@@ -479,8 +479,8 @@ msgid "Clear all"
 msgstr "Очистить всё"
 
 #: src/pages/MigrateV2/index.tsx
-msgid "Click Migrate to transfer your liquidity from SushiSwap or QuickSwap to QuickSwap."
-msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или QuickSwap в QuickSwap."
+msgid "Click Migrate to transfer your liquidity from SushiSwap or Swapr to Swapr."
+msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или Swapr в Swapr."
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Close"
@@ -1264,8 +1264,8 @@ msgid "Migrate Pool"
 msgstr "Перенести пул"
 
 #: src/components/NavigationTabs/FindPoolTabs.tsx
-msgid "Migrate from SushiSwap or QuickSwap"
-msgstr "Перенести из SushiSwap или QuickSwap"
+msgid "Migrate from SushiSwap or Swapr"
+msgstr "Перенести из SushiSwap или Swapr"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Migrating"
@@ -1777,8 +1777,8 @@ msgid "Select a token"
 msgstr "Выберите токен"
 
 #: src/pages/PoolFinder/index.tsx
-msgid "Select a token to find your liquidity on SushiSwap or QuickSwap."
-msgstr "Выберите токен, чтобы найти свою ликвидность в SushiSwap или QuickSwap."
+msgid "Select a token to find your liquidity on SushiSwap or Swapr."
+msgstr "Выберите токен, чтобы найти свою ликвидность в SushiSwap или Swapr."
 
 #: src/pages/AddLiquidity/index.tsx
 #: src/pages/AddLiquidity/Review.tsx
@@ -1935,8 +1935,8 @@ msgid "TVL"
 msgstr "TVL"
 
 #: src/hooks/useSwapCallback.ts
-msgid "The QuickSwap invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
-msgstr "Инвариант QuickSwap x * y = k не соблюдается при обмене. Обычно это означает, что один из токенов, которые вы обмениваете, имеет особенности поведения при его передаче."
+msgid "The Swapr invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
+msgstr "Инвариант Swapr x * y = k не соблюдается при обмене. Обычно это означает, что один из токенов, которые вы обмениваете, имеет особенности поведения при его передаче."
 
 #: src/components/InfoTotalStats/index.tsx
 msgid "The Subgraph information might be outdated – check all the correct statistics"
@@ -1951,8 +1951,8 @@ msgid "The output token cannot be transferred. There may be an issue with the ou
 msgstr "Выкупаемый токен не может быть отправлен. Возможно, имеется проблема с этим токеном."
 
 #: src/hooks/useSwapCallback.ts
-msgid "The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with QuickSwap."
-msgstr "Выкупаемый токен не может быть отправлен. Возможно, имеется проблема с этим токеном. Примечание: ребейз токены несовместимы с QuickSwap."
+msgid "The output token cannot be transferred. There may be an issue with the output token. Note: rebase tokens are incompatible with Swapr."
+msgstr "Выкупаемый токен не может быть отправлен. Возможно, имеется проблема с этим токеном. Примечание: ребейз токены несовместимы с Swapr."
 
 #: src/components/Badge/RangeBadge.tsx
 msgid "The price of this pool is outside of your selected range. Your position is not currently earning fees."
@@ -1975,8 +1975,8 @@ msgid "This farm is filled"
 msgstr "Этот фарминг заполнен"
 
 #: src/hooks/useSwapCallback.ts
-msgid "This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with QuickSwap"
-msgstr "Транзакция не может быть выполнена успешно из-за движения цены. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с QuickSwap"
+msgid "This transaction will not succeed due to price movement. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Swapr"
+msgstr "Транзакция не может быть выполнена успешно из-за движения цены. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с Swapr"
 
 #: src/hooks/useSwapCallback.ts
 msgid "This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance."
@@ -2000,8 +2000,8 @@ msgid "To (at least)"
 msgstr "На (минимум)"
 
 #: src/components/StakingModal/index.tsx
-msgid "To stake your NFT you should approve QuickSwap to use it"
-msgstr "Чтобы застейкать NFT вы должны одобрить QuickSwap его использование"
+msgid "To stake your NFT you should approve Swapr to use it"
+msgstr "Чтобы застейкать NFT вы должны одобрить Swapr его использование"
 
 #: src/components/StakeModal/index.tsx
 msgid "To take part in this farming event, you need to"
@@ -2088,8 +2088,8 @@ msgid "Undepositing"
 msgstr "Вывод"
 
 #: src/hooks/useSwapCallback.ts
-msgid "Unknown error{0}. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with QuickSwap."
-msgstr "Неизвестная ошибка{0}. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с QuickSwap."
+msgid "Unknown error{0}. Try increasing your slippage tolerance. Note: rebase tokens are incompatible with Swapr."
+msgstr "Неизвестная ошибка{0}. Попробуйте увеличить допустимое проскальзывание. Примечание: ребейз токены несовместимы с Swapr."
 
 #: src/pages/RealStakerPage/RealStakerResBlocks.tsx
 #: src/pages/RealStakerPage/RealStakerUnstakeModal.tsx
@@ -2125,8 +2125,8 @@ msgid "Updating..."
 msgstr "Обновление..."
 
 #: src/components/CautionModal/index.tsx
-msgid "Using QuickSwap involves various risks, including, but not limited to, losses while digital assets are being supplied to QuickSwap, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
-msgstr "Ипользование QuickSwap включает различные риски, включая потери цифровых активов во время добавления их на QuickSwap и потери из-за изменения цен токенов."
+msgid "Using Swapr involves various risks, including, but not limited to, losses while digital assets are being supplied to Swapr, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
+msgstr "Ипользование Swapr включает различные риски, включая потери цифровых активов во время добавления их на Swapr и потери из-за изменения цен токенов."
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "View list"
@@ -2175,8 +2175,8 @@ msgid "Week"
 msgstr "Неделя"
 
 #: src/components/CautionModal/index.tsx
-msgid "Welcome to QuickSwap, the first concentrated liquidity DEX on Polygon!"
-msgstr "Добро пожаловать на QuickSwap, первую децентрализованную биржу с концентрированной ликвидностью в сети Полигон!"
+msgid "Welcome to Swapr, the first concentrated liquidity DEX on Polygon!"
+msgstr "Добро пожаловать на Swapr, первую децентрализованную биржу с концентрированной ликвидностью в сети Полигон!"
 
 #: src/components/StakerMyStakes/PositionHeader.tsx
 msgid "Withdraw"
@@ -2211,8 +2211,8 @@ msgid "You are responsible for completing your own due diligence to understand t
 msgstr "Вы несете ответственность за проведение собственной проверки, чтобы понять риски торговли криптовалютами."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "You are the first liquidity provider for this QuickSwap pool. Your liquidity will migrate at the current"
-msgstr "Вы являетесь первым поставщиком ликвидности для этого пула QuickSwap. Ваша ликвидность будет перенесена по текущей цене"
+msgid "You are the first liquidity provider for this Swapr pool. Your liquidity will migrate at the current"
+msgstr "Вы являетесь первым поставщиком ликвидности для этого пула Swapr. Ваша ликвидность будет перенесена по текущей цене"
 
 #: src/pages/Swap/index.tsx
 msgid "You can now trade {0}"
@@ -2231,16 +2231,16 @@ msgid "You must connect an account."
 msgstr "Вы должны подключить аккаунт."
 
 #: src/pages/Swap/index.tsx
-msgid "You must give the QuickSwap smart contracts permission to use your {0}. You only have to do this once per token."
-msgstr "Вы должны дать разрешение смарт-контрактам QuickSwap на использование ваших {0}. Это нужно сделать только один раз для каждого токена."
+msgid "You must give the Swapr smart contracts permission to use your {0}. You only have to do this once per token."
+msgstr "Вы должны дать разрешение смарт-контрактам Swapr на использование ваших {0}. Это нужно сделать только один раз для каждого токена."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "You should only deposit liquidity into QuickSwap at a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
-msgstr "Вносить ликвидность в QuickSwap следует только по той цене, которую вы считаете правильной. <0/>Если цена кажется неправильной, вы можете либо произвести обмен, чтобы сдвинуть её, либо дождаться, чтобы это сделал кто-то другой."
+msgid "You should only deposit liquidity into Swapr at a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
+msgstr "Вносить ликвидность в Swapr следует только по той цене, которую вы считаете правильной. <0/>Если цена кажется неправильной, вы можете либо произвести обмен, чтобы сдвинуть её, либо дождаться, чтобы это сделал кто-то другой."
 
 #: src/components/CautionModal/index.tsx
-msgid "You use QuickSwap at your own risk and without warranties of any kind. QuickSwap is not liable for potential losses."
-msgstr "Вы используете QuickSwap на свой страх и риск и без каких-либо гарантий. QuickSwap не несет ответственности за возможные убытки\"."
+msgid "You use Swapr at your own risk and without warranties of any kind. Swapr is not liable for potential losses."
+msgstr "Вы используете Swapr на свой страх и риск и без каких-либо гарантий. Swapr не несет ответственности за возможные убытки\"."
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "You will also collect fees earned from this position."
@@ -2316,8 +2316,8 @@ msgid "ZOOM"
 msgstr "МАСШТАБ"
 
 #: src/pages/Swap/index.tsx
-msgid "best dex, QuickSwap exchange, QuickSwap crypto, QuickSwap finance, QuickSwap dex, defi, polygon dex, exchange on polygon, matic exchange"
-msgstr "best dex, QuickSwap exchange, QuickSwap crypto, QuickSwap finance, QuickSwap dex, defi, polygon dex, exchange on polygon, matic exchange"
+msgid "best dex, Swapr exchange, Swapr crypto, Swapr finance, Swapr dex, defi, polygon dex, exchange on polygon, matic exchange"
+msgstr "best dex, Swapr exchange, Swapr crypto, Swapr finance, Swapr dex, defi, polygon dex, exchange on polygon, matic exchange"
 
 #: src/components/Settings/index.tsx
 msgid "confirm"

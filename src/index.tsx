@@ -1,6 +1,5 @@
 import "inter-ui";
 import "@reach/dialog/styles.css";
-import "./components/analytics";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
 import { StrictMode } from "react";

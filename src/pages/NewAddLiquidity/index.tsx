@@ -453,7 +453,7 @@ export function NewAddLiquidityPage({
                             />
                         ) : (
                             <button
-                                className="add-buttons__next f f-jc f-ac ml-a"
+                                className="btn primary f f-jc f-ac ml-a"
                                 disabled={!steps[currentStep]}
                                 onClick={() => {
                                     dispatch(updateCurrentStep({ currentStep: currentStep + 1 }));
@@ -468,7 +468,7 @@ export function NewAddLiquidityPage({
                     </div>
                 ) : !account ? (
                     <div className="mt-2 add-buttons f f-ac f-jc mxs_mt-1">
-                        <button className="add-buttons__next f f-jc f-ac ml-a" onClick={toggleWalletModal}>
+                        <button className="btn primary f f-jc f-ac ml-a" onClick={toggleWalletModal}>
                             <Trans>Connect Wallet</Trans>
                         </button>
                     </div>

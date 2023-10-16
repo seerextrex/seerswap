@@ -3,18 +3,20 @@
   border-radius: 12px;
 
   &.primary {
-    background-color: var(--primary);
+    border-radius: var(--radius-border-radius-12, 12px);
+    background: var(--surface-theme-dark-brand, linear-gradient(180deg, #9185F7 0%, #6F58F6 100%));
+    box-shadow: 0px 1px 3px -1px rgba(17, 12, 34, 0.12);
     color: var(--white);
-    border: 1px solid var(--primary);
+    padding: 8px 16px;
+    
     
     &:hover {
-      background-color: var(--primary-hover);
-      border-color: var(--primary-hover);
+      background: var(--surface-theme-dark-brand, linear-gradient(180deg, #7d72e6 0%, #4c33d6 100%));
     }
 
     &:disabled {
       color: #938dcc7f;
-      background-color: var(--primary-disabled);
+      background: var(--surface-theme-dark-brand, linear-gradient(180deg, #4e4c66 0%, #3a374c 100%));
       border-color: transparent;
       cursor: not-allowed;
     }

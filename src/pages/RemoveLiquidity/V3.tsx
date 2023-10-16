@@ -363,9 +363,9 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
                         <div style={{ display: "flex" }}>
                             <AutoColumn gap="12px" style={{ flex: "1" }}>
-                                <ButtonConfirmed confirmed={false} disabled={removed || percent === 0 || !liquidityValue0} onClick={burn}>
+                                <button disabled={removed || percent === 0 || !liquidityValue0} onClick={burn} className={"btn primary pv-1 br-12 b"}>
                                     {removed ? <Trans>Closed</Trans> : error ?? <Trans>Remove</Trans>}
-                                </ButtonConfirmed>
+                                </button>
                             </AutoColumn>
                         </div>
                     </AutoColumn>

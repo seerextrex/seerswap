@@ -191,7 +191,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 label: [trade?.inputAmount.currency.symbol, toggledVersion].join("/"),
             });
         }
-    }, [approveCallback, gatherPermitSignature, signatureState]);
+    }, [approveCallback, gatherPermitSignature, signatureState, toggledVersion, trade?.inputAmount.currency.symbol]);
 
     // check if user has gone through approval process, used to show two step buttons, reset on token change
     const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false);
@@ -250,7 +250,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     txHash: undefined,
                 });
             });
-    }, [swapCallback, priceImpact, tradeToConfirm, showConfirm, recipient, recipientAddress, account, trade, singleHopOnly]);
+    }, [swapCallback, priceImpact, tradeToConfirm, showConfirm, recipient, recipientAddress, account, trade]);
 
     // errors
     const [showInverted, setShowInverted] = useState<boolean>(false);

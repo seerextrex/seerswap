@@ -8,7 +8,7 @@
 
     &__title {
         padding: 0.5rem 1rem;
-        border: 1px solid #4130a2;
+        border: 1px solid #443b73;
         border-right: none;
         border-radius: 8px 0 0 8px;
         color: #b4b1cf;
@@ -23,12 +23,12 @@
     &__fee {
         background-color: #202140;
         color: #A398E7;
-        border: 1px solid #4130a2;
+        border: 1px solid #443b73;
         border-right: none;
         
         &.single {
             border-radius: 0 8px 8px 0;
-            border-right: 1px solid #4130a2;
+            border-right: 1px solid #443b73;
         }
     }
     

@@ -343,7 +343,7 @@ msgstr "Volver"
 #~ msgstr "Volver a los fondos comunes"
 
 #: src/pages/PoolInfoPage/index.tsx
-msgid "Back to pools table"
+msgid "Back to pools"
 msgstr "Volver al tablero de fondos comunes"
 
 #: src/components/StakeModalFarmingTiers/index.tsx

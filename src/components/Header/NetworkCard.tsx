@@ -39,7 +39,7 @@ export default function NetworkCard() {
         return (
             <div className="f" style={{ display: "flex", alignItems: "center" }}>
                 <img src={GnosisLogo} width="20" height="20" style={{ borderRadius: "50%" }} />
-                <div className="ml-05" title={info.label}>
+                <div className="ml-05" style={{ width: "max-content" }} title={info.label}>
                     {info.label}
                 </div>
             </div>

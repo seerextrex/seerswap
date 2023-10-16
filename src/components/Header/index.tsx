@@ -73,7 +73,7 @@ export default function Header() {
                     <>
                         <NetworkCard />
                         {(chainId === AlgebraConfig.CHAIN_PARAMS.chainId && account && userEthBalance) || networkFailed ? (
-                            <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" fontWeight={500}>
+                            <BalanceText style={{ flexShrink: 0 }} px="0.85rem" fontWeight={500}>
                                 {_userEthBalance?.toFixed(5)} {!isMobile && chainValue}
                             </BalanceText>
                         ) : null}

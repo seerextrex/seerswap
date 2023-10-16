@@ -88,7 +88,7 @@ function colors(darkMode: boolean): Colors {
 
         winterBackground: "rgba(91, 183, 255, 0.6)",
         winterMainButton: "#6f58f6",
-        winterDisabledButton: "#17517c",
+        winterDisabledButton: "#283138",
     };
 }
 
@@ -188,6 +188,9 @@ export const TYPE = {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
+}
+body {
+    background-color: #030b18;
 }
 
 a {

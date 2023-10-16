@@ -74,7 +74,7 @@ export function Web3StatusInner() {
 
     if (account) {
         return (
-            <Web3StatusConnected id="web3-status-connected" style={{ background: "transparent", color: "white", border: "none" }} onClick={toggleWalletModal} pending={hasPendingTransactions}>
+            <Web3StatusConnected id="web3-status-connected" style={{ background: "#181e3e", color: "white", border: "none" }} onClick={toggleWalletModal} pending={hasPendingTransactions}>
                 {hasPendingTransactions ? (
                     <RowBetween>
                         <Text>

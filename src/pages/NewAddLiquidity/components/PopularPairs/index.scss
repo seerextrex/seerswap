@@ -2,7 +2,7 @@
     padding: 4px 8px;
     border-radius: 4px;
     background-color: #182732;
-    border: 1px solid #254476;
+    border: 1px solid var(--primary);
     width: fit-content;
     cursor: pointer;
     line-height: 14px;
@@ -16,7 +16,7 @@
     }
 
     &:hover {
-        background-color: #2a4559;
+        background-color: var(--primary2);
     }
 
 }

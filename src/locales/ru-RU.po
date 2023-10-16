@@ -350,7 +350,7 @@ msgstr "Назад"
 #~ msgstr "Назад к пулам"
 
 #: src/pages/PoolInfoPage/index.tsx
-msgid "Back to pools table"
+msgid "Back to pools"
 msgstr "Назад к таблице пулов"
 
 #: src/components/StakeModalFarmingTiers/index.tsx

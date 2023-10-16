@@ -12,7 +12,6 @@ import { Pool } from "lib/src";
 import React, { useEffect } from "react";
 import { useIsNetworkFailed } from "../hooks/useIsNetworkFailed";
 import Loader from "../components/Loader";
-import GoogleAnalyticsReporter from "../components/analytics/GoogleAnalyticsReporter";
 import { useActiveWeb3React } from "../hooks/web3";
 import { GlobalStyle, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
@@ -54,7 +53,6 @@ export default function App() {
             <GlobalStyle />
             <Route component={DarkModeQueryParamReader} />
             <Route component={ApeModeQueryParamReader} />
-            <Route component={GoogleAnalyticsReporter} />
             <Web3ReactManager>
                 <>
                     <Header />

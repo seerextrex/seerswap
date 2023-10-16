@@ -6,15 +6,17 @@
     background-color: var(--primary);
     color: var(--white);
     border: 1px solid var(--primary);
+    
     &:hover {
       background-color: var(--primary-hover);
       border-color: var(--primary-hover);
     }
 
     &:disabled {
+      color: #938dcc7f;
       background-color: var(--primary-disabled);
-      border-color: var(--primary-disabled);
-      cursor: default;
+      border-color: transparent;
+      cursor: not-allowed;
     }
   }
 

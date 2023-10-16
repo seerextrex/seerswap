@@ -8,10 +8,10 @@
 
     &__title {
         padding: 0.5rem 1rem;
-        border: 1px solid #233d65;
+        border: 1px solid #4130a2;
         border-right: none;
         border-radius: 8px 0 0 8px;
-        color: #9ed6ff;
+        color: #b4b1cf;
     }
 
     &__fee, &__apr {
@@ -21,20 +21,20 @@
     }
 
     &__fee {
-        background-color: #0d213a;
-        color: #22cbdc;
-        border: 1px solid #133156;
+        background-color: #202140;
+        color: #A398E7;
+        border: 1px solid #4130a2;
         border-right: none;
         
         &.single {
             border-radius: 0 8px 8px 0;
-            border-right: 1px solid #133156;
+            border-right: 1px solid #4130a2;
         }
     }
     
     &__apr {
         background-color: #2c4b3b;
-        color: #22dc22;
+        color: #21c621;
         border-radius: 0 8px 8px 0;
         border: 1px solid #31694c;
     }

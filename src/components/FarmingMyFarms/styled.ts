@@ -1,10 +1,9 @@
-import styled, { css } from 'styled-components/macro'
-import { darken } from 'polished'
-import { skeletonGradient } from '../../theme/styles/skeleton'
-import { stringToColour } from '../../utils/stringToColour'
-import gradient from 'random-gradient'
-import { NavLink } from 'react-router-dom'
-
+import styled, { css } from "styled-components/macro";
+import { darken } from "polished";
+import { skeletonGradient } from "../../theme/styles/skeleton";
+import { stringToColour } from "../../utils/stringToColour";
+import gradient from "random-gradient";
+import { NavLink } from "react-router-dom";
 
 export const TokenIcon = styled.div<{ name?: string; skeleton: boolean; logo: string }>`
     display: flex;
@@ -12,21 +11,21 @@ export const TokenIcon = styled.div<{ name?: string; skeleton: boolean; logo: st
     justify-content: center;
     width: 35px;
     height: 35px;
-    background-color: ${({ name }) => (name ? stringToColour(name).background : '#5aa7df')};
-    border: 1px solid ${({ name }) => (name ? stringToColour(name).border : '#5aa7df')};
-    color: ${({ name }) => (name ? stringToColour(name).text : '#5aa7df')};
+    background-color: ${({ name }) => (name ? stringToColour(name).background : "#5aa7df")};
+    border: 1px solid ${({ name }) => (name ? stringToColour(name).border : "#5aa7df")};
+    color: ${({ name }) => (name ? stringToColour(name).text : "#5aa7df")};
     border-radius: 50%;
     user-select: none;
 
     ${({ skeleton }) => (skeleton ? skeletonGradient : null)}
-    background: ${({ logo }) => (logo ? `url(${logo})` : '')};
+    background: ${({ logo }) => (logo ? `url(${logo})` : "")};
     background-size: contain;
     background-repeat: no-repeat;
 
     &:nth-of-type(2) {
         margin-left: -8px;
     }
-`
+`;
 export const NFTPositionIcon = styled.div<{ name: string; skeleton?: boolean }>`
     display: flex;
     align-items: center;
@@ -37,14 +36,14 @@ export const NFTPositionIcon = styled.div<{ name: string; skeleton?: boolean }>`
     height: 35px;
     border-radius: 50%;
     margin-top: 2px;
-    background: ${({ name }) => (name ? gradient('token' + name) : '')};
+    background: ${({ name }) => (name ? gradient("token" + name) : "")};
     ${({ skeleton }) =>
         skeleton &&
         css`
             background: rgba(60, 97, 126, 0.5);
             ${skeletonGradient}
         `};
-`
+`;
 export const NFTPositionDescription = styled.div<{ skeleton?: boolean }>`
     margin-left: 10px;
     line-height: 18px;
@@ -71,8 +70,8 @@ export const NFTPositionDescription = styled.div<{ skeleton?: boolean }>`
                 display: inline-block;
             }
         `}
-`
-export const NFTPositionIndex = styled.div``
+`;
+export const NFTPositionIndex = styled.div``;
 
 export const NFTPositionLink = styled.a`
     font-size: 13px;
@@ -81,7 +80,7 @@ export const NFTPositionLink = styled.a`
     &:hover {
         color: #01ffff;
     }
-`
+`;
 
 export const PositionCardBody = styled.div`
     display: flex;
@@ -89,7 +88,7 @@ export const PositionCardBody = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
-`
+`;
 
 export const PositionCardEvent = styled.div`
     display: flex;
@@ -108,7 +107,7 @@ export const PositionCardEvent = styled.div`
       margin-bottom: 1rem;
     }
   `}
-`
+`;
 
 export const PositionCardEventTitle = styled.div`
     font-size: 18px;
@@ -116,12 +115,12 @@ export const PositionCardEventTitle = styled.div`
     margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
-`
+`;
 export const TimeWrapper = styled.span`
     font-size: 14px;
     font-weight: 400;
     line-height: 21px;
-`
+`;
 
 export const PositionCardStats = styled.div`
     display: flex;
@@ -130,7 +129,7 @@ export const PositionCardStats = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `}
-`
+`;
 
 export const PositionCardStatsItemWrapper = styled.div`
     display: flex;
@@ -152,24 +151,24 @@ export const PositionCardStatsItemWrapper = styled.div`
       margin-left: 0;
     }
   `}
-`
+`;
 
 export const PositionCardStatsItem = styled.div`
     display: flex;
     flex-direction: column;
     margin-left: 10px;
-`
+`;
 
 export const PositionCardStatsItemTitle = styled.div`
     font-weight: 600;
     font-size: 12px;
     text-transform: uppercase;
-`
+`;
 
 export const PositionCardStatsItemValue = styled.div<{ title: any }>`
     font-size: 16px;
     line-height: 25px;
-`
+`;
 
 export const PositionCardMock = styled.div`
     display: flex;
@@ -180,7 +179,7 @@ export const PositionCardMock = styled.div`
     width: 100%;
     height: 100%;
     min-height: 92px;
-`
+`;
 
 export const TokensNames = styled.div<{ skeleton?: boolean }>`
     margin-left: 0.5rem;
@@ -191,18 +190,18 @@ export const TokensNames = styled.div<{ skeleton?: boolean }>`
   `}
     & > * {
         ${({ skeleton }) =>
-        skeleton
-            ? css`
-                    width: 40px;
-                    height: 16px;
-                    background: #5aa7df;
-                    margin-bottom: 3px;
-                    border-radius: 4px;
-                    ${skeletonGradient}
-                `
-            : null}
+            skeleton
+                ? css`
+                      width: 40px;
+                      height: 16px;
+                      background: #5aa7df;
+                      margin-bottom: 3px;
+                      border-radius: 4px;
+                      ${skeletonGradient}
+                  `
+                : null}
     }
-`
+`;
 
 export const EmptyMock = styled.div`
     display: flex;
@@ -214,28 +213,28 @@ export const EmptyMock = styled.div`
     & > * {
         margin-bottom: 1rem;
     }
-`
+`;
 
 export const SendModal = styled.div`
     display: flex;
     flex-direction: column;
     padding: 2rem;
     width: 100%;
-`
+`;
 
 export const ModalTitle = styled.div`
     margin-bottom: 1rem;
     font-size: 18px;
     font-weight: 600;
     color: #080064;
-`
+`;
 
 export const RecipientInput = styled.input`
     padding: 8px;
     border: none;
     border-radius: 8px;
     width: 100%;
-`
+`;
 
 export const SendNFTButton = styled.button`
     padding: 10px 16px;
@@ -248,7 +247,7 @@ export const SendNFTButton = styled.button`
     &:disabled {
         opacity: 0.4;
     }
-`
+`;
 
 export const MoreButton = styled.button<{ single?: boolean }>`
     display: flex;
@@ -256,7 +255,7 @@ export const MoreButton = styled.button<{ single?: boolean }>`
     justify-content: center;
     border: none;
     background-color: white;
-    color: #36f;
+    color: #6f58f6;
     border-radius: 4px;
     padding: 8px;
     height: 30px;
@@ -267,11 +266,11 @@ export const MoreButton = styled.button<{ single?: boolean }>`
     }
 
     &:last-of-type {
-        margin: ${({ single }) => (single ? 'auto 0 auto auto' : 'auto 0 auto 1rem')};
+        margin: ${({ single }) => (single ? "auto 0 auto auto" : "auto 0 auto 1rem")};
     }
 
     &:hover {
-        background-color: ${darken(0.1, '#fff')};
+        background-color: ${darken(0.1, "#fff")};
     }
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -286,14 +285,14 @@ export const MoreButton = styled.button<{ single?: boolean }>`
     }
 
   `}
-`
+`;
 export const SendNFTWarning = styled.div`
     margin-bottom: 1rem;
     padding: 8px 12px;
     background: #e4e46b;
     color: #333303;
     border-radius: 8px;
-`
+`;
 
 export const EventProgress = styled.div`
     width: 100%;
@@ -303,32 +302,32 @@ export const EventProgress = styled.div`
     background-color: white;
     position: relative;
     padding: 4px;
-`
+`;
 export const EventEndTime = styled.div`
     line-height: 16px;
     font-size: 13px;
     position: relative;
     margin-bottom: 3px;
-`
+`;
 
 export const EventProgressInner = styled.div.attrs(({ progress }: { progress: number }) => ({
     style: {
-        width: `${progress}%`
-    }
-})) <{ progress: number }>`
+        width: `${progress}%`,
+    },
+}))<{ progress: number }>`
     height: 100%;
     background-color: #5bb7ff;
     border-radius: 6px;
     transition-duration: 0.5s;
 
     ${skeletonGradient}
-`
+`;
 
 export const CheckOutLink = styled(NavLink)`
     color: white;
     font-size: 14px;
     text-decoration: none;
-    background-color: #36f;
+    background-color: #6F58F6;
     padding: 8px 12px;
     border-radius: 8px;
     font-weight: 600;
@@ -336,17 +335,16 @@ export const CheckOutLink = styled(NavLink)`
     &:hover {
         background-color: ${({ theme }) => darken(0.05, theme.winterMainButton)}};
     }
-`
+`;
 
 export const PositionNotDepositedText = styled.div`
     font-size: 14px;
     margin-bottom: 8px;
-`
-
+`;
 
 //IsActive
 export const PositionRange = styled.div`
     display: flex;
     align-items: center;
     font-size: 14px;
-`
+`;

@@ -18,22 +18,22 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        background-color: #395d79;
+        background-color: #314655;
         color: white;
         font-size: 13px;
         
         &.done {
-            background-color: #26a626;
+            background-color: #5dba51;
             color: white;
         }
 
         &.current {
-            background-color: #21cbff;
+            background-color: #8A78F2;
             color: #093542;
         }
 
         &-current {
-            color: #21cbff;
+            color: #8A78F2;
         }
     }
 }

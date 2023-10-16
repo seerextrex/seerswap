@@ -4,7 +4,7 @@ import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { useV3Positions } from "hooks/useV3Positions";
 import { useActiveWeb3React } from "hooks/web3";
 import { useCallback, useEffect, useMemo } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useWalletModalToggle } from "state/application/hooks";
 import { useUserHideClosedPositions, useUserHideFarmingPositions } from "state/user/hooks";
 import { Helmet } from "react-helmet";
@@ -17,7 +17,6 @@ import { SwapPoolTabs } from "../../components/NavigationTabs";
 import "./index.scss";
 import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
 import { EthereumWindow } from "models/types";
-import { useShowNewestPosition } from "state/mint/v3/hooks";
 
 export default function Pool() {
     const { account, chainId } = useActiveWeb3React();
@@ -68,21 +67,13 @@ export default function Pool() {
             return prevFilteredPositions;
         }
         return filteredPositions;
-    }, [filteredPositions, account, prevAccount]);
-
-    const showNewestPosition = useShowNewestPosition();
+    }, [account, prevAccount, filteredPositions, prevFilteredPositions]);
 
     const newestPosition = useMemo(() => {
         return Math.max(..._filteredPositions.map((position) => +position.tokenId));
-    }, [showNewestPosition, _filteredPositions]);
+    }, [_filteredPositions]);
 
     const showConnectAWallet = Boolean(!account);
-
-    let chainSymbol;
-
-    if (chainId === 137) {
-        chainSymbol = "MATIC";
-    }
 
     const reload = useCallback(() => window.location.reload(), []);
 
@@ -93,14 +84,14 @@ export default function Pool() {
 
         _window.ethereum.on("accountsChanged", reload);
         return () => _window.ethereum.removeListener("accountsChanged", reload);
-    }, []);
+    }, [reload]);
 
     return (
         <>
             <Helmet>
                 <title>{t`Swapr — Pool`}</title>
             </Helmet>
-            <Card classes={"br-24 ph-2 pv-1 mxs_ph-1"}>
+            <Card classes={"card-gradient-shadow br-24 ph-2 pv-1 mxs_ph-1"}>
                 <SwapPoolTabs active={"pool"} />
                 <AutoColumn gap="1">
                     <div className={"pool__header flex-s-between"}>
@@ -108,9 +99,6 @@ export default function Pool() {
                             <Trans>Pools Overview</Trans>
                         </span>
                         <div className={"flex-s-between mxs_mv-05"}>
-                            {/* <NavLink className={"btn primary p-05 br-8 mr-1"} id="join-pool-button" to={`/migrate`}>
-                                <Trans>Migrate Pool</Trans>
-                            </NavLink> */}
                             <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>
                                 + <Trans>New Position</Trans>
                             </NavLink>

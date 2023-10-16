@@ -332,7 +332,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 onDismiss={handleDismissTokenWarning}
             />
             <div className={"maw-610 mh-a pos-r swap"}>
-                <Card classes={"p-2 br-24"}>
+                <Card classes={"card-gradient-shadow p-2 br-24"}>
                     <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
                     <div id="swap-page">
                         <ConfirmSwapModal

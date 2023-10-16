@@ -325,7 +325,7 @@ export default function AddLiquidity({
                 )}
                 pendingText={pendingText}
             />
-            <Card classes={"p-2 br-24"}>
+            <Card classes={"card-gradient-shadow p-2 br-24"}>
                 <AddRemoveTabs creating={false} adding={true} positionID={tokenId} defaultSlippage={DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE} showBackLink={!hasExistingPosition} />
                 <div className={"add-liquidity pt-1 mt-1"} data-wide={!hasExistingPosition && !networkFailed}>
                     <AutoColumn gap="lg">

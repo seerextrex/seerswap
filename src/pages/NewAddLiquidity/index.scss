@@ -1,7 +1,7 @@
 .add-liquidity-page {
     background-color: #1c2a359e;
     padding: 2rem 2rem 0 2rem;
-    border-radius: 8px;
+    border-radius: 24px;
     display: flex; 
     flex-direction: column;
     width: 1080px;
@@ -37,7 +37,7 @@
   padding: 1rem 2rem;
   background-color: #1d272e;
   border-top: 1px solid #243956;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 24px 24px;
 
 
   &__liquidity, &__next {

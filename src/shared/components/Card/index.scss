@@ -1,8 +1,12 @@
 .card-wrapper {
   position: relative;
-  background-color: #1c2a359e;
-  backdrop-filter:   blur(24px);
+  background-color: #121e2a;
 }
+
+.card-gradient-shadow {
+  box-shadow: rgb(150 77 210 / 12%) 0px 2px 60px 0px;
+}
+
 .dark {
   background-color: var(--dark-ebony-clay);
 }

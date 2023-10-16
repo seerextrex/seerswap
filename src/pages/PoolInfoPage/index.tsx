@@ -182,7 +182,7 @@ export default function PoolInfoPage({
                 </span>
             </NavLink>
             {poolResult ? (
-                <Card classes={"p-2 br-24 mxs_p-1"}>
+                <Card classes={"p-2 br-24 mxs_p-1 test"}>
                     <PoolInfoHeader
                         token0={_token0 ?? undefined}
                         token1={_token1 ?? undefined}

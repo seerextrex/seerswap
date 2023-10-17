@@ -2,14 +2,14 @@
     width: 140px !important;
     background: #26343f !important;
     color: white !important;
-    border: 1px solid #233d65 !important;
+    border: 1px solid #443b73 !important;
     padding: 8px 1rem !important;
     border-radius: 8px !important;
     font-size: unset !important;
     text-align: left !important;
 
     &:focus {
-        border: 1px solid #21cbff !important;
+        border: 1px solid #8A78F2 !important;
     }
 
     &.is-usd {
@@ -19,14 +19,14 @@
     &__btn {
         background-color: transparent;
         color: white;
-        border: 1px solid #23406d;
+        border: 1px solid #8A78F2;
         border-radius: 50%;
         width: 22px;
         padding: 0 0 1px 1px;
 
         &:not(:disabled) {
             &:hover {
-                background-color: #2a4559;
+                background-color: #5c5074;
             }
         }
 
@@ -52,7 +52,7 @@
 }
 
 .current-price-tip {
-    background-color: #419fe8;
+    background-color: #A398E7;
     width: fit-content;
     padding: 9px;
     border-radius: 10px;

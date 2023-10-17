@@ -5,7 +5,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: max-content;
   grid-auto-flow: row;
-  border-top: 1px solid #2a7ed2;
+  border-top: 1px solid #A398E7;
 
   &[data-wide=true] {
     grid-template-columns: 1fr 1fr;
@@ -20,10 +20,4 @@
       pointer-events: none;
     }
   }
-
-  //  ${({ theme }) => theme.mediaWidth.upToMedium`
-  //grid-template-columns: 1fr;
-  //
-  //  margin-top: 0;
-  //  `};
 }

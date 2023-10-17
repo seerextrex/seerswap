@@ -132,7 +132,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
     }
 
     return (
-        <button className="add-buttons__liquidity ml-a" disabled={!isReady} onClick={onAdd}>
+        <button className="btn primary ml-a" disabled={!isReady} onClick={onAdd}>
             {title}
         </button>
     );

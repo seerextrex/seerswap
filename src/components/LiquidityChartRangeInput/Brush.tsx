@@ -6,9 +6,6 @@ import { LabelGroup, Tooltip, TooltipBackground } from "./styled";
 // flips the handles draggers when close to the container edges
 const FLIP_HANDLE_THRESHOLD_PX = 20;
 
-// margin to prevent tick snapping from putting the brush off screen
-const BRUSH_EXTENT_MARGIN_PX = 2;
-
 const compare = (a: [number, number], b: [number, number], xScale: ScaleLinear<number, number>): boolean => {
     // normalize pixels to 1 decimals
     const aNorm = a.map((x) => xScale(x).toFixed(1));
@@ -53,8 +50,8 @@ export const Brush = ({
             }
 
             if (selection[0] === 0 && selection[1] === innerWidth) {
-                setLocalBrushExtent(null)
-                return
+                setLocalBrushExtent(null);
+                return;
             }
 
             const scaled = (selection as [number, number]).map(xScale.invert) as [number, number];
@@ -85,7 +82,7 @@ export const Brush = ({
                 // [Math.max(0 + BRUSH_EXTENT_MARGIN_PX, xScale(0)), 0],
                 // [innerWidth - BRUSH_EXTENT_MARGIN_PX, innerHeight],
                 [0, 0],
-                [0, 0]
+                [0, 0],
             ])
             .handleSize(30)
             .filter(() => interactive)
@@ -162,14 +159,14 @@ export const Brush = ({
                         {/* west handle */}
                         <g cursor={"default"} transform={`translate(${Math.max(0, xScale(localBrushExtent[0]))}, 0)`}>
                             <svg width={xScale(localBrushExtent[1]) - xScale(localBrushExtent[0])}>
-                                <line stroke="#2797FF" strokeWidth="2" x1="0" x2={xScale(localBrushExtent[1])} y1={innerHeight} y2={innerHeight}></line>
+                                <line stroke="#6F58F6" strokeWidth="2" x1="0" x2={xScale(localBrushExtent[1])} y1={innerHeight} y2={innerHeight}></line>
                             </svg>
                         </g>
 
                         {westHandleInView ? (
                             <g cursor={"default"} transform={`translate(${Math.max(0, xScale(localBrushExtent[0])) + 7}, ${innerHeight - 9}), scale(${flipWestHandle ? "-1" : "1"}, 1)`}>
                                 <g style={{ userSelect: "none", pointerEvents: "none" }}>
-                                    <line x1={7} x2={7} y1={9} y2={-innerHeight - 20} stroke="#2797FF" strokeWidth="1"></line>
+                                    <line x1={7} x2={7} y1={9} y2={-innerHeight - 20} stroke="#6F58F6" strokeWidth="1"></line>
                                 </g>
 
                                 <LabelGroup visible={true} transform={`translate(0,${-innerHeight + 30}), scale(${flipWestHandle ? "1" : "-1"}, 1)`}>
@@ -185,7 +182,7 @@ export const Brush = ({
                         {eastHandleInView ? (
                             <g cursor={"default"} transform={`translate(${xScale(localBrushExtent[1]) - 7}, ${innerHeight - 9}), scale(${flipEastHandle ? "-1" : "1"}, 1)`}>
                                 <g style={{ userSelect: "none", pointerEvents: "none" }}>
-                                    <line x1={7} x2={7} y1={9} y2={-innerHeight - 20} stroke="#2797FF" strokeWidth="1"></line>
+                                    <line x1={7} x2={7} y1={9} y2={-innerHeight - 20} stroke="#6F58F6" strokeWidth="1"></line>
                                 </g>
 
                                 <LabelGroup transform={`translate(0,${-innerHeight + 30}), scale(${flipEastHandle ? "-1" : "1"}, 1)`} visible={true}>
@@ -202,6 +199,6 @@ export const Brush = ({
                 )}
             </>
         ),
-        [brushLabelValue, eastHandleInView, flipEastHandle, flipWestHandle, hovering, id, innerHeight, innerWidth, localBrushExtent, showEastArrow, showLabels, showWestArrow, westHandleInView, xScale]
+        [brushLabelValue, eastHandleInView, flipEastHandle, flipWestHandle, id, innerHeight, innerWidth, localBrushExtent, westHandleInView, xScale]
     );
 };

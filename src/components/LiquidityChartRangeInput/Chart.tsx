@@ -21,7 +21,7 @@ export function Chart({
     brushLabels,
     onBrushDomainChange,
     zoomLevels,
-    priceFormat
+    priceFormat,
 }: LiquidityChartRangeInputProps) {
     const zoomRef = useRef<SVGRectElement | null>(null);
 
@@ -32,7 +32,6 @@ export function Chart({
     const maxXScale = useMemo(() => series.reduce((acc, el) => (el.price0 > acc ? el.price0 : acc), 0), [series]);
 
     const { xScale, yScale } = useMemo(() => {
-
         const scales = {
             xScale: scaleLinear()
                 .domain([current * zoomLevels.initialMin, current * zoomLevels.initialMax] as number[])
@@ -48,7 +47,7 @@ export function Chart({
         }
 
         return scales;
-    }, [priceFormat, current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom]);
+    }, [current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom]);
 
     useEffect(() => {
         // reset zoom as necessary
@@ -70,7 +69,7 @@ export function Chart({
 
     return (
         <>
-         <Zoom
+            <Zoom
                 svg={zoomRef.current}
                 xScale={xScale}
                 setZoom={setZoom}
@@ -89,7 +88,7 @@ export function Chart({
                     </clipPath>
 
                     <linearGradient id="liquidity-chart-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="rgba(39, 151, 255, 0.2)"></stop>
+                        <stop offset="0%" stopColor="rgba(230,39,255, 0.2)"></stop>
                         <stop offset="100%" stopColor="rgba(39, 151, 255, 0)"></stop>
                     </linearGradient>
                     {brushDomain && (

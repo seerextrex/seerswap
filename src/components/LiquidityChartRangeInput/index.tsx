@@ -223,7 +223,7 @@ export default function LiquidityChartRangeInput({
                         margins={{ top: 10, right: 0, bottom: 20, left: 0 }}
                         styles={{
                             area: {
-                                selection: "#008FFF",
+                                selection: "#6f58f6",
                             },
                         }}
                         interactive={interactive}

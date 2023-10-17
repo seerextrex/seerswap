@@ -20,7 +20,6 @@ import { Currency, CurrencyAmount, Fraction, Percent, Token } from "@uniswap/sdk
 import { useActiveWeb3React } from "hooks/web3";
 import { useV3NFTPositionManagerContract } from "hooks/useContract";
 import { useIsTransactionPending, useTransactionAdder } from "state/transactions/hooks";
-import TransactionConfirmationModal, { ConfirmationModalContent } from "components/TransactionConfirmationModal";
 import { TransactionResponse } from "@ethersproject/providers";
 import { Dots } from "components/swap/styled";
 import { getPriceOrderingFromPositionForUI } from "../../components/PositionListItem";
@@ -303,7 +302,7 @@ export default function PositionPage({
                     <NavLink className={"c-p mb-1 f w-fc hover-op trans-op"} to="/pool">
                         <Trans>← Back to Pools Overview</Trans>
                     </NavLink>
-                    <Card classes={"br-24 p-2 mxs_p-1"}>
+                    <Card classes={"card-gradient-shadow br-24 p-2 mxs_p-1"}>
                         <AutoColumn gap="1">
                             <div className={"flex-s-between ms_fd-c"}>
                                 <div className={"f f-ac ms_w-100 ms_mb-1 mxs_fd-c"}>

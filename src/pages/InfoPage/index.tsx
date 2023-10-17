@@ -63,7 +63,7 @@ function InfoPage() {
                                 poolsStat={poolsResult}
                             />
                         </Card>
-                        <Card classes={"br-24 pa-2"}>
+                        <Card classes={"card-gradient-shadow br-24 pa-2"}>
                             <InfoPools data={poolsResult} refreshing={Boolean(poolsLoading)} fetchHandler={() => fetchInfoPoolsFn()} blocksFetched={blocksFetched} />
                         </Card>
                     </Route>

@@ -261,7 +261,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
     );
     return (
         <div className={"maw-765 mh-a"}>
-            <Card classes={"p-2 br-24 mxs_p-1"}>
+            <Card classes={"card-gradient-shadow p-2 br-24 mxs_p-1"}>
                 <AddRemoveTabs creating={false} adding={false} positionID={tokenId.toString()} defaultSlippage={DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE} />
                 {_position ? (
                     <AutoColumn gap="lg">
@@ -363,9 +363,9 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
                         <div style={{ display: "flex" }}>
                             <AutoColumn gap="12px" style={{ flex: "1" }}>
-                                <ButtonConfirmed confirmed={false} disabled={removed || percent === 0 || !liquidityValue0} onClick={burn}>
+                                <button disabled={removed || percent === 0 || !liquidityValue0} onClick={burn} className={"btn primary pv-1 br-12 b"}>
                                     {removed ? <Trans>Closed</Trans> : error ?? <Trans>Remove</Trans>}
-                                </ButtonConfirmed>
+                                </button>
                             </AutoColumn>
                         </div>
                     </AutoColumn>

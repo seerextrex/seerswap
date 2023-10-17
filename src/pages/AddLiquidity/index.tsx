@@ -295,7 +295,6 @@ export default function AddLiquidity({
                     className={"btn primary pv-1 br-12 b"}
                     onClick={() => (expertMode ? onAdd() : setShowConfirm(true))}
                     disabled={mustCreateSeparately || !isValid || (approvalA !== ApprovalState.APPROVED && !depositADisabled) || (approvalB !== ApprovalState.APPROVED && !depositBDisabled)}
-                    // error={!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]}
                 >
                     <Text fontWeight={500}>{mustCreateSeparately ? <Trans>Add</Trans> : errorMessage ? errorMessage : <Trans>Preview</Trans>}</Text>
                 </button>
@@ -315,17 +314,15 @@ export default function AddLiquidity({
                         onDismiss={handleDismissConfirmation}
                         topContent={() => <Review position={position} outOfRange={outOfRange} ticksAtLimit={ticksAtLimit} />}
                         bottomContent={() => (
-                            <ButtonPrimary style={{ marginTop: "1rem", color: "white" }} onClick={onAdd}>
-                                <Text fontWeight={500} fontSize={20}>
-                                    <Trans>Add</Trans>
-                                </Text>
-                            </ButtonPrimary>
+                            <button style={{ marginTop: "1rem" }} onClick={onAdd} className={"btn primary"}>
+                                <Trans>Add</Trans>
+                            </button>
                         )}
                     />
                 )}
                 pendingText={pendingText}
             />
-            <Card classes={"p-2 br-24"}>
+            <Card classes={"card-gradient-shadow p-2 br-24"}>
                 <AddRemoveTabs creating={false} adding={true} positionID={tokenId} defaultSlippage={DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE} showBackLink={!hasExistingPosition} />
                 <div className={"add-liquidity pt-1 mt-1"} data-wide={!hasExistingPosition && !networkFailed}>
                     <AutoColumn gap="lg">

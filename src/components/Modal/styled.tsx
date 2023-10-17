@@ -2,7 +2,6 @@ import { animated } from "react-spring";
 import { DialogContent, DialogOverlay } from "@reach/dialog";
 import styled, { css } from "styled-components/macro";
 import { transparentize } from "polished";
-import React from "react";
 
 const AnimatedDialogOverlay = animated(DialogOverlay);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -30,9 +29,9 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
 
     &[data-reach-dialog-content] {
         margin: 0 0 2rem 0;
-        background-color: #1c2a359e;
-        -webkit-backdrop-filter: blur(6px);
-        backdrop-filter: blur(6px);
+        background-color: #1c2a35;
+        -webkit-backdrop-filter: blur(24px);
+        backdrop-filter: blur(24px);
         box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
         width: 60vw;
         overflow-y: clip;

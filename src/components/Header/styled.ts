@@ -1,19 +1,19 @@
-import styled, { css, keyframes } from 'styled-components/macro'
-import Row from '../Row'
-import { Text } from 'rebass'
-import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
+import styled, { css, keyframes } from "styled-components/macro";
+import Row from "../Row";
+import { Text } from "rebass";
+import { NavLink } from "react-router-dom";
+import { darken } from "polished";
 // @ts-ignore
-import WoodenSlob from '../../assets/svg/wooden-slob.svg'
+import WoodenSlob from "../../assets/svg/wooden-slob.svg";
 // @ts-ignore
-import WoodenRope from '../../assets/svg/wooden-rope.svg'
+import WoodenRope from "../../assets/svg/wooden-rope.svg";
 // @ts-ignore
-import LogoIcicles from '../../assets/svg/logo-icicles.svg'
-import { YellowCard } from 'components/Card'
-import { TYPE } from '../../theme'
+import LogoIcicles from "../../assets/svg/logo-icicles.svg";
+import { YellowCard } from "components/Card";
+import { TYPE } from "../../theme";
 
 //index
-const activeClassName = 'ACTIVE'
+const activeClassName = "ACTIVE";
 export const HeaderFrame = styled.div<{ showBackground: boolean }>`
     display: flex;
     grid-template-columns: 120px 1fr 120px;
@@ -24,12 +24,9 @@ export const HeaderFrame = styled.div<{ showBackground: boolean }>`
     top: 0;
     position: relative;
     z-index: 21;
-    background-position: ${({ showBackground }) => (showBackground ? '0 -100%' : '0 0')};
+    background-position: ${({ showBackground }) => (showBackground ? "0 -100%" : "0 0")};
     background-size: 100% 200%;
-    box-shadow: 0 0 0 1px ${({
-  theme,
-  showBackground
-}) => (showBackground ? theme.bg2 : 'transparent;')};
+    box-shadow: 0 0 0 1px ${({ theme, showBackground }) => (showBackground ? theme.bg2 : "transparent;")};
     transition: background-position 0.1s, box-shadow 0.1s;
     background-blend-mode: hard-light;
     padding: 50px 1rem 1rem;
@@ -50,7 +47,7 @@ export const HeaderFrame = styled.div<{ showBackground: boolean }>`
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`{
     padding: 0.5rem 1rem;
   }`}
-`
+`;
 export const HeaderControls = styled.div`
     display: flex;
     position: relative;
@@ -70,7 +67,7 @@ export const HeaderControls = styled.div`
 
     &::before,
     &::after {
-        content: '';
+        content: "";
         background-image: url(${WoodenRope});
         width: 5px;
         height: 51px;
@@ -89,7 +86,7 @@ export const HeaderControls = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0 1rem;
   `}
-`
+`;
 export const HeaderElement = styled.div`
     display: flex;
     align-items: center;
@@ -103,7 +100,7 @@ export const HeaderElement = styled.div`
     ${({ theme }) => theme.mediaWidth.upToMedium`
     align-items: center;
   `};
-`
+`;
 export const HeaderLinks = styled(Row)`
     position: absolute;
     transform: translateX(-50%);
@@ -125,7 +122,7 @@ export const HeaderLinks = styled(Row)`
 
     &::before,
     &::after {
-        content: '';
+        content: "";
         background-image: url(${WoodenRope});
         width: 5px;
         height: 54px;
@@ -178,7 +175,7 @@ export const HeaderLinks = styled(Row)`
     }
 
   `}
-`
+`;
 export const AccountElement = styled.div<{ active: boolean }>`
     display: flex;
     flex-direction: row;
@@ -196,17 +193,17 @@ export const AccountElement = styled.div<{ active: boolean }>`
     ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 14px;
   `}
-`
+`;
 export const BalanceText = styled(Text)`
     cursor: default;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       font-size: 13px
     `}
-`
+`;
 export const LogoWrapper = styled.div`
     position: relative;
-`
+`;
 export const Title = styled.a`
     display: flex;
     z-index: 5;
@@ -230,7 +227,7 @@ export const Title = styled.a`
 
     &::before,
     &::after {
-        content: '';
+        content: "";
         background-image: url(${WoodenRope});
         width: 5px;
         height: 51px;
@@ -257,13 +254,13 @@ export const Title = styled.a`
     ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     width: 80px;
   `}
-`
+`;
 export const TitleIce = styled.div`
     width: 100%;
     height: 100%;
     background-color: RGBA(51, 182, 255, 0.5);
     border-radius: 11px;
-`
+`;
 export const TitleIcicle = styled.div`
     background-image: url(${LogoIcicles});
     background-repeat: no-repeat;
@@ -278,7 +275,7 @@ export const TitleIcicle = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `}
-`
+`;
 export const AlgIcon = styled.div`
     height: 100%;
     width: 100%;
@@ -300,9 +297,9 @@ export const AlgIcon = styled.div`
       width: 30px;
     }
   }`}
-`
+`;
 export const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
+    activeClassName,
 })`
     ${({ theme }) => theme.flexRowNoWrap}
     align-items: left;
@@ -334,7 +331,7 @@ export const StyledNavLink = styled(NavLink).attrs({
             color: ${({ theme }) => darken(0.1, theme.text1)};
         }
     }
-`
+`;
 
 //NetworkCard
 const BaseWrapper = css`
@@ -350,7 +347,7 @@ const BaseWrapper = css`
     text-overflow: ellipsis;
     flex-shrink: 1;
   `};
-`
+`;
 export const FallbackWrapper = styled(YellowCard)`
     ${BaseWrapper};
     background: #0f1940;
@@ -359,7 +356,7 @@ export const FallbackWrapper = styled(YellowCard)`
     border-radius: 12px;
     padding: 8px 12px;
     width: 100%;
-`
+`;
 export const NetworkWrapper = styled.div`
     padding: 8px 0 8px 12px;
     background-color: #713937;
@@ -370,14 +367,14 @@ export const NetworkWrapper = styled.div`
     ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
-`
+`;
 export const ChainWrapper = styled.span`
     margin-top: 3px;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
     margin-top: 1px;
   `}
-`
+`;
 
 //GasPrice
 export const GasPriceWrapper = styled.div`
@@ -388,7 +385,7 @@ export const GasPriceWrapper = styled.div`
     ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `}
-`
+`;
 
 //Pooling
 export const StyledPolling = styled.div`
@@ -399,8 +396,8 @@ export const StyledPolling = styled.div`
     ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `}
-`
-export const StyledPollingNumber = styled(TYPE.small) <{ breathe: boolean; hovering: boolean }>`
+`;
+export const StyledPollingNumber = styled(TYPE.small)<{ breathe: boolean; hovering: boolean }>`
     transition: opacity 0.25s ease;
     color: var(--white);
     opacity: ${({ breathe, hovering }) => (hovering ? 0.7 : breathe ? 1 : 0.5)};
@@ -408,7 +405,7 @@ export const StyledPollingNumber = styled(TYPE.small) <{ breathe: boolean; hover
     :hover {
         opacity: 1;
     }
-`
+`;
 export const StyledPollingDot = styled.div`
     width: 8px;
     height: 8px;
@@ -417,8 +414,8 @@ export const StyledPollingDot = styled.div`
     margin-left: 0.5rem;
     border-radius: 50%;
     position: relative;
-    background-color: rgb(91, 183, 255);
-`
+    background-color: var(--primary2);
+`;
 const rotate360 = keyframes`
     from {
         transform: rotate(0deg);
@@ -426,7 +423,7 @@ const rotate360 = keyframes`
     to {
         transform: rotate(360deg);
     }
-`
+`;
 export const Spinner = styled.div`
     animation: ${rotate360} 1s cubic-bezier(0.83, 0, 0.17, 1) infinite;
     transform: translateZ(0);
@@ -434,7 +431,7 @@ export const Spinner = styled.div`
     border-top: 1px solid transparent;
     border-right: 1px solid transparent;
     border-bottom: 1px solid transparent;
-    border-left: 2px solid rgb(91, 183, 255);
+    border-left: 2px solid var(--primary3);
     background: transparent;
     width: 14px;
     height: 14px;
@@ -443,4 +440,4 @@ export const Spinner = styled.div`
 
     left: -3px;
     top: -3px;
-`
+`;

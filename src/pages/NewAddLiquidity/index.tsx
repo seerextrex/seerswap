@@ -310,8 +310,8 @@ export function NewAddLiquidityPage({
                     <Trans>Pools</Trans>
                 </p>
             </NavLink>
-            <div className="add-liquidity-page">
-                <div className="add-liquidity-page__header f mxs_fd-c mb-1">
+            <div className="add-liquidity-page card-gradient-shadow">
+                <div className="mb-1 add-liquidity-page__header f mxs_fd-c">
                     <div className="add-liquidity-page__header-title">
                         <Trans>Add liquidity</Trans>
                     </div>
@@ -322,7 +322,7 @@ export function NewAddLiquidityPage({
                         </div>
                     </div>
                 </div>
-                <div className="add-liquidity-page__stepper mb-2">
+                <div className="mb-2 add-liquidity-page__stepper">
                     <Stepper
                         currencyA={baseCurrency ?? undefined}
                         currencyB={quoteCurrency ?? undefined}
@@ -422,7 +422,7 @@ export function NewAddLiquidityPage({
                     />
                 </Switch>
                 {!end && account ? (
-                    <div className="add-buttons f f-ac f-jc mt-2">
+                    <div className="mt-2 add-buttons f f-ac f-jc">
                         {currentStep !== 0 && (
                             <div>
                                 <button
@@ -453,7 +453,7 @@ export function NewAddLiquidityPage({
                             />
                         ) : (
                             <button
-                                className="add-buttons__next f f-jc f-ac ml-a"
+                                className="btn primary f f-jc f-ac ml-a"
                                 disabled={!steps[currentStep]}
                                 onClick={() => {
                                     dispatch(updateCurrentStep({ currentStep: currentStep + 1 }));
@@ -467,8 +467,8 @@ export function NewAddLiquidityPage({
                         )}
                     </div>
                 ) : !account ? (
-                    <div className="add-buttons f f-ac f-jc mt-2 mxs_mt-1">
-                        <button className="add-buttons__next f f-jc f-ac ml-a" onClick={toggleWalletModal}>
+                    <div className="mt-2 add-buttons f f-ac f-jc mxs_mt-1">
+                        <button className="btn primary f f-jc f-ac ml-a" onClick={toggleWalletModal}>
                             <Trans>Connect Wallet</Trans>
                         </button>
                     </div>

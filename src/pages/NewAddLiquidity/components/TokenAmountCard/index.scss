@@ -3,7 +3,7 @@
         background-color: var(--ebony-clay);
         border-radius: 8px; 
         width: 542px;
-        border: 1px solid #233d65;
+        border: 1px solid #443b73;
     }
 
     &__locked {
@@ -23,7 +23,7 @@
 
     &__input {
         background-color: #182732 !important;
-        border: 1px solid #233d65 !important;
+        border: 1px solid #443b73 !important;
         border-radius: 8px !important;
         color: white !important;
         padding: 8px 1rem !important;
@@ -36,22 +36,22 @@
         }
 
         &:focus {
-            border: 1px solid #21cbff !important;
+            border: 1px solid #8A78F2 !important;
         }
     }
 
     &__error {
         padding: 8px;
-        background-color: #290505;
-        color: #f31b1b;
-        border: 1px solid #580d0d;
+        background-color: #583130;
+        color: #ff8e8e;
+        border: 1px solid #743c3c;
         border-radius: 8px;
         text-align: center;
     }
 
     &__max-btn {
         background: transparent;
-        color: #4ca8ef;
+        color: #8A78F2;
         border: none;
         padding: 0;
         font-size: 13px;
@@ -69,13 +69,13 @@
 
     &__approve-btn {
         padding: 4px 8px;
-        background-color: #1199c3;
+        background-color: #8A78F2;
         border-radius: 6px;
         border: none;
         color: white;
 
         &:hover {
-            background-color: #5aa9c1;
+            background-color: #6F58F6;
         }
     }
 

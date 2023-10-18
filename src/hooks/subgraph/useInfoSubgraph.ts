@@ -320,7 +320,7 @@ export function useInfoSubgraph() {
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0;
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined);
                 const tvlToken = current ? parseFloat(current[manageUntrackedTVL]) : 0;
-                const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices!.current : 0;
+                const priceUSD = current ? parseFloat(current.derivedMatic) * ethPrices?.current : 0;
                 const priceUSDOneDay = oneDay ? parseFloat(oneDay.derivedMatic) * ethPrices.oneDay : 0;
                 // const priceUSDWeek = week ? parseFloat(week.derivedMatic) * ethPrices.week : 0
 

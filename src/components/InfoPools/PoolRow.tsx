@@ -5,7 +5,6 @@ import { TYPE } from "../../theme";
 import { BarChart2, ExternalLink } from "react-feather";
 import { feeTierPercent } from "../../utils";
 import { NavLink } from "react-router-dom";
-import React from "react";
 
 import AlgebraConfig from "algebra.config";
 

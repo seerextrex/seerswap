@@ -95,18 +95,11 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         title: formatDollarAmount(el.volumeUSDWeek),
                         value: el.volumeUSDWeek,
                     },
-                    // {
-                    //     title: formatDollarAmount(el.volumeUSDMonth),
-                    //     value: el.volumeUSDMonth,
-                    // },
+
                     {
                         title: formatDollarAmount(el.tvlUSD),
                         value: el.tvlUSD,
                     },
-                    // {
-                    //     title: el.txCount,
-                    //     value: el.txCount,
-                    // },
                     {
                         title: apr,
                         value: el.apr,
@@ -141,15 +134,9 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>Volume 7D</Trans>
                         </span>
-                        {/* <span className={"table-header__item table-header__item--center"}>
-                            <Trans>Volume 1M</Trans>
-                        </span> */}
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>TVL</Trans>
                         </span>
-                        {/* <span className={"table-header__item table-header__item--center"}>
-                            <Trans>Txs 24H</Trans>
-                        </span> */}
                         <span className={"table-header__item table-header__item--center"}>
                             <Apr />
                         </span>

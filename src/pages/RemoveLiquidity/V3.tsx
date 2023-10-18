@@ -32,7 +32,7 @@ import usePrevious from "../../hooks/usePrevious";
 
 import ReactGA from "react-ga";
 import { useAppSelector } from "../../state/hooks";
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import useTheme from "../../hooks/useTheme";
 import { WrappedCurrency } from "../../models/types";
 import { GAS_PRICE_MULTIPLIER } from "../../hooks/useGasPrice";
@@ -84,7 +84,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
     // burn state
     const { percent } = useBurnV3State();
 
-    const { account, chainId, library } = useActiveWeb3React();
+    const { account, chainId, provider } = useWeb3React();
     const theme = useTheme();
 
     const derivedInfo = useDerivedV3BurnInfo(position, receiveWETH);
@@ -123,7 +123,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
     const burn = useCallback(async () => {
         setAttemptingTxn(true);
-        if (!positionManager || !liquidityValue0 || !liquidityValue1 || !deadline || !account || !chainId || !feeValue0 || !feeValue1 || !positionSDK || !liquidityPercentage || !library) {
+        if (!positionManager || !liquidityValue0 || !liquidityValue1 || !deadline || !account || !chainId || !feeValue0 || !feeValue1 || !positionSDK || !liquidityPercentage || !provider) {
             return;
         }
 
@@ -145,7 +145,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
             value,
         };
 
-        library
+        provider
             .getSigner()
             .estimateGas(txn)
             .then((estimate) => {
@@ -155,7 +155,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                     gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
                 };
 
-                return library
+                return provider
                     .getSigner()
                     .sendTransaction(newTxn)
                     .then((response: TransactionResponse) => {
@@ -175,7 +175,23 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                 setAttemptingTxn(false);
                 console.error(error);
             });
-    }, [tokenId, liquidityValue0, liquidityValue1, deadline, allowedSlippage, account, addTransaction, positionManager, chainId, feeValue0, feeValue1, library, liquidityPercentage, positionSDK]);
+    }, [
+        positionManager,
+        liquidityValue0,
+        liquidityValue1,
+        deadline,
+        account,
+        chainId,
+        feeValue0,
+        feeValue1,
+        positionSDK,
+        liquidityPercentage,
+        provider,
+        tokenId,
+        allowedSlippage,
+        gasPrice,
+        addTransaction,
+    ]);
 
     const handleDismissConfirmation = useCallback(() => {
         setShowConfirm(false);

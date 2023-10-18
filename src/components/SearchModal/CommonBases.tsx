@@ -4,7 +4,7 @@ import { COMMON_BASES } from "../../constants/routing";
 import { currencyId } from "../../utils/currencyId";
 import { AutoRow } from "../Row";
 import CurrencyLogo from "../CurrencyLogo";
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { WrappedCurrency } from "../../models/types";
 import "./index.scss";
 
@@ -18,7 +18,7 @@ interface CommonBasesProps {
 export default function CommonBases({ onSelect, selectedCurrency }: CommonBasesProps) {
     const bases = COMMON_BASES[AlgebraConfig.CHAIN_PARAMS.chainId] as WrappedCurrency[];
 
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
 
     return bases.length > 0 ? (
         <div className={"mv-1 common-bases"}>

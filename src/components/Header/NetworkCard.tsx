@@ -1,16 +1,15 @@
 import { useOnClickOutside } from "hooks/useOnClickOutside";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useEffect, useRef, useState } from "react";
 import { ApplicationModal } from "state/application/actions";
 import { useModalOpen, useToggleModal } from "state/application/hooks";
-import { switchToNetwork } from "utils/switchToNetwork";
 import { CHAIN_INFO } from "../../constants/chains";
 import GnosisLogo from "../../assets/svg/gnosis-logo.svg";
 
 import AlgebraConfig from "algebra.config";
 
 export default function NetworkCard() {
-    const { chainId, library } = useActiveWeb3React();
+    const { chainId, connector } = useWeb3React();
 
     const node = useRef<HTMLDivElement>(null);
     const open = useModalOpen(ApplicationModal.ARBITRUM_OPTIONS);
@@ -22,16 +21,14 @@ export default function NetworkCard() {
         // metamask is currently the only known implementer of this EIP
         // here we proceed w/ a noop feature check to ensure the user's version of metamask supports network switching
         // if not, we hide the UI
-        if (!library?.provider?.request || !chainId || !library?.provider?.isMetaMask) {
+        if (!chainId) {
             return;
         }
-        switchToNetwork({ library, chainId })
-            .then((x) => x ?? setImplements3085(true))
-            .catch(() => setImplements3085(false));
-    }, [library, chainId]);
+        connector.activate(chainId);
+    }, [chainId, connector]);
 
     const info = chainId ? CHAIN_INFO[chainId] : undefined;
-    if (!chainId || !info || !library || !library?.provider?.isMetaMask) {
+    if (!chainId || !info) {
         return null;
     }
 

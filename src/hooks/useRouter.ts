@@ -1,30 +1,30 @@
-import { skipToken } from '@reduxjs/toolkit/query/react'
-import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
-import ms from 'ms.macro'
-import { useBlockNumber } from 'state/application/hooks'
-import { useGetQuoteQuery } from 'state/routing/slice'
-import { useActiveWeb3React } from './web3'
+import { skipToken } from "@reduxjs/toolkit/query/react";
+import { Currency, CurrencyAmount } from "@uniswap/sdk-core";
+import ms from "ms.macro";
+import { useBlockNumber } from "state/application/hooks";
+import { useGetQuoteQuery } from "state/routing/slice";
+import { useWeb3React } from "@web3-react/core";
 
 export function useRouterTradeExactIn(amountIn?: CurrencyAmount<Currency>, currencyOut?: Currency) {
-    const { account } = useActiveWeb3React()
+    const { account } = useWeb3React();
 
-    const blockNumber = useBlockNumber()
+    const blockNumber = useBlockNumber();
 
     const { isLoading, isError, data } = useGetQuoteQuery(
         amountIn && currencyOut && account && blockNumber
             ? {
-                tokenInAddress: amountIn.currency.wrapped.address,
-                tokenInChainId: amountIn.currency.chainId,
-                tokenOutAddress: currencyOut.wrapped.address,
-                tokenOutChainId: currencyOut.chainId,
-                amount: amountIn.quotient.toString(),
-                type: 'exactIn'
-            }
+                  tokenInAddress: amountIn.currency.wrapped.address,
+                  tokenInChainId: amountIn.currency.chainId,
+                  tokenOutAddress: currencyOut.wrapped.address,
+                  tokenOutChainId: currencyOut.chainId,
+                  amount: amountIn.quotient.toString(),
+                  type: "exactIn",
+              }
             : skipToken,
         { pollingInterval: ms`1s` }
-    )
+    );
 
     // todo(judo): validate block number for freshness
 
-    return !isLoading && !isError ? data?.routeString : undefined
+    return !isLoading && !isError ? data?.routeString : undefined;
 }

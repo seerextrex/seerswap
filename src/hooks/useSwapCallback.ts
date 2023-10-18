@@ -9,7 +9,7 @@ import { getTradeVersion } from "../utils/getTradeVersion";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import { isAddress, shortenAddress } from "../utils";
 import isZero from "../utils/isZero";
-import { useActiveWeb3React } from "./web3";
+import { useWeb3React } from "@web3-react/core";
 import { SignatureData } from "./useERC20Permit";
 import useTransactionDeadline from "./useTransactionDeadline";
 import useENS from "./useENS";
@@ -59,14 +59,14 @@ function useSwapCallArguments(
     recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
     signatureData: SignatureData | null | undefined
 ): SwapCall[] {
-    const { account, chainId, library } = useActiveWeb3React();
+    const { account, chainId, provider } = useWeb3React();
 
     const { address: recipientAddress } = useENS(recipientAddressOrName);
     const recipient = recipientAddressOrName === null ? account : recipientAddress;
     const deadline = useTransactionDeadline();
 
     return useMemo(() => {
-        if (!trade || !recipient || !library || !account || !chainId || !deadline) return [];
+        if (!trade || !recipient || !provider || !account || !chainId || !deadline) return [];
 
         const swapRouterAddress = chainId ? SWAP_ROUTER_ADDRESSES[chainId] : undefined;
 
@@ -142,7 +142,7 @@ function useSwapCallArguments(
                 value,
             };
         });
-    }, [account, allowedSlippage, chainId, deadline, library, recipient, signatureData, trade]);
+    }, [account, allowedSlippage, chainId, deadline, provider, recipient, signatureData, trade]);
 }
 
 /**
@@ -194,7 +194,7 @@ export function useSwapCallback(
     recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
     signatureData: SignatureData | undefined | null
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
-    const { account, chainId, library } = useActiveWeb3React();
+    const { account, chainId, provider } = useWeb3React();
 
     const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName, signatureData);
 
@@ -209,7 +209,7 @@ export function useSwapCallback(
     const recipient = recipientAddressOrName === null ? account : recipientAddress;
 
     return useMemo(() => {
-        if (!trade || !library || !account || !chainId) {
+        if (!trade || !provider || !account || !chainId) {
             return {
                 state: SwapCallbackState.INVALID,
                 callback: null,
@@ -245,7 +245,7 @@ export function useSwapCallback(
                                       value,
                                   };
 
-                        return library
+                        return provider
                             .estimateGas(tx)
                             .then((gasEstimate) => {
                                 return {
@@ -256,7 +256,7 @@ export function useSwapCallback(
                             .catch((gasError) => {
                                 console.debug("Gas estimate failed, trying eth_call to extract error", call);
 
-                                return library
+                                return provider
                                     .call(tx)
                                     .then((result) => {
                                         console.debug("Unexpected successful call after failed estimate gas", call, gasError, result);
@@ -294,7 +294,7 @@ export function useSwapCallback(
                     call: { address, calldata, value },
                 } = bestCallOption;
 
-                return library
+                return provider
                     .getSigner()
                     .sendTransaction({
                         from: account,
@@ -341,5 +341,5 @@ export function useSwapCallback(
             },
             error: null,
         };
-    }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction]);
+    }, [trade, provider, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction]);
 }

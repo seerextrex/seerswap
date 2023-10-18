@@ -10,7 +10,7 @@ import { useUSDCValue } from "hooks/useUSDCPrice";
 import { maxAmountSpend } from "utils/maxAmountSpend";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { Bound, updateCurrentStep } from "state/mint/v3/actions";
 import { useEffect, useMemo } from "react";
 import { tryParseAmount } from "state/swap/hooks";
@@ -32,7 +32,7 @@ interface IEnterAmounts {
 }
 
 export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, backStep }: IEnterAmounts) {
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
 
     const { independentField, typedValue } = useV3MintState();
 

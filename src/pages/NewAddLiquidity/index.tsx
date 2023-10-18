@@ -1,6 +1,6 @@
 import { useCurrency } from "hooks/Tokens";
 import usePrevious from "hooks/usePrevious";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useInitialUSDPrices, useCurrentStep } from "state/mint/v3/hooks";
@@ -48,7 +48,7 @@ export function NewAddLiquidityPage({
 }>) {
     const [isRejected, setRejected] = useState(false);
 
-    const { account, chainId } = useActiveWeb3React();
+    const { account, chainId } = useWeb3React();
 
     const toggleWalletModal = useWalletModalToggle(); // toggle wallet when disconnected
 

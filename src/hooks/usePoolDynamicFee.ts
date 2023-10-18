@@ -1,45 +1,37 @@
-import { utils } from 'ethers'
-import { useMemo } from 'react'
-import { useActiveWeb3React } from './web3'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { updateDynamicFee } from '../state/mint/v3/actions'
-import { AppState } from '../state'
-
+import { utils } from "ethers";
+import { useMemo } from "react";
+import { useWeb3React } from "@web3-react/core";
+import { useAppDispatch, useAppSelector } from "state/hooks";
+import { updateDynamicFee } from "../state/mint/v3/actions";
+import { AppState } from "../state";
 
 export function useDynamicFeeValue() {
-    return useAppSelector((state: AppState) => state.mintV3.dynamicFee)
+    return useAppSelector((state: AppState) => state.mintV3.dynamicFee);
 }
 
-export function usePoolDynamicFee(
-    address: string
-) {
+export function usePoolDynamicFee(address: string) {
+    const { provider, chainId } = useWeb3React();
 
-    const { library, chainId } = useActiveWeb3React()
-
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     const swapEventCallback = (e: any) => {
-        dispatch(updateDynamicFee({ dynamicFee: e }))
-    }
+        dispatch(updateDynamicFee({ dynamicFee: e }));
+    };
 
     return useMemo(() => {
-        if (!library || !chainId || !address) return undefined
+        if (!provider || !chainId || !address) return undefined;
 
         // setState({ chainId, blockNumber: null })
 
         const filter = {
             address,
-            topics: [
-                utils.id('Swap(address,address,int256,int256,uint160,uint128,int24)')
-            ]
-        }
+            topics: [utils.id("Swap(address,address,int256,int256,uint160,uint128,int24)")],
+        };
 
-        library.on(filter, swapEventCallback)
-        // library.on('block', blockNumberCallback)
+        provider.on(filter, swapEventCallback);
+        // provider.on('block', blockNumberCallback)
         return () => {
-            library.removeListener(filter, swapEventCallback)
-        }
-
-    }, [chainId, library, address])
-
+            provider.removeListener(filter, swapEventCallback);
+        };
+    }, [chainId, provider, address]);
 }

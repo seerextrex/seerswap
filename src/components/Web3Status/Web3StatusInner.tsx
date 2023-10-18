@@ -1,4 +1,4 @@
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import { useWeb3React } from "@web3-react/core";
 import useENSName from "../../hooks/useENSName";
 import { useSortedRecentTransactions } from "../../hooks/useSortedRecentTransactions";
 import { useHasSocks } from "../../hooks/useSocksBalance";
@@ -58,7 +58,7 @@ export async function addPolygonNetwork() {
 }
 
 export function Web3StatusInner() {
-    const { account, connector, error } = useWeb3React();
+    const { account, connector } = useWeb3React();
     const { ENSName } = useENSName(account ?? undefined);
     const sortedRecentTransactions = useSortedRecentTransactions();
 
@@ -71,6 +71,9 @@ export function Web3StatusInner() {
     const toggleWalletModal = useWalletModalToggle();
 
     const [ontoHelper, toggleOntoHelper] = useState(false);
+
+    //TODO: hanlde errors
+    const error = false;
 
     if (account) {
         return (
@@ -105,7 +108,9 @@ export function Web3StatusInner() {
         return (
             <Web3StatusError onClick={addPolygonNetwork}>
                 <NetworkIcon />
-                <Text>{error instanceof UnsupportedChainIdError ? <span>{t`Connect to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</span> : <Trans>Error</Trans>}</Text>
+                <Text>
+                    <Trans>Error</Trans>
+                </Text>
             </Web3StatusError>
         );
     } else {
@@ -118,3 +123,79 @@ export function Web3StatusInner() {
         );
     }
 }
+// function WrappedStatusIcon({ connector }: { connector: Connector }) {
+//     return (
+//       <IconWrapper size={16}>
+//         <StatusIcon connector={connector} />
+//       </IconWrapper>
+//     )
+//   }
+// export function Web3StatusInner() {
+//     const { account, connector, chainId, ENSName } = useWeb3React();
+
+//     const error = useAppSelector((state) => state.wallet.errorByWallet[getWalletForConnector(connector)]);
+
+//     const chainAllowed = chainId && AlgebraConfig.CHAIN_PARAMS.chainId == chainId;
+
+//     const allTransactions = useAllTransactions();
+
+//     const sortedRecentTransactions = useMemo(() => {
+//         const txs = Object.values(allTransactions);
+//         return txs.filter(isTransactionRecent).sort(newTransactionsFirst);
+//     }, [allTransactions]);
+
+//     const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash);
+
+//     const hasPendingTransactions = !!pending.length;
+//     const hasSocks = useHasSocks();
+//     const toggleWalletModal = useWalletModalToggle();
+
+//     if (!chainId) {
+//         return null;
+//     } else if (!chainAllowed) {
+//         return (
+//             <Web3StatusError onClick={toggleWalletModal}>
+//                 <NetworkIcon />
+//                 <Text>
+//                     <Trans>Wrong Network</Trans>
+//                 </Text>
+//             </Web3StatusError>
+//         );
+//     } else if (error) {
+//         return (
+//             <Web3StatusError onClick={toggleWalletModal}>
+//                 <NetworkIcon />
+//                 <Text>
+//                     <Trans>Error</Trans>
+//                 </Text>
+//             </Web3StatusError>
+//         );
+//     } else if (account) {
+//         return (
+//             <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
+//                 {hasPendingTransactions ? (
+//                     <RowBetween>
+//                         <Text>
+//                             <Trans>{pending?.length} Pending</Trans>
+//                         </Text>{" "}
+//                         <Loader stroke="white" />
+//                     </RowBetween>
+//                 ) : (
+//                     <>
+//                         {hasSocks ? <Sock /> : null}
+//                         <Text>{ENSName || shortenAddress(account)}</Text>
+//                     </>
+//                 )}
+//                 {!hasPendingTransactions && connector && <WrappedStatusIcon connector={connector} />}
+//             </Web3StatusConnected>
+//         );
+//     } else {
+//         return (
+//             <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
+//                 <Text>
+//                     <Trans>Connect Wallet</Trans>
+//                 </Text>
+//             </Web3StatusConnect>
+//         );
+//     }
+// }

@@ -17,7 +17,7 @@ import { useCurrencyBalance } from "state/wallet/hooks";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { CurrencyAmount } from "@uniswap/sdk-core";
 import { FARMING_CENTER } from "constants/addresses";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { Token } from "@uniswap/sdk-core";
 import { formatUnits } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
@@ -66,7 +66,7 @@ export function FarmModal({
     closeHandler,
     farmingType,
 }: FarmModalProps) {
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
 
     const isTierFarming = useMemo(
         () => Boolean((+tier1Multiplier || +tier2Multiplier || +tier3Multiplier) && (+tokenAmountForTier1 || +tokenAmountForTier2 || +tokenAmountForTier3)),

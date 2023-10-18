@@ -10,14 +10,14 @@ import { NEVER_RELOAD, useSingleCallResult } from "../state/multicall/hooks";
 import { useUserAddedTokens } from "../state/user/hooks";
 import { isAddress } from "../utils";
 
-import { useActiveWeb3React } from "./web3";
+import { useWeb3React } from "@web3-react/core";
 import { useBytes32TokenContract, useTokenContract } from "./useContract";
 
 import AlgebraConfig from "algebra.config";
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
     const userAddedTokens = useUserAddedTokens();
 
     return useMemo(() => {
@@ -57,7 +57,7 @@ export function useAllTokens(): { [address: string]: Token } {
 export function useSearchInactiveTokenLists(search: string | undefined, minResults = 10): WrappedTokenInfo[] {
     const lists = useAllLists();
     const inactiveUrls = useInactiveListUrls();
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
     const activeTokens = useAllTokens();
 
     return useMemo(() => {
@@ -120,7 +120,7 @@ function parseStringOrBytes32(str: string | undefined, bytes32: string | undefin
 // null if loading
 // otherwise returns the token
 export function useToken(tokenAddress?: string): Token | undefined | null {
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
     const tokens = useAllTokens();
 
     const address = isAddress(tokenAddress);
@@ -168,7 +168,7 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 }
 
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
     let isETH;
     if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
         isETH = currencyId?.toUpperCase() === AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol;

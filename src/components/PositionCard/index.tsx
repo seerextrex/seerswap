@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Text } from "rebass";
 import { useTotalSupply } from "../../hooks/useTotalSupply";
 import { Trans } from "@lingui/macro";
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useTokenBalance } from "../../state/wallet/hooks";
 import { TYPE } from "../../theme";
 import { currencyId } from "../../utils/currencyId";
@@ -37,7 +37,7 @@ interface PositionCardProps {
 }
 
 export function MinimalPositionCard({ pair, showUnwrapped = false, sushi }: PositionCardProps) {
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
 
     const currency0 = showUnwrapped ? pair.token0 : unwrappedToken(pair.token0);
     const currency1 = showUnwrapped ? pair.token1 : unwrappedToken(pair.token1);
@@ -171,7 +171,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, sushi }: Posi
 }
 
 export default function FullPositionCard({ pair, border, stakedBalance }: PositionCardProps) {
-    const { account, chainId } = useActiveWeb3React();
+    const { account, chainId } = useWeb3React();
 
     const currency0 = unwrappedToken(pair.token0);
     const currency1 = unwrappedToken(pair.token1);

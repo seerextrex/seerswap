@@ -1,4 +1,4 @@
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { NewAddLiquidityPage } from "pages/NewAddLiquidity";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { WXDAI_EXTENDED } from "../../constants/tokens";
@@ -12,7 +12,7 @@ export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ curren
         },
     } = props;
 
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
 
     // prevent weth + eth
     let symbol;

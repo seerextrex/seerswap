@@ -1,5 +1,4 @@
 import { useWeb3React } from "@web3-react/core";
-import { NetworkContextName } from "../../constants/misc";
 import useENSName from "../../hooks/useENSName";
 import WalletModal from "../WalletModal";
 import { useSortedRecentTransactions } from "../../hooks/useSortedRecentTransactions";
@@ -8,8 +7,7 @@ import { Text, Web3StatusConnect } from "./styled";
 import { Trans } from "@lingui/macro";
 
 export default function Web3Status() {
-    const { active, account } = useWeb3React();
-    const contextNetwork = useWeb3React(NetworkContextName);
+    const { isActive, account } = useWeb3React();
     const { ENSName } = useENSName(account ?? undefined);
 
     const sortedRecentTransactions = useSortedRecentTransactions();
@@ -17,7 +15,7 @@ export default function Web3Status() {
     const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash);
     const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash);
 
-    if (!contextNetwork.active && !active) {
+    if (!isActive) {
         return (
             <Web3StatusConnect id="connect-wallet" faded={!account} disabled>
                 <Text>

@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import PositionList from "components/PositionList";
 import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { useV3Positions } from "hooks/useV3Positions";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useCallback, useEffect, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { useWalletModalToggle } from "state/application/hooks";
@@ -19,7 +19,7 @@ import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
 import { EthereumWindow } from "models/types";
 
 export default function Pool() {
-    const { account, chainId } = useActiveWeb3React();
+    const { account, chainId } = useWeb3React();
     const toggleWalletModal = useWalletModalToggle();
 
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions();

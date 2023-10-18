@@ -1,6 +1,6 @@
 import React from "react";
 // @ts-ignore
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { stringToColour } from "../../utils/stringToColour";
 import { specialTokens } from "./SpecialTokens";
 import { StyledImgLogo, StyledLogo } from "./styled";
@@ -11,7 +11,7 @@ import AlgebraConfig from "algebra.config";
 export const getTokenLogoURL = (address: string) => `https://raw.githubusercontent.com/uniswap/assets/master/blockchains/ethereum/assets/${address}/logo.png`;
 
 export default function CurrencyLogo({ currency, size = "24px", style, ...rest }: { currency?: WrappedCurrency & { logoURI?: string; logo?: string }; size?: string; style?: React.CSSProperties }) {
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
 
     let logo;
 

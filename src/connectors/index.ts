@@ -1,169 +1,139 @@
-import { Web3Provider } from '@ethersproject/providers'
-import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react'
-import { InjectedConnector } from '@web3-react/injected-connector'
-import { ALL_SUPPORTED_CHAIN_IDS } from '../constants/chains'
-import getLibrary from '../utils/getLibrary'
-import { NetworkConnector } from './NetworkConnector'
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import { OntoWindow } from '../models/types/global'
-import { AbstractConnector } from '@web3-react/abstract-connector'
-import { ConnectorUpdate } from '@web3-react/types'
-import { getAddress } from 'ethers/lib/utils'
+import { CoinbaseWallet } from "@web3-react/coinbase-wallet";
+import { initializeConnector, Web3ReactHooks } from "@web3-react/core";
+import { GnosisSafe } from "@web3-react/gnosis-safe";
+import { MetaMask } from "@web3-react/metamask";
+import { Network } from "@web3-react/network";
+import { Connector } from "@web3-react/types";
+import { WalletConnect } from "@web3-react/walletconnect-v2";
+import { useMemo } from "react";
 
-import AlgebraConfig from "algebra.config"
+import SWAPR_LOGO_URL from "../assets/images/swapr-logo.svg";
+import algebraConfig from "../algebra.config";
 
-const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
-const NETWORK_URLS: { [chainId: number]: string } = {
-    [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.CHAIN_PARAMS.rpcURL
+export enum Wallet {
+    INJECTED = "INJECTED",
+    COINBASE_WALLET = "COINBASE_WALLET",
+    WALLET_CONNECT = "WALLET_CONNECT",
+    NETWORK = "NETWORK",
+    GNOSIS_SAFE = "GNOSIS_SAFE",
 }
 
-export const network = new NetworkConnector({
-    urls: NETWORK_URLS,
-    defaultChainId: AlgebraConfig.CHAIN_PARAMS.chainId
-})
+export const BACKFILLABLE_WALLETS = [Wallet.COINBASE_WALLET, Wallet.WALLET_CONNECT, Wallet.INJECTED];
+export const SELECTABLE_WALLETS = [...BACKFILLABLE_WALLETS];
 
-let networkLibrary: Web3Provider | undefined
-
-export function getNetworkLibrary(): Web3Provider {
-    return (networkLibrary = networkLibrary ?? getLibrary(network.provider))
+function onError(error: Error) {
+    console.debug(`web3-react error: ${error}`);
 }
 
-export const injected = new InjectedConnector({
-    supportedChainIds: ALL_SUPPORTED_CHAIN_IDS
-})
-
-export const gnosisSafe = new SafeAppConnector()
-
-export const walletconnector = new WalletConnectConnector({
-    rpc: { [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.CHAIN_PARAMS.rpcURL },
-    supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
-    qrcode: true,
-    chainId: AlgebraConfig.CHAIN_PARAMS.chainId
-})
-
-interface OntoWalletConfig {
-    supportedChainIds: number[]
-}
-
-export class OntoWalletConnector extends AbstractConnector {
-
-    constructor(config: OntoWalletConfig) {
-        super({ supportedChainIds: config.supportedChainIds })
+export function getWalletForConnector(connector: Connector) {
+    switch (connector) {
+        case injected:
+            return Wallet.INJECTED;
+        case coinbaseWallet:
+            return Wallet.COINBASE_WALLET;
+        case walletConnect:
+            return Wallet.WALLET_CONNECT;
+        case network:
+            return Wallet.NETWORK;
+        case gnosisSafe:
+            return Wallet.GNOSIS_SAFE;
+        default:
+            throw Error("unsupported connector");
     }
+}
 
-    async activate(): Promise<ConnectorUpdate> {
-        const ethAgent = this.getAgent()
+export function getConnectorForWallet(wallet: Wallet) {
+    switch (wallet) {
+        case Wallet.INJECTED:
+            return injected;
+        case Wallet.COINBASE_WALLET:
+            return coinbaseWallet;
+        case Wallet.WALLET_CONNECT:
+            return walletConnect;
+        case Wallet.NETWORK:
+            return network;
+        case Wallet.GNOSIS_SAFE:
+            return gnosisSafe;
+    }
+}
 
-        if (!(await this.isAvalible())) {
-            throw new Error('Wallet is not available')
-        }
+function getHooksForWallet(wallet: Wallet) {
+    switch (wallet) {
+        case Wallet.INJECTED:
+            return injectedHooks;
+        case Wallet.COINBASE_WALLET:
+            return coinbaseWalletHooks;
+        case Wallet.WALLET_CONNECT:
+            return walletConnectHooks;
+        case Wallet.NETWORK:
+            return networkHooks;
+        case Wallet.GNOSIS_SAFE:
+            return gnosisSafeHooks;
+    }
+}
 
-        const accounts: string[] = await ethAgent.request({
-            method: 'eth_requestAccounts'
+const rpcUrlMap = { [algebraConfig.CHAIN_PARAMS.chainId]: algebraConfig.CHAIN_PARAMS.rpcURL };
+
+export const [network, networkHooks] = initializeConnector<Network>((actions) => new Network({ actions, urlMap: rpcUrlMap, defaultChainId: algebraConfig.CHAIN_PARAMS.chainId }));
+
+export const [injected, injectedHooks] = initializeConnector<MetaMask>((actions) => new MetaMask({ actions, onError }));
+
+export const [gnosisSafe, gnosisSafeHooks] = initializeConnector<GnosisSafe>((actions) => new GnosisSafe({ actions }));
+
+export const [walletConnect, walletConnectHooks] = initializeConnector<WalletConnect>(
+    (actions) =>
+        new WalletConnect({
+            actions,
+            options: {
+                projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID as string,
+                chains: [algebraConfig.CHAIN_PARAMS.chainId],
+                rpcMap: rpcUrlMap,
+                showQrModal: true,
+                optionalMethods: ["eth_signTypedData", "eth_signTypedData_v4", "eth_sign", "eth_sendTransaction"],
+                qrModalOptions: {
+                    themeVariables: {
+                        "--wcm-z-index": "199",
+                    },
+                },
+            },
+            onError,
         })
+);
 
-        const account = getAddress(accounts[0])
-
-        const provider = new Web3Provider(ethAgent)
-
-        const { chainId } = await provider.getNetwork()
-
-        // @ts-ignore
-        provider.provider.on('accountsChanged', (accounts: string[]): void => {
-            //@ts-ignore
-            if (account !== accounts[0]) {
-                localStorage.setItem('ontoWarning', '')
-                window.location.reload()
-            } else if (accounts.length === 0) {
-                localStorage.setItem('ontoWarning', '')
-            }
+export const [coinbaseWallet, coinbaseWalletHooks] = initializeConnector<CoinbaseWallet>(
+    (actions) =>
+        new CoinbaseWallet({
+            actions,
+            options: {
+                url: algebraConfig.CHAIN_PARAMS.rpcURL,
+                appName: "Swapr Liquidity",
+                appLogoUrl: SWAPR_LOGO_URL,
+            },
+            onError,
         })
+);
 
-        //@ts-ignore
-        provider.provider.on('chainChanged', (chain) => {
-            //@ts-ignore
-            if (chain !== chainId) {
-                window.location.reload()
-            } else {
-                localStorage.setItem('ontoWarning', '')
-            }
-        })
-
-
-        return Promise.resolve({ provider: provider.provider, chainId, account })
-    }
-
-    deactivate(): void {
-    }
-
-    protected getAgent(): any {
-        return (
-            (window as any).onto ??
-            ((window as any).ethereum?.isONTO && (window as any).ethereum)
-        )
-    }
-
-    async getAccount(): Promise<string | null> {
-        const { account } = await this.activate()
-        return Promise.resolve(account ?? null)
-    }
-
-    async getChainId(): Promise<number | string> {
-        const { chainId } = await this.activate()
-        if (!chainId) {
-            throw new Error('Error chainId')
-        }
-        return Promise.resolve(chainId)
-    }
-
-    async getProvider(): Promise<any> {
-        const { provider } = await this.activate()
-        return Promise.resolve(provider)
-    }
-
-    protected async isAvalible(): Promise<boolean> {
-        return !!this.getAgent()
-    }
-
-    async close(): Promise<void> {
-        this.deactivate()
-        // const { provider, account } = await this.activate()
-        try {
-
-
-        } catch (e) {
-            console.error(e)
-        }
-    }
-
-    parseSendReturn(sendReturn: any) {
-        return sendReturn.hasOwnProperty('result') ? sendReturn.result : sendReturn
-    }
-
-
-    async isAuthorized(): Promise<boolean> {
-
-        const _window = window as unknown as OntoWindow
-
-        if (!_window.onto) {
-            return false
-        }
-
-        try {
-            return await _window.onto.send('eth_accounts').then((sendReturn: any) => {
-                if (this.parseSendReturn(sendReturn).length > 0) {
-                    return true
-                } else {
-                    return false
-                }
-            })
-        } catch {
-            return false
-        }
-    }
-
+interface ConnectorListItem {
+    connector: Connector;
+    hooks: Web3ReactHooks;
 }
 
-export const ontoconnector = new OntoWalletConnector({
-    supportedChainIds: [AlgebraConfig.CHAIN_PARAMS.chainId]
-})
+function getConnectorListItemForWallet(wallet: Wallet) {
+    return {
+        connector: getConnectorForWallet(wallet),
+        hooks: getHooksForWallet(wallet),
+    };
+}
+
+export function useConnectors(selectedWallet: Wallet | undefined) {
+    return useMemo(() => {
+        const connectors: ConnectorListItem[] = [{ connector: gnosisSafe, hooks: gnosisSafeHooks }];
+        if (selectedWallet) {
+            connectors.push(getConnectorListItemForWallet(selectedWallet));
+        }
+        connectors.push(...SELECTABLE_WALLETS.filter((wallet) => wallet !== selectedWallet).map(getConnectorListItemForWallet));
+        connectors.push({ connector: network, hooks: networkHooks });
+        const web3ReactConnectors: [Connector, Web3ReactHooks][] = connectors.map(({ connector, hooks }) => [connector, hooks]);
+        return web3ReactConnectors;
+    }, [selectedWallet]);
+}

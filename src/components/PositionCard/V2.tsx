@@ -7,7 +7,7 @@ import { Text } from "rebass";
 import { useTotalSupply } from "../../hooks/useTotalSupply";
 import { Trans } from "@lingui/macro";
 
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useTokenBalance } from "../../state/wallet/hooks";
 import { unwrappedToken } from "../../utils/unwrappedToken";
 import { ButtonEmpty, ButtonPrimary } from "../Button";
@@ -36,7 +36,7 @@ interface PositionCardProps {
 }
 
 export default function V2PositionCard({ pair, border, stakedBalance, sushi }: PositionCardProps) {
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
 
     const currency0 = unwrappedToken(pair?.token0 as WrappedCurrency);
     const currency1 = unwrappedToken(pair?.token1 as WrappedCurrency);

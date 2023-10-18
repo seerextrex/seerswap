@@ -2,7 +2,7 @@ import { isAddress } from "@ethersproject/address";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Frown } from "react-feather";
 import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useAllTransactions } from "../../state/transactions/hooks";
 import Loader from "../Loader";
 import Modal from "../Modal";
@@ -28,7 +28,7 @@ interface FarmingMyFarmsProps {
 }
 
 export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingMyFarmsProps) {
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
 
     const {
         getRewardsHash,

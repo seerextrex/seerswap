@@ -1,5 +1,4 @@
 import { Lock, Plus } from "react-feather";
-import { useActiveWeb3React } from "../../hooks/web3";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import { convertDateTime, getCountdownTime } from "../../utils/time";
 import { getProgress } from "../../utils/getProgress";
@@ -19,6 +18,7 @@ import { formatUnits } from "ethers/lib/utils";
 import { BigNumber } from "ethers";
 
 import AlgebraConfig from "algebra.config";
+import { useWeb3React } from "@web3-react/core";
 
 interface FarmingEventCardProps {
     active?: boolean;
@@ -55,7 +55,7 @@ export function FarmingEventCard({
     eternal,
     secret,
 }: FarmingEventCardProps) {
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
     const toggleWalletModal = useWalletModalToggle();
 
     const _startTime = useMemo(() => {

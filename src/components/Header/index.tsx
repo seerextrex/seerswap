@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
 import Logo from "../../assets/images/swapr-logo.svg";
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import Web3Status from "../Web3Status";
 import NetworkCard from "./NetworkCard";
 import { useIsNetworkFailed } from "../../hooks/useIsNetworkFailed";
@@ -16,7 +16,7 @@ import { Trans } from "@lingui/macro";
 import AlgebraConfig from "algebra.config";
 
 export default function Header() {
-    const { account, chainId } = useActiveWeb3React();
+    const { account, chainId } = useWeb3React();
 
     const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? ""];
 

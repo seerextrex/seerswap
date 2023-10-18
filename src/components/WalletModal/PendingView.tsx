@@ -1,20 +1,19 @@
-import { AbstractConnector } from '@web3-react/abstract-connector'
-import { SUPPORTED_WALLETS } from '../../constants/wallet'
-import Option from './Option'
-import { injected } from '../../connectors'
-import { Trans } from '@lingui/macro'
-import { ErrorButton, ErrorGroup, LoadingMessage, LoadingWrapper, PendingSection, StyledLoader } from './styled'
+import { SUPPORTED_WALLETS } from "../../constants/wallet";
+import Option from "./Option";
+import { injected } from "../../connectors";
+import { Trans } from "@lingui/macro";
+import { ErrorButton, ErrorGroup, LoadingMessage, LoadingWrapper, PendingSection, StyledLoader } from "./styled";
+import { Connector } from "@web3-react/types";
 
 interface PendingView {
-    connector?: AbstractConnector
-    error?: boolean
-    setPendingError: (error: boolean) => void
-    tryActivation: (connector: AbstractConnector) => void
-    errorMessage: string
+    connector?: Connector;
+    error?: boolean;
+    tryActivation: (connector: Connector) => void;
+    errorMessage?: string;
 }
 
-export default function PendingView({ connector, error = false, setPendingError, tryActivation, errorMessage }:PendingView ) {
-    const isMetamask = window?.ethereum?.isMetaMask
+export default function PendingView({ connector, error = false, tryActivation, errorMessage }: PendingView) {
+    const isMetamask = window?.ethereum?.isMetaMask;
 
     return (
         <PendingSection>
@@ -27,8 +26,7 @@ export default function PendingView({ connector, error = false, setPendingError,
                             </div>
                             <ErrorButton
                                 onClick={() => {
-                                    setPendingError(false)
-                                    connector && tryActivation(connector)
+                                    connector && tryActivation(connector);
                                 }}
                             >
                                 <Trans>Try Again</Trans>
@@ -43,30 +41,20 @@ export default function PendingView({ connector, error = false, setPendingError,
                 </LoadingWrapper>
             </LoadingMessage>
             {Object.keys(SUPPORTED_WALLETS).map((key) => {
-                const option = SUPPORTED_WALLETS[key]
+                const option = SUPPORTED_WALLETS[key];
                 if (option.connector === connector) {
                     if (option.connector === injected) {
-                        if (isMetamask && option.name !== 'MetaMask') {
-                            return null
+                        if (isMetamask && option.name !== "MetaMask") {
+                            return null;
                         }
-                        if (!isMetamask && option.name === 'MetaMask') {
-                            return null
+                        if (!isMetamask && option.name === "MetaMask") {
+                            return null;
                         }
                     }
-                    return (
-                        <Option
-                            id={`connect-${key}`}
-                            key={key}
-                            clickable={false}
-                            color={option.color}
-                            header={errorMessage}
-                            subheader={option.description}
-                            icon={option.iconURL}
-                        />
-                    )
+                    return <Option id={`connect-${key}`} key={key} clickable={false} color={option.color} header={errorMessage} subheader={option.description} icon={option.iconURL} />;
                 }
-                return null
+                return null;
             })}
         </PendingSection>
-    )
+    );
 }

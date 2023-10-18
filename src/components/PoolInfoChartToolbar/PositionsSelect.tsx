@@ -4,7 +4,7 @@ import { getPositionPeriod } from "../../utils/time";
 import stc from "string-to-color";
 import "./index.scss";
 import { ChevronDown, Layers } from "react-feather";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { t, Trans } from "@lingui/macro";
 
 interface PositionsSelectProps {
@@ -17,7 +17,7 @@ interface PositionsSelectProps {
 }
 
 export default function PositionsSelect({ positions: { closed, opened }, setSelected, selected }: PositionsSelectProps) {
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
 
     const _opened = useMemo(() => {
         const res: any[] = [];

@@ -1,85 +1,73 @@
-import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
-import { Position } from 'lib/src'
-import { usePool } from 'hooks/usePools'
-import { useActiveWeb3React } from 'hooks/web3'
-import { useToken } from 'hooks/Tokens'
-import { useV3PositionFees } from 'hooks/useV3PositionFees'
-import { useCallback, useMemo } from 'react'
-import { AppState } from '../../index'
-import { selectPercent } from './actions'
-import { unwrappedToken } from 'utils/unwrappedToken'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { t } from '@lingui/macro'
-import { PositionPool } from '../../../models/interfaces'
+import { Currency, CurrencyAmount, Percent } from "@uniswap/sdk-core";
+import { Position } from "lib/src";
+import { usePool } from "hooks/usePools";
+import { useWeb3React } from "@web3-react/core";
+import { useToken } from "hooks/Tokens";
+import { useV3PositionFees } from "hooks/useV3PositionFees";
+import { useCallback, useMemo } from "react";
+import { AppState } from "../../index";
+import { selectPercent } from "./actions";
+import { unwrappedToken } from "utils/unwrappedToken";
+import { useAppDispatch, useAppSelector } from "state/hooks";
+import { t } from "@lingui/macro";
+import { PositionPool } from "../../../models/interfaces";
 
-export function useBurnV3State(): AppState['burnV3'] {
-    return useAppSelector((state) => state.burnV3)
+export function useBurnV3State(): AppState["burnV3"] {
+    return useAppSelector((state) => state.burnV3);
 }
 
 export function useDerivedV3BurnInfo(
     position?: PositionPool,
     asWETH = false
 ): {
-    position?: Position
-    liquidityPercentage?: Percent
-    liquidityValue0?: CurrencyAmount<Currency>
-    liquidityValue1?: CurrencyAmount<Currency>
-    feeValue0?: CurrencyAmount<Currency>
-    feeValue1?: CurrencyAmount<Currency>
-    outOfRange: boolean
-    error?: string
+    position?: Position;
+    liquidityPercentage?: Percent;
+    liquidityValue0?: CurrencyAmount<Currency>;
+    liquidityValue1?: CurrencyAmount<Currency>;
+    feeValue0?: CurrencyAmount<Currency>;
+    feeValue1?: CurrencyAmount<Currency>;
+    outOfRange: boolean;
+    error?: string;
 } {
-    const { account } = useActiveWeb3React()
-    const { percent } = useBurnV3State()
+    const { account } = useWeb3React();
+    const { percent } = useBurnV3State();
 
+    const token0 = useToken(position?.token0);
+    const token1 = useToken(position?.token1);
 
-    const token0 = useToken(position?.token0)
-    const token1 = useToken(position?.token1)
-
-    const [, pool] = usePool(token0 ?? undefined, token1 ?? undefined)
+    const [, pool] = usePool(token0 ?? undefined, token1 ?? undefined);
 
     const positionSDK = useMemo(
         () =>
-            pool && position?.liquidity && typeof position?.tickLower === 'number' && typeof position?.tickUpper === 'number'
+            pool && position?.liquidity && typeof position?.tickLower === "number" && typeof position?.tickUpper === "number"
                 ? new Position({
-                    pool,
-                    liquidity: position.liquidity.toString(),
-                    tickLower: position.tickLower,
-                    tickUpper: position.tickUpper
-                })
+                      pool,
+                      liquidity: position.liquidity.toString(),
+                      tickLower: position.tickLower,
+                      tickUpper: position.tickUpper,
+                  })
                 : undefined,
         [pool, position]
-    )
+    );
 
-    const liquidityPercentage = new Percent(percent, 100)
+    const liquidityPercentage = new Percent(percent, 100);
 
-    const discountedAmount0 = positionSDK
-        ? liquidityPercentage.multiply(positionSDK.amount0.quotient).quotient
-        : undefined
-    const discountedAmount1 = positionSDK
-        ? liquidityPercentage.multiply(positionSDK.amount1.quotient).quotient
-        : undefined
+    const discountedAmount0 = positionSDK ? liquidityPercentage.multiply(positionSDK.amount0.quotient).quotient : undefined;
+    const discountedAmount1 = positionSDK ? liquidityPercentage.multiply(positionSDK.amount1.quotient).quotient : undefined;
 
-    const liquidityValue0 =
-        token0 && discountedAmount0
-            ? CurrencyAmount.fromRawAmount(asWETH ? token0 : unwrappedToken(token0), discountedAmount0)
-            : undefined
-    const liquidityValue1 =
-        token1 && discountedAmount1
-            ? CurrencyAmount.fromRawAmount(asWETH ? token1 : unwrappedToken(token1), discountedAmount1)
-            : undefined
+    const liquidityValue0 = token0 && discountedAmount0 ? CurrencyAmount.fromRawAmount(asWETH ? token0 : unwrappedToken(token0), discountedAmount0) : undefined;
+    const liquidityValue1 = token1 && discountedAmount1 ? CurrencyAmount.fromRawAmount(asWETH ? token1 : unwrappedToken(token1), discountedAmount1) : undefined;
 
-    const [feeValue0, feeValue1] = useV3PositionFees(pool ?? undefined, position?.tokenId, asWETH)
+    const [feeValue0, feeValue1] = useV3PositionFees(pool ?? undefined, position?.tokenId, asWETH);
 
-    const outOfRange =
-        pool && position ? pool.tickCurrent < position.tickLower || pool.tickCurrent > position.tickUpper : false
+    const outOfRange = pool && position ? pool.tickCurrent < position.tickLower || pool.tickCurrent > position.tickUpper : false;
 
-    let error: string | undefined
+    let error: string | undefined;
     if (!account) {
-        error = t`Connect Wallet`
+        error = t`Connect Wallet`;
     }
     if (percent === 0) {
-        error = error ?? t`Enter a percent`
+        error = error ?? t`Enter a percent`;
     }
     return {
         position: positionSDK,
@@ -89,23 +77,23 @@ export function useDerivedV3BurnInfo(
         feeValue0,
         feeValue1,
         outOfRange,
-        error
-    }
+        error,
+    };
 }
 
 export function useBurnV3ActionHandlers(): {
-    onPercentSelect: (percent: number) => void
+    onPercentSelect: (percent: number) => void;
 } {
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     const onPercentSelect = useCallback(
         (percent: number) => {
-            dispatch(selectPercent({ percent }))
+            dispatch(selectPercent({ percent }));
         },
         [dispatch]
-    )
+    );
 
     return {
-        onPercentSelect
-    }
+        onPercentSelect,
+    };
 }

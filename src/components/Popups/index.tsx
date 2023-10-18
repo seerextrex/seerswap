@@ -1,7 +1,7 @@
 import { useActivePopups } from "../../state/application/hooks";
 import PopupItem from "./PopupItem";
 import { useURLWarningVisible } from "../../state/user/hooks";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { FixedPopupColumn, MobilePopupInner, MobilePopupWrapper } from "./styled";
 
 import AlgebraConfig from "algebra.config";
@@ -13,7 +13,7 @@ export default function Popups() {
     const urlWarningActive = useURLWarningVisible();
 
     // need extra padding if network is not L1 Ethereum
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
     const isNotOnMainnet = Boolean(chainId && chainId !== AlgebraConfig.CHAIN_PARAMS.chainId);
 
     return (

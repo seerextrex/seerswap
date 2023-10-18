@@ -1,12 +1,13 @@
-import { AbstractConnector } from "@web3-react/abstract-connector";
 import INJECTED_ICON_URL from "../assets/images/arrow-right.svg";
 import METAMASK_ICON_URL from "../assets/svg/metamask-logo.svg";
+import COINBASE_ICON_URL from "../assets/svg/coinbaseWalletIcon.svg";
 import WALLET_CONNECT_URL from "../assets/images/walletConnectionIcon.svg";
-import ONTO_ICON_URL from "../assets/images/onto-logo.svg";
-import { injected, ontoconnector, walletconnector } from "../connectors";
+import { Wallet, injected, walletConnect, coinbaseWallet } from "../connectors";
+import { Connector } from "@web3-react/types";
 
 interface WalletInfo {
-    connector?: AbstractConnector;
+    connector?: Connector;
+    wallet?: Wallet;
     name: string;
     iconURL: string;
     description: string;
@@ -15,12 +16,12 @@ interface WalletInfo {
     primary?: true;
     mobile?: true;
     mobileOnly?: true;
-    chromeOnly?: true;
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     INJECTED: {
         connector: injected,
+        wallet: Wallet.INJECTED,
         name: "Injected",
         iconURL: INJECTED_ICON_URL,
         description: "Injected web3 provider.",
@@ -30,28 +31,21 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     },
     METAMASK: {
         connector: injected,
+        wallet: Wallet.INJECTED,
         name: "MetaMask",
         iconURL: METAMASK_ICON_URL,
-        description: "",
+        description: "Easy-to-use browser extension.",
         href: null,
         color: "#E8831D",
     },
     WALLET_CONNECT: {
-        connector: walletconnector,
-        name: "Wallet Connect",
+        connector: walletConnect,
+        wallet: Wallet.WALLET_CONNECT,
+        name: "WalletConnect",
         iconURL: WALLET_CONNECT_URL,
-        description: "Universal wallet protocol.",
+        description: "Connect to Trust Wallet, Rainbow Wallet and more...",
         href: null,
-        color: "#6F58F6",
+        color: "#4196FC",
         mobile: true,
-    },
-    ONTO: {
-        connector: ontoconnector,
-        name: "ONTO Wallet",
-        iconURL: ONTO_ICON_URL,
-        description: "Secure browser extension.",
-        href: null,
-        color: "#000000",
-        chromeOnly: true,
     },
 };

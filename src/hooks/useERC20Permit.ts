@@ -6,7 +6,7 @@ import { splitSignature } from "ethers/lib/utils";
 import { useMemo, useState } from "react";
 import { SWAP_ROUTER_ADDRESSES } from "../constants/addresses";
 import { useSingleCallResult } from "../state/multicall/hooks";
-import { useActiveWeb3React } from "./web3";
+import { useWeb3React } from "@web3-react/core";
 import { useEIP2612Contract } from "./useContract";
 import useTransactionDeadline from "./useTransactionDeadline";
 
@@ -101,7 +101,7 @@ function useERC20Permit(
     state: UseERC20PermitState;
     gatherPermitSignature: null | (() => Promise<void>);
 } {
-    const { account, chainId, library } = useActiveWeb3React();
+    const { account, chainId, provider } = useWeb3React();
     const transactionDeadline = useTransactionDeadline();
     const tokenAddress = currencyAmount?.currency?.isToken ? currencyAmount.currency.address : undefined;
     const eip2612Contract = useEIP2612Contract(tokenAddress);
@@ -112,7 +112,7 @@ function useERC20Permit(
     const [signatureData, setSignatureData] = useState<SignatureData | null>(null);
 
     return useMemo(() => {
-        if (!currencyAmount || !eip2612Contract || !account || !chainId || !transactionDeadline || !library || !tokenNonceState.valid || !tokenAddress || !spender || !permitInfo) {
+        if (!currencyAmount || !eip2612Contract || !account || !chainId || !transactionDeadline || !provider || !tokenNonceState.valid || !tokenAddress || !spender || !permitInfo) {
             return {
                 state: UseERC20PermitState.NOT_APPLICABLE,
                 signatureData: null,
@@ -183,7 +183,7 @@ function useERC20Permit(
                     message,
                 });
 
-                return library
+                return provider
                     .send("eth_signTypedData_v4", [account, data])
                     .then(splitSignature)
                     .then((signature) => {
@@ -222,7 +222,7 @@ function useERC20Permit(
         account,
         chainId,
         transactionDeadline,
-        library,
+        provider,
         tokenNonceState.loading,
         tokenNonceState.valid,
         tokenNonceState.result,
@@ -244,7 +244,7 @@ export function useV2LiquidityTokenPermit(liquidityAmount: CurrencyAmount<Token>
 }
 
 export function useERC20PermitFromTrade(trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined, allowedSlippage: Percent) {
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
     const swapRouterAddress = chainId ? SWAP_ROUTER_ADDRESSES[chainId] : undefined;
     const amountToApprove = useMemo(() => (trade ? trade.maximumAmountIn(allowedSlippage) : undefined), [trade, allowedSlippage]);
 

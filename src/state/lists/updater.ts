@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import useInterval from "../../hooks/useInterval";
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useAppDispatch } from "../hooks";
 import useIsWindowVisible from "../../hooks/useIsWindowVisible";
 import { useActiveListUrls, useAllLists } from "./hooks";
@@ -10,7 +10,7 @@ import { UNSUPPORTED_LIST_URLS } from "../../constants/lists";
 import { VersionUpgrade, getVersionUpgrade, minVersionBump } from "@uniswap/token-lists";
 
 export default function Updater(): null {
-    const { library } = useActiveWeb3React();
+    const { provider } = useWeb3React();
     const dispatch = useAppDispatch();
     const isWindowVisible = useIsWindowVisible();
 
@@ -29,8 +29,8 @@ export default function Updater(): null {
     //         dispatch(enableList(HONEYSWAP_LIST));
     //     }
     // }, [chainId, dispatch]);
-    // fetch all lists every 10 minutes, but only after we initialize library
-    useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null);
+    // fetch all lists every 10 minutes, but only after we initialize provider
+    useInterval(fetchAllListsCallback, provider ? 1000 * 60 * 10 : null);
 
     // whenever a list is not loaded and not loading, try again to load it
     useEffect(() => {
@@ -40,7 +40,7 @@ export default function Updater(): null {
                 fetchList(listUrl).catch((error) => console.debug("list added fetching error", error));
             }
         });
-    }, [dispatch, fetchList, library, lists]);
+    }, [dispatch, fetchList, provider, lists]);
 
     // if any lists from unsupported lists are loaded, check them too (in case new updates since last visit)
     useEffect(() => {
@@ -50,7 +50,7 @@ export default function Updater(): null {
                 fetchList(listUrl).catch((error) => console.debug("list added fetching error", error));
             }
         });
-    }, [dispatch, fetchList, library, lists]);
+    }, [dispatch, fetchList, provider, lists]);
 
     // automatically update lists if versions are minor/patch
     useEffect(() => {

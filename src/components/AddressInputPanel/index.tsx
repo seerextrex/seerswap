@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { ReactNode, useCallback, useContext } from "react";
 import { ThemeContext } from "styled-components/macro";
 import useENS from "../../hooks/useENS";
-import { useActiveWeb3React } from "../../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { ExternalLink, TYPE } from "../../theme";
 import { ExplorerDataType, getExplorerLink } from "../../utils/getExplorerLink";
 import { AutoColumn } from "../Column";
@@ -24,7 +24,7 @@ export default function AddressInputPanel({
     value: string;
     onChange: (value: string) => void;
 }) {
-    const { chainId } = useActiveWeb3React();
+    const { chainId } = useWeb3React();
     const theme = useContext(ThemeContext);
 
     const { address, loading, name } = useENS(value);

@@ -1,13 +1,11 @@
 import "inter-ui";
 import "@reach/dialog/styles.css";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
 import Blocklist from "./components/Blocklist";
-import { NetworkContextName } from "./constants/misc";
 import { LanguageProvider } from "./i18n";
 import App from "./pages/App";
 import store from "./state";
@@ -18,14 +16,13 @@ import LogsUpdater from "./state/logs/updater";
 import TransactionUpdater from "./state/transactions/updater";
 import UserUpdater from "./state/user/updater";
 import ThemeProvider, { ThemedGlobalStyle } from "./theme";
-import getLibrary from "./utils/getLibrary";
 import "@fontsource/montserrat";
 import GasUpdater from "./state/application/gasUpdater";
 import "./assets/styles/index.scss";
 
 import AlgebraConfig from "algebra.config";
+import Web3Provider from "./components/Web3Provider";
 
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
 type __window = Window & { ethereum: any };
 
 const _window = window as unknown as __window;
@@ -59,17 +56,15 @@ ReactDOM.render(
             <Provider store={store}>
                 <HashRouter>
                     <LanguageProvider>
-                        <Web3ReactProvider getLibrary={getLibrary}>
-                            <Web3ProviderNetwork getLibrary={getLibrary}>
-                                <Blocklist>
-                                    <Updaters />
-                                    <ThemeProvider>
-                                        <ThemedGlobalStyle />
-                                        <App />
-                                    </ThemeProvider>
-                                </Blocklist>
-                            </Web3ProviderNetwork>
-                        </Web3ReactProvider>
+                        <Web3Provider>
+                            <Blocklist>
+                                <Updaters />
+                                <ThemeProvider>
+                                    <ThemedGlobalStyle />
+                                    <App />
+                                </ThemeProvider>
+                            </Blocklist>
+                        </Web3Provider>
                     </LanguageProvider>
                 </HashRouter>
             </Provider>

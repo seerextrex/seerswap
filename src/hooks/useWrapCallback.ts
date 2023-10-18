@@ -4,7 +4,7 @@ import { WXDAI_EXTENDED } from "../constants/tokens";
 import { tryParseAmount } from "../state/swap/hooks";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import { useCurrencyBalance } from "../state/wallet/hooks";
-import { useActiveWeb3React } from "./web3";
+import { useWeb3React } from "@web3-react/core";
 import { useWETHContract } from "./useContract";
 import { t } from "@lingui/macro";
 
@@ -28,7 +28,7 @@ export default function useWrapCallback(
     outputCurrency: Currency | undefined,
     typedValue: string | undefined
 ): { wrapType: WrapType; execute?: undefined | (() => Promise<void>); inputError?: string } {
-    const { chainId, account } = useActiveWeb3React();
+    const { chainId, account } = useWeb3React();
     const wethContract = useWETHContract();
     const balance = useCurrencyBalance(account ?? undefined, inputCurrency);
     // we can always parse the amount typed as the input currency, since wrapping is 1:1

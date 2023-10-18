@@ -3,7 +3,6 @@ import { Route, Switch } from "react-router-dom";
 import ErrorBoundary from "../components/ErrorBoundary";
 import Header from "../components/Header";
 import Popups from "../components/Popups";
-import Web3ReactManager from "../components/Web3ReactManager";
 import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
 import { RedirectDuplicateTokenIdsNew } from "./AddLiquidity/redirects";
 import RemoveLiquidityV3 from "./RemoveLiquidity/V3";
@@ -12,7 +11,7 @@ import { Pool } from "lib/src";
 import React, { useEffect } from "react";
 import { useIsNetworkFailed } from "../hooks/useIsNetworkFailed";
 import Loader from "../components/Loader";
-import { useActiveWeb3React } from "../hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { GlobalStyle, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
 import { t, Trans } from "@lingui/macro";
@@ -32,7 +31,7 @@ export default function App() {
             return 60;
         },
     });
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
     const networkFailed = useIsNetworkFailed();
 
     useEffect(() => {
@@ -53,50 +52,46 @@ export default function App() {
             <GlobalStyle />
             <Route component={DarkModeQueryParamReader} />
             <Route component={ApeModeQueryParamReader} />
-            <Web3ReactManager>
-                <>
-                    <Header />
-                    <div className={"app-body w-100 maw-1180 ph-1 pt-3 mh-a pb-4 mm_pt-5"} style={{ zIndex: 3, marginBottom: "5rem" }}>
-                        {networkFailed && (
-                            <NetworkFailedCard>
-                                <div style={{ display: "flex" }}>
-                                    <Loader
-                                        style={{
-                                            display: "inline-block",
-                                            margin: "auto 8px auto 0",
-                                        }}
-                                        stroke={"white"}
-                                    />
-                                    <span>{t`Connecting to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</span>
-                                </div>
-                            </NetworkFailedCard>
-                        )}
-                        <div className={"pb-2 mm_pb-2 mxs_pb-2"} style={{ zIndex: 2 }}>
-                            <Popups />
-                            <React.Suspense
-                                fallback={
-                                    <p>
-                                        <Trans>Loading...</Trans>
-                                    </p>
-                                }
-                            >
-                                <Switch>
-                                    <Route strict path="/info" component={InfoPage} />
-                                    <Route exact strict path="/send" component={RedirectPathToPoolOnly} />
-                                    <Route exact strict path="/pool" component={PoolPage} />
-                                    <Route exact strict path="/pool/:tokenId" component={PositionPage} />
-                                    <Route exact strict path="/add/:currencyIdA?/:currencyIdB?/:step?" component={RedirectDuplicateTokenIdsNew} />
-                                    <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
-                                    <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
-                                    <Route component={RedirectPathToPoolOnly} />
-                                </Switch>
-                            </React.Suspense>
-                            <Marginer />
+            <Header />
+            <div className={"app-body w-100 maw-1180 ph-1 pt-3 mh-a pb-4 mm_pt-5"} style={{ zIndex: 3, marginBottom: "5rem" }}>
+                {networkFailed && (
+                    <NetworkFailedCard>
+                        <div style={{ display: "flex" }}>
+                            <Loader
+                                style={{
+                                    display: "inline-block",
+                                    margin: "auto 8px auto 0",
+                                }}
+                                stroke={"white"}
+                            />
+                            <span>{t`Connecting to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</span>
                         </div>
-                    </div>
-                    <Footer />
-                </>
-            </Web3ReactManager>
+                    </NetworkFailedCard>
+                )}
+                <div className={"pb-2 mm_pb-2 mxs_pb-2"} style={{ zIndex: 2 }}>
+                    <Popups />
+                    <React.Suspense
+                        fallback={
+                            <p>
+                                <Trans>Loading...</Trans>
+                            </p>
+                        }
+                    >
+                        <Switch>
+                            <Route strict path="/info" component={InfoPage} />
+                            <Route exact strict path="/send" component={RedirectPathToPoolOnly} />
+                            <Route exact strict path="/pool" component={PoolPage} />
+                            <Route exact strict path="/pool/:tokenId" component={PositionPage} />
+                            <Route exact strict path="/add/:currencyIdA?/:currencyIdB?/:step?" component={RedirectDuplicateTokenIdsNew} />
+                            <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
+                            <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
+                            <Route component={RedirectPathToPoolOnly} />
+                        </Switch>
+                    </React.Suspense>
+                    <Marginer />
+                </div>
+            </div>
+            <Footer />
         </ErrorBoundary>
     );
 }

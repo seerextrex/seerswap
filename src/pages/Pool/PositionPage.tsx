@@ -17,7 +17,7 @@ import { formatCurrencyAmount } from "utils/formatCurrencyAmount";
 import { useV3PositionFees } from "hooks/useV3PositionFees";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Currency, CurrencyAmount, Fraction, Percent, Token } from "@uniswap/sdk-core";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useV3NFTPositionManagerContract } from "hooks/useContract";
 import { useIsTransactionPending, useTransactionAdder } from "state/transactions/hooks";
 import { TransactionResponse } from "@ethersproject/providers";
@@ -56,7 +56,7 @@ export default function PositionPage({
         params: { tokenId: tokenIdFromUrl },
     },
 }: RouteComponentProps<{ tokenId?: string }>) {
-    const { chainId, account, library } = useActiveWeb3React();
+    const { chainId, account, provider } = useWeb3React();
 
     const query = useQuery();
 
@@ -194,7 +194,7 @@ export default function PositionPage({
     const addTransaction = useTransactionAdder();
     const positionManager = useV3NFTPositionManagerContract();
     const collect = useCallback(() => {
-        if (!chainId || !feeValue0 || !feeValue1 || !positionManager || !account || !tokenId || !library) return;
+        if (!chainId || !feeValue0 || !feeValue1 || !positionManager || !account || !tokenId || !provider) return;
 
         setCollecting(true);
 
@@ -213,7 +213,7 @@ export default function PositionPage({
             value: value,
         };
 
-        library
+        provider
             .getSigner()
             .estimateGas(txn)
             .then((estimate) => {
@@ -223,7 +223,7 @@ export default function PositionPage({
                     gasPrice: gasPrice * 1000000000,
                 };
 
-                return library
+                return provider
                     .getSigner()
                     .sendTransaction(newTxn)
                     .then((response: TransactionResponse) => {
@@ -245,7 +245,7 @@ export default function PositionPage({
                 setCollecting(false);
                 console.error(error);
             });
-    }, [chainId, feeValue0, feeValue1, positionManager, account, tokenId, addTransaction, library]);
+    }, [chainId, feeValue0, feeValue1, positionManager, account, tokenId, addTransaction, provider]);
 
     const owner = useSingleCallResult(!!tokenId ? positionManager : null, "ownerOf", [tokenId]).result?.[0];
     const ownsNFT = owner === account || positionDetails?.operator === account;

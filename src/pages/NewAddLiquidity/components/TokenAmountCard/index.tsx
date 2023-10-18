@@ -6,7 +6,7 @@ import "./index.scss";
 import CurrencyLogo from "components/CurrencyLogo";
 import { WrappedCurrency } from "models/types";
 import { useCurrencyBalance } from "state/wallet/hooks";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Input from "components/NumericalInput";
@@ -53,7 +53,7 @@ export function TokenAmountCard({
     priceFormat,
     isBase,
 }: ITokenAmountCard) {
-    const { account } = useActiveWeb3React();
+    const { account } = useWeb3React();
 
     const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
     const balanceUSD = useUSDCPrice(currency ?? undefined);

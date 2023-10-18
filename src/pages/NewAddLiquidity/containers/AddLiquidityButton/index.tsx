@@ -2,7 +2,7 @@ import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { ZERO_PERCENT } from "constants/misc";
 import { useV3NFTPositionManagerContract } from "hooks/useContract";
 import useTransactionDeadline from "hooks/useTransactionDeadline";
-import { useActiveWeb3React } from "hooks/web3";
+import { useWeb3React } from "@web3-react/core";
 import { useUserSlippageToleranceWithDefault } from "state/user/hooks";
 
 import { NonfungiblePositionManager as NonFunPosMan } from "lib/src/nonfungiblePositionManager";
@@ -33,7 +33,7 @@ interface IAddLiquidityButton {
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
 export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, handleAddLiquidity, title, setRejected }: IAddLiquidityButton) {
-    const { chainId, library, account } = useActiveWeb3React();
+    const { chainId, provider, account } = useWeb3React();
 
     const positionManager = useV3NFTPositionManagerContract();
 
@@ -69,7 +69,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
     }, [mintInfo, approvalA, approvalB]);
 
     async function onAdd() {
-        if (!chainId || !library || !account) return;
+        if (!chainId || !provider || !account) return;
 
         if (!positionManager || !baseCurrency || !quoteCurrency) {
             return;
@@ -94,7 +94,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
 
             setRejected && setRejected(false);
 
-            library
+            provider
                 .getSigner()
                 .estimateGas(txn)
                 .then((estimate) => {
@@ -104,7 +104,7 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
                         gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
                     };
 
-                    return library
+                    return provider
                         .getSigner()
                         .sendTransaction(newTxn)
                         .then((response: TransactionResponse) => {

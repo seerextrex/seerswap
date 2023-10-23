@@ -2,8 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { StatCard } from "./StatCard";
 import "./index.scss";
-import { t, Trans } from "@lingui/macro";
-import { AlertCircle } from "react-feather";
+import { t } from "@lingui/macro";
 
 interface InfoTotalStatsProps {
     data: any;

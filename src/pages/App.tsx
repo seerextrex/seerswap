@@ -19,6 +19,7 @@ import { t, Trans } from "@lingui/macro";
 import "./index.scss";
 
 import AlgebraConfig from "algebra.config";
+import Swap from "pages/Swap";
 
 const AddLiquidity = React.lazy(() => import("./AddLiquidity"));
 const PoolPage = React.lazy(() => import("./Pool"));
@@ -79,13 +80,14 @@ export default function App() {
                     >
                         <Switch>
                             <Route strict path="/info" component={InfoPage} />
+                            <Route exact strict path="/swap" component={Swap} />
                             <Route exact strict path="/send" component={RedirectPathToPoolOnly} />
                             <Route exact strict path="/pool" component={PoolPage} />
                             <Route exact strict path="/pool/:tokenId" component={PositionPage} />
                             <Route exact strict path="/add/:currencyIdA?/:currencyIdB?/:step?" component={RedirectDuplicateTokenIdsNew} />
                             <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
                             <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
-                            <Route component={RedirectPathToPoolOnly} />
+                            {/* <Route component={RedirectPathToPoolOnly} /> */}
                         </Switch>
                     </React.Suspense>
                     <Marginer />

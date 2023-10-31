@@ -87,7 +87,7 @@ export default function App() {
                             <Route exact strict path="/add/:currencyIdA?/:currencyIdB?/:step?" component={RedirectDuplicateTokenIdsNew} />
                             <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
                             <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
-                            {/* <Route component={RedirectPathToPoolOnly} /> */}
+                            <Route component={RedirectPathToPoolOnly} />
                         </Switch>
                     </React.Suspense>
                     <Marginer />

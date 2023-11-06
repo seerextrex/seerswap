@@ -11,8 +11,7 @@ import { Sock } from "./Sock";
 import { shortenAddress } from "../../utils";
 import { StatusIcon } from "./StatusIcon";
 import { EthereumWindow } from "models/types";
-import { OntoWrongChainModal } from "components/OntoWrongChainModal";
-import { useState } from "react";
+import { isMobile } from "react-device-detect";
 
 import AlgebraConfig from "algebra.config";
 
@@ -58,11 +57,9 @@ export async function addPolygonNetwork() {
 }
 
 export function Web3StatusInner() {
-    const { account, connector } = useWeb3React();
+    const { account, connector, chainId } = useWeb3React();
     const { ENSName } = useENSName(account ?? undefined);
     const sortedRecentTransactions = useSortedRecentTransactions();
-
-    const ontoWrongChainWarning = !!localStorage.getItem("ontoWarning");
 
     const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash);
 
@@ -70,12 +67,28 @@ export function Web3StatusInner() {
     const hasSocks = useHasSocks();
     const toggleWalletModal = useWalletModalToggle();
 
-    const [ontoHelper, toggleOntoHelper] = useState(false);
-
     //TODO: hanlde errors
     const error = false;
 
-    if (account) {
+    const chainAllowed = chainId && AlgebraConfig.CHAIN_PARAMS.chainId == chainId;
+
+    if (!chainAllowed) {
+        return (
+            <>
+                <Web3StatusConnect style={{ marginRight: "4px" }} onClick={() => connector.activate(AlgebraConfig.CHAIN_PARAMS.chainId)}>
+                    <Text style={{ overflow: "unset" }}>Switch to {AlgebraConfig.CHAIN_PARAMS.chainName}</Text>
+                </Web3StatusConnect>
+                {!isMobile && (
+                    <Web3StatusError onClick={toggleWalletModal}>
+                        <NetworkIcon />
+                        <Text>
+                            <Trans>Wrong Network</Trans>
+                        </Text>
+                    </Web3StatusError>
+                )}
+            </>
+        );
+    } else if (account) {
         return (
             <Web3StatusConnected id="web3-status-connected" style={{ background: "#181e3e", color: "white", border: "none" }} onClick={toggleWalletModal} pending={hasPendingTransactions}>
                 {hasPendingTransactions ? (
@@ -93,16 +106,6 @@ export function Web3StatusInner() {
                 )}
                 {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
             </Web3StatusConnected>
-        );
-    } else if (ontoWrongChainWarning) {
-        return (
-            <>
-                {ontoHelper && <OntoWrongChainModal handleClose={() => toggleOntoHelper(false)} />}
-                <Web3StatusError onClick={() => toggleOntoHelper(true)}>
-                    <NetworkIcon />
-                    <Text>{t`Connect to ${AlgebraConfig.CHAIN_PARAMS.chainName}`}</Text>
-                </Web3StatusError>
-            </>
         );
     } else if (error) {
         return (

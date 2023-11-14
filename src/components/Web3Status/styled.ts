@@ -35,6 +35,7 @@ const Web3StatusGeneric = styled(ButtonSecondary)`
 `;
 
 export const Web3StatusError = styled(Web3StatusGeneric)`
+    background: none;
     background-color: ${({ theme }) => theme.red1};
     border: 1px solid ${({ theme }) => theme.red1};
     color: ${({ theme }) => theme.white};
@@ -42,6 +43,7 @@ export const Web3StatusError = styled(Web3StatusGeneric)`
 
     :hover,
     :focus {
+        background: none;
         background-color: ${({ theme }) => darken(0.1, theme.red1)};
     }
 `;

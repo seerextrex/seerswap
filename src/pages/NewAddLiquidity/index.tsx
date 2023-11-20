@@ -160,8 +160,8 @@ export function NewAddLiquidityPage({
     }, [history, handleCurrencySelect, currencyIdA, currencyIdB]);
 
     const handlePopularPairSelection = useCallback((pair: [string, string]) => {
-        const WMATIC = "0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101";
-        history.push(`/add/${pair[0] === WMATIC ? "WDOGE" : pair[0]}/${pair[1] === WMATIC ? "WDOGE" : pair[1]}`);
+        const WXDAI = "0xe91d153e0b41518a2ce8dd3d7944fa863463a97d";
+        history.push(`/add/${pair[0] === WXDAI ? "WXDAI" : pair[0]}/${pair[1] === WXDAI ? "WXDAI" : pair[1]}`);
         resetState();
     }, []);
 

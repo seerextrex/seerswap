@@ -101,7 +101,7 @@ export function Web3StatusInner() {
                 ) : (
                     <>
                         {hasSocks ? <Sock /> : null}
-                        <Text>{ENSName || shortenAddress(account, 2)}</Text>
+                        <Text>{ENSName || shortenAddress(account, 4)}</Text>
                     </>
                 )}
                 {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}

@@ -91,7 +91,7 @@ export default function Pool() {
             <Helmet>
                 <title>{t`Swapr — Pool`}</title>
             </Helmet>
-            <Card classes={"card-gradient-shadow br-24 ph-2 pv-1 mxs_ph-1"}>
+            <Card classes={"card-gradient-shadow br-24 ph-2 pv-1 mxs_ph-1 mv-2"}>
                 <SwapPoolTabs active={"pool"} />
                 <AutoColumn gap="1">
                     <div className={"pool__header flex-s-between"}>
@@ -119,10 +119,14 @@ export default function Pool() {
                         ) : (
                             <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>
                                 <Trans>You do not have any liquidity positions.</Trans>
-                                {showConnectAWallet && (
+                                {showConnectAWallet ? (
                                     <button className={"btn primary pv-05 ph-1 mt-1 w-100"} onClick={toggleWalletModal}>
                                         <Trans>Connect Wallet</Trans>
                                     </button>
+                                ) : (
+                                    <NavLink style={{ textAlign: "center" }} className={"btn primary pv-05 ph-1 mt-1 w-100"} to={`/add`}>
+                                        + <Trans>New Position</Trans>
+                                    </NavLink>
                                 )}
                             </div>
                         )}

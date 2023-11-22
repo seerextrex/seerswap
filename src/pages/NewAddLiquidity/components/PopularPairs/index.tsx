@@ -50,19 +50,19 @@ function PopularPair({ pair, handlePopularPairSelection }: { pair: [string, stri
 
     const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
 
-    const WMATIC = "0xb7ddc6414bf4f5515b52d8bdd69973ae205ff101";
+    const WXDAI = "0xe91d153e0b41518a2ce8dd3d7944fa863463a97d";
 
     return (
         <div onClick={() => handlePopularPairSelection([token0.address.toLowerCase(), token1.address.toLowerCase()])} className={`f f-ac f-jc popular-pair`}>
             <span className="popular-pair__logo">
                 <CurrencyLogo currency={token0 as WrappedCurrency} size={"16px"} />
             </span>
-            <span>{token0.address.toLowerCase() === WMATIC ? "WDOGE" : token0.symbol}</span>
+            <span>{token0.address.toLowerCase() === WXDAI ? "WXDAI" : token0.symbol}</span>
             <span className="popular-pair__plus">+</span>
             <span className="popular-pair__logo">
                 <CurrencyLogo currency={token1 as WrappedCurrency} size={"16px"} />
             </span>
-            <span>{token1.address.toLowerCase() === WMATIC ? "WDOGE" : token1.symbol}</span>
+            <span>{token1.address.toLowerCase() === WXDAI ? "WXDAI" : token1.symbol}</span>
         </div>
     );
 }

@@ -511,7 +511,7 @@ msgid "Collect rewards"
 msgstr "Recolectar recompensas"
 
 #: src/components/StakerMyStakes/index.tsx
-msgid "Collect rewards & Undeposit"
+msgid "Collect rewards & Withdraw"
 msgstr "Recolectar recompensas y anular el depósito"
 
 #: src/pages/Pool/PositionPage.tsx
@@ -2081,11 +2081,11 @@ msgstr "Comisiones no reclamadas"
 
 #: src/components/StakerMyStakes/index.tsx
 #: src/components/StakerMyStakes/index.tsx
-msgid "Undeposit"
+msgid "Withdraw"
 msgstr "Anular depósito"
 
 #: src/components/StakerMyStakes/index.tsx
-msgid "Undepositing"
+msgid "Withdrawing"
 msgstr "Desembolsando"
 
 #: src/hooks/useSwapCallback.ts

@@ -281,7 +281,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                                 </span>
                                                                             ) : (
                                                                                 <span>
-                                                                                    <Trans>Undeposit</Trans>
+                                                                                    <Trans>Withdraw</Trans>
                                                                                 </span>
                                                                             )}
                                                                         </button>
@@ -314,7 +314,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                         </div>
                                                                     ) : (
                                                                         <span>
-                                                                            <Trans>Collect rewards & Undeposit</Trans>
+                                                                            <Trans>Collect rewards & Withdraw</Trans>
                                                                         </span>
                                                                     )}
                                                                 </button>
@@ -390,11 +390,11 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                 {gettingReward && gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== "done" ? (
                                                                     <div className={"f f-jc f-ac cg-05"}>
                                                                         <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                        <Trans>Undepositing</Trans>
+                                                                        <Trans>Withdrawing</Trans>
                                                                     </div>
                                                                 ) : (
                                                                     <span>
-                                                                        <Trans>Undeposit</Trans>
+                                                                        <Trans>Withdraw</Trans>
                                                                     </span>
                                                                 )}
                                                             </button>

@@ -514,7 +514,7 @@ msgid "Collect rewards"
 msgstr "Получить награды"
 
 #: src/components/StakerMyStakes/index.tsx
-msgid "Collect rewards & Undeposit"
+msgid "Collect rewards & Withdraw"
 msgstr "Получить награды и вывести"
 
 #: src/pages/Pool/PositionPage.tsx
@@ -2080,11 +2080,11 @@ msgstr "Комиссии"
 
 #: src/components/StakerMyStakes/index.tsx
 #: src/components/StakerMyStakes/index.tsx
-msgid "Undeposit"
+msgid "Withdraw"
 msgstr "Вывести"
 
 #: src/components/StakerMyStakes/index.tsx
-msgid "Undepositing"
+msgid "Withdrawing"
 msgstr "Вывод"
 
 #: src/hooks/useSwapCallback.ts

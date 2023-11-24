@@ -127,6 +127,6 @@ export default {
     MISC: {
         title: "Liqudity | Swapr",
         description: "Concetraded liquidity on Gnosis Chain",
-        appURL: "swapr.liquidity.eth.limo",
+        appURL: "https://swapr.liquidity.eth.limo",
     },
 };

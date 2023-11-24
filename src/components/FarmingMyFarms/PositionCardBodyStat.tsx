@@ -8,6 +8,7 @@ import { Trans } from "@lingui/macro";
 import "./position-card-body-stat.scss";
 
 import AlgebraConfig from "algebra.config";
+import { ZERO_ADDRESS } from "../../constants/misc";
 
 interface PositionCardBodyStatProps {
     rewardToken: any;
@@ -19,6 +20,7 @@ interface PositionCardBodyStatProps {
 export default function PositionCardBodyStat({ rewardToken, earned, bonusRewardToken, bonusEarned }: PositionCardBodyStatProps) {
     const rewardList = useMemo(() => {
         if (rewardToken.id === bonusRewardToken.id) return [{ token: rewardToken, amount: +earned + +bonusEarned }];
+        if (bonusRewardToken.id === ZERO_ADDRESS) return [{ token: rewardToken, amount: earned }];
 
         return [
             { token: rewardToken, amount: earned },

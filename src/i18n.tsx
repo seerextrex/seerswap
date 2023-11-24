@@ -3,10 +3,8 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { useActiveLocale, useSetLocaleFromUrl } from "hooks/useActiveLocale";
 import { SupportedLocale } from "constants/locales";
-import { en, ru, es, PluralCategory } from "make-plural/plurals";
+import { en, PluralCategory } from "make-plural/plurals";
 import { messages as enMessages } from "locales/en-US.js";
-import { messages as ruMessages } from "locales/ru-RU.js";
-import { messages as esMessages } from "locales/es-ES.js";
 
 type LocalePlural = {
     [key in SupportedLocale]: (n: number | string, ord?: boolean) => PluralCategory;
@@ -14,14 +12,10 @@ type LocalePlural = {
 
 const plurals: LocalePlural = {
     "en-US": en,
-    "ru-RU": ru,
-    "es-ES": es,
 };
 
 const localesMessages: any = {
     "en-US": enMessages,
-    "ru-RU": ruMessages,
-    "es-ES": esMessages,
 };
 
 async function dynamicActivate(locale: SupportedLocale) {

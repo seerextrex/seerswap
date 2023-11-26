@@ -179,7 +179,6 @@ export const LoadingMessage = styled.div<{ error?: boolean }>`
     border-radius: 12px;
     margin-bottom: 20px;
     color: ${({ theme, error }) => (error ? theme.red1 : "inherit")};
-    border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text4)};
 
     & > * {
         padding: 1rem;

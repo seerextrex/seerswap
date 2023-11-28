@@ -15,6 +15,7 @@ export default {
         wrappedNativeCurrency: { name: "Wrapped XDAI", symbol: "WXDAI", decimals: 18, address: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d", logo: WXDAI_LOGO },
         rpcURL: "https://rpc.gnosis.gateway.fm",
         blockExplorerURL: "https://gnosisscan.io",
+        blockExplorerDomain: "gnosisscan.io",
     },
 
     // Token addresses should be in lowercase

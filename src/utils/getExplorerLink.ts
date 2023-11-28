@@ -1,14 +1,14 @@
-import AlgebraConfig from "algebra.config"
+import AlgebraConfig from "algebra.config";
 
 const ETHERSCAN_PREFIXES: { [chainId: number]: string } = {
-    [AlgebraConfig.CHAIN_PARAMS.chainId]: ''
-}
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: "",
+};
 
 export enum ExplorerDataType {
-    TRANSACTION = 'transaction',
-    TOKEN = 'token',
-    ADDRESS = 'address',
-    BLOCK = 'block',
+    TRANSACTION = "transaction",
+    TOKEN = "token",
+    ADDRESS = "address",
+    BLOCK = "block",
 }
 
 /**
@@ -18,21 +18,21 @@ export enum ExplorerDataType {
  * @param type the type of the data
  */
 export function getExplorerLink(chainId: number, data: string, type: ExplorerDataType): string {
-    const prefix = `https://${ETHERSCAN_PREFIXES[chainId] ?? ''}${AlgebraConfig.CHAIN_PARAMS.blockExplorerURL}`
+    const prefix = `https://${ETHERSCAN_PREFIXES[chainId] ?? ""}${AlgebraConfig.CHAIN_PARAMS.blockExplorerDomain}`;
 
     switch (type) {
         case ExplorerDataType.TRANSACTION:
-            return `${prefix}/tx/${data}`
+            return `${prefix}/tx/${data}`;
 
         case ExplorerDataType.TOKEN:
-            return `${prefix}/token/${data}`
+            return `${prefix}/token/${data}`;
 
         case ExplorerDataType.BLOCK:
-            return `${prefix}/block/${data}`
+            return `${prefix}/block/${data}`;
 
         case ExplorerDataType.ADDRESS:
-            return `${prefix}/address/${data}`
+            return `${prefix}/address/${data}`;
         default:
-            return `${prefix}`
+            return `${prefix}`;
     }
 }

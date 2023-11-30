@@ -14,6 +14,7 @@ import { NavLink } from "react-router-dom";
 import { Trans } from "@lingui/macro";
 
 import AlgebraConfig from "algebra.config";
+import { ArrowUpRight, Link } from "react-feather";
 
 export default function Header() {
     const { account, chainId } = useWeb3React();
@@ -72,6 +73,10 @@ export default function Header() {
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     <Trans>Info</Trans>
                 </NavLink>
+                <a className={"header__links__link hover-op"} id={`info-nav-link`} href="https://swapr.eth.limo" target="_blank" style={{ display: "flex", alignItems: "center" }}>
+                    <Trans>Swap</Trans>
+                    <ArrowUpRight width={18} style={{ marginLeft: "4px" }} />
+                </a>
             </div>
 
             <div className={"header__account flex-s-between"}>

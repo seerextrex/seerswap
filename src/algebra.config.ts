@@ -118,11 +118,11 @@ export default {
     },
 
     API: {
-        eternalFarmsAPR: "https://algebra.swaprhq.io/api/APR/eternalFarmings/",
-        limitFarmsAPR: "https://algebra.swaprhq.io/api/APR/limitFarmings/",
-        eternalFarmsTVL: "https://algebra.swaprhq.io/api/TVL/eternalFarmings/",
-        limitFarmsTVL: "https://algebra.swaprhq.io/api/TVL/limitFarmings/",
-        poolsAPR: "https://algebra.swaprhq.io/api/APR/pools/",
+        eternalFarmsAPR: "https://algebra.swaprhq.io/api/APR/eternalFarmings/?network=gnosis",
+        limitFarmsAPR: "https://algebra.swaprhq.io/api/APR/limitFarmings/?network=gnosis",
+        eternalFarmsTVL: "https://algebra.swaprhq.io/api/TVL/eternalFarmings/?network=gnosis",
+        limitFarmsTVL: "https://algebra.swaprhq.io/api/TVL/limitFarmings/?network=gnosis",
+        poolsAPR: "https://algebra.swaprhq.io/api/APR/pools/?network=gnosis",
     },
 
     MISC: {

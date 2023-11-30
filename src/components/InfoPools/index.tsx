@@ -25,21 +25,21 @@ const sortFields = [
         value: "pool",
     },
     {
-        title: t`Volume 24H`,
-        value: "volumeUSD",
+        title: t`TVL`,
+        value: "tvlUSD",
     },
     {
         title: t`Volume 7D`,
         value: "volumeUSDWeek",
     },
+    {
+        title: t`Volume 24H`,
+        value: "volumeUSD",
+    },
     // {
     //     title: t`Volume 1M`,
     //     value: "volumeUSDMonth",
     // },
-    {
-        title: t`TVL`,
-        value: "tvlUSD",
-    },
     // {
     //     title: t`Txs 24H`,
     //     value: "txCount",
@@ -56,7 +56,7 @@ const sortFields = [
 
 export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps) {
     const [sortField, setSortField] = useState("tvlUSD");
-    const [sortIndex, setSortIndex] = useState(3);
+    const [sortIndex, setSortIndex] = useState(1);
     const [sortDirection, setSortDirection] = useState<boolean>(true);
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex);
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection);
@@ -87,18 +87,18 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         title: pool,
                         value: el.address,
                     },
+
                     {
-                        title: formatDollarAmount(el.volumeUSD),
-                        value: el.volumeUSD,
+                        title: formatDollarAmount(el.tvlUSD),
+                        value: el.tvlUSD,
                     },
                     {
                         title: formatDollarAmount(el.volumeUSDWeek),
                         value: el.volumeUSDWeek,
                     },
-
                     {
-                        title: formatDollarAmount(el.tvlUSD),
-                        value: el.tvlUSD,
+                        title: formatDollarAmount(el.volumeUSD),
+                        value: el.volumeUSD,
                     },
                     {
                         title: apr,
@@ -129,13 +129,13 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                             <Trans>Pool</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
-                            <Trans>Volume 24H</Trans>
+                            <Trans>TVL</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Trans>Volume 7D</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
-                            <Trans>TVL</Trans>
+                            <Trans>Volume 24H</Trans>
                         </span>
                         <span className={"table-header__item table-header__item--center"}>
                             <Apr />

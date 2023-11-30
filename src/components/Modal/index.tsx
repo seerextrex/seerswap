@@ -60,7 +60,7 @@ export default function Modal({ isOpen, onDismiss, minHeight = false, maxHeight 
                                           style: { transform: `translateY(-3rem)` },
                                       }
                                     : {
-                                          style: { width: fitContent ? "unset" : "700px" },
+                                          style: { width: fitContent ? "unset" : "400px" },
                                       })}
                                 aria-label="dialog content"
                                 minHeight={minHeight}

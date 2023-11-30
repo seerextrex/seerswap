@@ -742,7 +742,7 @@ export function useFarmingSubgraph() {
                 const dailyRewardRate = Math.round(+_rewardRate * 86_400);
                 const dailyBonusRewardRate = Math.round(+_bonusRewardRate * 86_400);
 
-                const apr = aprs[farming.id] ? aprs[farming.id] : 200;
+                const apr = aprs[farming.id] ? aprs[farming.id] : 0;
                 // const tvl = eventTVL[farming.id] ? Math.round(eventTVL[farming.id] * ethPrices.current) : 0
 
                 _eternalFarmings = [

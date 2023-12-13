@@ -6,7 +6,7 @@ import Popups from "../components/Popups";
 import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
 import { RedirectDuplicateTokenIdsNew } from "./AddLiquidity/redirects";
 import RemoveLiquidityV3 from "./RemoveLiquidity/V3";
-import { RedirectPathToPoolOnly } from "./Swap/redirects";
+import { RedirectPathToSwapOnly } from "./Swap/redirects";
 import { Pool } from "lib/src";
 import React, { useEffect } from "react";
 import { useIsNetworkFailed } from "../hooks/useIsNetworkFailed";
@@ -82,14 +82,14 @@ export default function App() {
                         <Switch>
                             <Route strict path="/info" component={InfoPage} />
                             <Route exact strict path="/swap" component={Swap} />
-                            <Route exact strict path="/send" component={RedirectPathToPoolOnly} />
+                            <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                             <Route exact strict path="/pool" component={PoolPage} />
                             <Route exact strict path="/pool/:tokenId" component={PositionPage} />
                             <Route exact strict path="/add/:currencyIdA?/:currencyIdB?/:step?" component={RedirectDuplicateTokenIdsNew} />
                             <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
                             <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
                             <Route strict path="/farming" component={FarmingPage} />
-                            <Route component={RedirectPathToPoolOnly} />
+                            <Route component={RedirectPathToSwapOnly} />
                         </Switch>
                     </React.Suspense>
                     <Marginer />

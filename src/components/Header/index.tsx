@@ -53,6 +53,9 @@ export default function Header() {
                 <img src={Logo} alt="logo" />
             </a>
             <div className={"header__links"}>
+                <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
+                    <Trans>Swap</Trans>
+                </NavLink>
                 <NavLink
                     className={"header__links__link hover-op trans-op"}
                     id={`pool-nav-link`}
@@ -73,10 +76,10 @@ export default function Header() {
                 <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
                     <Trans>Info</Trans>
                 </NavLink>
-                <a className={"header__links__link hover-op"} id={`info-nav-link`} href="https://swapr.eth.limo" target="_blank" style={{ display: "flex", alignItems: "center" }}>
+                {/* <a className={"header__links__link hover-op"} id={`info-nav-link`} href="https://swapr.eth.limo" target="_blank" style={{ display: "flex", alignItems: "center" }}>
                     <Trans>Swap</Trans>
                     <ArrowUpRight width={18} style={{ marginLeft: "4px" }} />
-                </a>
+                </a> */}
             </div>
 
             <div className={"header__account flex-s-between"}>

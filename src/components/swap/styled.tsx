@@ -1,32 +1,31 @@
-import { transparentize } from 'polished'
-import { ReactNode } from 'react'
+import { transparentize } from "polished";
+import { ReactNode } from "react";
 
-import { AlertTriangle } from 'react-feather'
-import styled, { css } from 'styled-components/macro'
-import { Text } from 'rebass'
-import { AutoColumn } from '../Column'
-import { ButtonPrimary } from '../Button'
-import { TYPE } from '../../theme'
+import { AlertTriangle } from "react-feather";
+import styled, { css } from "styled-components/macro";
+import { Text } from "rebass";
+import { AutoColumn } from "../Column";
+import { ButtonPrimary } from "../Button";
+import { TYPE } from "../../theme";
 
 export const Wrapper = styled.div`
     position: relative;
     padding: 16px 40px 30px 40px;
-`
+`;
 
 export const ArrowWrapper = styled.button<{ clickable: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    border-radius: 12px;
-    height: 42px;
-    width: 35px;
+    border-radius: 34px;
+    height: 40px;
+    width: 40px;
     position: relative;
-    margin-top: -32px;
-    margin-bottom: -14px;
-    left: calc(50% - 11px);
-    background-color: var(--primary-weak);
-    opacity: .5;
+    margin-top: -28px;
+    margin-bottom: -17px;
+    left: calc(50% - 20px);
+    background-color: rgb(64, 69, 87);
     border: none;
     z-index: 2;
 
@@ -36,62 +35,55 @@ export const ArrowWrapper = styled.button<{ clickable: boolean }>`
   `}
 
     ${({ clickable }) =>
-    clickable
-        ? css`
-                :hover {
-                    cursor: pointer;
-                    opacity: 0.8;
-                }
-            `
-        : null}
-`
+        clickable
+            ? css`
+                  :hover {
+                      cursor: pointer;
+                      opacity: 0.8;
+                  }
+              `
+            : null}
+`;
 
 export const SectionBreak = styled.div`
     height: 1px;
     width: 100%;
     background-color: ${({ theme }) => theme.bg3};
-`
+`;
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
-    color: ${({ theme, severity }) =>
-    severity === 3 || severity === 4
-        ? theme.red1
-        : severity === 2
-            ? theme.yellow2
-            : severity === 1
-                ? theme.text1
-                : theme.text2};
-`
+    color: ${({ theme, severity }) => (severity === 3 || severity === 4 ? theme.red1 : severity === 2 ? theme.yellow2 : severity === 1 ? theme.text1 : theme.text2)};
+`;
 
 export const TruncatedText = styled(Text)`
     text-overflow: ellipsis;
     max-width: 220px;
     overflow: hidden;
     text-align: right;
-`
+`;
 
 // styles
 export const Dots = styled.span`
     &::after {
         display: inline-block;
         animation: ellipsis 1.25s infinite;
-        content: '.';
+        content: ".";
         width: 1em;
         text-align: left;
     }
 
     @keyframes ellipsis {
         0% {
-            content: '.';
+            content: ".";
         }
         33% {
-            content: '..';
+            content: "..";
         }
         66% {
-            content: '...';
+            content: "...";
         }
     }
-`
+`;
 
 const SwapCallbackErrorInner = styled.div`
     background-color: ${({ theme }) => transparentize(0.9, theme.red1)};
@@ -110,7 +102,7 @@ const SwapCallbackErrorInner = styled.div`
         margin: 0;
         font-weight: 500;
     }
-`
+`;
 
 const SwapCallbackErrorInnerAlertTriangle = styled.div`
     background-color: ${({ theme }) => transparentize(0.9, theme.red1)};
@@ -121,7 +113,7 @@ const SwapCallbackErrorInnerAlertTriangle = styled.div`
     border-radius: 12px;
     min-width: 48px;
     height: 48px;
-`
+`;
 
 export function SwapCallbackError({ error }: { error: ReactNode }) {
     return (
@@ -129,9 +121,9 @@ export function SwapCallbackError({ error }: { error: ReactNode }) {
             <SwapCallbackErrorInnerAlertTriangle>
                 <AlertTriangle size={24} />
             </SwapCallbackErrorInnerAlertTriangle>
-            <p style={{ wordBreak: 'break-word' }}>{error}</p>
+            <p style={{ wordBreak: "break-word" }}>{error}</p>
         </SwapCallbackErrorInner>
-    )
+    );
 }
 
 export const SwapShowAcceptChanges = styled(AutoColumn)`
@@ -140,7 +132,7 @@ export const SwapShowAcceptChanges = styled(AutoColumn)`
     padding: 0.5rem;
     border-radius: 12px;
     margin-top: 8px;
-`
+`;
 
 //BetterTradeLink
 export const ResponsiveButton = styled(ButtonPrimary)`
@@ -153,14 +145,14 @@ export const ResponsiveButton = styled(ButtonPrimary)`
     padding: 4px;
     border-radius: 8px;
   `};
-`
+`;
 
 //SwapHeader
 export const StyledSwapHeader = styled.div`
     padding: 30px 40px 16px 40px;
     width: 100%;
     color: ${({ theme }) => theme.text2};
-`
+`;
 
 //SwapModalHeader
 export const SwapModalHeaderArrowWrapper = styled.div`
@@ -179,7 +171,7 @@ export const SwapModalHeaderArrowWrapper = styled.div`
     border: 4px solid;
     border-color: ${({ theme }) => theme.bg0};
     z-index: 2;
-`
+`;
 
 //TradePrice
 export const StyledPriceContainer = styled.button`
@@ -193,7 +185,7 @@ export const StyledPriceContainer = styled.button`
     border: none;
     height: 24px;
     cursor: pointer;
-`
+`;
 
 //UnsuportedCurrencyFoter
 export const DetailsFooter = styled.div<{ show: boolean }>`
@@ -208,14 +200,14 @@ export const DetailsFooter = styled.div<{ show: boolean }>`
     background-color: ${({ theme }) => theme.advancedBG};
     z-index: -1;
 
-    transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%)')};
+    transform: ${({ show }) => (show ? "translateY(0%)" : "translateY(-100%)")};
     transition: transform 300ms ease-in-out;
     text-align: center;
-`
+`;
 export const AddressText = styled(TYPE.blue)`
     font-size: 12px;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 10px;
 `}
-`
+`;

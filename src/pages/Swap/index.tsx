@@ -48,6 +48,8 @@ import ReactGA from "react-ga";
 import { WrappedCurrency } from "../../models/types";
 import Card from "../../shared/components/Card/Card";
 import "./index.scss";
+import NewCurrencyInputPanel from "../../components/CurrencyInputPanel/NewCurrencyInputPanel";
+import { ReactComponent as DoubleArrow } from "../../assets/svg/double-arrow.svg";
 
 export default function Swap({ history }: RouteComponentProps) {
     const { account } = useWeb3React();
@@ -331,9 +333,9 @@ export default function Swap({ history }: RouteComponentProps) {
                 onConfirm={handleConfirmTokenWarning}
                 onDismiss={handleDismissTokenWarning}
             />
-            <div className={"maw-610 mh-a pos-r swap"}>
+            <div className={"maw-610 mh-a pos-r swap"} style={{ paddingBottom: "50px" }}>
                 <Card classes={"card-gradient-shadow p-2 br-24"}>
-                    <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />
+                    <SwapHeader allowedSlippage={allowedSlippage} dynamicFee={null} />
                     <div id="swap-page">
                         <ConfirmSwapModal
                             isOpen={showConfirm}
@@ -350,8 +352,9 @@ export default function Swap({ history }: RouteComponentProps) {
                         />
 
                         <AutoColumn gap={"md"}>
-                            <Card isDark={false} classes={"p-1 br-12"}>
-                                <CurrencyInputPanel
+                            <Card isDark={false} classes={"br-12"}>
+                                <NewCurrencyInputPanel
+                                    title="From"
                                     label={independentField === Field.OUTPUT && !showWrap ? <Trans>From (at most)</Trans> : <Trans>From</Trans>}
                                     value={formattedAmounts[Field.INPUT]}
                                     showMaxButton={showMaxButton}
@@ -378,18 +381,10 @@ export default function Swap({ history }: RouteComponentProps) {
                                         onSwitchTokens();
                                     }}
                                 >
-                                    <svg width="11" height="21" viewBox="0 0 11 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M10.0287 6.01207C10.2509 6.2384 10.6112 6.2384 10.8334 6.01207C11.0555 5.78575 11.0555 5.4188 10.8334 5.19247L5.90232 0.169745C5.68012 -0.0565819 5.31988 -0.0565819 5.09768 0.169745L0.166647 5.19247C-0.055548 5.4188 -0.055548 5.78575 0.166647 6.01207C0.388841 6.2384 0.749091 6.2384 0.971286 6.01207L5.5 1.39915L10.0287 6.01207Z"
-                                            fill="#fff"
-                                        />
-                                        <path
-                                            d="M10.0287 14.9879C10.2509 14.7616 10.6112 14.7616 10.8334 14.9879C11.0555 15.2143 11.0555 15.5812 10.8334 15.8075L5.90232 20.8303C5.68012 21.0566 5.31988 21.0566 5.09768 20.8303L0.166646 15.8075C-0.0555484 15.5812 -0.0555484 15.2143 0.166646 14.9879C0.388841 14.7616 0.749091 14.7616 0.971285 14.9879L5.5 19.6009L10.0287 14.9879Z"
-                                            fill="#fff"
-                                        />
-                                    </svg>
+                                    <DoubleArrow style={{ color: "white", transform: "rotate(90deg)" }} />
                                 </ArrowWrapper>
-                                <CurrencyInputPanel
+                                <NewCurrencyInputPanel
+                                    title="To"
                                     value={formattedAmounts[Field.OUTPUT]}
                                     onUserInput={handleTypeOutput}
                                     label={independentField === Field.INPUT && !showWrap ? <Trans>To (at least)</Trans> : <Trans>To</Trans>}
@@ -410,6 +405,9 @@ export default function Swap({ history }: RouteComponentProps) {
                                     shallow={false}
                                     swap
                                 />
+                                <Row style={{ justifyContent: !trade ? "center" : "space-between" }}>
+                                    {trade ? <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} /> : null}
+                                </Row>
                             </Card>
                             <div>
                                 {recipient !== null && !showWrap ? (
@@ -428,29 +426,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
                                 {showWrap ? null : (
                                     <Row style={{ justifyContent: !trade ? "center" : "space-between" }}>
-                                        {trade ? (
-                                            <div className={"flex-s-between"}>
-                                                <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
-                                                <MouseoverTooltipContent
-                                                    //@ts-ignore
-                                                    onOpen={() => {
-                                                        ReactGA.event({
-                                                            category: "Swap",
-                                                            action: "Transaction Details Tooltip Open",
-                                                        });
-                                                    }}
-                                                    content={<AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />}
-                                                >
-                                                    <Info size={"1rem"} stroke={"var(--primary)"} />
-                                                </MouseoverTooltipContent>
-                                            </div>
-                                        ) : null}
+                                        {trade && <AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} dynamicFee={dynamicFee} />}
                                     </Row>
                                 )}
                             </div>
                             <div>
                                 {!account ? (
-                                    <button className={"btn primary w-100 pv-1 b"} onClick={toggleWalletModal}>
+                                    <button className={"btn primary w-100 b"} style={{ padding: "16px" }} onClick={toggleWalletModal}>
                                         <Trans>Connect Wallet</Trans>
                                     </button>
                                 ) : showWrap ? (

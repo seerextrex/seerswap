@@ -92,7 +92,7 @@ export default function SwapModalHeader({ trade, allowedSlippage, recipient, sho
             </div>
 
             <Card isDark classes={"p-1 br-12 mv-05"}>
-                <AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} />
+                <AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} dynamicFee={null} />
             </Card>
 
             {showAcceptChanges ? (

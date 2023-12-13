@@ -45,7 +45,7 @@ export const Input = React.memo(function InnerInput({ value, onUserInput, placeh
             // text-specific options
             type="text"
             pattern="^[0-9]*[.,]?[0-9]*$"
-            placeholder={placeholder || t`Enter an amount`}
+            placeholder={placeholder || "0.00"}
             minLength={1}
             maxLength={79}
             spellCheck="false"

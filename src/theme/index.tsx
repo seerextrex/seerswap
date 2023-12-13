@@ -188,9 +188,7 @@ export const TYPE = {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-}
-body {
-    background-color: #030b18;
+  background-color: #030b18;
 }
 
 a {

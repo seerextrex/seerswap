@@ -30,7 +30,7 @@ export function AdvancedSwapDetails({ trade, allowedSlippage, dynamicFee = null 
     }, [trade]);
 
     return !trade ? null : (
-        <AutoColumn gap="8px" style={{ width: "100%", padding: "0 1rem 1rem 1rem", lineHeight: "21px" }}>
+        <AutoColumn gap="8px" style={{ width: "100%", padding: "1rem", lineHeight: "21px" }}>
             {dynamicFee && (
                 <RowBetween>
                     <RowFixed>

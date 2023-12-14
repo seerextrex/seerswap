@@ -237,6 +237,8 @@ export default function Swap({ history }: RouteComponentProps) {
                     swapErrorMessage: undefined,
                     txHash: hash,
                 });
+                onUserInput(Field.INPUT, "");
+                onUserInput(Field.OUTPUT, "");
                 ReactGA.event({
                     category: "Swap",
                     action: recipient === null ? "Swap w/o Send" : (recipientAddress ?? recipient) === account ? "Swap w/o Send + recipient" : "Swap w/ Send",

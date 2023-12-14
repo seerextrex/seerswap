@@ -86,12 +86,11 @@ export default function SwapModalHeader({ trade, allowedSlippage, recipient, sho
                     </RowFixed>
                 </div>
             </Card>
-            <div className={"flex-s-between c-p fs-085 ph-05"}>
-                <Trans>Price</Trans>
+            <div className={"flex-s-between c-p fs-085"}>
                 <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
             </div>
 
-            <Card isDark classes={"p-1 br-12 mv-05"}>
+            <Card isDark classes={"br-12 mv-05"}>
                 <AdvancedSwapDetails trade={trade} allowedSlippage={allowedSlippage} dynamicFee={null} />
             </Card>
 

@@ -9,7 +9,7 @@ interface CardProps {
 
 const Card = ({ classes, children, isDark }: CardProps) => {
     const theme = useMemo(() => (isDark ? "dark" : isDark === undefined ? "" : "light"), [isDark]);
-    return <div className={`card-wrapper ${theme} ${classes}`}>{children}</div>;
+    return <div className={`card-wrapper ${classes}`}>{children}</div>;
 };
 
 export default Card;

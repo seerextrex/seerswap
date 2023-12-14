@@ -5,6 +5,7 @@ import { ApplicationModal } from "state/application/actions";
 import { useModalOpen, useToggleModal } from "state/application/hooks";
 import { CHAIN_INFO } from "../../constants/chains";
 import GnosisLogo from "../../assets/svg/gnosis-logo.svg";
+import styled from "styled-components/macro";
 
 import AlgebraConfig from "algebra.config";
 
@@ -36,12 +37,19 @@ export default function NetworkCard() {
         return (
             <div className="f" style={{ display: "flex", alignItems: "center" }}>
                 <img src={GnosisLogo} width="20" height="20" style={{ borderRadius: "50%" }} />
-                <div className="ml-05" style={{ width: "max-content" }} title={info.label}>
+                <NetworkName className="ml-05" style={{ width: "max-content" }} title={info.label}>
                     {info.label}
-                </div>
+                </NetworkName>
             </div>
         );
     }
 
     return <div title={info.label}>{info.label}</div>;
 }
+
+export const NetworkName = styled.div`
+    display: block;
+    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+      display: none;
+  `}
+`;

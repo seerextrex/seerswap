@@ -107,8 +107,10 @@
     }
 
     &__wrapper {
-      position: fixed;
+      position: sticky;
       z-index: 99999999;
+      top: 0;
+      margin-bottom: -50px;
     }
 
     &__account {
@@ -128,7 +130,7 @@
       overflow-x: scroll;
       right: 0;
       left: 0;
-      bottom: 33px;
+      bottom: 0;
       width: 100%;
       border-radius: 0;
       background: #030b18;

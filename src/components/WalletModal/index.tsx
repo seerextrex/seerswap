@@ -11,7 +11,6 @@ import { ReactComponent as Close } from "../../assets/images/x.svg";
 import { injected } from "../../connectors";
 import { SUPPORTED_WALLETS } from "../../constants/wallet";
 import { useModalOpen, useWalletModalToggle } from "../../state/application/hooks";
-import { isMobile } from "../../utils/userAgent";
 import AccountDetails from "../AccountDetails";
 import Modal from "../Modal";
 import Option from "./Option";
@@ -159,7 +158,6 @@ export default function WalletModal({
     // get wallets user can switch too, depending on device/browser
     function getOptions() {
         const isMetamask = !!window.ethereum?.isMetaMask;
-        const isTally = !!window.ethereum?.isTally;
         return Object.keys(SUPPORTED_WALLETS).map((key) => {
             const option = SUPPORTED_WALLETS[key];
             const isActive = option.connector === connector;
@@ -173,24 +171,6 @@ export default function WalletModal({
                 key,
                 icon: option.iconURL,
             };
-
-            // check for mobile options
-            if (isMobile) {
-                if (!window.web3 && !window.ethereum && option.mobile) {
-                    return (
-                        <Option
-                            {...optionProps}
-                            onClick={() => {
-                                if (!isActive && !option.href && !!option.connector) {
-                                    tryActivation(option.connector);
-                                }
-                            }}
-                            subheader={null}
-                        />
-                    );
-                }
-                return null;
-            }
 
             // overwrite injected when needed
             if (option.connector === injected) {
@@ -224,16 +204,13 @@ export default function WalletModal({
 
             // return rest of options
             return (
-                !isMobile &&
-                !option.mobileOnly && (
-                    <Option
-                        {...optionProps}
-                        onClick={() => {
-                            option.connector === connector ? setWalletView(WALLET_VIEWS.ACCOUNT) : !option.href && option.connector && tryActivation(option.connector);
-                        }}
-                        subheader={null} //use option.descriptio to bring back multi-line
-                    />
-                )
+                <Option
+                    {...optionProps}
+                    onClick={() => {
+                        option.connector === connector ? setWalletView(WALLET_VIEWS.ACCOUNT) : !option.href && option.connector && tryActivation(option.connector);
+                    }}
+                    subheader={null} //use option.descriptio to bring back multi-line
+                />
             );
         });
     }

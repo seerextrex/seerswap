@@ -25,6 +25,11 @@ import { BigNumber } from "ethers";
 import { t, Trans } from "@lingui/macro";
 
 import AlgebraConfig from "algebra.config";
+import { useV3PositionFromTokenId } from "../../hooks/useV3Positions";
+import { useToken } from "../../hooks/Tokens";
+import useUSDCPrice from "../../hooks/useUSDCPrice";
+import { Position } from "lib/src";
+import { usePool } from "../../hooks/usePools";
 
 interface FarmModalProps {
     event: {
@@ -326,144 +331,192 @@ export function FarmModal({
                             <span className="b" style={{ fontSize: "18px" }}>{t`2. Select a Position`}</span>
                         </div>
                     )}
-                    <div style={{ height: "unset", marginLeft: "-1rem", position: "relative", marginRight: "-1rem" }} className="mb-1 pl-1 pr-1">
-                        {chunkedPositions && chunkedPositions.length === 0 ? (
-                            <div className={`f c f-ac f-jc`}>
-                                <Frown size={30} stroke={"var(--white)"} />
-                                <p className={"mt-1 mb-05"}>
-                                    <Trans>No NFT-s for this pool</Trans>
-                                </p>
-                                <p>
-                                    <Trans>To take part in this farming event, you need to</Trans>
-                                </p>
-                                <NavLink className={"flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1 hover-c-ph"} to={linkToProviding}>
-                                    <span>{t`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
-                                    <ArrowRight className={"ml-05"} size={16} />
-                                </NavLink>
-                            </div>
-                        ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-                            chunkedPositions.map((row, i, arr) => (
-                                <div style={{ opacity: !isEnoughTokenForLock && selectedTier ? "0.5" : "1" }} className="f mb-1 pl-1 pb-1 pr-1 mxs_pb-0 farm-modal__nft-position-row" key={i}>
-                                    {row.map((el, j) => (
-                                        <div
-                                            className={"farm-modal__nft-position p-1 br-8 c-w"}
-                                            key={j}
-                                            data-selected={!!selectedNFT && selectedNFT.id === el.id}
-                                            onClick={(e: any) => {
-                                                if (!isEnoughTokenForLock && selectedTier) return;
-                                                if (e.target.tagName !== "A" && !submitLoader) {
-                                                    setSelectedNFT((old) =>
-                                                        old && old.id === el.id
-                                                            ? null
-                                                            : {
-                                                                  onFarmingCenter: el.onFarmingCenter,
-                                                                  id: el.id,
-                                                              }
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            <NFTPositionIcon name={el.id}>{el.id}</NFTPositionIcon>
-                                            <div className="ml-1">
-                                                <IsActive el={el} />
-                                                <div className={"farm-modal__nft-position__description"}>
-                                                    <a className={"fs-085 c-w hover-cp"} href={`${AlgebraConfig.MISC.appURL}/#/pool/${+el.id}`} rel="noopener noreferrer" target="_blank">
-                                                        <Trans>View position</Trans>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                    <div style={{ position: "relative", overflowY: "auto", height: "100%" }}>
+                        <div style={{ height: "unset", marginLeft: "-1rem", position: "relative", marginRight: "-1rem" }} className="mb-1 pl-1 pr-1">
+                            {chunkedPositions && chunkedPositions.length === 0 ? (
+                                <div className={`f c f-ac f-jc`}>
+                                    <Frown size={30} stroke={"var(--white)"} />
+                                    <p className={"mt-1 mb-05"}>
+                                        <Trans>No NFT-s for this pool</Trans>
+                                    </p>
+                                    <p>
+                                        <Trans>To take part in this farming event, you need to</Trans>
+                                    </p>
+                                    <NavLink className={"flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1 hover-c-ph"} to={linkToProviding}>
+                                        <span>{t`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
+                                        <ArrowRight className={"ml-05"} size={16} />
+                                    </NavLink>
                                 </div>
-                            ))
-                        ) : (
-                            <NFTPositionsRow>
-                                {[0, 1, 2].map((el, i) => (
-                                    <NFTPosition key={i} skeleton>
-                                        <NFTPositionIcon skeleton />
-                                        <NFTPositionDescription skeleton>
-                                            <NFTPositionIndex skeleton />
-                                            <NFTPositionLink skeleton />
-                                        </NFTPositionDescription>
-                                        <NFTPositionSelectCircle />
-                                    </NFTPosition>
-                                ))}
-                            </NFTPositionsRow>
-                        )}
-                    </div>
-                    {selectedTier === "" && chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
-                            <Trans>Select Tier</Trans>
-                        </button>
-                    ) : selectedTier && !isEnoughTokenForLock && chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled className="btn primary w-100 p-1">{t`Not enough ${multiplierToken.symbol}`}</button>
-                    ) : selectedNFT ? (
-                        <div className={`f mxs_fd-c w-100 ${!isTierFarming && "pos-a bottom-0"}`}>
-                            {selectedTier && (
-                                <button
-                                    disabled={!showApproval || !selectedTier}
-                                    onClick={approveCallback}
-                                    id={"farming-approve-algb"}
-                                    className={"btn primary w-100 mr-1 mxs_mr-0 p-1 mxs_mb-1 farming-approve-algb"}
-                                >
-                                    {approval === ApprovalState.PENDING ? (
-                                        <span className={"f f-ac f-jc"}>
-                                            <Loader stroke={"white"} />
-                                            <span className={"ml-05"}>
-                                                <Trans>Approving</Trans>
-                                            </span>
-                                        </span>
-                                    ) : !showApproval ? (
-                                        t`${multiplierToken.symbol} Approved`
-                                    ) : (
-                                        t`Approve ${multiplierToken.symbol}`
-                                    )}
-                                </button>
+                            ) : chunkedPositions && chunkedPositions.length !== 0 ? (
+                                chunkedPositions.map((row, i, arr) => (
+                                    <div style={{ opacity: !isEnoughTokenForLock && selectedTier ? "0.5" : "1" }} className="mb-1 pl-1 pb-1 pr-1 mxs_pb-0 farm-modal__nft-position-row" key={i}>
+                                        {row.map((token, j) => {
+                                            return (
+                                                <PoistionCard
+                                                    token={token}
+                                                    selectedNFT={selectedNFT}
+                                                    isEnoughTokenForLock={isEnoughTokenForLock}
+                                                    selectedTier={selectedTier}
+                                                    submitLoader={submitLoader}
+                                                    setSelectedNFT={setSelectedNFT}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                ))
+                            ) : (
+                                <NFTPositionsRow>
+                                    {[0, 1, 2].map((el, i) => (
+                                        <NFTPosition key={i} skeleton>
+                                            <NFTPositionIcon skeleton />
+                                            <NFTPositionDescription skeleton>
+                                                <NFTPositionIndex skeleton />
+                                                <NFTPositionLink skeleton />
+                                            </NFTPositionDescription>
+                                            <NFTPositionSelectCircle />
+                                        </NFTPosition>
+                                    ))}
+                                </NFTPositionsRow>
                             )}
-                            <button
-                                disabled={submitLoader || !NFTsForApprove}
-                                onClick={approveNFTs}
-                                id={"farming-approve-nft"}
-                                className={"btn primary w-100 mr-1 mxs_mr-0 mxs_mb-1 p-1 farming-approve-nft"}
-                            >
-                                {submitLoader && submitState === 0 ? (
-                                    <span className={"f f-ac f-jc"}>
-                                        <Loader stroke={"white"} />
-                                        <span className={"ml-05"}>
-                                            <Trans>Approving</Trans>
-                                        </span>
-                                    </span>
-                                ) : NFTsForStake && !NFTsForApprove ? (
-                                    t`Position Approved`
-                                ) : (
-                                    t`Approve Position`
-                                )}
-                            </button>
-                            <button
-                                disabled={submitLoader || !NFTsForStake}
-                                onClick={() => farmNFTs(farmingType)}
-                                id={"farming-deposit-nft"}
-                                className={"btn primary w-100 mxs_mb-1 p-1 farming-deposit-nft"}
-                            >
-                                {submitLoader && submitState === 2 ? (
-                                    <span className={"f f-ac f-jc"}>
-                                        <Loader stroke={"white"} />
-                                        <span className={"ml-05"}>
-                                            <Trans>Depositing</Trans>
-                                        </span>
-                                    </span>
-                                ) : (
-                                    t`Deposit`
-                                )}
-                            </button>
                         </div>
-                    ) : chunkedPositions && chunkedPositions.length !== 0 ? (
-                        <button disabled id={"farming-select-nft"} className={`btn primary w-100 p-1 farming-select-nft ${!isTierFarming && "pos-a bottom-0"}`}>
-                            <Trans>Select Position</Trans>
-                        </button>
-                    ) : null}
+                        <div style={{ paddingBottom: "30px" }}>
+                            {selectedTier === "" && chunkedPositions && chunkedPositions.length !== 0 ? (
+                                <button disabled id={"farming-select-tier"} className={"btn primary w-100 p-1 farming-select-tier"}>
+                                    <Trans>Select Tier</Trans>
+                                </button>
+                            ) : selectedTier && !isEnoughTokenForLock && chunkedPositions && chunkedPositions.length !== 0 ? (
+                                <button disabled className="btn primary w-100 p-1">{t`Not enough ${multiplierToken.symbol}`}</button>
+                            ) : selectedNFT ? (
+                                <div className={`f mxs_fd-c w-100`}>
+                                    {selectedTier && (
+                                        <button
+                                            disabled={!showApproval || !selectedTier}
+                                            onClick={approveCallback}
+                                            id={"farming-approve-algb"}
+                                            className={"btn primary w-100 mr-1 mxs_mr-0 p-1 mxs_mb-1 farming-approve-algb"}
+                                        >
+                                            {approval === ApprovalState.PENDING ? (
+                                                <span className={"f f-ac f-jc"}>
+                                                    <Loader stroke={"white"} />
+                                                    <span className={"ml-05"}>
+                                                        <Trans>Approving</Trans>
+                                                    </span>
+                                                </span>
+                                            ) : !showApproval ? (
+                                                t`${multiplierToken.symbol} Approved`
+                                            ) : (
+                                                t`Approve ${multiplierToken.symbol}`
+                                            )}
+                                        </button>
+                                    )}
+                                    <button
+                                        disabled={submitLoader || !NFTsForApprove}
+                                        onClick={approveNFTs}
+                                        id={"farming-approve-nft"}
+                                        className={"btn primary w-100 mr-1 mxs_mr-0 mxs_mb-1 p-1 farming-approve-nft"}
+                                    >
+                                        {submitLoader && submitState === 0 ? (
+                                            <span className={"f f-ac f-jc"}>
+                                                <Loader stroke={"white"} />
+                                                <span className={"ml-05"}>
+                                                    <Trans>Approving</Trans>
+                                                </span>
+                                            </span>
+                                        ) : NFTsForStake && !NFTsForApprove ? (
+                                            t`Position Approved`
+                                        ) : (
+                                            t`Approve Position`
+                                        )}
+                                    </button>
+                                    <button
+                                        disabled={submitLoader || !NFTsForStake}
+                                        onClick={() => farmNFTs(farmingType)}
+                                        id={"farming-deposit-nft"}
+                                        className={"btn primary w-100 mxs_mb-1 p-1 farming-deposit-nft"}
+                                    >
+                                        {submitLoader && submitState === 2 ? (
+                                            <span className={"f f-ac f-jc"}>
+                                                <Loader stroke={"white"} />
+                                                <span className={"ml-05"}>
+                                                    <Trans>Depositing</Trans>
+                                                </span>
+                                            </span>
+                                        ) : (
+                                            t`Deposit`
+                                        )}
+                                    </button>
+                                </div>
+                            ) : chunkedPositions && chunkedPositions.length !== 0 ? (
+                                <button disabled id={"farming-select-nft"} className={`btn primary w-100 p-1 farming-select-nft`}>
+                                    <Trans>Select Position</Trans>
+                                </button>
+                            ) : null}
+                        </div>
+                    </div>
                 </div>
             )}
         </>
     );
 }
+
+const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, submitLoader, setSelectedNFT }) => {
+    const { loading, position: positionDetails } = useV3PositionFromTokenId(token.id);
+
+    const { token0: token0Address, token1: token1Address, liquidity, tickLower, tickUpper } = { ...positionDetails };
+
+    const token0 = useToken(token0Address);
+    const token1 = useToken(token1Address);
+    const [, pool] = usePool(token0 ?? undefined, token1 ?? undefined);
+    const price0 = useUSDCPrice(token0 ?? undefined);
+    const price1 = useUSDCPrice(token1 ?? undefined);
+
+    const fiatValueOfLiquidity: () => CurrencyAmount<Token> | null = () => {
+        if (loading || !price0 || !price1 || !pool || !liquidity || typeof tickLower !== "number" || typeof tickUpper !== "number") return null;
+        const position = new Position({
+            pool,
+            liquidity: liquidity.toString(),
+            tickLower,
+            tickUpper,
+        });
+        const amount0 = price0.quote(position.amount0);
+        const amount1 = price1.quote(position.amount1);
+        return amount0.add(amount1);
+    };
+
+    return (
+        <div
+            className={"farm-modal__nft-position p-1 br-8 c-w"}
+            key={token.id}
+            data-selected={!!selectedNFT && selectedNFT.id === token.id}
+            onClick={(e: any) => {
+                if (!isEnoughTokenForLock && selectedTier) return;
+                if (e.target.tagName !== "A" && !submitLoader) {
+                    setSelectedNFT((old) =>
+                        old && old.id === token.id
+                            ? null
+                            : {
+                                  onFarmingCenter: token.onFarmingCenter,
+                                  id: token.id,
+                              }
+                    );
+                }
+            }}
+        >
+            <NFTPositionIcon name={token.id}>{token.id}</NFTPositionIcon>
+            <div style={{ marginLeft: "10px" }}>
+                <p style={{ fontWeight: "bold" }}>
+                    {token0?.symbol} / {token1?.symbol}
+                </p>
+                <p style={{ fontSize: "13px", marginTop: "6px" }}>${fiatValueOfLiquidity()?.toSignificant()}</p>
+            </div>
+            <div style={{ marginLeft: "auto" }}>
+                <IsActive el={token} />
+                <div className={"farm-modal__nft-position__description"}>
+                    <a className={"fs-085 c-w hover-cp"} href={`${AlgebraConfig.MISC.appURL}/#/pool/${+token.id}`} rel="noopener noreferrer" target="_blank">
+                        <Trans>View position</Trans>
+                    </a>
+                </div>
+            </div>
+        </div>
+    );
+};

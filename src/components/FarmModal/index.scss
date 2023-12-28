@@ -22,6 +22,9 @@
       overflow-x: auto; 
       scroll-padding: 0 1rem;
       scroll-snap-type: x mandatory;
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 10px;
     }
 
     display: inline-flex;
@@ -29,15 +32,9 @@
     transition-duration: .2s;
     background-color: var(--dark-ebony-clay);
     border: 1px solid #34434F;
-    margin-right: 1rem;
     white-space: nowrap;
     cursor: pointer;
     scroll-snap-align: start;
-    width: 164px;
-
-    &:last-of-type {
-      margin-right: 0;
-    }
 
     &[data-selected=true] {
       border-color: var(--primary);
@@ -45,6 +42,7 @@
     }
 
     &__description {
+      margin-top: 4px;
       line-height: 24px;
       & > a {
         text-decoration: underline;

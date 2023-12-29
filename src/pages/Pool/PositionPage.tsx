@@ -321,7 +321,7 @@ export default function PositionPage({
                                         <RangeBadge removed={removed} inRange={inRange} />
                                     </div>
                                 </div>
-                                {ownsNFT && (
+                                {ownsNFT ? (
                                     <div className={"f ms_w-100"}>
                                         {currency0 && currency1 && tokenId ? (
                                             <NavLink
@@ -336,6 +336,11 @@ export default function PositionPage({
                                                 <Trans>Remove Liquidity</Trans>
                                             </NavLink>
                                         ) : null}
+                                    </div>
+                                ) : (
+                                    <div className={"ms_w-100"}>
+                                        <p>Position currently farming.</p>
+                                        <p style={{ fontSize: "12px", marginTop: "4px" }}>To manage this position, you must own the position NFT.</p>
                                     </div>
                                 )}
                             </div>

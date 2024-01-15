@@ -82,7 +82,7 @@ export default function Header() {
                     >
                         <p>This product is still in beta phase, launching soon in Q1 2024.</p>
                         <p>
-                            Make sure you are on <span style={{ fontWeight: "bold" }}>swapr.liquidity.eth.limo</span>
+                            Make sure you are on <span style={{ fontWeight: "bold" }}>v3.swapr.eth.limo</span>
                         </p>
                     </div>
                     <button

@@ -1,8 +1,8 @@
 {
   "background_color": "#fff",
   "display": "standalone",
-  "homepage_url": "https://swapr.liquidity.eth",
-  "providedBy": { "name": "Swapr", "url": "https://swapr.liquidity.eth" },
+  "homepage_url": "https://v3.swapr.eth.limo",
+  "providedBy": { "name": "Swapr", "url": "https://v3.swapr.eth.limo" },
   "icons": [
     {
       "src": "./images/192x192_App_Icon.png",

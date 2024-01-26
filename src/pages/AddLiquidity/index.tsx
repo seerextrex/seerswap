@@ -93,7 +93,6 @@ export default function AddLiquidity({
         depositADisabled,
         depositBDisabled,
         ticksAtLimit,
-        dynamicFee,
     } = useV3DerivedMintInfo(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, baseCurrency ?? undefined, existingPosition);
 
     const { onFieldAInput, onFieldBInput } = useV3MintActionHandlers(noLiquidity);

@@ -5,7 +5,6 @@ import { useToken } from "hooks/Tokens";
 import { useDerivedPositionInfo } from "hooks/useDerivedPositionInfo";
 import { useV3PositionFromTokenId } from "hooks/useV3Positions";
 import { NavLink, RouteComponentProps, useLocation } from "react-router-dom";
-import { unwrappedToken } from "utils/unwrappedToken";
 import { calculateGasMargin } from "../../utils/calculateGasMargin";
 import AutoColumn from "shared/components/AutoColumn";
 import DoubleCurrencyLogo from "components/DoubleLogo";
@@ -92,8 +91,8 @@ export default function PositionPage({
     const token0 = useToken(_token0Address);
     const token1 = useToken(_token1Address);
 
-    const currency0 = token0 ? unwrappedToken(token0) : undefined;
-    const currency1 = token1 ? unwrappedToken(token1) : undefined;
+    const currency0 = token0 as Currency;
+    const currency1 = token1 as Currency;
 
     // flag for receiving WETH
     const [receiveWETH, setReceiveWETH] = useState(false);
@@ -325,7 +324,7 @@ export default function PositionPage({
                                     <div className={"f ms_w-100"}>
                                         {currency0 && currency1 && tokenId ? (
                                             <NavLink
-                                                to={`/increase/${currencyId(currency0, chainId || 137)}/${currencyId(currency1, chainId || 137)}/${tokenId}`}
+                                                to={`/increase/${currencyId(currency0, chainId || 100)}/${currencyId(currency1, chainId || 100)}/${tokenId}`}
                                                 className={"btn primary pv-025 ph-05 br-8 mr-05"}
                                             >
                                                 <Trans>Increase Liquidity</Trans>

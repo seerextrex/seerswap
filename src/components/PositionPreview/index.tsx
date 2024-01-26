@@ -4,7 +4,6 @@ import { AutoColumn } from "components/Column";
 import { TYPE } from "theme";
 import { RowBetween, RowFixed } from "components/Row";
 import CurrencyLogo from "components/CurrencyLogo";
-import { unwrappedToken } from "utils/unwrappedToken";
 import { Trans } from "@lingui/macro";
 import { Currency } from "@uniswap/sdk-core";
 import RateToggle from "components/RateToggle";
@@ -28,8 +27,8 @@ interface PositionPreviewProps {
 export const PositionPreview = ({ position, title, inRange, baseCurrencyDefault, ticksAtLimit }: PositionPreviewProps) => {
     const theme = useContext(ThemeContext);
 
-    const currency0 = unwrappedToken(position.pool.token0);
-    const currency1 = unwrappedToken(position.pool.token1);
+    const currency0 = position.pool.token0;
+    const currency1 = position.pool.token1;
 
     // track which currency should be base
     const [baseCurrency, setBaseCurrency] = useState(baseCurrencyDefault ? (baseCurrencyDefault === currency0 ? currency0 : baseCurrencyDefault === currency1 ? currency1 : currency0) : currency0);

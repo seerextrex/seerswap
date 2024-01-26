@@ -105,10 +105,10 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
     }, [approvalB]);
 
     const [token0Ratio, token1Ratio] = useMemo(() => {
-        const currentPrice = mintInfo.price?.toSignificant(5);
+        const currentPrice = mintInfo.price?.toSignificant();
 
-        const left = mintInfo.lowerPrice.toSignificant(5);
-        const right = mintInfo.upperPrice.toSignificant(5);
+        const left = mintInfo.lowerPrice.toSignificant();
+        const right = mintInfo.upperPrice.toSignificant();
 
         //TODO
         if (right === "338490000000000000000000000000000000000000000000000" || right === "338490000000000000000000000000000000000") return ["50", "50"];
@@ -127,6 +127,22 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
 
         if (mintInfo.depositBDisabled) {
             return ["100", "0"];
+        }
+
+        const tokenAUsd = usdcValues[Field.CURRENCY_A];
+        const tokenBUsd = usdcValues[Field.CURRENCY_B];
+
+        if (tokenAUsd && tokenBUsd) {
+            const totalUsd = +tokenAUsd.toSignificant() + +tokenBUsd.toSignificant();
+
+            const rightRate = (+tokenAUsd.toSignificant() * 100) / totalUsd;
+            const leftRate = (+tokenBUsd.toSignificant() * 100) / totalUsd;
+
+            if (mintInfo.invertPrice) {
+                return [String(leftRate), String(rightRate)];
+            } else {
+                return [String(rightRate), String(leftRate)];
+            }
         }
 
         if (left && right && currentPrice) {

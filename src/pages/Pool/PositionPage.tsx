@@ -308,7 +308,7 @@ export default function PositionPage({
                                     <div className={"f f-ac ml-1 mxs_ml-2 mxs_w-100 mxs_mb-05"}>
                                         <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin={false} />
                                         <span className={"mr-05 fs-125 b"}>
-                                            &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
+                                            &nbsp;{currencyQuote?.symbol === "sDAI" ? "sexyDAI🔥" : currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
                                         </span>
                                     </div>
                                     <div className={"f f-ac mxs_w-100"}>

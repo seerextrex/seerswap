@@ -96,7 +96,7 @@ export default function Pool() {
                 <AutoColumn gap="1">
                     <div className={"pool__header flex-s-between"}>
                         <span className={"fs-125"}>
-                            <Trans>Pools Overview</Trans>
+                            <Trans>Positions Overview</Trans>
                         </span>
                         <div className={"flex-s-between mxs_mv-05"}>
                             <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>

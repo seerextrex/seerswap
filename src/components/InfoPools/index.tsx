@@ -4,13 +4,15 @@ import Table from "../Table";
 import { formatDollarAmount, formatPercent } from "../../utils/numbers";
 import "../Table/index.scss";
 import "./index.scss";
-import { NavLink } from "react-router-dom";
 import { Pool } from "./PoolRow";
 import { Apr } from "./AprHeader";
 import { useHandleSort } from "../../hooks/useHandleSort";
 import { useHandleArrow } from "../../hooks/useHandleArrow";
 import TableHeader from "../Table/TableHeader";
 import { t, Trans } from "@lingui/macro";
+import { ExternalLink } from "react-feather";
+
+const MERKL_GNOSIS_CHAIN_URL = "https://merkl.angle.money/?times=active%2Cfuture%2C&phrase=&chains=100%2C";
 
 interface InfoPoolsProps {
     data: any;
@@ -75,9 +77,19 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                 const apr = el.apr > 0 ? <span style={{ color: "var(--green)" }}>{formatPercent(el.apr)}</span> : <span>-</span>;
                 const farming =
                     el.farmingApr > 0 ? (
-                        <NavLink to={`/farming/infinite-farms`} className={"farming-link"} data-apr={el.farmingApr > 0}>
-                            {formatPercent(el.farmingApr)}
-                        </NavLink>
+                        <>
+                            <a
+                                href={MERKL_GNOSIS_CHAIN_URL}
+                                target="_blank"
+                                data-apr={el.farmingApr > 0}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <span style={{ color: "var(--green)", marginRight: "5px" }}>{formatPercent(el.farmingApr)}</span> <ExternalLink size={16} color={"var(--green)"} />
+                            </a>
+                        </>
                     ) : (
                         <span>-</span>
                     );

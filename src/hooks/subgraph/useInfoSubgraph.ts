@@ -38,13 +38,13 @@ import {
     TokenAddressSubgraph,
     TokenInSubgraph,
     TotalStatSubgraph,
-    PositionPriceRange,
     EternalFarmingByPool,
 } from "../../models/interfaces";
-import { fetchEternalFarmAPR, fetchPoolsAPR } from "utils/api";
+import { fetchEternalFarmAPR, fetchMerklFarmAPR, fetchPoolsAPR } from "utils/api";
 import { farmingClient } from "apollo/client";
 
 import AlgebraConfig from "algebra.config";
+import { getAddress } from "ethers/lib/utils";
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === "string") return {};
@@ -169,16 +169,7 @@ export function useInfoSubgraph() {
 
             const aprs = await fetchPoolsAPR();
 
-            const farmAprs = await fetchEternalFarmAPR();
-
-            const farmingAprs = await fetchEternalFarmingsAPRByPool(poolsAddresses);
-            const _farmingAprs: { [type: string]: number } = farmingAprs.reduce(
-                (acc, el) => ({
-                    ...acc,
-                    [el.pool]: farmAprs[el.id],
-                }),
-                {}
-            );
+            const farmAprs = await fetchMerklFarmAPR();
 
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool | any }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address];
@@ -212,7 +203,9 @@ export function useInfoSubgraph() {
                 const tvlUSD = current ? parseFloat(current[manageUntrackedTVL]) : 0;
                 const tvlUSDChange = getPercentChange(current ? current[manageUntrackedTVL] : undefined, oneDay ? oneDay[manageUntrackedTVL] : undefined);
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0;
-                const farmingApr = _farmingAprs[address] ? +_farmingAprs[address].toFixed(2) : 0;
+
+                const checksumAddres = getAddress(address);
+                const farmingApr = farmAprs["100"].pools[checksumAddres] ? +farmAprs["100"].pools[checksumAddres].meanAPR.toFixed(2) : 0;
 
                 accum[address] = {
                     token0: current.token0,

@@ -5,6 +5,7 @@ import "./index.scss";
 import { Trans } from "@lingui/macro";
 
 import AlgebraConfig from "algebra.config";
+import { NavLink } from "react-router-dom";
 
 interface PoolInfoHeaderProps {
     token0: Token | undefined;
@@ -40,13 +41,18 @@ export function PoolInfoHeader({ token0, token1, fee, collectedFees }: PoolInfoH
                     </span>
                     <span className={"ml-1 br-8 fee-badge c-p mxs_ml-a"}>{`${+fee / 10000}%`}</span>
                 </div>
-                {+collectedFees !== 0 && (
-                    <span className={"ml-a mxs_w-100 mxs_mt-1"}>
-                        <Trans>
-                            Total Collected Fees: <span className={"c-p"}>${Math.round(+collectedFees) || " <0.001"}</span>
-                        </Trans>
-                    </span>
-                )}
+                <div>
+                    <NavLink className={"btn primary p-05 br-8 mr-1"} to={`/add/${token0?.address}/${token1?.address}/select-pair`}>
+                        Add liquidity
+                    </NavLink>
+                    {+collectedFees !== 0 && (
+                        <span className={"ml-a mxs_w-100 mxs_mt-1"}>
+                            <Trans>
+                                Total Collected Fees: <span className={"c-p"}>${Math.round(+collectedFees) || " <0.001"}</span>
+                            </Trans>
+                        </span>
+                    )}
+                </div>
             </div>
             <span />
         </div>

@@ -72,6 +72,7 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
     const _data = useMemo(() => {
         return (
             data &&
+            Array.isArray(data) &&
             data.map((el: any, i: any) => {
                 const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address });
                 const apr = el.apr > 0 ? <span style={{ color: "var(--green)" }}>{formatPercent(el.apr)}</span> : <span>-</span>;

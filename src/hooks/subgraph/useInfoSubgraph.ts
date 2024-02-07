@@ -118,7 +118,7 @@ export function useInfoSubgraph() {
             });
 
             if (error) {
-                setPools(`failed`);
+                setPools(null);
                 return;
             }
 
@@ -133,7 +133,7 @@ export function useInfoSubgraph() {
             });
 
             if (_error2) {
-                setPools(`failed`);
+                setPools(null);
                 return;
             }
 
@@ -205,7 +205,7 @@ export function useInfoSubgraph() {
                 const aprPercent = aprs[address] ? aprs[address].toFixed(2) : 0;
 
                 const checksumAddres = getAddress(address);
-                const farmingApr = farmAprs["100"].pools[checksumAddres] ? +farmAprs["100"].pools[checksumAddres].meanAPR.toFixed(2) : 0;
+                const farmingApr = farmAprs["100"] && farmAprs["100"].pools[checksumAddres] ? +farmAprs["100"].pools[checksumAddres].meanAPR.toFixed(2) : 0;
 
                 accum[address] = {
                     token0: current.token0,
@@ -230,7 +230,7 @@ export function useInfoSubgraph() {
             setPools(Object.values(formatted));
         } catch (err) {
             console.error("ERROR", err);
-            setPools("failed");
+            setPools(null);
             throw new Error("Info pools fetch " + err);
         } finally {
             setPoolsLoading(false);

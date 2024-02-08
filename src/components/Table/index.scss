@@ -5,7 +5,6 @@
   align-items: center;
   border-bottom: 1px solid var(--mirage);
 
-
   &__item {
     font-size: 14px;
     text-align: start;
@@ -14,16 +13,16 @@
     display: flex;
     justify-content: start;
 
-
-   &--center {
-     text-align: center;
-     cursor: pointer;
-     align-items: center;
-     justify-content: center;
-   }
+    &--center {
+      text-align: center;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
-  &__apr {
+  &__apr,
+  &__farming {
     position: relative;
     display: flex;
     align-items: center;
@@ -31,8 +30,8 @@
 
     &:hover {
       & > .helper {
-      display: block;
-    }
+        display: block;
+      }
     }
   }
 }
@@ -71,7 +70,7 @@
   color: white;
   padding: 0 20px;
   user-select: none;
-  opacity: .3;
+  opacity: 0.3;
 
   &:hover {
     cursor: pointer;
@@ -90,18 +89,18 @@
     cursor: default !important;
   }
 
-    &__item {
-      font-size: 14px;
-      text-align: center;
+  &__item {
+    font-size: 14px;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+    &[data-center="true"] {
+      text-align: left;
       align-items: center;
       display: flex;
-      justify-content: center;
-
-      &[data-center=true] {
-        text-align: left;
-        align-items: center;
-        display: flex;
-        justify-content: start;
-      }
+      justify-content: start;
+    }
   }
 }

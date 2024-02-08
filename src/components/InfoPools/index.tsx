@@ -11,6 +11,7 @@ import { useHandleArrow } from "../../hooks/useHandleArrow";
 import TableHeader from "../Table/TableHeader";
 import { t, Trans } from "@lingui/macro";
 import { ExternalLink } from "react-feather";
+import { HelpCircle } from "react-feather";
 
 const MERKL_GNOSIS_CHAIN_URL = "https://merkl.angle.money/?times=active%2Cfuture%2C&phrase=&chains=100%2C";
 
@@ -153,8 +154,12 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         <span className={"table-header__item table-header__item--center"}>
                             <Apr />
                         </span>
-                        <span className={"table-header__item table-header__item--center"}>
+                        <span className={"table-header__item table-header__item--center table-header__farming"}>
                             <Trans>🔥 Farming</Trans>
+                            <HelpCircle style={{ display: "block", marginLeft: "6px" }} color={"white"} size={"1rem"} />
+                            <Trans>
+                                <span className="helper">Farming rewards are claimable through merkl.angle.money</span>
+                            </Trans>
                         </span>
                     </TableHeader>
                 </Table>

@@ -5,6 +5,12 @@ import WETH_LOGO from "./assets/images/weth.png";
 import SWAPR_LOGO from "./assets/images/swapr.png";
 import WBTC_LOGO from "./assets/images/wbtc.png";
 import GNO_LOGO from "./assets/images/gno.png";
+import EURE_LOGO from "./assets/images/eure-logo.svg";
+import SDAI_LOGO from "./assets/images/sdai-logo.svg";
+import AGEUR_LOGO from "./assets/images/ageur-logo.svg";
+import WSTETH_LOGO from "./assets/images/wsteth-logo.svg";
+import PNK_LOGO from "./assets/images/pnk-logo.svg";
+import COW_LOGO from "./assets/images/cow-logo.svg";
 
 export default {
     CHAIN_PARAMS: {
@@ -73,6 +79,12 @@ export default {
             ["0x9c58bacc331c9aa871afd802db6379a98e80cedb"]: GNO_LOGO,
             ["0x8e5bbbb09ed1ebde8674cda39a0c169401db4252"]: WBTC_LOGO,
             ["0xddafbb505ad214d7b80b1f830fccc89b60fb7a83"]: USDC_LOGO,
+            ["0xcb444e90d8198415266c6a2724b7900fb12fc56e"]: EURE_LOGO,
+            ["0xaf204776c7245bf4147c2612bf6e5972ee483701"]: SDAI_LOGO,
+            ["0x4b1e2c2762667331bc91648052f646d1b0d35984"]: AGEUR_LOGO,
+            ["0x6c76971f98945ae98dd7d4dfca8711ebea946ea6"]: WSTETH_LOGO,
+            ["0x37b60f4e9a31a64ccc0024dce7d0fd07eaa0f7b3"]: PNK_LOGO,
+            ["0x177127622c4a00f3d409b75571e12cb3c8973d3c"]: COW_LOGO,
         },
         stableTokens: {
             ["0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"]: { name: "USD//C on Gnosis", symbol: "USDC", decimals: 6 },

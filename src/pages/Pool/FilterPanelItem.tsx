@@ -4,7 +4,6 @@ import Toggle from "../../components/Toggle";
 
 interface FilterPanelProps {
     item: {
-        title: string;
         method: (v: boolean) => void;
         checkValue: boolean;
     };

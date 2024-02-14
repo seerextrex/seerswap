@@ -39,7 +39,6 @@ export default function Pool() {
 
     const filters = [
         {
-            title: t`Closed`,
             method: setUserHideClosedPositions,
             checkValue: userHideClosedPositions,
         },
@@ -91,7 +90,7 @@ export default function Pool() {
     return (
         <>
             <Helmet>
-                <title>{t`Swapr — Pool`}</title>
+                <title>{t`Swapr — Positions`}</title>
             </Helmet>
             <Card classes={"card-gradient-shadow br-24 ph-2 pv-1 mxs_ph-1 mv-2"}>
                 <SwapPoolTabs active={"pool"} />

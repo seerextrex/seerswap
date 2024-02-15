@@ -146,7 +146,7 @@ export const StyledTokenName = styled.span<{ active?: boolean }>`
     font-size: ${({ active }) => (active ? "16px" : "16px")};
 `;
 export const MaxButton = styled.button<{ page: string | undefined }>`
-    background-color: ${({ page, theme }) => (page === "addLiq" ? "var(--primary)" : "var(--primary-weak)")};
+    background-color: ${({ page }) => (page === "addLiq" ? "var(--wine)" : "var(--primary-weak)")};
     border-radius: 6px;
     color: white;
     margin-right: 10px;

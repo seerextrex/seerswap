@@ -1,17 +1,21 @@
 .toggle-button {
-  background-color: var(--dark-gray);
+  background-color: #314559;
   width: fit-content;
   cursor: pointer;
   outline: none;
-  padding: 2px;
+  padding: 4px;
   border: none;
+
+  :hover {
+    background: #2c3e51;
+  }
 
   span {
     padding: 0.25rem 0.6rem;
     transition-duration: .2s;
 
     &[data-isactive=true] {
-      background-color: var(--primary2);
+      background-color: var(--wine);
     }
   }
 }

@@ -15,7 +15,7 @@ export function CurrentPriceCard({ inverted, pool, currencyQuote, currencyBase }
     if (!pool || !currencyQuote || !currencyBase) return null;
 
     return (
-        <Card isDark classes={"p-1 br-12"}>
+        <Card isDark classes={"p-1 br-12 card-bg"}>
             <AutoColumn gap="1">
                 <span className={"c-lg fs-095 ta-c"} style={{ color: "var(--white)" }}>
                     <Trans>Current price</Trans>

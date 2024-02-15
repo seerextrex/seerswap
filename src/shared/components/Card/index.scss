@@ -3,6 +3,23 @@
   background-color: #121e2a;
 }
 
+.card-bg {
+  background-color: rgb(125 123 123 / 12%);
+}
+
+.card-bg-hover {
+  background-color: rgb(125 123 123 / 12%);
+
+  &:hover {
+    background: rgb(125 123 123 / 22%);
+  }
+}
+
+.position-list-card {
+  padding: 1.5rem;
+}
+
+
 .card-gradient-shadow {
   box-shadow: rgb(150 77 210 / 12%) 0px 2px 60px 0px;
 }

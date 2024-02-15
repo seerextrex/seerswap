@@ -39,7 +39,6 @@ export default function Pool() {
 
     const filters = [
         {
-            title: t`Closed`,
             method: setUserHideClosedPositions,
             checkValue: userHideClosedPositions,
         },
@@ -86,10 +85,12 @@ export default function Pool() {
         return () => _window.ethereum.removeListener("accountsChanged", reload);
     }, [reload]);
 
+    const hasPositions = _filteredPositions && _filteredPositions.length > 0;
+
     return (
         <>
             <Helmet>
-                <title>{t`Swapr — Pool`}</title>
+                <title>{t`Swapr — Positions`}</title>
             </Helmet>
             <Card classes={"card-gradient-shadow br-24 ph-2 pv-1 mxs_ph-1 mv-2"}>
                 <SwapPoolTabs active={"pool"} />
@@ -98,11 +99,13 @@ export default function Pool() {
                         <span className={"fs-125"}>
                             <Trans>Positions Overview</Trans>
                         </span>
-                        <div className={"flex-s-between mxs_mv-05"}>
-                            <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>
-                                + <Trans>New Position</Trans>
-                            </NavLink>
-                        </div>
+                        {hasPositions && (
+                            <div className={"flex-s-between mxs_mv-05"}>
+                                <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>
+                                    + <Trans>New Position</Trans>
+                                </NavLink>
+                            </div>
+                        )}
                     </div>
                     {account && (
                         <div className={"f mb-05 rg-2 cg-2 mxs_f-jc"}>
@@ -114,7 +117,7 @@ export default function Pool() {
                     <main className={"f c f-ac"}>
                         {positionsLoading ? (
                             <Loader style={{ margin: "auto" }} stroke="white" size={"2rem"} />
-                        ) : _filteredPositions && _filteredPositions.length > 0 ? (
+                        ) : hasPositions ? (
                             <PositionList positions={_filteredPositions.sort((posA, posB) => Number(+posA.tokenId < +posB.tokenId))} newestPosition={newestPosition} />
                         ) : (
                             <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>

@@ -288,7 +288,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                             </RowFixed>
                             <RangeBadge removed={removed} inRange={!outOfRange} />
                         </div>
-                        <Card isDark={false} classes={"p-1 br-12"}>
+                        <Card isDark={false} classes={"p-1 br-12 card-bg"}>
                             <div>
                                 <TYPE.main fontWeight={400}>
                                     <Trans>Amount</Trans>
@@ -315,7 +315,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
                                 <Slider value={percentForSlider} onChange={onPercentSelectForSlider} disabled={false} />
                             </div>
                         </Card>
-                        <Card isDark={false} classes={"p-1 br-12"}>
+                        <Card isDark={false} classes={"p-1 br-12 card-bg"}>
                             <AutoColumn gap="md">
                                 <RowBetween>
                                     <Text fontSize={16} fontWeight={500}>

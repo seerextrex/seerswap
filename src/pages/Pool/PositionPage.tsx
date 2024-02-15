@@ -260,7 +260,7 @@ export default function PositionPage({
     function modalHeader() {
         return (
             <>
-                <Card isDark classes={"p-1 br-12"}>
+                <Card isDark classes={"p-1 br-12 card-bg"}>
                     <div className={"flex-s-between mb-1"}>
                         <div className={"f f-ac"}>
                             <CurrencyLogo currency={feeValueUpper?.currency as WrappedCurrency} size={"24px"} />
@@ -358,7 +358,7 @@ export default function PositionPage({
                                         </span>
                                     )}
                                 </div>
-                                <Card isDark classes={"p-1 br-12"}>
+                                <Card isDark classes={"p-1 br-12 card-bg"}>
                                     <div className={"flex-s-between mb-1"}>
                                         <LinkedCurrency chainId={chainId} currency={currencyQuote} />
                                         <div className={"f f-ac"}>
@@ -383,7 +383,7 @@ export default function PositionPage({
                                     </div>
                                 </Card>
                             </Card>
-                            <Card isDark={false} classes={"p-1 br-12"}>
+                            <Card isDark={false} classes={"p-1 br-12 card-bg"}>
                                 <div className={"f c mb-05"}>
                                     <span className={"b mb-05"}>
                                         <Trans>Unclaimed fees</Trans>
@@ -417,7 +417,7 @@ export default function PositionPage({
                                         ) : null}
                                     </div>
                                 </div>
-                                <Card isDark classes={"p-1 br-12"}>
+                                <Card isDark classes={"p-1 br-12 card-bg"}>
                                     <div className={"flex-s-between mb-1"}>
                                         <div className={"f f-ac"}>
                                             <CurrencyLogo currency={feeValueUpper?.currency as WrappedCurrency} size={"24px"} />
@@ -440,7 +440,7 @@ export default function PositionPage({
                                     </div>
                                 )}
                             </Card>
-                            <Card isDark={false} classes={"p-1 br-12"}>
+                            <Card isDark={false} classes={"p-1 br-12 card-bg"}>
                                 <div className={"flex-s-between mb-1 fs-085"}>
                                     <div className={"f f-ac mxs_fd-c"}>
                                         <div className={"mr-05 fs-1 mxs_w-100 mxs_mr-0"}>
@@ -459,7 +459,7 @@ export default function PositionPage({
                                 </div>
 
                                 <div className={"f f-ac mb-1 ms_fd-c"}>
-                                    <Card isDark classes={"w-100 p-1 br-12"}>
+                                    <Card isDark classes={"w-100 p-1 br-12 card-bg"}>
                                         <AutoColumn gap="1" justify="center">
                                             <span className={"c-lg fs-095 ta-c"} style={{ color: "var(--white)" }}>
                                                 <Trans>Min price</Trans>
@@ -479,7 +479,7 @@ export default function PositionPage({
                                     </Card>
                                     <span className={"mh-1 c-lg hide-s"}>⟷</span>
                                     <span className={"show-s c-lg mv-05 fs-125"}>↕</span>
-                                    <Card isDark classes={"w-100 p-1 br-12"}>
+                                    <Card isDark classes={"w-100 p-1 br-12 card-bg"}>
                                         <AutoColumn gap="1" justify="center">
                                             <span className={"c-lg fs-095 ta-c"} style={{ color: "var(--white)" }}>
                                                 <Trans>Max price</Trans>

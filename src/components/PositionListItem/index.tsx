@@ -155,7 +155,7 @@ export default function PositionListItem({ positionDetails, newestPosition, high
 
     return (
         <NavLink className={"w-100"} to={positionSummaryLink} id={isNewest && highlightNewest ? "newest" : ""}>
-            <Card isDark={false} classes={"br-24 p-1 mv-05 pool-card"}>
+            <Card isDark={false} classes={"br-24 p-1 mv-05 card-bg"}>
                 <div className={"position-list-item__header f f-ac"}>
                     <div className={"f f-ac"}>
                         <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin />

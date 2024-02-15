@@ -61,7 +61,7 @@ export const PositionPreview = ({ position, title, inRange, baseCurrencyDefault,
                 </div>
             </div>
 
-            <Card isDark={title === "Selected Range"} classes={"p-1 br-12"}>
+            <Card isDark={title === "Selected Range"} classes={"p-1 br-12 card-bg"}>
                 <AutoColumn gap="md">
                     <RowBetween>
                         <RowFixed>
@@ -99,7 +99,7 @@ export const PositionPreview = ({ position, title, inRange, baseCurrencyDefault,
                 </RowBetween>
 
                 <div className={"flex-s-between cg-2 rg-1 mxs_fd-c"}>
-                    <Card isDark={false} classes={"p-1 br-12 w-100"}>
+                    <Card isDark={false} classes={"p-1 br-12 w-100 card-bg"}>
                         <AutoColumn gap="4px" justify="center">
                             <TYPE.main fontSize="12px">
                                 <Trans>Min Price</Trans>
@@ -116,7 +116,7 @@ export const PositionPreview = ({ position, title, inRange, baseCurrencyDefault,
                         </AutoColumn>
                     </Card>
 
-                    <Card isDark={false} classes={"p-1 br-12 w-100"}>
+                    <Card isDark={false} classes={"p-1 br-12 w-100 card-bg"}>
                         <AutoColumn gap="4px" justify="center">
                             <TYPE.main fontSize="12px">
                                 <Trans>Max Price</Trans>
@@ -133,7 +133,7 @@ export const PositionPreview = ({ position, title, inRange, baseCurrencyDefault,
                         </AutoColumn>
                     </Card>
                 </div>
-                <Card isDark={false} classes={"p-1 br-12"}>
+                <Card isDark={false} classes={"p-1 br-12 card-bg"}>
                     <AutoColumn gap="4px" justify="center">
                         <TYPE.main fontSize="12px">
                             <Trans>Current price</Trans>

@@ -329,7 +329,7 @@ export default function AddLiquidity({
                             <PositionPreview position={existingPosition} title={<Trans>Selected Range</Trans>} inRange={!outOfRange} ticksAtLimit={ticksAtLimit} />
                         )}
                     </AutoColumn>
-                    <Card isDark={false} classes={"add-liquidity__bottom p-1 br-12"} data-disabled={tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange}>
+                    <Card isDark={false} classes={"add-liquidity__bottom p-1 br-12 card-bg"} data-disabled={tickLower === undefined || tickUpper === undefined || invalidPool || invalidRange}>
                         <TYPE.label>{hasExistingPosition ? <Trans>Add more liquidity</Trans> : <Trans>Deposit Amounts</Trans>}</TYPE.label>
 
                         <CurrencyInputPanel

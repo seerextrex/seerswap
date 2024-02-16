@@ -1,4 +1,3 @@
-import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
 import { Currency, CurrencyAmount, Percent, TradeType } from "@uniswap/sdk-core";
 import { Trade as V2Trade } from "@uniswap/v2-sdk";
@@ -77,15 +76,15 @@ export function useApproveCallback(amountToApprove?: CurrencyAmount<Currency>, s
             return;
         }
 
-        let useExact = false;
-        const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+        const exactToApprove = amountToApprove.quotient.toString();
+
+        const estimatedGas = await tokenContract.estimateGas.approve(spender, exactToApprove).catch(() => {
             // general fallback for tokens who restrict approval amounts
-            useExact = true;
             return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString());
         });
 
         return tokenContract
-            .approve(spender, useExact ? amountToApprove.quotient.toString() : MaxUint256, {
+            .approve(spender, exactToApprove, {
                 gasLimit: calculateGasMargin(chainId, estimatedGas),
                 gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
             })

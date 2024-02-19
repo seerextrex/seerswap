@@ -36,9 +36,30 @@ interface IUSDPrice extends IPrice {
     changeQuoteCurrencyUSDHandler: any;
 }
 
+enum MISSING_PRICE_TOKEN {
+    BASE = "missingBase",
+    QUOTE = "missingQuote",
+}
+
+const getTokenSymbolForMissingPrice = (priceA: string | undefined, priceB: string | undefined): MISSING_PRICE_TOKEN | null => {
+    const hasPriceA = Boolean(priceA);
+    const hasPriceB = Boolean(priceB);
+
+    switch (true) {
+        case hasPriceA && !hasPriceB:
+            return MISSING_PRICE_TOKEN.QUOTE;
+        case !hasPriceA && hasPriceB:
+            return MISSING_PRICE_TOKEN.BASE;
+        default:
+            return null;
+    }
+};
+
 function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLocked, userQuoteCurrencyToken, changeQuotePriceHandler, isSelected }: ITokenPrice) {
     const baseSymbol = useMemo(() => (baseCurrency ? baseCurrency.symbol : "-"), [baseCurrency]);
     const quoteSymbol = useMemo(() => (quoteCurrency ? quoteCurrency.symbol : "-"), [quoteCurrency]);
+    const tokenSymbolWithMissingPrice = getTokenSymbolForMissingPrice(basePrice?.toSignificant(5), quotePrice?.toSignificant(5));
+    const isMissingBasePrice = tokenSymbolWithMissingPrice === MISSING_PRICE_TOKEN.BASE;
 
     const tokenRatio = useMemo(() => {
         if (!basePrice || !quotePrice) return t`Loading...`;
@@ -58,22 +79,17 @@ function TokenPrice({ baseCurrency, quoteCurrency, basePrice, quotePrice, isLock
                             <span className="quote-token__auto-fetched">{tokenRatio}</span>
                         </div>
                     ) : isSelected ? (
-                        <Input
-                            className={`quote-token__input bg-t c-w ol-n`}
-                            placeholder={`${baseCurrency?.symbol} in ${quoteCurrency?.symbol}`}
-                            value={userQuoteCurrencyToken || ""}
-                            onUserInput={(e: string) => changeQuotePriceHandler(e)}
-                        />
+                        <Input className={`quote-token__input bg-t c-w ol-n`} value={userQuoteCurrencyToken || ""} onUserInput={(e: string) => changeQuotePriceHandler(e)} />
                     ) : (
                         <span>-</span>
                     )}
                 </div>
-                <div className="quote-token__symbol ml-a">{quoteSymbol}</div>
+                <div className="quote-token__symbol ml-a">{isMissingBasePrice ? quoteSymbol : baseSymbol}</div>
             </div>
             <div className="quote-token__separator"> = </div>
             <div className="base-token">
                 <div className="base-token__amount">1</div>
-                <div className="base-token__symbol">{baseSymbol}</div>
+                <div className="base-token__symbol">{isMissingBasePrice ? baseSymbol : quoteSymbol}</div>
             </div>
         </div>
     );

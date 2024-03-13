@@ -20,21 +20,20 @@ export const Pool = ({ token0, token1, fee, address }: any) => {
 
     return (
         <div className={"f f-jc f-ac"}>
-            <DoubleCurrencyLogo
-                currency0={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, token0?.id, 18, token0.symbol) as WrappedCurrency}
-                currency1={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, token1?.id, 18, token1.symbol) as WrappedCurrency}
-                size={20}
-            />
-            <a className={"link f-ac"} href={`${AlgebraConfig.CHAIN_PARAMS.blockExplorerURL}/address/${address}`} rel="noopener noreferrer" target="_blank">
+            <NavLink className={"link f-ac"} to={`/info/pools/${address}`}>
+                <DoubleCurrencyLogo
+                    currency0={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, token0?.id, 18, token0.symbol) as WrappedCurrency}
+                    currency1={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, token1?.id, 18, token1.symbol) as WrappedCurrency}
+                    size={20}
+                />
                 <TYPE.label ml="8px">
                     {_poolTitle[0]}/{_poolTitle[1]}
                 </TYPE.label>
+            </NavLink>
+            <span className={"fee-badge ml-05 mr-05"}>{feeTierPercent(+fee)}</span>
+            <a className={" hover-op trans-op"} href={`${AlgebraConfig.CHAIN_PARAMS.blockExplorerURL}/address/${address}`} rel="noopener noreferrer" target="_blank">
                 <ExternalLink size={16} color={"var(--white)"} />
             </a>
-            <span className={"fee-badge ml-05 mr-05"}>{feeTierPercent(+fee)}</span>
-            <NavLink className={"chart-link hover-op trans-op"} to={`/info/pools/${address}`}>
-                <BarChart2 size={18} stroke={"var(--primary)"} />
-            </NavLink>
         </div>
     );
 };

@@ -11,6 +11,9 @@ import AGEUR_LOGO from "./assets/images/ageur-logo.svg";
 import WSTETH_LOGO from "./assets/images/wsteth-logo.svg";
 import PNK_LOGO from "./assets/images/pnk-logo.svg";
 import COW_LOGO from "./assets/images/cow-logo.svg";
+import SAFE_LOGO from "./assets/images/safe-logo.svg";
+import AJNA_LOGO from "./assets/images/ajna-logo.svg";
+import CRV_LOGO from "./assets/images/crv-logo.svg";
 
 export default {
     CHAIN_PARAMS: {
@@ -85,6 +88,9 @@ export default {
             ["0x6c76971f98945ae98dd7d4dfca8711ebea946ea6"]: WSTETH_LOGO,
             ["0x37b60f4e9a31a64ccc0024dce7d0fd07eaa0f7b3"]: PNK_LOGO,
             ["0x177127622c4a00f3d409b75571e12cb3c8973d3c"]: COW_LOGO,
+            ["0x4d18815d14fe5c3304e87b3fa18318baa5c23820"]: SAFE_LOGO,
+            ["0x67ee2155601e168f7777f169cd74f3e22bb5e0ce"]: AJNA_LOGO,
+            ["0x712b3d230f3c1c19db860d80619288b1f0bdd0bd"]: CRV_LOGO,
         },
         stableTokens: {
             ["0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"]: { name: "USD//C on Gnosis", symbol: "USDC", decimals: 6 },

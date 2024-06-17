@@ -14,13 +14,15 @@ import COW_LOGO from "./assets/images/cow-logo.svg";
 import SAFE_LOGO from "./assets/images/safe-logo.svg";
 import AJNA_LOGO from "./assets/images/ajna-logo.svg";
 import CRV_LOGO from "./assets/images/crv-logo.svg";
+import HOPR_LOGO from "./assets/images/hopr-logo.png";
+import OLAS_LOGO from "./assets/images/autonolas-logo.png";
 
 export default {
     CHAIN_PARAMS: {
         chainId: 100,
         chainIdHex: "0x64",
         chainName: "Gnosis Chain",
-        nativeCurrency: { name: "XDAI", symbol: "XDAI", decimals: 18, logo: XDAI_LOGO },
+        nativeCurrency: { name: "xDAI", symbol: "XDAI", decimals: 18, logo: XDAI_LOGO },
         wrappedNativeCurrency: { name: "Wrapped XDAI", symbol: "WXDAI", decimals: 18, address: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d", logo: WXDAI_LOGO },
         rpcURL: "https://rpc.gnosis.gateway.fm",
         blockExplorerURL: "https://gnosisscan.io",
@@ -74,6 +76,8 @@ export default {
                 symbol: "USDC",
                 decimals: 6,
             },
+            ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: { name: "Wrapped XDAI", symbol: "WXDAI", decimals: 18 },
+            ["0xaf204776c7245bf4147c2612bf6e5972ee483701"]: { name: "Savings xDAI", symbol: "sDAI", decimals: 18 },
         },
         tokensLogos: {
             ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: WXDAI_LOGO,
@@ -91,6 +95,8 @@ export default {
             ["0x4d18815d14fe5c3304e87b3fa18318baa5c23820"]: SAFE_LOGO,
             ["0x67ee2155601e168f7777f169cd74f3e22bb5e0ce"]: AJNA_LOGO,
             ["0x712b3d230f3c1c19db860d80619288b1f0bdd0bd"]: CRV_LOGO,
+            ["0xd057604a14982fe8d88c5fc25aac3267ea142a08"]: HOPR_LOGO,
+            ["0xce11e14225575945b8e6dc0d4f2dd4c570f79d9f"]: OLAS_LOGO,
         },
         stableTokens: {
             ["0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"]: { name: "USD//C on Gnosis", symbol: "USDC", decimals: 6 },

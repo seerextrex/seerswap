@@ -80,7 +80,6 @@ export default function Header() {
                             gap: "10px",
                         }}
                     >
-                        <p>This product is still in beta phase, launching soon in Q1 2024.</p>
                         <p>
                             Make sure you are on <span style={{ fontWeight: "bold" }}>v3.swapr.eth.limo</span>
                         </p>

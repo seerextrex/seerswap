@@ -17,6 +17,8 @@ import CRV_LOGO from "./assets/images/crv-logo.svg";
 import HOPR_LOGO from "./assets/images/hopr-logo.png";
 import OLAS_LOGO from "./assets/images/autonolas-logo.png";
 
+const SUBGRAPH_API_KEY = process.env.REACT_APP_SUBGRAPH_API_KEY || "";
+
 export default {
     CHAIN_PARAMS: {
         chainId: 100,
@@ -136,9 +138,9 @@ export default {
     },
 
     SUBGRAPH: {
-        infoURL: "https://api.thegraph.com/subgraphs/name/swaprhq/algebra-v19",
-        farmingURL: "https://api.thegraph.com/subgraphs/name/swaprhq/algebrafarming-v19",
-        blocklyticsURL: "https://api.thegraph.com/subgraphs/name/swaprhq/algebrablocks-v19",
+        infoURL: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/AAA1vYjxwFHzbt6qKwLHNcDSASyr1J1xVViDH8gTMFMR`,
+        farmingURL: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/4WysHZ1gFJcv1HLAobLMx3dS9B6aovExzyG3n7kRjwKT`,
+        blocklyticsURL: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/FSFGfeobVFdtoWnGkULtLQ5vYu38tc9BxYR1e1yXjVPZ`,
     },
 
     API: {

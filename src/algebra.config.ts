@@ -81,6 +81,7 @@ export default {
             },
             ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: { name: "Wrapped XDAI", symbol: "WXDAI", decimals: 18 },
             ["0xaf204776c7245bf4147c2612bf6e5972ee483701"]: { name: "Savings xDAI", symbol: "sDAI", decimals: 18 },
+            ["0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0"]: { name: "Bridged USDC (Gnosis)", symbol: "USDC.e", decimals: 6 },
         },
         tokensLogos: {
             ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: WXDAI_LOGO,

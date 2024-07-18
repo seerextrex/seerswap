@@ -16,6 +16,7 @@ import AJNA_LOGO from "./assets/images/ajna-logo.svg";
 import CRV_LOGO from "./assets/images/crv-logo.svg";
 import HOPR_LOGO from "./assets/images/hopr-logo.png";
 import OLAS_LOGO from "./assets/images/autonolas-logo.png";
+import SHUTTER_LOGO from "./assets/images/shutter.png";
 
 const SUBGRAPH_API_KEY = process.env.REACT_APP_SUBGRAPH_API_KEY || "";
 
@@ -80,6 +81,7 @@ export default {
             },
             ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: { name: "Wrapped XDAI", symbol: "WXDAI", decimals: 18 },
             ["0xaf204776c7245bf4147c2612bf6e5972ee483701"]: { name: "Savings xDAI", symbol: "sDAI", decimals: 18 },
+            ["0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0"]: { name: "Bridged USDC (Gnosis)", symbol: "USDC.e", decimals: 6 },
         },
         tokensLogos: {
             ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: WXDAI_LOGO,
@@ -99,6 +101,8 @@ export default {
             ["0x712b3d230f3c1c19db860d80619288b1f0bdd0bd"]: CRV_LOGO,
             ["0xd057604a14982fe8d88c5fc25aac3267ea142a08"]: HOPR_LOGO,
             ["0xce11e14225575945b8e6dc0d4f2dd4c570f79d9f"]: OLAS_LOGO,
+            ["0x8CCd277Cc638E7e17F8100cE583cBcEf42007Dca"]: SHUTTER_LOGO,
+            ["0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0"]: USDC_LOGO, // USDC.e (bridged)
         },
         stableTokens: {
             ["0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83"]: { name: "USD//C on Gnosis", symbol: "USDC", decimals: 6 },

@@ -7,12 +7,13 @@ const CMC_STABLECOIN = "stablecoin.cmc.eth";
 export const COINGECKO_LIST = "https://tokens.coingecko.com/uniswap/all.json";
 const COMPOUND_LIST = "https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json";
 const GEMINI_LIST = "https://www.gemini.com/uniswap/manifest.json";
-const KLEROS_LIST = "t2crtokens.eth";
+const KLEROS_LIST = "https://t2crtokens.eth.limo/";
 export const OPTIMISM_LIST = "https://static.optimism.io/optimism.tokenlist.json";
 const ROLL_LIST = "https://app.tryroll.com/tokens.json";
 const SET_LIST = "https://raw.githubusercontent.com/SetProtocol/uniswap-tokenlist/main/set.tokenlist.json";
 const WRAPPED_LIST = "wrapped.tokensoft.eth";
 export const HONEYSWAP_LIST = "https://tokens.honeyswap.org/";
+
 // only load blocked list if on app url
 export const UNSUPPORTED_LIST_URLS: string[] = IS_ON_APP_URL ? [BA_LIST] : [];
 
@@ -30,6 +31,7 @@ export const DEFAULT_LIST_OF_LISTS: string[] = [
     // OPTIMISM_LIST,
     // GEMINI_LIST,
     HONEYSWAP_LIST,
+    KLEROS_LIST,
     ...UNSUPPORTED_LIST_URLS, // need to load unsupported tokens as well
 ];
 

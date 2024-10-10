@@ -1,0 +1,12 @@
+{
+  "tokens": [
+    {
+      "chainId": 100,
+      "address": "0x4d18815d14fe5c3304e87b3fa18318baa5c23820",
+      "symbol": "SAFE",
+      "name": "Safe Token from Mainnet",
+      "decimals": 18,
+      "logoURI": "../assets/images/safe-logo.svg"
+    }
+  ]
+}

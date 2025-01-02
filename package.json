@@ -33,7 +33,7 @@
     "@types/lodash.keyby": "^4.6.6",
     "@types/ms.macro": "^2.0.0",
     "@types/multicodec": "^1.0.0",
-    "@types/node": "^13.13.5",
+    "@types/node": "^22.10.3",
     "@types/qs": "^6.9.2",
     "@types/random-gradient": "^0.0.0",
     "@types/react": "^18.0.10",

@@ -1,3 +1,4 @@
+import BCSPX_LOGO from "./assets/images/bcspx-logo.svg";
 import WXDAI_LOGO from "./assets/images/wxdai.png";
 import XDAI_LOGO from "./assets/images/xdai.png";
 import USDC_LOGO from "./assets/images/usdc.png";
@@ -61,6 +62,11 @@ export default {
                 symbol: "USDC",
                 decimals: 6,
             },
+            ["0x1e2c4fb7ede391d116e6b41cd0608260e8801d59"]: {
+                name: "Backed CSPX",
+                symbol: "bCSPX",
+                decimals: 18,
+            },
         },
         // Tokens, which would be used for creating multihop routes
         tokensForMultihop: {
@@ -84,6 +90,7 @@ export default {
             ["0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0"]: { name: "Bridged USDC (Gnosis)", symbol: "USDC.e", decimals: 6 },
         },
         tokensLogos: {
+            ["0x1e2c4fb7ede391d116e6b41cd0608260e8801d59"]: BCSPX_LOGO,
             ["0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"]: WXDAI_LOGO,
             ["0x532801ed6f82fffd2dab70a19fc2d7b2772c4f4b"]: SWAPR_LOGO,
             ["0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1"]: WETH_LOGO,

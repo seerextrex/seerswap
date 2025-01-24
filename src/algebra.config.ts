@@ -149,7 +149,8 @@ export default {
     },
 
     SUBGRAPH: {
-        infoURL: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/AAA1vYjxwFHzbt6qKwLHNcDSASyr1J1xVViDH8gTMFMR`,
+        // Deployed on https://thegraph.com/studio/subgraph/swapr-v3/
+        infoURL: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/YwkNWffc8UTH77wDqGWgMShMq1uXdiQsD5wrD5MzKwJ`,
         farmingURL: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/4WysHZ1gFJcv1HLAobLMx3dS9B6aovExzyG3n7kRjwKT`,
         blocklyticsURL: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/FSFGfeobVFdtoWnGkULtLQ5vYu38tc9BxYR1e1yXjVPZ`,
     },

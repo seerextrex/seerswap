@@ -11,51 +11,56 @@ export async function fetchMerklFarmAPR() {
 }
 
 export async function fetchEternalFarmAPR() {
-    const apiURL = AlgebraConfig.API.eternalFarmsAPR;
+    return {};
+    // const apiURL = AlgebraConfig.API.eternalFarmsAPR;
 
-    try {
-        return await fetch(apiURL).then((v) => v.json());
-    } catch (error: any) {
-        return {};
-    }
+    // try {
+    //     return await fetch(apiURL).then((v) => v.json());
+    // } catch (error: any) {
+    //     return {};
+    // }
 }
 
 export async function fetchLimitFarmAPR() {
-    const apiURL = AlgebraConfig.API.limitFarmsAPR;
+    return {};
+    // const apiURL = AlgebraConfig.API.limitFarmsAPR;
 
-    try {
-        return await fetch(apiURL).then((v) => v.json());
-    } catch (error: any) {
-        return {};
-    }
+    // try {
+    //     return await fetch(apiURL).then((v) => v.json());
+    // } catch (error: any) {
+    //     return {};
+    // }
 }
 
 export async function fetchLimitFarmTVL() {
-    const apiURL = AlgebraConfig.API.limitFarmsTVL;
+    return {};
+    // const apiURL = AlgebraConfig.API.limitFarmsTVL;
 
-    try {
-        return await fetch(apiURL).then((v) => v.json());
-    } catch (error: any) {
-        return {};
-    }
+    // try {
+    //     return await fetch(apiURL).then((v) => v.json());
+    // } catch (error: any) {
+    //     return {};
+    // }
 }
 
 export async function fetchEternalFarmTVL() {
-    const apiURL = AlgebraConfig.API.eternalFarmsTVL;
+    return {};
+    // const apiURL = AlgebraConfig.API.eternalFarmsTVL;
 
-    try {
-        return await fetch(apiURL).then((v) => v.json());
-    } catch (error: any) {
-        return {};
-    }
+    // try {
+    //     return await fetch(apiURL).then((v) => v.json());
+    // } catch (error: any) {
+    //     return {};
+    // }
 }
 
 export async function fetchPoolsAPR() {
-    const apiURL = AlgebraConfig.API.poolsAPR;
+    return {};
+    // const apiURL = AlgebraConfig.API.poolsAPR;
 
-    try {
-        return await fetch(apiURL).then((v) => v.json());
-    } catch (error: any) {
-        return {};
-    }
+    // try {
+    //     return await fetch(apiURL).then((v) => v.json());
+    // } catch (error: any) {
+    //     return {};
+    // }
 }

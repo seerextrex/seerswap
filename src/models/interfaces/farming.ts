@@ -149,6 +149,18 @@ export interface Deposit {
     tierEternal: string
     tierLimit: string
     multiplierToken: TokenSubgraph
+    limitTokenAmountForTier1?: string;
+    limitTokenAmountForTier2?: string;
+    limitTokenAmountForTier3?: string;
+    limitTier1Multiplier?: string;
+    limitTier2Multiplier?: string;
+    limitTier3Multiplier?: string;
+    eternalTokenAmountForTier1?: string;
+    eternalTokenAmountForTier2?: string;
+    eternalTokenAmountForTier3?: string;
+    eternalTier1Multiplier?: string;
+    eternalTier2Multiplier?: string;
+    eternalTier3Multiplier?: string;
     oldFarming?: boolean
 }
 

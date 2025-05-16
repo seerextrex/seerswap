@@ -169,6 +169,57 @@ export const FETCH_POOL = () => gql`
     }
 `;
 
+export const FETCH_POOLS_BY_IDS = (poolIds: string[]) => {
+    let poolString = `[`;
+    poolIds.forEach((id) => {
+        poolString += `"${id}",`;
+    });
+    poolString = poolString.slice(0, -1) + `]`; // Remove trailing comma and close bracket
+    const queryString = `
+        query fetchPoolsByIds {
+            pools(where: { id_in: ${poolString} }) {
+                id
+                fee
+                token0 {
+                    id
+                    decimals
+                    symbol
+                }
+                token1 {
+                    id
+                    decimals
+                    symbol
+                }
+                sqrtPrice
+                liquidity
+                tick
+                feesUSD
+                untrackedFeesUSD
+            }
+        }
+    `;
+    return gql(queryString);
+};
+
+export const FETCH_TOKENS_BY_IDS = (tokenIds: string[]) => {
+    let tokenString = `[`;
+    tokenIds.forEach((id) => {
+        tokenString += `"${id}",`;
+    });
+    tokenString = tokenString.slice(0, -1) + `]`; // Remove trailing comma and close bracket
+    const queryString = `
+        query fetchTokensByIds($tokenIds: [ID!]) { # Changed to accept array of IDs
+            tokens(where: { id_in: $tokenIds }) { # Use the variable $tokenIds
+                id
+                symbol
+                name
+                decimals
+            }
+        }
+    `;
+    return gql(queryString);
+};
+
 export const CHART_FEE_POOL_DATA = () => gql`
     query feeHourData($pool: String, $startTimestamp: BigInt, $endTimestamp: BigInt) {
         feeHourDatas(first: 1000, where: { pool: $pool, timestamp_gte: $startTimestamp, timestamp_lte: $endTimestamp }) {
@@ -381,16 +432,15 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
             limitFarming
             eternalFarming
             onFarmingCenter
-            ${
-                tierFarming
-                    ? `
+            ${tierFarming
+        ? `
               enteredInEternalFarming
               tokensLockedEternal
               tokensLockedLimit
               tierLimit
               tierEternal`
-                    : ""
-            }
+        : ""
+    }
     }
 }
 `;
@@ -502,10 +552,10 @@ export const FULL_POSITIONS = (positions: string[], account: string | undefined,
     `;
     return gql(query);
 };
-
-export const INFINITE_EVENTS = gql`
+// add a filter on endtime with variable
+export const INFINITE_EVENTS = (endTime: number) => gql`
     query infiniteFarms {
-        eternalFarmings(where: { isDetached: false }) {
+        eternalFarmings(where: { isDetached: false, endTime_gt: ${endTime}, reward_gt: 0, endTimeImplied_gt: ${endTime} }) {
             id
             rewardToken
             bonusRewardToken

@@ -14,8 +14,10 @@ import {
     FETCH_FINITE_FARM_FROM_POOL,
     FETCH_LIMIT,
     FETCH_POOL,
+    FETCH_POOLS_BY_IDS,
     FETCH_REWARDS,
     FETCH_TOKEN,
+    FETCH_TOKENS_BY_IDS,
     FUTURE_EVENTS,
     HAS_TRANSFERED_POSITIONS,
     INFINITE_EVENTS,
@@ -92,6 +94,7 @@ export function useFarmingSubgraph() {
         const _events: any[] = [];
 
         for (let i = 0; i < events.length; i++) {
+            console.log("count", i);
             const pool = await fetchPool(events[i].pool);
             const rewardToken = await fetchToken(events[i].rewardToken, farming);
             const bonusRewardToken = await fetchToken(events[i].bonusRewardToken, farming);
@@ -205,10 +208,10 @@ export function useFarmingSubgraph() {
             if (!provider) throw new Error("No provider");
 
             const newRewards: any[] = [];
-
+            // skip 0x0000000000000000000000000000000000000000
             for (const reward of rewards) {
+                if (reward.rewardAddress === "0x0000000000000000000000000000000000000000") continue;
                 const rewardContract = new Contract(reward.rewardAddress, ERC20_ABI, provider);
-
                 const symbol = await rewardContract.symbol();
                 const name = await rewardContract.name();
                 const decimals = await rewardContract.decimals();
@@ -227,6 +230,7 @@ export function useFarmingSubgraph() {
             setRewardsResult(newRewards);
         } catch (err) {
             setRewardsResult("failed");
+            console.log("err", err);
             if (err instanceof Error) {
                 throw new Error("Reward fetching " + err.message);
             }
@@ -390,8 +394,9 @@ export function useFarmingSubgraph() {
             }
 
             const _positions: any[] = [];
-
+            let i = 0;
             for (const position of positionsTransferred) {
+                console.log("count", i)
                 const nftContract = new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId], NON_FUN_POS_MAN, provider.getSigner());
 
                 const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id);
@@ -454,7 +459,7 @@ export function useFarmingSubgraph() {
                         createdAtTimestamp: +createdAtTimestamp,
                         limitEarned: rewardInfo[0] ? formatUnits(BigNumber.from(rewardInfo[0]), _rewardToken.decimals) : 0,
                         limitBonusEarned: rewardInfo[1] ? formatUnits(BigNumber.from(rewardInfo[1]), _bonusRewardToken.decimals) : 0,
-                        limitMultiplierToken: _multiplierToken,
+                        multiplierToken: _multiplierToken,
                         limitTokenAmountForTier1: tokenAmountForTier1,
                         limitTokenAmountForTier2: tokenAmountForTier2,
                         limitTokenAmountForTier3: tokenAmountForTier3,
@@ -515,7 +520,7 @@ export function useFarmingSubgraph() {
                         eternalBonusRewardToken: _bonusRewardToken,
                         eternalStartTime: startTime,
                         eternalEndTime: endTime,
-                        eternalMultiplierToken: _multiplierToken,
+                        multiplierToken: _multiplierToken,
                         eternalTier1Multiplier: tier1Multiplier,
                         eternalTier2Multiplier: tier2Multiplier,
                         eternalTier3Multiplier: tier3Multiplier,
@@ -583,8 +588,9 @@ export function useFarmingSubgraph() {
             }
 
             const _positions: TickFarming[] = [];
-
+            let m = 0;
             for (const position of eternalPositions) {
+                console.log("count m", m)
                 const nftContract = new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId], NON_FUN_POS_MAN, provider.getSigner());
 
                 const { tickLower, tickUpper, liquidity, token0, token1 } = await nftContract.positions(+position.id);
@@ -710,7 +716,7 @@ export function useFarmingSubgraph() {
                 data: { eternalFarmings },
                 error,
             } = await farmingClient.query<SubgraphResponse<EternalFarming[]>>({
-                query: INFINITE_EVENTS,
+                query: INFINITE_EVENTS(Math.round(Date.now() / 1000)),
                 fetchPolicy: reload ? "network-only" : "cache-first",
             });
 
@@ -722,19 +728,50 @@ export function useFarmingSubgraph() {
                 return;
             }
 
-            const aprs: Aprs = await fetchEternalFarmAPR();
-            const eventTVL = await fetchEternalFarmTVL();
+            // Collect all unique IDs
+            const poolIds = [...new Set(eternalFarmings.map(farm => farm.pool))];
+            const rewardTokenIds = [...new Set(eternalFarmings.map(farm => farm.rewardToken))];
+            const bonusRewardTokenIds = [...new Set(eternalFarmings.map(farm => farm.bonusRewardToken))];
+            const multiplierTokenIds = [...new Set(eternalFarmings.map(farm => farm.multiplierToken))];
+
+            const allTokenIds = [...new Set([...rewardTokenIds, ...bonusRewardTokenIds, ...multiplierTokenIds])];
+
+            // Fetch all pools and tokens in batch
+            const {
+                data: { pools: fetchedPoolsData },
+                error: poolsError,
+            } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
+                query: FETCH_POOLS_BY_IDS(poolIds),
+            });
+
+            if (poolsError) throw new Error(`Fetch pools error: ${poolsError.name} ${poolsError.message}`);
+
+            const {
+                data: { tokens: fetchedTokensData },
+                error: tokensError,
+            } = await farmingClient.query<SubgraphResponse<TokenSubgraph[]>>({
+                query: FETCH_TOKENS_BY_IDS(allTokenIds),
+                variables: { tokenIds: allTokenIds }, // Ensure 'tokenIds' is the correct variable name if your GQL query expects it
+            });
+
+            if (tokensError) throw new Error(`Fetch tokens error: ${tokensError.name} ${tokensError.message}`);
+
+            // Create maps for easy lookup
+            const poolMap = new Map(fetchedPoolsData.map(p => [p.id, p]));
+            const tokenMap = new Map(fetchedTokensData.map(t => [t.id, t]));
 
             let _eternalFarmings: FormattedEternalFarming[] = [];
-            // TODO
-            // .filter(farming => +farming.bonusRewardRate || +farming.rewardRate)
-            for (const farming of eternalFarmings) {
-                const pool = await fetchPool(farming.pool);
-                const rewardToken = await fetchToken(farming.rewardToken, true);
-                const bonusRewardToken = await fetchToken(farming.bonusRewardToken, true);
-                const multiplierToken = await fetchToken(farming.multiplierToken, true);
 
-                if (!pool || !rewardToken || !bonusRewardToken || !multiplierToken) continue;
+            for (const farming of eternalFarmings) {
+                const pool = poolMap.get(farming.pool);
+                const rewardToken = tokenMap.get(farming.rewardToken);
+                const bonusRewardToken = tokenMap.get(farming.bonusRewardToken);
+                const multiplierToken = tokenMap.get(farming.multiplierToken);
+
+                if (!pool || !rewardToken || !bonusRewardToken || !multiplierToken) {
+                    console.warn("Missing data for farming id:", farming.id, { pool, rewardToken, bonusRewardToken, multiplierToken });
+                    continue;
+                }
 
                 const _rewardRate = formatUnits(BigNumber.from(farming.rewardRate), rewardToken.decimals);
                 const _bonusRewardRate = formatUnits(BigNumber.from(farming.bonusRewardRate), bonusRewardToken.decimals);
@@ -742,25 +779,17 @@ export function useFarmingSubgraph() {
                 const dailyRewardRate = Math.round(+_rewardRate * 86_400);
                 const dailyBonusRewardRate = Math.round(+_bonusRewardRate * 86_400);
 
-                const apr = aprs[farming.id] ? aprs[farming.id] : 0;
-                // const tvl = eventTVL[farming.id] ? Math.round(eventTVL[farming.id] * ethPrices.current) : 0
-
-                _eternalFarmings = [
-                    //@ts-ignore
-                    ..._eternalFarmings,
-                    {
-                        ...farming,
-                        rewardToken,
-                        bonusRewardToken,
-                        multiplierToken,
-                        dailyRewardRate,
-                        dailyBonusRewardRate,
-                        //@ts-ignore
-                        pool,
-                        apr,
-                        tvl: 0,
-                    },
-                ];
+                _eternalFarmings.push({
+                    ...farming,
+                    rewardToken,
+                    bonusRewardToken,
+                    multiplierToken,
+                    dailyRewardRate,
+                    dailyBonusRewardRate,
+                    pool,
+                    apr: 0, // Assuming APR and TVL are handled elsewhere or will be adjusted
+                    tvl: 0,
+                });
             }
 
             setEternalFarms(_eternalFarmings);

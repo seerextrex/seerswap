@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Loader from "../Loader";
 import Table from "../Table";
-import { formatDollarAmount, formatPercent } from "../../utils/numbers";
+import { formatDollarAmount, formatPercent, formatAmountTokens } from "../../utils/numbers";
 import "../Table/index.scss";
 import "./index.scss";
 import { Pool } from "./PoolRow";
@@ -77,13 +77,28 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             data.map((el: any, i: any) => {
                 const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address });
                 const apr = el.apr > 0 ? <span style={{ color: "var(--green)" }}>{formatPercent(el.apr)}</span> : <span>-</span>;
-                const farming =
-                    el.farmingApr > 0 ? (
+
+                let farmingContent;
+                let farmingSortValue = el.farmingApr; // Default sort value
+
+                if (el.isEternal && el.dailyRewardRate > 0) {
+                    farmingContent = (
+                        // No external link for eternal farms as they are not on Merkl
+                        <span style={{ color: "var(--green)" }}>
+                            {formatAmountTokens(el.dailyRewardRate, true)} SEER / day
+                        </span>
+                    );
+                    // For sorting purposes, if we want to sort by the SEER amount for eternal farms,
+                    // we might need a different sort value. Or convert SEER/day to an APR-like value if possible.
+                    // For now, using dailyRewardRate directly for sorting if it's an eternal farm.
+                    farmingSortValue = el.dailyRewardRate;
+                } else if (el.farmingApr > 0) {
+                    farmingContent = (
                         <>
                             <a
                                 href={MERKL_GNOSIS_CHAIN_URL}
                                 target="_blank"
-                                data-apr={el.farmingApr > 0}
+                                data-apr={el.farmingApr > 0} // data-apr might not be accurate if it's eternal
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
@@ -92,16 +107,17 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                                 <span style={{ color: "var(--green)", marginRight: "5px" }}>{formatPercent(el.farmingApr)}</span> <ExternalLink size={16} color={"var(--green)"} />
                             </a>
                         </>
-                    ) : (
-                        <span>-</span>
                     );
+                } else {
+                    farmingContent = <span>-</span>;
+                    farmingSortValue = 0; // Ensure sorting consistency for '-' values
+                }
 
                 return [
                     {
                         title: pool,
                         value: el.address,
                     },
-
                     {
                         title: formatDollarAmount(el.tvlUSD),
                         value: el.tvlUSD,
@@ -119,8 +135,8 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
                         value: el.apr,
                     },
                     {
-                        title: farming,
-                        value: el.farmingApr,
+                        title: farmingContent,
+                        value: farmingSortValue, // Use the determined sort value
                     },
                 ];
             })

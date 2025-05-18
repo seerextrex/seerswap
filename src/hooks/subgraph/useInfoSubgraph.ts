@@ -50,9 +50,9 @@ function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === "string") return {};
     return tokenData
         ? tokenData.reduce((accum: { [address: string]: PoolSubgraph }, poolData) => {
-              accum[poolData.id] = poolData;
-              return accum;
-          }, {})
+            accum[poolData.id] = poolData;
+            return accum;
+        }, {})
         : {};
 }
 
@@ -60,9 +60,9 @@ function parseTokensData(tokenData: TokenInSubgraph[] | string) {
     if (typeof tokenData === "string") return {};
     return tokenData
         ? tokenData.reduce((accum: { [address: string]: TokenInSubgraph }, tokenData) => {
-              accum[tokenData.id] = tokenData;
-              return accum;
-          }, {})
+            accum[tokenData.id] = tokenData;
+            return accum;
+        }, {})
         : {};
 }
 
@@ -171,6 +171,23 @@ export function useInfoSubgraph() {
 
             const farmAprs = await fetchMerklFarmAPR();
 
+            const eternalFarmsData = await fetchEternalFarmingsAPRByPool(poolsAddresses);
+            const eternalFarmsMap = eternalFarmsData.reduce((map, farm) => {
+                const poolAddress = getAddress(farm.pool);
+                // Assuming rewardRate and bonusRewardRate should be summed up if they are for the same token (SEER)
+                // and that they are indeed the daily rates.
+                // The rates are strings in the subgraph data, so parse them.
+                const dailyRate = parseFloat(farm.rewardRate || "0") + parseFloat(farm.bonusRewardRate || "0");
+                // Only add to map if there's a positive reward rate
+                if (dailyRate > 0) {
+                    map[poolAddress] = {
+                        dailyRewardRate: dailyRate * 86400 / 1e18,
+                        isEternal: true, // Mark as eternal if data is found here
+                    };
+                }
+                return map;
+            }, {} as Record<string, { dailyRewardRate: number; isEternal: boolean }>);
+
             const formatted = poolsAddresses.reduce((accum: { [address: string]: FormattedPool | any }, address) => {
                 const current: PoolSubgraph | undefined = parsedPools[address];
                 const oneDay: PoolSubgraph | undefined = parsedPools24[address];
@@ -185,10 +202,10 @@ export function useInfoSubgraph() {
                     current && oneDay && twoDay
                         ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
                         : current && oneDay
-                        ? [parseFloat(current[manageUntrackedVolume]) - parseFloat(oneDay[manageUntrackedVolume]), 0]
-                        : current
-                        ? [parseFloat(current[manageUntrackedVolume]), 0]
-                        : [0, 0];
+                            ? [parseFloat(current[manageUntrackedVolume]) - parseFloat(oneDay[manageUntrackedVolume]), 0]
+                            : current
+                                ? [parseFloat(current[manageUntrackedVolume]), 0]
+                                : [0, 0];
 
                 const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume]) : current ? parseFloat(current[manageUntrackedVolume]) : 0;
 
@@ -207,6 +224,8 @@ export function useInfoSubgraph() {
                 const checksumAddres = getAddress(address);
                 const farmingApr = farmAprs["100"] && farmAprs["100"].pools[checksumAddres] ? +farmAprs["100"].pools[checksumAddres].meanAPR.toFixed(2) : 0;
 
+                const eternalFarmInfo = eternalFarmsMap[checksumAddres];
+
                 accum[address] = {
                     token0: current.token0,
                     token1: current.token1,
@@ -221,8 +240,10 @@ export function useInfoSubgraph() {
                     txCount,
                     tvlUSDChange,
                     apr: aprPercent,
-                    farmingApr,
+                    farmingApr: eternalFarmInfo?.isEternal ? 0 : farmingApr, // Set farmingApr to 0 if eternal, as we'll use dailyRewardRate
                     feesCollected,
+                    isEternal: eternalFarmInfo?.isEternal || false,
+                    dailyRewardRate: eternalFarmInfo?.dailyRewardRate || 0,
                 };
                 return accum;
             }, {});
@@ -305,8 +326,8 @@ export function useInfoSubgraph() {
                     current && oneDay && twoDay
                         ? get2DayChange(current[manageUntrackedVolume], oneDay[manageUntrackedVolume], twoDay[manageUntrackedVolume])
                         : current
-                        ? [parseFloat(current[manageUntrackedVolume]), 0]
-                        : [0, 0];
+                            ? [parseFloat(current[manageUntrackedVolume]), 0]
+                            : [0, 0];
 
                 // const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume]) : current ? parseFloat(current[manageUntrackedVolume]) : 0
                 const volumeUSDWeek = current ? parseFloat(current[manageUntrackedVolume]) : 0;
@@ -624,18 +645,38 @@ export function useInfoSubgraph() {
     }
 
     async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]): Promise<EternalFarmingByPool[]> {
+        // Handle empty poolAddresses array to prevent an unnecessary query if not desired
+        if (!poolAddresses || poolAddresses.length === 0) {
+            console.log("fetchEternalFarmingsAPRByPool: No pool addresses provided, returning empty array.");
+            return [];
+        }
         try {
-            const {
-                data: { eternalFarmings },
-                error,
-            } = await farmingClient.query({
-                query: FETCH_ETERNAL_FARM_FROM_POOL(poolAddresses),
+            const gqlQuery = FETCH_ETERNAL_FARM_FROM_POOL(poolAddresses);
+
+            if (!gqlQuery) {
+                console.error("fetchEternalFarmingsAPRByPool: Generated GQL query is undefined.");
+                return [];
+            }
+
+            const response = await farmingClient.query<{ eternalFarmings?: EternalFarmingByPool[] }>({
+                query: gqlQuery,
                 fetchPolicy: "network-only",
             });
 
-            return eternalFarmings;
+            if (response.errors && response.errors.length > 0) {
+                console.error("fetchEternalFarmingsAPRByPool: GraphQL errors received:", response.errors);
+                return [];
+            }
+
+            if (!response.data || response.data.eternalFarmings === undefined || response.data.eternalFarmings === null) {
+                console.warn("fetchEternalFarmingsAPRByPool: No data.eternalFarmings in response for pools:", poolAddresses, "Response data:", response.data);
+                return [];
+            }
+
+            return response.data.eternalFarmings;
         } catch (err) {
-            throw new Error("Eternal fetch error " + err);
+            console.error("fetchEternalFarmingsAPRByPool: Exception during query execution:", err);
+            return [];
         }
     }
 

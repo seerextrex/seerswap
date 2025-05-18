@@ -1,14 +1,15 @@
 import { FeeSubgraph, LastPoolSubgraph, TokenSubgraph } from './responseSubgraph'
 import JSBI from 'jsbi'
 import { Token } from '@uniswap/sdk-core'
+import { TokenInSubgraph } from "."
 
 export interface FormattedPool {
     address: string
-    apr: number
+    apr: number | string
     exists: boolean
-    fee: string
-    token0: TokenSubgraph
-    token1: TokenSubgraph
+    fee: number
+    token0: TokenInSubgraph
+    token1: TokenInSubgraph
     totalValueLockedUSD: string
     tvlUSD: number
     tvlUSDChange: number
@@ -17,6 +18,10 @@ export interface FormattedPool {
     volumeUSDWeek: number
     volumeUSDMonth: number
     totalFeesUSD: number
+    farmingApr: number
+    feesCollected: number
+    isEternal?: boolean
+    dailyRewardRate?: number
 }
 
 export interface FormattedToken {

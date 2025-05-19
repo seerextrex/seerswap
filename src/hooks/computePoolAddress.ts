@@ -29,7 +29,7 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
 
 /**
  * Computes a pool address
- * @param poolDeployer The Swapr factory address
+ * @param poolDeployer The SeerSwap sfactory address
  * @param tokenA The first token of the pair, irrespective of sort order
  * @param tokenB The second token of the pair, irrespective of sort order
  * @param fee The fee tier of the pool

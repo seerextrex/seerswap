@@ -7,7 +7,7 @@ import { Connector } from "@web3-react/types";
 import { WalletConnect } from "@web3-react/walletconnect-v2";
 import { useMemo } from "react";
 
-import SWAPR_LOGO_URL from "../assets/images/swapr-logo.svg";
+import SWAPR_LOGO_URL from "../assets/images/seerswap.jpg";
 import algebraConfig from "../algebra.config";
 
 export enum Wallet {
@@ -106,7 +106,7 @@ export const [coinbaseWallet, coinbaseWalletHooks] = initializeConnector<Coinbas
             actions,
             options: {
                 url: algebraConfig.CHAIN_PARAMS.rpcURL,
-                appName: "Swapr Liquidity",
+                appName: "SeerSwap Liquidity",
                 appLogoUrl: SWAPR_LOGO_URL,
             },
             onError,

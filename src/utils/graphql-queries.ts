@@ -69,26 +69,25 @@ export const FETCH_LIMIT = () => gql`
 `;
 
 export const FETCH_ETERNAL_FARM = () => gql`
-    query fetchEternalFarm($farmId: ID) {
+    query eternalFarmings($farmId: ID!) {
         eternalFarmings(where: { id: $farmId }) {
             id
+            isDetached
+            pool
             rewardToken
             bonusRewardToken
-            pool
-            startTime
-            endTime
-            reward
-            bonusReward
             rewardRate
             bonusRewardRate
-            isDetached
-            tier1Multiplier
-            tier2Multiplier
-            tier3Multiplier
+            startTime
+            endTime
+            virtualPool
+            multiplierToken
             tokenAmountForTier1
             tokenAmountForTier2
             tokenAmountForTier3
-            multiplierToken
+            tier1Multiplier
+            tier2Multiplier
+            tier3Multiplier
         }
     }
 `;
@@ -101,7 +100,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
     poolString += "]";
     const queryString = `
       query eternalFarmingsFromPools {
-        eternalFarmings(where: {pool_in: ${poolString}, isDetached: false}) {
+        eternalFarmings(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${Math.round(Date.now() / 1000)}, endTimeImplied_gt: ${Math.round(Date.now() / 1000)}}) {
           id
           rewardToken
           bonusRewardToken
@@ -579,7 +578,7 @@ export const INFINITE_EVENTS = (endTime: number) => gql`
 
 export const TOP_POOLS = gql`
     query topPools {
-        pools(first: 50, orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+        pools(first: 100, orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
             id
         }
     }
@@ -709,6 +708,30 @@ export const FETCH_POPULAR_POOLS = () => gql`
             token1 {
                 id
             }
+        }
+    }
+`;
+
+export const FETCH_ETERNAL_FARMS_BY_IDS = (farmIds: string[]) => gql`
+    query eternalFarmingsByIds($farmIds: [ID!]!) {
+        eternalFarmings(where: { id_in: $farmIds }) {
+            id
+            isDetached
+            pool
+            rewardToken
+            bonusRewardToken
+            rewardRate
+            bonusRewardRate
+            startTime
+            endTime
+            virtualPool
+            multiplierToken
+            tokenAmountForTier1
+            tokenAmountForTier2
+            tokenAmountForTier3
+            tier1Multiplier
+            tier2Multiplier
+            tier3Multiplier
         }
     }
 `;

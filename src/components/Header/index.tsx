@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
-import Logo from "../../assets/images/swapr-logo.svg";
+import Logo from "../../assets/images/seerswap.jpg";
 import { useWeb3React } from "@web3-react/core";
 import Web3Status from "../Web3Status";
 import NetworkCard from "./NetworkCard";
@@ -81,7 +81,7 @@ export default function Header() {
                         }}
                     >
                         <p>
-                            Make sure you are on <span style={{ fontWeight: "bold" }}>v3.swapr.eth.limo</span>
+                            Make sure you are on <span style={{ fontWeight: "bold" }}>app.seerswap.org</span>
                         </p>
                     </div>
                     <button
@@ -139,7 +139,7 @@ export default function Header() {
 
                     {(account && chainId === AlgebraConfig.CHAIN_PARAMS.chainId && userEthBalance) || networkFailed ? (
                         <BalanceText style={{ flexShrink: 0 }} px="0.85rem" fontWeight={500}>
-                            {_userEthBalance?.toFixed(5)} {!isMobile && chainValue}
+                            {_userEthBalance?.toFixed(2)} {!isMobile && chainValue}
                         </BalanceText>
                     ) : null}
                     <Web3Status />

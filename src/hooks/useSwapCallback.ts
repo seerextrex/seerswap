@@ -83,23 +83,23 @@ function useSwapCallArguments(
                 deadline: deadline.toString(),
                 ...(signatureData
                     ? {
-                          inputTokenPermit:
-                              "allowed" in signatureData
-                                  ? {
-                                        expiry: signatureData.deadline,
-                                        nonce: signatureData.nonce,
-                                        s: signatureData.s,
-                                        r: signatureData.r,
-                                        v: signatureData.v as any,
-                                    }
-                                  : {
-                                        deadline: signatureData.deadline,
-                                        amount: signatureData.amount,
-                                        s: signatureData.s,
-                                        r: signatureData.r,
-                                        v: signatureData.v as any,
-                                    },
-                      }
+                        inputTokenPermit:
+                            "allowed" in signatureData
+                                ? {
+                                    expiry: signatureData.deadline,
+                                    nonce: signatureData.nonce,
+                                    s: signatureData.s,
+                                    r: signatureData.r,
+                                    v: signatureData.v as any,
+                                }
+                                : {
+                                    deadline: signatureData.deadline,
+                                    amount: signatureData.amount,
+                                    s: signatureData.s,
+                                    r: signatureData.r,
+                                    v: signatureData.v as any,
+                                },
+                    }
                     : {}),
             })
         );
@@ -113,23 +113,23 @@ function useSwapCallArguments(
                     deadline: deadline.toString(),
                     ...(signatureData
                         ? {
-                              inputTokenPermit:
-                                  "allowed" in signatureData
-                                      ? {
-                                            expiry: signatureData.deadline,
-                                            nonce: signatureData.nonce,
-                                            s: signatureData.s,
-                                            r: signatureData.r,
-                                            v: signatureData.v as any,
-                                        }
-                                      : {
-                                            deadline: signatureData.deadline,
-                                            amount: signatureData.amount,
-                                            s: signatureData.s,
-                                            r: signatureData.r,
-                                            v: signatureData.v as any,
-                                        },
-                          }
+                            inputTokenPermit:
+                                "allowed" in signatureData
+                                    ? {
+                                        expiry: signatureData.deadline,
+                                        nonce: signatureData.nonce,
+                                        s: signatureData.s,
+                                        r: signatureData.r,
+                                        v: signatureData.v as any,
+                                    }
+                                    : {
+                                        deadline: signatureData.deadline,
+                                        amount: signatureData.amount,
+                                        s: signatureData.s,
+                                        r: signatureData.r,
+                                        v: signatureData.v as any,
+                                    },
+                        }
                         : {}),
                 })
             );
@@ -170,7 +170,7 @@ function swapErrorToUserReadableMessage(error: any): string {
         case "UniswapV2: TRANSFER_FAILED":
             return t`The output token cannot be transferred. There may be an issue with the output token.`;
         case "UniswapV2: K":
-            return t`The Swapr invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer.`;
+            return t`The SeerSwap invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer.`;
         case "Too little received":
         case "Too much requested":
         case "STF":
@@ -239,11 +239,11 @@ export function useSwapCallback(
                             !value || isZero(value)
                                 ? { from: account, to: address, data: calldata }
                                 : {
-                                      from: account,
-                                      to: address,
-                                      data: calldata,
-                                      value,
-                                  };
+                                    from: account,
+                                    to: address,
+                                    data: calldata,
+                                    value,
+                                };
 
                         return provider
                             .estimateGas(tx)

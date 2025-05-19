@@ -156,60 +156,60 @@ msgstr "Добавление ликвидности"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "Swapr {0} Price:"
+msgid "SeerSwap{0} Price:"
 msgstr "Цена {0} на Swapr:"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Swapr — Farming"
-msgstr "Swapr — Фарминг"
+msgid "SeerSwap — Farming"
+msgstr "SeerSwap — Фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Swapr — Farming • Farms History history"
-msgstr "Swapr — Фарминг • Фарминг История история"
+msgid "SeerSwap — Farming • Farms History history"
+msgstr "SeerSwap — Фарминг • Фарминг История история"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Swapr — Farming • Infinite Farms"
-msgstr "Swapr — Фарминг • Бессрочный фарминг"
+msgid "SeerSwap — Farming • Infinite Farms"
+msgstr "SeerSwap — Фарминг • Бессрочный фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Swapr — Farming • Limit Farms"
-msgstr "Swapr — Фарминг • Временный фарминг"
+msgid "SeerSwap — Farming • Limit Farms"
+msgstr "SeerSwap — Фарминг • Временный фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "Swapr — Farming • My Farms"
-msgstr "Swapr — Фарминг • Мои фарминги"
+msgid "SeerSwap — Farming • My Farms"
+msgstr "SeerSwap — Фарминг • Мои фарминги"
 
 #: src/pages/PoolFinder/index.tsx
-msgid "Swapr — Find Pool"
-msgstr "Swapr — Найти пул"
+msgid "SeerSwap — Find Pool"
+msgstr "SeerSwap — Найти пул"
 
 #: src/pages/InfoPage/index.tsx
-msgid "Swapr — Info"
-msgstr "Swapr — Информация"
+msgid "SeerSwap — Info"
+msgstr "SeerSwap — Информация"
 
 #: src/pages/InfoPage/index.tsx
-msgid "Swapr — Info • Pools"
-msgstr "Swapr — Информация • Пулы"
+msgid "SeerSwap — Info • Pools"
+msgstr "SeerSwap — Информация • Пулы"
 
 #: src/pages/InfoPage/index.tsx
-msgid "Swapr — Info • Tokens"
-msgstr "Swapr — Информация • Токены"
+msgid "SeerSwap — Info • Tokens"
+msgstr "SeerSwap — Информация • Токены"
 
 #: src/pages/MigrateV2/index.tsx
-msgid "Swapr — Migrate Liquidity"
-msgstr "Swapr — Перенести Ликвидность"
+msgid "SeerSwap — Migrate Liquidity"
+msgstr "SeerSwap — Перенести Ликвидность"
 
 #: src/pages/Pool/index.tsx
-msgid "Swapr — Pool"
-msgstr "Swapr — Пул"
+msgid "SeerSwap — Pool"
+msgstr "SeerSwap — Пул"
 
 #: src/pages/RealStakerPage/index.tsx
-msgid "Swapr — Staking"
-msgstr "Swapr — Стейкинг"
+msgid "SeerSwap — Staking"
+msgstr "SeerSwap — Стейкинг"
 
 #: src/pages/Swap/index.tsx
-msgid "Swapr — Swap"
-msgstr "Swapr — Обменять"
+msgid "SeerSwap — Swap"
+msgstr "SeerSwap — Обменять"
 
 #: src/pages/Swap/index.tsx
 msgid "Swapr.Finance is the first concentrated liquidity DEX on Polygon: best rates for traders and liquidity providers on the Polygon Network, with built-in farming and adaptive fees."
@@ -220,8 +220,8 @@ msgid "All"
 msgstr "Все"
 
 #: src/pages/Swap/index.tsx
-msgid "Allow Swapr to use your {0}"
-msgstr "Разрешить Swapr использовать ваши {0}"
+msgid "Allow SeerSwapto use your {0}"
+msgstr "Разрешить SeerSwapиспользовать ваши {0}"
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
 msgid "Allow LP token migration"
@@ -375,7 +375,7 @@ msgid "Based on <0>fees</0> / <1>active liquidity</1>"
 msgstr "На основе <0>комиссии</0> / <1>активная ликвидность</1>"
 
 #: src/components/CautionModal/index.tsx
-msgid "Before using Swapr, you should review the relevant documentation to make sure you understand how Swapr works."
+msgid "Before using Swapr, you should review the relevant documentation to make sure you understand how SeerSwapworks."
 msgstr "Перед тем, как начать пользоваться Swapr, ознакомьтесь с необходимой документацией и убедитесь в том, что вы понимаете как работает Swapr."
 
 #: src/pages/EventsHistory/index.tsx
@@ -479,8 +479,8 @@ msgid "Clear all"
 msgstr "Очистить всё"
 
 #: src/pages/MigrateV2/index.tsx
-msgid "Click Migrate to transfer your liquidity from SushiSwap or Swapr to Swapr."
-msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или Swapr в Swapr."
+msgid "Click Migrate to transfer your liquidity from SushiSwap or SeerSwapto Swapr."
+msgstr "Нажмите «Перенести», чтобы перенести ликвидность из SushiSwap или SeerSwapв Swapr."
 
 #: src/components/TransactionConfirmationModal/index.tsx
 msgid "Close"
@@ -1935,8 +1935,8 @@ msgid "TVL"
 msgstr "TVL"
 
 #: src/hooks/useSwapCallback.ts
-msgid "The Swapr invariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
-msgstr "Инвариант Swapr x * y = k не соблюдается при обмене. Обычно это означает, что один из токенов, которые вы обмениваете, имеет особенности поведения при его передаче."
+msgid "The SeerSwapinvariant x*y=k was not satisfied by the swap. This usually means one of the tokens you are swapping incorporates custom behavior on transfer."
+msgstr "Инвариант SeerSwapx * y = k не соблюдается при обмене. Обычно это означает, что один из токенов, которые вы обмениваете, имеет особенности поведения при его передаче."
 
 #: src/components/InfoTotalStats/index.tsx
 msgid "The Subgraph information might be outdated – check all the correct statistics"
@@ -2000,8 +2000,8 @@ msgid "To (at least)"
 msgstr "На (минимум)"
 
 #: src/components/StakingModal/index.tsx
-msgid "To stake your NFT you should approve Swapr to use it"
-msgstr "Чтобы застейкать NFT вы должны одобрить Swapr его использование"
+msgid "To stake your NFT you should approve SeerSwapto use it"
+msgstr "Чтобы застейкать NFT вы должны одобрить SeerSwapего использование"
 
 #: src/components/StakeModal/index.tsx
 msgid "To take part in this farming event, you need to"
@@ -2125,8 +2125,8 @@ msgid "Updating..."
 msgstr "Обновление..."
 
 #: src/components/CautionModal/index.tsx
-msgid "Using Swapr involves various risks, including, but not limited to, losses while digital assets are being supplied to Swapr, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
-msgstr "Ипользование Swapr включает различные риски, включая потери цифровых активов во время добавления их на Swapr и потери из-за изменения цен токенов."
+msgid "Using SeerSwapinvolves various risks, including, but not limited to, losses while digital assets are being supplied to Swapr, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool."
+msgstr "Ипользование SeerSwapвключает различные риски, включая потери цифровых активов во время добавления их на SeerSwapи потери из-за изменения цен токенов."
 
 #: src/components/SearchModal/ManageLists.tsx
 msgid "View list"
@@ -2211,7 +2211,7 @@ msgid "You are responsible for completing your own due diligence to understand t
 msgstr "Вы несете ответственность за проведение собственной проверки, чтобы понять риски торговли криптовалютами."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "You are the first liquidity provider for this Swapr pool. Your liquidity will migrate at the current"
+msgid "You are the first liquidity provider for this SeerSwappool. Your liquidity will migrate at the current"
 msgstr "Вы являетесь первым поставщиком ликвидности для этого пула Swapr. Ваша ликвидность будет перенесена по текущей цене"
 
 #: src/pages/Swap/index.tsx
@@ -2231,16 +2231,16 @@ msgid "You must connect an account."
 msgstr "Вы должны подключить аккаунт."
 
 #: src/pages/Swap/index.tsx
-msgid "You must give the Swapr smart contracts permission to use your {0}. You only have to do this once per token."
-msgstr "Вы должны дать разрешение смарт-контрактам Swapr на использование ваших {0}. Это нужно сделать только один раз для каждого токена."
+msgid "You must give the SeerSwapsmart contracts permission to use your {0}. You only have to do this once per token."
+msgstr "Вы должны дать разрешение смарт-контрактам SeerSwapна использование ваших {0}. Это нужно сделать только один раз для каждого токена."
 
 #: src/pages/MigrateV2/V2PairMigration.tsx
-msgid "You should only deposit liquidity into Swapr at a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
-msgstr "Вносить ликвидность в Swapr следует только по той цене, которую вы считаете правильной. <0/>Если цена кажется неправильной, вы можете либо произвести обмен, чтобы сдвинуть её, либо дождаться, чтобы это сделал кто-то другой."
+msgid "You should only deposit liquidity into SeerSwapat a price you believe is correct. <0/>If the price seems incorrect, you can either make a swap to move the price or wait for someone else to do so."
+msgstr "Вносить ликвидность в SeerSwapследует только по той цене, которую вы считаете правильной. <0/>Если цена кажется неправильной, вы можете либо произвести обмен, чтобы сдвинуть её, либо дождаться, чтобы это сделал кто-то другой."
 
 #: src/components/CautionModal/index.tsx
-msgid "You use Swapr at your own risk and without warranties of any kind. Swapr is not liable for potential losses."
-msgstr "Вы используете Swapr на свой страх и риск и без каких-либо гарантий. Swapr не несет ответственности за возможные убытки\"."
+msgid "You use SeerSwapat your own risk and without warranties of any kind. SeerSwapis not liable for potential losses."
+msgstr "Вы используете SeerSwapна свой страх и риск и без каких-либо гарантий. SeerSwapне несет ответственности за возможные убытки\"."
 
 #: src/pages/RemoveLiquidity/V3.tsx
 msgid "You will also collect fees earned from this position."
@@ -2316,8 +2316,8 @@ msgid "ZOOM"
 msgstr "МАСШТАБ"
 
 #: src/pages/Swap/index.tsx
-msgid "best dex, Swapr exchange, Swapr crypto, Swapr finance, Swapr dex, defi, polygon dex, exchange on polygon, matic exchange"
-msgstr "best dex, Swapr exchange, Swapr crypto, Swapr finance, Swapr dex, defi, polygon dex, exchange on polygon, matic exchange"
+msgid "best dex, SeerSwapexchange, SeerSwapcrypto, SeerSwapfinance, SeerSwapdex, defi, polygon dex, exchange on polygon, matic exchange"
+msgstr "best dex, SeerSwapexchange, SeerSwapcrypto, SeerSwapfinance, SeerSwapdex, defi, polygon dex, exchange on polygon, matic exchange"
 
 #: src/components/Settings/index.tsx
 msgid "confirm"

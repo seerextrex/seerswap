@@ -4,9 +4,9 @@ import Modal from "../Modal";
 import { AgreeButton, CautionList, CautionListItem, CautionModalInner } from "./styled";
 
 const agreementItems = [
-    t`Using Swapr involves various risks, including, but not limited to, losses while digital assets are being supplied to Swapr, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool.`,
-    t`You use Swapr at your own risk and without warranties of any kind. Swapr is not liable for potential losses.`,
-    t`Before using Swapr, you should review the relevant documentation to make sure you understand how Swapr works.`,
+    t`Using SeerSwap involves various risks, including, but not limited to, losses while digital assets are being supplied to SeerSwap, and losses due to the fluctuation of prices of tokens in a trading pair or liquidity pool.`,
+    t`You use SeerSwap at your own risk and without warranties of any kind. SeerSwap is not liable for potential losses.`,
+    t`Before using SeerSwap, you should review the relevant documentation to make sure you understand how SeerSwap works.`,
     t`You are responsible for completing your own due diligence to understand the risks of trading crypto.`,
 ];
 
@@ -22,7 +22,7 @@ export default function CautionModal() {
     }, []);
 
     return (
-        <Modal isOpen={cautionModal} onDismiss={() => {}}>
+        <Modal isOpen={cautionModal} onDismiss={() => { }}>
             <CautionModalInner>
                 <p>
                     <Trans>Please confirm that you agree with the following paragraphs:</Trans>

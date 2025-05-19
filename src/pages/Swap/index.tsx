@@ -103,13 +103,13 @@ export default function Swap({ history }: RouteComponentProps) {
         () =>
             showWrap
                 ? {
-                      [Field.INPUT]: parsedAmount,
-                      [Field.OUTPUT]: parsedAmount,
-                  }
+                    [Field.INPUT]: parsedAmount,
+                    [Field.OUTPUT]: parsedAmount,
+                }
                 : {
-                      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-                      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-                  },
+                    [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+                    [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+                },
         [independentField, parsedAmount, showWrap, trade]
     );
 
@@ -327,7 +327,7 @@ export default function Swap({ history }: RouteComponentProps) {
         <>
             <Helmet>
                 {/* //TODO */}
-                <title>{t`Swapr — Swap`}</title>
+                <title>{t`SeerSwap — Swap`}</title>
             </Helmet>
             <TokenWarningModal
                 isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
@@ -497,7 +497,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         {approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED ? (
                                                             <Trans>You can now trade {currencies[Field.INPUT]?.symbol}</Trans>
                                                         ) : (
-                                                            <Trans>Allow Swapr to use your {currencies[Field.INPUT]?.symbol}</Trans>
+                                                            <Trans>Allow SeerSwapto use your {currencies[Field.INPUT]?.symbol}</Trans>
                                                         )}
                                                     </span>
                                                     {approvalState === ApprovalState.PENDING ? (
@@ -508,7 +508,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         <MouseoverTooltip
                                                             text={
                                                                 <Trans>
-                                                                    You must give the Swapr smart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once per
+                                                                    You must give the SeerSwapsmart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once per
                                                                     token.
                                                                 </Trans>
                                                             }
@@ -536,23 +536,23 @@ export default function Swap({ history }: RouteComponentProps) {
                                                 style={{
                                                     backgroundColor:
                                                         !isValid ||
-                                                        (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
-                                                        priceImpactTooHigh ||
-                                                        priceImpactSeverity
+                                                            (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
+                                                            priceImpactTooHigh ||
+                                                            priceImpactSeverity
                                                             ? theme.winterDisabledButton
                                                             : theme.winterMainButton,
                                                     color:
                                                         !isValid ||
-                                                        (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
-                                                        priceImpactTooHigh ||
-                                                        priceImpactSeverity
+                                                            (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
+                                                            priceImpactTooHigh ||
+                                                            priceImpactSeverity
                                                             ? "rgb(195, 197, 203)"
                                                             : "white",
                                                     border:
                                                         !isValid ||
-                                                        (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
-                                                        priceImpactTooHigh ||
-                                                        priceImpactSeverity
+                                                            (approvalState !== ApprovalState.APPROVED && signatureState !== UseERC20PermitState.SIGNED) ||
+                                                            priceImpactTooHigh ||
+                                                            priceImpactSeverity
                                                             ? "1px solid #073c66"
                                                             : `1px solid ${({ theme }: any) => theme.winterMainButton}`,
                                                 }}

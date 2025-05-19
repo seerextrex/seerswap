@@ -1,8 +1,11 @@
 {
   "background_color": "#fff",
   "display": "standalone",
-  "homepage_url": "https://v3.swapr.eth.limo",
-  "providedBy": { "name": "Swapr", "url": "https://v3.swapr.eth.limo" },
+  "homepage_url": "https://app.seerswap.org",
+  "providedBy": {
+    "name": "SeerSwap",
+    "url": "https://app.seerswap.org"
+  },
   "icons": [
     {
       "src": "./images/192x192_App_Icon.png",
@@ -18,10 +21,10 @@
     }
   ],
   "orientation": "portrait",
-  "name": "Swapr",
-  "description": "Swap and provide liquidity on Swapr",
+  "name": "SeerSwap",
+  "description": "Swap and provide liquidity on SeerSwap",
   "iconPath": "./images/256x256_App_Icon.svg",
-  "short_name": "Swapr",
+  "short_name": "SeerSwap",
   "start_url": ".",
   "theme_color": "#ff007a"
 }

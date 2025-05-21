@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from 'wagmi';
 import { useMulticall2Contract } from "../../hooks/useContract";
 import useDebounce from "../../hooks/useDebounce";
 import chunkArray from "../../utils/chunkArray";
@@ -19,31 +19,48 @@ const DEFAULT_GAS_REQUIRED = 1_000_000;
  * @param blockNumber block number passed as the block tag in the eth_call
  */
 async function fetchChunk(multicall: any, chunk: Call[], blockNumber: number): Promise<{ success: boolean; returnData: string }[]> {
-    // console.debug('Fetching chunk', chunk, blockNumber)
+    console.log('[fetchChunk] Attempting to fetch chunk:', { chunk, blockNumber });
     try {
-        const { returnData } = await multicall.callStatic.multicall(
+        // ethers v6: use contract.methodName.staticCall(...) for non-view methods called statically
+        // The ABI for 'multicall' is nonpayable, so staticCall is needed.
+        // The result will be an array if multiple values are returned; named outputs are also properties.
+        const multicallResponse = await multicall.multicall.staticCall(
             chunk.map((obj) => ({
                 target: obj.address,
                 callData: obj.callData,
                 gasLimit: obj.gasRequired ?? DEFAULT_GAS_REQUIRED,
             })),
-            { blockTag: blockNumber }
+            { blockTag: blockNumber } // Options object as the last parameter
         );
 
-        if (process.env.NODE_ENV === "development") {
-            returnData.forEach(({ gasUsed, returnData, success }, i: number) => {
-                if (!success && returnData.length === 2 && gasUsed.gte(Math.floor((chunk[i].gasRequired ?? DEFAULT_GAS_REQUIRED) * 0.95))) {
-                    console.warn(`A call failed due to requiring ${gasUsed.toString()} vs. allowed ${chunk[i].gasRequired ?? DEFAULT_GAS_REQUIRED}`, chunk[i]);
-                }
-            });
-        }
+        // The ABI defines two outputs: blockNumber and returnData (the array of results)
+        // Access the returnData array, which is the second element and also named 'returnData'
+        const multicallResults = multicallResponse.returnData;
 
-        return returnData;
+        console.log('[fetchChunk] Raw multicallResults from multicall contract:', multicallResults);
+
+        // Detailed log for each result from AlgebraInterfaceMulticall
+        multicallResults.forEach((result: any, i: number) => {
+            console.log(`[fetchChunk] Sub-call ${i} to ${chunk[i].address}: success: ${result.success}, returnData: ${result.returnData}, gasUsed: ${result.gasUsed?.toString()}`);
+            if (!result.success && chunk[i].gasRequired) { // Check original gasRequired
+                const requiredGas = BigInt(chunk[i].gasRequired ?? DEFAULT_GAS_REQUIRED);
+                const usedGas = BigInt(result.gasUsed ?? 0);
+                // Corrected gas check for BigInt
+                if (result.returnData?.length <= 2 && usedGas >= (requiredGas * 95n / 100n)) { // Check if 0x and gas is high
+                    console.warn(
+                        `[fetchChunk] Sub-call ${i} failed. Gas used: ${usedGas.toString()}, Gas allowed: ${requiredGas.toString()}`,
+                        `Target: ${chunk[i].address}, CallData: ${chunk[i].callData}`
+                    );
+                }
+            }
+        });
+
+        return multicallResults;
     } catch (error: any) {
         if (error.code === -32000 || error.message?.indexOf("header not found") !== -1) {
             throw new RetryableError(`header not found for block number ${blockNumber}`);
         }
-        // console.error('Failed to fetch chunk', error)
+        console.error('[fetchChunk] Failed to fetch chunk, error object:', error);
         throw error;
     }
 }
@@ -116,7 +133,8 @@ export default function Updater(): null {
     // wait for listeners to settle before triggering updates
     const debouncedListeners = useDebounce(state.callListeners, 100);
     const latestBlockNumber = useBlockNumber();
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const multicall2Contract = useMulticall2Contract();
     const cancellations = useRef<{ blockNumber: number; cancellations: (() => void)[] }>();
 

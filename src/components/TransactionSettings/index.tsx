@@ -7,7 +7,7 @@ import { AutoColumn } from "../Column";
 import { RowBetween, RowFixed } from "../Row";
 import { DEFAULT_DEADLINE_FROM_NOW } from "constants/misc";
 import { useSetUserSlippageTolerance, useUserSlippageTolerance, useUserTransactionTTL } from "state/user/hooks";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { Input, Option, OptionCustom, SlippageEmojiContainer } from "./styled";
 
 enum SlippageError {
@@ -23,7 +23,8 @@ interface TransactionSettingsProps {
 }
 
 export default function TransactionSettings({ placeholderSlippage }: TransactionSettingsProps) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     const userSlippageTolerance = useUserSlippageTolerance();
     const setUserSlippageTolerance = useSetUserSlippageTolerance();

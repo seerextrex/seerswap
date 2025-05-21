@@ -11,7 +11,7 @@ import { Pool } from "lib/src";
 import React, { useEffect } from "react";
 import { useIsNetworkFailed } from "../hooks/useIsNetworkFailed";
 import Loader from "../components/Loader";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from 'wagmi';
 import { GlobalStyle, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
 import { t, Trans } from "@lingui/macro";
@@ -33,7 +33,7 @@ export default function App() {
             return 60;
         },
     });
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
     const networkFailed = useIsNetworkFailed();
 
     useEffect(() => {

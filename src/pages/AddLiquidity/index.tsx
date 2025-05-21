@@ -1,6 +1,7 @@
 import { useCallback, useContext, useState } from "react";
-import { TransactionResponse } from "@ethersproject/providers";
+import { TransactionResponse } from "ethers";
 import { Currency, CurrencyAmount, Percent } from "@uniswap/sdk-core";
+import { FeeAmount } from "../../lib/src";
 import { ZERO_PERCENT } from "../../constants/misc";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../../constants/addresses";
 import { useV3NFTPositionManagerContract } from "../../hooks/useContract";
@@ -15,7 +16,6 @@ import { RowBetween } from "../../components/Row";
 import { useUSDCValue } from "../../hooks/useUSDCPrice";
 import { calculateGasMargin } from "../../utils/calculateGasMargin";
 import { Review } from "./Review";
-import { useWeb3React } from "@web3-react/core";
 import { useCurrency } from "../../hooks/Tokens";
 import { ApprovalState, useApproveCallback } from "../../hooks/useApproveCallback";
 import useTransactionDeadline from "../../hooks/useTransactionDeadline";
@@ -32,7 +32,6 @@ import { useV3DerivedMintInfo, useV3MintActionHandlers, useV3MintState } from "s
 import { useV3PositionFromTokenId } from "hooks/useV3Positions";
 import { useDerivedPositionInfo } from "hooks/useDerivedPositionInfo";
 import { PositionPreview } from "components/PositionPreview";
-import { BigNumber } from "@ethersproject/bignumber";
 import { AddRemoveTabs } from "components/NavigationTabs";
 import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { NonfungiblePositionManager as NonFunPosMan } from "../../lib/src/nonfungiblePositionManager";
@@ -43,6 +42,8 @@ import { useIsNetworkFailed } from "../../hooks/useIsNetworkFailed";
 import ReactGA from "react-ga";
 import { WrappedCurrency } from "../../models/types";
 import Card from "../../shared/components/Card/Card";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { publicClientToProvider, walletClientToSigner } from "../../utils/ethersAdapters";
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
@@ -52,29 +53,29 @@ export default function AddLiquidity({
     },
     history,
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; feeAmount?: string; tokenId?: string }>) {
-    const { account, chainId, provider } = useWeb3React();
+    const { address: account, chainId } = useAccount();
+    const publicClient = usePublicClient({ chainId });
+    const { data: walletClient } = useWalletClient({ chainId });
+
     const theme = useContext(ThemeContext);
-    const toggleWalletModal = useWalletModalToggle(); // toggle wallet when disconnected
+    const toggleWalletModal = useWalletModalToggle();
     const expertMode = useIsExpertMode();
     const addTransaction = useTransactionAdder();
     const positionManager = useV3NFTPositionManagerContract();
 
-    // check for existing position if tokenId in url
-    const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(tokenId ? BigNumber.from(tokenId) : undefined);
+    const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(tokenId ? BigInt(tokenId) : undefined);
 
     const networkFailed = useIsNetworkFailed();
 
     const hasExistingPosition = !!existingPositionDetails && !positionLoading;
     const { position: existingPosition } = useDerivedPositionInfo(existingPositionDetails);
-    const feeAmount = 100;
+    const feeAmountFromUrl = 100;
+    const feeAmount: FeeAmount = FeeAmount.LOWEST;
 
     const baseCurrency = useCurrency(currencyIdA);
     const currencyB = useCurrency(currencyIdB);
-    // prevent an error if they input ETH/WETH
-    //TODO
     const quoteCurrency = baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB;
 
-    // mint state
     const { independentField, typedValue } = useV3MintState();
 
     const {
@@ -99,16 +100,12 @@ export default function AddLiquidity({
 
     const isValid = !errorMessage && !invalidRange;
 
-    // modal and loading
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
-    const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false); // clicked confirm
+    const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false);
 
-    // txn values
-    const deadline = useTransactionDeadline(); // custom from users settings
-
+    const deadline = useTransactionDeadline();
     const [txHash, setTxHash] = useState<string>("");
 
-    // get formatted amounts
     const formattedAmounts = {
         [independentField]: typedValue,
         [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? "",
@@ -119,7 +116,6 @@ export default function AddLiquidity({
         [Field.CURRENCY_B]: useUSDCValue(parsedAmounts[Field.CURRENCY_B]),
     };
 
-    // get the max amounts user can add
     const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce((accumulator, field) => {
         return {
             ...accumulator,
@@ -134,18 +130,20 @@ export default function AddLiquidity({
         };
     }, {});
 
-    // check whether the user has approved the router on the tokens
     const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
     const [approvalB, approveBCallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_B], chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId] : undefined);
 
     const allowedSlippage = useUserSlippageToleranceWithDefault(outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE);
 
     async function onAdd() {
-        if (!chainId || !provider || !account) return;
+        if (!chainId || !publicClient || !walletClient || !account) return;
 
         if (!positionManager || !baseCurrency || !quoteCurrency) {
             return;
         }
+
+        const ethersSigner = walletClientToSigner(walletClient);
+        if (!ethersSigner) return;
 
         if (position && account && deadline) {
             const useNative = baseCurrency.isNative ? baseCurrency : quoteCurrency.isNative ? quoteCurrency : undefined;
@@ -153,72 +151,61 @@ export default function AddLiquidity({
             const { calldata, value } =
                 hasExistingPosition && tokenId
                     ? NonFunPosMan.addCallParameters(position, {
-                          tokenId,
-                          slippageTolerance: allowedSlippage,
-                          deadline: deadline.toString(),
-                          useNative,
-                      })
+                        tokenId: tokenId,
+                        slippageTolerance: allowedSlippage,
+                        deadline: deadline.toString(),
+                        useNative,
+                    })
                     : NonFunPosMan.addCallParameters(position, {
-                          slippageTolerance: allowedSlippage,
-                          recipient: account,
-                          deadline: deadline.toString(),
-                          useNative,
-                          createPool: noLiquidity,
-                      });
+                        slippageTolerance: allowedSlippage,
+                        recipient: account,
+                        deadline: deadline.toString(),
+                        useNative,
+                        createPool: noLiquidity,
+                    });
 
             const txn: { to: string; data: string; value: string } = { to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId], data: calldata, value };
 
             setAttemptingTxn(true);
+            try {
+                const estimate = await ethersSigner.estimateGas(txn);
+                const newTxn = {
+                    ...txn,
+                    gasLimit: calculateGasMargin(chainId, estimate),
+                };
 
-            provider
-                .getSigner()
-                .estimateGas(txn)
-                .then((estimate) => {
-                    const newTxn = {
-                        ...txn,
-                        gasLimit: calculateGasMargin(chainId, estimate),
-                    };
+                const response: TransactionResponse = await ethersSigner.sendTransaction(newTxn);
 
-                    return provider
-                        .getSigner()
-                        .sendTransaction(newTxn)
-                        .then((response: TransactionResponse) => {
-                            setAttemptingTxn(false);
-                            addTransaction(response, {
-                                summary: noLiquidity
-                                    ? t`Create pool and add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
-                                    : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`,
-                            });
-                            setTxHash(response.hash);
-                            ReactGA.event({
-                                category: "Liquidity",
-                                action: "Add",
-                                label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join("/"),
-                            });
-                        });
-                })
-                .catch((error) => {
-                    console.error("Failed to send transaction", error);
-                    setAttemptingTxn(false);
-                    // we only care if the error is something _other_ than the user rejected the tx
-                    if (error?.code !== 4001) {
-                        console.error(error);
-                    }
+                setAttemptingTxn(false);
+                addTransaction(response, {
+                    summary: noLiquidity
+                        ? baseCurrency?.symbol && quoteCurrency?.symbol && t`Create pool and add ${baseCurrency.symbol}/${quoteCurrency.symbol} liquidity` || ''
+                        : baseCurrency?.symbol && quoteCurrency?.symbol && t`Add ${baseCurrency.symbol}/${quoteCurrency.symbol} liquidity` || '',
                 });
+                setTxHash(response.hash);
+                ReactGA.event({
+                    category: "Liquidity",
+                    action: "Add",
+                    label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join("/"),
+                });
+            } catch (error: any) {
+                console.error("Failed to send transaction", error);
+                setAttemptingTxn(false);
+                if (error?.code !== 4001) {
+                    console.error("Transaction error:", error);
+                }
+            }
         } else {
             return;
         }
     }
 
-    // flag for whether pool creation must be a separate tx
     const mustCreateSeparately = noLiquidity;
 
     const handleDismissConfirmation = useCallback(() => {
         setShowConfirm(false);
-        // if there was a tx hash, we want to clear the input
         if (txHash) {
             onFieldAInput("");
-            // dont jump to pool page if creating
             if (!mustCreateSeparately) {
                 history.push("/pool");
             }
@@ -226,11 +213,9 @@ export default function AddLiquidity({
         setTxHash("");
     }, [history, mustCreateSeparately, onFieldAInput, txHash]);
 
-    // get value and prices at ticks
     const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks;
     const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks;
 
-    // we need an existence check on parsed amounts for single-asset deposits
     const showApprovalA = approvalA !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_A];
     const showApprovalB = approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B];
 
@@ -279,24 +264,15 @@ export default function AddLiquidity({
                         )}
                     </RowBetween>
                 )}
-                {mustCreateSeparately && (
-                    <ButtonError disabled={!isValid || attemptingTxn || !position}>
-                        {attemptingTxn ? (
-                            <Dots>
-                                <Trans>Confirm Create</Trans>
-                            </Dots>
-                        ) : (
-                            <Text fontWeight={500}>{errorMessage ? errorMessage : <Trans>Create</Trans>}</Text>
-                        )}
-                    </ButtonError>
-                )}
-                <button
-                    className={"btn primary pv-1 br-12 b"}
-                    onClick={() => (expertMode ? onAdd() : setShowConfirm(true))}
-                    disabled={mustCreateSeparately || !isValid || (approvalA !== ApprovalState.APPROVED && !depositADisabled) || (approvalB !== ApprovalState.APPROVED && !depositBDisabled)}
+                <ButtonError
+                    onClick={() => {
+                        expertMode ? onAdd() : setShowConfirm(true);
+                    }}
+                    disabled={attemptingTxn || !isValid || (approvalA !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_A]) || (approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B])}
+                    error={!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]}
                 >
-                    <Text fontWeight={500}>{mustCreateSeparately ? <Trans>Add</Trans> : errorMessage ? errorMessage : <Trans>Preview</Trans>}</Text>
-                </button>
+                    <Text fontWeight={500}>{errorMessage || <Trans>Preview</Trans>}</Text>
+                </ButtonError>
             </AutoColumn>
         );
 

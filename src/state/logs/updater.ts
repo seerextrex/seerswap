@@ -1,14 +1,18 @@
 import { useEffect, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, usePublicClient } from "wagmi";
 import { useBlockNumber } from "../application/hooks";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { fetchedLogs, fetchedLogsError, fetchingLogs } from "./slice";
 import { EventFilter, keyToFilter } from "./utils";
+import { publicClientToProvider } from "../../utils/ethersAdapters";
 
 export default function Updater(): null {
     const dispatch = useAppDispatch();
     const state = useAppSelector((state) => state.logs);
-    const { chainId, provider } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+    const publicClient = usePublicClient({ chainId });
+    const provider = publicClient ? publicClientToProvider(publicClient) : undefined;
 
     const blockNumber = useBlockNumber();
 

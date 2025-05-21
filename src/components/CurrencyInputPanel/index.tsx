@@ -7,7 +7,7 @@ import CurrencyLogo from "../CurrencyLogo";
 import DoubleCurrencyLogo from "../DoubleLogo";
 import { RowBetween, RowFixed } from "../Row";
 import { TYPE } from "../../theme";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { Trans } from "@lingui/macro";
 import { FiatValue } from "./FiatValue";
 import Loader from "../Loader";
@@ -72,7 +72,7 @@ export default function CurrencyInputPanel({
     ...rest
 }: CurrencyInputPanelProps) {
     const [modalOpen, setModalOpen] = useState(false);
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
 

@@ -1,5 +1,5 @@
 import { useOnClickOutside } from "hooks/useOnClickOutside";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { ApplicationModal } from "state/application/actions";
 import { useModalOpen, useToggleModal } from "state/application/hooks";
@@ -10,7 +10,8 @@ import styled from "styled-components/macro";
 import AlgebraConfig from "algebra.config";
 
 export default function NetworkCard() {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     const node = useRef<HTMLDivElement>(null);
     const open = useModalOpen(ApplicationModal.ARBITRUM_OPTIONS);

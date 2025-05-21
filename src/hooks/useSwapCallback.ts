@@ -9,16 +9,16 @@ import { getTradeVersion } from "../utils/getTradeVersion";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import { isAddress, shortenAddress } from "../utils";
 import isZero from "../utils/isZero";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
+import { publicClientToProvider, walletClientToSigner } from '../utils/ethersAdapters';
 import { SignatureData } from "./useERC20Permit";
 import useTransactionDeadline from "./useTransactionDeadline";
 import useENS from "./useENS";
 import { Version } from "./useToggledVersion";
 import { SwapRouter } from "../lib/src";
-
-// import abi from '../abis/swap-router.json'
 import { GAS_PRICE_MULTIPLIER } from "./useGasPrice";
 import { useAppSelector } from "../state/hooks";
+import { Contract, Signer, TransactionRequest, Provider } from "ethers";
 
 enum SwapCallbackState {
     INVALID,
@@ -38,7 +38,7 @@ interface SwapCallEstimate {
 
 interface SuccessfulCall extends SwapCallEstimate {
     call: SwapCall;
-    gasEstimate: BigNumber;
+    gasEstimate: bigint;
 }
 
 interface FailedCall extends SwapCallEstimate {
@@ -54,33 +54,34 @@ interface FailedCall extends SwapCallEstimate {
  * @param signatureData the signature data of the permit of the input token amount, if available
  */
 function useSwapCallArguments(
-    trade: V3Trade<Currency, Currency, TradeType> | undefined, // trade to execute, required
-    allowedSlippage: Percent, // in bips
-    recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+    trade: V3Trade<Currency, Currency, TradeType> | undefined,
+    allowedSlippage: Percent,
+    recipientAddressOrName: string | null,
     signatureData: SignatureData | null | undefined
 ): SwapCall[] {
-    const { account, chainId, provider } = useWeb3React();
+    const { address: account, chainId } = useAccount();
 
     const { address: recipientAddress } = useENS(recipientAddressOrName);
     const recipient = recipientAddressOrName === null ? account : recipientAddress;
     const deadline = useTransactionDeadline();
 
     return useMemo(() => {
-        if (!trade || !recipient || !provider || !account || !chainId || !deadline) return [];
+        if (!trade || !recipient || !account || !chainId || !deadline) return [];
 
         const swapRouterAddress = chainId ? SWAP_ROUTER_ADDRESSES[chainId] : undefined;
 
         if (!swapRouterAddress) return [];
 
-        // if (!routerContract) return []
         const swapMethods: any[] = [];
+
+        const deadlineString = typeof deadline === 'bigint' ? deadline.toString() : String(deadline);
 
         swapMethods.push(
             SwapRouter.swapCallParameters(trade, {
                 feeOnTransfer: false,
                 recipient,
                 slippageTolerance: allowedSlippage,
-                deadline: deadline.toString(),
+                deadline: deadlineString,
                 ...(signatureData
                     ? {
                         inputTokenPermit:
@@ -110,7 +111,7 @@ function useSwapCallArguments(
                     feeOnTransfer: true,
                     recipient,
                     slippageTolerance: allowedSlippage,
-                    deadline: deadline.toString(),
+                    deadline: deadlineString,
                     ...(signatureData
                         ? {
                             inputTokenPermit:
@@ -120,14 +121,14 @@ function useSwapCallArguments(
                                         nonce: signatureData.nonce,
                                         s: signatureData.s,
                                         r: signatureData.r,
-                                        v: signatureData.v as any,
+                                        v: signatureData.v as any
                                     }
                                     : {
                                         deadline: signatureData.deadline,
                                         amount: signatureData.amount,
                                         s: signatureData.s,
                                         r: signatureData.r,
-                                        v: signatureData.v as any,
+                                        v: signatureData.v as any
                                     },
                         }
                         : {}),
@@ -142,7 +143,7 @@ function useSwapCallArguments(
                 value,
             };
         });
-    }, [account, allowedSlippage, chainId, deadline, provider, recipient, signatureData, trade]);
+    }, [account, allowedSlippage, chainId, deadline, recipient, signatureData, trade]);
 }
 
 /**
@@ -154,7 +155,7 @@ function swapErrorToUserReadableMessage(error: any): string {
     let reason: string | undefined;
     while (Boolean(error)) {
         reason = error.reason ?? error.message ?? reason;
-        error = error.error ?? error.data?.originalError;
+        error = error.error ?? error.data?.originalError ?? error.cause;
     }
 
     if (reason?.indexOf("execution reverted: ") === 0) reason = reason.substr("execution reverted: ".length);
@@ -189,27 +190,28 @@ function swapErrorToUserReadableMessage(error: any): string {
 // returns a function that will execute a swap, if the parameters are all valid
 // and the user has approved the slippage adjusted input amount for the trade
 export function useSwapCallback(
-    trade: V3Trade<Currency, Currency, TradeType> | undefined, // trade to execute, required
-    allowedSlippage: Percent, // in bips
-    recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+    trade: V3Trade<Currency, Currency, TradeType> | undefined,
+    allowedSlippage: Percent,
+    recipientAddressOrName: string | null,
     signatureData: SignatureData | undefined | null
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
-    const { account, chainId, provider } = useWeb3React();
+    const { address: account, chainId } = useAccount();
+    const publicClient = usePublicClient({ chainId });
+    const { data: walletClient } = useWalletClient({ chainId });
 
     const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName, signatureData);
-
     const addTransaction = useTransactionAdder();
 
-    const gasPrice = useAppSelector((state) => {
-        if (!state.application.gasPrice.fetched) return 36;
-        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched;
+    const gasPriceState = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return BigInt(36 * 10 ** 9);
+        return state.application.gasPrice.override ? BigInt(36 * 10 ** 9) : BigInt(state.application.gasPrice.fetched * 10 ** 9);
     });
 
     const { address: recipientAddress } = useENS(recipientAddressOrName);
     const recipient = recipientAddressOrName === null ? account : recipientAddress;
 
     return useMemo(() => {
-        if (!trade || !provider || !account || !chainId) {
+        if (!trade || !account || !chainId || !publicClient) {
             return {
                 state: SwapCallbackState.INVALID,
                 callback: null,
@@ -228,118 +230,96 @@ export function useSwapCallback(
             }
         }
 
+        const ethersProvider = publicClientToProvider(publicClient);
+        let ethersSigner: Signer | undefined;
+        if (walletClient && account) {
+            ethersSigner = walletClientToSigner(walletClient);
+        }
+
+        if (!ethersSigner) {
+            return { state: SwapCallbackState.INVALID, callback: null, error: "Wallet not connected or signer unavailable" };
+        }
+        const finalSigner = ethersSigner;
+
         return {
             state: SwapCallbackState.VALID,
             callback: async function onSwap(): Promise<string> {
                 const estimatedCalls: SwapCallEstimate[] = await Promise.all(
                     swapCalls.map((call) => {
                         const { address, calldata, value } = call;
-
-                        const tx =
-                            !value || isZero(value)
-                                ? { from: account, to: address, data: calldata }
-                                : {
-                                    from: account,
-                                    to: address,
-                                    data: calldata,
-                                    value,
-                                };
-
-                        return provider
-                            .estimateGas(tx)
-                            .then((gasEstimate) => {
-                                return {
-                                    call,
-                                    gasEstimate,
-                                };
-                            })
+                        const tx: TransactionRequest = {
+                            from: account,
+                            to: address,
+                            data: calldata,
+                            ...(value && !isZero(value) ? { value: value } : {}),
+                        };
+                        return finalSigner.estimateGas(tx)
+                            .then((gasEstimate) => ({ call, gasEstimate }))
                             .catch((gasError) => {
-                                console.debug("Gas estimate failed, trying eth_call to extract error", call);
-
-                                return provider
-                                    .call(tx)
+                                console.debug("Gas estimate failed, trying eth_call to extract error", call, gasError);
+                                return ethersProvider.call(tx)
                                     .then((result) => {
                                         console.debug("Unexpected successful call after failed estimate gas", call, gasError, result);
-                                        return {
-                                            call,
-                                            error: new Error("Unexpected issue with estimating the gas. Please try again."),
-                                        };
+                                        return { call, error: new Error(t`Unexpected issue with estimating gas. Please try again.`) };
                                     })
                                     .catch((callError) => {
-                                        console.debug("Call threw error", call, callError);
-                                        return {
-                                            call,
-                                            error: new Error(swapErrorToUserReadableMessage(callError)),
-                                        };
+                                        console.debug("Call failed", call, callError);
+                                        return { call, error: new Error(swapErrorToUserReadableMessage(callError)) };
                                     });
                             });
                     })
                 );
 
-                // a successful estimation is a bignumber gas estimate and the next call is also a bignumber gas estimate
-                let bestCallOption: SuccessfulCall | SwapCallEstimate | undefined = estimatedCalls.find(
-                    (el, ix, list): el is SuccessfulCall => "gasEstimate" in el && (ix === list.length - 1 || "gasEstimate" in list[ix + 1])
-                );
-
-                // check if any calls errored with a recognizable error
-                if (!bestCallOption) {
+                const successfulEstimation = estimatedCalls.find((el): el is SuccessfulCall => "gasEstimate" in el);
+                if (!successfulEstimation) {
                     const errorCalls = estimatedCalls.filter((call): call is FailedCall => "error" in call);
                     if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error;
-                    const firstNoErrorCall = estimatedCalls.find<SwapCallEstimate>((call): call is SwapCallEstimate => !("error" in call));
-                    if (!firstNoErrorCall) throw new Error("Unexpected error. Could not estimate gas for the swap.");
-                    bestCallOption = firstNoErrorCall;
+                    throw new Error(t`Unexpected error. Could not estimate gas for the swap.`);
                 }
 
-                const {
-                    call: { address, calldata, value },
-                } = bestCallOption;
+                const { call, gasEstimate } = successfulEstimation;
 
-                return provider
-                    .getSigner()
-                    .sendTransaction({
-                        from: account,
-                        to: address,
-                        data: calldata,
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
-                        // let the wallet try if we can't estimate the gas
-                        ...("gasEstimate" in bestCallOption ? { gasLimit: calculateGasMargin(chainId, bestCallOption.gasEstimate, true) } : {}),
-                        ...(value && !isZero(value) ? { value } : {}),
-                    })
-                    .then((response) => {
-                        const inputSymbol = trade.inputAmount.currency.symbol;
-                        const outputSymbol = trade.outputAmount.currency.symbol;
-                        const inputAmount = trade.inputAmount.toSignificant(4);
-                        const outputAmount = trade.outputAmount.toSignificant(4);
+                const tx = {
+                    from: account,
+                    to: call.address,
+                    data: call.calldata,
+                    gasLimit: calculateGasMargin(chainId, gasEstimate),
+                    ...(call.value && !isZero(call.value) ? { value: call.value } : {}),
+                    gasPrice: gasPriceState * BigInt(GAS_PRICE_MULTIPLIER)
+                };
 
-                        const base = t`Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`;
-                        const withRecipient =
-                            recipient === account
-                                ? base
-                                : t`${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName) ? shortenAddress(recipientAddressOrName) : recipientAddressOrName}`;
+                const response = await finalSigner.sendTransaction(tx);
 
-                        const tradeVersion = getTradeVersion(trade);
+                const inputSymbol = trade.inputAmount.currency.symbol;
+                const outputSymbol = trade.outputAmount.currency.symbol;
+                const inputAmount = trade.inputAmount.toSignificant(3);
+                const outputAmount = trade.outputAmount.toSignificant(3);
 
-                        const withVersion = tradeVersion === Version.v3 ? withRecipient : `${withRecipient} on ${tradeVersion}`;
+                let baseSummary = '';
+                let recipientSummary = '';
 
-                        addTransaction(response, {
-                            summary: withVersion,
-                        });
+                if (inputSymbol && outputSymbol) {
+                    baseSummary = t`Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`;
+                    recipientSummary =
+                        recipient === account || !recipient
+                            ? baseSummary
+                            : t`${baseSummary} to ${(recipientAddressOrName && isAddress(recipientAddressOrName) ? shortenAddress(recipientAddressOrName) : recipientAddressOrName) || ''}`;
+                }
 
-                        return response.hash;
-                    })
-                    .catch((error) => {
-                        // if the user rejected the tx, pass this along
-                        if (error?.code === 4001) {
-                            throw new Error("Transaction rejected.");
-                        } else {
-                            // otherwise, the error was unexpected and we need to convey that
-                            console.error(`Swap failed`, error, address, calldata, value);
+                const tradeVersion = getTradeVersion(trade);
+                const finalSummary = tradeVersion === Version.v3
+                    ? recipientSummary
+                    : tradeVersion
+                        ? `${recipientSummary} on ${tradeVersion.toString()}`
+                        : recipientSummary;
 
-                            throw new Error(`Swap failed: ${swapErrorToUserReadableMessage(error)}`);
-                        }
-                    });
+                addTransaction(response, {
+                    summary: finalSummary,
+                });
+
+                return response.hash;
             },
             error: null,
         };
-    }, [trade, provider, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction]);
+    }, [trade, account, chainId, publicClient, walletClient, recipient, recipientAddressOrName, swapCalls, addTransaction, gasPriceState]);
 }

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "state/hooks";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, usePublicClient } from "wagmi";
 import { retry, RetryableError, RetryOptions } from "../../utils/retry";
 import { updateBlockNumber } from "../application/actions";
 import { useAddPopup, useBlockNumber } from "../application/hooks";
 import { checkedTransaction, finalizeTransaction } from "./actions";
+import { publicClientToProvider } from "../../utils/ethersAdapters";
+import { ZeroAddress } from "ethers";
 
 interface TxInterface {
     addedTime: number;
@@ -33,7 +35,10 @@ export function shouldCheck(lastBlockNumber: number, tx: TxInterface): boolean {
 const DEFAULT_RETRY_OPTIONS: RetryOptions = { n: 1, minWait: 0, maxWait: 0 };
 
 export default function Updater(): null {
-    const { chainId, provider } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+    const publicClient = usePublicClient({ chainId });
+    const provider = publicClient ? publicClientToProvider(publicClient) : undefined;
 
     const lastBlockNumber = useBlockNumber();
 
@@ -78,14 +83,14 @@ export default function Updater(): null {
                                     chainId,
                                     hash,
                                     receipt: {
-                                        blockHash: receipt.blockHash,
-                                        blockNumber: receipt.blockNumber,
-                                        contractAddress: receipt.contractAddress,
-                                        from: receipt.from,
-                                        status: receipt.status,
-                                        to: receipt.to,
-                                        transactionHash: receipt.transactionHash,
-                                        transactionIndex: receipt.transactionIndex,
+                                        blockHash: receipt.blockHash ?? ZeroAddress,
+                                        blockNumber: receipt.blockNumber ?? 0,
+                                        contractAddress: receipt.contractAddress ?? ZeroAddress,
+                                        from: receipt.from ?? ZeroAddress,
+                                        status: receipt.status === null ? 0 : receipt.status,
+                                        to: receipt.to ?? ZeroAddress,
+                                        transactionHash: receipt.hash,
+                                        transactionIndex: receipt.index,
                                     },
                                 })
                             );

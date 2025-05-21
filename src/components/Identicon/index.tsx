@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import Jazzicon from "@metamask/jazzicon";
 import { StyledIdenticonContainer } from "./styled";
 
 export default function Identicon() {
     const ref = useRef<HTMLDivElement>();
 
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     useEffect(() => {
         if (account && ref.current) {

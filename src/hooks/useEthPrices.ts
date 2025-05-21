@@ -3,7 +3,7 @@ import { useDeltaTimestamps } from "../utils/queries";
 import { useEffect, useMemo, useState } from "react";
 import { ApolloClient, gql, NormalizedCacheObject } from "@apollo/client";
 import { useClients } from "./subgraph/useClients";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 
 import AlgebraConfig from "algebra.config";
 
@@ -99,7 +99,8 @@ export function useEthPrices(): EthPrices | undefined {
     const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek]);
 
     // index on active network
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const indexedPrices = prices?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId];
 
     const formattedBlocks = useMemo(() => {

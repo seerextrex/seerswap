@@ -1,11 +1,12 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { blockClient, client, farmingClient } from "../../apollo/client";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 
 import AlgebraConfig from "algebra.config";
 
 export function useBlockClient(): ApolloClient<NormalizedCacheObject> {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     switch (chainId) {
         case AlgebraConfig.CHAIN_PARAMS.chainId:
             return blockClient;
@@ -15,7 +16,8 @@ export function useBlockClient(): ApolloClient<NormalizedCacheObject> {
 }
 
 export function useDataClient(): ApolloClient<NormalizedCacheObject> {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     switch (chainId) {
         case AlgebraConfig.CHAIN_PARAMS.chainId:
             return client;
@@ -25,7 +27,8 @@ export function useDataClient(): ApolloClient<NormalizedCacheObject> {
 }
 
 export function useFarmingClient(): ApolloClient<NormalizedCacheObject> {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     switch (chainId) {
         case AlgebraConfig.CHAIN_PARAMS.chainId:
             return farmingClient;

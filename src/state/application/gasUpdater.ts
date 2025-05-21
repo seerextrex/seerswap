@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useGasPrice } from "../../hooks/useGasPrice";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { updateGasPrice } from "./actions";
 
@@ -9,7 +9,8 @@ import AlgebraConfig from "algebra.config";
 export default function GasUpdater(): null {
     const dispatch = useAppDispatch();
 
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     const block = useAppSelector((state) => {
         return state.application.blockNumber[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId];

@@ -1,11 +1,10 @@
 import { Currency, CurrencyAmount, TradeType } from "@uniswap/sdk-core";
 import { encodeRouteToPath, Route, Trade } from "lib/src";
-import { BigNumber } from "ethers";
 import { useMemo } from "react";
 import { useSingleContractMultipleData } from "../state/multicall/hooks";
 import { useAllV3Routes } from "./useAllV3Routes";
 import { useV3Quoter } from "./useContract";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import usePrevious from "./usePrevious";
 
 export enum V3TradeState {
@@ -24,7 +23,8 @@ const DEFAULT_GAS_QUOTE = 2_000_000;
  * @param currencyOut the desired output currency
  */
 export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, currencyOut?: Currency): { state: V3TradeState; trade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null } {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const quoter = useV3Quoter();
 
     const { routes, loading: routesLoading } = useAllV3Routes(amountIn?.currency, currencyOut);
@@ -35,6 +35,7 @@ export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
 
     const quotesResults = useSingleContractMultipleData(quoter, "quoteExactInput", quoteExactInInputs, {
         gasRequired: chainId ? DEFAULT_GAS_QUOTE : undefined,
+        blocksPerFetch: 3,
     });
 
     const trade = useMemo(() => {
@@ -53,7 +54,7 @@ export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
         }
 
         const { bestRoute, amountOut } = quotesResults.reduce(
-            (currentBest: { bestRoute: Route<Currency, Currency> | null; amountOut: BigNumber | null }, { result }, i) => {
+            (currentBest: { bestRoute: Route<Currency, Currency> | null; amountOut: bigint | null }, { result }, i) => {
                 if (!result) return currentBest;
 
                 if (currentBest.amountOut === null) {
@@ -61,7 +62,7 @@ export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
                         bestRoute: routes[i],
                         amountOut: result.amountOut,
                     };
-                } else if (currentBest.amountOut.lt(result.amountOut)) {
+                } else if (result.amountOut !== undefined && currentBest.amountOut < result.amountOut) {
                     return {
                         bestRoute: routes[i],
                         amountOut: result.amountOut,
@@ -104,7 +105,7 @@ export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
         if (!trade.trade && prevTrade.trade) return prevTrade;
 
         return trade;
-    }, [trade]);
+    }, [trade, prevTrade]);
 }
 
 /**
@@ -113,7 +114,8 @@ export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
  * @param amountOut the amount to swap out
  */
 export function useBestV3TradeExactOut(currencyIn?: Currency, amountOut?: CurrencyAmount<Currency>): { state: V3TradeState; trade: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null } {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const quoter = useV3Quoter();
 
     const { routes, loading: routesLoading } = useAllV3Routes(currencyIn, amountOut?.currency);
@@ -124,6 +126,7 @@ export function useBestV3TradeExactOut(currencyIn?: Currency, amountOut?: Curren
 
     const quotesResults = useSingleContractMultipleData(quoter, "quoteExactOutput", quoteExactOutInputs, {
         gasRequired: chainId ? DEFAULT_GAS_QUOTE : undefined,
+        blocksPerFetch: 3,
     });
 
     const trade = useMemo(() => {
@@ -142,7 +145,7 @@ export function useBestV3TradeExactOut(currencyIn?: Currency, amountOut?: Curren
         }
 
         const { bestRoute, amountIn } = quotesResults.reduce(
-            (currentBest: { bestRoute: Route<Currency, Currency> | null; amountIn: BigNumber | null }, { result }, i) => {
+            (currentBest: { bestRoute: Route<Currency, Currency> | null; amountIn: bigint | null }, { result }, i) => {
                 if (!result) return currentBest;
 
                 if (currentBest.amountIn === null) {
@@ -150,7 +153,7 @@ export function useBestV3TradeExactOut(currencyIn?: Currency, amountOut?: Curren
                         bestRoute: routes[i],
                         amountIn: result.amountIn,
                     };
-                } else if (currentBest.amountIn.gt(result.amountIn)) {
+                } else if (result.amountIn !== undefined && currentBest.amountIn > result.amountIn) {
                     return {
                         bestRoute: routes[i],
                         amountIn: result.amountIn,

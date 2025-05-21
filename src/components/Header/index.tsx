@@ -1,9 +1,9 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { useETHBalances } from "state/wallet/hooks";
 // @ts-ignore
 import Logo from "../../assets/images/seerswap.jpg";
-import { useWeb3React } from "@web3-react/core";
-import Web3Status from "../Web3Status";
+import { useAccount } from 'wagmi';
+import { ConnectKitButton } from 'connectkit';
 import NetworkCard from "./NetworkCard";
 import { useIsNetworkFailed } from "../../hooks/useIsNetworkFailed";
 import usePrevious from "../../hooks/usePrevious";
@@ -21,7 +21,8 @@ import { ReactComponent as Close } from "../../assets/images/x.svg";
 export default function Header() {
     const [showBanner, setShowBanner] = useState(true);
 
-    const { account, chainId } = useWeb3React();
+    const { address: account, chain } = useAccount();
+    const currentChainId = chain?.id;
     const theme = useContext(ThemeContext);
 
     const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? ""];
@@ -40,7 +41,7 @@ export default function Header() {
 
     let chainValue;
 
-    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+    if (currentChainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
         chainValue = AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol;
     }
 
@@ -137,12 +138,12 @@ export default function Header() {
                 <div className={"header__account flex-s-between"}>
                     <NetworkCard />
 
-                    {(account && chainId === AlgebraConfig.CHAIN_PARAMS.chainId && userEthBalance) || networkFailed ? (
+                    {(account && currentChainId === AlgebraConfig.CHAIN_PARAMS.chainId && userEthBalance) || networkFailed ? (
                         <BalanceText style={{ flexShrink: 0 }} px="0.85rem" fontWeight={500}>
                             {_userEthBalance?.toFixed(2)} {!isMobile && chainValue}
                         </BalanceText>
                     ) : null}
-                    <Web3Status />
+                    <ConnectKitButton />
                 </div>
             </div>
         </>

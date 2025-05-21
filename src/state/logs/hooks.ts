@@ -1,6 +1,6 @@
 import { useBlockNumber } from "../application/hooks";
 import { useEffect, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { addListener, removeListener } from "./slice";
 import { EventFilter, filterToKey, Log } from "./utils";
@@ -28,7 +28,8 @@ export interface UseLogsResult {
  * @param filter The logs filter, without `blockHash`, `fromBlock` or `toBlock` defined.
  */
 export function useLogs(filter: EventFilter | undefined): UseLogsResult {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const blockNumber = useBlockNumber();
 
     const logs = useAppSelector((state) => state.logs);

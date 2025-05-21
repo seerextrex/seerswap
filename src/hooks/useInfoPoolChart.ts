@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FETCH_POOL } from '../utils/graphql-queries'
 import { useClients } from './subgraph/useClients'
 import { PoolChartSubgraph, SubgraphResponse } from '../models/interfaces'
@@ -16,8 +16,8 @@ export function useInfoPoolChart() {
             setPoolLoading(true)
 
             const { data: { pools }, error } = (await dataClient.query<SubgraphResponse<PoolChartSubgraph[]>>({
-                query: FETCH_POOL(),
-                variables: {poolId}
+                query: FETCH_POOL,
+                variables: { poolId }
             }))
 
             if (error) throw new Error(`${error.name} ${error.message}`)

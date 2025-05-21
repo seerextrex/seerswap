@@ -3,12 +3,12 @@ import JSBI from "jsbi";
 import { Trade as V3Trade } from "lib/src";
 import { useBestV3TradeExactIn, useBestV3TradeExactOut, V3TradeState } from "../../hooks/useBestV3Trade";
 import useENS from "../../hooks/useENS";
-import { parseUnits } from "@ethersproject/units";
+import { parseUnits } from "ethers";
 import { Currency, CurrencyAmount, Percent, TradeType } from "@uniswap/sdk-core";
 import { Trade as V2Trade } from "@uniswap/v2-sdk";
 import { ParsedQs } from "qs";
-import { useCallback, useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useCallback, useEffect, useState, useMemo } from "react";
+import { useAccount } from "wagmi";
 import { useCurrency } from "../../hooks/Tokens";
 import useSwapSlippageTolerance from "../../hooks/useSwapSlippageTolerance";
 import useParsedQueryString from "../../hooks/useParsedQueryString";
@@ -106,7 +106,7 @@ export function useDerivedSwapInfo(): {
     toggledTrade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined;
     allowedSlippage: Percent;
 } {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const {
         independentField,
@@ -119,10 +119,15 @@ export function useDerivedSwapInfo(): {
     const inputCurrency = useCurrency(inputCurrencyId);
     const outputCurrency = useCurrency(outputCurrencyId);
 
-    const recipientLookup = useENS(recipient ?? undefined);
-    const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null;
+    // const recipientLookup = useENS(recipient ?? undefined); // Temporarily disable ENS lookup for recipient
+    const to: string | null = (recipient === null ? account : recipient) ?? null; // Use raw recipient or account directly
 
-    const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [inputCurrency ?? undefined, outputCurrency ?? undefined]);
+    const currenciesForBalance = useMemo(() => [
+        inputCurrency ?? undefined,
+        outputCurrency ?? undefined
+    ], [inputCurrency, outputCurrency]);
+
+    const relevantTokenBalances = useCurrencyBalances(account ?? undefined, currenciesForBalance);
 
     const isExactIn: boolean = independentField === Field.INPUT;
     const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
@@ -180,10 +185,10 @@ export function useDerivedSwapInfo(): {
     const allowedSlippage = useSwapSlippageTolerance(toggledTrade);
 
     // compare input balance to max input based on version
-    const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], toggledTrade?.maximumAmountIn(allowedSlippage)];
+    const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], relevantTokenBalances[Field.INPUT]];
 
     if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-        inputError = t`Insufficient ${amountIn.currency.symbol} balance`;
+        inputError = t`Insufficient ${amountIn.currency.symbol || ''} balance`;
     }
 
     return {
@@ -263,7 +268,8 @@ export function queryParametersToSwapState(parsedQs: ParsedQs, chainId: number):
 
 // updates the swap state to use the defaults for a given network
 export function useDefaultsFromURLSearch(): { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const dispatch = useAppDispatch();
     const parsedQs = useParsedQueryString();
     const [result, setResult] = useState<{ inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined>();

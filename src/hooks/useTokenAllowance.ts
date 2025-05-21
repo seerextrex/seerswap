@@ -1,27 +1,31 @@
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { useMemo } from 'react'
-import { useSingleCallResult } from '../state/multicall/hooks'
-import { useTokenContract } from './useContract'
+import { useReadContract } from 'wagmi'
+import { erc20Abi } from 'viem'
 import usePrevious from './usePrevious'
 
 export function useTokenAllowance(token?: Token, owner?: string, spender?: string): CurrencyAmount<Token> | undefined {
-    const contract = useTokenContract(token?.address, false)
-
-    const inputs = useMemo(() => [owner, spender], [owner, spender])
-    const allowance = useSingleCallResult(contract, 'allowance', inputs).result
+    const { data: allowance, isLoading, isError } = useReadContract({
+        address: token?.address as `0x${string}` | undefined,
+        abi: erc20Abi,
+        functionName: 'allowance',
+        args: owner && spender ? [owner as `0x${string}`, spender as `0x${string}`] : undefined,
+        query: {
+            enabled: !!token && !!owner && !!spender,
+        }
+    })
 
     const prevAllowance = usePrevious(allowance)
 
     const _allowance = useMemo(() => {
+        if (isLoading || isError) return undefined
         if (!prevAllowance) return allowance
-
-        if (!allowance && prevAllowance) return prevAllowance
-
+        if (allowance === undefined && prevAllowance !== undefined) return prevAllowance
         return allowance
-    }, [allowance, token, owner, spender])
+    }, [allowance, isLoading, isError, prevAllowance])
 
     return useMemo(
-        () => (token && _allowance ? CurrencyAmount.fromRawAmount(token, _allowance.toString()) : undefined),
+        () => (token && _allowance !== undefined ? CurrencyAmount.fromRawAmount(token, _allowance.toString()) : undefined),
         [token, _allowance]
     )
 }

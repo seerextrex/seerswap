@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, usePublicClient } from "wagmi";
 import { useClients } from "./useClients";
 import {
     CHART_FEE_LAST_ENTRY,
@@ -9,11 +9,14 @@ import {
     CHART_POOL_LAST_ENTRY,
     CHART_POOL_LAST_NOT_EMPTY,
     FETCH_ETERNAL_FARM_FROM_POOL,
-    POOLS_FROM_ADDRESSES,
-    TOKENS_FROM_ADDRESSES,
+    POOLS_FROM_ADDRESSES_LATEST,
+    POOLS_FROM_ADDRESSES_HISTORICAL,
+    TOKENS_FROM_ADDRESSES_LATEST,
+    TOKENS_FROM_ADDRESSES_HISTORICAL,
     TOP_POOLS,
     TOP_TOKENS,
-    TOTAL_STATS,
+    TOTAL_STATS_LATEST,
+    TOTAL_STATS_HISTORICAL,
 } from "utils/graphql-queries";
 import { useBlocksFromTimestamps } from "../blocks";
 import { useEthPrices } from "../useEthPrices";
@@ -44,7 +47,12 @@ import { fetchEternalFarmAPR, fetchMerklFarmAPR, fetchPoolsAPR } from "utils/api
 import { farmingClient } from "apollo/client";
 
 import AlgebraConfig from "algebra.config";
-import { getAddress } from "ethers/lib/utils";
+import { getAddress } from "ethers";
+
+// Define block offset constants
+const GNOSIS_AVG_BLOCKS_PER_24H = 16589;
+const GNOSIS_AVG_BLOCKS_PER_48H = GNOSIS_AVG_BLOCKS_PER_24H * 2;
+const GNOSIS_AVG_BLOCKS_PER_WEEK = GNOSIS_AVG_BLOCKS_PER_24H * 7;
 
 function parsePoolsData(tokenData: PoolSubgraph[] | string) {
     if (typeof tokenData === "string") return {};
@@ -67,12 +75,14 @@ function parseTokensData(tokenData: TokenInSubgraph[] | string) {
 }
 
 export function useInfoSubgraph() {
-    const { account } = useWeb3React();
-    const { dataClient } = useClients();
+    const { address: account } = useAccount();
+    const { dataClient, farmingClient } = useClients();
+    const publicClient = usePublicClient();
     const [t24, t48, tWeek] = useDeltaTimestamps();
 
     const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek]);
     const [block24, block48, blockWeek] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? [];
+    console.log("[useInfoSubgraph] Initial blocks from useBlocksFromTimestamps (for ethPrices). block24:", block24);
 
     const ethPrices = useEthPrices();
 
@@ -104,37 +114,87 @@ export function useInfoSubgraph() {
     const possibleNames = AlgebraConfig.DEFAULT_TOKEN_LIST.filterForScamTokens.possibleFakeNames;
 
     async function fetchInfoPools() {
-        if (!blocks || blockError || !ethPrices) return;
+        // ethPrices depends on 'blocks', publicClient is for latest block.
+        if (!ethPrices || !publicClient) {
+            setPoolsLoading(false);
+            console.warn("[useInfoSubgraph][fetchInfoPools] Aborting: Core dependencies (ethPrices or publicClient) are not available yet.");
+            setPools(null);
+            return;
+        }
+
+        setPoolsLoading(true);
+        let latestBlockNumber: number;
+        let queryHistoricalBlock24H: number | undefined = undefined;
+        let queryHistoricalBlock48H: number | undefined = undefined;
+        let queryHistoricalBlockWeek: number | undefined = undefined;
 
         try {
-            setPoolsLoading(true);
+            const latestBlockBigInt = await publicClient.getBlockNumber();
+            latestBlockNumber = Number(latestBlockBigInt);
 
+            if (isNaN(latestBlockNumber)) {
+                console.error("[useInfoSubgraph][fetchInfoPools] Aborting: Failed to parse latestBlockNumber.", latestBlockBigInt);
+                setPools("Failed due to latest block number parsing");
+                setPoolsLoading(false);
+                return;
+            }
+
+            queryHistoricalBlock24H = latestBlockNumber - GNOSIS_AVG_BLOCKS_PER_24H;
+            queryHistoricalBlock48H = latestBlockNumber - GNOSIS_AVG_BLOCKS_PER_48H;
+            queryHistoricalBlockWeek = latestBlockNumber - GNOSIS_AVG_BLOCKS_PER_WEEK;
+
+            if (queryHistoricalBlock24H <= 0 || queryHistoricalBlock48H <= 0 || queryHistoricalBlockWeek <= 0) {
+                console.error("[useInfoSubgraph][fetchInfoPools] Aborting: One or more calculated historical block numbers are invalid (<=0).");
+                setPools("Failed due to invalid historical block calculation");
+                setPoolsLoading(false);
+                return;
+            }
+            // console.log(`[useInfoSubgraph][fetchInfoPools] Latest block: ${latestBlockNumber}. Historical blocks: 24H=${queryHistoricalBlock24H}, 48H=${queryHistoricalBlock48H}, Week=${queryHistoricalBlockWeek}`);
+
+        } catch (e) {
+            console.error("[useInfoSubgraph][fetchInfoPools] Error fetching latest block number:", e);
+            setPools("Failed to fetch latest block");
+            setPoolsLoading(false);
+            return;
+        }
+
+        try {
             const {
-                data: { pools: topPools },
+                data,
                 error,
             } = await dataClient.query<SubgraphResponse<PoolAddressSubgraph[]>>({
                 query: TOP_POOLS,
                 fetchPolicy: "network-only",
             });
 
-            if (error) {
+            if (error || !data || !data.pools) {
+                console.error("Failed to fetch top pools or data.pools is undefined. Error:", error, "Data:", data);
                 setPools(null);
+                setPoolsLoading(false);
                 return;
             }
 
+            const topPools = data.pools;
+
             const _poolsAddresses = topPools.map((el) => el.id);
+            console.log('[useInfoSubgraph] _poolsAddresses for POOLS_FROM_ADDRESSES:', _poolsAddresses);
 
-            const {
-                data: { pools: rawPools },
-                error: _error2,
-            } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
-                query: POOLS_FROM_ADDRESSES(undefined, _poolsAddresses),
-                fetchPolicy: "network-only",
-            });
+            let rawPools: PoolSubgraph[] = [];
 
-            if (_error2) {
-                setPools(null);
-                return;
+            if (_poolsAddresses.length > 0) {
+                const poolsFromAddressesResult = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
+                    query: POOLS_FROM_ADDRESSES_LATEST,
+                    variables: { pools: _poolsAddresses },
+                    fetchPolicy: "network-only",
+                });
+
+                if (poolsFromAddressesResult.error || !poolsFromAddressesResult.data || !poolsFromAddressesResult.data.pools) {
+                    console.error("Failed to fetch pool details from POOLS_FROM_ADDRESSES_LATEST. Error:", poolsFromAddressesResult.error, "Data:", poolsFromAddressesResult.data);
+                    setPoolsLoading(false);
+                    setPools(null);
+                    return;
+                }
+                rawPools = poolsFromAddressesResult.data.pools;
             }
 
             const pools = rawPools.filter((pool) => {
@@ -154,18 +214,18 @@ export function useInfoSubgraph() {
 
             const poolsAddresses = pools.map((pool) => pool.id);
 
-            const [_block24, _block48, _blockWeek] = [block24, block48, blockWeek].sort((a, b) => +b.timestamp - +a.timestamp);
+            // Use calculated historical block numbers
+            const pools24 = await fetchPoolsByTime(queryHistoricalBlock24H, poolsAddresses);
+            const pools48 = await fetchPoolsByTime(queryHistoricalBlock48H, poolsAddresses);
+            const poolsWeek = await fetchPoolsByTime(queryHistoricalBlockWeek, poolsAddresses);
 
-            const pools24 = await fetchPoolsByTime(_block24.number, poolsAddresses);
-            const pools48 = await fetchPoolsByTime(_block48.number, poolsAddresses);
-            const poolsWeek = await fetchPoolsByTime(_blockWeek.number, poolsAddresses);
-            // const poolsMonth = await fetchPoolsByTime(_blockMonth.number, poolsAddresses)
+            // console.log("[useInfoSubgraph][fetchInfoPools] pools24 (historical data result):", pools24); // Verbose
 
             const parsedPools = parsePoolsData(pools);
             const parsedPools24 = parsePoolsData(pools24);
+            // console.log("[useInfoSubgraph][fetchInfoPools] parsedPools24:", parsedPools24); // Verbose
             const parsedPools48 = parsePoolsData(pools48);
             const parsedPoolsWeek = parsePoolsData(poolsWeek);
-            // const parsedPoolsMonth = parsePoolsData(poolsMonth)
 
             const aprs = await fetchPoolsAPR();
 
@@ -193,7 +253,8 @@ export function useInfoSubgraph() {
                 const oneDay: PoolSubgraph | undefined = parsedPools24[address];
                 const twoDay: PoolSubgraph | undefined = parsedPools48[address];
                 const week: PoolSubgraph | undefined = parsedPoolsWeek[address];
-                // const month: PoolSubgraph | undefined = parsedPoolsMonth[address]
+
+                // Removed detailed debug log for the first pool
 
                 const manageUntrackedVolume = +current.volumeUSD <= 1 ? "volumeUSD" : "volumeUSD";
                 const manageUntrackedTVL = +current.totalValueLockedUSD <= 1 ? "totalValueLockedUSD" : "totalValueLockedUSD";
@@ -209,8 +270,6 @@ export function useInfoSubgraph() {
 
                 const volumeUSDWeek = current && week ? parseFloat(current[manageUntrackedVolume]) - parseFloat(week[manageUntrackedVolume]) : current ? parseFloat(current[manageUntrackedVolume]) : 0;
 
-                // const volumeUSDMonth = current && month ? parseFloat(current[manageUntrackedVolume]) - parseFloat(month[manageUntrackedVolume])
-                //     : current ? parseFloat(current[manageUntrackedVolume]) : 0
                 const volumeUSDMonth = current ? parseFloat(current[manageUntrackedVolume]) : 0;
 
                 const txCount = current && oneDay ? parseFloat(current.txCount) - parseFloat(oneDay.txCount) : current ? parseFloat(current.txCount) : 0;
@@ -250,47 +309,97 @@ export function useInfoSubgraph() {
 
             setPools(Object.values(formatted));
         } catch (err) {
-            console.error("ERROR", err);
+            console.error("[useInfoSubgraph][fetchInfoPools] ERROR during subgraph queries or processing", err);
             setPools(null);
-            throw new Error("Info pools fetch " + err);
+            // Consider if re-throwing is desired or if setting state to null/error is sufficient.
+            // throw new Error("Info pools fetch " + err);
         } finally {
             setPoolsLoading(false);
         }
     }
 
     async function fetchInfoTokens() {
-        if (!blocks || blockError || !ethPrices) return;
+        // ethPrices depends on 'blocks', publicClient for latest block
+        if (!ethPrices || !publicClient) {
+            setTokensLoading(false);
+            console.warn("[useInfoSubgraph][fetchInfoTokens] Aborting: Core dependencies (ethPrices or publicClient) are not available yet.");
+            setTokens(null);
+            return;
+        }
+
+        setTokensLoading(true);
+        let latestBlockNumber: number;
+        let queryHistoricalBlock24H: number | undefined = undefined;
+        let queryHistoricalBlock48H: number | undefined = undefined;
 
         try {
-            setTokensLoading(true);
+            const latestBlockBigInt = await publicClient.getBlockNumber();
+            latestBlockNumber = Number(latestBlockBigInt);
 
+            if (isNaN(latestBlockNumber)) {
+                console.error("[useInfoSubgraph][fetchInfoTokens] Aborting: Failed to parse latestBlockNumber.", latestBlockBigInt);
+                setTokens("Failed due to latest block number parsing");
+                setTokensLoading(false);
+                return;
+            }
+
+            queryHistoricalBlock24H = latestBlockNumber - GNOSIS_AVG_BLOCKS_PER_24H;
+            queryHistoricalBlock48H = latestBlockNumber - GNOSIS_AVG_BLOCKS_PER_48H;
+            // Not fetching week for tokens currently, but could add queryHistoricalBlockWeek if needed
+
+            if (queryHistoricalBlock24H <= 0 || queryHistoricalBlock48H <= 0) {
+                console.error("[useInfoSubgraph][fetchInfoTokens] Aborting: One or more calculated historical block numbers are invalid (<=0).");
+                setTokens("Failed due to invalid historical block calculation");
+                setTokensLoading(false);
+                return;
+            }
+            // console.log(`[useInfoSubgraph][fetchInfoTokens] Latest block: ${latestBlockNumber}. Historical blocks: 24H=${queryHistoricalBlock24H}, 48H=${queryHistoricalBlock48H}`);
+
+        } catch (e) {
+            console.error("[useInfoSubgraph][fetchInfoTokens] Error fetching latest block number:", e);
+            setTokens("Failed to fetch latest block");
+            setTokensLoading(false);
+            return;
+        }
+
+        try {
             const {
-                data: { tokens: topTokens },
-                error,
+                data: topTokensData,
+                error: topTokensError,
             } = await dataClient.query<SubgraphResponse<TokenAddressSubgraph[]>>({
                 query: TOP_TOKENS,
-                fetchPolicy: "network-only",
+                fetchPolicy: "cache-first",
             });
 
-            if (error) {
-                setTokens("failed");
+            if (topTokensError || !topTokensData || !topTokensData.tokens) {
+                console.error("Failed to fetch top tokens. Error:", topTokensError, "Data:", topTokensData);
+                setTokensLoading(false);
+                setTokens(null);
+                return;
+            }
+            const topTokens = topTokensData.tokens;
+
+            const _tokenAddresses = topTokens.map((el) => el.id);
+
+            if (_tokenAddresses.length === 0) {
+                setTokens([]);
+                setTokensLoading(false);
                 return;
             }
 
-            const _tokenAddresses: string[] = topTokens.map((el) => el.id);
-
-            const {
-                data: { tokens: rawTokens },
-                error: _error,
-            } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
-                query: TOKENS_FROM_ADDRESSES(undefined, _tokenAddresses),
+            const tokensFromAddressesResult = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
+                query: TOKENS_FROM_ADDRESSES_LATEST,
+                variables: { tokens: _tokenAddresses },
                 fetchPolicy: "network-only",
             });
 
-            if (_error) {
-                setTokens("failed");
+            if (tokensFromAddressesResult.error || !tokensFromAddressesResult.data || !tokensFromAddressesResult.data.tokens) {
+                console.error("Failed to fetch token details from TOKENS_FROM_ADDRESSES_LATEST. Error:", tokensFromAddressesResult.error, "Data:", tokensFromAddressesResult.data);
+                setTokensLoading(false);
+                setTokens(null);
                 return;
             }
+            const rawTokens = tokensFromAddressesResult.data.tokens;
 
             const tokens = rawTokens.filter((token) => {
                 if (token.symbol.toUpperCase() in addressForCheck || possibleNames.some((el) => el.names.includes(token.name))) {
@@ -302,11 +411,10 @@ export function useInfoSubgraph() {
 
             const tokenAddresses = tokens.map((token) => token.id);
 
-            const [_block24, _block48] = [block24, block48].sort((a, b) => +b.timestamp - +a.timestamp);
-
-            const tokens24 = await fetchTokensByTime(_block24.number, tokenAddresses);
-            const tokens48 = await fetchTokensByTime(_block48.number, tokenAddresses);
-            // const tokensWeek = await fetchTokensByTime(_blockWeek.number, tokenAddresses)
+            // Use calculated historical block numbers
+            const tokens24 = await fetchTokensByTime(queryHistoricalBlock24H, tokenAddresses);
+            const tokens48 = await fetchTokensByTime(queryHistoricalBlock48H, tokenAddresses);
+            // const tokensWeek = await fetchTokensByTime(queryHistoricalBlockWeek, tokenAddresses) // If week is needed
 
             const parsedTokens = parseTokensData(tokens);
             const parsedTokens24 = parseTokensData(tokens24);
@@ -372,44 +480,55 @@ export function useInfoSubgraph() {
 
             setTokens(Object.values(formatted));
         } catch (err) {
-            setTokens("failed");
-            throw new Error("Info tokens fetching " + err);
+            setTokensLoading(false);
+            setTokens(null);
+            console.error("[useInfoSubgraph][fetchInfoTokens] Error during subgraph queries or processing", err);
+            // throw new Error("Info tokens fetching " + err);
         } finally {
             setTokensLoading(false);
         }
     }
 
-    async function fetchTokensByTime(blockNumber: number, tokenAddresses: string[]): Promise<TokenInSubgraph[] | string> {
+    async function fetchTokensByTime(blockNumber: number | null | undefined, tokenAddresses: string[]): Promise<TokenInSubgraph[] | string> {
         try {
+            if (typeof blockNumber !== 'number') {
+                return "error: blockNumber must be a number for historical query";
+            }
+
             const {
-                data: { tokens },
-                error: error,
+                data: queryData,
+                error,
             } = await dataClient.query<SubgraphResponse<TokenInSubgraph[]>>({
-                query: TOKENS_FROM_ADDRESSES(blockNumber, tokenAddresses),
+                query: TOKENS_FROM_ADDRESSES_HISTORICAL,
+                variables: { tokens: tokenAddresses, blockNumber },
                 fetchPolicy: "network-only",
             });
+            if (error || !queryData || !queryData.tokens) return "error fetching data";
 
-            if (error) return `${error.name} ${error.message}`;
-
-            return tokens;
+            return queryData.tokens;
         } catch (err) {
             throw new Error("Tokens fetching by time " + err);
         }
     }
 
-    async function fetchPoolsByTime(blockNumber: number, tokenAddresses: string[]): Promise<PoolSubgraph[] | string> {
+    async function fetchPoolsByTime(blockNumber: number | null | undefined, tokenAddresses: string[]): Promise<PoolSubgraph[] | string> {
         try {
+            if (typeof blockNumber !== 'number') {
+                console.warn("[fetchPoolsByTime] Attempted to fetch with invalid blockNumber:", blockNumber);
+                return "error: blockNumber must be a number for historical query";
+            }
+
             const {
-                data: { pools },
+                data: queryData,
                 error,
             } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
-                query: POOLS_FROM_ADDRESSES(blockNumber, tokenAddresses),
+                query: POOLS_FROM_ADDRESSES_HISTORICAL,
+                variables: { pools: tokenAddresses, blockNumber },
                 fetchPolicy: "network-only",
             });
+            if (error || !queryData || !queryData.pools) return "error fetching data";
 
-            if (error) return `${error.name} ${error.message}`;
-
-            return pools;
+            return queryData.pools;
         } catch (err) {
             throw new Error("Pools by time fetching " + err);
         }
@@ -421,16 +540,14 @@ export function useInfoSubgraph() {
                 data: { feeHourDatas },
                 error,
             } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
-                query: CHART_FEE_LAST_ENTRY(),
-                fetchPolicy: "network-only",
+                query: CHART_FEE_LAST_ENTRY,
                 variables: { pool },
+                fetchPolicy: "network-only",
             });
-
-            if (error) return `${error.name} ${error.message}`;
-
+            if (error || !feeHourDatas) return "error fetching data";
             return feeHourDatas;
         } catch (err) {
-            throw new Error("Fees last failed: " + err);
+            return `error fetching data ${err}`;
         }
     }
 
@@ -440,17 +557,14 @@ export function useInfoSubgraph() {
                 data: { feeHourDatas },
                 error,
             } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
-                query: CHART_FEE_LAST_NOT_EMPTY(),
+                query: CHART_FEE_LAST_NOT_EMPTY,
+                variables: { pool, timestamp },
                 fetchPolicy: "network-only",
-                variables: { pool, timestamp: Number(timestamp) },
             });
-            if (error) return `${error.name} ${error.message}`;
-
-            if (feeHourDatas.length === 0) return [];
-
+            if (error || !feeHourDatas) return "error fetching data";
             return feeHourDatas;
         } catch (err) {
-            throw new Error("Fees last not empty failed:" + err);
+            return `error fetching data ${err}`;
         }
     }
 
@@ -460,18 +574,14 @@ export function useInfoSubgraph() {
                 data: { poolHourDatas },
                 error,
             } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
-                query: CHART_POOL_LAST_NOT_EMPTY(),
-                fetchPolicy: "network-only",
+                query: CHART_POOL_LAST_NOT_EMPTY,
                 variables: { pool, timestamp },
+                fetchPolicy: "network-only",
             });
-
-            if (error) return `${error.name} ${error.message}`;
-
-            if (poolHourDatas.length === 0) return [];
-
+            if (error || !poolHourDatas) return "error fetching data";
             return poolHourDatas;
         } catch (err) {
-            throw new Error("Pool last not empty failed:" + err);
+            return `error fetching data ${err}`;
         }
     }
 
@@ -481,30 +591,34 @@ export function useInfoSubgraph() {
                 data: { poolHourDatas },
                 error,
             } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
-                query: CHART_POOL_LAST_ENTRY(),
-                fetchPolicy: "network-only",
+                query: CHART_POOL_LAST_ENTRY,
                 variables: { pool },
+                fetchPolicy: "network-only",
             });
-
-            if (error) return `${error.name} ${error.message}`;
-
+            if (error || !poolHourDatas) return "error fetching data";
             return poolHourDatas;
         } catch (err) {
-            throw new Error("Fees last failed: " + err);
+            return `error fetching data ${err}`;
         }
     }
 
     async function fetchFeePool(pool: string, startTimestamp: number, endTimestamp: number) {
         try {
             setFeesLoading(true);
-
             const {
                 data: { feeHourDatas },
+                error,
             } = await dataClient.query<SubgraphResponse<FeeSubgraph[]>>({
-                query: CHART_FEE_POOL_DATA(),
-                fetchPolicy: "network-only",
+                query: CHART_FEE_POOL_DATA,
                 variables: { pool, startTimestamp, endTimestamp },
+                fetchPolicy: "network-only",
             });
+
+            if (error || !feeHourDatas) {
+                setFees("failed");
+                setFeesLoading(false);
+                return;
+            }
 
             const _feeHourData = feeHourDatas.length === 0 ? await fetchLastEntry(pool) : feeHourDatas;
 
@@ -535,17 +649,20 @@ export function useInfoSubgraph() {
     async function fetchChartPoolData(pool: string, startTimestamp: number, endTimestamp: number) {
         try {
             setChartPoolDataLoading(true);
-
             const {
                 data: { poolHourDatas },
                 error,
             } = await dataClient.query<SubgraphResponse<LastPoolSubgraph[]>>({
-                query: CHART_POOL_DATA(),
-                fetchPolicy: "network-only",
+                query: CHART_POOL_DATA,
                 variables: { pool, startTimestamp, endTimestamp },
+                fetchPolicy: "network-only",
             });
 
-            if (error) return;
+            if (error || !poolHourDatas) {
+                setChartPoolData("failed");
+                setChartPoolDataLoading(false);
+                return;
+            }
 
             const _poolHourDatas = poolHourDatas.length === 0 ? await fetchPoolLastEntry(pool) : poolHourDatas;
 
@@ -574,60 +691,90 @@ export function useInfoSubgraph() {
     }
 
     async function fetchTotalStats() {
+        // ethPrices depends on 'blocks', publicClient is needed for latest block.
+        if (!ethPrices || !publicClient) {
+            setTotalStatsLoading(false);
+            console.warn("[useInfoSubgraph][fetchTotalStats] Aborting: Core dependencies (ethPrices or publicClient) are not available yet.");
+            return;
+        }
+
+        setTotalStatsLoading(true);
+        let latestBlockNumber: number;
+        let queryHistoricalBlock24H: number | undefined = undefined;
+
         try {
-            setTotalStatsLoading(true);
+            const latestBlockBigInt = await publicClient.getBlockNumber();
+            latestBlockNumber = Number(latestBlockBigInt);
 
-            const [_block24, _block48, _blockWeek, _blockMonth] = [block24, block48].sort((a, b) => +b.timestamp - +a.timestamp);
-
-            const { data: data, error: error } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
-                query: TOTAL_STATS(),
-                fetchPolicy: "network-only",
-            });
-
-            if (error) {
-                setTotalStats("Failed");
+            if (isNaN(latestBlockNumber)) {
+                console.error("[useInfoSubgraph][fetchTotalStats] Aborting: Failed to parse latestBlockNumber.", latestBlockBigInt);
+                setTotalStats("Failed due to latest block number parsing");
+                setTotalStatsLoading(false);
                 return;
             }
 
-            const { data: data24, error: error24 } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
-                query: TOTAL_STATS(_block24.number),
+            queryHistoricalBlock24H = latestBlockNumber - GNOSIS_AVG_BLOCKS_PER_24H;
+
+            if (queryHistoricalBlock24H <= 0) {
+                console.error("[useInfoSubgraph][fetchTotalStats] Aborting: Calculated historical block number is invalid (<=0).", queryHistoricalBlock24H);
+                setTotalStats("Failed due to invalid historical block calculation");
+                setTotalStatsLoading(false);
+                return;
+            }
+            // Minimal log
+            // console.log(`[useInfoSubgraph][fetchTotalStats] Latest block: ${latestBlockNumber}. Historical query block (24H ago approx): ${queryHistoricalBlock24H}`);
+
+        } catch (e) {
+            console.error("[useInfoSubgraph][fetchTotalStats] Error fetching latest block number:", e);
+            setTotalStats("Failed to fetch latest block");
+            setTotalStatsLoading(false);
+            return;
+        }
+
+        try {
+            // Fetch current total stats (using latest, no block filter)
+            const { data: currentQueryResultData, error: currentError } = await dataClient.query<SubgraphResponse<{ factories: TotalStatSubgraph[] }>>({
+                query: TOTAL_STATS_LATEST,
+                variables: {},
                 fetchPolicy: "network-only",
             });
 
-            if (error24) {
+            // Fetch historical total stats
+            let historicalQueryResultData: SubgraphResponse<{ factories: TotalStatSubgraph[] }> | undefined = undefined;
+            let historicalError: any = undefined;
+            let historicalQueryAttempted = false;
+
+            if (typeof queryHistoricalBlock24H === 'number') {
+                historicalQueryAttempted = true;
+                const result24 = await dataClient.query<SubgraphResponse<{ factories: TotalStatSubgraph[] }>>({
+                    query: TOTAL_STATS_HISTORICAL,
+                    variables: { blockNumber: queryHistoricalBlock24H },
+                    fetchPolicy: "network-only",
+                });
+                historicalQueryResultData = result24.data;
+                historicalError = result24.error;
+            }
+
+            // console.log("[useInfoSubgraph][fetchTotalStats] historicalQueryResultData:", historicalQueryResultData); // Verbose log, remove later
+
+            if (currentError || !currentQueryResultData?.factories?.[0] || (historicalQueryAttempted && (historicalError || !historicalQueryResultData?.factories?.[0]))) {
+                console.error("[useInfoSubgraph][fetchTotalStats] Failed to fetch total stats. Current error:", currentError, "Historical error:", historicalError);
                 setTotalStats("Failed");
+                setTotalStatsLoading(false);
                 return;
             }
 
-            // const { data: dataWeek, error: errorWeek } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
-            //     query: TOTAL_STATS(_blockWeek.number),
-            //     fetchPolicy: 'network-only'
-            // })
+            const stats = currentQueryResultData.factories[0];
+            const stats24 = historicalQueryAttempted && historicalQueryResultData?.factories?.[0] ? historicalQueryResultData.factories[0] : undefined;
 
-            // if (errorWeek) {
-            //     setTotalStats('Failed')
-            //     return
+            // Minimal logging for calculation values, can be removed after confirmation
+            // if (stats && stats24) {
+            //     console.log(`[useInfoSubgraph][fetchTotalStats] Calc Values: CurrentVol: ${stats.totalVolumeUSD}, HistVol: ${stats24.totalVolumeUSD}`);
             // }
 
-            // const { data: dataMonth, error: errorMonth } = await dataClient.query<SubgraphResponse<TotalStatSubgraph[]>>({
-            //     query: TOTAL_STATS(_blockMonth.number),
-            //     fetchPolicy: 'network-only'
-            // })
-
-            // if (errorMonth) {
-            //     setTotalStats('Failed')
-            //     return
-            // }
-
-            const stats = data.factories[0];
-            const stats24 = data24.factories[0];
-            // const statsWeek = dataWeek.factories[0]
-            // const statsMonth = dataMonth.factories[0]
 
             const volumeUSD = stats && stats24 ? parseFloat(stats.totalVolumeUSD) - parseFloat(stats24.totalVolumeUSD) : parseFloat(stats.totalVolumeUSD);
-
             const txCount = stats && stats24 ? parseFloat(stats.txCount) - parseFloat(stats24.txCount) : stats ? parseFloat(stats.txCount) : 0;
-
             const feesCollected = stats && stats24 ? parseFloat(stats.totalFeesUSD) - parseFloat(stats24.totalFeesUSD) : stats ? parseFloat(stats.totalFeesUSD) : 0;
 
             setTotalStats({
@@ -637,45 +784,29 @@ export function useInfoSubgraph() {
                 feesCollected,
             });
         } catch (err) {
-            console.error("total stats failed", err);
+            console.error("[useInfoSubgraph][fetchTotalStats] Error during subgraph queries or processing:", err);
             setTotalStats("Failed");
+        } finally {
+            setTotalStatsLoading(false);
         }
-
-        setTotalStatsLoading(false);
     }
 
     async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]): Promise<EternalFarmingByPool[]> {
-        // Handle empty poolAddresses array to prevent an unnecessary query if not desired
-        if (!poolAddresses || poolAddresses.length === 0) {
-            console.log("fetchEternalFarmingsAPRByPool: No pool addresses provided, returning empty array.");
-            return [];
-        }
+        if (!dataClient) return [];
         try {
-            const gqlQuery = FETCH_ETERNAL_FARM_FROM_POOL(poolAddresses);
-
-            if (!gqlQuery) {
-                console.error("fetchEternalFarmingsAPRByPool: Generated GQL query is undefined.");
-                return [];
-            }
-
-            const response = await farmingClient.query<{ eternalFarmings?: EternalFarmingByPool[] }>({
-                query: gqlQuery,
+            const { data, error } = await farmingClient.query<SubgraphResponse<EternalFarmingByPool[]>>({
+                query: FETCH_ETERNAL_FARM_FROM_POOL,
+                variables: { pools: poolAddresses, currentTime: Math.floor(Date.now() / 1000) },
                 fetchPolicy: "network-only",
             });
 
-            if (response.errors && response.errors.length > 0) {
-                console.error("fetchEternalFarmingsAPRByPool: GraphQL errors received:", response.errors);
+            if (error || !data || !data.eternalFarmings) {
+                console.error("Error fetching eternal farmings APR by pool:", error);
                 return [];
             }
-
-            if (!response.data || response.data.eternalFarmings === undefined || response.data.eternalFarmings === null) {
-                console.warn("fetchEternalFarmingsAPRByPool: No data.eternalFarmings in response for pools:", poolAddresses, "Response data:", response.data);
-                return [];
-            }
-
-            return response.data.eternalFarmings;
-        } catch (err) {
-            console.error("fetchEternalFarmingsAPRByPool: Exception during query execution:", err);
+            return data.eternalFarmings;
+        } catch (e) {
+            console.error("Exception fetching eternal farmings APR by pool:", e);
             return [];
         }
     }

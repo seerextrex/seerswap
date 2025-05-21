@@ -19,7 +19,7 @@ const localesMessages: any = {
 };
 
 async function dynamicActivate(locale: SupportedLocale) {
-    i18n.loadLocaleData(locale, { plurals: () => plurals[locale] });
+    i18n.loadLocaleData(locale, { plurals: plurals[locale] });
     i18n.load(locale, localesMessages[locale]);
     i18n.activate(locale);
 }
@@ -43,7 +43,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (!loaded) return null;
 
     return (
-        <I18nProvider forceRenderOnLocaleChange={false} i18n={i18n}>
+        <I18nProvider i18n={i18n}>
             {children}
         </I18nProvider>
     );

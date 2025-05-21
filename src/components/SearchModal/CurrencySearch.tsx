@@ -3,7 +3,7 @@ import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useS
 import { t, Trans } from "@lingui/macro";
 import { FixedSizeList } from "react-window";
 import { ExtendedEther } from "../../constants/tokens";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useAllTokens, useIsUserAddedToken, useSearchInactiveTokenLists, useToken } from "../../hooks/Tokens";
 import { CloseIcon, TYPE } from "../../theme";
 import { isAddress } from "../../utils";
@@ -19,6 +19,8 @@ import useTheme from "hooks/useTheme";
 import ImportRow from "./ImportRow";
 import useDebounce from "hooks/useDebounce";
 import ReactGA from "react-ga";
+import { Text } from "rebass";
+import "./index.scss";
 
 interface CurrencySearchProps {
     isOpen: boolean;
@@ -46,24 +48,18 @@ export function CurrencySearch({
     showImportView,
     setImportToken,
 }: CurrencySearchProps) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const theme = useTheme();
 
-    // refs for fixed size lists
     const fixedList = useRef<FixedSizeList>();
-
     const [searchQuery, setSearchQuery] = useState<string>("");
     const debouncedQuery = useDebounce(searchQuery, 200);
 
-    const [invertSearchOrder] = useState<boolean>(false);
-
     const allTokens = useAllTokens();
 
-    // if they input an address, use it
     const isAddressSearch = isAddress(debouncedQuery);
-
     const searchToken = useToken(debouncedQuery);
-
     const searchTokenIsAdded = useIsUserAddedToken(searchToken);
 
     useEffect(() => {
@@ -76,6 +72,7 @@ export function CurrencySearch({
         }
     }, [isAddressSearch]);
 
+    const [invertSearchOrder] = useState<boolean>(false);
     const tokenComparator = useTokenComparator(invertSearchOrder);
 
     const filteredTokens: Token[] = useMemo(() => {
@@ -106,14 +103,12 @@ export function CurrencySearch({
         [onDismiss, onCurrencySelect]
     );
 
-    // clear the input on open
     useEffect(() => {
         if (isOpen) setSearchQuery("");
     }, [isOpen]);
 
-    // manage focus on modal show
     const inputRef = useRef<HTMLInputElement>();
-    const handleInput = useCallback((event) => {
+    const handleInput = useCallback((event: any) => {
         const input = event.target.value;
         const checksummedInput = isAddress(input);
         setSearchQuery(checksummedInput || input);
@@ -136,12 +131,10 @@ export function CurrencySearch({
         [debouncedQuery, ether, filteredSortedTokensWithETH, handleCurrencySelect]
     );
 
-    // menu ui
     const [open, toggle] = useToggle(false);
     const node = useRef<HTMLDivElement>();
     useOnClickOutside(node, open ? toggle : undefined);
 
-    // if no results on main list, show option to expand into inactive
     const filteredInactiveTokens = useSearchInactiveTokenLists(filteredTokens.length === 0 || (debouncedQuery.length > 2 && !isAddressSearch) ? debouncedQuery : undefined);
 
     return (
@@ -161,7 +154,7 @@ export function CurrencySearch({
                     onChange={handleInput}
                     onKeyDown={handleEnter}
                 />
-                {showCommonBases && <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />}
+                {showCommonBases && <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency as Token | null} />}
             </div>
             {searchToken && !searchTokenIsAdded ? (
                 <div>

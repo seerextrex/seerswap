@@ -7,7 +7,7 @@ import { Text } from "rebass";
 import { useTotalSupply } from "../../hooks/useTotalSupply";
 import { Trans } from "@lingui/macro";
 
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useTokenBalance } from "../../state/wallet/hooks";
 import { unwrappedToken } from "../../utils/unwrappedToken";
 import { ButtonEmpty, ButtonPrimary } from "../Button";
@@ -36,7 +36,7 @@ interface PositionCardProps {
 }
 
 export default function V2PositionCard({ pair, border, stakedBalance, sushi }: PositionCardProps) {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const currency0 = unwrappedToken(pair?.token0 as WrappedCurrency);
     const currency1 = unwrappedToken(pair?.token1 as WrappedCurrency);
@@ -57,10 +57,10 @@ export default function V2PositionCard({ pair, border, stakedBalance, sushi }: P
 
     const [token0Deposited, token1Deposited] =
         !!pair &&
-        !!totalPoolTokens &&
-        !!userPoolBalance &&
-        // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
-        JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
+            !!totalPoolTokens &&
+            !!userPoolBalance &&
+            // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
+            JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
             ? [pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false), pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false)]
             : [undefined, undefined];
 

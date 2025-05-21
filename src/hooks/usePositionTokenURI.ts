@@ -1,36 +1,35 @@
-import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { useMemo } from 'react'
 import { NEVER_RELOAD, useSingleCallResult } from '../state/multicall/hooks'
 import { useV3NFTPositionManagerContract } from './useContract'
 
-type TokenId = number | JSBI | BigNumber
+type TokenId = number | JSBI | bigint
 
 const STARTS_WITH = 'data:application/json;base64,'
 
 type UsePositionTokenURIResult =
     | {
-    valid: true
-    loading: false
-    result: {
-        name: string
-        description: string
-        image: string
+        valid: true
+        loading: false
+        result: {
+            name: string
+            description: string
+            image: string
+        }
     }
-}
     | {
-    valid: false
-    loading: false
-}
+        valid: false
+        loading: false
+    }
     | {
-    valid: true
-    loading: true
-}
+        valid: true
+        loading: true
+    }
 
 export function usePositionTokenURI(tokenId: TokenId | undefined): UsePositionTokenURIResult {
     const contract = useV3NFTPositionManagerContract()
     const inputs = useMemo(
-        () => [tokenId instanceof BigNumber ? tokenId.toHexString() : tokenId?.toString(16)],
+        () => [tokenId?.toString(16)],
         [tokenId]
     )
 

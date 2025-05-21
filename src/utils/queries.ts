@@ -9,14 +9,14 @@ import dayjs from 'dayjs'
  * @param values - the keys that are used as the values to map over if
  * @param skipCount - amount of entities to skip per query
  */
-export async function splitQuery<Type>(
-    query: any,
+export async function splitQuery<Type extends Record<string, any>>(
+    query: (...args: any[]) => any,
     client: ApolloClient<NormalizedCacheObject>,
     vars: any[],
     values: any[],
     skipCount = 1000
-) {
-    let fetchedData = {}
+): Promise<Partial<Type> | undefined> {
+    let fetchedData: Partial<Type> = {}
     let allFound = false
     let skip = 0
     try {
@@ -30,14 +30,18 @@ export async function splitQuery<Type>(
                 query: query(...vars, sliced),
                 fetchPolicy: 'network-only'
             })
-            fetchedData = {
-                ...fetchedData,
-                ...result.data
-            }
-            if (Object.keys(result.data).length < skipCount || skip + skipCount > values.length) {
-                allFound = true
+            if (result.data) {
+                fetchedData = {
+                    ...fetchedData,
+                    ...result.data
+                }
+                if (Object.keys(result.data).length < skipCount || skip + skipCount > values.length) {
+                    allFound = true
+                } else {
+                    skip += skipCount
+                }
             } else {
-                skip += skipCount
+                allFound = true
             }
         }
         return fetchedData

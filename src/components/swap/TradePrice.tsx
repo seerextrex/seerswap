@@ -4,6 +4,7 @@ import { Text } from "rebass";
 import { StyledPriceContainer } from "./styled";
 import { ThemeContext } from "styled-components/macro";
 import { ReactComponent as DoubleArrow } from "../../assets/svg/double-arrow.svg";
+// import { useLingui } from "@lingui/react"; // Temporarily commented out
 
 interface TradePriceProps {
     price: Price<Currency, Currency>;
@@ -13,18 +14,21 @@ interface TradePriceProps {
 
 export default function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
     const theme = useContext(ThemeContext);
-    let formattedPrice: string;
-    try {
-        formattedPrice = showInverted ? price.toSignificant(4) : price.invert()?.toSignificant(4);
-    } catch (error) {
-        formattedPrice = "0";
-    }
+    // const { t } = useLingui(); // Temporarily commented out
 
-    const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `;
-    const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
+    const formattedPrice = showInverted ? price?.invert()?.toSignificant(6) : price?.toSignificant(6);
+
+    // Corrected label and labelInverted declarations and temporarily removed i18n
+    const baseSymbol = price?.baseCurrency?.symbol ?? '';
+    const quoteSymbol = price?.quoteCurrency?.symbol ?? '';
+
+    const labelStr = showInverted ? `${quoteSymbol} per ${baseSymbol}` : `${baseSymbol} per ${quoteSymbol}`;
+    const labelInvertedStr = showInverted ? baseSymbol : quoteSymbol;
+
     const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
 
-    const text = `${"1 " + labelInverted + " = " + formattedPrice ?? "-"} ${label}`;
+    const priceText = formattedPrice ? `1 ${labelInvertedStr} = ${formattedPrice}` : "-";
+    const text = `${priceText} ${labelStr}`;
 
     return (
         <StyledPriceContainer

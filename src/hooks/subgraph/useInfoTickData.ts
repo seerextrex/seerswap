@@ -23,7 +23,7 @@ export function useInfoTickData() {
         let skip = 0
         do {
             const { data, error, loading } = await dataClient.query<SubgraphResponse<Liquidity[]>>({
-                query: FETCH_TICKS(),
+                query: FETCH_TICKS,
                 fetchPolicy: 'cache-first',
                 variables: {
                     poolAddress,
@@ -57,7 +57,7 @@ export function useInfoTickData() {
         try {
 
             const { data: { pools }, error } = await dataClient.query<SubgraphResponse<SmallPoolSubgraph[]>>({
-                query: FETCH_POOL(),
+                query: FETCH_POOL,
                 variables: { poolId }
             })
 

@@ -33,7 +33,7 @@ import { useSwapCallback } from "../../hooks/useSwapCallback";
 import useToggledVersion, { Version } from "../../hooks/useToggledVersion";
 import { useUSDCValue } from "../../hooks/useUSDCPrice";
 import useWrapCallback, { WrapType } from "../../hooks/useWrapCallback";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from 'wagmi';
 import { useWalletModalToggle } from "../../state/application/hooks";
 import { Field } from "../../state/swap/actions";
 import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from "../../state/swap/hooks";
@@ -52,7 +52,7 @@ import NewCurrencyInputPanel from "../../components/CurrencyInputPanel/NewCurren
 import { ReactComponent as DoubleArrow } from "../../assets/svg/double-arrow.svg";
 
 export default function Swap({ history }: RouteComponentProps) {
-    const { account } = useWeb3React();
+    const { address: account, isConnected } = useAccount();
     const loadedUrlParams = useDefaultsFromURLSearch();
 
     // token warning stuff

@@ -3,7 +3,7 @@ import { logDOM } from "@testing-library/react";
 
 //Farming
 
-export const ONE_FARMING_EVENT = () => gql`
+export const ONE_FARMING_EVENT = gql`
     query limitFarm($time: BigInt) {
         limitFarmings(orderBy: createdAtTimestamp, orderDirection: desc, first: 1, where: { startTime_gt: $time, isDetached: false }) {
             startTime
@@ -12,7 +12,7 @@ export const ONE_FARMING_EVENT = () => gql`
     }
 `;
 
-export const ONE_ETERNAL_FARMING = () => gql`
+export const ONE_ETERNAL_FARMING = gql`
     query eternalFarm {
         eternalFarmings(where: { isDetached: false }, first: 1) {
             startTime
@@ -21,7 +21,7 @@ export const ONE_ETERNAL_FARMING = () => gql`
     }
 `;
 
-export const FETCH_REWARDS = () => gql`
+export const FETCH_REWARDS = gql`
     query fetchRewards($account: Bytes) {
         rewards(orderBy: amount, orderDirection: desc, where: { owner: $account }) {
             id
@@ -32,8 +32,8 @@ export const FETCH_REWARDS = () => gql`
     }
 `;
 
-export const FETCH_TOKEN = () => gql`
-    query fetchToken($tokenId: ID) {
+export const FETCH_TOKEN = gql`
+    query fetchToken($tokenId: ID!) {
         tokens(where: { id: $tokenId }) {
             id
             symbol
@@ -43,8 +43,8 @@ export const FETCH_TOKEN = () => gql`
     }
 `;
 
-export const FETCH_LIMIT = () => gql`
-    query fetchLimit($limitFarmingId: ID) {
+export const FETCH_LIMIT = gql`
+    query fetchLimit($limitFarmingId: ID!) {
         limitFarmings(where: { id: $limitFarmingId }) {
             id
             rewardToken
@@ -68,7 +68,7 @@ export const FETCH_LIMIT = () => gql`
     }
 `;
 
-export const FETCH_ETERNAL_FARM = () => gql`
+export const FETCH_ETERNAL_FARM = gql`
     query eternalFarmings($farmId: ID!) {
         eternalFarmings(where: { id: $farmId }) {
             id
@@ -92,60 +92,53 @@ export const FETCH_ETERNAL_FARM = () => gql`
     }
 `;
 
-export const FETCH_ETERNAL_FARM_FROM_POOL = (pools: string[]) => {
-    let poolString = `[`;
-    pools.map((address) => {
-        return (poolString += `"${address}",`);
-    });
-    poolString += "]";
-    const queryString = `
-      query eternalFarmingsFromPools {
-        eternalFarmings(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${Math.round(Date.now() / 1000)}, endTimeImplied_gt: ${Math.round(Date.now() / 1000)}}) {
-          id
-          rewardToken
-          bonusRewardToken
-          pool
-          startTime
-          endTime
-          reward
-          bonusReward
-          rewardRate
-          bonusRewardRate
-          isDetached
-        }
-      }
-      `;
-    return gql(queryString);
-};
-
-export const FETCH_LIMIT_FARM_FROM_POOL = (pools: string[]) => {
-    let poolString = `[`;
-    pools.map((address) => {
-        return (poolString += `"${address}",`);
-    });
-    poolString += "]";
-    const now = Math.round(Date.now() / 1000);
-    const queryString = `
-    query limitFarmingsFromPools {
-      limitFarmings(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${now}}) {
-        id
-        createdAtTimestamp
-        rewardToken
-        bonusReward
-        bonusRewardToken
-        pool
-        startTime
-        endTime
-        reward
-        multiplierToken
-      }
+export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
+  query eternalFarmingsFromPools($pools: [Bytes!]!, $currentTime: BigInt!) {
+    eternalFarmings(
+      where: {pool_in: $pools, isDetached: false, endTime_gt: $currentTime, endTimeImplied_gt: $currentTime}
+    ) {
+      id
+      rewardToken
+      bonusRewardToken
+      pool
+      startTime
+      endTime
+      reward
+      bonusReward
+      rewardRate
+      bonusRewardRate
+      isDetached
     }
-    `;
-    return gql(queryString);
-};
+  }
+`;
 
-export const FETCH_POOL = () => gql`
-    query fetchPool($poolId: ID) {
+export const FETCH_LIMIT_FARM_FROM_POOL = gql`
+  query limitFarmingsFromPools($pools: [Bytes!]!, $currentTime: BigInt!) {
+    limitFarmings(where: {pool_in: $pools, isDetached: false, endTime_gt: $currentTime}) {
+      id
+      createdAtTimestamp
+      rewardToken
+      bonusReward
+      bonusRewardToken
+      pool
+      startTime
+      endTime
+      reward
+      multiplierToken
+      tokenAmountForTier1
+      tokenAmountForTier2
+      tokenAmountForTier3
+      tier1Multiplier
+      tier2Multiplier
+      tier3Multiplier
+      enterStartTime
+      isDetached
+    }
+  }
+`;
+
+export const FETCH_POOL = gql`
+    query fetchPool($poolId: ID!) {
         pools(where: { id: $poolId }) {
             id
             fee
@@ -168,58 +161,43 @@ export const FETCH_POOL = () => gql`
     }
 `;
 
-export const FETCH_POOLS_BY_IDS = (poolIds: string[]) => {
-    let poolString = `[`;
-    poolIds.forEach((id) => {
-        poolString += `"${id}",`;
-    });
-    poolString = poolString.slice(0, -1) + `]`; // Remove trailing comma and close bracket
-    const queryString = `
-        query fetchPoolsByIds {
-            pools(where: { id_in: ${poolString} }) {
+export const FETCH_POOLS_BY_IDS = gql`
+    query fetchPoolsByIds($poolIds: [ID!]!) {
+        pools(where: { id_in: $poolIds }) {
+            id
+            fee
+            token0 {
                 id
-                fee
-                token0 {
-                    id
-                    decimals
-                    symbol
-                }
-                token1 {
-                    id
-                    decimals
-                    symbol
-                }
-                sqrtPrice
-                liquidity
-                tick
-                feesUSD
-                untrackedFeesUSD
-            }
-        }
-    `;
-    return gql(queryString);
-};
-
-export const FETCH_TOKENS_BY_IDS = (tokenIds: string[]) => {
-    let tokenString = `[`;
-    tokenIds.forEach((id) => {
-        tokenString += `"${id}",`;
-    });
-    tokenString = tokenString.slice(0, -1) + `]`; // Remove trailing comma and close bracket
-    const queryString = `
-        query fetchTokensByIds($tokenIds: [ID!]) { # Changed to accept array of IDs
-            tokens(where: { id_in: $tokenIds }) { # Use the variable $tokenIds
-                id
-                symbol
-                name
                 decimals
+                symbol
             }
+            token1 {
+                id
+                decimals
+                symbol
+            }
+            sqrtPrice
+            liquidity
+            tick
+            feesUSD
+            untrackedFeesUSD
         }
-    `;
-    return gql(queryString);
-};
+    }
+`;
 
-export const CHART_FEE_POOL_DATA = () => gql`
+export const FETCH_TOKENS_BY_IDS = gql`
+    query fetchTokensByIds($tokenIds: [ID!]!) {
+        tokens(where: {id_in: $tokenIds}) {
+            id
+            symbol
+            name
+            decimals
+            derivedMatic # Using this as derivedETH is not available on the subgraph
+        }
+    }
+`;
+
+export const CHART_FEE_POOL_DATA = gql`
     query feeHourData($pool: String, $startTimestamp: BigInt, $endTimestamp: BigInt) {
         feeHourDatas(first: 1000, where: { pool: $pool, timestamp_gte: $startTimestamp, timestamp_lte: $endTimestamp }) {
             id
@@ -235,7 +213,7 @@ export const CHART_FEE_POOL_DATA = () => gql`
     }
 `;
 
-export const CHART_FEE_LAST_ENTRY = () => gql`
+export const CHART_FEE_LAST_ENTRY = gql`
     query lastFeeHourData($pool: String) {
         feeHourDatas(first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: $pool }) {
             id
@@ -250,7 +228,7 @@ export const CHART_FEE_LAST_ENTRY = () => gql`
         }
     }
 `;
-export const CHART_FEE_LAST_NOT_EMPTY = () => gql`
+export const CHART_FEE_LAST_NOT_EMPTY = gql`
     query lastNotEmptyHourData($pool: String, $timestamp: BigInt) {
         feeHourDatas(first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: $pool, timestamp_lt: $timestamp }) {
             id
@@ -266,7 +244,7 @@ export const CHART_FEE_LAST_NOT_EMPTY = () => gql`
     }
 `;
 
-export const CHART_POOL_LAST_NOT_EMPTY = () => gql`
+export const CHART_POOL_LAST_NOT_EMPTY = gql`
     query lastNotEmptyPoolHourData($pool: String, $timestamp: Int) {
         poolHourDatas(first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: $pool, periodStartUnix_lt: $timestamp }) {
             periodStartUnix
@@ -280,7 +258,7 @@ export const CHART_POOL_LAST_NOT_EMPTY = () => gql`
     }
 `;
 
-export const CHART_POOL_LAST_ENTRY = () => gql`
+export const CHART_POOL_LAST_ENTRY = gql`
     query lastPoolHourData($pool: String) {
         poolHourDatas(first: 1, where: { pool: $pool }, orderBy: periodStartUnix, orderDirection: desc) {
             periodStartUnix
@@ -292,7 +270,7 @@ export const CHART_POOL_LAST_ENTRY = () => gql`
     }
 `;
 
-export const CHART_POOL_DATA = () => gql`
+export const CHART_POOL_DATA = gql`
     query poolHourData($pool: String, $startTimestamp: Int, $endTimestamp: Int) {
         poolHourDatas(
             first: 1000
@@ -312,23 +290,7 @@ export const CHART_POOL_DATA = () => gql`
     }
 `;
 
-export const TOTAL_STATS = (block?: number) => {
-    const qString = `
-  query totalStats {
-    factories ${block ? `(block: { number: ${block} })` : ""} {
-      totalVolumeUSD
-      untrackedVolumeUSD
-      totalValueLockedUSD
-      totalValueLockedUSDUntracked
-      txCount
-      totalFeesUSD
-    }
-  }
-`;
-    return gql(qString);
-};
-
-export const LAST_EVENT = () => gql`
+export const LAST_EVENT = gql`
     query lastEvent {
         limitFarmings(first: 1, orderDirection: desc, orderBy: createdAtTimestamp, where: { isDetached: false }) {
             createdAtTimestamp
@@ -339,8 +301,8 @@ export const LAST_EVENT = () => gql`
     }
 `;
 
-export const FUTURE_EVENTS = () => gql`
-    query futureEvents($timestamp: BigInt) {
+export const FUTURE_EVENTS = gql`
+    query futureEvents($timestamp: BigInt!) {
         limitFarmings(orderBy: startTime, orderDirection: asc, where: { startTime_gt: $timestamp, isDetached: false }) {
             id
             createdAtTimestamp
@@ -364,8 +326,8 @@ export const FUTURE_EVENTS = () => gql`
     }
 `;
 
-export const CURRENT_EVENTS = () => gql`
-    query currentEvents($startTime: BigInt, $endTime: BigInt) {
+export const CURRENT_EVENTS = gql`
+    query currentEvents($startTime: BigInt!, $endTime: BigInt!) {
         limitFarmings(orderBy: endTime, orderDirection: desc, where: { startTime_lte: $startTime, endTime_gt: $endTime, isDetached: false }) {
             id
             rewardToken
@@ -388,38 +350,30 @@ export const CURRENT_EVENTS = () => gql`
     }
 `;
 
-export const FETCH_FINITE_FARM_FROM_POOL = (pools: string[]) => {
-    let poolString = `[`;
-    pools.map((address) => {
-        return (poolString += `"${address}",`);
-    });
-    poolString += "]";
-    const queryString = `
-      query finiteFarmingsFromPools {
-        limitFarmings(where: {pool_in: ${poolString}, isDetached: false, endTime_gt: ${Math.round(Date.now() / 1000)}}) {
-          id
-          createdAtTimestamp
-          rewardToken
-          bonusReward
-          bonusRewardToken
-          pool
-          startTime
-          endTime
-          reward
-          multiplierToken
-          tokenAmountForTier1
-          tokenAmountForTier2
-          tokenAmountForTier3
-          tier1Multiplier
-          tier2Multiplier
-          tier3Multiplier
-          enterStartTime
-          isDetached
-        }
-      }
-      `;
-    return gql(queryString);
-};
+export const FETCH_FINITE_FARM_FROM_POOL = gql`
+  query limitFarmingsFromPools($pools: [Bytes!]!, $currentTime: BigInt!) {
+    limitFarmings(where: {pool_in: $pools, isDetached: false, endTime_gt: $currentTime}) {
+        id
+        createdAtTimestamp
+        rewardToken
+        bonusReward
+        bonusRewardToken
+        pool
+        startTime
+        endTime
+        reward
+        multiplierToken
+        tokenAmountForTier1
+        tokenAmountForTier2
+        tokenAmountForTier3
+        tier1Multiplier
+        tier2Multiplier
+        tier3Multiplier
+        enterStartTime
+        isDetached
+    }
+  }
+`;
 
 export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
     query transferedPositions ($account: Bytes) {
@@ -444,16 +398,16 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
 }
 `;
 
-export const HAS_TRANSFERED_POSITIONS = () => gql`
-    query hasTransferedPositions($account: Bytes) {
+export const HAS_TRANSFERED_POSITIONS = gql`
+    query hasTransferedPositions($account: Bytes!) {
         deposits(first: 1, where: { owner: $account, onFarmingCenter: true }) {
             id
         }
     }
 `;
 
-export const POSITIONS_ON_ETERNAL_FARMING = () => gql`
-    query positionsOnEternalFarming($account: Bytes) {
+export const POSITIONS_ON_ETERNAL_FARMING = gql`
+    query positionsOnEternalFarming($account: Bytes!) {
         deposits(orderBy: id, orderDirection: desc, where: { owner: $account, onFarmingCenter: true, eternalFarming_not: null }) {
             id
             owner
@@ -466,8 +420,8 @@ export const POSITIONS_ON_ETERNAL_FARMING = () => gql`
     }
 `;
 
-export const TRANSFERED_POSITIONS_FOR_POOL = () => gql`
-    query transferedPositionsForPool($account: Bytes, $pool: Bytes) {
+export const TRANSFERED_POSITIONS_FOR_POOL = gql`
+    query transferedPositionsForPool($account: Bytes!, $pool: Bytes!) {
         deposits(orderBy: id, orderDirection: desc, where: { owner: $account, pool: $pool, liquidity_not: "0" }) {
             id
             owner
@@ -487,74 +441,66 @@ export const TRANSFERED_POSITIONS_FOR_POOL = () => gql`
 
 //Info
 
-export const POSITIONS_ON_FARMING = () => gql`
-    query positionsOnFarming($account: Bytes, $pool: Bytes) {
+export const POSITIONS_ON_FARMING = gql`
+    query positionsOnFarming($account: Bytes!, $pool: Bytes!) {
         deposits(orderBy: id, orderDirection: desc, where: { owner: $account, pool: $pool, onFarmingCenter: true }) {
             id
         }
     }
 `;
 
-export const FULL_POSITIONS = (positions: string[], account: string | undefined, pool: string) => {
-    const query = `
-        query fullPositionsPriceRange {
-            q1 : positions (where: {owner: "${account}", pool: "${pool}"})
-            {
-              owner
-              liquidity
-              id
-              closed
-              transaction {
-                timestamp
-              }
-              tickLower {
-                price0
-                price1
-              }
-              tickUpper {
-                price0
-                price1
-              }
-              token0 {
-                decimals
-              }
-              token1 {
-                decimals
-              }
-              timestamps
-            }
-            q2: positions (where: {id_in: [${positions}] }) {
-              owner
-              liquidity
-              id
-              closed
-              transaction {
-                timestamp
-              }
-              tickLower {
-                price0
-                price1
-              }
-              tickUpper {
-                price0
-                price1
-              }
-               token0 {
-                decimals
-              }
-              token1 {
-                decimals
-              }
-              timestamps
-            }
-        }
-    `;
-    return gql(query);
-};
-// add a filter on endtime with variable
-export const INFINITE_EVENTS = (endTime: number) => gql`
-    query infiniteFarms {
-        eternalFarmings(where: { isDetached: false, endTime_gt: ${endTime}, reward_gt: 0, endTimeImplied_gt: ${endTime} }) {
+export const FULL_POSITIONS = gql`
+  query fullPositionsPriceRange($account: Bytes, $pool: String!, $positions: [ID!]!) {
+    q1: positions (where: {owner: $account, pool: $pool}) {
+      owner
+      liquidity
+      id
+      transaction {
+        timestamp
+      }
+      tickLower {
+        price0
+        price1
+      }
+      tickUpper {
+        price0
+        price1
+      }
+      token0 {
+        decimals
+      }
+      token1 {
+        decimals
+      }
+    }
+    q2: positions (where: {id_in: $positions}) {
+      owner
+      liquidity
+      id
+      transaction {
+        timestamp
+      }
+      tickLower {
+        price0
+        price1
+      }
+      tickUpper {
+        price0
+        price1
+      }
+      token0 {
+        decimals
+      }
+      token1 {
+        decimals
+      }
+    }
+  }
+`;
+
+export const INFINITE_EVENTS = gql`
+    query infiniteFarms($endTime: BigInt!) {
+        eternalFarmings(where: { isDetached: false, endTime_gt: $endTime, reward_gt: 0, endTimeImplied_gt: $endTime }) {
             id
             rewardToken
             bonusRewardToken
@@ -584,52 +530,90 @@ export const TOP_POOLS = gql`
     }
 `;
 
-export const POOLS_FROM_ADDRESSES = (blockNumber: undefined | number, pools: string[]) => {
-    let poolString = `[`;
-    pools.map((address) => {
-        return (poolString += `"${address}",`);
-    });
-    poolString += "]";
-    const queryString =
-        `
-      query pools {
-        pools(where: {id_in: ${poolString}},` +
-        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
+// For fetching with a specific block
+export const POOLS_FROM_ADDRESSES_HISTORICAL = gql`
+  query getPoolsFromAddressesHistorical($pools: [ID!]!, $blockNumber: Int!) {
+    pools(
+      where: {id_in: $pools}
+      block: {number: $blockNumber}
+      orderBy: totalValueLockedUSD
+      orderDirection: desc
+      subgraphError: allow
+    ) {
+      id
+      fee
+      liquidity
+      sqrtPrice
+      tick
+      token0 {
           id
-          fee
-          liquidity
-          sqrtPrice
-          tick
-          token0 {
-              id
-              symbol
-              name
-              decimals
-              derivedMatic
-          }
-          token1 {
-              id
-              symbol
-              name
-              decimals
-              derivedMatic
-          }
-          token0Price
-          token1Price
-          volumeUSD
-          txCount
-          totalValueLockedToken0
-          totalValueLockedToken1
-          totalValueLockedUSD
-          totalValueLockedUSDUntracked
-          untrackedVolumeUSD
-          feesUSD
-        }
+          symbol
+          name
+          decimals
+          derivedMatic
       }
-      `;
-    return gql(queryString);
-};
+      token1 {
+          id
+          symbol
+          name
+          decimals
+          derivedMatic
+      }
+      token0Price
+      token1Price
+      volumeUSD
+      txCount
+      totalValueLockedToken0
+      totalValueLockedToken1
+      totalValueLockedUSD
+      totalValueLockedUSDUntracked
+      untrackedVolumeUSD
+      feesUSD
+    }
+  }
+`;
+
+// For fetching latest block data
+export const POOLS_FROM_ADDRESSES_LATEST = gql`
+  query getPoolsFromAddressesLatest($pools: [ID!]!) {
+    pools(
+      where: {id_in: $pools}
+      orderBy: totalValueLockedUSD
+      orderDirection: desc
+      subgraphError: allow
+    ) {
+      id
+      fee
+      liquidity
+      sqrtPrice
+      tick
+      token0 {
+          id
+          symbol
+          name
+          decimals
+          derivedMatic
+      }
+      token1 {
+          id
+          symbol
+          name
+          decimals
+          derivedMatic
+      }
+      token0Price
+      token1Price
+      volumeUSD
+      txCount
+      totalValueLockedToken0
+      totalValueLockedToken1
+      totalValueLockedUSD
+      totalValueLockedUSDUntracked
+      untrackedVolumeUSD
+      feesUSD
+    }
+  }
+`;
 
 export const TOP_TOKENS = gql`
     query topTokens {
@@ -639,53 +623,98 @@ export const TOP_TOKENS = gql`
     }
 `;
 
-export const TOKENS_FROM_ADDRESSES = (blockNumber: number | undefined, tokens: string[]) => {
-    let tokenString = `[`;
-    tokens.map((address) => {
-        return (tokenString += `"${address}",`);
-    });
-    tokenString += "]";
-    const queryString =
-        `
-      query tokens {
-        tokens(where: {id_in: ${tokenString}},` +
-        (blockNumber ? `block: {number: ${blockNumber}} ,` : ``) +
-        ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
-          id
-          symbol
-          name
-          derivedMatic
-          volumeUSD
-          volume
-          txCount
-          totalValueLocked
-          untrackedVolumeUSD
-          feesUSD
-          totalValueLockedUSD
-          totalValueLockedUSDUntracked
-        }
-      }
-      `;
+// For fetching with a specific block
+export const TOKENS_FROM_ADDRESSES_HISTORICAL = gql`
+  query getTokensFromAddressesHistorical($tokens: [ID!]!, $blockNumber: Int!) {
+    tokens(
+      where: {id_in: $tokens}
+      block: {number: $blockNumber}
+      orderBy: totalValueLockedUSD
+      orderDirection: desc
+      subgraphError: allow
+    ) {
+      id
+      symbol
+      name
+      derivedMatic
+      volumeUSD
+      volume
+      txCount
+      totalValueLocked
+      untrackedVolumeUSD
+      feesUSD
+      totalValueLockedUSD
+      totalValueLockedUSDUntracked
+    }
+  }
+`;
 
-    return gql(queryString);
-};
+// For fetching latest block data
+export const TOKENS_FROM_ADDRESSES_LATEST = gql`
+  query getTokensFromAddressesLatest($tokens: [ID!]!) {
+    tokens(
+      where: {id_in: $tokens}
+      orderBy: totalValueLockedUSD
+      orderDirection: desc
+      subgraphError: allow
+    ) {
+      id
+      symbol
+      name
+      derivedMatic
+      volumeUSD
+      volume
+      txCount
+      totalValueLocked
+      untrackedVolumeUSD
+      feesUSD
+      totalValueLockedUSD
+      totalValueLockedUSDUntracked
+    }
+  }
+`;
+
+// For fetching with a specific block
+export const TOTAL_STATS_HISTORICAL = gql`
+  query totalStatsHistorical($blockNumber: Int!) {
+    factories(block: { number: $blockNumber }) {
+      totalVolumeUSD
+      untrackedVolumeUSD
+      totalValueLockedUSD
+      totalValueLockedUSDUntracked
+      txCount
+      totalFeesUSD
+    }
+  }
+`;
+
+// For fetching latest block data
+export const TOTAL_STATS_LATEST = gql`
+  query totalStatsLatest {
+    factories {
+      totalVolumeUSD
+      untrackedVolumeUSD
+      totalValueLockedUSD
+      totalValueLockedUSDUntracked
+      txCount
+      totalFeesUSD
+    }
+  }
+`;
 
 //Blocklytics
 
-export const GET_BLOCKS = (timestamps: string[]) => {
-    let queryString = "query blocks {";
-    queryString += timestamps.map((timestamp) => {
-        return `t${timestamp}:blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: { timestamp_gt: ${timestamp}, timestamp_lt: ${timestamp + 600} }) {
-          number
-        }`;
-    });
-    queryString += "}";
-    return gql(queryString);
-};
+export const GET_BLOCK_BY_TIMESTAMP_RANGE = gql`
+  query getBlockByTimestampRange($timestamp_gt: BigInt!, $timestamp_lt: BigInt!) {
+    blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: {timestamp_gt: $timestamp_gt, timestamp_lt: $timestamp_lt}) {
+      number
+    }
+  }
+`;
 
 //Ticks
 
-export const FETCH_TICKS = () => gql`
+export const FETCH_TICKS = gql`
     query surroundingTicks($poolAddress: String!, $tickIdxLowerBound: BigInt!, $tickIdxUpperBound: BigInt!, $skip: Int!) {
         ticks(subgraphError: allow, first: 1000, skip: $skip, where: { poolAddress: $poolAddress, tickIdx_lte: $tickIdxUpperBound, tickIdx_gte: $tickIdxLowerBound }) {
             tickIdx
@@ -699,7 +728,7 @@ export const FETCH_TICKS = () => gql`
 
 //Add Liquidity
 
-export const FETCH_POPULAR_POOLS = () => gql`
+export const FETCH_POPULAR_POOLS = gql`
     query popularPools {
         pools(orderBy: totalValueLockedUSD, orderDirection: desc, first: 6) {
             token0 {

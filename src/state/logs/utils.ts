@@ -4,8 +4,8 @@ export interface EventFilter {
 }
 
 export interface Log {
-    topics: Array<string>
-    data: string
+    topics: readonly string[];
+    data: string;
 }
 
 /**
@@ -13,9 +13,8 @@ export interface Log {
  * @param filter the filter to convert
  */
 export function filterToKey(filter: EventFilter): string {
-    return `${filter.address ?? ''}:${
-        filter.topics?.map((topic) => (topic ? (Array.isArray(topic) ? topic.join(';') : topic) : '\0'))?.join('-') ?? ''
-    }`
+    return `${filter.address ?? ''}:${filter.topics?.map((topic) => (topic ? (Array.isArray(topic) ? topic.join(';') : topic) : '\0'))?.join('-') ?? ''
+        }`
 }
 
 /**

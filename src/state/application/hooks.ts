@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "state/hooks";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { AppState } from "../index";
 import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from "./actions";
 
 export function useBlockNumber(): number | undefined {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     return useAppSelector((state: AppState) => state.application.blockNumber[chainId ?? -1]);
 }

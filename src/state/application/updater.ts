@@ -1,79 +1,100 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { api, CHAIN_TAG } from "state/data/enhanced";
-import { useAppDispatch, useAppSelector } from "state/hooks";
-import { supportedChainId } from "utils/supportedChainId";
+import { useAppDispatch } from "state/hooks";
 import useDebounce from "../../hooks/useDebounce";
 import useIsWindowVisible from "../../hooks/useIsWindowVisible";
-import { useWeb3React } from "@web3-react/core";
-import { updateBlockNumber, updateChainId } from "./actions";
+import { useAccount, usePublicClient } from "wagmi";
+import { updateBlockNumber } from "./actions";
+import { publicClientToProvider } from "../../utils/ethersAdapters";
 
 function useQueryCacheInvalidator() {
-    const chainId = useAppSelector((state) => state.application.chainId);
+    const { chain } = useAccount();
+    const currentChainId = chain?.id;
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         dispatch(api.util.invalidateTags([CHAIN_TAG]));
-    }, [chainId, dispatch]);
+    }, [currentChainId, dispatch]);
 }
 
 export default function Updater(): null {
-    const { provider, chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const currentChainId = chain?.id;
+    const publicClient = usePublicClient({ chainId: currentChainId });
     const dispatch = useAppDispatch();
-
     const windowVisible = useIsWindowVisible();
 
-    const [state, setState] = useState<{ chainId: number | undefined; blockNumber: number | null }>({
-        chainId,
+    const provider = useMemo(() => {
+        if (!publicClient) return undefined;
+        try {
+            return publicClientToProvider(publicClient);
+        } catch (error) {
+            console.error("ApplicationUpdater: Error creating provider from publicClient", error);
+            return undefined;
+        }
+    }, [publicClient]);
+
+    const [internalState, setInternalState] = useState<{ chainId: number | undefined; blockNumber: number | null }>(() => ({
+        chainId: currentChainId,
         blockNumber: null,
-    });
+    }));
 
     useQueryCacheInvalidator();
 
+    useEffect(() => {
+        setInternalState(prevState => {
+            if (prevState.chainId !== currentChainId) {
+                console.log(`ApplicationUpdater: Chain ID changed from ${prevState.chainId} to ${currentChainId}. Resetting block number.`);
+                return { chainId: currentChainId, blockNumber: null };
+            }
+            return prevState;
+        });
+    }, [currentChainId]);
+
     const blockNumberCallback = useCallback(
         (blockNumber: number) => {
-            setState((state) => {
-                if (chainId === state.chainId) {
-                    if (typeof state.blockNumber !== "number") return { chainId, blockNumber };
-                    return { chainId, blockNumber: Math.max(blockNumber, state.blockNumber) };
+            setInternalState((prevState) => {
+                if (prevState.chainId === internalState.chainId) {
+                    if (typeof prevState.blockNumber !== "number" || blockNumber > prevState.blockNumber) {
+                        return { ...prevState, blockNumber };
+                    }
                 }
-                return state;
+                return prevState;
             });
         },
-        [chainId, setState]
+        [internalState.chainId]
     );
 
-    // attach/detach listeners
     useEffect(() => {
-        if (!provider || !chainId || !windowVisible) return undefined;
+        if (!provider || !internalState.chainId || !windowVisible) return undefined;
 
-        setState({ chainId, blockNumber: null });
+        console.log(`ApplicationUpdater: Setting up block listeners for chainId: ${internalState.chainId}`);
 
         provider
             .getBlockNumber()
             .then(blockNumberCallback)
-            .catch((error) => console.error(`Failed to get block number for chainId: ${chainId}`, error));
+            .catch((error) => console.error(`ApplicationUpdater: Failed to get initial block number for chainId: ${internalState.chainId}`, error));
 
         provider.on("block", blockNumberCallback);
         return () => {
+            console.log(`ApplicationUpdater: Removing block listeners for chainId: ${internalState.chainId}`);
             provider.removeListener("block", blockNumberCallback);
         };
-    }, [dispatch, chainId, provider, blockNumberCallback, windowVisible]);
+    }, [provider, internalState.chainId, blockNumberCallback, windowVisible]);
 
-    const debouncedState = useDebounce(state, 100);
+    const debouncedInternalState = useDebounce(internalState, 100);
 
     useEffect(() => {
-        if (!debouncedState.chainId || !debouncedState.blockNumber || !windowVisible) return;
+        if (!debouncedInternalState.chainId || typeof debouncedInternalState.blockNumber !== 'number' || !windowVisible) {
+            return;
+        }
         dispatch(
             updateBlockNumber({
-                chainId: debouncedState.chainId,
-                blockNumber: debouncedState.blockNumber,
+                chainId: debouncedInternalState.chainId,
+                blockNumber: debouncedInternalState.blockNumber,
             })
         );
-    }, [windowVisible, dispatch, debouncedState.blockNumber, debouncedState.chainId]);
-
-    useEffect(() => {
-        dispatch(updateChainId({ chainId: debouncedState.chainId ? supportedChainId(debouncedState.chainId) ?? null : null }));
-    }, [dispatch, debouncedState.chainId]);
+    }, [windowVisible, dispatch, debouncedInternalState.blockNumber, debouncedInternalState.chainId]);
 
     return null;
 }

@@ -1,6 +1,6 @@
-import { namehash } from 'ethers/lib/utils'
+import { namehash } from 'ethers'
 import { useMemo } from 'react'
-import { useSingleCallResult } from '../state/multicall/hooks'
+import { useSingleCallResult, NEVER_RELOAD } from '../state/multicall/hooks'
 import isZero from '../utils/isZero'
 import { useENSRegistrarContract, useENSResolverContract } from './useContract'
 
@@ -11,19 +11,19 @@ export default function useENSContentHash(ensName?: string | null): { loading: b
     const ensNodeArgument = useMemo(() => {
         if (!ensName) return [undefined]
         try {
-            return ensName ? [namehash(ensName)] : [undefined]
+            return [namehash(ensName)]
         } catch (error) {
             return [undefined]
         }
     }, [ensName])
     const registrarContract = useENSRegistrarContract(false)
-    const resolverAddressResult = useSingleCallResult(registrarContract, 'resolver', ensNodeArgument)
+    const resolverAddressResult = useSingleCallResult(registrarContract, 'resolver', ensNodeArgument, NEVER_RELOAD)
     const resolverAddress = resolverAddressResult.result?.[0]
     const resolverContract = useENSResolverContract(
-        resolverAddress && isZero(resolverAddress) ? undefined : resolverAddress,
+        resolverAddress && !isZero(resolverAddress) ? resolverAddress : undefined,
         false
     )
-    const contenthash = useSingleCallResult(resolverContract, 'contenthash', ensNodeArgument)
+    const contenthash = useSingleCallResult(resolverContract, 'contenthash', ensNodeArgument, NEVER_RELOAD)
 
     return {
         contenthash: contenthash.result?.[0] ?? null,

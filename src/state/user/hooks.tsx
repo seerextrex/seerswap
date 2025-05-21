@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "state/hooks";
 import { V2_FACTORY_ADDRESSES } from "../../constants/addresses";
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from "../../constants/routing";
 import { useAllTokens } from "../../hooks/Tokens";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { computePairAddress, Pair } from "../../utils/computePairAddress";
 import { AppState } from "../index";
 import {
@@ -241,7 +241,8 @@ export function useRemoveUserAddedToken(): (chainId: number, address: string) =>
 }
 
 export function useUserAddedTokens(): Token[] {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const serializedTokensMap = useAppSelector(({ user: { tokens } }) => tokens);
 
     return useMemo(() => {
@@ -276,7 +277,8 @@ export function useURLWarningVisible(): boolean {
  * Returns all the pairs of tokens that are tracked by the user for the current chain ID.
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const tokens = useAllTokens();
 
     // pinned pairs

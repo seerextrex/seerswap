@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { useMemo } from "react";
 import { useBestV3TradeExactOut } from "./useBestV3Trade";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 
 import { STABLE_TOKEN_FOR_USD_PRICE } from "constants/tokens";
 
@@ -18,7 +18,8 @@ const STABLECOIN_AMOUNT_OUT_FILTERED: CurrencyAmount<Token> = CurrencyAmount.fro
  * @param currency currency to compute the USDC price of
  */
 export default function useUSDCPrice(currency?: Currency, allLiquidity?: boolean): Price<Currency, Token> | undefined {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     const amountOut = chainId ? (allLiquidity ? STABLECOIN_AMOUNT_OUT_ALL : STABLECOIN_AMOUNT_OUT_FILTERED) : undefined;
     const stablecoin = amountOut?.currency;

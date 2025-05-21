@@ -1,5 +1,5 @@
 import { AlertCircle, CheckCircle } from "react-feather";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { ExternalLink } from "../../theme";
 import { ExplorerDataType, getExplorerLink } from "../../utils/getExplorerLink";
 import { t, Trans } from "@lingui/macro";
@@ -11,7 +11,8 @@ interface TransactionPopupProps {
 }
 
 export default function TransactionPopup({ hash, success, summary }: TransactionPopupProps) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     return (
         <div id={success ? `transaction-success-toast` : `transaction-failed-toast`} className={`${hash} f f-ac`}>

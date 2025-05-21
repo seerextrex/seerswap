@@ -1,13 +1,12 @@
 import { useCallback, useEffect } from "react";
 import { SUPPORTED_WALLETS } from "../../constants/wallet";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, useDisconnect } from "wagmi";
 import { clearAllTransactions } from "../../state/transactions/actions";
 import { shortenAddress } from "../../utils";
 import { ExplorerDataType, getExplorerLink } from "../../utils/getExplorerLink";
 import Copy from "./Copy";
 import Transaction from "./Transaction";
 import { ReactComponent as Close } from "../../assets/images/x.svg";
-import { injected } from "../../connectors";
 import Identicon from "../Identicon";
 import { ExternalLink as LinkIcon } from "react-feather";
 import { ExternalLink } from "../../theme";
@@ -41,15 +40,19 @@ interface AccountDetailsProps {
 }
 
 export default function AccountDetails({ toggleWalletModal, pendingTransactions, confirmedTransactions, ENSName }: AccountDetailsProps) {
-    const { chainId, account, connector } = useWeb3React();
+    const { address: account, chain, connector: activeConnector } = useAccount();
+    const chainId = chain?.id;
+    const { disconnect } = useDisconnect();
     const dispatch = useAppDispatch();
 
     function formatConnectorName() {
         const { ethereum } = window as unknown as EthereumWindow;
         const isMetaMask = !!(ethereum && ethereum.isMetaMask);
+        const connectorName = activeConnector?.name;
         const name = Object.keys(SUPPORTED_WALLETS)
-            .filter((k) => SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === "METAMASK")))
-            .map((k) => SUPPORTED_WALLETS[k].name)[0];
+            .filter((k) => SUPPORTED_WALLETS[k].connectorId === activeConnector?.id && (SUPPORTED_WALLETS[k].name === "Browser Wallet" ? !isMetaMask : true))
+            .map((k) => SUPPORTED_WALLETS[k].name)[0] || connectorName || 'Unknown Connector';
+
         return (
             <div className={`fs-085 ${name === "Metamask" && "mb-05"}`}>
                 <Trans>Connected with {name}</Trans>
@@ -58,13 +61,15 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
     }
 
     function getStatusIcon() {
-        if (connector === injected) {
+        // activeConnector.id can be 'injected', 'walletConnect', 'coinbaseWallet', etc.
+        if (activeConnector?.id === 'injected' || activeConnector?.id === 'metaMask') {
             return (
                 <IconWrapper size={16}>
                     <Identicon />
                 </IconWrapper>
             );
         }
+        // Potentially return other icons based on activeConnector.id
         return null;
     }
 
@@ -84,7 +89,7 @@ export default function AccountDetails({ toggleWalletModal, pendingTransactions,
                 <div className={"account-details p-1 mb-15 br-12 c-w"}>
                     <div className={"f f-ac mb-05"}>
                         {formatConnectorName()}
-                        <WalletAction onClick={() => (connector.deactivate ? connector.deactivate() : connector.resetState())}>
+                        <WalletAction onClick={() => disconnect()}>
                             <Trans>Disconnect</Trans>
                         </WalletAction>
                     </div>

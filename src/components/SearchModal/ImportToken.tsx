@@ -9,12 +9,15 @@ import { ArrowLeft } from "react-feather";
 import { ButtonPrimary } from "components/Button";
 import { SectionBreak } from "../swap/styled";
 import { useAddUserToken } from "state/user/hooks";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { ExternalLink } from "../../theme";
 import { ExplorerDataType, getExplorerLink } from "../../utils/getExplorerLink";
 import { AddressText, PaddedColumn } from "./styled";
 import { Plural, Trans } from "@lingui/macro";
 import { WrappedCurrency } from "../../models/types";
+import useTheme from "../../hooks/useTheme";
+import styled from "styled-components/macro";
+import { useState } from "react";
 
 interface ImportProps {
     tokens: Token[];
@@ -25,9 +28,12 @@ interface ImportProps {
 }
 
 export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }: ImportProps) {
-    const { chainId } = useWeb3React();
+    const theme = useTheme();
+    const { address, chainId } = useAccount();
 
     const addToken = useAddUserToken();
+
+    const [confirmed, setConfirmed] = useState(false);
 
     return (
         <div className={"w-100 pos-r"}>

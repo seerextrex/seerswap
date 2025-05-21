@@ -9,6 +9,7 @@ import { PoolState, usePools } from './usePools'
  * @param currencyIn the input currency
  * @param currencyOut the output currency
  */
+
 export function useV3SwapPools(
     currencyIn?: Currency,
     currencyOut?: Currency
@@ -16,19 +17,21 @@ export function useV3SwapPools(
     pools: Pool[]
     loading: boolean
 } {
-
-    const allCurrencyCombinations = useAllCurrencyCombinations(currencyIn, currencyOut)
-
-    // const allCurrencyCombinationsWithAllFees: [Token, Token, FeeAmount][] = useMemo(
-    //   () =>
-    //     allCurrencyCombinations
-    //   [allCurrencyCombinations]
-    // )
-
+    // Ensure allCurrencyCombinations is an empty array if currencies are not provided,
+    // rather than conditionally calling the hook.
+    const allCurrencyCombinations = useAllCurrencyCombinations(
+        currencyIn,
+        currencyOut
+    );
 
     const pools = usePools(allCurrencyCombinations)
 
     return useMemo(() => {
+        // If currencyIn or currencyOut are undefined, allCurrencyCombinations will be empty,
+        // leading to pools being empty, and this will correctly return { pools: [], loading: false }
+        if (!currencyIn || !currencyOut) {
+            return { pools: [], loading: false };
+        }
         return {
             pools: pools
                 .filter((tuple): tuple is [PoolState.EXISTS, Pool] => {
@@ -37,5 +40,5 @@ export function useV3SwapPools(
                 .map(([, pool]) => pool),
             loading: pools.some(([state]) => state === PoolState.LOADING)
         }
-    }, [pools])
+    }, [pools, currencyIn, currencyOut]); // Added currencyIn, currencyOut to dependency array
 }

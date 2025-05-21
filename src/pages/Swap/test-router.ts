@@ -1,4 +1,4 @@
-import { Interface } from '@ethersproject/abi'
+import { Interface } from 'ethers'
 import { BigintIsh, Currency, CurrencyAmount, Percent, Token, TradeType, validateAndParseAddress } from '@uniswap/sdk-core'
 import invariant from 'tiny-invariant'
 import { ADDRESS_ZERO, Trade } from 'lib/src'

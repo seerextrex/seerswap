@@ -34,7 +34,7 @@ const NO_TICK_DATA_PROVIDER_DEFAULT = new NoTickDataProvider()
 export class Pool {
     public readonly token0: Token
     public readonly token1: Token
-    public readonly fee: FeeAmount
+    public readonly fee: number
     public readonly sqrtRatioX96: JSBI
     public readonly liquidity: JSBI
     public readonly tickCurrent: number
@@ -53,13 +53,13 @@ export class Pool {
     public constructor(
         tokenA: Token,
         tokenB: Token,
-        fee: FeeAmount,
+        fee: number,
         sqrtRatioX96: BigintIsh,
         liquidity: BigintIsh,
         tickCurrent: number,
         ticks: TickDataProvider | (Tick | TickConstructorArgs)[] = NO_TICK_DATA_PROVIDER_DEFAULT
     ) {
-        invariant(Number.isInteger(fee) && fee < 1_000_000, 'FEE')
+        invariant(Number.isInteger(fee) && fee >= 0 && fee < 1_000_000, 'FEE')
 
         const tickCurrentSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent)
         const nextTickSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent + 1)

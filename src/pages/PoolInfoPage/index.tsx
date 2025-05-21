@@ -17,7 +17,7 @@ import { InfoTotalStats } from "../../components/InfoTotalStats";
 import { ArrowLeft } from "react-feather";
 import { NavLink } from "react-router-dom";
 import Card from "../../shared/components/Card/Card";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { t, Trans } from "@lingui/macro";
 
 interface PoolInfoPageProps {
@@ -40,7 +40,7 @@ export default function PoolInfoPage({
         params: { id },
     },
 }: PoolInfoPageProps & RouteComponentProps<{ id?: string }>) {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const {
         fetchPool: { fetchPoolFn, poolResult },

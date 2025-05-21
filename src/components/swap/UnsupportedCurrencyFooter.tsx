@@ -5,20 +5,21 @@ import Modal from "components/Modal";
 import Card from "components/Card";
 import { RowBetween } from "components/Row";
 import { AutoColumn } from "components/Column";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { Currency } from "@uniswap/sdk-core";
 import { Trans } from "@lingui/macro";
 import { DetailsFooter } from "./styled";
 
 export default function UnsupportedCurrencyFooter({ show, currencies }: { show: boolean; currencies: (Currency | undefined)[] }) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const [showDetails, setShowDetails] = useState(false);
 
     const tokens =
         chainId && currencies
             ? currencies.map((currency) => {
-                  return currency?.wrapped;
-              })
+                return currency?.wrapped;
+            })
             : [];
 
     return (

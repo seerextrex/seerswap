@@ -1,7 +1,4 @@
-import { getAddress } from "@ethersproject/address";
-import { AddressZero } from "@ethersproject/constants";
-import { Contract } from "@ethersproject/contracts";
-import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
+import { getAddress, ZeroAddress, Contract, JsonRpcSigner, BrowserProvider, Provider } from "ethers";
 import { Token } from "@uniswap/sdk-core";
 import { FeeAmount } from "@uniswap/v3-sdk/dist/";
 import { TokenAddressMap } from "../state/lists/hooks";
@@ -25,18 +22,18 @@ export function shortenAddress(address: string, chars = 4): string {
 }
 
 // account is not optional
-function getSigner(provider: Web3Provider, account: string): JsonRpcSigner {
-    return provider.getSigner(account).connectUnchecked();
+function getSigner(provider: Provider, account: string): JsonRpcSigner {
+    return new JsonRpcSigner(provider as any, account);
 }
 
 // account is optional
-function getProviderOrSigner(provider: Web3Provider, account?: string): Web3Provider | JsonRpcSigner {
+function getProviderOrSigner(provider: Provider, account?: string): Provider | JsonRpcSigner {
     return account ? getSigner(provider, account) : provider;
 }
 
 // account is optional
-export function getContract(address: string, ABI: any, provider: Web3Provider, account?: string): Contract {
-    if (!isAddress(address) || address === AddressZero) {
+export function getContract(address: string, ABI: any, provider: Provider, account?: string): Contract {
+    if (!isAddress(address) || address === ZeroAddress) {
         throw Error(`Invalid 'address' parameter '${address}'.`);
     }
 

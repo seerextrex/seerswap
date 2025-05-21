@@ -6,7 +6,7 @@ import { PoolState } from "../../../hooks/usePools";
 import { encodeSqrtRatioX96, FeeAmount, nearestUsableTick, Pool, Position, priceToClosestTick, TickMath, tickToPrice } from "lib/src";
 import { Currency, CurrencyAmount, Price, Rounding, Token } from "@uniswap/sdk-core";
 import { useCallback, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { AppState } from "../../index";
 import { tryParseAmount } from "../../swap/hooks";
 import { useCurrencyBalances } from "../../wallet/hooks";
@@ -146,7 +146,7 @@ export function useV3DerivedMintInfo(
     lowerPrice: any;
     upperPrice: any;
 } {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } = useV3MintState();
 
@@ -167,7 +167,12 @@ export function useV3DerivedMintInfo(
     const [token0, token1] = useMemo(() => (tokenA && tokenB ? (tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]) : [undefined, undefined]), [tokenA, tokenB]);
 
     // balances
-    const balances = useCurrencyBalances(account ?? undefined, [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]]);
+    const currenciesForBalance = useMemo(() => [
+        currencies[Field.CURRENCY_A],
+        currencies[Field.CURRENCY_B]
+    ], [currencies]);
+
+    const balances = useCurrencyBalances(account ?? undefined, currenciesForBalance);
     const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = {
         [Field.CURRENCY_A]: balances[0],
         [Field.CURRENCY_B]: balances[1],
@@ -242,18 +247,18 @@ export function useV3DerivedMintInfo(
                 typeof existingPosition?.tickLower === "number"
                     ? existingPosition.tickLower
                     : (invertPrice && typeof rightRangeTypedValue === "boolean") || (!invertPrice && typeof leftRangeTypedValue === "boolean")
-                    ? tickSpaceLimits[Bound.LOWER]
-                    : invertPrice
-                    ? tryParseTick(token1, token0, feeAmount, rightRangeTypedValue.toString())
-                    : tryParseTick(token0, token1, feeAmount, leftRangeTypedValue.toString()),
+                        ? tickSpaceLimits[Bound.LOWER]
+                        : invertPrice
+                            ? tryParseTick(token1, token0, feeAmount, rightRangeTypedValue.toString())
+                            : tryParseTick(token0, token1, feeAmount, leftRangeTypedValue.toString()),
             [Bound.UPPER]:
                 typeof existingPosition?.tickUpper === "number"
                     ? existingPosition.tickUpper
                     : (!invertPrice && typeof rightRangeTypedValue === "boolean") || (invertPrice && typeof leftRangeTypedValue === "boolean")
-                    ? tickSpaceLimits[Bound.UPPER]
-                    : invertPrice
-                    ? tryParseTick(token1, token0, feeAmount, leftRangeTypedValue.toString())
-                    : tryParseTick(token0, token1, feeAmount, rightRangeTypedValue.toString()),
+                        ? tickSpaceLimits[Bound.UPPER]
+                        : invertPrice
+                            ? tryParseTick(token1, token0, feeAmount, leftRangeTypedValue.toString())
+                            : tryParseTick(token0, token1, feeAmount, rightRangeTypedValue.toString()),
         };
     }, [existingPosition, feeAmount, invertPrice, leftRangeTypedValue, rightRangeTypedValue, token0, token1, tickSpaceLimits]);
 
@@ -297,18 +302,18 @@ export function useV3DerivedMintInfo(
 
             const position: Position | undefined = wrappedIndependentAmount.currency.equals(poolForPosition.token0)
                 ? Position.fromAmount0({
-                      pool: poolForPosition,
-                      tickLower,
-                      tickUpper,
-                      amount0: independentAmount.quotient,
-                      useFullPrecision: true, // we want full precision for the theoretical position
-                  })
+                    pool: poolForPosition,
+                    tickLower,
+                    tickUpper,
+                    amount0: independentAmount.quotient,
+                    useFullPrecision: true, // we want full precision for the theoretical position
+                })
                 : Position.fromAmount1({
-                      pool: poolForPosition,
-                      tickLower,
-                      tickUpper,
-                      amount1: independentAmount.quotient,
-                  });
+                    pool: poolForPosition,
+                    tickLower,
+                    tickUpper,
+                    amount1: independentAmount.quotient,
+                });
 
             const dependentTokenAmount = wrappedIndependentAmount.currency.equals(poolForPosition.token0) ? position.amount1 : position.amount0;
             return dependentCurrency && CurrencyAmount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient);
@@ -386,12 +391,12 @@ export function useV3DerivedMintInfo(
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
     if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-        errorMessage = t`Insufficient ${currencies[Field.CURRENCY_A]?.symbol} balance`;
+        errorMessage = t`Insufficient ${currencies[Field.CURRENCY_A]?.symbol || ''} balance`;
         errorCode = errorCode ?? 4;
     }
 
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-        errorMessage = t`Insufficient ${currencies[Field.CURRENCY_B]?.symbol} balance`;
+        errorMessage = t`Insufficient ${currencies[Field.CURRENCY_B]?.symbol || ''} balance`;
         errorCode = errorCode ?? 5;
     }
 

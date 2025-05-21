@@ -1,15 +1,14 @@
-import { BigNumber } from '@ethersproject/bignumber'
+// import { BigNumber } from '@ethersproject/bignumber' // Removed ethers v5 BigNumber
 
-// add 20% (except on optimism)
-export function calculateGasMargin(chainId: number, value: BigNumber, swap?: boolean): BigNumber {
+// add 20% 
+export function calculateGasMargin(chainId: number, value: bigint, swap?: boolean): bigint { // value is now bigint, returns bigint
 
     if (swap) {
-        return value.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000))
+        return value * (10000n + 2000n) / 10000n; // bigint arithmetic
     }
 
-    return value.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000))
+    return value * (10000n + 2000n) / 10000n; // bigint arithmetic
 
-    // return chainId === SupportedChainId.OPTIMISM || chainId === SupportedChainId.OPTIMISTIC_ || chainId === SupportedChainId.KOVAN
-    //   ? value
-    //   : value.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000))
+    // The commented out optimism logic would also need to be updated if re-enabled
+    // e.g., return chainId === SupportedChainId.OPTIMISM ... ? value : value * 12000n / 10000n;
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import useInterval from "../../hooks/useInterval";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, usePublicClient } from "wagmi";
 import { useAppDispatch } from "../hooks";
 import useIsWindowVisible from "../../hooks/useIsWindowVisible";
 import { useActiveListUrls, useAllLists } from "./hooks";
@@ -8,9 +8,13 @@ import { useFetchListCallback } from "../../hooks/useFetchListCallback";
 import { acceptListUpdate } from "./actions";
 import { UNSUPPORTED_LIST_URLS } from "../../constants/lists";
 import { VersionUpgrade, getVersionUpgrade, minVersionBump } from "@uniswap/token-lists";
+import { publicClientToProvider } from "../../utils/ethersAdapters";
 
 export default function Updater(): null {
-    const { provider } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+    const publicClient = usePublicClient({ chainId });
+    const provider = publicClient ? publicClientToProvider(publicClient) : undefined;
     const dispatch = useAppDispatch();
     const isWindowVisible = useIsWindowVisible();
 

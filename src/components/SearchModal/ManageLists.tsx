@@ -3,7 +3,7 @@ import { TokenList } from "@uniswap/token-lists";
 import Card from "components/Card";
 import { UNSUPPORTED_LIST_URLS } from "constants/lists";
 import { useListColor } from "hooks/useColor";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle, Settings } from "react-feather";
 import { usePopper } from "react-popper";
@@ -44,7 +44,8 @@ function listUrlRowHTMLId(listUrl: string) {
 }
 
 const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const listsByUrl = useAppSelector((state) => state.lists.byUrl);
     const dispatch = useAppDispatch();
     const { current: list, pendingUpdate: pending } = listsByUrl[listUrl];
@@ -153,7 +154,8 @@ export function ManageLists({
     setImportList: (list: TokenList) => void;
     setListUrl: (url: string) => void;
 }) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const theme = useTheme();
 
     const [listUrlInput, setListUrlInput] = useState<string>("");

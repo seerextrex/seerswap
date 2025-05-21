@@ -5,6 +5,7 @@ import { usePool } from "hooks/usePools";
 import { useToken } from "hooks/Tokens";
 import { Price, Token } from "@uniswap/sdk-core";
 import { formatTickPrice } from "utils/formatTickPrice";
+import JSBI from 'jsbi';
 import Loader from "components/Loader";
 import { unwrappedToken } from "utils/unwrappedToken";
 import { STABLE_TOKENS, WXDAI_EXTENDED } from "../../constants/tokens";
@@ -19,6 +20,7 @@ import Card from "../../shared/components/Card/Card";
 import RangeBadge from "../Badge/RangeBadge";
 import "./index.scss";
 import { useAppDispatch } from "state/hooks";
+import { NEVER_RELOAD } from "../../state/multicall/hooks";
 
 interface PositionListItemProps {
     positionDetails: PositionPool;
@@ -100,14 +102,23 @@ export default function PositionListItem({ positionDetails, newestPosition, high
         return { ...positionDetails };
     }, [positionDetails]);
 
+    console.log('[PositionListItem] positionDetails.tokenId:', positionDetails?.tokenId, 'token0:', _token0Address, 'token1:', _token1Address);
+
     const token0 = useToken(_token0Address);
     const token1 = useToken(_token1Address);
+
+    console.log('[PositionListItem] token0 object:', token0, 'token1 object:', token1);
 
     const currency0 = token0 ? unwrappedToken(token0) : undefined;
     const currency1 = token1 ? unwrappedToken(token1) : undefined;
 
+    console.log('[PositionListItem] currency0 object:', currency0, 'currency1 object:', currency1);
+
     // construct Position from details returned
-    const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined);
+    const [poolState, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined, NEVER_RELOAD);
+
+    console.log('[PositionListItem] poolState:', poolState, 'pool object:', pool);
+
     const prevPool = usePrevious(pool);
     const _pool = useMemo(() => {
         if (!pool && prevPool) {
@@ -142,9 +153,9 @@ export default function PositionListItem({ positionDetails, newestPosition, high
 
     const farmingLink = `/farming/farms#${positionDetails.tokenId}`;
 
-    const isNewest = newestPosition ? newestPosition === +positionDetails.tokenId : undefined;
+    const isNewest = newestPosition ? newestPosition === Number(positionDetails.tokenId) : undefined;
 
-    const removed = _liquidity?.eq(0);
+    const removed = position ? JSBI.equal(position.liquidity, JSBI.BigInt(0)) : false;
 
     useEffect(() => {
         if (newestPosition && highlightNewest) {

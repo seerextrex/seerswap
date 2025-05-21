@@ -14,16 +14,16 @@ import { t, Trans } from "@lingui/macro";
 import { currencyId } from "utils/currencyId";
 import { formatCurrencyAmount } from "utils/formatCurrencyAmount";
 import { useV3PositionFees } from "hooks/useV3PositionFees";
-import { BigNumber } from "@ethersproject/bignumber";
 import { Currency, CurrencyAmount, Fraction, Percent, Token } from "@uniswap/sdk-core";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, useWalletClient } from "wagmi";
+import { walletClientToSigner } from "../../utils/ethersAdapters";
 import { useV3NFTPositionManagerContract } from "hooks/useContract";
 import { useIsTransactionPending, useTransactionAdder } from "state/transactions/hooks";
-import { TransactionResponse } from "@ethersproject/providers";
+import { TransactionResponse } from "ethers";
 import { Dots } from "components/swap/styled";
 import { getPriceOrderingFromPositionForUI } from "../../components/PositionListItem";
 import RateToggle from "../../components/RateToggle";
-import { useSingleCallResult } from "state/multicall/hooks";
+import { useSingleCallResult, NEVER_RELOAD } from "../../state/multicall/hooks";
 import RangeBadge from "../../components/Badge/RangeBadge";
 import { SwitchLocaleLink } from "../../components/SwitchLocaleLink";
 import useUSDCPrice from "hooks/useUSDCPrice";
@@ -43,6 +43,10 @@ import { LinkedCurrency } from "./LinkedCurrency";
 import { CurrentPriceCard } from "./CurrentPriceCard";
 import { WrappedCurrency } from "../../models/types";
 import Card from "../../shared/components/Card/Card";
+import { RowBetween, RowFixed } from "components/Row";
+import { ApplicationModal } from "../../state/application/actions";
+import { useModalOpen, useToggleModal } from "../../state/application/hooks";
+import { isAddress } from "../../utils";
 
 function useQuery() {
     const { search } = useLocation();
@@ -55,13 +59,16 @@ export default function PositionPage({
         params: { tokenId: tokenIdFromUrl },
     },
 }: RouteComponentProps<{ tokenId?: string }>) {
-    const { chainId, account, provider } = useWeb3React();
+    const { address: account, chain } = useAccount();
+    const chainId = chain?.id;
+    const { data: walletClient } = useWalletClient({ chainId });
+    const signer = useMemo(() => walletClient ? walletClientToSigner(walletClient) : undefined, [walletClient]);
 
     const query = useQuery();
 
     const isOnFarming = useMemo(() => query.get("onFarming"), [tokenIdFromUrl, query]);
 
-    const parsedTokenId = tokenIdFromUrl ? BigNumber.from(tokenIdFromUrl) : undefined;
+    const parsedTokenId = tokenIdFromUrl ? BigInt(tokenIdFromUrl) : undefined;
     const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId);
     const { position: existingPosition } = useDerivedPositionInfo(positionDetails);
 
@@ -86,7 +93,7 @@ export default function PositionPage({
         return { ...positionDetails };
     }, [positionDetails]);
 
-    const removed = _liquidity?.eq(0);
+    const removed = _liquidity === 0n;
 
     const token0 = useToken(_token0Address);
     const token1 = useToken(_token1Address);
@@ -193,7 +200,7 @@ export default function PositionPage({
     const addTransaction = useTransactionAdder();
     const positionManager = useV3NFTPositionManagerContract();
     const collect = useCallback(() => {
-        if (!chainId || !feeValue0 || !feeValue1 || !positionManager || !account || !tokenId || !provider) return;
+        if (!chainId || !feeValue0 || !feeValue1 || !positionManager || !account || !tokenId || !signer) return;
 
         setCollecting(true);
 
@@ -212,18 +219,16 @@ export default function PositionPage({
             value: value,
         };
 
-        provider
-            .getSigner()
+        signer
             .estimateGas(txn)
             .then((estimate) => {
                 const newTxn = {
                     ...txn,
                     gasLimit: calculateGasMargin(chainId, estimate),
-                    gasPrice: gasPrice * 1000000000,
+                    gasPrice: BigInt(gasPrice) * 1000000000n,
                 };
 
-                return provider
-                    .getSigner()
+                return signer
                     .sendTransaction(newTxn)
                     .then((response: TransactionResponse) => {
                         setCollectMigrationHash(response.hash);
@@ -232,11 +237,11 @@ export default function PositionPage({
                         ReactGA.event({
                             category: "Liquidity",
                             action: "CollectV3",
-                            label: [feeValue0.currency.symbol, feeValue1.currency.symbol].join("/"),
+                            label: [feeValue0.currency.symbol || '', feeValue1.currency.symbol || ''].join("/"),
                         });
 
                         addTransaction(response, {
-                            summary: t`Collect ${feeValue0.currency.symbol}/${feeValue1.currency.symbol} fees`,
+                            summary: t`Collect ${feeValue0.currency.symbol || ''}/${feeValue1.currency.symbol || ''} fees`,
                         });
                     });
             })
@@ -244,9 +249,14 @@ export default function PositionPage({
                 setCollecting(false);
                 console.error(error);
             });
-    }, [chainId, feeValue0, feeValue1, positionManager, account, tokenId, addTransaction, provider]);
+    }, [chainId, feeValue0, feeValue1, positionManager, account, tokenId, addTransaction, signer, gasPrice]);
 
-    const owner = useSingleCallResult(!!tokenId ? positionManager : null, "ownerOf", [tokenId]).result?.[0];
+    const owner = useSingleCallResult(
+        !!tokenId ? positionManager : null,
+        "ownerOf",
+        [tokenId?.toString()],
+        NEVER_RELOAD
+    ).result?.[0];
     const ownsNFT = owner === account || positionDetails?.operator === account;
 
     const feeValueUpper = inverted ? feeValue0 : feeValue1;
@@ -256,6 +266,8 @@ export default function PositionPage({
     const below = _pool && typeof _tickLower === "number" ? _pool.tickCurrent < _tickLower : undefined;
     const above = _pool && typeof _tickUpper === "number" ? _pool.tickCurrent >= _tickUpper : undefined;
     const inRange: boolean = typeof below === "boolean" && typeof above === "boolean" ? !below && !above : false;
+
+    // const removeLiquidityModalOpen = useModalOpen(ApplicationModal.POOL_REMOVE_LIQUIDITY); // Commented out due to missing enum member
 
     function modalHeader() {
         return (

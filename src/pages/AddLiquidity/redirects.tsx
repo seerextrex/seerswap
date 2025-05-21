@@ -1,4 +1,4 @@
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { NewAddLiquidityPage } from "pages/NewAddLiquidity";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { WXDAI_EXTENDED } from "../../constants/tokens";
@@ -12,17 +12,17 @@ export function RedirectDuplicateTokenIdsNew(props: RouteComponentProps<{ curren
         },
     } = props;
 
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
 
     // prevent weth + eth
     let symbol;
 
-    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+    if (chain?.id === AlgebraConfig.CHAIN_PARAMS.chainId) {
         symbol = AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol;
     }
 
-    const isETHOrWETHA = currencyIdA === symbol || (chainId !== undefined && currencyIdA === WXDAI_EXTENDED[chainId]?.address);
-    const isETHOrWETHB = currencyIdB === symbol || (chainId !== undefined && currencyIdB === WXDAI_EXTENDED[chainId]?.address);
+    const isETHOrWETHA = currencyIdA === symbol || (chain?.id !== undefined && currencyIdA === WXDAI_EXTENDED[chain.id]?.address);
+    const isETHOrWETHB = currencyIdB === symbol || (chain?.id !== undefined && currencyIdB === WXDAI_EXTENDED[chain.id]?.address);
 
     if (currencyIdA && currencyIdB && (currencyIdA.toLowerCase() === currencyIdB.toLowerCase() || (isETHOrWETHA && isETHOrWETHB))) {
         return <Redirect to={`/add/${currencyIdA}`} />;

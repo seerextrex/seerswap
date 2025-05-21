@@ -1,4 +1,4 @@
-import { pack } from '@ethersproject/solidity'
+import { solidityPacked } from 'ethers'
 import { Currency, Token } from '@uniswap/sdk-core'
 import { Pool, Route } from 'lib/src'
 
@@ -40,5 +40,5 @@ export function encodeRouteToPath(route: Route<Currency, Currency>, exactOutput:
         { inputToken: firstInputToken, path: [], types: [] }
     )
 
-    return exactOutput ? pack(types.reverse(), path.reverse()) : pack(types, path)
+    return exactOutput ? solidityPacked(types.reverse(), path.reverse()) : solidityPacked(types, path)
 }

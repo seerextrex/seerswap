@@ -2,12 +2,13 @@ import JSBI from "jsbi";
 import { Currency, CurrencyAmount, Percent, Token, TradeType } from "@uniswap/sdk-core";
 import { Trade as V2Trade } from "@uniswap/v2-sdk";
 import { Trade as V3Trade } from "lib/src";
-import { splitSignature } from "ethers/lib/utils";
+import { Signature } from "ethers";
 import { useMemo, useState } from "react";
 import { SWAP_ROUTER_ADDRESSES } from "../constants/addresses";
 import { useSingleCallResult } from "../state/multicall/hooks";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, useWalletClient, useConfig } from 'wagmi';
 import { useEIP2612Contract } from "./useContract";
+import { signTypedData as signTypedDataAction } from "wagmi/actions";
 import useTransactionDeadline from "./useTransactionDeadline";
 
 enum PermitType {
@@ -63,18 +64,18 @@ interface AllowedSignatureData extends BaseSignatureData {
 
 export type SignatureData = StandardSignatureData | AllowedSignatureData;
 
+const EIP712_DOMAIN_TYPE_NO_VERSION = [
+    { name: "name", type: "string" },
+    { name: "chainId", type: "uint256" },
+    { name: "verifyingContract", type: "address" },
+] as const;
+
 const EIP712_DOMAIN_TYPE = [
     { name: "name", type: "string" },
     { name: "version", type: "string" },
     { name: "chainId", type: "uint256" },
     { name: "verifyingContract", type: "address" },
-];
-
-const EIP712_DOMAIN_TYPE_NO_VERSION = [
-    { name: "name", type: "string" },
-    { name: "chainId", type: "uint256" },
-    { name: "verifyingContract", type: "address" },
-];
+] as const;
 
 const EIP2612_TYPE = [
     { name: "owner", type: "address" },
@@ -82,7 +83,7 @@ const EIP2612_TYPE = [
     { name: "value", type: "uint256" },
     { name: "nonce", type: "uint256" },
     { name: "deadline", type: "uint256" },
-];
+] as const;
 
 const PERMIT_ALLOWED_TYPE = [
     { name: "holder", type: "address" },
@@ -101,7 +102,9 @@ function useERC20Permit(
     state: UseERC20PermitState;
     gatherPermitSignature: null | (() => Promise<void>);
 } {
-    const { account, chainId, provider } = useWeb3React();
+    const { address: account, chainId } = useAccount();
+    const { data: walletClient } = useWalletClient({ chainId });
+    const config = useConfig();
     const transactionDeadline = useTransactionDeadline();
     const tokenAddress = currencyAmount?.currency?.isToken ? currencyAmount.currency.address : undefined;
     const eip2612Contract = useEIP2612Contract(tokenAddress);
@@ -112,7 +115,9 @@ function useERC20Permit(
     const [signatureData, setSignatureData] = useState<SignatureData | null>(null);
 
     return useMemo(() => {
-        if (!currencyAmount || !eip2612Contract || !account || !chainId || !transactionDeadline || !provider || !tokenNonceState.valid || !tokenAddress || !spender || !permitInfo) {
+        const deadlineNumber = typeof transactionDeadline === 'bigint' ? Number(transactionDeadline) : transactionDeadline;
+
+        if (!currencyAmount || !eip2612Contract || !account || !chainId || !deadlineNumber || !walletClient || !tokenNonceState.valid || !tokenAddress || !spender || !permitInfo) {
             return {
                 state: UseERC20PermitState.NOT_APPLICABLE,
                 signatureData: null,
@@ -120,7 +125,9 @@ function useERC20Permit(
             };
         }
 
-        const nonceNumber = tokenNonceState.result?.[0]?.toNumber();
+        const nonceResult = tokenNonceState.result?.[0];
+        const nonceNumber = typeof nonceResult === 'bigint' ? Number(nonceResult) : (nonceResult as any)?.toNumber?.();
+
         if (tokenNonceState.loading || typeof nonceNumber !== "number") {
             return {
                 state: UseERC20PermitState.LOADING,
@@ -132,7 +139,7 @@ function useERC20Permit(
         const isSignatureDataValid =
             signatureData &&
             signatureData.owner === account &&
-            signatureData.deadline >= transactionDeadline.toNumber() &&
+            signatureData.deadline >= deadlineNumber &&
             signatureData.tokenAddress === tokenAddress &&
             signatureData.nonce === nonceNumber &&
             signatureData.spender === spender &&
@@ -143,77 +150,79 @@ function useERC20Permit(
             signatureData: isSignatureDataValid ? signatureData : null,
             gatherPermitSignature: async function gatherPermitSignature() {
                 const allowed = permitInfo.type === PermitType.ALLOWED;
-                const signatureDeadline = transactionDeadline.toNumber() + PERMIT_VALIDITY_BUFFER;
+                const signatureDeadline = deadlineNumber + PERMIT_VALIDITY_BUFFER;
                 const value = currencyAmount.quotient.toString();
 
                 const message = allowed
                     ? {
-                          holder: account,
-                          spender,
-                          allowed,
-                          nonce: nonceNumber,
-                          expiry: signatureDeadline,
-                      }
+                        holder: account,
+                        spender,
+                        allowed,
+                        nonce: nonceNumber,
+                        expiry: signatureDeadline,
+                    }
                     : {
-                          owner: account,
-                          spender,
-                          value,
-                          nonce: nonceNumber,
-                          deadline: signatureDeadline,
-                      };
-                const domain = permitInfo.version
-                    ? {
-                          name: permitInfo.name,
-                          version: permitInfo.version,
-                          verifyingContract: tokenAddress,
-                          chainId,
-                      }
-                    : {
-                          name: permitInfo.name,
-                          verifyingContract: tokenAddress,
-                          chainId,
-                      };
-                const data = JSON.stringify({
-                    types: {
-                        EIP712Domain: permitInfo.version ? EIP712_DOMAIN_TYPE : EIP712_DOMAIN_TYPE_NO_VERSION,
-                        Permit: allowed ? PERMIT_ALLOWED_TYPE : EIP2612_TYPE,
-                    },
-                    domain,
-                    primaryType: "Permit",
-                    message,
-                });
+                        owner: account,
+                        spender,
+                        value,
+                        nonce: nonceNumber,
+                        deadline: signatureDeadline,
+                    };
 
-                return provider
-                    .send("eth_signTypedData_v4", [account, data])
-                    .then(splitSignature)
-                    .then((signature) => {
-                        console.log("eth v4", {
-                            v: signature.v,
-                            r: signature.r,
-                            s: signature.s,
-                            deadline: signatureDeadline,
-                            ...(allowed ? { allowed } : { amount: value }),
-                            nonce: nonceNumber,
-                            chainId,
-                            owner: account,
-                            spender,
-                            tokenAddress,
-                            permitType: permitInfo.type,
+                // Define types for viem's signTypedData
+                const permitSpecificTypes = {
+                    Permit: allowed ? PERMIT_ALLOWED_TYPE : EIP2612_TYPE,
+                } as const;
+
+                try {
+                    let rawSignature;
+                    if (permitInfo.version) {
+                        const domain = {
+                            name: permitInfo.name,
+                            version: permitInfo.version,
+                            verifyingContract: tokenAddress as `0x${string}`,
+                            chainId: BigInt(chainId),
+                        };
+                        rawSignature = await signTypedDataAction(config, {
+                            account: account as `0x${string}`,
+                            domain,
+                            types: { ...permitSpecificTypes, EIP712Domain: EIP712_DOMAIN_TYPE },
+                            primaryType: "Permit",
+                            message: message as any,
                         });
-                        setSignatureData({
-                            v: signature.v,
-                            r: signature.r,
-                            s: signature.s,
-                            deadline: signatureDeadline,
-                            ...(allowed ? { allowed } : { amount: value }),
-                            nonce: nonceNumber,
-                            chainId,
-                            owner: account,
-                            spender,
-                            tokenAddress,
-                            permitType: permitInfo.type,
+                    } else {
+                        const domain = {
+                            name: permitInfo.name,
+                            verifyingContract: tokenAddress as `0x${string}`,
+                            chainId: BigInt(chainId),
+                        };
+                        rawSignature = await signTypedDataAction(config, {
+                            account: account as `0x${string}`,
+                            domain,
+                            types: { ...permitSpecificTypes, EIP712Domain: EIP712_DOMAIN_TYPE_NO_VERSION },
+                            primaryType: "Permit",
+                            message: message as any,
                         });
+                    }
+
+                    const sig = Signature.from(rawSignature);
+
+                    setSignatureData({
+                        v: sig.v,
+                        r: sig.r,
+                        s: sig.s,
+                        deadline: signatureDeadline,
+                        ...(allowed ? { allowed } : { amount: value }),
+                        nonce: nonceNumber,
+                        chainId,
+                        owner: account,
+                        spender,
+                        tokenAddress,
+                        permitType: permitInfo.type,
                     });
+                } catch (error) {
+                    console.error("Error signing typed data", error);
+                }
             },
         };
     }, [
@@ -222,7 +231,7 @@ function useERC20Permit(
         account,
         chainId,
         transactionDeadline,
-        provider,
+        walletClient,
         tokenNonceState.loading,
         tokenNonceState.valid,
         tokenNonceState.result,
@@ -244,14 +253,9 @@ export function useV2LiquidityTokenPermit(liquidityAmount: CurrencyAmount<Token>
 }
 
 export function useERC20PermitFromTrade(trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined, allowedSlippage: Percent) {
-    const { chainId } = useWeb3React();
+    const { chainId } = useAccount();
     const swapRouterAddress = chainId ? SWAP_ROUTER_ADDRESSES[chainId] : undefined;
     const amountToApprove = useMemo(() => (trade ? trade.maximumAmountIn(allowedSlippage) : undefined), [trade, allowedSlippage]);
 
-    return useERC20Permit(
-        amountToApprove,
-        // v2 router does not support
-        trade instanceof V2Trade ? undefined : trade instanceof V3Trade ? swapRouterAddress : undefined,
-        null
-    );
+    return useERC20Permit(amountToApprove, swapRouterAddress, undefined);
 }

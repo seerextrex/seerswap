@@ -1,5 +1,5 @@
 import { useBlockNumber } from "../state/application/hooks";
-import { useWeb3React } from "@web3-react/core";
+// import { useWeb3React } from "@web3-react/core"; // Removed unused import
 
 import useInterval from "./useInterval";
 import { useState } from "react";
@@ -22,7 +22,7 @@ export function useIsNetworkFailed() {
     const machineTime = useMachineTimeMs(NETWORK_HEALTH_CHECK_MS);
     const blockTime = useCurrentBlockTimestamp();
 
-    const warning = Boolean(!!blockTime && machineTime - blockTime.mul(1000).toNumber() > DEFAULT_MS_BEFORE_WARNING);
+    const warning = Boolean(blockTime && machineTime - Number(blockTime * 1000n) > DEFAULT_MS_BEFORE_WARNING);
 
     return warning;
 }
@@ -31,7 +31,7 @@ export function useIsNetworkFailedImmediate() {
     const machineTime = useMachineTimeMs(ms`1s`);
     const blockTime = useCurrentBlockTimestamp();
 
-    const warning = Boolean(!!blockTime && machineTime - blockTime.mul(1000).toNumber());
+    const warning = Boolean(blockTime && machineTime - Number(blockTime * 1000n));
 
     return !warning;
 }

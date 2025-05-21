@@ -3,7 +3,7 @@ import { forwardRef, useEffect, useMemo, useState } from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { useFarmingSubgraph } from "../../hooks/useFarmingSubgraph";
 import { AlignJustify, Calendar, Zap } from "react-feather";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { FarmingMyFarms } from "../../components/FarmingMyFarms";
 import { FarmingEventsPage } from "../FarmingEventsPage";
 import { useWalletModalToggle } from "../../state/application/hooks";
@@ -64,7 +64,7 @@ const farmingMenuList = [
 ];
 
 export default function FarmingPage() {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
     const { path } = useRouteMatch();
     const toggleWalletModal = useWalletModalToggle();
 

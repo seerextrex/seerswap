@@ -5,16 +5,20 @@ import reducer, { ApplicationState } from './reducer'
 describe('application reducer', () => {
     let store: Store<ApplicationState>
 
-    // beforeEach(() => {
-    //     store = createStore(reducer, {
-    //         chainId: null,
-    //         popupList: [],
-    //         blockNumber: {
-    //             [1]: 3
-    //         },
-    //         openModal: null
-    //     })
-    // })
+    beforeEach(() => {
+        store = createStore(reducer, {
+            chainId: null,
+            popupList: [],
+            blockNumber: {
+                [1]: 3
+            },
+            gasPrice: {
+                fetched: null,
+                override: false
+            },
+            openModal: null
+        })
+    })
 
     describe('addPopup', () => {
         it('adds the popup to list with a generated id', () => {

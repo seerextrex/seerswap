@@ -17,7 +17,7 @@ export function useInfoLiquidity() {
             setPopularPoolsLoading(true)
 
             const { data: { pools }, error: error } = await dataClient.query<SubgraphResponse<any[]>>({
-                query: FETCH_POPULAR_POOLS(),
+                query: FETCH_POPULAR_POOLS,
                 fetchPolicy: 'network-only'
             })
 

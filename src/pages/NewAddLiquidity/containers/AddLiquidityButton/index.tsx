@@ -2,7 +2,8 @@ import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { ZERO_PERCENT } from "constants/misc";
 import { useV3NFTPositionManagerContract } from "hooks/useContract";
 import useTransactionDeadline from "hooks/useTransactionDeadline";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, useWalletClient } from "wagmi";
+import { walletClientToSigner } from "../../../../utils/ethersAdapters";
 import { useUserSlippageToleranceWithDefault } from "state/user/hooks";
 
 import { NonfungiblePositionManager as NonFunPosMan } from "lib/src/nonfungiblePositionManager";
@@ -15,12 +16,13 @@ import { t, Trans } from "@lingui/macro";
 import { useAllTransactions, useTransactionAdder } from "state/transactions/hooks";
 import { useMemo, useState } from "react";
 
-import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { TransactionResponse } from "ethers";
 import { IDerivedMintInfo, useAddLiquidityTxHash } from "state/mint/v3/hooks";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { Field } from "state/mint/actions";
 import { useIsNetworkFailedImmediate } from "hooks/useIsNetworkFailed";
 import { setAddLiquidityTxHash } from "state/mint/v3/actions";
+import ReactGA from "react-ga";
 
 interface IAddLiquidityButton {
     baseCurrency: Currency | undefined;
@@ -33,7 +35,10 @@ interface IAddLiquidityButton {
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
 export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, handleAddLiquidity, title, setRejected }: IAddLiquidityButton) {
-    const { chainId, provider, account } = useWeb3React();
+    const { address: account, chain } = useAccount();
+    const chainId = chain?.id;
+    const { data: walletClient } = useWalletClient({ chainId });
+    const signer = useMemo(() => walletClient ? walletClientToSigner(walletClient) : undefined, [walletClient]);
 
     const positionManager = useV3NFTPositionManagerContract();
 
@@ -60,16 +65,16 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
     const isReady = useMemo(() => {
         return Boolean(
             (mintInfo.depositADisabled ? true : approvalA === ApprovalState.APPROVED) &&
-                (mintInfo.depositBDisabled ? true : approvalB === ApprovalState.APPROVED) &&
-                !mintInfo.errorMessage &&
-                !mintInfo.invalidRange &&
-                !txHash &&
-                !isNetworkFailed
+            (mintInfo.depositBDisabled ? true : approvalB === ApprovalState.APPROVED) &&
+            !mintInfo.errorMessage &&
+            !mintInfo.invalidRange &&
+            !txHash &&
+            !isNetworkFailed
         );
-    }, [mintInfo, approvalA, approvalB]);
+    }, [mintInfo, approvalA, approvalB, txHash, isNetworkFailed]);
 
     async function onAdd() {
-        if (!chainId || !provider || !account) return;
+        if (!chainId || !signer || !account) return;
 
         if (!positionManager || !baseCurrency || !quoteCurrency) {
             return;
@@ -94,33 +99,31 @@ export function AddLiquidityButton({ baseCurrency, quoteCurrency, mintInfo, hand
 
             setRejected && setRejected(false);
 
-            provider
-                .getSigner()
+            signer
                 .estimateGas(txn)
                 .then((estimate) => {
                     const newTxn = {
                         ...txn,
                         gasLimit: calculateGasMargin(chainId, estimate),
-                        gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
+                        gasPrice: BigInt(gasPrice) * BigInt(GAS_PRICE_MULTIPLIER),
                     };
 
-                    return provider
-                        .getSigner()
+                    return signer
                         .sendTransaction(newTxn)
                         .then((response: TransactionResponse) => {
                             addTransaction(response, {
                                 summary: mintInfo.noLiquidity
-                                    ? t`Create pool and add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`
-                                    : t`Add ${baseCurrency?.symbol}/${quoteCurrency?.symbol} liquidity`,
+                                    ? baseCurrency?.symbol && quoteCurrency?.symbol && t`Create pool and add ${baseCurrency.symbol}/${quoteCurrency.symbol} liquidity` || ''
+                                    : baseCurrency?.symbol && quoteCurrency?.symbol && t`Add ${baseCurrency.symbol}/${quoteCurrency.symbol} liquidity` || '',
                             });
 
                             handleAddLiquidity();
                             dispatch(setAddLiquidityTxHash({ txHash: response.hash }));
+                            ReactGA.event({ category: 'Liquidity', action: 'Add' });
                         });
                 })
                 .catch((error) => {
                     console.error("Failed to send transaction", error);
-                    // we only care if the error is something _other_ than the user rejected the tx
                     setRejected && setRejected(true);
                     if (error?.code !== 4001) {
                         console.error(error);

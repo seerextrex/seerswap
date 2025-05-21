@@ -1,7 +1,5 @@
-import { parseBytes32String } from "@ethersproject/strings";
 import { Currency, Token } from "@uniswap/sdk-core";
-import { arrayify } from "ethers/lib/utils";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { createTokenFilterFunction } from "../components/SearchModal/filtering";
 import { ExtendedEther, WXDAI_EXTENDED } from "../constants/tokens";
 import { TokenAddressMap, useAllLists, useCombinedActiveList, useInactiveListUrls } from "../state/lists/hooks";
@@ -10,22 +8,23 @@ import { NEVER_RELOAD, useSingleCallResult } from "../state/multicall/hooks";
 import { useUserAddedTokens } from "../state/user/hooks";
 import { isAddress } from "../utils";
 
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
+import { decodeBytes32String, getBytes } from "ethers";
 import { useBytes32TokenContract, useTokenContract } from "./useContract";
 
 import AlgebraConfig from "algebra.config";
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
     const userAddedTokens = useUserAddedTokens();
 
     return useMemo(() => {
-        if (!chainId) return {};
+        if (!chain?.id) return {};
 
         // reduce to just tokens
-        const mapWithoutUrls = Object.keys(tokenMap[chainId] ?? {}).reduce<{ [address: string]: Token }>((newMap, address) => {
-            newMap[address] = tokenMap[chainId][address].token;
+        const mapWithoutUrls = Object.keys(tokenMap[chain.id] ?? {}).reduce<{ [address: string]: Token }>((newMap, address) => {
+            newMap[address] = tokenMap[chain.id][address].token;
             return newMap;
         }, {});
 
@@ -46,7 +45,7 @@ function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean):
         }
 
         return mapWithoutUrls;
-    }, [chainId, userAddedTokens, tokenMap, includeUserAdded]);
+    }, [chain?.id, userAddedTokens, tokenMap, includeUserAdded]);
 }
 
 export function useAllTokens(): { [address: string]: Token } {
@@ -57,7 +56,7 @@ export function useAllTokens(): { [address: string]: Token } {
 export function useSearchInactiveTokenLists(search: string | undefined, minResults = 10): WrappedTokenInfo[] {
     const lists = useAllLists();
     const inactiveUrls = useInactiveListUrls();
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
     const activeTokens = useAllTokens();
 
     return useMemo(() => {
@@ -69,7 +68,7 @@ export function useSearchInactiveTokenLists(search: string | undefined, minResul
             const list = lists[url].current;
             if (!list) continue;
             for (const tokenInfo of list.tokens) {
-                if (tokenInfo.chainId === chainId && tokenFilter(tokenInfo)) {
+                if (tokenInfo.chainId === chain?.id && tokenFilter(tokenInfo)) {
                     const wrapped: WrappedTokenInfo = new WrappedTokenInfo(tokenInfo, list);
                     if (!(wrapped.address in activeTokens) && !addressSet[wrapped.address]) {
                         addressSet[wrapped.address] = true;
@@ -80,7 +79,7 @@ export function useSearchInactiveTokenLists(search: string | undefined, minResul
             }
         }
         return result;
-    }, [activeTokens, chainId, inactiveUrls, lists, minResults, search]);
+    }, [activeTokens, chain?.id, inactiveUrls, lists, minResults, search]);
 }
 
 export function useIsTokenActive(token: Token | undefined | null): boolean {
@@ -108,20 +107,29 @@ export function useIsUserAddedToken(currency: Currency | undefined | null): bool
 const BYTES32_REGEX = /^0x[a-fA-F0-9]{64}$/;
 
 function parseStringOrBytes32(str: string | undefined, bytes32: string | undefined, defaultValue: string): string {
-    return str && str.length > 0
+    // console.log(`parseStringOrBytes32: str='${str}', bytes32='${bytes32}', defaultValue='${defaultValue}'`);
+    const result = str && str.length > 0
         ? str
         : // need to check for proper bytes string and valid terminator
-        bytes32 && BYTES32_REGEX.test(bytes32) && arrayify(bytes32)[31] === 0
-        ? parseBytes32String(bytes32)
-        : defaultValue;
+        bytes32 && BYTES32_REGEX.test(bytes32) && getBytes(bytes32)[31] === 0
+            ? decodeBytes32String(bytes32)
+            : defaultValue;
+    // if (result === defaultValue) {
+    //     console.log(`parseStringOrBytes32: Defaulted! str='${str}', typeof str: ${typeof str}, bytes32='${bytes32}', result='${result}'`);
+    // }
+    if (result === defaultValue && defaultValue !== '' && str !== undefined && str !== '') {
+        console.warn(`parseStringOrBytes32: Outputting default value '${defaultValue}' despite non-empty input str='${str}' (length ${str?.length}). Str type: ${typeof str}. Bytes32 input: '${bytes32}'`);
+    }
+    return result;
 }
 
 // undefined if invalid or does not exist
 // null if loading
 // otherwise returns the token
 export function useToken(tokenAddress?: string): Token | undefined | null {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
     const tokens = useAllTokens();
+    // const stableTokenRef = useRef<Token | undefined | null>(undefined); // Cache for the token object REMOVED
 
     const address = isAddress(tokenAddress);
     const _lowkeyAddress = useMemo(() => {
@@ -142,41 +150,50 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 
     const decimals = useSingleCallResult(token ? undefined : tokenContract, "decimals", undefined, NEVER_RELOAD);
 
-    return useMemo(() => {
+    const newCalculatedToken = useMemo(() => {
         if (token) return token;
-        if (!chainId || !address || !_lowkeyAddress) return undefined;
-        if (_lowkeyAddress in AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens)
+        if (!chain?.id || !address || !_lowkeyAddress) return undefined;
+        if (_lowkeyAddress in AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens) {
+            const defaultConfig = AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress];
             return new Token(
-                chainId,
+                chain.id,
                 address,
-                AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress].decimals,
-                AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress].symbol,
-                AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress].name
+                defaultConfig.decimals,
+                defaultConfig.symbol,
+                defaultConfig.name
             );
-        if (decimals.loading || symbol.loading || tokenName.loading) return null;
+        }
+        if (decimals.loading || symbol.loading || tokenName.loading) return null; // Still loading
         if (decimals.result) {
             return new Token(
-                chainId,
+                chain.id,
                 address,
-                decimals.result[0],
+                Number(decimals.result[0]),
                 parseStringOrBytes32(symbol.result?.[0], symbolBytes32.result?.[0], "UNKNOWN"),
                 parseStringOrBytes32(tokenName.result?.[0], tokenNameBytes32.result?.[0], "Unknown Token")
             );
         }
-        return undefined;
-    }, [address, chainId, decimals.loading, decimals.result, symbol.loading, symbol.result, symbolBytes32.result, token, tokenName.loading, tokenName.result, tokenNameBytes32.result]);
+        return undefined; // Not found, not loading, no valid data
+    }, [
+        token, chain?.id, address, _lowkeyAddress,
+        decimals.loading, decimals.result,
+        symbol.loading, symbol.result, symbolBytes32.result,
+        tokenName.loading, tokenName.result, tokenNameBytes32.result
+    ]);
+
+    return newCalculatedToken; // MODIFIED - directly return newCalculatedToken
 }
 
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
     let isETH;
-    if (chainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
+    if (chain?.id === AlgebraConfig.CHAIN_PARAMS.chainId) {
         isETH = currencyId?.toUpperCase() === AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol;
     }
 
     const token = useToken(isETH ? undefined : currencyId);
-    const extendedEther = useMemo(() => (chainId ? ExtendedEther.onChain(chainId) : undefined), [chainId]);
-    const weth = chainId ? WXDAI_EXTENDED[chainId] : undefined;
+    const extendedEther = useMemo(() => (chain?.id ? ExtendedEther.onChain(chain.id) : undefined), [chain?.id]);
+    const weth = chain?.id ? WXDAI_EXTENDED[chain.id] : undefined;
     if (weth?.address?.toLowerCase() === currencyId?.toLowerCase()) return weth;
     return isETH ? extendedEther : token;
 }

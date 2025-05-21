@@ -62,7 +62,7 @@ export interface FormattedEternalFarming {
     tvl: number
     bonusReward: string
     bonusRewardRate: string
-    bonusRewardToken: TokenSubgraph
+    bonusRewardToken?: TokenSubgraph
     endTime: string
     id: string
     pool: PoolChartSubgraph
@@ -78,7 +78,7 @@ export interface FormattedEternalFarming {
     tier1Multiplier: string
     tier2Multiplier: string
     tier3Multiplier: string
-    multiplierToken: TokenSubgraph
+    multiplierToken?: TokenSubgraph
 }
 
 export interface FarmingEvent extends DefaultFarmingEvent {

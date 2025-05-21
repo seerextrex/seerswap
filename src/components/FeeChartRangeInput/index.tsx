@@ -10,16 +10,16 @@ import { Token } from "@uniswap/sdk-core";
 import Toggle from "../Toggle";
 import "./index.scss";
 import PositionsSelect from "components/PoolInfoChartToolbar/PositionsSelect";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 
 interface FeeChartRangeInputProps {
     fetchedData:
-        | {
-              data: FeeSubgraph[] | PoolHourData[];
-              previousData: FeeSubgraph[] | PoolHourData[];
-          }
-        | undefined
-        | string;
+    | {
+        data: FeeSubgraph[] | PoolHourData[];
+        previousData: FeeSubgraph[] | PoolHourData[];
+    }
+    | undefined
+    | string;
     refreshing: boolean;
     id: string;
     span: number;
@@ -39,7 +39,7 @@ interface FeeChartRangeInputProps {
 export default function FeeChartRangeInput({ fetchedData, refreshing, span, type, token, token1, token0, setToken, positions, selected, setSelected }: FeeChartRangeInputProps) {
     const ref = useRef<HTMLDivElement>(null);
 
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const formattedData: FeeChart = useMemo(() => {
         if (!fetchedData || typeof fetchedData === "string")
@@ -66,12 +66,12 @@ export default function FeeChartRangeInput({ fetchedData, refreshing, span, type
                     ? "token0Price"
                     : "token1Price"
                 : type === ChartType.TVL
-                ? "tvlUSD"
-                : type === ChartType.VOLUME
-                ? isUntracked
-                    ? "untrackedVolumeUSD"
-                    : "volumeUSD"
-                : "feesUSD";
+                    ? "tvlUSD"
+                    : type === ChartType.VOLUME
+                        ? isUntracked
+                            ? "untrackedVolumeUSD"
+                            : "volumeUSD"
+                        : "feesUSD";
 
         if (type === ChartType.FEES) {
             return {

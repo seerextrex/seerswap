@@ -1,14 +1,14 @@
-import { TransactionResponse } from "@ethersproject/providers";
+import { TransactionResponse } from "ethers";
 import { useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "state/hooks";
-
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { addTransaction } from "./actions";
 import { TransactionDetails } from "./reducer";
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (response: TransactionResponse, customData?: { summary?: string; approval?: { tokenAddress: string; spender: string }; claim?: { recipient: string } }) => void {
-    const { chainId, account } = useWeb3React();
+    const { chain, address: account } = useAccount();
+    const chainId = chain?.id;
     const dispatch = useAppDispatch();
 
     return useCallback(
@@ -28,7 +28,8 @@ export function useTransactionAdder(): (response: TransactionResponse, customDat
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     const state = useAppSelector((state) => state.transactions);
 

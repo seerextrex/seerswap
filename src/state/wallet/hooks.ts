@@ -1,14 +1,13 @@
 import { Currency, CurrencyAmount, Ether, Token } from "@uniswap/sdk-core";
 import JSBI from "jsbi";
 import { useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useAllTokens } from "../../hooks/Tokens";
 import { useMulticall2Contract } from "../../hooks/useContract";
 import { isAddress } from "../../utils";
-import { useMultipleContractSingleData, useSingleContractMultipleData } from "../multicall/hooks";
-import { Interface } from "@ethersproject/abi";
+import { useMultipleContractSingleData, useSingleContractMultipleData, NEVER_RELOAD } from "../multicall/hooks";
+import { Interface } from "ethers";
 import ERC20ABI from "abis/erc20.json";
-import { Erc20Interface } from "abis/types/Erc20";
 import usePrevious, { usePreviousNonEmptyObject } from "hooks/usePrevious";
 
 /**
@@ -17,16 +16,17 @@ import usePrevious, { usePreviousNonEmptyObject } from "hooks/usePrevious";
 export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
     [address: string]: CurrencyAmount<Currency> | undefined;
 } {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const multicallContract = useMulticall2Contract();
 
     const addresses: string[] = useMemo(
         () =>
             uncheckedAddresses
                 ? uncheckedAddresses
-                      .map(isAddress)
-                      .filter((a): a is string => a !== false)
-                      .sort()
+                    .map(isAddress)
+                    .filter((a): a is string => a !== false)
+                    .sort()
                 : [],
         [uncheckedAddresses]
     );
@@ -34,7 +34,8 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
     const results = useSingleContractMultipleData(
         multicallContract,
         "getEthBalance",
-        addresses.map((address) => [address])
+        addresses.map((address) => [address]),
+        NEVER_RELOAD
     );
 
     const balances = useMemo(
@@ -65,22 +66,27 @@ export function useTokenBalancesWithLoadingIndicator(address?: string, tokens?: 
     const validatedTokens: Token[] = useMemo(() => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false) ?? [], [tokens]);
 
     const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens]);
-    const ERC20Interface = new Interface(ERC20ABI) as Erc20Interface;
-    const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20Interface, "balanceOf", [address], {
+    const erc20Interface = new Interface(ERC20ABI);
+
+    // Memoize callInputs array
+    const callInputs = useMemo(() => (address ? [address] : undefined), [address]);
+
+    const balances = useMultipleContractSingleData(validatedTokenAddresses, erc20Interface, "balanceOf", callInputs, {
         gasRequired: 100_000,
+        ...NEVER_RELOAD,
     });
 
     const _balances = useMemo(
         () =>
             address && validatedTokens.length > 0
                 ? validatedTokens.reduce<{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }>((memo, token, i) => {
-                      const value = balances?.[i]?.result?.[0];
-                      const amount = value ? JSBI.BigInt(value.toString()) : undefined;
-                      if (amount) {
-                          memo[token.address] = CurrencyAmount.fromRawAmount(token, amount);
-                      }
-                      return memo;
-                  }, {})
+                    const value = balances?.[i]?.result?.[0];
+                    const amount = value ? JSBI.BigInt(value.toString()) : undefined;
+                    if (amount) {
+                        memo[token.address] = CurrencyAmount.fromRawAmount(token, amount);
+                    }
+                    return memo;
+                }, {})
                 : {},
         [address, validatedTokens, balances]
     );
@@ -133,7 +139,7 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
 
 // mimics useAllBalances
 export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
     const allTokens = useAllTokens();
     const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens]);
     const balances = useTokenBalances(account ?? undefined, allTokensArray);

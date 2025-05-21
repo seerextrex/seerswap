@@ -6,7 +6,7 @@ import CurrencyLogo from "components/CurrencyLogo";
 import { ChevronRight } from "react-feather";
 import { useCallback, useMemo, useState } from "react";
 import CurrencySearchModal from "components/SearchModal/CurrencySearchModal";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useCurrencyBalance } from "state/wallet/hooks";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { PriceFormats } from "../PriceFomatToggler";
@@ -22,7 +22,7 @@ interface ITokenCard {
 export function TokenCard({ handleTokenSelection, currency, otherCurrency, priceFormat }: ITokenCard) {
     const [selectModal, toggleSelectModal] = useState(false);
 
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
     const balanceUSD = useUSDCPrice(currency ?? undefined);

@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from "react";
 import { Trans } from "@lingui/macro";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 
 // SDN OFAC addresses
 const BLOCKED_ADDRESSES: string[] = [
@@ -12,7 +12,7 @@ const BLOCKED_ADDRESSES: string[] = [
 ];
 
 export default function Blocklist({ children }: { children: ReactNode }) {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
     const blocked: boolean = useMemo(() => Boolean(account && BLOCKED_ADDRESSES.indexOf(account) !== -1), [account]);
     if (blocked) {
         return (

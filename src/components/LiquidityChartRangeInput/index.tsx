@@ -214,7 +214,7 @@ export default function LiquidityChartRangeInput({
                 <InfoBox icon={<Loader size="40px" stroke={"white"} />} />
             ) : isError ? (
                 <InfoBox message={<Trans>Liquidity data not available.</Trans>} icon={<CloudOff size={56} />} />
-            ) : !formattedData || formattedData === [] || !price ? (
+            ) : !formattedData || formattedData.length === 0 || !price ? (
                 // <InfoBox message={<Trans>There is no liquidity data.</Trans>} icon={<BarChart2 size={56} />} />
                 <ChartWrapper>
                     <Chart

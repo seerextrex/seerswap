@@ -1,25 +1,44 @@
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient, NormalizedCacheObject, gql } from "@apollo/client";
 import { useEffect, useMemo, useState } from "react";
-import { GET_BLOCKS } from "../../utils/graphql-queries";
+// GET_BLOCK_BY_TIMESTAMP_RANGE is not directly used by splitQuery if splitQuery needs a dynamic query builder.
+// import { GET_BLOCK_BY_TIMESTAMP_RANGE } from "../../utils/graphql-queries"; 
 import { splitQuery } from "../../utils/queries";
 import { useClients } from "../subgraph/useClients";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 
 import AlgebraConfig from "algebra.config";
+
+const ONE_DAY_UNIX = 86400;
+
+// This function generates a dynamic GraphQL query string for a batch of timestamps.
+// It's similar to the old GET_BLOCKS function.
+const buildBlocksQueryForTimestamps = (timestampsToQuery: number[]): any => {
+    if (!timestampsToQuery || timestampsToQuery.length === 0) {
+        // Return a valid query that yields no results
+        return gql`query emptyBlocks { __typename }`;
+    }
+    let queryString = 'query blocks {\n';
+    for (const timestamp of timestampsToQuery) {
+        queryString += `  t${timestamp}: blocks(first: 1, orderBy: timestamp, orderDirection: desc, where: {timestamp_gt: ${timestamp - ONE_DAY_UNIX}, timestamp_lt: ${timestamp + ONE_DAY_UNIX}}) {\n    number\n  }\n`;
+    }
+    queryString += '}';
+    return gql(queryString);
+};
 
 export function useBlocksFromTimestamps(
     timestamps: number[],
     blockClientOverride?: ApolloClient<NormalizedCacheObject>
 ): {
     blocks:
-        | {
-              timestamp: string;
-              number: any;
-          }[]
-        | undefined;
+    | {
+        timestamp: string;
+        number: any;
+    }[]
+    | undefined;
     error: boolean;
 } {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const [blocks, setBlocks] = useState<any>();
     const [error, setError] = useState(false);
 
@@ -31,28 +50,33 @@ export function useBlocksFromTimestamps(
 
     useEffect(() => {
         async function fetchData() {
-            const results = await splitQuery(GET_BLOCKS, activeBlockClient, [], timestamps);
-            if (results) {
-                setBlocks({ ...(blocks ?? {}), [chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]: results });
+            if (timestamps && timestamps.length > 0) { // Ensure timestamps exist before querying
+                const results = await splitQuery(buildBlocksQueryForTimestamps, activeBlockClient, [], timestamps);
+                if (results) {
+                    setBlocks({ ...(blocks ?? {}), [chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]: results });
+                } else {
+                    setError(true);
+                }
             } else {
-                setError(true);
+                // Handle empty timestamps array, perhaps set empty blocks or do nothing
+                setBlocks({ ...(blocks ?? {}), [chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]: {} });
             }
         }
 
         if (!networkBlocks && !error) {
             fetchData();
         }
-    });
+    }, [timestamps, activeBlockClient, networkBlocks, error, chainId, blocks]); // Added dependencies
 
     const blocksFormatted = useMemo(() => {
         if (blocks?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId]) {
-            const networkBlocks = blocks?.[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId];
+            const currentNetworkBlocks = blocks[chainId ?? AlgebraConfig.CHAIN_PARAMS.chainId];
             const formatted: any[] = [];
-            for (const t in networkBlocks) {
-                if (networkBlocks[t].length > 0) {
+            for (const t in currentNetworkBlocks) {
+                if (currentNetworkBlocks[t] && currentNetworkBlocks[t].length > 0) {
                     formatted.push({
-                        timestamp: t.split("t")[1],
-                        number: networkBlocks[t][0]["number"],
+                        timestamp: t.startsWith('t') ? t.substring(1) : t, // Handle if 't' prefix is missing
+                        number: currentNetworkBlocks[t][0]["number"],
                     });
                 }
             }
@@ -67,22 +91,27 @@ export function useBlocksFromTimestamps(
     };
 }
 
-export async function getBlocksFromTimestamps(timestamps: number[], blockClient: ApolloClient<NormalizedCacheObject>, skipCount = 500) {
+export async function getBlocksFromTimestamps(
+    timestamps: number[],
+    blockClient: ApolloClient<NormalizedCacheObject>,
+    skipCount = 500 // This skipCount is likely used by splitQuery for batch sizing
+) {
     if (timestamps?.length === 0) {
         return [];
     }
-    const fetchedData: any = await splitQuery(GET_BLOCKS, blockClient, [], timestamps, skipCount);
+    // Use the dynamic query builder with splitQuery
+    const fetchedData: any = await splitQuery(buildBlocksQueryForTimestamps, blockClient, [], timestamps, skipCount);
 
-    const blocks: any[] = [];
+    const resultingBlocks: any[] = [];
     if (fetchedData) {
         for (const t in fetchedData) {
-            if (fetchedData[t].length > 0) {
-                blocks.push({
-                    timestamp: t.split("t")[1],
+            if (fetchedData[t] && fetchedData[t].length > 0) {
+                resultingBlocks.push({
+                    timestamp: t.startsWith('t') ? t.substring(1) : t, // Handle if 't' prefix is missing
                     number: fetchedData[t][0]["number"],
                 });
             }
         }
     }
-    return blocks;
+    return resultingBlocks;
 }

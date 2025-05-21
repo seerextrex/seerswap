@@ -1,24 +1,24 @@
-import { FunctionFragment, Interface } from "@ethersproject/abi";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Contract } from "@ethersproject/contracts";
-import { useEffect, useMemo } from "react";
+import { FunctionFragment, Interface } from "ethers";
+import { Contract } from "ethers";
+import { useEffect, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "state/hooks";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useBlockNumber } from "../application/hooks";
 import { addMulticallListeners, ListenerOptions, removeMulticallListeners } from "./actions";
+export type { ListenerOptions };
 import { Call, parseCallKey, toCallKey } from "./utils";
 
 export interface Result extends ReadonlyArray<any> {
     readonly [key: string]: any;
 }
 
-type MethodArg = string | number | BigNumber;
+type MethodArg = string | number | bigint;
 type MethodArgs = Array<MethodArg | MethodArg[]>;
 
 type OptionalMethodInputs = Array<MethodArg | MethodArg[] | undefined> | undefined;
 
 function isMethodArg(x: unknown): x is MethodArg {
-    return BigNumber.isBigNumber(x) || ["string", "number"].indexOf(typeof x) !== -1;
+    return typeof x === 'bigint' || typeof x === 'string' || typeof x === 'number';
 }
 
 function isValidMethodArgs(x: unknown): x is MethodArgs | undefined {
@@ -40,7 +40,8 @@ export const NEVER_RELOAD: ListenerOptions = {
 
 // the lowest level call for subscribing to contract data
 function useCallsData(calls: (Call | undefined)[], { blocksPerFetch }: ListenerOptions = { blocksPerFetch: 1 }, methodName?: string): CallResult[] {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const callResults = useAppSelector((state) => state.multicall.callResults);
     const dispatch = useAppDispatch();
 
@@ -161,13 +162,68 @@ function toCallState(callResult: CallResult | undefined, contractInterface: Inte
     };
 }
 
+// THIS FUNCTION SHOULD REMAIN AS IS
+function shallowArrayEquals<T>(a: T[], b: T[], compareFn: (x: T, y: T) => boolean): boolean {
+    if (a === b) return true;
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (!compareFn(a[i], b[i])) return false;
+    }
+    return true;
+}
+
+// NEW FUNCTION for comparing Result objects
+function shallowResultEquals(a: Result | undefined, b: Result | undefined): boolean {
+    if (a === b) return true; // Same reference or both undefined
+    if (!a || !b) return false; // One is undefined, the other is not
+    // Ethers.js Result type is array-like with named properties.
+    // Check array part length and content
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (typeof a[i] === 'bigint' && typeof b[i] === 'bigint') {
+            if (a[i] !== b[i]) return false;
+        } else if (a[i] !== b[i]) {
+            // For other primitives or non-identical objects (by reference)
+            return false;
+        }
+    }
+
+    // Check named non-numeric properties
+    const aKeys = Object.keys(a).filter(key => isNaN(Number(key)));
+    const bKeys = Object.keys(b).filter(key => isNaN(Number(key)));
+
+    if (aKeys.length !== bKeys.length) return false;
+
+    for (const key of aKeys) {
+        if (!b.hasOwnProperty(key)) return false;
+        if (typeof a[key] === 'bigint' && typeof b[key] === 'bigint') {
+            if (a[key] !== b[key]) return false;
+        } else if (a[key] !== b[key]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function shallowCallStateEquals(a: CallState, b: CallState): boolean {
+    if (a === b) return true;
+    // Compare key properties
+    return (
+        a.valid === b.valid &&
+        a.loading === b.loading &&
+        a.syncing === b.syncing &&
+        a.error === b.error &&
+        shallowResultEquals(a.result, b.result) // MODIFIED: Use new function here
+    );
+}
+
 export function useSingleContractMultipleData(
     contract: Contract | null | undefined,
     methodName: string,
     callInputs: OptionalMethodInputs[],
     options: Partial<ListenerOptions> & { gasRequired?: number } = {}
 ): CallState[] {
-    const fragment = useMemo(() => contract?.interface?.getFunction(methodName), [contract, methodName]);
+    const fragment = useMemo(() => contract?.interface?.getFunction(methodName) ?? undefined, [contract, methodName]);
 
     const blocksPerFetch = options?.blocksPerFetch;
     const gasRequired = options?.gasRequired;
@@ -176,12 +232,12 @@ export function useSingleContractMultipleData(
         () =>
             contract && fragment && callInputs?.length > 0 && callInputs.every((inputs) => isValidMethodArgs(inputs))
                 ? callInputs.map<Call>((inputs) => {
-                      return {
-                          address: contract.address,
-                          callData: contract.interface.encodeFunctionData(fragment, inputs),
-                          ...(gasRequired ? { gasRequired } : {}),
-                      };
-                  })
+                    return {
+                        address: contract.target as string,
+                        callData: contract.interface.encodeFunctionData(fragment, inputs),
+                        ...(gasRequired ? { gasRequired } : {}),
+                    };
+                })
                 : [],
         [contract, fragment, callInputs, gasRequired]
     );
@@ -190,9 +246,18 @@ export function useSingleContractMultipleData(
 
     const latestBlockNumber = useBlockNumber();
 
-    return useMemo(() => {
+    const previousResultsRef = useRef<CallState[] | undefined>();
+
+    const newCallStates = useMemo(() => {
         return results.map((result) => toCallState(result, contract?.interface, fragment, latestBlockNumber));
     }, [fragment, contract, results, latestBlockNumber]);
+
+    // Stabilize the returned array reference
+    if (previousResultsRef.current && shallowArrayEquals(previousResultsRef.current, newCallStates, shallowCallStateEquals)) {
+        return previousResultsRef.current;
+    }
+    previousResultsRef.current = newCallStates;
+    return newCallStates;
 }
 
 export function useMultipleContractSingleData(
@@ -202,28 +267,31 @@ export function useMultipleContractSingleData(
     callInputs?: OptionalMethodInputs,
     options?: Partial<ListenerOptions> & { gasRequired?: number }
 ): CallState[] {
-    const fragment = useMemo(() => contractInterface.getFunction(methodName), [contractInterface, methodName]);
+    const fragment = useMemo(() => contractInterface.getFunction(methodName) ?? undefined, [contractInterface, methodName]);
 
     const blocksPerFetch = options?.blocksPerFetch;
     const gasRequired = options?.gasRequired;
 
-    const callData: string | undefined = useMemo(
-        () => (fragment && isValidMethodArgs(callInputs) ? contractInterface.encodeFunctionData(fragment, callInputs) : undefined),
-        [callInputs, contractInterface, fragment]
-    );
+    const callData: string | undefined = useMemo(() => {
+        if (!fragment) return undefined;
+        if (fragment.inputs.length > 0 && callInputs === undefined) return undefined;
+        if (!isValidMethodArgs(callInputs) && fragment.inputs.length > 0) return undefined;
+
+        return contractInterface.encodeFunctionData(fragment, callInputs);
+    }, [callInputs, contractInterface, fragment]);
 
     const calls = useMemo(
         () =>
             fragment && addresses && addresses.length > 0 && callData
                 ? addresses.map<Call | undefined>((address) => {
-                      return address && callData
-                          ? {
-                                address,
-                                callData,
-                                ...(gasRequired ? { gasRequired } : {}),
-                            }
-                          : undefined;
-                  })
+                    return address && callData
+                        ? {
+                            address,
+                            callData,
+                            ...(gasRequired ? { gasRequired } : {}),
+                        }
+                        : undefined;
+                })
                 : [],
         [addresses, callData, fragment, gasRequired]
     );
@@ -231,10 +299,18 @@ export function useMultipleContractSingleData(
     const results = useCallsData(calls, blocksPerFetch ? { blocksPerFetch } : undefined);
 
     const latestBlockNumber = useBlockNumber();
+    const previousResultsRef = useRef<CallState[] | undefined>();
 
-    return useMemo(() => {
+    const newCallStates = useMemo(() => {
         return results.map((result) => toCallState(result, contractInterface, fragment, latestBlockNumber));
     }, [fragment, results, contractInterface, latestBlockNumber]);
+
+    // Stabilize the returned array reference
+    if (previousResultsRef.current && shallowArrayEquals(previousResultsRef.current, newCallStates, shallowCallStateEquals)) {
+        return previousResultsRef.current;
+    }
+    previousResultsRef.current = newCallStates;
+    return newCallStates;
 }
 
 export function useSingleCallResult(
@@ -243,27 +319,36 @@ export function useSingleCallResult(
     inputs?: OptionalMethodInputs,
     options?: Partial<ListenerOptions> & { gasRequired?: number }
 ): CallState {
-    const fragment = useMemo(() => contract?.interface?.getFunction(methodName), [contract, methodName]);
+    const fragment = useMemo(() => contract?.interface?.getFunction(methodName) ?? undefined, [contract, methodName]);
 
     const blocksPerFetch = options?.blocksPerFetch;
     const gasRequired = options?.gasRequired;
 
-    const calls = useMemo<Call[]>(() => {
-        return contract && fragment && isValidMethodArgs(inputs)
-            ? [
-                  {
-                      address: contract.address,
-                      callData: contract.interface.encodeFunctionData(fragment, inputs),
-                      ...(gasRequired ? { gasRequired } : {}),
-                  },
-              ]
-            : [];
-    }, [contract, fragment, inputs, gasRequired]);
+    const call = useMemo<Call | undefined>(
+        () =>
+            contract && fragment && isValidMethodArgs(inputs)
+                ? {
+                    address: contract.target as string,
+                    callData: contract.interface.encodeFunctionData(fragment, inputs),
+                    ...(gasRequired ? { gasRequired } : {}),
+                }
+                : undefined,
+        [contract, fragment, inputs, gasRequired]
+    );
 
-    const result = useCallsData(calls, blocksPerFetch ? { blocksPerFetch } : undefined)[0];
+    const result = useCallsData([call], blocksPerFetch ? { blocksPerFetch } : undefined)[0];
     const latestBlockNumber = useBlockNumber();
 
-    return useMemo(() => {
-        return toCallState(result, contract?.interface, fragment, latestBlockNumber);
+    const previousResultRef = useRef<CallState | undefined>();
+
+    const newCallState = useMemo(() => {
+        return toCallState(result, contract?.interface, fragment, latestBlockNumber)
     }, [result, contract, fragment, latestBlockNumber]);
+
+    // Stabilize the returned object reference
+    if (previousResultRef.current && shallowCallStateEquals(previousResultRef.current, newCallState)) {
+        return previousResultRef.current;
+    }
+    previousResultRef.current = newCallState;
+    return newCallState;
 }

@@ -13,10 +13,25 @@ export type Scalars = {
   BigDecimal: any;
   BigInt: any;
   Bytes: any;
+  /**
+   * 8 bytes signed integer
+   *
+   */
+  Int8: any;
+  /**
+   * A string representation of microseconds UNIX timestamp (16 digits)
+   *
+   */
+  Timestamp: any;
 };
 
 
 
+
+export enum Aggregation_Interval {
+  Day = 'day',
+  Hour = 'hour'
+}
 
 export type AlgebraDayData = {
   __typename?: 'AlgebraDayData';
@@ -33,6 +48,7 @@ export type AlgebraDayData = {
 export type AlgebraDayData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<AlgebraDayData_Filter>>>;
   date?: Maybe<Scalars['Int']>;
   date_gt?: Maybe<Scalars['Int']>;
   date_gte?: Maybe<Scalars['Int']>;
@@ -57,6 +73,7 @@ export type AlgebraDayData_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  or?: Maybe<Array<Maybe<AlgebraDayData_Filter>>>;
   tvlUSD?: Maybe<Scalars['BigDecimal']>;
   tvlUSD_gt?: Maybe<Scalars['BigDecimal']>;
   tvlUSD_gte?: Maybe<Scalars['BigDecimal']>;
@@ -110,6 +127,56 @@ export enum AlgebraDayData_OrderBy {
   VolumeUsdUntracked = 'volumeUSDUntracked'
 }
 
+export type ArbitratorMetadata = {
+  __typename?: 'ArbitratorMetadata';
+  /** The arbitrator address */
+  id: Scalars['Bytes'];
+  /** The current arbitrator meta evidence URI */
+  registrationMetaEvidenceURI: Scalars['String'];
+};
+
+export type ArbitratorMetadata_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<ArbitratorMetadata_Filter>>>;
+  id?: Maybe<Scalars['Bytes']>;
+  id_contains?: Maybe<Scalars['Bytes']>;
+  id_gt?: Maybe<Scalars['Bytes']>;
+  id_gte?: Maybe<Scalars['Bytes']>;
+  id_in?: Maybe<Array<Scalars['Bytes']>>;
+  id_lt?: Maybe<Scalars['Bytes']>;
+  id_lte?: Maybe<Scalars['Bytes']>;
+  id_not?: Maybe<Scalars['Bytes']>;
+  id_not_contains?: Maybe<Scalars['Bytes']>;
+  id_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  or?: Maybe<Array<Maybe<ArbitratorMetadata_Filter>>>;
+  registrationMetaEvidenceURI?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_contains?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_contains_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_ends_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_ends_with_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_gt?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_gte?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_in?: Maybe<Array<Scalars['String']>>;
+  registrationMetaEvidenceURI_lt?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_lte?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_contains?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_contains_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_ends_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_in?: Maybe<Array<Scalars['String']>>;
+  registrationMetaEvidenceURI_not_starts_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_starts_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_starts_with_nocase?: Maybe<Scalars['String']>;
+};
+
+export enum ArbitratorMetadata_OrderBy {
+  Id = 'id',
+  RegistrationMetaEvidenceUri = 'registrationMetaEvidenceURI'
+}
+
 
 
 export type Block = {
@@ -137,6 +204,7 @@ export type BlockChangedFilter = {
 export type Block_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Block_Filter>>>;
   author?: Maybe<Scalars['String']>;
   author_contains?: Maybe<Scalars['String']>;
   author_contains_nocase?: Maybe<Scalars['String']>;
@@ -197,6 +265,7 @@ export type Block_Filter = {
   number_lte?: Maybe<Scalars['BigInt']>;
   number_not?: Maybe<Scalars['BigInt']>;
   number_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Block_Filter>>>;
   parentHash?: Maybe<Scalars['String']>;
   parentHash_contains?: Maybe<Scalars['String']>;
   parentHash_contains_nocase?: Maybe<Scalars['String']>;
@@ -355,6 +424,7 @@ export type Bundle = {
 export type Bundle_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Bundle_Filter>>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -371,6 +441,7 @@ export type Bundle_Filter = {
   maticPriceUSD_lte?: Maybe<Scalars['BigDecimal']>;
   maticPriceUSD_not?: Maybe<Scalars['BigDecimal']>;
   maticPriceUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  or?: Maybe<Array<Maybe<Bundle_Filter>>>;
 };
 
 export enum Bundle_OrderBy {
@@ -432,6 +503,7 @@ export type Burn_Filter = {
   amount_lte?: Maybe<Scalars['BigInt']>;
   amount_not?: Maybe<Scalars['BigInt']>;
   amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  and?: Maybe<Array<Maybe<Burn_Filter>>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -448,15 +520,24 @@ export type Burn_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_not?: Maybe<Scalars['BigInt']>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Burn_Filter>>>;
   origin?: Maybe<Scalars['Bytes']>;
   origin_contains?: Maybe<Scalars['Bytes']>;
+  origin_gt?: Maybe<Scalars['Bytes']>;
+  origin_gte?: Maybe<Scalars['Bytes']>;
   origin_in?: Maybe<Array<Scalars['Bytes']>>;
+  origin_lt?: Maybe<Scalars['Bytes']>;
+  origin_lte?: Maybe<Scalars['Bytes']>;
   origin_not?: Maybe<Scalars['Bytes']>;
   origin_not_contains?: Maybe<Scalars['Bytes']>;
   origin_not_in?: Maybe<Array<Scalars['Bytes']>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -580,12 +661,82 @@ export enum Burn_OrderBy {
   Origin = 'origin',
   Owner = 'owner',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   TickLower = 'tickLower',
   TickUpper = 'tickUpper',
   Timestamp = 'timestamp',
   Token0 = 'token0',
+  Token0Decimals = 'token0__decimals',
+  Token0DerivedMatic = 'token0__derivedMatic',
+  Token0FeesUsd = 'token0__feesUSD',
+  Token0Id = 'token0__id',
+  Token0IsSeer = 'token0__isSeer',
+  Token0Name = 'token0__name',
+  Token0PoolCount = 'token0__poolCount',
+  Token0Symbol = 'token0__symbol',
+  Token0TotalSupply = 'token0__totalSupply',
+  Token0TotalValueLocked = 'token0__totalValueLocked',
+  Token0TotalValueLockedUsd = 'token0__totalValueLockedUSD',
+  Token0TotalValueLockedUsdUntracked = 'token0__totalValueLockedUSDUntracked',
+  Token0TxCount = 'token0__txCount',
+  Token0UntrackedVolumeUsd = 'token0__untrackedVolumeUSD',
+  Token0Volume = 'token0__volume',
+  Token0VolumeUsd = 'token0__volumeUSD',
   Token1 = 'token1',
-  Transaction = 'transaction'
+  Token1Decimals = 'token1__decimals',
+  Token1DerivedMatic = 'token1__derivedMatic',
+  Token1FeesUsd = 'token1__feesUSD',
+  Token1Id = 'token1__id',
+  Token1IsSeer = 'token1__isSeer',
+  Token1Name = 'token1__name',
+  Token1PoolCount = 'token1__poolCount',
+  Token1Symbol = 'token1__symbol',
+  Token1TotalSupply = 'token1__totalSupply',
+  Token1TotalValueLocked = 'token1__totalValueLocked',
+  Token1TotalValueLockedUsd = 'token1__totalValueLockedUSD',
+  Token1TotalValueLockedUsdUntracked = 'token1__totalValueLockedUSDUntracked',
+  Token1TxCount = 'token1__txCount',
+  Token1UntrackedVolumeUsd = 'token1__untrackedVolumeUSD',
+  Token1Volume = 'token1__volume',
+  Token1VolumeUsd = 'token1__volumeUSD',
+  Transaction = 'transaction',
+  TransactionBlockNumber = 'transaction__blockNumber',
+  TransactionGasLimit = 'transaction__gasLimit',
+  TransactionGasPrice = 'transaction__gasPrice',
+  TransactionId = 'transaction__id',
+  TransactionTimestamp = 'transaction__timestamp'
 }
 
 
@@ -631,6 +782,7 @@ export type Collect_Filter = {
   amountUSD_lte?: Maybe<Scalars['BigDecimal']>;
   amountUSD_not?: Maybe<Scalars['BigDecimal']>;
   amountUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  and?: Maybe<Array<Maybe<Collect_Filter>>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -647,9 +799,14 @@ export type Collect_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_not?: Maybe<Scalars['BigInt']>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Collect_Filter>>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -729,10 +886,327 @@ export enum Collect_OrderBy {
   LogIndex = 'logIndex',
   Owner = 'owner',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   TickLower = 'tickLower',
   TickUpper = 'tickUpper',
   Timestamp = 'timestamp',
-  Transaction = 'transaction'
+  Transaction = 'transaction',
+  TransactionBlockNumber = 'transaction__blockNumber',
+  TransactionGasLimit = 'transaction__gasLimit',
+  TransactionGasPrice = 'transaction__gasPrice',
+  TransactionId = 'transaction__id',
+  TransactionTimestamp = 'transaction__timestamp'
+}
+
+export type Condition = {
+  __typename?: 'Condition';
+  /**  Conditional token conditionId  */
+  id: Scalars['ID'];
+  markets: Array<Market>;
+};
+
+
+export type ConditionMarketsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Market_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  where?: Maybe<Market_Filter>;
+};
+
+export type Condition_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Condition_Filter>>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  markets_?: Maybe<Market_Filter>;
+  or?: Maybe<Array<Maybe<Condition_Filter>>>;
+};
+
+export enum Condition_OrderBy {
+  Id = 'id',
+  Markets = 'markets'
+}
+
+export type ConditionalEvent = {
+  __typename?: 'ConditionalEvent';
+  accountId: Scalars['Bytes'];
+  amount: Scalars['BigInt'];
+  blockNumber: Scalars['BigInt'];
+  collateral: Scalars['Bytes'];
+  id: Scalars['Bytes'];
+  market: Market;
+  transactionHash: Scalars['Bytes'];
+  type: Scalars['String'];
+};
+
+export type ConditionalEvent_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  accountId?: Maybe<Scalars['Bytes']>;
+  accountId_contains?: Maybe<Scalars['Bytes']>;
+  accountId_gt?: Maybe<Scalars['Bytes']>;
+  accountId_gte?: Maybe<Scalars['Bytes']>;
+  accountId_in?: Maybe<Array<Scalars['Bytes']>>;
+  accountId_lt?: Maybe<Scalars['Bytes']>;
+  accountId_lte?: Maybe<Scalars['Bytes']>;
+  accountId_not?: Maybe<Scalars['Bytes']>;
+  accountId_not_contains?: Maybe<Scalars['Bytes']>;
+  accountId_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  amount?: Maybe<Scalars['BigInt']>;
+  amount_gt?: Maybe<Scalars['BigInt']>;
+  amount_gte?: Maybe<Scalars['BigInt']>;
+  amount_in?: Maybe<Array<Scalars['BigInt']>>;
+  amount_lt?: Maybe<Scalars['BigInt']>;
+  amount_lte?: Maybe<Scalars['BigInt']>;
+  amount_not?: Maybe<Scalars['BigInt']>;
+  amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  and?: Maybe<Array<Maybe<ConditionalEvent_Filter>>>;
+  blockNumber?: Maybe<Scalars['BigInt']>;
+  blockNumber_gt?: Maybe<Scalars['BigInt']>;
+  blockNumber_gte?: Maybe<Scalars['BigInt']>;
+  blockNumber_in?: Maybe<Array<Scalars['BigInt']>>;
+  blockNumber_lt?: Maybe<Scalars['BigInt']>;
+  blockNumber_lte?: Maybe<Scalars['BigInt']>;
+  blockNumber_not?: Maybe<Scalars['BigInt']>;
+  blockNumber_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  collateral?: Maybe<Scalars['Bytes']>;
+  collateral_contains?: Maybe<Scalars['Bytes']>;
+  collateral_gt?: Maybe<Scalars['Bytes']>;
+  collateral_gte?: Maybe<Scalars['Bytes']>;
+  collateral_in?: Maybe<Array<Scalars['Bytes']>>;
+  collateral_lt?: Maybe<Scalars['Bytes']>;
+  collateral_lte?: Maybe<Scalars['Bytes']>;
+  collateral_not?: Maybe<Scalars['Bytes']>;
+  collateral_not_contains?: Maybe<Scalars['Bytes']>;
+  collateral_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  id?: Maybe<Scalars['Bytes']>;
+  id_contains?: Maybe<Scalars['Bytes']>;
+  id_gt?: Maybe<Scalars['Bytes']>;
+  id_gte?: Maybe<Scalars['Bytes']>;
+  id_in?: Maybe<Array<Scalars['Bytes']>>;
+  id_lt?: Maybe<Scalars['Bytes']>;
+  id_lte?: Maybe<Scalars['Bytes']>;
+  id_not?: Maybe<Scalars['Bytes']>;
+  id_not_contains?: Maybe<Scalars['Bytes']>;
+  id_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  market?: Maybe<Scalars['String']>;
+  market_?: Maybe<Market_Filter>;
+  market_contains?: Maybe<Scalars['String']>;
+  market_contains_nocase?: Maybe<Scalars['String']>;
+  market_ends_with?: Maybe<Scalars['String']>;
+  market_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_gt?: Maybe<Scalars['String']>;
+  market_gte?: Maybe<Scalars['String']>;
+  market_in?: Maybe<Array<Scalars['String']>>;
+  market_lt?: Maybe<Scalars['String']>;
+  market_lte?: Maybe<Scalars['String']>;
+  market_not?: Maybe<Scalars['String']>;
+  market_not_contains?: Maybe<Scalars['String']>;
+  market_not_contains_nocase?: Maybe<Scalars['String']>;
+  market_not_ends_with?: Maybe<Scalars['String']>;
+  market_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_not_in?: Maybe<Array<Scalars['String']>>;
+  market_not_starts_with?: Maybe<Scalars['String']>;
+  market_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  market_starts_with?: Maybe<Scalars['String']>;
+  market_starts_with_nocase?: Maybe<Scalars['String']>;
+  or?: Maybe<Array<Maybe<ConditionalEvent_Filter>>>;
+  transactionHash?: Maybe<Scalars['Bytes']>;
+  transactionHash_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash_gt?: Maybe<Scalars['Bytes']>;
+  transactionHash_gte?: Maybe<Scalars['Bytes']>;
+  transactionHash_in?: Maybe<Array<Scalars['Bytes']>>;
+  transactionHash_lt?: Maybe<Scalars['Bytes']>;
+  transactionHash_lte?: Maybe<Scalars['Bytes']>;
+  transactionHash_not?: Maybe<Scalars['Bytes']>;
+  transactionHash_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  type?: Maybe<Scalars['String']>;
+  type_contains?: Maybe<Scalars['String']>;
+  type_contains_nocase?: Maybe<Scalars['String']>;
+  type_ends_with?: Maybe<Scalars['String']>;
+  type_ends_with_nocase?: Maybe<Scalars['String']>;
+  type_gt?: Maybe<Scalars['String']>;
+  type_gte?: Maybe<Scalars['String']>;
+  type_in?: Maybe<Array<Scalars['String']>>;
+  type_lt?: Maybe<Scalars['String']>;
+  type_lte?: Maybe<Scalars['String']>;
+  type_not?: Maybe<Scalars['String']>;
+  type_not_contains?: Maybe<Scalars['String']>;
+  type_not_contains_nocase?: Maybe<Scalars['String']>;
+  type_not_ends_with?: Maybe<Scalars['String']>;
+  type_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  type_not_in?: Maybe<Array<Scalars['String']>>;
+  type_not_starts_with?: Maybe<Scalars['String']>;
+  type_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  type_starts_with?: Maybe<Scalars['String']>;
+  type_starts_with_nocase?: Maybe<Scalars['String']>;
+};
+
+export enum ConditionalEvent_OrderBy {
+  AccountId = 'accountId',
+  Amount = 'amount',
+  BlockNumber = 'blockNumber',
+  Collateral = 'collateral',
+  Id = 'id',
+  Market = 'market',
+  MarketBlockNumber = 'market__blockNumber',
+  MarketBlockTimestamp = 'market__blockTimestamp',
+  MarketCollateralToken = 'market__collateralToken',
+  MarketCollateralToken1 = 'market__collateralToken1',
+  MarketCollateralToken2 = 'market__collateralToken2',
+  MarketConditionId = 'market__conditionId',
+  MarketCreator = 'market__creator',
+  MarketFactory = 'market__factory',
+  MarketFinalizeTs = 'market__finalizeTs',
+  MarketHasAnswers = 'market__hasAnswers',
+  MarketId = 'market__id',
+  MarketIndex = 'market__index',
+  MarketLowerBound = 'market__lowerBound',
+  MarketMarketName = 'market__marketName',
+  MarketOpeningTs = 'market__openingTs',
+  MarketOutcomesSupply = 'market__outcomesSupply',
+  MarketParentCollectionId = 'market__parentCollectionId',
+  MarketParentOutcome = 'market__parentOutcome',
+  MarketPayoutReported = 'market__payoutReported',
+  MarketQuestionId = 'market__questionId',
+  MarketQuestionsInArbitration = 'market__questionsInArbitration',
+  MarketTemplateId = 'market__templateId',
+  MarketTotalValueLocked = 'market__totalValueLocked',
+  MarketTotalValueLockedUsd = 'market__totalValueLockedUSD',
+  MarketTotalValueLockedUsdUntracked = 'market__totalValueLockedUSDUntracked',
+  MarketTransactionHash = 'market__transactionHash',
+  MarketType = 'market__type',
+  MarketUntrackedVolumeUsd = 'market__untrackedVolumeUSD',
+  MarketUpperBound = 'market__upperBound',
+  MarketVolume = 'market__volume',
+  MarketVolumeUsd = 'market__volumeUSD',
+  TransactionHash = 'transactionHash',
+  Type = 'type'
+}
+
+export type CurateMetadata = {
+  __typename?: 'CurateMetadata';
+  /** The current removal meta evidence URI */
+  clearingMetaEvidenceURI: Scalars['String'];
+  /** The registry address */
+  id: Scalars['Bytes'];
+  /** The number of MetaEvidence event logs emitted. */
+  metaEvidenceCount: Scalars['BigInt'];
+  /** The current registration meta evidence URI */
+  registrationMetaEvidenceURI: Scalars['String'];
+};
+
+export type CurateMetadata_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<CurateMetadata_Filter>>>;
+  clearingMetaEvidenceURI?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_contains?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_contains_nocase?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_ends_with?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_ends_with_nocase?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_gt?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_gte?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_in?: Maybe<Array<Scalars['String']>>;
+  clearingMetaEvidenceURI_lt?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_lte?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_not?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_not_contains?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_not_contains_nocase?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_not_ends_with?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_not_in?: Maybe<Array<Scalars['String']>>;
+  clearingMetaEvidenceURI_not_starts_with?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_starts_with?: Maybe<Scalars['String']>;
+  clearingMetaEvidenceURI_starts_with_nocase?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Bytes']>;
+  id_contains?: Maybe<Scalars['Bytes']>;
+  id_gt?: Maybe<Scalars['Bytes']>;
+  id_gte?: Maybe<Scalars['Bytes']>;
+  id_in?: Maybe<Array<Scalars['Bytes']>>;
+  id_lt?: Maybe<Scalars['Bytes']>;
+  id_lte?: Maybe<Scalars['Bytes']>;
+  id_not?: Maybe<Scalars['Bytes']>;
+  id_not_contains?: Maybe<Scalars['Bytes']>;
+  id_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  metaEvidenceCount?: Maybe<Scalars['BigInt']>;
+  metaEvidenceCount_gt?: Maybe<Scalars['BigInt']>;
+  metaEvidenceCount_gte?: Maybe<Scalars['BigInt']>;
+  metaEvidenceCount_in?: Maybe<Array<Scalars['BigInt']>>;
+  metaEvidenceCount_lt?: Maybe<Scalars['BigInt']>;
+  metaEvidenceCount_lte?: Maybe<Scalars['BigInt']>;
+  metaEvidenceCount_not?: Maybe<Scalars['BigInt']>;
+  metaEvidenceCount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<CurateMetadata_Filter>>>;
+  registrationMetaEvidenceURI?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_contains?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_contains_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_ends_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_ends_with_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_gt?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_gte?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_in?: Maybe<Array<Scalars['String']>>;
+  registrationMetaEvidenceURI_lt?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_lte?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_contains?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_contains_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_ends_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_in?: Maybe<Array<Scalars['String']>>;
+  registrationMetaEvidenceURI_not_starts_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_starts_with?: Maybe<Scalars['String']>;
+  registrationMetaEvidenceURI_starts_with_nocase?: Maybe<Scalars['String']>;
+};
+
+export enum CurateMetadata_OrderBy {
+  ClearingMetaEvidenceUri = 'clearingMetaEvidenceURI',
+  Id = 'id',
+  MetaEvidenceCount = 'metaEvidenceCount',
+  RegistrationMetaEvidenceUri = 'registrationMetaEvidenceURI'
 }
 
 export type Deposit = {
@@ -764,6 +1238,7 @@ export type Deposit_Filter = {
   L2tokenId_not_in?: Maybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Deposit_Filter>>>;
   enteredInEternalFarming?: Maybe<Scalars['BigInt']>;
   enteredInEternalFarming_gt?: Maybe<Scalars['BigInt']>;
   enteredInEternalFarming_gte?: Maybe<Scalars['BigInt']>;
@@ -774,7 +1249,11 @@ export type Deposit_Filter = {
   enteredInEternalFarming_not_in?: Maybe<Array<Scalars['BigInt']>>;
   eternalFarming?: Maybe<Scalars['Bytes']>;
   eternalFarming_contains?: Maybe<Scalars['Bytes']>;
+  eternalFarming_gt?: Maybe<Scalars['Bytes']>;
+  eternalFarming_gte?: Maybe<Scalars['Bytes']>;
   eternalFarming_in?: Maybe<Array<Scalars['Bytes']>>;
+  eternalFarming_lt?: Maybe<Scalars['Bytes']>;
+  eternalFarming_lte?: Maybe<Scalars['Bytes']>;
   eternalFarming_not?: Maybe<Scalars['Bytes']>;
   eternalFarming_not_contains?: Maybe<Scalars['Bytes']>;
   eternalFarming_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -788,7 +1267,11 @@ export type Deposit_Filter = {
   id_not_in?: Maybe<Array<Scalars['ID']>>;
   limitFarming?: Maybe<Scalars['Bytes']>;
   limitFarming_contains?: Maybe<Scalars['Bytes']>;
+  limitFarming_gt?: Maybe<Scalars['Bytes']>;
+  limitFarming_gte?: Maybe<Scalars['Bytes']>;
   limitFarming_in?: Maybe<Array<Scalars['Bytes']>>;
+  limitFarming_lt?: Maybe<Scalars['Bytes']>;
+  limitFarming_lte?: Maybe<Scalars['Bytes']>;
   limitFarming_not?: Maybe<Scalars['Bytes']>;
   limitFarming_not_contains?: Maybe<Scalars['Bytes']>;
   limitFarming_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -804,15 +1287,24 @@ export type Deposit_Filter = {
   onFarmingCenter_in?: Maybe<Array<Scalars['Boolean']>>;
   onFarmingCenter_not?: Maybe<Scalars['Boolean']>;
   onFarmingCenter_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  or?: Maybe<Array<Maybe<Deposit_Filter>>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   pool?: Maybe<Scalars['Bytes']>;
   pool_contains?: Maybe<Scalars['Bytes']>;
+  pool_gt?: Maybe<Scalars['Bytes']>;
+  pool_gte?: Maybe<Scalars['Bytes']>;
   pool_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool_lt?: Maybe<Scalars['Bytes']>;
+  pool_lte?: Maybe<Scalars['Bytes']>;
   pool_not?: Maybe<Scalars['Bytes']>;
   pool_not_contains?: Maybe<Scalars['Bytes']>;
   pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -881,6 +1373,7 @@ export type EternalFarming = {
   bonusRewardRate: Scalars['BigInt'];
   bonusRewardToken: Scalars['Bytes'];
   endTime: Scalars['BigInt'];
+  endTimeImplied: Scalars['BigInt'];
   id: Scalars['ID'];
   isDetached?: Maybe<Scalars['Boolean']>;
   minRangeLength: Scalars['BigInt'];
@@ -902,6 +1395,7 @@ export type EternalFarming = {
 export type EternalFarming_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<EternalFarming_Filter>>>;
   bonusReward?: Maybe<Scalars['BigInt']>;
   bonusRewardRate?: Maybe<Scalars['BigInt']>;
   bonusRewardRate_gt?: Maybe<Scalars['BigInt']>;
@@ -913,7 +1407,11 @@ export type EternalFarming_Filter = {
   bonusRewardRate_not_in?: Maybe<Array<Scalars['BigInt']>>;
   bonusRewardToken?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_contains?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_gt?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_gte?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  bonusRewardToken_lt?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_lte?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_not?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_not_contains?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -925,6 +1423,14 @@ export type EternalFarming_Filter = {
   bonusReward_not?: Maybe<Scalars['BigInt']>;
   bonusReward_not_in?: Maybe<Array<Scalars['BigInt']>>;
   endTime?: Maybe<Scalars['BigInt']>;
+  endTimeImplied?: Maybe<Scalars['BigInt']>;
+  endTimeImplied_gt?: Maybe<Scalars['BigInt']>;
+  endTimeImplied_gte?: Maybe<Scalars['BigInt']>;
+  endTimeImplied_in?: Maybe<Array<Scalars['BigInt']>>;
+  endTimeImplied_lt?: Maybe<Scalars['BigInt']>;
+  endTimeImplied_lte?: Maybe<Scalars['BigInt']>;
+  endTimeImplied_not?: Maybe<Scalars['BigInt']>;
+  endTimeImplied_not_in?: Maybe<Array<Scalars['BigInt']>>;
   endTime_gt?: Maybe<Scalars['BigInt']>;
   endTime_gte?: Maybe<Scalars['BigInt']>;
   endTime_in?: Maybe<Array<Scalars['BigInt']>>;
@@ -954,13 +1460,22 @@ export type EternalFarming_Filter = {
   minRangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
   multiplierToken?: Maybe<Scalars['Bytes']>;
   multiplierToken_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_gt?: Maybe<Scalars['Bytes']>;
+  multiplierToken_gte?: Maybe<Scalars['Bytes']>;
   multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  multiplierToken_lt?: Maybe<Scalars['Bytes']>;
+  multiplierToken_lte?: Maybe<Scalars['Bytes']>;
   multiplierToken_not?: Maybe<Scalars['Bytes']>;
   multiplierToken_not_contains?: Maybe<Scalars['Bytes']>;
   multiplierToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  or?: Maybe<Array<Maybe<EternalFarming_Filter>>>;
   pool?: Maybe<Scalars['Bytes']>;
   pool_contains?: Maybe<Scalars['Bytes']>;
+  pool_gt?: Maybe<Scalars['Bytes']>;
+  pool_gte?: Maybe<Scalars['Bytes']>;
   pool_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool_lt?: Maybe<Scalars['Bytes']>;
+  pool_lte?: Maybe<Scalars['Bytes']>;
   pool_not?: Maybe<Scalars['Bytes']>;
   pool_not_contains?: Maybe<Scalars['Bytes']>;
   pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -975,7 +1490,11 @@ export type EternalFarming_Filter = {
   rewardRate_not_in?: Maybe<Array<Scalars['BigInt']>>;
   rewardToken?: Maybe<Scalars['Bytes']>;
   rewardToken_contains?: Maybe<Scalars['Bytes']>;
+  rewardToken_gt?: Maybe<Scalars['Bytes']>;
+  rewardToken_gte?: Maybe<Scalars['Bytes']>;
   rewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  rewardToken_lt?: Maybe<Scalars['Bytes']>;
+  rewardToken_lte?: Maybe<Scalars['Bytes']>;
   rewardToken_not?: Maybe<Scalars['Bytes']>;
   rewardToken_not_contains?: Maybe<Scalars['Bytes']>;
   rewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1044,7 +1563,11 @@ export type EternalFarming_Filter = {
   tokenAmountForTier3_not_in?: Maybe<Array<Scalars['BigInt']>>;
   virtualPool?: Maybe<Scalars['Bytes']>;
   virtualPool_contains?: Maybe<Scalars['Bytes']>;
+  virtualPool_gt?: Maybe<Scalars['Bytes']>;
+  virtualPool_gte?: Maybe<Scalars['Bytes']>;
   virtualPool_in?: Maybe<Array<Scalars['Bytes']>>;
+  virtualPool_lt?: Maybe<Scalars['Bytes']>;
+  virtualPool_lte?: Maybe<Scalars['Bytes']>;
   virtualPool_not?: Maybe<Scalars['Bytes']>;
   virtualPool_not_contains?: Maybe<Scalars['Bytes']>;
   virtualPool_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1055,6 +1578,7 @@ export enum EternalFarming_OrderBy {
   BonusRewardRate = 'bonusRewardRate',
   BonusRewardToken = 'bonusRewardToken',
   EndTime = 'endTime',
+  EndTimeImplied = 'endTimeImplied',
   Id = 'id',
   IsDetached = 'isDetached',
   MinRangeLength = 'minRangeLength',
@@ -1075,6 +1599,7 @@ export enum EternalFarming_OrderBy {
 
 export type Factory = {
   __typename?: 'Factory';
+  defaultCommunityFee: Scalars['BigInt'];
   id: Scalars['ID'];
   owner: Scalars['ID'];
   poolCount: Scalars['BigInt'];
@@ -1093,6 +1618,15 @@ export type Factory = {
 export type Factory_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Factory_Filter>>>;
+  defaultCommunityFee?: Maybe<Scalars['BigInt']>;
+  defaultCommunityFee_gt?: Maybe<Scalars['BigInt']>;
+  defaultCommunityFee_gte?: Maybe<Scalars['BigInt']>;
+  defaultCommunityFee_in?: Maybe<Array<Scalars['BigInt']>>;
+  defaultCommunityFee_lt?: Maybe<Scalars['BigInt']>;
+  defaultCommunityFee_lte?: Maybe<Scalars['BigInt']>;
+  defaultCommunityFee_not?: Maybe<Scalars['BigInt']>;
+  defaultCommunityFee_not_in?: Maybe<Array<Scalars['BigInt']>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -1101,6 +1635,7 @@ export type Factory_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  or?: Maybe<Array<Maybe<Factory_Filter>>>;
   owner?: Maybe<Scalars['ID']>;
   owner_gt?: Maybe<Scalars['ID']>;
   owner_gte?: Maybe<Scalars['ID']>;
@@ -1200,6 +1735,7 @@ export type Factory_Filter = {
 };
 
 export enum Factory_OrderBy {
+  DefaultCommunityFee = 'defaultCommunityFee',
   Id = 'id',
   Owner = 'owner',
   PoolCount = 'poolCount',
@@ -1231,6 +1767,7 @@ export type FeeHourData = {
 export type FeeHourData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<FeeHourData_Filter>>>;
   changesCount?: Maybe<Scalars['BigInt']>;
   changesCount_gt?: Maybe<Scalars['BigInt']>;
   changesCount_gte?: Maybe<Scalars['BigInt']>;
@@ -1279,6 +1816,7 @@ export type FeeHourData_Filter = {
   minFee_lte?: Maybe<Scalars['BigInt']>;
   minFee_not?: Maybe<Scalars['BigInt']>;
   minFee_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<FeeHourData_Filter>>>;
   pool?: Maybe<Scalars['String']>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
@@ -1388,6 +1926,7 @@ export type Flash_Filter = {
   amountUSD_lte?: Maybe<Scalars['BigDecimal']>;
   amountUSD_not?: Maybe<Scalars['BigDecimal']>;
   amountUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  and?: Maybe<Array<Maybe<Flash_Filter>>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -1404,6 +1943,7 @@ export type Flash_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_not?: Maybe<Scalars['BigInt']>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Flash_Filter>>>;
   pool?: Maybe<Scalars['String']>;
   pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
@@ -1427,13 +1967,21 @@ export type Flash_Filter = {
   pool_starts_with_nocase?: Maybe<Scalars['String']>;
   recipient?: Maybe<Scalars['Bytes']>;
   recipient_contains?: Maybe<Scalars['Bytes']>;
+  recipient_gt?: Maybe<Scalars['Bytes']>;
+  recipient_gte?: Maybe<Scalars['Bytes']>;
   recipient_in?: Maybe<Array<Scalars['Bytes']>>;
+  recipient_lt?: Maybe<Scalars['Bytes']>;
+  recipient_lte?: Maybe<Scalars['Bytes']>;
   recipient_not?: Maybe<Scalars['Bytes']>;
   recipient_not_contains?: Maybe<Scalars['Bytes']>;
   recipient_not_in?: Maybe<Array<Scalars['Bytes']>>;
   sender?: Maybe<Scalars['Bytes']>;
   sender_contains?: Maybe<Scalars['Bytes']>;
+  sender_gt?: Maybe<Scalars['Bytes']>;
+  sender_gte?: Maybe<Scalars['Bytes']>;
   sender_in?: Maybe<Array<Scalars['Bytes']>>;
+  sender_lt?: Maybe<Scalars['Bytes']>;
+  sender_lte?: Maybe<Scalars['Bytes']>;
   sender_not?: Maybe<Scalars['Bytes']>;
   sender_not_contains?: Maybe<Scalars['Bytes']>;
   sender_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1477,11 +2025,50 @@ export enum Flash_OrderBy {
   Id = 'id',
   LogIndex = 'logIndex',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   Recipient = 'recipient',
   Sender = 'sender',
   Timestamp = 'timestamp',
-  Transaction = 'transaction'
+  Transaction = 'transaction',
+  TransactionBlockNumber = 'transaction__blockNumber',
+  TransactionGasLimit = 'transaction__gasLimit',
+  TransactionGasPrice = 'transaction__gasPrice',
+  TransactionId = 'transaction__id',
+  TransactionTimestamp = 'transaction__timestamp'
 }
+
 
 export type LimitFarming = {
   __typename?: 'LimitFarming';
@@ -1509,10 +2096,15 @@ export type LimitFarming = {
 export type LimitFarming_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<LimitFarming_Filter>>>;
   bonusReward?: Maybe<Scalars['BigInt']>;
   bonusRewardToken?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_contains?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_gt?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_gte?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  bonusRewardToken_lt?: Maybe<Scalars['Bytes']>;
+  bonusRewardToken_lte?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_not?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_not_contains?: Maybe<Scalars['Bytes']>;
   bonusRewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1569,20 +2161,33 @@ export type LimitFarming_Filter = {
   minRangeLength_not_in?: Maybe<Array<Scalars['BigInt']>>;
   multiplierToken?: Maybe<Scalars['Bytes']>;
   multiplierToken_contains?: Maybe<Scalars['Bytes']>;
+  multiplierToken_gt?: Maybe<Scalars['Bytes']>;
+  multiplierToken_gte?: Maybe<Scalars['Bytes']>;
   multiplierToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  multiplierToken_lt?: Maybe<Scalars['Bytes']>;
+  multiplierToken_lte?: Maybe<Scalars['Bytes']>;
   multiplierToken_not?: Maybe<Scalars['Bytes']>;
   multiplierToken_not_contains?: Maybe<Scalars['Bytes']>;
   multiplierToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  or?: Maybe<Array<Maybe<LimitFarming_Filter>>>;
   pool?: Maybe<Scalars['Bytes']>;
   pool_contains?: Maybe<Scalars['Bytes']>;
+  pool_gt?: Maybe<Scalars['Bytes']>;
+  pool_gte?: Maybe<Scalars['Bytes']>;
   pool_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool_lt?: Maybe<Scalars['Bytes']>;
+  pool_lte?: Maybe<Scalars['Bytes']>;
   pool_not?: Maybe<Scalars['Bytes']>;
   pool_not_contains?: Maybe<Scalars['Bytes']>;
   pool_not_in?: Maybe<Array<Scalars['Bytes']>>;
   reward?: Maybe<Scalars['BigInt']>;
   rewardToken?: Maybe<Scalars['Bytes']>;
   rewardToken_contains?: Maybe<Scalars['Bytes']>;
+  rewardToken_gt?: Maybe<Scalars['Bytes']>;
+  rewardToken_gte?: Maybe<Scalars['Bytes']>;
   rewardToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  rewardToken_lt?: Maybe<Scalars['Bytes']>;
+  rewardToken_lte?: Maybe<Scalars['Bytes']>;
   rewardToken_not?: Maybe<Scalars['Bytes']>;
   rewardToken_not_contains?: Maybe<Scalars['Bytes']>;
   rewardToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1673,6 +2278,956 @@ export enum LimitFarming_OrderBy {
   TokenAmountForTier3 = 'tokenAmountForTier3'
 }
 
+export type Market = {
+  __typename?: 'Market';
+  blockNumber: Scalars['BigInt'];
+  blockTimestamp: Scalars['BigInt'];
+  childMarkets: Array<Market>;
+  /**  collateral token for Generic markets. It's either the MarketFactory's collateralToken or the parentMarket corresponding wrapped token  */
+  collateralToken: Scalars['Bytes'];
+  /**  collateral token 1 for Futarchy markets  */
+  collateralToken1: Scalars['Bytes'];
+  /**  collateral token 2 for Futarchy markets  */
+  collateralToken2: Scalars['Bytes'];
+  conditionId: Scalars['Bytes'];
+  creator: Scalars['Bytes'];
+  ctfCondition: Condition;
+  encodedQuestions: Array<Scalars['String']>;
+  factory: Scalars['Bytes'];
+  /**  finalizeTs is equal to 33260976000 (random big number) if there is any unanswered question, otherwise it contains the finalizeTs value of the lattest question. This allows us to filter multi scalar markets using `finalizeTs > now` for markets with pending answers, and `finalizeTs < now` for markets with pending execution  */
+  finalizeTs: Scalars['BigInt'];
+  hasAnswers: Scalars['Boolean'];
+  id: Scalars['ID'];
+  index: Scalars['BigInt'];
+  lowerBound: Scalars['BigInt'];
+  marketName: Scalars['String'];
+  openingTs: Scalars['BigInt'];
+  outcomes: Array<Scalars['String']>;
+  outcomesSupply: Scalars['BigInt'];
+  parentCollectionId: Scalars['Bytes'];
+  parentMarket?: Maybe<Market>;
+  parentOutcome: Scalars['BigInt'];
+  payoutNumerators: Array<Scalars['BigInt']>;
+  payoutReported: Scalars['Boolean'];
+  questionId: Scalars['Bytes'];
+  questions: Array<MarketQuestion>;
+  questionsInArbitration: Scalars['BigInt'];
+  templateId: Scalars['BigInt'];
+  tokens: Array<Token>;
+  totalValueLocked: Scalars['BigDecimal'];
+  totalValueLockedUSD: Scalars['BigDecimal'];
+  totalValueLockedUSDUntracked: Scalars['BigDecimal'];
+  transactionHash: Scalars['Bytes'];
+  type: MarketType;
+  untrackedVolumeUSD: Scalars['BigDecimal'];
+  upperBound: Scalars['BigInt'];
+  volume: Scalars['BigDecimal'];
+  volumeUSD: Scalars['BigDecimal'];
+  wrappedTokens: Array<Scalars['Bytes']>;
+};
+
+
+export type MarketChildMarketsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Market_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  where?: Maybe<Market_Filter>;
+};
+
+
+export type MarketQuestionsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<MarketQuestion_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  where?: Maybe<MarketQuestion_Filter>;
+};
+
+
+export type MarketTokensArgs = {
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Token_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  where?: Maybe<Token_Filter>;
+};
+
+export type MarketDayData = {
+  __typename?: 'MarketDayData';
+  date: Scalars['Int'];
+  id: Scalars['ID'];
+  market: Market;
+  totalValueLocked: Scalars['BigDecimal'];
+  totalValueLockedUSD: Scalars['BigDecimal'];
+  totalValueLockedUSDUntracked: Scalars['BigDecimal'];
+  untrackedVolumeUSD: Scalars['BigDecimal'];
+  volume: Scalars['BigDecimal'];
+  volumeUSD: Scalars['BigDecimal'];
+};
+
+export type MarketDayData_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<MarketDayData_Filter>>>;
+  date?: Maybe<Scalars['Int']>;
+  date_gt?: Maybe<Scalars['Int']>;
+  date_gte?: Maybe<Scalars['Int']>;
+  date_in?: Maybe<Array<Scalars['Int']>>;
+  date_lt?: Maybe<Scalars['Int']>;
+  date_lte?: Maybe<Scalars['Int']>;
+  date_not?: Maybe<Scalars['Int']>;
+  date_not_in?: Maybe<Array<Scalars['Int']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  market?: Maybe<Scalars['String']>;
+  market_?: Maybe<Market_Filter>;
+  market_contains?: Maybe<Scalars['String']>;
+  market_contains_nocase?: Maybe<Scalars['String']>;
+  market_ends_with?: Maybe<Scalars['String']>;
+  market_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_gt?: Maybe<Scalars['String']>;
+  market_gte?: Maybe<Scalars['String']>;
+  market_in?: Maybe<Array<Scalars['String']>>;
+  market_lt?: Maybe<Scalars['String']>;
+  market_lte?: Maybe<Scalars['String']>;
+  market_not?: Maybe<Scalars['String']>;
+  market_not_contains?: Maybe<Scalars['String']>;
+  market_not_contains_nocase?: Maybe<Scalars['String']>;
+  market_not_ends_with?: Maybe<Scalars['String']>;
+  market_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_not_in?: Maybe<Array<Scalars['String']>>;
+  market_not_starts_with?: Maybe<Scalars['String']>;
+  market_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  market_starts_with?: Maybe<Scalars['String']>;
+  market_starts_with_nocase?: Maybe<Scalars['String']>;
+  or?: Maybe<Array<Maybe<MarketDayData_Filter>>>;
+  totalValueLocked?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSDUntracked_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLocked_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLocked_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  untrackedVolumeUSD?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  untrackedVolumeUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_not?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volumeUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_not?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume_gt?: Maybe<Scalars['BigDecimal']>;
+  volume_gte?: Maybe<Scalars['BigDecimal']>;
+  volume_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume_lt?: Maybe<Scalars['BigDecimal']>;
+  volume_lte?: Maybe<Scalars['BigDecimal']>;
+  volume_not?: Maybe<Scalars['BigDecimal']>;
+  volume_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+};
+
+export enum MarketDayData_OrderBy {
+  Date = 'date',
+  Id = 'id',
+  Market = 'market',
+  MarketBlockNumber = 'market__blockNumber',
+  MarketBlockTimestamp = 'market__blockTimestamp',
+  MarketCollateralToken = 'market__collateralToken',
+  MarketCollateralToken1 = 'market__collateralToken1',
+  MarketCollateralToken2 = 'market__collateralToken2',
+  MarketConditionId = 'market__conditionId',
+  MarketCreator = 'market__creator',
+  MarketFactory = 'market__factory',
+  MarketFinalizeTs = 'market__finalizeTs',
+  MarketHasAnswers = 'market__hasAnswers',
+  MarketId = 'market__id',
+  MarketIndex = 'market__index',
+  MarketLowerBound = 'market__lowerBound',
+  MarketMarketName = 'market__marketName',
+  MarketOpeningTs = 'market__openingTs',
+  MarketOutcomesSupply = 'market__outcomesSupply',
+  MarketParentCollectionId = 'market__parentCollectionId',
+  MarketParentOutcome = 'market__parentOutcome',
+  MarketPayoutReported = 'market__payoutReported',
+  MarketQuestionId = 'market__questionId',
+  MarketQuestionsInArbitration = 'market__questionsInArbitration',
+  MarketTemplateId = 'market__templateId',
+  MarketTotalValueLocked = 'market__totalValueLocked',
+  MarketTotalValueLockedUsd = 'market__totalValueLockedUSD',
+  MarketTotalValueLockedUsdUntracked = 'market__totalValueLockedUSDUntracked',
+  MarketTransactionHash = 'market__transactionHash',
+  MarketType = 'market__type',
+  MarketUntrackedVolumeUsd = 'market__untrackedVolumeUSD',
+  MarketUpperBound = 'market__upperBound',
+  MarketVolume = 'market__volume',
+  MarketVolumeUsd = 'market__volumeUSD',
+  TotalValueLocked = 'totalValueLocked',
+  TotalValueLockedUsd = 'totalValueLockedUSD',
+  TotalValueLockedUsdUntracked = 'totalValueLockedUSDUntracked',
+  UntrackedVolumeUsd = 'untrackedVolumeUSD',
+  Volume = 'volume',
+  VolumeUsd = 'volumeUSD'
+}
+
+export type MarketHourData = {
+  __typename?: 'MarketHourData';
+  id: Scalars['ID'];
+  market: Market;
+  periodStartUnix: Scalars['Int'];
+  totalValueLocked: Scalars['BigDecimal'];
+  totalValueLockedUSD: Scalars['BigDecimal'];
+  totalValueLockedUSDUntracked: Scalars['BigDecimal'];
+  untrackedVolumeUSD: Scalars['BigDecimal'];
+  volume: Scalars['BigDecimal'];
+  volumeUSD: Scalars['BigDecimal'];
+};
+
+export type MarketHourData_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<MarketHourData_Filter>>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  market?: Maybe<Scalars['String']>;
+  market_?: Maybe<Market_Filter>;
+  market_contains?: Maybe<Scalars['String']>;
+  market_contains_nocase?: Maybe<Scalars['String']>;
+  market_ends_with?: Maybe<Scalars['String']>;
+  market_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_gt?: Maybe<Scalars['String']>;
+  market_gte?: Maybe<Scalars['String']>;
+  market_in?: Maybe<Array<Scalars['String']>>;
+  market_lt?: Maybe<Scalars['String']>;
+  market_lte?: Maybe<Scalars['String']>;
+  market_not?: Maybe<Scalars['String']>;
+  market_not_contains?: Maybe<Scalars['String']>;
+  market_not_contains_nocase?: Maybe<Scalars['String']>;
+  market_not_ends_with?: Maybe<Scalars['String']>;
+  market_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_not_in?: Maybe<Array<Scalars['String']>>;
+  market_not_starts_with?: Maybe<Scalars['String']>;
+  market_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  market_starts_with?: Maybe<Scalars['String']>;
+  market_starts_with_nocase?: Maybe<Scalars['String']>;
+  or?: Maybe<Array<Maybe<MarketHourData_Filter>>>;
+  periodStartUnix?: Maybe<Scalars['Int']>;
+  periodStartUnix_gt?: Maybe<Scalars['Int']>;
+  periodStartUnix_gte?: Maybe<Scalars['Int']>;
+  periodStartUnix_in?: Maybe<Array<Scalars['Int']>>;
+  periodStartUnix_lt?: Maybe<Scalars['Int']>;
+  periodStartUnix_lte?: Maybe<Scalars['Int']>;
+  periodStartUnix_not?: Maybe<Scalars['Int']>;
+  periodStartUnix_not_in?: Maybe<Array<Scalars['Int']>>;
+  totalValueLocked?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSDUntracked_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLocked_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLocked_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  untrackedVolumeUSD?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  untrackedVolumeUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_not?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volumeUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_not?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume_gt?: Maybe<Scalars['BigDecimal']>;
+  volume_gte?: Maybe<Scalars['BigDecimal']>;
+  volume_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume_lt?: Maybe<Scalars['BigDecimal']>;
+  volume_lte?: Maybe<Scalars['BigDecimal']>;
+  volume_not?: Maybe<Scalars['BigDecimal']>;
+  volume_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+};
+
+export enum MarketHourData_OrderBy {
+  Id = 'id',
+  Market = 'market',
+  MarketBlockNumber = 'market__blockNumber',
+  MarketBlockTimestamp = 'market__blockTimestamp',
+  MarketCollateralToken = 'market__collateralToken',
+  MarketCollateralToken1 = 'market__collateralToken1',
+  MarketCollateralToken2 = 'market__collateralToken2',
+  MarketConditionId = 'market__conditionId',
+  MarketCreator = 'market__creator',
+  MarketFactory = 'market__factory',
+  MarketFinalizeTs = 'market__finalizeTs',
+  MarketHasAnswers = 'market__hasAnswers',
+  MarketId = 'market__id',
+  MarketIndex = 'market__index',
+  MarketLowerBound = 'market__lowerBound',
+  MarketMarketName = 'market__marketName',
+  MarketOpeningTs = 'market__openingTs',
+  MarketOutcomesSupply = 'market__outcomesSupply',
+  MarketParentCollectionId = 'market__parentCollectionId',
+  MarketParentOutcome = 'market__parentOutcome',
+  MarketPayoutReported = 'market__payoutReported',
+  MarketQuestionId = 'market__questionId',
+  MarketQuestionsInArbitration = 'market__questionsInArbitration',
+  MarketTemplateId = 'market__templateId',
+  MarketTotalValueLocked = 'market__totalValueLocked',
+  MarketTotalValueLockedUsd = 'market__totalValueLockedUSD',
+  MarketTotalValueLockedUsdUntracked = 'market__totalValueLockedUSDUntracked',
+  MarketTransactionHash = 'market__transactionHash',
+  MarketType = 'market__type',
+  MarketUntrackedVolumeUsd = 'market__untrackedVolumeUSD',
+  MarketUpperBound = 'market__upperBound',
+  MarketVolume = 'market__volume',
+  MarketVolumeUsd = 'market__volumeUSD',
+  PeriodStartUnix = 'periodStartUnix',
+  TotalValueLocked = 'totalValueLocked',
+  TotalValueLockedUsd = 'totalValueLockedUSD',
+  TotalValueLockedUsdUntracked = 'totalValueLockedUSDUntracked',
+  UntrackedVolumeUsd = 'untrackedVolumeUSD',
+  Volume = 'volume',
+  VolumeUsd = 'volumeUSD'
+}
+
+export type MarketQuestion = {
+  __typename?: 'MarketQuestion';
+  id: Scalars['ID'];
+  /**  a market can have the same question multiple times, we use the index to identify each one of them  */
+  index: Scalars['Int'];
+  market: Market;
+  question: Question;
+};
+
+export type MarketQuestion_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<MarketQuestion_Filter>>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  index?: Maybe<Scalars['Int']>;
+  index_gt?: Maybe<Scalars['Int']>;
+  index_gte?: Maybe<Scalars['Int']>;
+  index_in?: Maybe<Array<Scalars['Int']>>;
+  index_lt?: Maybe<Scalars['Int']>;
+  index_lte?: Maybe<Scalars['Int']>;
+  index_not?: Maybe<Scalars['Int']>;
+  index_not_in?: Maybe<Array<Scalars['Int']>>;
+  market?: Maybe<Scalars['String']>;
+  market_?: Maybe<Market_Filter>;
+  market_contains?: Maybe<Scalars['String']>;
+  market_contains_nocase?: Maybe<Scalars['String']>;
+  market_ends_with?: Maybe<Scalars['String']>;
+  market_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_gt?: Maybe<Scalars['String']>;
+  market_gte?: Maybe<Scalars['String']>;
+  market_in?: Maybe<Array<Scalars['String']>>;
+  market_lt?: Maybe<Scalars['String']>;
+  market_lte?: Maybe<Scalars['String']>;
+  market_not?: Maybe<Scalars['String']>;
+  market_not_contains?: Maybe<Scalars['String']>;
+  market_not_contains_nocase?: Maybe<Scalars['String']>;
+  market_not_ends_with?: Maybe<Scalars['String']>;
+  market_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_not_in?: Maybe<Array<Scalars['String']>>;
+  market_not_starts_with?: Maybe<Scalars['String']>;
+  market_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  market_starts_with?: Maybe<Scalars['String']>;
+  market_starts_with_nocase?: Maybe<Scalars['String']>;
+  or?: Maybe<Array<Maybe<MarketQuestion_Filter>>>;
+  question?: Maybe<Scalars['String']>;
+  question_?: Maybe<Question_Filter>;
+  question_contains?: Maybe<Scalars['String']>;
+  question_contains_nocase?: Maybe<Scalars['String']>;
+  question_ends_with?: Maybe<Scalars['String']>;
+  question_ends_with_nocase?: Maybe<Scalars['String']>;
+  question_gt?: Maybe<Scalars['String']>;
+  question_gte?: Maybe<Scalars['String']>;
+  question_in?: Maybe<Array<Scalars['String']>>;
+  question_lt?: Maybe<Scalars['String']>;
+  question_lte?: Maybe<Scalars['String']>;
+  question_not?: Maybe<Scalars['String']>;
+  question_not_contains?: Maybe<Scalars['String']>;
+  question_not_contains_nocase?: Maybe<Scalars['String']>;
+  question_not_ends_with?: Maybe<Scalars['String']>;
+  question_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  question_not_in?: Maybe<Array<Scalars['String']>>;
+  question_not_starts_with?: Maybe<Scalars['String']>;
+  question_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  question_starts_with?: Maybe<Scalars['String']>;
+  question_starts_with_nocase?: Maybe<Scalars['String']>;
+};
+
+export enum MarketQuestion_OrderBy {
+  Id = 'id',
+  Index = 'index',
+  Market = 'market',
+  MarketBlockNumber = 'market__blockNumber',
+  MarketBlockTimestamp = 'market__blockTimestamp',
+  MarketCollateralToken = 'market__collateralToken',
+  MarketCollateralToken1 = 'market__collateralToken1',
+  MarketCollateralToken2 = 'market__collateralToken2',
+  MarketConditionId = 'market__conditionId',
+  MarketCreator = 'market__creator',
+  MarketFactory = 'market__factory',
+  MarketFinalizeTs = 'market__finalizeTs',
+  MarketHasAnswers = 'market__hasAnswers',
+  MarketId = 'market__id',
+  MarketIndex = 'market__index',
+  MarketLowerBound = 'market__lowerBound',
+  MarketMarketName = 'market__marketName',
+  MarketOpeningTs = 'market__openingTs',
+  MarketOutcomesSupply = 'market__outcomesSupply',
+  MarketParentCollectionId = 'market__parentCollectionId',
+  MarketParentOutcome = 'market__parentOutcome',
+  MarketPayoutReported = 'market__payoutReported',
+  MarketQuestionId = 'market__questionId',
+  MarketQuestionsInArbitration = 'market__questionsInArbitration',
+  MarketTemplateId = 'market__templateId',
+  MarketTotalValueLocked = 'market__totalValueLocked',
+  MarketTotalValueLockedUsd = 'market__totalValueLockedUSD',
+  MarketTotalValueLockedUsdUntracked = 'market__totalValueLockedUSDUntracked',
+  MarketTransactionHash = 'market__transactionHash',
+  MarketType = 'market__type',
+  MarketUntrackedVolumeUsd = 'market__untrackedVolumeUSD',
+  MarketUpperBound = 'market__upperBound',
+  MarketVolume = 'market__volume',
+  MarketVolumeUsd = 'market__volumeUSD',
+  Question = 'question',
+  QuestionArbitrationOccurred = 'question__arbitration_occurred',
+  QuestionArbitrator = 'question__arbitrator',
+  QuestionBestAnswer = 'question__best_answer',
+  QuestionBond = 'question__bond',
+  QuestionFinalizeTs = 'question__finalize_ts',
+  QuestionId = 'question__id',
+  QuestionIndex = 'question__index',
+  QuestionIsPendingArbitration = 'question__is_pending_arbitration',
+  QuestionMinBond = 'question__min_bond',
+  QuestionOpeningTs = 'question__opening_ts',
+  QuestionTimeout = 'question__timeout'
+}
+
+export enum MarketType {
+  Futarchy = 'Futarchy',
+  Generic = 'Generic'
+}
+
+export type Market_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Market_Filter>>>;
+  blockNumber?: Maybe<Scalars['BigInt']>;
+  blockNumber_gt?: Maybe<Scalars['BigInt']>;
+  blockNumber_gte?: Maybe<Scalars['BigInt']>;
+  blockNumber_in?: Maybe<Array<Scalars['BigInt']>>;
+  blockNumber_lt?: Maybe<Scalars['BigInt']>;
+  blockNumber_lte?: Maybe<Scalars['BigInt']>;
+  blockNumber_not?: Maybe<Scalars['BigInt']>;
+  blockNumber_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  blockTimestamp?: Maybe<Scalars['BigInt']>;
+  blockTimestamp_gt?: Maybe<Scalars['BigInt']>;
+  blockTimestamp_gte?: Maybe<Scalars['BigInt']>;
+  blockTimestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  blockTimestamp_lt?: Maybe<Scalars['BigInt']>;
+  blockTimestamp_lte?: Maybe<Scalars['BigInt']>;
+  blockTimestamp_not?: Maybe<Scalars['BigInt']>;
+  blockTimestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  childMarkets_?: Maybe<Market_Filter>;
+  collateralToken?: Maybe<Scalars['Bytes']>;
+  collateralToken1?: Maybe<Scalars['Bytes']>;
+  collateralToken1_contains?: Maybe<Scalars['Bytes']>;
+  collateralToken1_gt?: Maybe<Scalars['Bytes']>;
+  collateralToken1_gte?: Maybe<Scalars['Bytes']>;
+  collateralToken1_in?: Maybe<Array<Scalars['Bytes']>>;
+  collateralToken1_lt?: Maybe<Scalars['Bytes']>;
+  collateralToken1_lte?: Maybe<Scalars['Bytes']>;
+  collateralToken1_not?: Maybe<Scalars['Bytes']>;
+  collateralToken1_not_contains?: Maybe<Scalars['Bytes']>;
+  collateralToken1_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  collateralToken2?: Maybe<Scalars['Bytes']>;
+  collateralToken2_contains?: Maybe<Scalars['Bytes']>;
+  collateralToken2_gt?: Maybe<Scalars['Bytes']>;
+  collateralToken2_gte?: Maybe<Scalars['Bytes']>;
+  collateralToken2_in?: Maybe<Array<Scalars['Bytes']>>;
+  collateralToken2_lt?: Maybe<Scalars['Bytes']>;
+  collateralToken2_lte?: Maybe<Scalars['Bytes']>;
+  collateralToken2_not?: Maybe<Scalars['Bytes']>;
+  collateralToken2_not_contains?: Maybe<Scalars['Bytes']>;
+  collateralToken2_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  collateralToken_contains?: Maybe<Scalars['Bytes']>;
+  collateralToken_gt?: Maybe<Scalars['Bytes']>;
+  collateralToken_gte?: Maybe<Scalars['Bytes']>;
+  collateralToken_in?: Maybe<Array<Scalars['Bytes']>>;
+  collateralToken_lt?: Maybe<Scalars['Bytes']>;
+  collateralToken_lte?: Maybe<Scalars['Bytes']>;
+  collateralToken_not?: Maybe<Scalars['Bytes']>;
+  collateralToken_not_contains?: Maybe<Scalars['Bytes']>;
+  collateralToken_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  conditionId?: Maybe<Scalars['Bytes']>;
+  conditionId_contains?: Maybe<Scalars['Bytes']>;
+  conditionId_gt?: Maybe<Scalars['Bytes']>;
+  conditionId_gte?: Maybe<Scalars['Bytes']>;
+  conditionId_in?: Maybe<Array<Scalars['Bytes']>>;
+  conditionId_lt?: Maybe<Scalars['Bytes']>;
+  conditionId_lte?: Maybe<Scalars['Bytes']>;
+  conditionId_not?: Maybe<Scalars['Bytes']>;
+  conditionId_not_contains?: Maybe<Scalars['Bytes']>;
+  conditionId_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  creator?: Maybe<Scalars['Bytes']>;
+  creator_contains?: Maybe<Scalars['Bytes']>;
+  creator_gt?: Maybe<Scalars['Bytes']>;
+  creator_gte?: Maybe<Scalars['Bytes']>;
+  creator_in?: Maybe<Array<Scalars['Bytes']>>;
+  creator_lt?: Maybe<Scalars['Bytes']>;
+  creator_lte?: Maybe<Scalars['Bytes']>;
+  creator_not?: Maybe<Scalars['Bytes']>;
+  creator_not_contains?: Maybe<Scalars['Bytes']>;
+  creator_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  ctfCondition?: Maybe<Scalars['String']>;
+  ctfCondition_?: Maybe<Condition_Filter>;
+  ctfCondition_contains?: Maybe<Scalars['String']>;
+  ctfCondition_contains_nocase?: Maybe<Scalars['String']>;
+  ctfCondition_ends_with?: Maybe<Scalars['String']>;
+  ctfCondition_ends_with_nocase?: Maybe<Scalars['String']>;
+  ctfCondition_gt?: Maybe<Scalars['String']>;
+  ctfCondition_gte?: Maybe<Scalars['String']>;
+  ctfCondition_in?: Maybe<Array<Scalars['String']>>;
+  ctfCondition_lt?: Maybe<Scalars['String']>;
+  ctfCondition_lte?: Maybe<Scalars['String']>;
+  ctfCondition_not?: Maybe<Scalars['String']>;
+  ctfCondition_not_contains?: Maybe<Scalars['String']>;
+  ctfCondition_not_contains_nocase?: Maybe<Scalars['String']>;
+  ctfCondition_not_ends_with?: Maybe<Scalars['String']>;
+  ctfCondition_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  ctfCondition_not_in?: Maybe<Array<Scalars['String']>>;
+  ctfCondition_not_starts_with?: Maybe<Scalars['String']>;
+  ctfCondition_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  ctfCondition_starts_with?: Maybe<Scalars['String']>;
+  ctfCondition_starts_with_nocase?: Maybe<Scalars['String']>;
+  encodedQuestions?: Maybe<Array<Scalars['String']>>;
+  encodedQuestions_contains?: Maybe<Array<Scalars['String']>>;
+  encodedQuestions_contains_nocase?: Maybe<Array<Scalars['String']>>;
+  encodedQuestions_not?: Maybe<Array<Scalars['String']>>;
+  encodedQuestions_not_contains?: Maybe<Array<Scalars['String']>>;
+  encodedQuestions_not_contains_nocase?: Maybe<Array<Scalars['String']>>;
+  factory?: Maybe<Scalars['Bytes']>;
+  factory_contains?: Maybe<Scalars['Bytes']>;
+  factory_gt?: Maybe<Scalars['Bytes']>;
+  factory_gte?: Maybe<Scalars['Bytes']>;
+  factory_in?: Maybe<Array<Scalars['Bytes']>>;
+  factory_lt?: Maybe<Scalars['Bytes']>;
+  factory_lte?: Maybe<Scalars['Bytes']>;
+  factory_not?: Maybe<Scalars['Bytes']>;
+  factory_not_contains?: Maybe<Scalars['Bytes']>;
+  factory_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  finalizeTs?: Maybe<Scalars['BigInt']>;
+  finalizeTs_gt?: Maybe<Scalars['BigInt']>;
+  finalizeTs_gte?: Maybe<Scalars['BigInt']>;
+  finalizeTs_in?: Maybe<Array<Scalars['BigInt']>>;
+  finalizeTs_lt?: Maybe<Scalars['BigInt']>;
+  finalizeTs_lte?: Maybe<Scalars['BigInt']>;
+  finalizeTs_not?: Maybe<Scalars['BigInt']>;
+  finalizeTs_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  hasAnswers?: Maybe<Scalars['Boolean']>;
+  hasAnswers_in?: Maybe<Array<Scalars['Boolean']>>;
+  hasAnswers_not?: Maybe<Scalars['Boolean']>;
+  hasAnswers_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  index?: Maybe<Scalars['BigInt']>;
+  index_gt?: Maybe<Scalars['BigInt']>;
+  index_gte?: Maybe<Scalars['BigInt']>;
+  index_in?: Maybe<Array<Scalars['BigInt']>>;
+  index_lt?: Maybe<Scalars['BigInt']>;
+  index_lte?: Maybe<Scalars['BigInt']>;
+  index_not?: Maybe<Scalars['BigInt']>;
+  index_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  lowerBound?: Maybe<Scalars['BigInt']>;
+  lowerBound_gt?: Maybe<Scalars['BigInt']>;
+  lowerBound_gte?: Maybe<Scalars['BigInt']>;
+  lowerBound_in?: Maybe<Array<Scalars['BigInt']>>;
+  lowerBound_lt?: Maybe<Scalars['BigInt']>;
+  lowerBound_lte?: Maybe<Scalars['BigInt']>;
+  lowerBound_not?: Maybe<Scalars['BigInt']>;
+  lowerBound_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  marketName?: Maybe<Scalars['String']>;
+  marketName_contains?: Maybe<Scalars['String']>;
+  marketName_contains_nocase?: Maybe<Scalars['String']>;
+  marketName_ends_with?: Maybe<Scalars['String']>;
+  marketName_ends_with_nocase?: Maybe<Scalars['String']>;
+  marketName_gt?: Maybe<Scalars['String']>;
+  marketName_gte?: Maybe<Scalars['String']>;
+  marketName_in?: Maybe<Array<Scalars['String']>>;
+  marketName_lt?: Maybe<Scalars['String']>;
+  marketName_lte?: Maybe<Scalars['String']>;
+  marketName_not?: Maybe<Scalars['String']>;
+  marketName_not_contains?: Maybe<Scalars['String']>;
+  marketName_not_contains_nocase?: Maybe<Scalars['String']>;
+  marketName_not_ends_with?: Maybe<Scalars['String']>;
+  marketName_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  marketName_not_in?: Maybe<Array<Scalars['String']>>;
+  marketName_not_starts_with?: Maybe<Scalars['String']>;
+  marketName_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  marketName_starts_with?: Maybe<Scalars['String']>;
+  marketName_starts_with_nocase?: Maybe<Scalars['String']>;
+  openingTs?: Maybe<Scalars['BigInt']>;
+  openingTs_gt?: Maybe<Scalars['BigInt']>;
+  openingTs_gte?: Maybe<Scalars['BigInt']>;
+  openingTs_in?: Maybe<Array<Scalars['BigInt']>>;
+  openingTs_lt?: Maybe<Scalars['BigInt']>;
+  openingTs_lte?: Maybe<Scalars['BigInt']>;
+  openingTs_not?: Maybe<Scalars['BigInt']>;
+  openingTs_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Market_Filter>>>;
+  outcomes?: Maybe<Array<Scalars['String']>>;
+  outcomesSupply?: Maybe<Scalars['BigInt']>;
+  outcomesSupply_gt?: Maybe<Scalars['BigInt']>;
+  outcomesSupply_gte?: Maybe<Scalars['BigInt']>;
+  outcomesSupply_in?: Maybe<Array<Scalars['BigInt']>>;
+  outcomesSupply_lt?: Maybe<Scalars['BigInt']>;
+  outcomesSupply_lte?: Maybe<Scalars['BigInt']>;
+  outcomesSupply_not?: Maybe<Scalars['BigInt']>;
+  outcomesSupply_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  outcomes_contains?: Maybe<Array<Scalars['String']>>;
+  outcomes_contains_nocase?: Maybe<Array<Scalars['String']>>;
+  outcomes_not?: Maybe<Array<Scalars['String']>>;
+  outcomes_not_contains?: Maybe<Array<Scalars['String']>>;
+  outcomes_not_contains_nocase?: Maybe<Array<Scalars['String']>>;
+  parentCollectionId?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_contains?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_gt?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_gte?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_in?: Maybe<Array<Scalars['Bytes']>>;
+  parentCollectionId_lt?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_lte?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_not?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_not_contains?: Maybe<Scalars['Bytes']>;
+  parentCollectionId_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  parentMarket?: Maybe<Scalars['String']>;
+  parentMarket_?: Maybe<Market_Filter>;
+  parentMarket_contains?: Maybe<Scalars['String']>;
+  parentMarket_contains_nocase?: Maybe<Scalars['String']>;
+  parentMarket_ends_with?: Maybe<Scalars['String']>;
+  parentMarket_ends_with_nocase?: Maybe<Scalars['String']>;
+  parentMarket_gt?: Maybe<Scalars['String']>;
+  parentMarket_gte?: Maybe<Scalars['String']>;
+  parentMarket_in?: Maybe<Array<Scalars['String']>>;
+  parentMarket_lt?: Maybe<Scalars['String']>;
+  parentMarket_lte?: Maybe<Scalars['String']>;
+  parentMarket_not?: Maybe<Scalars['String']>;
+  parentMarket_not_contains?: Maybe<Scalars['String']>;
+  parentMarket_not_contains_nocase?: Maybe<Scalars['String']>;
+  parentMarket_not_ends_with?: Maybe<Scalars['String']>;
+  parentMarket_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  parentMarket_not_in?: Maybe<Array<Scalars['String']>>;
+  parentMarket_not_starts_with?: Maybe<Scalars['String']>;
+  parentMarket_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  parentMarket_starts_with?: Maybe<Scalars['String']>;
+  parentMarket_starts_with_nocase?: Maybe<Scalars['String']>;
+  parentOutcome?: Maybe<Scalars['BigInt']>;
+  parentOutcome_gt?: Maybe<Scalars['BigInt']>;
+  parentOutcome_gte?: Maybe<Scalars['BigInt']>;
+  parentOutcome_in?: Maybe<Array<Scalars['BigInt']>>;
+  parentOutcome_lt?: Maybe<Scalars['BigInt']>;
+  parentOutcome_lte?: Maybe<Scalars['BigInt']>;
+  parentOutcome_not?: Maybe<Scalars['BigInt']>;
+  parentOutcome_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  payoutNumerators?: Maybe<Array<Scalars['BigInt']>>;
+  payoutNumerators_contains?: Maybe<Array<Scalars['BigInt']>>;
+  payoutNumerators_contains_nocase?: Maybe<Array<Scalars['BigInt']>>;
+  payoutNumerators_not?: Maybe<Array<Scalars['BigInt']>>;
+  payoutNumerators_not_contains?: Maybe<Array<Scalars['BigInt']>>;
+  payoutNumerators_not_contains_nocase?: Maybe<Array<Scalars['BigInt']>>;
+  payoutReported?: Maybe<Scalars['Boolean']>;
+  payoutReported_in?: Maybe<Array<Scalars['Boolean']>>;
+  payoutReported_not?: Maybe<Scalars['Boolean']>;
+  payoutReported_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  questionId?: Maybe<Scalars['Bytes']>;
+  questionId_contains?: Maybe<Scalars['Bytes']>;
+  questionId_gt?: Maybe<Scalars['Bytes']>;
+  questionId_gte?: Maybe<Scalars['Bytes']>;
+  questionId_in?: Maybe<Array<Scalars['Bytes']>>;
+  questionId_lt?: Maybe<Scalars['Bytes']>;
+  questionId_lte?: Maybe<Scalars['Bytes']>;
+  questionId_not?: Maybe<Scalars['Bytes']>;
+  questionId_not_contains?: Maybe<Scalars['Bytes']>;
+  questionId_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  questionsInArbitration?: Maybe<Scalars['BigInt']>;
+  questionsInArbitration_gt?: Maybe<Scalars['BigInt']>;
+  questionsInArbitration_gte?: Maybe<Scalars['BigInt']>;
+  questionsInArbitration_in?: Maybe<Array<Scalars['BigInt']>>;
+  questionsInArbitration_lt?: Maybe<Scalars['BigInt']>;
+  questionsInArbitration_lte?: Maybe<Scalars['BigInt']>;
+  questionsInArbitration_not?: Maybe<Scalars['BigInt']>;
+  questionsInArbitration_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  questions_?: Maybe<MarketQuestion_Filter>;
+  templateId?: Maybe<Scalars['BigInt']>;
+  templateId_gt?: Maybe<Scalars['BigInt']>;
+  templateId_gte?: Maybe<Scalars['BigInt']>;
+  templateId_in?: Maybe<Array<Scalars['BigInt']>>;
+  templateId_lt?: Maybe<Scalars['BigInt']>;
+  templateId_lte?: Maybe<Scalars['BigInt']>;
+  templateId_not?: Maybe<Scalars['BigInt']>;
+  templateId_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  tokens_?: Maybe<Token_Filter>;
+  totalValueLocked?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSDUntracked_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSDUntracked_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLockedUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLockedUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLocked_gt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_gte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalValueLocked_lt?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_lte?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_not?: Maybe<Scalars['BigDecimal']>;
+  totalValueLocked_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  transactionHash?: Maybe<Scalars['Bytes']>;
+  transactionHash_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash_gt?: Maybe<Scalars['Bytes']>;
+  transactionHash_gte?: Maybe<Scalars['Bytes']>;
+  transactionHash_in?: Maybe<Array<Scalars['Bytes']>>;
+  transactionHash_lt?: Maybe<Scalars['Bytes']>;
+  transactionHash_lte?: Maybe<Scalars['Bytes']>;
+  transactionHash_not?: Maybe<Scalars['Bytes']>;
+  transactionHash_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  type?: Maybe<MarketType>;
+  type_in?: Maybe<Array<MarketType>>;
+  type_not?: Maybe<MarketType>;
+  type_not_in?: Maybe<Array<MarketType>>;
+  untrackedVolumeUSD?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  untrackedVolumeUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_not?: Maybe<Scalars['BigDecimal']>;
+  untrackedVolumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  upperBound?: Maybe<Scalars['BigInt']>;
+  upperBound_gt?: Maybe<Scalars['BigInt']>;
+  upperBound_gte?: Maybe<Scalars['BigInt']>;
+  upperBound_in?: Maybe<Array<Scalars['BigInt']>>;
+  upperBound_lt?: Maybe<Scalars['BigInt']>;
+  upperBound_lte?: Maybe<Scalars['BigInt']>;
+  upperBound_not?: Maybe<Scalars['BigInt']>;
+  upperBound_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  volume?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_gt?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_gte?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volumeUSD_lt?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_lte?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_not?: Maybe<Scalars['BigDecimal']>;
+  volumeUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume_gt?: Maybe<Scalars['BigDecimal']>;
+  volume_gte?: Maybe<Scalars['BigDecimal']>;
+  volume_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  volume_lt?: Maybe<Scalars['BigDecimal']>;
+  volume_lte?: Maybe<Scalars['BigDecimal']>;
+  volume_not?: Maybe<Scalars['BigDecimal']>;
+  volume_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  wrappedTokens?: Maybe<Array<Scalars['Bytes']>>;
+  wrappedTokens_contains?: Maybe<Array<Scalars['Bytes']>>;
+  wrappedTokens_contains_nocase?: Maybe<Array<Scalars['Bytes']>>;
+  wrappedTokens_not?: Maybe<Array<Scalars['Bytes']>>;
+  wrappedTokens_not_contains?: Maybe<Array<Scalars['Bytes']>>;
+  wrappedTokens_not_contains_nocase?: Maybe<Array<Scalars['Bytes']>>;
+};
+
+export enum Market_OrderBy {
+  BlockNumber = 'blockNumber',
+  BlockTimestamp = 'blockTimestamp',
+  ChildMarkets = 'childMarkets',
+  CollateralToken = 'collateralToken',
+  CollateralToken1 = 'collateralToken1',
+  CollateralToken2 = 'collateralToken2',
+  ConditionId = 'conditionId',
+  Creator = 'creator',
+  CtfCondition = 'ctfCondition',
+  CtfConditionId = 'ctfCondition__id',
+  EncodedQuestions = 'encodedQuestions',
+  Factory = 'factory',
+  FinalizeTs = 'finalizeTs',
+  HasAnswers = 'hasAnswers',
+  Id = 'id',
+  Index = 'index',
+  LowerBound = 'lowerBound',
+  MarketName = 'marketName',
+  OpeningTs = 'openingTs',
+  Outcomes = 'outcomes',
+  OutcomesSupply = 'outcomesSupply',
+  ParentCollectionId = 'parentCollectionId',
+  ParentMarket = 'parentMarket',
+  ParentMarketBlockNumber = 'parentMarket__blockNumber',
+  ParentMarketBlockTimestamp = 'parentMarket__blockTimestamp',
+  ParentMarketCollateralToken = 'parentMarket__collateralToken',
+  ParentMarketCollateralToken1 = 'parentMarket__collateralToken1',
+  ParentMarketCollateralToken2 = 'parentMarket__collateralToken2',
+  ParentMarketConditionId = 'parentMarket__conditionId',
+  ParentMarketCreator = 'parentMarket__creator',
+  ParentMarketFactory = 'parentMarket__factory',
+  ParentMarketFinalizeTs = 'parentMarket__finalizeTs',
+  ParentMarketHasAnswers = 'parentMarket__hasAnswers',
+  ParentMarketId = 'parentMarket__id',
+  ParentMarketIndex = 'parentMarket__index',
+  ParentMarketLowerBound = 'parentMarket__lowerBound',
+  ParentMarketMarketName = 'parentMarket__marketName',
+  ParentMarketOpeningTs = 'parentMarket__openingTs',
+  ParentMarketOutcomesSupply = 'parentMarket__outcomesSupply',
+  ParentMarketParentCollectionId = 'parentMarket__parentCollectionId',
+  ParentMarketParentOutcome = 'parentMarket__parentOutcome',
+  ParentMarketPayoutReported = 'parentMarket__payoutReported',
+  ParentMarketQuestionId = 'parentMarket__questionId',
+  ParentMarketQuestionsInArbitration = 'parentMarket__questionsInArbitration',
+  ParentMarketTemplateId = 'parentMarket__templateId',
+  ParentMarketTotalValueLocked = 'parentMarket__totalValueLocked',
+  ParentMarketTotalValueLockedUsd = 'parentMarket__totalValueLockedUSD',
+  ParentMarketTotalValueLockedUsdUntracked = 'parentMarket__totalValueLockedUSDUntracked',
+  ParentMarketTransactionHash = 'parentMarket__transactionHash',
+  ParentMarketType = 'parentMarket__type',
+  ParentMarketUntrackedVolumeUsd = 'parentMarket__untrackedVolumeUSD',
+  ParentMarketUpperBound = 'parentMarket__upperBound',
+  ParentMarketVolume = 'parentMarket__volume',
+  ParentMarketVolumeUsd = 'parentMarket__volumeUSD',
+  ParentOutcome = 'parentOutcome',
+  PayoutNumerators = 'payoutNumerators',
+  PayoutReported = 'payoutReported',
+  QuestionId = 'questionId',
+  Questions = 'questions',
+  QuestionsInArbitration = 'questionsInArbitration',
+  TemplateId = 'templateId',
+  Tokens = 'tokens',
+  TotalValueLocked = 'totalValueLocked',
+  TotalValueLockedUsd = 'totalValueLockedUSD',
+  TotalValueLockedUsdUntracked = 'totalValueLockedUSDUntracked',
+  TransactionHash = 'transactionHash',
+  Type = 'type',
+  UntrackedVolumeUsd = 'untrackedVolumeUSD',
+  UpperBound = 'upperBound',
+  Volume = 'volume',
+  VolumeUsd = 'volumeUSD',
+  WrappedTokens = 'wrappedTokens'
+}
+
+export type MarketsCount = {
+  __typename?: 'MarketsCount';
+  count: Scalars['BigInt'];
+  id: Scalars['ID'];
+};
+
+export type MarketsCount_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<MarketsCount_Filter>>>;
+  count?: Maybe<Scalars['BigInt']>;
+  count_gt?: Maybe<Scalars['BigInt']>;
+  count_gte?: Maybe<Scalars['BigInt']>;
+  count_in?: Maybe<Array<Scalars['BigInt']>>;
+  count_lt?: Maybe<Scalars['BigInt']>;
+  count_lte?: Maybe<Scalars['BigInt']>;
+  count_not?: Maybe<Scalars['BigInt']>;
+  count_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  or?: Maybe<Array<Maybe<MarketsCount_Filter>>>;
+};
+
+export enum MarketsCount_OrderBy {
+  Count = 'count',
+  Id = 'id'
+}
+
 export type Mint = {
   __typename?: 'Mint';
   amount: Scalars['BigInt'];
@@ -1728,6 +3283,7 @@ export type Mint_Filter = {
   amount_lte?: Maybe<Scalars['BigInt']>;
   amount_not?: Maybe<Scalars['BigInt']>;
   amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  and?: Maybe<Array<Maybe<Mint_Filter>>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -1744,15 +3300,24 @@ export type Mint_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_not?: Maybe<Scalars['BigInt']>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Mint_Filter>>>;
   origin?: Maybe<Scalars['Bytes']>;
   origin_contains?: Maybe<Scalars['Bytes']>;
+  origin_gt?: Maybe<Scalars['Bytes']>;
+  origin_gte?: Maybe<Scalars['Bytes']>;
   origin_in?: Maybe<Array<Scalars['Bytes']>>;
+  origin_lt?: Maybe<Scalars['Bytes']>;
+  origin_lte?: Maybe<Scalars['Bytes']>;
   origin_not?: Maybe<Scalars['Bytes']>;
   origin_not_contains?: Maybe<Scalars['Bytes']>;
   origin_not_in?: Maybe<Array<Scalars['Bytes']>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1779,7 +3344,11 @@ export type Mint_Filter = {
   pool_starts_with_nocase?: Maybe<Scalars['String']>;
   sender?: Maybe<Scalars['Bytes']>;
   sender_contains?: Maybe<Scalars['Bytes']>;
+  sender_gt?: Maybe<Scalars['Bytes']>;
+  sender_gte?: Maybe<Scalars['Bytes']>;
   sender_in?: Maybe<Array<Scalars['Bytes']>>;
+  sender_lt?: Maybe<Scalars['Bytes']>;
+  sender_lte?: Maybe<Scalars['Bytes']>;
   sender_not?: Maybe<Scalars['Bytes']>;
   sender_not_contains?: Maybe<Scalars['Bytes']>;
   sender_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1882,13 +3451,83 @@ export enum Mint_OrderBy {
   Origin = 'origin',
   Owner = 'owner',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   Sender = 'sender',
   TickLower = 'tickLower',
   TickUpper = 'tickUpper',
   Timestamp = 'timestamp',
   Token0 = 'token0',
+  Token0Decimals = 'token0__decimals',
+  Token0DerivedMatic = 'token0__derivedMatic',
+  Token0FeesUsd = 'token0__feesUSD',
+  Token0Id = 'token0__id',
+  Token0IsSeer = 'token0__isSeer',
+  Token0Name = 'token0__name',
+  Token0PoolCount = 'token0__poolCount',
+  Token0Symbol = 'token0__symbol',
+  Token0TotalSupply = 'token0__totalSupply',
+  Token0TotalValueLocked = 'token0__totalValueLocked',
+  Token0TotalValueLockedUsd = 'token0__totalValueLockedUSD',
+  Token0TotalValueLockedUsdUntracked = 'token0__totalValueLockedUSDUntracked',
+  Token0TxCount = 'token0__txCount',
+  Token0UntrackedVolumeUsd = 'token0__untrackedVolumeUSD',
+  Token0Volume = 'token0__volume',
+  Token0VolumeUsd = 'token0__volumeUSD',
   Token1 = 'token1',
-  Transaction = 'transaction'
+  Token1Decimals = 'token1__decimals',
+  Token1DerivedMatic = 'token1__derivedMatic',
+  Token1FeesUsd = 'token1__feesUSD',
+  Token1Id = 'token1__id',
+  Token1IsSeer = 'token1__isSeer',
+  Token1Name = 'token1__name',
+  Token1PoolCount = 'token1__poolCount',
+  Token1Symbol = 'token1__symbol',
+  Token1TotalSupply = 'token1__totalSupply',
+  Token1TotalValueLocked = 'token1__totalValueLocked',
+  Token1TotalValueLockedUsd = 'token1__totalValueLockedUSD',
+  Token1TotalValueLockedUsdUntracked = 'token1__totalValueLockedUSDUntracked',
+  Token1TxCount = 'token1__txCount',
+  Token1UntrackedVolumeUsd = 'token1__untrackedVolumeUSD',
+  Token1Volume = 'token1__volume',
+  Token1VolumeUsd = 'token1__volumeUSD',
+  Transaction = 'transaction',
+  TransactionBlockNumber = 'transaction__blockNumber',
+  TransactionGasLimit = 'transaction__gasLimit',
+  TransactionGasPrice = 'transaction__gasPrice',
+  TransactionId = 'transaction__id',
+  TransactionTimestamp = 'transaction__timestamp'
 }
 
 /** Defines the order direction, either ascending or descending */
@@ -1924,6 +3563,7 @@ export type Pool = {
   sqrtPrice: Scalars['BigInt'];
   swaps: Array<Swap>;
   tick: Scalars['BigInt'];
+  tickSpacing: Scalars['BigInt'];
   ticks: Array<Tick>;
   token0: Token;
   token0Price: Scalars['BigDecimal'];
@@ -2035,6 +3675,7 @@ export type PoolDayData = {
 export type PoolDayData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<PoolDayData_Filter>>>;
   close?: Maybe<Scalars['BigDecimal']>;
   close_gt?: Maybe<Scalars['BigDecimal']>;
   close_gte?: Maybe<Scalars['BigDecimal']>;
@@ -2131,6 +3772,7 @@ export type PoolDayData_Filter = {
   open_lte?: Maybe<Scalars['BigDecimal']>;
   open_not?: Maybe<Scalars['BigDecimal']>;
   open_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  or?: Maybe<Array<Maybe<PoolDayData_Filter>>>;
   pool?: Maybe<Scalars['String']>;
   pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
@@ -2248,6 +3890,39 @@ export enum PoolDayData_OrderBy {
   Low = 'low',
   Open = 'open',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   SqrtPrice = 'sqrtPrice',
   Tick = 'tick',
   Token0Price = 'token0Price',
@@ -2271,6 +3946,7 @@ export type PoolFeeData = {
 export type PoolFeeData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<PoolFeeData_Filter>>>;
   fee?: Maybe<Scalars['BigInt']>;
   fee_gt?: Maybe<Scalars['BigInt']>;
   fee_gte?: Maybe<Scalars['BigInt']>;
@@ -2287,6 +3963,7 @@ export type PoolFeeData_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  or?: Maybe<Array<Maybe<PoolFeeData_Filter>>>;
   pool?: Maybe<Scalars['String']>;
   pool_contains?: Maybe<Scalars['String']>;
   pool_contains_nocase?: Maybe<Scalars['String']>;
@@ -2352,6 +4029,7 @@ export type PoolHourData = {
 export type PoolHourData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<PoolHourData_Filter>>>;
   close?: Maybe<Scalars['BigDecimal']>;
   close_gt?: Maybe<Scalars['BigDecimal']>;
   close_gte?: Maybe<Scalars['BigDecimal']>;
@@ -2424,6 +4102,7 @@ export type PoolHourData_Filter = {
   open_lte?: Maybe<Scalars['BigDecimal']>;
   open_not?: Maybe<Scalars['BigDecimal']>;
   open_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  or?: Maybe<Array<Maybe<PoolHourData_Filter>>>;
   periodStartUnix?: Maybe<Scalars['Int']>;
   periodStartUnix_gt?: Maybe<Scalars['Int']>;
   periodStartUnix_gte?: Maybe<Scalars['Int']>;
@@ -2547,6 +4226,39 @@ export enum PoolHourData_OrderBy {
   Open = 'open',
   PeriodStartUnix = 'periodStartUnix',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   SqrtPrice = 'sqrtPrice',
   Tick = 'tick',
   Token0Price = 'token0Price',
@@ -2559,9 +4271,198 @@ export enum PoolHourData_OrderBy {
   VolumeUsd = 'volumeUSD'
 }
 
+export type PoolPosition = {
+  __typename?: 'PoolPosition';
+  id: Scalars['ID'];
+  liquidity: Scalars['BigInt'];
+  lowerTick: Tick;
+  owner: Scalars['Bytes'];
+  pool: Pool;
+  upperTick: Tick;
+};
+
+export type PoolPosition_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<PoolPosition_Filter>>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  liquidity?: Maybe<Scalars['BigInt']>;
+  liquidity_gt?: Maybe<Scalars['BigInt']>;
+  liquidity_gte?: Maybe<Scalars['BigInt']>;
+  liquidity_in?: Maybe<Array<Scalars['BigInt']>>;
+  liquidity_lt?: Maybe<Scalars['BigInt']>;
+  liquidity_lte?: Maybe<Scalars['BigInt']>;
+  liquidity_not?: Maybe<Scalars['BigInt']>;
+  liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  lowerTick?: Maybe<Scalars['String']>;
+  lowerTick_?: Maybe<Tick_Filter>;
+  lowerTick_contains?: Maybe<Scalars['String']>;
+  lowerTick_contains_nocase?: Maybe<Scalars['String']>;
+  lowerTick_ends_with?: Maybe<Scalars['String']>;
+  lowerTick_ends_with_nocase?: Maybe<Scalars['String']>;
+  lowerTick_gt?: Maybe<Scalars['String']>;
+  lowerTick_gte?: Maybe<Scalars['String']>;
+  lowerTick_in?: Maybe<Array<Scalars['String']>>;
+  lowerTick_lt?: Maybe<Scalars['String']>;
+  lowerTick_lte?: Maybe<Scalars['String']>;
+  lowerTick_not?: Maybe<Scalars['String']>;
+  lowerTick_not_contains?: Maybe<Scalars['String']>;
+  lowerTick_not_contains_nocase?: Maybe<Scalars['String']>;
+  lowerTick_not_ends_with?: Maybe<Scalars['String']>;
+  lowerTick_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  lowerTick_not_in?: Maybe<Array<Scalars['String']>>;
+  lowerTick_not_starts_with?: Maybe<Scalars['String']>;
+  lowerTick_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  lowerTick_starts_with?: Maybe<Scalars['String']>;
+  lowerTick_starts_with_nocase?: Maybe<Scalars['String']>;
+  or?: Maybe<Array<Maybe<PoolPosition_Filter>>>;
+  owner?: Maybe<Scalars['Bytes']>;
+  owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
+  owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
+  owner_not?: Maybe<Scalars['Bytes']>;
+  owner_not_contains?: Maybe<Scalars['Bytes']>;
+  owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  pool?: Maybe<Scalars['String']>;
+  pool_?: Maybe<Pool_Filter>;
+  pool_contains?: Maybe<Scalars['String']>;
+  pool_contains_nocase?: Maybe<Scalars['String']>;
+  pool_ends_with?: Maybe<Scalars['String']>;
+  pool_ends_with_nocase?: Maybe<Scalars['String']>;
+  pool_gt?: Maybe<Scalars['String']>;
+  pool_gte?: Maybe<Scalars['String']>;
+  pool_in?: Maybe<Array<Scalars['String']>>;
+  pool_lt?: Maybe<Scalars['String']>;
+  pool_lte?: Maybe<Scalars['String']>;
+  pool_not?: Maybe<Scalars['String']>;
+  pool_not_contains?: Maybe<Scalars['String']>;
+  pool_not_contains_nocase?: Maybe<Scalars['String']>;
+  pool_not_ends_with?: Maybe<Scalars['String']>;
+  pool_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  pool_not_in?: Maybe<Array<Scalars['String']>>;
+  pool_not_starts_with?: Maybe<Scalars['String']>;
+  pool_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  pool_starts_with?: Maybe<Scalars['String']>;
+  pool_starts_with_nocase?: Maybe<Scalars['String']>;
+  upperTick?: Maybe<Scalars['String']>;
+  upperTick_?: Maybe<Tick_Filter>;
+  upperTick_contains?: Maybe<Scalars['String']>;
+  upperTick_contains_nocase?: Maybe<Scalars['String']>;
+  upperTick_ends_with?: Maybe<Scalars['String']>;
+  upperTick_ends_with_nocase?: Maybe<Scalars['String']>;
+  upperTick_gt?: Maybe<Scalars['String']>;
+  upperTick_gte?: Maybe<Scalars['String']>;
+  upperTick_in?: Maybe<Array<Scalars['String']>>;
+  upperTick_lt?: Maybe<Scalars['String']>;
+  upperTick_lte?: Maybe<Scalars['String']>;
+  upperTick_not?: Maybe<Scalars['String']>;
+  upperTick_not_contains?: Maybe<Scalars['String']>;
+  upperTick_not_contains_nocase?: Maybe<Scalars['String']>;
+  upperTick_not_ends_with?: Maybe<Scalars['String']>;
+  upperTick_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  upperTick_not_in?: Maybe<Array<Scalars['String']>>;
+  upperTick_not_starts_with?: Maybe<Scalars['String']>;
+  upperTick_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  upperTick_starts_with?: Maybe<Scalars['String']>;
+  upperTick_starts_with_nocase?: Maybe<Scalars['String']>;
+};
+
+export enum PoolPosition_OrderBy {
+  Id = 'id',
+  Liquidity = 'liquidity',
+  LowerTick = 'lowerTick',
+  LowerTickCollectedFeesToken0 = 'lowerTick__collectedFeesToken0',
+  LowerTickCollectedFeesToken1 = 'lowerTick__collectedFeesToken1',
+  LowerTickCollectedFeesUsd = 'lowerTick__collectedFeesUSD',
+  LowerTickCreatedAtBlockNumber = 'lowerTick__createdAtBlockNumber',
+  LowerTickCreatedAtTimestamp = 'lowerTick__createdAtTimestamp',
+  LowerTickFeeGrowthOutside0X128 = 'lowerTick__feeGrowthOutside0X128',
+  LowerTickFeeGrowthOutside1X128 = 'lowerTick__feeGrowthOutside1X128',
+  LowerTickFeesUsd = 'lowerTick__feesUSD',
+  LowerTickId = 'lowerTick__id',
+  LowerTickLiquidityGross = 'lowerTick__liquidityGross',
+  LowerTickLiquidityNet = 'lowerTick__liquidityNet',
+  LowerTickLiquidityProviderCount = 'lowerTick__liquidityProviderCount',
+  LowerTickPoolAddress = 'lowerTick__poolAddress',
+  LowerTickPrice0 = 'lowerTick__price0',
+  LowerTickPrice1 = 'lowerTick__price1',
+  LowerTickTickIdx = 'lowerTick__tickIdx',
+  LowerTickUntrackedVolumeUsd = 'lowerTick__untrackedVolumeUSD',
+  LowerTickVolumeToken0 = 'lowerTick__volumeToken0',
+  LowerTickVolumeToken1 = 'lowerTick__volumeToken1',
+  LowerTickVolumeUsd = 'lowerTick__volumeUSD',
+  Owner = 'owner',
+  Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
+  UpperTick = 'upperTick',
+  UpperTickCollectedFeesToken0 = 'upperTick__collectedFeesToken0',
+  UpperTickCollectedFeesToken1 = 'upperTick__collectedFeesToken1',
+  UpperTickCollectedFeesUsd = 'upperTick__collectedFeesUSD',
+  UpperTickCreatedAtBlockNumber = 'upperTick__createdAtBlockNumber',
+  UpperTickCreatedAtTimestamp = 'upperTick__createdAtTimestamp',
+  UpperTickFeeGrowthOutside0X128 = 'upperTick__feeGrowthOutside0X128',
+  UpperTickFeeGrowthOutside1X128 = 'upperTick__feeGrowthOutside1X128',
+  UpperTickFeesUsd = 'upperTick__feesUSD',
+  UpperTickId = 'upperTick__id',
+  UpperTickLiquidityGross = 'upperTick__liquidityGross',
+  UpperTickLiquidityNet = 'upperTick__liquidityNet',
+  UpperTickLiquidityProviderCount = 'upperTick__liquidityProviderCount',
+  UpperTickPoolAddress = 'upperTick__poolAddress',
+  UpperTickPrice0 = 'upperTick__price0',
+  UpperTickPrice1 = 'upperTick__price1',
+  UpperTickTickIdx = 'upperTick__tickIdx',
+  UpperTickUntrackedVolumeUsd = 'upperTick__untrackedVolumeUSD',
+  UpperTickVolumeToken0 = 'upperTick__volumeToken0',
+  UpperTickVolumeToken1 = 'upperTick__volumeToken1',
+  UpperTickVolumeUsd = 'upperTick__volumeUSD'
+}
+
 export type Pool_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Pool_Filter>>>;
   burns_?: Maybe<Burn_Filter>;
   collectedFeesToken0?: Maybe<Scalars['BigDecimal']>;
   collectedFeesToken0_gt?: Maybe<Scalars['BigDecimal']>;
@@ -2701,6 +4602,7 @@ export type Pool_Filter = {
   observationIndex_lte?: Maybe<Scalars['BigInt']>;
   observationIndex_not?: Maybe<Scalars['BigInt']>;
   observationIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Pool_Filter>>>;
   poolDayData_?: Maybe<PoolDayData_Filter>;
   poolHourData_?: Maybe<PoolHourData_Filter>;
   sqrtPrice?: Maybe<Scalars['BigInt']>;
@@ -2713,6 +4615,14 @@ export type Pool_Filter = {
   sqrtPrice_not_in?: Maybe<Array<Scalars['BigInt']>>;
   swaps_?: Maybe<Swap_Filter>;
   tick?: Maybe<Scalars['BigInt']>;
+  tickSpacing?: Maybe<Scalars['BigInt']>;
+  tickSpacing_gt?: Maybe<Scalars['BigInt']>;
+  tickSpacing_gte?: Maybe<Scalars['BigInt']>;
+  tickSpacing_in?: Maybe<Array<Scalars['BigInt']>>;
+  tickSpacing_lt?: Maybe<Scalars['BigInt']>;
+  tickSpacing_lte?: Maybe<Scalars['BigInt']>;
+  tickSpacing_not?: Maybe<Scalars['BigInt']>;
+  tickSpacing_not_in?: Maybe<Array<Scalars['BigInt']>>;
   tick_gt?: Maybe<Scalars['BigInt']>;
   tick_gte?: Maybe<Scalars['BigInt']>;
   tick_in?: Maybe<Array<Scalars['BigInt']>>;
@@ -2895,11 +4805,44 @@ export enum Pool_OrderBy {
   SqrtPrice = 'sqrtPrice',
   Swaps = 'swaps',
   Tick = 'tick',
+  TickSpacing = 'tickSpacing',
   Ticks = 'ticks',
   Token0 = 'token0',
   Token0Price = 'token0Price',
+  Token0Decimals = 'token0__decimals',
+  Token0DerivedMatic = 'token0__derivedMatic',
+  Token0FeesUsd = 'token0__feesUSD',
+  Token0Id = 'token0__id',
+  Token0IsSeer = 'token0__isSeer',
+  Token0Name = 'token0__name',
+  Token0PoolCount = 'token0__poolCount',
+  Token0Symbol = 'token0__symbol',
+  Token0TotalSupply = 'token0__totalSupply',
+  Token0TotalValueLocked = 'token0__totalValueLocked',
+  Token0TotalValueLockedUsd = 'token0__totalValueLockedUSD',
+  Token0TotalValueLockedUsdUntracked = 'token0__totalValueLockedUSDUntracked',
+  Token0TxCount = 'token0__txCount',
+  Token0UntrackedVolumeUsd = 'token0__untrackedVolumeUSD',
+  Token0Volume = 'token0__volume',
+  Token0VolumeUsd = 'token0__volumeUSD',
   Token1 = 'token1',
   Token1Price = 'token1Price',
+  Token1Decimals = 'token1__decimals',
+  Token1DerivedMatic = 'token1__derivedMatic',
+  Token1FeesUsd = 'token1__feesUSD',
+  Token1Id = 'token1__id',
+  Token1IsSeer = 'token1__isSeer',
+  Token1Name = 'token1__name',
+  Token1PoolCount = 'token1__poolCount',
+  Token1Symbol = 'token1__symbol',
+  Token1TotalSupply = 'token1__totalSupply',
+  Token1TotalValueLocked = 'token1__totalValueLocked',
+  Token1TotalValueLockedUsd = 'token1__totalValueLockedUSD',
+  Token1TotalValueLockedUsdUntracked = 'token1__totalValueLockedUSDUntracked',
+  Token1TxCount = 'token1__txCount',
+  Token1UntrackedVolumeUsd = 'token1__untrackedVolumeUSD',
+  Token1Volume = 'token1__volume',
+  Token1VolumeUsd = 'token1__volumeUSD',
   TotalValueLockedMatic = 'totalValueLockedMatic',
   TotalValueLockedToken0 = 'totalValueLockedToken0',
   TotalValueLockedToken1 = 'totalValueLockedToken1',
@@ -2961,6 +4904,7 @@ export type PositionSnapshot = {
 export type PositionSnapshot_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<PositionSnapshot_Filter>>>;
   blockNumber?: Maybe<Scalars['BigInt']>;
   blockNumber_gt?: Maybe<Scalars['BigInt']>;
   blockNumber_gte?: Maybe<Scalars['BigInt']>;
@@ -3033,9 +4977,14 @@ export type PositionSnapshot_Filter = {
   liquidity_lte?: Maybe<Scalars['BigInt']>;
   liquidity_not?: Maybe<Scalars['BigInt']>;
   liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<PositionSnapshot_Filter>>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -3140,9 +5089,62 @@ export enum PositionSnapshot_OrderBy {
   Liquidity = 'liquidity',
   Owner = 'owner',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   Position = 'position',
+  PositionCollectedFeesToken0 = 'position__collectedFeesToken0',
+  PositionCollectedFeesToken1 = 'position__collectedFeesToken1',
+  PositionCollectedToken0 = 'position__collectedToken0',
+  PositionCollectedToken1 = 'position__collectedToken1',
+  PositionDepositedToken0 = 'position__depositedToken0',
+  PositionDepositedToken1 = 'position__depositedToken1',
+  PositionFeeGrowthInside0LastX128 = 'position__feeGrowthInside0LastX128',
+  PositionFeeGrowthInside1LastX128 = 'position__feeGrowthInside1LastX128',
+  PositionId = 'position__id',
+  PositionLiquidity = 'position__liquidity',
+  PositionOwner = 'position__owner',
+  PositionToken0Tvl = 'position__token0Tvl',
+  PositionToken1Tvl = 'position__token1Tvl',
+  PositionWithdrawnToken0 = 'position__withdrawnToken0',
+  PositionWithdrawnToken1 = 'position__withdrawnToken1',
   Timestamp = 'timestamp',
   Transaction = 'transaction',
+  TransactionBlockNumber = 'transaction__blockNumber',
+  TransactionGasLimit = 'transaction__gasLimit',
+  TransactionGasPrice = 'transaction__gasPrice',
+  TransactionId = 'transaction__id',
+  TransactionTimestamp = 'transaction__timestamp',
   WithdrawnToken0 = 'withdrawnToken0',
   WithdrawnToken1 = 'withdrawnToken1'
 }
@@ -3150,6 +5152,7 @@ export enum PositionSnapshot_OrderBy {
 export type Position_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Position_Filter>>>;
   collectedFeesToken0?: Maybe<Scalars['BigDecimal']>;
   collectedFeesToken0_gt?: Maybe<Scalars['BigDecimal']>;
   collectedFeesToken0_gte?: Maybe<Scalars['BigDecimal']>;
@@ -3230,9 +5233,14 @@ export type Position_Filter = {
   liquidity_lte?: Maybe<Scalars['BigInt']>;
   liquidity_not?: Maybe<Scalars['BigInt']>;
   liquidity_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Position_Filter>>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -3409,13 +5417,123 @@ export enum Position_OrderBy {
   Liquidity = 'liquidity',
   Owner = 'owner',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   TickLower = 'tickLower',
+  TickLowerCollectedFeesToken0 = 'tickLower__collectedFeesToken0',
+  TickLowerCollectedFeesToken1 = 'tickLower__collectedFeesToken1',
+  TickLowerCollectedFeesUsd = 'tickLower__collectedFeesUSD',
+  TickLowerCreatedAtBlockNumber = 'tickLower__createdAtBlockNumber',
+  TickLowerCreatedAtTimestamp = 'tickLower__createdAtTimestamp',
+  TickLowerFeeGrowthOutside0X128 = 'tickLower__feeGrowthOutside0X128',
+  TickLowerFeeGrowthOutside1X128 = 'tickLower__feeGrowthOutside1X128',
+  TickLowerFeesUsd = 'tickLower__feesUSD',
+  TickLowerId = 'tickLower__id',
+  TickLowerLiquidityGross = 'tickLower__liquidityGross',
+  TickLowerLiquidityNet = 'tickLower__liquidityNet',
+  TickLowerLiquidityProviderCount = 'tickLower__liquidityProviderCount',
+  TickLowerPoolAddress = 'tickLower__poolAddress',
+  TickLowerPrice0 = 'tickLower__price0',
+  TickLowerPrice1 = 'tickLower__price1',
+  TickLowerTickIdx = 'tickLower__tickIdx',
+  TickLowerUntrackedVolumeUsd = 'tickLower__untrackedVolumeUSD',
+  TickLowerVolumeToken0 = 'tickLower__volumeToken0',
+  TickLowerVolumeToken1 = 'tickLower__volumeToken1',
+  TickLowerVolumeUsd = 'tickLower__volumeUSD',
   TickUpper = 'tickUpper',
+  TickUpperCollectedFeesToken0 = 'tickUpper__collectedFeesToken0',
+  TickUpperCollectedFeesToken1 = 'tickUpper__collectedFeesToken1',
+  TickUpperCollectedFeesUsd = 'tickUpper__collectedFeesUSD',
+  TickUpperCreatedAtBlockNumber = 'tickUpper__createdAtBlockNumber',
+  TickUpperCreatedAtTimestamp = 'tickUpper__createdAtTimestamp',
+  TickUpperFeeGrowthOutside0X128 = 'tickUpper__feeGrowthOutside0X128',
+  TickUpperFeeGrowthOutside1X128 = 'tickUpper__feeGrowthOutside1X128',
+  TickUpperFeesUsd = 'tickUpper__feesUSD',
+  TickUpperId = 'tickUpper__id',
+  TickUpperLiquidityGross = 'tickUpper__liquidityGross',
+  TickUpperLiquidityNet = 'tickUpper__liquidityNet',
+  TickUpperLiquidityProviderCount = 'tickUpper__liquidityProviderCount',
+  TickUpperPoolAddress = 'tickUpper__poolAddress',
+  TickUpperPrice0 = 'tickUpper__price0',
+  TickUpperPrice1 = 'tickUpper__price1',
+  TickUpperTickIdx = 'tickUpper__tickIdx',
+  TickUpperUntrackedVolumeUsd = 'tickUpper__untrackedVolumeUSD',
+  TickUpperVolumeToken0 = 'tickUpper__volumeToken0',
+  TickUpperVolumeToken1 = 'tickUpper__volumeToken1',
+  TickUpperVolumeUsd = 'tickUpper__volumeUSD',
   Token0 = 'token0',
   Token0Tvl = 'token0Tvl',
+  Token0Decimals = 'token0__decimals',
+  Token0DerivedMatic = 'token0__derivedMatic',
+  Token0FeesUsd = 'token0__feesUSD',
+  Token0Id = 'token0__id',
+  Token0IsSeer = 'token0__isSeer',
+  Token0Name = 'token0__name',
+  Token0PoolCount = 'token0__poolCount',
+  Token0Symbol = 'token0__symbol',
+  Token0TotalSupply = 'token0__totalSupply',
+  Token0TotalValueLocked = 'token0__totalValueLocked',
+  Token0TotalValueLockedUsd = 'token0__totalValueLockedUSD',
+  Token0TotalValueLockedUsdUntracked = 'token0__totalValueLockedUSDUntracked',
+  Token0TxCount = 'token0__txCount',
+  Token0UntrackedVolumeUsd = 'token0__untrackedVolumeUSD',
+  Token0Volume = 'token0__volume',
+  Token0VolumeUsd = 'token0__volumeUSD',
   Token1 = 'token1',
   Token1Tvl = 'token1Tvl',
+  Token1Decimals = 'token1__decimals',
+  Token1DerivedMatic = 'token1__derivedMatic',
+  Token1FeesUsd = 'token1__feesUSD',
+  Token1Id = 'token1__id',
+  Token1IsSeer = 'token1__isSeer',
+  Token1Name = 'token1__name',
+  Token1PoolCount = 'token1__poolCount',
+  Token1Symbol = 'token1__symbol',
+  Token1TotalSupply = 'token1__totalSupply',
+  Token1TotalValueLocked = 'token1__totalValueLocked',
+  Token1TotalValueLockedUsd = 'token1__totalValueLockedUSD',
+  Token1TotalValueLockedUsdUntracked = 'token1__totalValueLockedUSDUntracked',
+  Token1TxCount = 'token1__txCount',
+  Token1UntrackedVolumeUsd = 'token1__untrackedVolumeUSD',
+  Token1Volume = 'token1__volume',
+  Token1VolumeUsd = 'token1__volumeUSD',
   Transaction = 'transaction',
+  TransactionBlockNumber = 'transaction__blockNumber',
+  TransactionGasLimit = 'transaction__gasLimit',
+  TransactionGasPrice = 'transaction__gasPrice',
+  TransactionId = 'transaction__id',
+  TransactionTimestamp = 'transaction__timestamp',
   WithdrawnToken0 = 'withdrawnToken0',
   WithdrawnToken1 = 'withdrawnToken1'
 }
@@ -3426,6 +5544,8 @@ export type Query = {
   _meta?: Maybe<_Meta_>;
   algebraDayData?: Maybe<AlgebraDayData>;
   algebraDayDatas: Array<AlgebraDayData>;
+  arbitratorMetadata?: Maybe<ArbitratorMetadata>;
+  arbitratorMetadata_collection: Array<ArbitratorMetadata>;
   block?: Maybe<Block>;
   blocks: Array<Block>;
   bundle?: Maybe<Bundle>;
@@ -3434,6 +5554,12 @@ export type Query = {
   burns: Array<Burn>;
   collect?: Maybe<Collect>;
   collects: Array<Collect>;
+  condition?: Maybe<Condition>;
+  conditionalEvent?: Maybe<ConditionalEvent>;
+  conditionalEvents: Array<ConditionalEvent>;
+  conditions: Array<Condition>;
+  curateMetadata?: Maybe<CurateMetadata>;
+  curateMetadata_collection: Array<CurateMetadata>;
   deposit?: Maybe<Deposit>;
   deposits: Array<Deposit>;
   eternalFarming?: Maybe<EternalFarming>;
@@ -3446,6 +5572,16 @@ export type Query = {
   flashes: Array<Flash>;
   limitFarming?: Maybe<LimitFarming>;
   limitFarmings: Array<LimitFarming>;
+  market?: Maybe<Market>;
+  marketDayData?: Maybe<MarketDayData>;
+  marketDayDatas: Array<MarketDayData>;
+  marketHourData?: Maybe<MarketHourData>;
+  marketHourDatas: Array<MarketHourData>;
+  marketQuestion?: Maybe<MarketQuestion>;
+  marketQuestions: Array<MarketQuestion>;
+  markets: Array<Market>;
+  marketsCount?: Maybe<MarketsCount>;
+  marketsCounts: Array<MarketsCount>;
   mint?: Maybe<Mint>;
   mints: Array<Mint>;
   pool?: Maybe<Pool>;
@@ -3455,11 +5591,15 @@ export type Query = {
   poolFeeDatas: Array<PoolFeeData>;
   poolHourData?: Maybe<PoolHourData>;
   poolHourDatas: Array<PoolHourData>;
+  poolPosition?: Maybe<PoolPosition>;
+  poolPositions: Array<PoolPosition>;
   pools: Array<Pool>;
   position?: Maybe<Position>;
   positionSnapshot?: Maybe<PositionSnapshot>;
   positionSnapshots: Array<PositionSnapshot>;
   positions: Array<Position>;
+  question?: Maybe<Question>;
+  questions: Array<Question>;
   reward?: Maybe<Reward>;
   rewards: Array<Reward>;
   swap?: Maybe<Swap>;
@@ -3501,6 +5641,24 @@ export type QueryAlgebraDayDatasArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<AlgebraDayData_Filter>;
+};
+
+
+export type QueryArbitratorMetadataArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryArbitratorMetadata_CollectionArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<ArbitratorMetadata_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<ArbitratorMetadata_Filter>;
 };
 
 
@@ -3573,6 +5731,60 @@ export type QueryCollectsArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Collect_Filter>;
+};
+
+
+export type QueryConditionArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryConditionalEventArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryConditionalEventsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<ConditionalEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<ConditionalEvent_Filter>;
+};
+
+
+export type QueryConditionsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Condition_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Condition_Filter>;
+};
+
+
+export type QueryCurateMetadataArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryCurateMetadata_CollectionArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<CurateMetadata_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<CurateMetadata_Filter>;
 };
 
 
@@ -3684,6 +5896,96 @@ export type QueryLimitFarmingsArgs = {
 };
 
 
+export type QueryMarketArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryMarketDayDataArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryMarketDayDatasArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<MarketDayData_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<MarketDayData_Filter>;
+};
+
+
+export type QueryMarketHourDataArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryMarketHourDatasArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<MarketHourData_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<MarketHourData_Filter>;
+};
+
+
+export type QueryMarketQuestionArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryMarketQuestionsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<MarketQuestion_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<MarketQuestion_Filter>;
+};
+
+
+export type QueryMarketsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Market_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Market_Filter>;
+};
+
+
+export type QueryMarketsCountArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryMarketsCountsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<MarketsCount_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<MarketsCount_Filter>;
+};
+
+
 export type QueryMintArgs = {
   block?: Maybe<Block_Height>;
   id: Scalars['ID'];
@@ -3763,6 +6065,24 @@ export type QueryPoolHourDatasArgs = {
 };
 
 
+export type QueryPoolPositionArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryPoolPositionsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<PoolPosition_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<PoolPosition_Filter>;
+};
+
+
 export type QueryPoolsArgs = {
   block?: Maybe<Block_Height>;
   first?: Maybe<Scalars['Int']>;
@@ -3807,6 +6127,24 @@ export type QueryPositionsArgs = {
   skip?: Maybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: Maybe<Position_Filter>;
+};
+
+
+export type QueryQuestionArgs = {
+  block?: Maybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryQuestionsArgs = {
+  block?: Maybe<Block_Height>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Question_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: Maybe<Question_Filter>;
 };
 
 
@@ -3971,6 +6309,138 @@ export type QueryTransactionsArgs = {
   where?: Maybe<Transaction_Filter>;
 };
 
+export type Question = {
+  __typename?: 'Question';
+  arbitration_occurred: Scalars['Boolean'];
+  arbitrator: Scalars['Bytes'];
+  best_answer: Scalars['Bytes'];
+  bond: Scalars['BigInt'];
+  finalize_ts: Scalars['BigInt'];
+  id: Scalars['ID'];
+  index: Scalars['Int'];
+  is_pending_arbitration: Scalars['Boolean'];
+  marketQuestions: Array<MarketQuestion>;
+  min_bond: Scalars['BigInt'];
+  opening_ts: Scalars['BigInt'];
+  timeout: Scalars['BigInt'];
+};
+
+
+export type QuestionMarketQuestionsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<MarketQuestion_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  skip?: Maybe<Scalars['Int']>;
+  where?: Maybe<MarketQuestion_Filter>;
+};
+
+export type Question_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Question_Filter>>>;
+  arbitration_occurred?: Maybe<Scalars['Boolean']>;
+  arbitration_occurred_in?: Maybe<Array<Scalars['Boolean']>>;
+  arbitration_occurred_not?: Maybe<Scalars['Boolean']>;
+  arbitration_occurred_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  arbitrator?: Maybe<Scalars['Bytes']>;
+  arbitrator_contains?: Maybe<Scalars['Bytes']>;
+  arbitrator_gt?: Maybe<Scalars['Bytes']>;
+  arbitrator_gte?: Maybe<Scalars['Bytes']>;
+  arbitrator_in?: Maybe<Array<Scalars['Bytes']>>;
+  arbitrator_lt?: Maybe<Scalars['Bytes']>;
+  arbitrator_lte?: Maybe<Scalars['Bytes']>;
+  arbitrator_not?: Maybe<Scalars['Bytes']>;
+  arbitrator_not_contains?: Maybe<Scalars['Bytes']>;
+  arbitrator_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  best_answer?: Maybe<Scalars['Bytes']>;
+  best_answer_contains?: Maybe<Scalars['Bytes']>;
+  best_answer_gt?: Maybe<Scalars['Bytes']>;
+  best_answer_gte?: Maybe<Scalars['Bytes']>;
+  best_answer_in?: Maybe<Array<Scalars['Bytes']>>;
+  best_answer_lt?: Maybe<Scalars['Bytes']>;
+  best_answer_lte?: Maybe<Scalars['Bytes']>;
+  best_answer_not?: Maybe<Scalars['Bytes']>;
+  best_answer_not_contains?: Maybe<Scalars['Bytes']>;
+  best_answer_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  bond?: Maybe<Scalars['BigInt']>;
+  bond_gt?: Maybe<Scalars['BigInt']>;
+  bond_gte?: Maybe<Scalars['BigInt']>;
+  bond_in?: Maybe<Array<Scalars['BigInt']>>;
+  bond_lt?: Maybe<Scalars['BigInt']>;
+  bond_lte?: Maybe<Scalars['BigInt']>;
+  bond_not?: Maybe<Scalars['BigInt']>;
+  bond_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  finalize_ts?: Maybe<Scalars['BigInt']>;
+  finalize_ts_gt?: Maybe<Scalars['BigInt']>;
+  finalize_ts_gte?: Maybe<Scalars['BigInt']>;
+  finalize_ts_in?: Maybe<Array<Scalars['BigInt']>>;
+  finalize_ts_lt?: Maybe<Scalars['BigInt']>;
+  finalize_ts_lte?: Maybe<Scalars['BigInt']>;
+  finalize_ts_not?: Maybe<Scalars['BigInt']>;
+  finalize_ts_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  id?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  index?: Maybe<Scalars['Int']>;
+  index_gt?: Maybe<Scalars['Int']>;
+  index_gte?: Maybe<Scalars['Int']>;
+  index_in?: Maybe<Array<Scalars['Int']>>;
+  index_lt?: Maybe<Scalars['Int']>;
+  index_lte?: Maybe<Scalars['Int']>;
+  index_not?: Maybe<Scalars['Int']>;
+  index_not_in?: Maybe<Array<Scalars['Int']>>;
+  is_pending_arbitration?: Maybe<Scalars['Boolean']>;
+  is_pending_arbitration_in?: Maybe<Array<Scalars['Boolean']>>;
+  is_pending_arbitration_not?: Maybe<Scalars['Boolean']>;
+  is_pending_arbitration_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  marketQuestions_?: Maybe<MarketQuestion_Filter>;
+  min_bond?: Maybe<Scalars['BigInt']>;
+  min_bond_gt?: Maybe<Scalars['BigInt']>;
+  min_bond_gte?: Maybe<Scalars['BigInt']>;
+  min_bond_in?: Maybe<Array<Scalars['BigInt']>>;
+  min_bond_lt?: Maybe<Scalars['BigInt']>;
+  min_bond_lte?: Maybe<Scalars['BigInt']>;
+  min_bond_not?: Maybe<Scalars['BigInt']>;
+  min_bond_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  opening_ts?: Maybe<Scalars['BigInt']>;
+  opening_ts_gt?: Maybe<Scalars['BigInt']>;
+  opening_ts_gte?: Maybe<Scalars['BigInt']>;
+  opening_ts_in?: Maybe<Array<Scalars['BigInt']>>;
+  opening_ts_lt?: Maybe<Scalars['BigInt']>;
+  opening_ts_lte?: Maybe<Scalars['BigInt']>;
+  opening_ts_not?: Maybe<Scalars['BigInt']>;
+  opening_ts_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Question_Filter>>>;
+  timeout?: Maybe<Scalars['BigInt']>;
+  timeout_gt?: Maybe<Scalars['BigInt']>;
+  timeout_gte?: Maybe<Scalars['BigInt']>;
+  timeout_in?: Maybe<Array<Scalars['BigInt']>>;
+  timeout_lt?: Maybe<Scalars['BigInt']>;
+  timeout_lte?: Maybe<Scalars['BigInt']>;
+  timeout_not?: Maybe<Scalars['BigInt']>;
+  timeout_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum Question_OrderBy {
+  ArbitrationOccurred = 'arbitration_occurred',
+  Arbitrator = 'arbitrator',
+  BestAnswer = 'best_answer',
+  Bond = 'bond',
+  FinalizeTs = 'finalize_ts',
+  Id = 'id',
+  Index = 'index',
+  IsPendingArbitration = 'is_pending_arbitration',
+  MarketQuestions = 'marketQuestions',
+  MinBond = 'min_bond',
+  OpeningTs = 'opening_ts',
+  Timeout = 'timeout'
+}
+
 export type Reward = {
   __typename?: 'Reward';
   amount: Scalars['BigInt'];
@@ -3990,6 +6460,7 @@ export type Reward_Filter = {
   amount_lte?: Maybe<Scalars['BigInt']>;
   amount_not?: Maybe<Scalars['BigInt']>;
   amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  and?: Maybe<Array<Maybe<Reward_Filter>>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -3998,15 +6469,24 @@ export type Reward_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  or?: Maybe<Array<Maybe<Reward_Filter>>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_contains?: Maybe<Scalars['Bytes']>;
+  owner_gt?: Maybe<Scalars['Bytes']>;
+  owner_gte?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
+  owner_lt?: Maybe<Scalars['Bytes']>;
+  owner_lte?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   rewardAddress?: Maybe<Scalars['Bytes']>;
   rewardAddress_contains?: Maybe<Scalars['Bytes']>;
+  rewardAddress_gt?: Maybe<Scalars['Bytes']>;
+  rewardAddress_gte?: Maybe<Scalars['Bytes']>;
   rewardAddress_in?: Maybe<Array<Scalars['Bytes']>>;
+  rewardAddress_lt?: Maybe<Scalars['Bytes']>;
+  rewardAddress_lte?: Maybe<Scalars['Bytes']>;
   rewardAddress_not?: Maybe<Scalars['Bytes']>;
   rewardAddress_not_contains?: Maybe<Scalars['Bytes']>;
   rewardAddress_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -4018,557 +6498,6 @@ export enum Reward_OrderBy {
   Owner = 'owner',
   RewardAddress = 'rewardAddress'
 }
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  /** Access to subgraph metadata */
-  _meta?: Maybe<_Meta_>;
-  algebraDayData?: Maybe<AlgebraDayData>;
-  algebraDayDatas: Array<AlgebraDayData>;
-  block?: Maybe<Block>;
-  blocks: Array<Block>;
-  bundle?: Maybe<Bundle>;
-  bundles: Array<Bundle>;
-  burn?: Maybe<Burn>;
-  burns: Array<Burn>;
-  collect?: Maybe<Collect>;
-  collects: Array<Collect>;
-  deposit?: Maybe<Deposit>;
-  deposits: Array<Deposit>;
-  eternalFarming?: Maybe<EternalFarming>;
-  eternalFarmings: Array<EternalFarming>;
-  factories: Array<Factory>;
-  factory?: Maybe<Factory>;
-  feeHourData?: Maybe<FeeHourData>;
-  feeHourDatas: Array<FeeHourData>;
-  flash?: Maybe<Flash>;
-  flashes: Array<Flash>;
-  limitFarming?: Maybe<LimitFarming>;
-  limitFarmings: Array<LimitFarming>;
-  mint?: Maybe<Mint>;
-  mints: Array<Mint>;
-  pool?: Maybe<Pool>;
-  poolDayData?: Maybe<PoolDayData>;
-  poolDayDatas: Array<PoolDayData>;
-  poolFeeData?: Maybe<PoolFeeData>;
-  poolFeeDatas: Array<PoolFeeData>;
-  poolHourData?: Maybe<PoolHourData>;
-  poolHourDatas: Array<PoolHourData>;
-  pools: Array<Pool>;
-  position?: Maybe<Position>;
-  positionSnapshot?: Maybe<PositionSnapshot>;
-  positionSnapshots: Array<PositionSnapshot>;
-  positions: Array<Position>;
-  reward?: Maybe<Reward>;
-  rewards: Array<Reward>;
-  swap?: Maybe<Swap>;
-  swaps: Array<Swap>;
-  tick?: Maybe<Tick>;
-  tickDayData?: Maybe<TickDayData>;
-  tickDayDatas: Array<TickDayData>;
-  tickHourData?: Maybe<TickHourData>;
-  tickHourDatas: Array<TickHourData>;
-  ticks: Array<Tick>;
-  token?: Maybe<Token>;
-  tokenDayData?: Maybe<TokenDayData>;
-  tokenDayDatas: Array<TokenDayData>;
-  tokenHourData?: Maybe<TokenHourData>;
-  tokenHourDatas: Array<TokenHourData>;
-  tokens: Array<Token>;
-  transaction?: Maybe<Transaction>;
-  transactions: Array<Transaction>;
-};
-
-
-export type Subscription_MetaArgs = {
-  block?: Maybe<Block_Height>;
-};
-
-
-export type SubscriptionAlgebraDayDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionAlgebraDayDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<AlgebraDayData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<AlgebraDayData_Filter>;
-};
-
-
-export type SubscriptionBlockArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionBlocksArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Block_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Block_Filter>;
-};
-
-
-export type SubscriptionBundleArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionBundlesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Bundle_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Bundle_Filter>;
-};
-
-
-export type SubscriptionBurnArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionBurnsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Burn_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Burn_Filter>;
-};
-
-
-export type SubscriptionCollectArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionCollectsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Collect_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Collect_Filter>;
-};
-
-
-export type SubscriptionDepositArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionDepositsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Deposit_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Deposit_Filter>;
-};
-
-
-export type SubscriptionEternalFarmingArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionEternalFarmingsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<EternalFarming_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<EternalFarming_Filter>;
-};
-
-
-export type SubscriptionFactoriesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Factory_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Factory_Filter>;
-};
-
-
-export type SubscriptionFactoryArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFeeHourDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFeeHourDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<FeeHourData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<FeeHourData_Filter>;
-};
-
-
-export type SubscriptionFlashArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFlashesArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Flash_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Flash_Filter>;
-};
-
-
-export type SubscriptionLimitFarmingArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionLimitFarmingsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<LimitFarming_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<LimitFarming_Filter>;
-};
-
-
-export type SubscriptionMintArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionMintsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Mint_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Mint_Filter>;
-};
-
-
-export type SubscriptionPoolArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolDayDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolDayDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<PoolDayData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<PoolDayData_Filter>;
-};
-
-
-export type SubscriptionPoolFeeDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolFeeDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<PoolFeeData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<PoolFeeData_Filter>;
-};
-
-
-export type SubscriptionPoolHourDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolHourDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<PoolHourData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<PoolHourData_Filter>;
-};
-
-
-export type SubscriptionPoolsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Pool_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Pool_Filter>;
-};
-
-
-export type SubscriptionPositionArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPositionSnapshotArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPositionSnapshotsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<PositionSnapshot_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<PositionSnapshot_Filter>;
-};
-
-
-export type SubscriptionPositionsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Position_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Position_Filter>;
-};
-
-
-export type SubscriptionRewardArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionRewardsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Reward_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Reward_Filter>;
-};
-
-
-export type SubscriptionSwapArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionSwapsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Swap_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Swap_Filter>;
-};
-
-
-export type SubscriptionTickArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTickDayDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTickDayDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<TickDayData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<TickDayData_Filter>;
-};
-
-
-export type SubscriptionTickHourDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTickHourDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<TickHourData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<TickHourData_Filter>;
-};
-
-
-export type SubscriptionTicksArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Tick_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Tick_Filter>;
-};
-
-
-export type SubscriptionTokenArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTokenDayDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTokenDayDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<TokenDayData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<TokenDayData_Filter>;
-};
-
-
-export type SubscriptionTokenHourDataArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTokenHourDatasArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<TokenHourData_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<TokenHourData_Filter>;
-};
-
-
-export type SubscriptionTokensArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Token_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Token_Filter>;
-};
-
-
-export type SubscriptionTransactionArgs = {
-  block?: Maybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTransactionsArgs = {
-  block?: Maybe<Block_Height>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Transaction_OrderBy>;
-  orderDirection?: Maybe<OrderDirection>;
-  skip?: Maybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: Maybe<Transaction_Filter>;
-};
 
 export type Swap = {
   __typename?: 'Swap';
@@ -4617,6 +6546,7 @@ export type Swap_Filter = {
   amountUSD_lte?: Maybe<Scalars['BigDecimal']>;
   amountUSD_not?: Maybe<Scalars['BigDecimal']>;
   amountUSD_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  and?: Maybe<Array<Maybe<Swap_Filter>>>;
   id?: Maybe<Scalars['ID']>;
   id_gt?: Maybe<Scalars['ID']>;
   id_gte?: Maybe<Scalars['ID']>;
@@ -4641,9 +6571,14 @@ export type Swap_Filter = {
   logIndex_lte?: Maybe<Scalars['BigInt']>;
   logIndex_not?: Maybe<Scalars['BigInt']>;
   logIndex_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Swap_Filter>>>;
   origin?: Maybe<Scalars['Bytes']>;
   origin_contains?: Maybe<Scalars['Bytes']>;
+  origin_gt?: Maybe<Scalars['Bytes']>;
+  origin_gte?: Maybe<Scalars['Bytes']>;
   origin_in?: Maybe<Array<Scalars['Bytes']>>;
+  origin_lt?: Maybe<Scalars['Bytes']>;
+  origin_lte?: Maybe<Scalars['Bytes']>;
   origin_not?: Maybe<Scalars['Bytes']>;
   origin_not_contains?: Maybe<Scalars['Bytes']>;
   origin_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -4678,13 +6613,21 @@ export type Swap_Filter = {
   price_not_in?: Maybe<Array<Scalars['BigInt']>>;
   recipient?: Maybe<Scalars['Bytes']>;
   recipient_contains?: Maybe<Scalars['Bytes']>;
+  recipient_gt?: Maybe<Scalars['Bytes']>;
+  recipient_gte?: Maybe<Scalars['Bytes']>;
   recipient_in?: Maybe<Array<Scalars['Bytes']>>;
+  recipient_lt?: Maybe<Scalars['Bytes']>;
+  recipient_lte?: Maybe<Scalars['Bytes']>;
   recipient_not?: Maybe<Scalars['Bytes']>;
   recipient_not_contains?: Maybe<Scalars['Bytes']>;
   recipient_not_in?: Maybe<Array<Scalars['Bytes']>>;
   sender?: Maybe<Scalars['Bytes']>;
   sender_contains?: Maybe<Scalars['Bytes']>;
+  sender_gt?: Maybe<Scalars['Bytes']>;
+  sender_gte?: Maybe<Scalars['Bytes']>;
   sender_in?: Maybe<Array<Scalars['Bytes']>>;
+  sender_lt?: Maybe<Scalars['Bytes']>;
+  sender_lte?: Maybe<Scalars['Bytes']>;
   sender_not?: Maybe<Scalars['Bytes']>;
   sender_not_contains?: Maybe<Scalars['Bytes']>;
   sender_not_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -4778,14 +6721,84 @@ export enum Swap_OrderBy {
   LogIndex = 'logIndex',
   Origin = 'origin',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   Price = 'price',
   Recipient = 'recipient',
   Sender = 'sender',
   Tick = 'tick',
   Timestamp = 'timestamp',
   Token0 = 'token0',
+  Token0Decimals = 'token0__decimals',
+  Token0DerivedMatic = 'token0__derivedMatic',
+  Token0FeesUsd = 'token0__feesUSD',
+  Token0Id = 'token0__id',
+  Token0IsSeer = 'token0__isSeer',
+  Token0Name = 'token0__name',
+  Token0PoolCount = 'token0__poolCount',
+  Token0Symbol = 'token0__symbol',
+  Token0TotalSupply = 'token0__totalSupply',
+  Token0TotalValueLocked = 'token0__totalValueLocked',
+  Token0TotalValueLockedUsd = 'token0__totalValueLockedUSD',
+  Token0TotalValueLockedUsdUntracked = 'token0__totalValueLockedUSDUntracked',
+  Token0TxCount = 'token0__txCount',
+  Token0UntrackedVolumeUsd = 'token0__untrackedVolumeUSD',
+  Token0Volume = 'token0__volume',
+  Token0VolumeUsd = 'token0__volumeUSD',
   Token1 = 'token1',
-  Transaction = 'transaction'
+  Token1Decimals = 'token1__decimals',
+  Token1DerivedMatic = 'token1__derivedMatic',
+  Token1FeesUsd = 'token1__feesUSD',
+  Token1Id = 'token1__id',
+  Token1IsSeer = 'token1__isSeer',
+  Token1Name = 'token1__name',
+  Token1PoolCount = 'token1__poolCount',
+  Token1Symbol = 'token1__symbol',
+  Token1TotalSupply = 'token1__totalSupply',
+  Token1TotalValueLocked = 'token1__totalValueLocked',
+  Token1TotalValueLockedUsd = 'token1__totalValueLockedUSD',
+  Token1TotalValueLockedUsdUntracked = 'token1__totalValueLockedUSDUntracked',
+  Token1TxCount = 'token1__txCount',
+  Token1UntrackedVolumeUsd = 'token1__untrackedVolumeUSD',
+  Token1Volume = 'token1__volume',
+  Token1VolumeUsd = 'token1__volumeUSD',
+  Transaction = 'transaction',
+  TransactionBlockNumber = 'transaction__blockNumber',
+  TransactionGasLimit = 'transaction__gasLimit',
+  TransactionGasPrice = 'transaction__gasPrice',
+  TransactionId = 'transaction__id',
+  TransactionTimestamp = 'transaction__timestamp'
 }
 
 export type Tick = {
@@ -4832,6 +6845,7 @@ export type TickDayData = {
 export type TickDayData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<TickDayData_Filter>>>;
   date?: Maybe<Scalars['Int']>;
   date_gt?: Maybe<Scalars['Int']>;
   date_gte?: Maybe<Scalars['Int']>;
@@ -4888,6 +6902,7 @@ export type TickDayData_Filter = {
   liquidityNet_lte?: Maybe<Scalars['BigInt']>;
   liquidityNet_not?: Maybe<Scalars['BigInt']>;
   liquidityNet_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<TickDayData_Filter>>>;
   pool?: Maybe<Scalars['String']>;
   pool_?: Maybe<Pool_Filter>;
   pool_contains?: Maybe<Scalars['String']>;
@@ -4965,7 +6980,60 @@ export enum TickDayData_OrderBy {
   LiquidityGross = 'liquidityGross',
   LiquidityNet = 'liquidityNet',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   Tick = 'tick',
+  TickCollectedFeesToken0 = 'tick__collectedFeesToken0',
+  TickCollectedFeesToken1 = 'tick__collectedFeesToken1',
+  TickCollectedFeesUsd = 'tick__collectedFeesUSD',
+  TickCreatedAtBlockNumber = 'tick__createdAtBlockNumber',
+  TickCreatedAtTimestamp = 'tick__createdAtTimestamp',
+  TickFeeGrowthOutside0X128 = 'tick__feeGrowthOutside0X128',
+  TickFeeGrowthOutside1X128 = 'tick__feeGrowthOutside1X128',
+  TickFeesUsd = 'tick__feesUSD',
+  TickId = 'tick__id',
+  TickLiquidityGross = 'tick__liquidityGross',
+  TickLiquidityNet = 'tick__liquidityNet',
+  TickLiquidityProviderCount = 'tick__liquidityProviderCount',
+  TickPoolAddress = 'tick__poolAddress',
+  TickPrice0 = 'tick__price0',
+  TickPrice1 = 'tick__price1',
+  TickTickIdx = 'tick__tickIdx',
+  TickUntrackedVolumeUsd = 'tick__untrackedVolumeUSD',
+  TickVolumeToken0 = 'tick__volumeToken0',
+  TickVolumeToken1 = 'tick__volumeToken1',
+  TickVolumeUsd = 'tick__volumeUSD',
   VolumeToken0 = 'volumeToken0',
   VolumeToken1 = 'volumeToken1',
   VolumeUsd = 'volumeUSD'
@@ -4988,6 +7056,7 @@ export type TickHourData = {
 export type TickHourData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<TickHourData_Filter>>>;
   feesUSD?: Maybe<Scalars['BigDecimal']>;
   feesUSD_gt?: Maybe<Scalars['BigDecimal']>;
   feesUSD_gte?: Maybe<Scalars['BigDecimal']>;
@@ -5020,6 +7089,7 @@ export type TickHourData_Filter = {
   liquidityNet_lte?: Maybe<Scalars['BigInt']>;
   liquidityNet_not?: Maybe<Scalars['BigInt']>;
   liquidityNet_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<TickHourData_Filter>>>;
   periodStartUnix?: Maybe<Scalars['Int']>;
   periodStartUnix_gt?: Maybe<Scalars['Int']>;
   periodStartUnix_gte?: Maybe<Scalars['Int']>;
@@ -5103,7 +7173,60 @@ export enum TickHourData_OrderBy {
   LiquidityNet = 'liquidityNet',
   PeriodStartUnix = 'periodStartUnix',
   Pool = 'pool',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   Tick = 'tick',
+  TickCollectedFeesToken0 = 'tick__collectedFeesToken0',
+  TickCollectedFeesToken1 = 'tick__collectedFeesToken1',
+  TickCollectedFeesUsd = 'tick__collectedFeesUSD',
+  TickCreatedAtBlockNumber = 'tick__createdAtBlockNumber',
+  TickCreatedAtTimestamp = 'tick__createdAtTimestamp',
+  TickFeeGrowthOutside0X128 = 'tick__feeGrowthOutside0X128',
+  TickFeeGrowthOutside1X128 = 'tick__feeGrowthOutside1X128',
+  TickFeesUsd = 'tick__feesUSD',
+  TickId = 'tick__id',
+  TickLiquidityGross = 'tick__liquidityGross',
+  TickLiquidityNet = 'tick__liquidityNet',
+  TickLiquidityProviderCount = 'tick__liquidityProviderCount',
+  TickPoolAddress = 'tick__poolAddress',
+  TickPrice0 = 'tick__price0',
+  TickPrice1 = 'tick__price1',
+  TickTickIdx = 'tick__tickIdx',
+  TickUntrackedVolumeUsd = 'tick__untrackedVolumeUSD',
+  TickVolumeToken0 = 'tick__volumeToken0',
+  TickVolumeToken1 = 'tick__volumeToken1',
+  TickVolumeUsd = 'tick__volumeUSD',
   VolumeToken0 = 'volumeToken0',
   VolumeToken1 = 'volumeToken1',
   VolumeUsd = 'volumeUSD'
@@ -5112,6 +7235,7 @@ export enum TickHourData_OrderBy {
 export type Tick_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Tick_Filter>>>;
   collectedFeesToken0?: Maybe<Scalars['BigDecimal']>;
   collectedFeesToken0_gt?: Maybe<Scalars['BigDecimal']>;
   collectedFeesToken0_gte?: Maybe<Scalars['BigDecimal']>;
@@ -5208,6 +7332,7 @@ export type Tick_Filter = {
   liquidityProviderCount_lte?: Maybe<Scalars['BigInt']>;
   liquidityProviderCount_not?: Maybe<Scalars['BigInt']>;
   liquidityProviderCount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  or?: Maybe<Array<Maybe<Tick_Filter>>>;
   pool?: Maybe<Scalars['String']>;
   poolAddress?: Maybe<Scalars['String']>;
   poolAddress_contains?: Maybe<Scalars['String']>;
@@ -5322,6 +7447,39 @@ export enum Tick_OrderBy {
   LiquidityProviderCount = 'liquidityProviderCount',
   Pool = 'pool',
   PoolAddress = 'poolAddress',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee0 = 'pool__communityFee0',
+  PoolCommunityFee1 = 'pool__communityFee1',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
   Price0 = 'price0',
   Price1 = 'price1',
   TickIdx = 'tickIdx',
@@ -5331,12 +7489,15 @@ export enum Tick_OrderBy {
   VolumeUsd = 'volumeUSD'
 }
 
+
 export type Token = {
   __typename?: 'Token';
   decimals: Scalars['BigInt'];
   derivedMatic: Scalars['BigDecimal'];
   feesUSD: Scalars['BigDecimal'];
   id: Scalars['ID'];
+  isSeer: Scalars['Boolean'];
+  market: Market;
   name: Scalars['String'];
   poolCount: Scalars['BigInt'];
   symbol: Scalars['String'];
@@ -5391,6 +7552,7 @@ export type TokenDayData = {
 export type TokenDayData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<TokenDayData_Filter>>>;
   close?: Maybe<Scalars['BigDecimal']>;
   close_gt?: Maybe<Scalars['BigDecimal']>;
   close_gte?: Maybe<Scalars['BigDecimal']>;
@@ -5447,6 +7609,7 @@ export type TokenDayData_Filter = {
   open_lte?: Maybe<Scalars['BigDecimal']>;
   open_not?: Maybe<Scalars['BigDecimal']>;
   open_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  or?: Maybe<Array<Maybe<TokenDayData_Filter>>>;
   priceUSD?: Maybe<Scalars['BigDecimal']>;
   priceUSD_gt?: Maybe<Scalars['BigDecimal']>;
   priceUSD_gte?: Maybe<Scalars['BigDecimal']>;
@@ -5528,6 +7691,22 @@ export enum TokenDayData_OrderBy {
   Open = 'open',
   PriceUsd = 'priceUSD',
   Token = 'token',
+  TokenDecimals = 'token__decimals',
+  TokenDerivedMatic = 'token__derivedMatic',
+  TokenFeesUsd = 'token__feesUSD',
+  TokenId = 'token__id',
+  TokenIsSeer = 'token__isSeer',
+  TokenName = 'token__name',
+  TokenPoolCount = 'token__poolCount',
+  TokenSymbol = 'token__symbol',
+  TokenTotalSupply = 'token__totalSupply',
+  TokenTotalValueLocked = 'token__totalValueLocked',
+  TokenTotalValueLockedUsd = 'token__totalValueLockedUSD',
+  TokenTotalValueLockedUsdUntracked = 'token__totalValueLockedUSDUntracked',
+  TokenTxCount = 'token__txCount',
+  TokenUntrackedVolumeUsd = 'token__untrackedVolumeUSD',
+  TokenVolume = 'token__volume',
+  TokenVolumeUsd = 'token__volumeUSD',
   TotalValueLocked = 'totalValueLocked',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   UntrackedVolumeUsd = 'untrackedVolumeUSD',
@@ -5556,6 +7735,7 @@ export type TokenHourData = {
 export type TokenHourData_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<TokenHourData_Filter>>>;
   close?: Maybe<Scalars['BigDecimal']>;
   close_gt?: Maybe<Scalars['BigDecimal']>;
   close_gte?: Maybe<Scalars['BigDecimal']>;
@@ -5604,6 +7784,7 @@ export type TokenHourData_Filter = {
   open_lte?: Maybe<Scalars['BigDecimal']>;
   open_not?: Maybe<Scalars['BigDecimal']>;
   open_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  or?: Maybe<Array<Maybe<TokenHourData_Filter>>>;
   periodStartUnix?: Maybe<Scalars['Int']>;
   periodStartUnix_gt?: Maybe<Scalars['Int']>;
   periodStartUnix_gte?: Maybe<Scalars['Int']>;
@@ -5693,6 +7874,22 @@ export enum TokenHourData_OrderBy {
   PeriodStartUnix = 'periodStartUnix',
   PriceUsd = 'priceUSD',
   Token = 'token',
+  TokenDecimals = 'token__decimals',
+  TokenDerivedMatic = 'token__derivedMatic',
+  TokenFeesUsd = 'token__feesUSD',
+  TokenId = 'token__id',
+  TokenIsSeer = 'token__isSeer',
+  TokenName = 'token__name',
+  TokenPoolCount = 'token__poolCount',
+  TokenSymbol = 'token__symbol',
+  TokenTotalSupply = 'token__totalSupply',
+  TokenTotalValueLocked = 'token__totalValueLocked',
+  TokenTotalValueLockedUsd = 'token__totalValueLockedUSD',
+  TokenTotalValueLockedUsdUntracked = 'token__totalValueLockedUSDUntracked',
+  TokenTxCount = 'token__txCount',
+  TokenUntrackedVolumeUsd = 'token__untrackedVolumeUSD',
+  TokenVolume = 'token__volume',
+  TokenVolumeUsd = 'token__volumeUSD',
   TotalValueLocked = 'totalValueLocked',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   UntrackedVolumeUsd = 'untrackedVolumeUSD',
@@ -5703,6 +7900,7 @@ export enum TokenHourData_OrderBy {
 export type Token_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Token_Filter>>>;
   decimals?: Maybe<Scalars['BigInt']>;
   decimals_gt?: Maybe<Scalars['BigInt']>;
   decimals_gte?: Maybe<Scalars['BigInt']>;
@@ -5735,6 +7933,31 @@ export type Token_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  isSeer?: Maybe<Scalars['Boolean']>;
+  isSeer_in?: Maybe<Array<Scalars['Boolean']>>;
+  isSeer_not?: Maybe<Scalars['Boolean']>;
+  isSeer_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  market?: Maybe<Scalars['String']>;
+  market_?: Maybe<Market_Filter>;
+  market_contains?: Maybe<Scalars['String']>;
+  market_contains_nocase?: Maybe<Scalars['String']>;
+  market_ends_with?: Maybe<Scalars['String']>;
+  market_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_gt?: Maybe<Scalars['String']>;
+  market_gte?: Maybe<Scalars['String']>;
+  market_in?: Maybe<Array<Scalars['String']>>;
+  market_lt?: Maybe<Scalars['String']>;
+  market_lte?: Maybe<Scalars['String']>;
+  market_not?: Maybe<Scalars['String']>;
+  market_not_contains?: Maybe<Scalars['String']>;
+  market_not_contains_nocase?: Maybe<Scalars['String']>;
+  market_not_ends_with?: Maybe<Scalars['String']>;
+  market_not_ends_with_nocase?: Maybe<Scalars['String']>;
+  market_not_in?: Maybe<Array<Scalars['String']>>;
+  market_not_starts_with?: Maybe<Scalars['String']>;
+  market_not_starts_with_nocase?: Maybe<Scalars['String']>;
+  market_starts_with?: Maybe<Scalars['String']>;
+  market_starts_with_nocase?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   name_contains?: Maybe<Scalars['String']>;
   name_contains_nocase?: Maybe<Scalars['String']>;
@@ -5755,6 +7978,7 @@ export type Token_Filter = {
   name_not_starts_with_nocase?: Maybe<Scalars['String']>;
   name_starts_with?: Maybe<Scalars['String']>;
   name_starts_with_nocase?: Maybe<Scalars['String']>;
+  or?: Maybe<Array<Maybe<Token_Filter>>>;
   poolCount?: Maybe<Scalars['BigInt']>;
   poolCount_gt?: Maybe<Scalars['BigInt']>;
   poolCount_gte?: Maybe<Scalars['BigInt']>;
@@ -5862,6 +8086,39 @@ export enum Token_OrderBy {
   DerivedMatic = 'derivedMatic',
   FeesUsd = 'feesUSD',
   Id = 'id',
+  IsSeer = 'isSeer',
+  Market = 'market',
+  MarketBlockNumber = 'market__blockNumber',
+  MarketBlockTimestamp = 'market__blockTimestamp',
+  MarketCollateralToken = 'market__collateralToken',
+  MarketCollateralToken1 = 'market__collateralToken1',
+  MarketCollateralToken2 = 'market__collateralToken2',
+  MarketConditionId = 'market__conditionId',
+  MarketCreator = 'market__creator',
+  MarketFactory = 'market__factory',
+  MarketFinalizeTs = 'market__finalizeTs',
+  MarketHasAnswers = 'market__hasAnswers',
+  MarketId = 'market__id',
+  MarketIndex = 'market__index',
+  MarketLowerBound = 'market__lowerBound',
+  MarketMarketName = 'market__marketName',
+  MarketOpeningTs = 'market__openingTs',
+  MarketOutcomesSupply = 'market__outcomesSupply',
+  MarketParentCollectionId = 'market__parentCollectionId',
+  MarketParentOutcome = 'market__parentOutcome',
+  MarketPayoutReported = 'market__payoutReported',
+  MarketQuestionId = 'market__questionId',
+  MarketQuestionsInArbitration = 'market__questionsInArbitration',
+  MarketTemplateId = 'market__templateId',
+  MarketTotalValueLocked = 'market__totalValueLocked',
+  MarketTotalValueLockedUsd = 'market__totalValueLockedUSD',
+  MarketTotalValueLockedUsdUntracked = 'market__totalValueLockedUSDUntracked',
+  MarketTransactionHash = 'market__transactionHash',
+  MarketType = 'market__type',
+  MarketUntrackedVolumeUsd = 'market__untrackedVolumeUSD',
+  MarketUpperBound = 'market__upperBound',
+  MarketVolume = 'market__volume',
+  MarketVolumeUsd = 'market__volumeUSD',
   Name = 'name',
   PoolCount = 'poolCount',
   Symbol = 'symbol',
@@ -5939,6 +8196,7 @@ export type TransactionSwapsArgs = {
 export type Transaction_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  and?: Maybe<Array<Maybe<Transaction_Filter>>>;
   blockNumber?: Maybe<Scalars['BigInt']>;
   blockNumber_gt?: Maybe<Scalars['BigInt']>;
   blockNumber_gte?: Maybe<Scalars['BigInt']>;
@@ -5975,6 +8233,7 @@ export type Transaction_Filter = {
   id_not?: Maybe<Scalars['ID']>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
   mints_?: Maybe<Mint_Filter>;
+  or?: Maybe<Array<Maybe<Transaction_Filter>>>;
   swaps_?: Maybe<Swap_Filter>;
   timestamp?: Maybe<Scalars['BigInt']>;
   timestamp_gt?: Maybe<Scalars['BigInt']>;
@@ -6005,6 +8264,10 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']>;
   /** The block number */
   number: Scalars['Int'];
+  /** The hash of the parent block */
+  parentHash?: Maybe<Scalars['Bytes']>;
+  /** Integer representation of the timestamp stored in blocks for the chain */
+  timestamp?: Maybe<Scalars['Int']>;
 };
 
 /** The type for the top-level _meta field */
@@ -6029,6 +8292,11 @@ export enum _SubgraphErrorPolicy_ {
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   Deny = 'deny'
 }
+
+export type EmptyBlocksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EmptyBlocksQuery = { __typename: 'Query' };
 
 export type PricesQueryVariables = Exact<{
   block24: Scalars['Int'];
@@ -6129,7 +8397,7 @@ export type FetchRewardsQuery = (
 );
 
 export type FetchTokenQueryVariables = Exact<{
-  tokenId?: Maybe<Scalars['ID']>;
+  tokenId: Scalars['ID'];
 }>;
 
 
@@ -6142,7 +8410,7 @@ export type FetchTokenQuery = (
 );
 
 export type FetchLimitQueryVariables = Exact<{
-  limitFarmingId?: Maybe<Scalars['ID']>;
+  limitFarmingId: Scalars['ID'];
 }>;
 
 
@@ -6154,21 +8422,49 @@ export type FetchLimitQuery = (
   )> }
 );
 
-export type FetchEternalFarmQueryVariables = Exact<{
-  farmId?: Maybe<Scalars['ID']>;
+export type EternalFarmingsQueryVariables = Exact<{
+  farmId: Scalars['ID'];
 }>;
 
 
-export type FetchEternalFarmQuery = (
+export type EternalFarmingsQuery = (
   { __typename?: 'Query' }
   & { eternalFarmings: Array<(
     { __typename?: 'EternalFarming' }
-    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'multiplierToken'>
+    & Pick<EternalFarming, 'id' | 'isDetached' | 'pool' | 'rewardToken' | 'bonusRewardToken' | 'rewardRate' | 'bonusRewardRate' | 'startTime' | 'endTime' | 'virtualPool' | 'multiplierToken' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier'>
+  )> }
+);
+
+export type EternalFarmingsFromPoolsQueryVariables = Exact<{
+  pools: Array<Scalars['Bytes']> | Scalars['Bytes'];
+  currentTime: Scalars['BigInt'];
+}>;
+
+
+export type EternalFarmingsFromPoolsQuery = (
+  { __typename?: 'Query' }
+  & { eternalFarmings: Array<(
+    { __typename?: 'EternalFarming' }
+    & Pick<EternalFarming, 'id' | 'rewardToken' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'bonusReward' | 'rewardRate' | 'bonusRewardRate' | 'isDetached'>
+  )> }
+);
+
+export type LimitFarmingsFromPoolsQueryVariables = Exact<{
+  pools: Array<Scalars['Bytes']> | Scalars['Bytes'];
+  currentTime: Scalars['BigInt'];
+}>;
+
+
+export type LimitFarmingsFromPoolsQuery = (
+  { __typename?: 'Query' }
+  & { limitFarmings: Array<(
+    { __typename?: 'LimitFarming' }
+    & Pick<LimitFarming, 'id' | 'createdAtTimestamp' | 'rewardToken' | 'bonusReward' | 'bonusRewardToken' | 'pool' | 'startTime' | 'endTime' | 'reward' | 'multiplierToken' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier' | 'enterStartTime' | 'isDetached'>
   )> }
 );
 
 export type FetchPoolQueryVariables = Exact<{
-  poolId?: Maybe<Scalars['ID']>;
+  poolId: Scalars['ID'];
 }>;
 
 
@@ -6184,6 +8480,39 @@ export type FetchPoolQuery = (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
     ) }
+  )> }
+);
+
+export type FetchPoolsByIdsQueryVariables = Exact<{
+  poolIds: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type FetchPoolsByIdsQuery = (
+  { __typename?: 'Query' }
+  & { pools: Array<(
+    { __typename?: 'Pool' }
+    & Pick<Pool, 'id' | 'fee' | 'sqrtPrice' | 'liquidity' | 'tick' | 'feesUSD' | 'untrackedFeesUSD'>
+    & { token0: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'id' | 'decimals' | 'symbol'>
+    ), token1: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'id' | 'decimals' | 'symbol'>
+    ) }
+  )> }
+);
+
+export type FetchTokensByIdsQueryVariables = Exact<{
+  tokenIds: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type FetchTokensByIdsQuery = (
+  { __typename?: 'Query' }
+  & { tokens: Array<(
+    { __typename?: 'Token' }
+    & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
   )> }
 );
 
@@ -6271,6 +8600,19 @@ export type PoolHourDataQuery = (
   )> }
 );
 
+export type TotalStatsQueryVariables = Exact<{
+  blockNumber?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type TotalStatsQuery = (
+  { __typename?: 'Query' }
+  & { factories: Array<(
+    { __typename?: 'Factory' }
+    & Pick<Factory, 'totalVolumeUSD' | 'untrackedVolumeUSD' | 'totalValueLockedUSD' | 'totalValueLockedUSDUntracked' | 'txCount' | 'totalFeesUSD'>
+  )> }
+);
+
 export type LastEventQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -6283,7 +8625,7 @@ export type LastEventQuery = (
 );
 
 export type FutureEventsQueryVariables = Exact<{
-  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp: Scalars['BigInt'];
 }>;
 
 
@@ -6296,8 +8638,8 @@ export type FutureEventsQuery = (
 );
 
 export type CurrentEventsQueryVariables = Exact<{
-  startTime?: Maybe<Scalars['BigInt']>;
-  endTime?: Maybe<Scalars['BigInt']>;
+  startTime: Scalars['BigInt'];
+  endTime: Scalars['BigInt'];
 }>;
 
 
@@ -6323,7 +8665,7 @@ export type TransferedPositionsQuery = (
 );
 
 export type HasTransferedPositionsQueryVariables = Exact<{
-  account?: Maybe<Scalars['Bytes']>;
+  account: Scalars['Bytes'];
 }>;
 
 
@@ -6336,7 +8678,7 @@ export type HasTransferedPositionsQuery = (
 );
 
 export type PositionsOnEternalFarmingQueryVariables = Exact<{
-  account?: Maybe<Scalars['Bytes']>;
+  account: Scalars['Bytes'];
 }>;
 
 
@@ -6349,8 +8691,8 @@ export type PositionsOnEternalFarmingQuery = (
 );
 
 export type TransferedPositionsForPoolQueryVariables = Exact<{
-  account?: Maybe<Scalars['Bytes']>;
-  pool?: Maybe<Scalars['Bytes']>;
+  account: Scalars['Bytes'];
+  pool: Scalars['Bytes'];
 }>;
 
 
@@ -6363,8 +8705,8 @@ export type TransferedPositionsForPoolQuery = (
 );
 
 export type PositionsOnFarmingQueryVariables = Exact<{
-  account?: Maybe<Scalars['Bytes']>;
-  pool?: Maybe<Scalars['Bytes']>;
+  account: Scalars['Bytes'];
+  pool: Scalars['Bytes'];
 }>;
 
 
@@ -6376,7 +8718,59 @@ export type PositionsOnFarmingQuery = (
   )> }
 );
 
-export type InfiniteFarmsQueryVariables = Exact<{ [key: string]: never; }>;
+export type FullPositionsPriceRangeQueryVariables = Exact<{
+  account?: Maybe<Scalars['Bytes']>;
+  pool: Scalars['String'];
+  positions: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type FullPositionsPriceRangeQuery = (
+  { __typename?: 'Query' }
+  & { q1: Array<(
+    { __typename?: 'Position' }
+    & Pick<Position, 'owner' | 'liquidity' | 'id'>
+    & { transaction: (
+      { __typename?: 'Transaction' }
+      & Pick<Transaction, 'timestamp'>
+    ), tickLower: (
+      { __typename?: 'Tick' }
+      & Pick<Tick, 'price0' | 'price1'>
+    ), tickUpper: (
+      { __typename?: 'Tick' }
+      & Pick<Tick, 'price0' | 'price1'>
+    ), token0: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'decimals'>
+    ), token1: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'decimals'>
+    ) }
+  )>, q2: Array<(
+    { __typename?: 'Position' }
+    & Pick<Position, 'owner' | 'liquidity' | 'id'>
+    & { transaction: (
+      { __typename?: 'Transaction' }
+      & Pick<Transaction, 'timestamp'>
+    ), tickLower: (
+      { __typename?: 'Tick' }
+      & Pick<Tick, 'price0' | 'price1'>
+    ), tickUpper: (
+      { __typename?: 'Tick' }
+      & Pick<Tick, 'price0' | 'price1'>
+    ), token0: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'decimals'>
+    ), token1: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'decimals'>
+    ) }
+  )> }
+);
+
+export type InfiniteFarmsQueryVariables = Exact<{
+  endTime: Scalars['BigInt'];
+}>;
 
 
 export type InfiniteFarmsQuery = (
@@ -6398,6 +8792,27 @@ export type TopPoolsQuery = (
   )> }
 );
 
+export type GetPoolsFromAddressesQueryVariables = Exact<{
+  pools: Array<Scalars['ID']> | Scalars['ID'];
+  blockNumber?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetPoolsFromAddressesQuery = (
+  { __typename?: 'Query' }
+  & { pools: Array<(
+    { __typename?: 'Pool' }
+    & Pick<Pool, 'id' | 'fee' | 'liquidity' | 'sqrtPrice' | 'tick' | 'token0Price' | 'token1Price' | 'volumeUSD' | 'txCount' | 'totalValueLockedToken0' | 'totalValueLockedToken1' | 'totalValueLockedUSD' | 'totalValueLockedUSDUntracked' | 'untrackedVolumeUSD' | 'feesUSD'>
+    & { token0: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
+    ), token1: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
+    ) }
+  )> }
+);
+
 export type TopTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -6406,6 +8821,34 @@ export type TopTokensQuery = (
   & { tokens: Array<(
     { __typename?: 'Token' }
     & Pick<Token, 'id'>
+  )> }
+);
+
+export type GetTokensFromAddressesQueryVariables = Exact<{
+  tokens: Array<Scalars['ID']> | Scalars['ID'];
+  blockNumber?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetTokensFromAddressesQuery = (
+  { __typename?: 'Query' }
+  & { tokens: Array<(
+    { __typename?: 'Token' }
+    & Pick<Token, 'id' | 'symbol' | 'name' | 'derivedMatic' | 'volumeUSD' | 'volume' | 'txCount' | 'totalValueLocked' | 'untrackedVolumeUSD' | 'feesUSD' | 'totalValueLockedUSD' | 'totalValueLockedUSDUntracked'>
+  )> }
+);
+
+export type GetBlockByTimestampRangeQueryVariables = Exact<{
+  timestamp_gt: Scalars['BigInt'];
+  timestamp_lt: Scalars['BigInt'];
+}>;
+
+
+export type GetBlockByTimestampRangeQuery = (
+  { __typename?: 'Query' }
+  & { blocks: Array<(
+    { __typename?: 'Block' }
+    & Pick<Block, 'number'>
   )> }
 );
 
@@ -6442,7 +8885,25 @@ export type PopularPoolsQuery = (
   )> }
 );
 
+export type EternalFarmingsByIdsQueryVariables = Exact<{
+  farmIds: Array<Scalars['ID']> | Scalars['ID'];
+}>;
 
+
+export type EternalFarmingsByIdsQuery = (
+  { __typename?: 'Query' }
+  & { eternalFarmings: Array<(
+    { __typename?: 'EternalFarming' }
+    & Pick<EternalFarming, 'id' | 'isDetached' | 'pool' | 'rewardToken' | 'bonusRewardToken' | 'rewardRate' | 'bonusRewardRate' | 'startTime' | 'endTime' | 'virtualPool' | 'multiplierToken' | 'tokenAmountForTier1' | 'tokenAmountForTier2' | 'tokenAmountForTier3' | 'tier1Multiplier' | 'tier2Multiplier' | 'tier3Multiplier'>
+  )> }
+);
+
+
+export const EmptyBlocksDocument = `
+    query emptyBlocks {
+  __typename
+}
+    `;
 export const PricesDocument = `
     query prices($block24: Int!, $block48: Int!, $blockWeek: Int!) {
   current: bundles(first: 1, subgraphError: allow) {
@@ -6533,7 +8994,7 @@ export const FetchRewardsDocument = `
 }
     `;
 export const FetchTokenDocument = `
-    query fetchToken($tokenId: ID) {
+    query fetchToken($tokenId: ID!) {
   tokens(where: {id: $tokenId}) {
     id
     symbol
@@ -6543,7 +9004,7 @@ export const FetchTokenDocument = `
 }
     `;
 export const FetchLimitDocument = `
-    query fetchLimit($limitFarmingId: ID) {
+    query fetchLimit($limitFarmingId: ID!) {
   limitFarmings(where: {id: $limitFarmingId}) {
     id
     rewardToken
@@ -6566,9 +9027,34 @@ export const FetchLimitDocument = `
   }
 }
     `;
-export const FetchEternalFarmDocument = `
-    query fetchEternalFarm($farmId: ID) {
+export const EternalFarmingsDocument = `
+    query eternalFarmings($farmId: ID!) {
   eternalFarmings(where: {id: $farmId}) {
+    id
+    isDetached
+    pool
+    rewardToken
+    bonusRewardToken
+    rewardRate
+    bonusRewardRate
+    startTime
+    endTime
+    virtualPool
+    multiplierToken
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+  }
+}
+    `;
+export const EternalFarmingsFromPoolsDocument = `
+    query eternalFarmingsFromPools($pools: [Bytes!]!, $currentTime: BigInt!) {
+  eternalFarmings(
+    where: {pool_in: $pools, isDetached: false, endTime_gt: $currentTime, endTimeImplied_gt: $currentTime}
+  ) {
     id
     rewardToken
     bonusRewardToken
@@ -6580,18 +9066,37 @@ export const FetchEternalFarmDocument = `
     rewardRate
     bonusRewardRate
     isDetached
-    tier1Multiplier
-    tier2Multiplier
-    tier3Multiplier
+  }
+}
+    `;
+export const LimitFarmingsFromPoolsDocument = `
+    query limitFarmingsFromPools($pools: [Bytes!]!, $currentTime: BigInt!) {
+  limitFarmings(
+    where: {pool_in: $pools, isDetached: false, endTime_gt: $currentTime}
+  ) {
+    id
+    createdAtTimestamp
+    rewardToken
+    bonusReward
+    bonusRewardToken
+    pool
+    startTime
+    endTime
+    reward
+    multiplierToken
     tokenAmountForTier1
     tokenAmountForTier2
     tokenAmountForTier3
-    multiplierToken
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+    enterStartTime
+    isDetached
   }
 }
     `;
 export const FetchPoolDocument = `
-    query fetchPool($poolId: ID) {
+    query fetchPool($poolId: ID!) {
   pools(where: {id: $poolId}) {
     id
     fee
@@ -6610,6 +9115,40 @@ export const FetchPoolDocument = `
     tick
     feesUSD
     untrackedFeesUSD
+  }
+}
+    `;
+export const FetchPoolsByIdsDocument = `
+    query fetchPoolsByIds($poolIds: [ID!]!) {
+  pools(where: {id_in: $poolIds}) {
+    id
+    fee
+    token0 {
+      id
+      decimals
+      symbol
+    }
+    token1 {
+      id
+      decimals
+      symbol
+    }
+    sqrtPrice
+    liquidity
+    tick
+    feesUSD
+    untrackedFeesUSD
+  }
+}
+    `;
+export const FetchTokensByIdsDocument = `
+    query fetchTokensByIds($tokenIds: [ID!]!) {
+  tokens(where: {id_in: $tokenIds}) {
+    id
+    symbol
+    name
+    decimals
+    derivedMatic
   }
 }
     `;
@@ -6724,6 +9263,18 @@ export const PoolHourDataDocument = `
   }
 }
     `;
+export const TotalStatsDocument = `
+    query totalStats($blockNumber: Int) {
+  factories(block: {number: $blockNumber}) {
+    totalVolumeUSD
+    untrackedVolumeUSD
+    totalValueLockedUSD
+    totalValueLockedUSDUntracked
+    txCount
+    totalFeesUSD
+  }
+}
+    `;
 export const LastEventDocument = `
     query lastEvent {
   limitFarmings(
@@ -6740,7 +9291,7 @@ export const LastEventDocument = `
 }
     `;
 export const FutureEventsDocument = `
-    query futureEvents($timestamp: BigInt) {
+    query futureEvents($timestamp: BigInt!) {
   limitFarmings(
     orderBy: startTime
     orderDirection: asc
@@ -6768,7 +9319,7 @@ export const FutureEventsDocument = `
 }
     `;
 export const CurrentEventsDocument = `
-    query currentEvents($startTime: BigInt, $endTime: BigInt) {
+    query currentEvents($startTime: BigInt!, $endTime: BigInt!) {
   limitFarmings(
     orderBy: endTime
     orderDirection: desc
@@ -6812,14 +9363,14 @@ export const TransferedPositionsDocument = `
 }
     `;
 export const HasTransferedPositionsDocument = `
-    query hasTransferedPositions($account: Bytes) {
+    query hasTransferedPositions($account: Bytes!) {
   deposits(first: 1, where: {owner: $account, onFarmingCenter: true}) {
     id
   }
 }
     `;
 export const PositionsOnEternalFarmingDocument = `
-    query positionsOnEternalFarming($account: Bytes) {
+    query positionsOnEternalFarming($account: Bytes!) {
   deposits(
     orderBy: id
     orderDirection: desc
@@ -6836,7 +9387,7 @@ export const PositionsOnEternalFarmingDocument = `
 }
     `;
 export const TransferedPositionsForPoolDocument = `
-    query transferedPositionsForPool($account: Bytes, $pool: Bytes) {
+    query transferedPositionsForPool($account: Bytes!, $pool: Bytes!) {
   deposits(
     orderBy: id
     orderDirection: desc
@@ -6858,7 +9409,7 @@ export const TransferedPositionsForPoolDocument = `
 }
     `;
 export const PositionsOnFarmingDocument = `
-    query positionsOnFarming($account: Bytes, $pool: Bytes) {
+    query positionsOnFarming($account: Bytes!, $pool: Bytes!) {
   deposits(
     orderBy: id
     orderDirection: desc
@@ -6868,9 +9419,59 @@ export const PositionsOnFarmingDocument = `
   }
 }
     `;
+export const FullPositionsPriceRangeDocument = `
+    query fullPositionsPriceRange($account: Bytes, $pool: String!, $positions: [ID!]!) {
+  q1: positions(where: {owner: $account, pool: $pool}) {
+    owner
+    liquidity
+    id
+    transaction {
+      timestamp
+    }
+    tickLower {
+      price0
+      price1
+    }
+    tickUpper {
+      price0
+      price1
+    }
+    token0 {
+      decimals
+    }
+    token1 {
+      decimals
+    }
+  }
+  q2: positions(where: {id_in: $positions}) {
+    owner
+    liquidity
+    id
+    transaction {
+      timestamp
+    }
+    tickLower {
+      price0
+      price1
+    }
+    tickUpper {
+      price0
+      price1
+    }
+    token0 {
+      decimals
+    }
+    token1 {
+      decimals
+    }
+  }
+}
+    `;
 export const InfiniteFarmsDocument = `
-    query infiniteFarms {
-  eternalFarmings(where: {isDetached: false}) {
+    query infiniteFarms($endTime: BigInt!) {
+  eternalFarmings(
+    where: {isDetached: false, endTime_gt: $endTime, reward_gt: 0, endTimeImplied_gt: $endTime}
+  ) {
     id
     rewardToken
     bonusRewardToken
@@ -6894,12 +9495,53 @@ export const InfiniteFarmsDocument = `
 export const TopPoolsDocument = `
     query topPools {
   pools(
-    first: 50
+    first: 100
     orderBy: totalValueLockedUSD
     orderDirection: desc
     subgraphError: allow
   ) {
     id
+  }
+}
+    `;
+export const GetPoolsFromAddressesDocument = `
+    query getPoolsFromAddresses($pools: [ID!]!, $blockNumber: Int) {
+  pools(
+    where: {id_in: $pools}
+    block: {number: $blockNumber}
+    orderBy: totalValueLockedUSD
+    orderDirection: desc
+    subgraphError: allow
+  ) {
+    id
+    fee
+    liquidity
+    sqrtPrice
+    tick
+    token0 {
+      id
+      symbol
+      name
+      decimals
+      derivedMatic
+    }
+    token1 {
+      id
+      symbol
+      name
+      decimals
+      derivedMatic
+    }
+    token0Price
+    token1Price
+    volumeUSD
+    txCount
+    totalValueLockedToken0
+    totalValueLockedToken1
+    totalValueLockedUSD
+    totalValueLockedUSDUntracked
+    untrackedVolumeUSD
+    feesUSD
   }
 }
     `;
@@ -6912,6 +9554,42 @@ export const TopTokensDocument = `
     subgraphError: allow
   ) {
     id
+  }
+}
+    `;
+export const GetTokensFromAddressesDocument = `
+    query getTokensFromAddresses($tokens: [ID!]!, $blockNumber: Int) {
+  tokens(
+    where: {id_in: $tokens}
+    block: {number: $blockNumber}
+    orderBy: totalValueLockedUSD
+    orderDirection: desc
+    subgraphError: allow
+  ) {
+    id
+    symbol
+    name
+    derivedMatic
+    volumeUSD
+    volume
+    txCount
+    totalValueLocked
+    untrackedVolumeUSD
+    feesUSD
+    totalValueLockedUSD
+    totalValueLockedUSDUntracked
+  }
+}
+    `;
+export const GetBlockByTimestampRangeDocument = `
+    query getBlockByTimestampRange($timestamp_gt: BigInt!, $timestamp_lt: BigInt!) {
+  blocks(
+    first: 1
+    orderBy: timestamp
+    orderDirection: desc
+    where: {timestamp_gt: $timestamp_gt, timestamp_lt: $timestamp_lt}
+  ) {
+    number
   }
 }
     `;
@@ -6943,9 +9621,35 @@ export const PopularPoolsDocument = `
   }
 }
     `;
+export const EternalFarmingsByIdsDocument = `
+    query eternalFarmingsByIds($farmIds: [ID!]!) {
+  eternalFarmings(where: {id_in: $farmIds}) {
+    id
+    isDetached
+    pool
+    rewardToken
+    bonusRewardToken
+    rewardRate
+    bonusRewardRate
+    startTime
+    endTime
+    virtualPool
+    multiplierToken
+    tokenAmountForTier1
+    tokenAmountForTier2
+    tokenAmountForTier3
+    tier1Multiplier
+    tier2Multiplier
+    tier3Multiplier
+  }
+}
+    `;
 
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
+    emptyBlocks: build.query<EmptyBlocksQuery, EmptyBlocksQueryVariables | void>({
+      query: (variables) => ({ document: EmptyBlocksDocument, variables })
+    }),
     prices: build.query<PricesQuery, PricesQueryVariables>({
       query: (variables) => ({ document: PricesDocument, variables })
     }),
@@ -6964,17 +9668,29 @@ const injectedRtkApi = api.injectEndpoints({
     fetchRewards: build.query<FetchRewardsQuery, FetchRewardsQueryVariables | void>({
       query: (variables) => ({ document: FetchRewardsDocument, variables })
     }),
-    fetchToken: build.query<FetchTokenQuery, FetchTokenQueryVariables | void>({
+    fetchToken: build.query<FetchTokenQuery, FetchTokenQueryVariables>({
       query: (variables) => ({ document: FetchTokenDocument, variables })
     }),
-    fetchLimit: build.query<FetchLimitQuery, FetchLimitQueryVariables | void>({
+    fetchLimit: build.query<FetchLimitQuery, FetchLimitQueryVariables>({
       query: (variables) => ({ document: FetchLimitDocument, variables })
     }),
-    fetchEternalFarm: build.query<FetchEternalFarmQuery, FetchEternalFarmQueryVariables | void>({
-      query: (variables) => ({ document: FetchEternalFarmDocument, variables })
+    eternalFarmings: build.query<EternalFarmingsQuery, EternalFarmingsQueryVariables>({
+      query: (variables) => ({ document: EternalFarmingsDocument, variables })
     }),
-    fetchPool: build.query<FetchPoolQuery, FetchPoolQueryVariables | void>({
+    eternalFarmingsFromPools: build.query<EternalFarmingsFromPoolsQuery, EternalFarmingsFromPoolsQueryVariables>({
+      query: (variables) => ({ document: EternalFarmingsFromPoolsDocument, variables })
+    }),
+    limitFarmingsFromPools: build.query<LimitFarmingsFromPoolsQuery, LimitFarmingsFromPoolsQueryVariables>({
+      query: (variables) => ({ document: LimitFarmingsFromPoolsDocument, variables })
+    }),
+    fetchPool: build.query<FetchPoolQuery, FetchPoolQueryVariables>({
       query: (variables) => ({ document: FetchPoolDocument, variables })
+    }),
+    fetchPoolsByIds: build.query<FetchPoolsByIdsQuery, FetchPoolsByIdsQueryVariables>({
+      query: (variables) => ({ document: FetchPoolsByIdsDocument, variables })
+    }),
+    fetchTokensByIds: build.query<FetchTokensByIdsQuery, FetchTokensByIdsQueryVariables>({
+      query: (variables) => ({ document: FetchTokensByIdsDocument, variables })
     }),
     feeHourData: build.query<FeeHourDataQuery, FeeHourDataQueryVariables | void>({
       query: (variables) => ({ document: FeeHourDataDocument, variables })
@@ -6994,38 +9710,53 @@ const injectedRtkApi = api.injectEndpoints({
     poolHourData: build.query<PoolHourDataQuery, PoolHourDataQueryVariables | void>({
       query: (variables) => ({ document: PoolHourDataDocument, variables })
     }),
+    totalStats: build.query<TotalStatsQuery, TotalStatsQueryVariables | void>({
+      query: (variables) => ({ document: TotalStatsDocument, variables })
+    }),
     lastEvent: build.query<LastEventQuery, LastEventQueryVariables | void>({
       query: (variables) => ({ document: LastEventDocument, variables })
     }),
-    futureEvents: build.query<FutureEventsQuery, FutureEventsQueryVariables | void>({
+    futureEvents: build.query<FutureEventsQuery, FutureEventsQueryVariables>({
       query: (variables) => ({ document: FutureEventsDocument, variables })
     }),
-    currentEvents: build.query<CurrentEventsQuery, CurrentEventsQueryVariables | void>({
+    currentEvents: build.query<CurrentEventsQuery, CurrentEventsQueryVariables>({
       query: (variables) => ({ document: CurrentEventsDocument, variables })
     }),
     transferedPositions: build.query<TransferedPositionsQuery, TransferedPositionsQueryVariables | void>({
       query: (variables) => ({ document: TransferedPositionsDocument, variables })
     }),
-    hasTransferedPositions: build.query<HasTransferedPositionsQuery, HasTransferedPositionsQueryVariables | void>({
+    hasTransferedPositions: build.query<HasTransferedPositionsQuery, HasTransferedPositionsQueryVariables>({
       query: (variables) => ({ document: HasTransferedPositionsDocument, variables })
     }),
-    positionsOnEternalFarming: build.query<PositionsOnEternalFarmingQuery, PositionsOnEternalFarmingQueryVariables | void>({
+    positionsOnEternalFarming: build.query<PositionsOnEternalFarmingQuery, PositionsOnEternalFarmingQueryVariables>({
       query: (variables) => ({ document: PositionsOnEternalFarmingDocument, variables })
     }),
-    transferedPositionsForPool: build.query<TransferedPositionsForPoolQuery, TransferedPositionsForPoolQueryVariables | void>({
+    transferedPositionsForPool: build.query<TransferedPositionsForPoolQuery, TransferedPositionsForPoolQueryVariables>({
       query: (variables) => ({ document: TransferedPositionsForPoolDocument, variables })
     }),
-    positionsOnFarming: build.query<PositionsOnFarmingQuery, PositionsOnFarmingQueryVariables | void>({
+    positionsOnFarming: build.query<PositionsOnFarmingQuery, PositionsOnFarmingQueryVariables>({
       query: (variables) => ({ document: PositionsOnFarmingDocument, variables })
     }),
-    infiniteFarms: build.query<InfiniteFarmsQuery, InfiniteFarmsQueryVariables | void>({
+    fullPositionsPriceRange: build.query<FullPositionsPriceRangeQuery, FullPositionsPriceRangeQueryVariables>({
+      query: (variables) => ({ document: FullPositionsPriceRangeDocument, variables })
+    }),
+    infiniteFarms: build.query<InfiniteFarmsQuery, InfiniteFarmsQueryVariables>({
       query: (variables) => ({ document: InfiniteFarmsDocument, variables })
     }),
     topPools: build.query<TopPoolsQuery, TopPoolsQueryVariables | void>({
       query: (variables) => ({ document: TopPoolsDocument, variables })
     }),
+    getPoolsFromAddresses: build.query<GetPoolsFromAddressesQuery, GetPoolsFromAddressesQueryVariables>({
+      query: (variables) => ({ document: GetPoolsFromAddressesDocument, variables })
+    }),
     topTokens: build.query<TopTokensQuery, TopTokensQueryVariables | void>({
       query: (variables) => ({ document: TopTokensDocument, variables })
+    }),
+    getTokensFromAddresses: build.query<GetTokensFromAddressesQuery, GetTokensFromAddressesQueryVariables>({
+      query: (variables) => ({ document: GetTokensFromAddressesDocument, variables })
+    }),
+    getBlockByTimestampRange: build.query<GetBlockByTimestampRangeQuery, GetBlockByTimestampRangeQueryVariables>({
+      query: (variables) => ({ document: GetBlockByTimestampRangeDocument, variables })
     }),
     surroundingTicks: build.query<SurroundingTicksQuery, SurroundingTicksQueryVariables>({
       query: (variables) => ({ document: SurroundingTicksDocument, variables })
@@ -7033,9 +9764,12 @@ const injectedRtkApi = api.injectEndpoints({
     popularPools: build.query<PopularPoolsQuery, PopularPoolsQueryVariables | void>({
       query: (variables) => ({ document: PopularPoolsDocument, variables })
     }),
+    eternalFarmingsByIds: build.query<EternalFarmingsByIdsQuery, EternalFarmingsByIdsQueryVariables>({
+      query: (variables) => ({ document: EternalFarmingsByIdsDocument, variables })
+    }),
   }),
 });
 
 export { injectedRtkApi as api };
-export const { usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useFetchEternalFarmQuery, useLazyFetchEternalFarmQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useTopTokensQuery, useLazyTopTokensQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery } = injectedRtkApi;
+export const { useEmptyBlocksQuery, useLazyEmptyBlocksQuery, usePricesQuery, useLazyPricesQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useEternalFarmingsQuery, useLazyEternalFarmingsQuery, useEternalFarmingsFromPoolsQuery, useLazyEternalFarmingsFromPoolsQuery, useLimitFarmingsFromPoolsQuery, useLazyLimitFarmingsFromPoolsQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFetchPoolsByIdsQuery, useLazyFetchPoolsByIdsQuery, useFetchTokensByIdsQuery, useLazyFetchTokensByIdsQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useTotalStatsQuery, useLazyTotalStatsQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useFullPositionsPriceRangeQuery, useLazyFullPositionsPriceRangeQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useGetPoolsFromAddressesQuery, useLazyGetPoolsFromAddressesQuery, useTopTokensQuery, useLazyTopTokensQuery, useGetTokensFromAddressesQuery, useLazyGetTokensFromAddressesQuery, useGetBlockByTimestampRangeQuery, useLazyGetBlockByTimestampRangeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery, useEternalFarmingsByIdsQuery, useLazyEternalFarmingsByIdsQuery } = injectedRtkApi;
 

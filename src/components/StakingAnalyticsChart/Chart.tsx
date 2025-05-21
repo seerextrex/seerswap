@@ -59,7 +59,7 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
             });
         const yAxis = axisLeft(yScale)
             .ticks(dimensions.height / 40)
-            .tickFormat((val) => (val >= 1000_000 ? `${+val / 1000000}m` : `${val >= 1000 ? `${+val / 1000}k` : val}`));
+            .tickFormat((val) => (+val >= 1000_000 ? `${+val / 1000000}m` : `${+val >= 1000 ? `${+val / 1000}k` : +val}`));
 
         // Construct a focus line.
         const Line = create("svg:line")
@@ -250,21 +250,19 @@ export default function Chart({ fData, data2, margin, dimensions, type, colors }
 
                         InfoRectFeeText.property(
                             "innerHTML",
-                            `Value: ${
-                                type === "apr" ? Number(val1) : textVal >= 1000_000 ? `${(textVal / 1000_000).toFixed(2)}m` : textVal >= 1000 ? `${(textVal / 1000).toFixed(2)}k` : textVal.toFixed(2)
+                            `Value: ${type === "apr" ? Number(val1) : textVal >= 1000_000 ? `${(textVal / 1000_000).toFixed(2)}m` : textVal >= 1000 ? `${(textVal / 1000).toFixed(2)}k` : textVal.toFixed(2)
                             } ${type === "apr" ? "%" : ""}`
                         );
                         InfoRectColor.attr("fill", data2?.length !== 0 ? (val1 < val2 ? colors[1] : colors[0]) : colors[0]);
                         InfoRectFeeText2.property(
                             "innerHTML",
-                            `Value: ${
-                                type === "apr"
-                                    ? Number(val2)
-                                    : textVal2 >= 1000_000
+                            `Value: ${type === "apr"
+                                ? Number(val2)
+                                : textVal2 >= 1000_000
                                     ? `${(textVal2 / 1000_000).toFixed(2)}m`
                                     : textVal2 >= 1000
-                                    ? `${(textVal2 / 1000).toFixed(2)}k`
-                                    : textVal2.toFixed(2)
+                                        ? `${(textVal2 / 1000).toFixed(2)}k`
+                                        : textVal2.toFixed(2)
                             } ${type === "apr" ? "%" : ""}`
                         );
                         InfoRectColor2.attr("fill", val2 === val1 ? colors[1] : val2 < val1 ? colors[1] : colors[0]);

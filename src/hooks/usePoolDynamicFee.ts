@@ -1,6 +1,7 @@
-import { utils } from "ethers";
+import { id as ethersId } from "ethers";
 import { useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, usePublicClient } from "wagmi";
+import { publicClientToProvider } from "../utils/ethersAdapters";
 import { useAppDispatch, useAppSelector } from "state/hooks";
 import { updateDynamicFee } from "../state/mint/v3/actions";
 import { AppState } from "../state";
@@ -10,7 +11,10 @@ export function useDynamicFeeValue() {
 }
 
 export function usePoolDynamicFee(address: string) {
-    const { provider, chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+    const publicClient = usePublicClient({ chainId });
+    const provider = useMemo(() => publicClient ? publicClientToProvider(publicClient) : undefined, [publicClient]);
 
     const dispatch = useAppDispatch();
 
@@ -21,17 +25,14 @@ export function usePoolDynamicFee(address: string) {
     return useMemo(() => {
         if (!provider || !chainId || !address) return undefined;
 
-        // setState({ chainId, blockNumber: null })
-
         const filter = {
             address,
-            topics: [utils.id("Swap(address,address,int256,int256,uint160,uint128,int24)")],
+            topics: [ethersId("Swap(address,address,int256,int256,uint160,uint128,int24)")],
         };
 
         provider.on(filter, swapEventCallback);
-        // provider.on('block', blockNumberCallback)
         return () => {
             provider.removeListener(filter, swapEventCallback);
         };
-    }, [chainId, provider, address]);
+    }, [chainId, provider, address, dispatch]);
 }

@@ -3,7 +3,6 @@ import { useV3PositionFromTokenId } from "hooks/useV3Positions";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { WXDAI_EXTENDED } from "../../constants/tokens";
 import { calculateGasMargin } from "../../utils/calculateGasMargin";
-import { BigNumber } from "@ethersproject/bignumber";
 import useDebouncedChangeHandler from "hooks/useDebouncedChangeHandler";
 import { useBurnV3ActionHandlers, useBurnV3State, useDerivedV3BurnInfo } from "state/burn/v3/hooks";
 import Slider from "components/Slider";
@@ -17,7 +16,7 @@ import FormattedCurrencyAmount from "components/FormattedCurrencyAmount";
 import { useV3NFTPositionManagerContract } from "hooks/useContract";
 import { useUserSlippageToleranceWithDefault } from "state/user/hooks";
 import useTransactionDeadline from "hooks/useTransactionDeadline";
-import { TransactionResponse } from "@ethersproject/providers";
+import { TransactionResponse } from "ethers";
 import { useTransactionAdder } from "state/transactions/hooks";
 import { Percent } from "@uniswap/sdk-core";
 import { TYPE } from "theme";
@@ -32,7 +31,8 @@ import usePrevious from "../../hooks/usePrevious";
 
 import ReactGA from "react-ga";
 import { useAppSelector } from "../../state/hooks";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { walletClientToSigner, publicClientToProvider } from "../../utils/ethersAdapters";
 import useTheme from "../../hooks/useTheme";
 import { WrappedCurrency } from "../../models/types";
 import { GAS_PRICE_MULTIPLIER } from "../../hooks/useGasPrice";
@@ -50,20 +50,20 @@ export default function RemoveLiquidityV3({
 }: RouteComponentProps<{ tokenId: string }>) {
     const parsedTokenId = useMemo(() => {
         try {
-            return BigNumber.from(tokenId);
+            return BigInt(tokenId);
         } catch {
             return null;
         }
     }, [tokenId]);
 
-    if (parsedTokenId === null || parsedTokenId.eq(0)) {
+    if (parsedTokenId === null || parsedTokenId === 0n) {
         return <Redirect to={{ ...location, pathname: "/pool" }} />;
     }
 
     return <Remove tokenId={parsedTokenId} />;
 }
 
-function Remove({ tokenId }: { tokenId: BigNumber }) {
+function Remove({ tokenId }: { tokenId: bigint }) {
     const { position } = useV3PositionFromTokenId(tokenId);
     const prevPosition = usePrevious({ ...position });
     const _position = useMemo(() => {
@@ -84,7 +84,12 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
     // burn state
     const { percent } = useBurnV3State();
 
-    const { account, chainId, provider } = useWeb3React();
+    const { address: account, chain } = useAccount();
+    const chainId = chain?.id;
+    const { data: walletClient } = useWalletClient({ chainId });
+    const publicClient = usePublicClient({ chainId });
+    const signer = useMemo(() => walletClient ? walletClientToSigner(walletClient) : undefined, [walletClient]);
+
     const theme = useTheme();
 
     const derivedInfo = useDerivedV3BurnInfo(position, receiveWETH);
@@ -107,7 +112,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
     const { onPercentSelect } = useBurnV3ActionHandlers();
 
-    const removed = position?.liquidity?.eq(0);
+    const removed = position?.liquidity === 0n;
 
     // boilerplate for the slider
     const [percentForSlider, onPercentSelectForSlider] = useDebouncedChangeHandler(percent, onPercentSelect);
@@ -123,7 +128,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
     const burn = useCallback(async () => {
         setAttemptingTxn(true);
-        if (!positionManager || !liquidityValue0 || !liquidityValue1 || !deadline || !account || !chainId || !feeValue0 || !feeValue1 || !positionSDK || !liquidityPercentage || !provider) {
+        if (!positionManager || !liquidityValue0 || !liquidityValue1 || !deadline || !account || !chainId || !feeValue0 || !feeValue1 || !positionSDK || !liquidityPercentage || !signer) {
             return;
         }
 
@@ -140,34 +145,32 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         });
 
         const txn = {
-            to: positionManager.address,
+            to: positionManager.target,
             data: calldata,
             value,
         };
 
-        provider
-            .getSigner()
+        signer
             .estimateGas(txn)
             .then((estimate) => {
                 const newTxn = {
                     ...txn,
                     gasLimit: calculateGasMargin(chainId, estimate),
-                    gasPrice: gasPrice * GAS_PRICE_MULTIPLIER,
+                    gasPrice: BigInt(gasPrice) * BigInt(GAS_PRICE_MULTIPLIER),
                 };
 
-                return provider
-                    .getSigner()
+                return signer
                     .sendTransaction(newTxn)
                     .then((response: TransactionResponse) => {
                         ReactGA.event({
                             category: "Liquidity",
                             action: "RemoveV3",
-                            label: [liquidityValue0.currency.symbol, liquidityValue1.currency.symbol].join("/"),
+                            label: [liquidityValue0.currency.symbol || '', liquidityValue1.currency.symbol || ''].join("/"),
                         });
                         setTxnHash(response.hash);
                         setAttemptingTxn(false);
                         addTransaction(response, {
-                            summary: t`Remove ${liquidityValue0.currency.symbol}/${liquidityValue1.currency.symbol} liquidity`,
+                            summary: t`Remove ${liquidityValue0.currency.symbol || ''}/${liquidityValue1.currency.symbol || ''} liquidity`,
                         });
                     });
             })
@@ -186,7 +189,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         feeValue1,
         positionSDK,
         liquidityPercentage,
-        provider,
+        signer,
         tokenId,
         allowedSlippage,
         gasPrice,
@@ -203,7 +206,7 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
         setTxnHash("");
     }, [onPercentSelectForSlider, txnHash]);
 
-    const pendingText = t`Removing ${liquidityValue0?.toSignificant(6)} ${liquidityValue0?.currency?.symbol} and ${liquidityValue1?.toSignificant(6)} ${liquidityValue1?.currency?.symbol}`;
+    const pendingText = t`Removing ${liquidityValue0?.toSignificant(6) || ''} ${liquidityValue0?.currency?.symbol || ''} and ${liquidityValue1?.toSignificant(6) || ''} ${liquidityValue1?.currency?.symbol || ''}`;
 
     function modalHeader() {
         return (
@@ -268,12 +271,12 @@ function Remove({ tokenId }: { tokenId: BigNumber }) {
 
     const showCollectAsWeth = Boolean(
         !chainId &&
-            liquidityValue0?.currency &&
-            liquidityValue1?.currency &&
-            (liquidityValue0.currency.isNative ||
-                liquidityValue1.currency.isNative ||
-                liquidityValue0.currency.wrapped.equals(WXDAI_EXTENDED[liquidityValue0.currency.chainId]) ||
-                liquidityValue1.currency.wrapped.equals(WXDAI_EXTENDED[liquidityValue1.currency.chainId]))
+        liquidityValue0?.currency &&
+        liquidityValue1?.currency &&
+        (liquidityValue0.currency.isNative ||
+            liquidityValue1.currency.isNative ||
+            liquidityValue0.currency.wrapped.equals(WXDAI_EXTENDED[liquidityValue0.currency.chainId]) ||
+            liquidityValue1.currency.wrapped.equals(WXDAI_EXTENDED[liquidityValue1.currency.chainId]))
     );
     return (
         <div className={"maw-765 mh-a"}>

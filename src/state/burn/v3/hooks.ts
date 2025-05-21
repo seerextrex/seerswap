@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, Percent } from "@uniswap/sdk-core";
 import { Position } from "lib/src";
 import { usePool } from "hooks/usePools";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useToken } from "hooks/Tokens";
 import { useV3PositionFees } from "hooks/useV3PositionFees";
 import { useCallback, useMemo } from "react";
@@ -29,7 +29,7 @@ export function useDerivedV3BurnInfo(
     outOfRange: boolean;
     error?: string;
 } {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
     const { percent } = useBurnV3State();
 
     const token0 = useToken(position?.token0);
@@ -41,11 +41,11 @@ export function useDerivedV3BurnInfo(
         () =>
             pool && position?.liquidity && typeof position?.tickLower === "number" && typeof position?.tickUpper === "number"
                 ? new Position({
-                      pool,
-                      liquidity: position.liquidity.toString(),
-                      tickLower: position.tickLower,
-                      tickUpper: position.tickUpper,
-                  })
+                    pool,
+                    liquidity: position.liquidity.toString(),
+                    tickLower: position.tickLower,
+                    tickUpper: position.tickUpper,
+                })
                 : undefined,
         [pool, position]
     );

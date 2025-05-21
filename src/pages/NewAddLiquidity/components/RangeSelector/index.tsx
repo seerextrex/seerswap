@@ -118,8 +118,8 @@ export function RangeSelector({
                 isUSD && currentPriceInUSD
                     ? parseFloat(currentPriceInUSD?.toSignificant(5))
                     : mintInfo.invertPrice
-                    ? parseFloat(mintInfo.price.invert().toSignificant(5))
-                    : parseFloat(mintInfo.price.toSignificant(5));
+                        ? parseFloat(mintInfo.price.invert().toSignificant(5))
+                        : parseFloat(mintInfo.price.toSignificant(5));
         } else {
             if (isInitialInUSD) {
                 _price = parseFloat(initialUSDPrices.CURRENCY_A);
@@ -160,7 +160,7 @@ export function RangeSelector({
             {mintInfo.price && (
                 <div className="current-price f f-ac mxs_fd-c" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
                     <div className="mb-05 mxs_mt-05" style={{ whiteSpace: "nowrap" }}>
-                        {initial ? t`Initial ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price` : t`Current ${currencyA?.symbol} to ${isUSD ? "USD" : currencyB?.symbol} price`}
+                        {initial ? t`Initial ${currencyA?.symbol || ''} to ${isUSD ? "USD" : currencyB?.symbol || ''} price` : t`Current ${currencyA?.symbol || ''} to ${isUSD ? "USD" : currencyB?.symbol || ''} price`}
                     </div>
                     <div className="current-price-tip ta-c">{`${currentPrice || t`Loading...`}`}</div>
                 </div>

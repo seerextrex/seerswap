@@ -1,4 +1,4 @@
-import { TransactionResponse } from "@ethersproject/providers";
+import { TransactionResponse } from "ethers";
 import { Currency, CurrencyAmount, Percent, TradeType } from "@uniswap/sdk-core";
 import { Trade as V2Trade } from "@uniswap/v2-sdk";
 import { Trade as V3Trade } from "lib/src";
@@ -7,7 +7,7 @@ import { SWAP_ROUTER_ADDRESSES } from "../constants/addresses";
 import { useHasPendingApproval, useTransactionAdder } from "../state/transactions/hooks";
 import { calculateGasMargin } from "../utils/calculateGasMargin";
 import { useTokenContract } from "./useContract";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from 'wagmi';
 import { useTokenAllowance } from "./useTokenAllowance";
 import { useAppSelector } from "state/hooks";
 import { GAS_PRICE_MULTIPLIER } from "./useGasPrice";
@@ -22,7 +22,8 @@ export enum ApprovalState {
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useApproveCallback(amountToApprove?: CurrencyAmount<Currency>, spender?: string): [ApprovalState, () => Promise<void>] {
-    const { account, chainId } = useWeb3React();
+    const { address: account, chain } = useAccount();
+    const chainId = chain?.id;
     const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined;
     const currentAllowance = useTokenAllowance(token, account ?? undefined, spender);
     const pendingApproval = useHasPendingApproval(token?.address, spender);
@@ -78,9 +79,9 @@ export function useApproveCallback(amountToApprove?: CurrencyAmount<Currency>, s
 
         const exactToApprove = amountToApprove.quotient.toString();
 
-        const estimatedGas = await tokenContract.estimateGas.approve(spender, exactToApprove).catch(() => {
+        const estimatedGas = await tokenContract.approve.estimateGas(spender, exactToApprove).catch(() => {
             // general fallback for tokens who restrict approval amounts
-            return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString());
+            return tokenContract.approve.estimateGas(spender, amountToApprove.quotient.toString());
         });
 
         return tokenContract
@@ -105,7 +106,8 @@ export function useApproveCallback(amountToApprove?: CurrencyAmount<Currency>, s
 
 // wraps useApproveCallback in the context of a swap
 export function useApproveCallbackFromTrade(trade: V2Trade<Currency, Currency, TradeType> | V3Trade<Currency, Currency, TradeType> | undefined, allowedSlippage: Percent) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const v3SwapRouterAddress = chainId ? SWAP_ROUTER_ADDRESSES[chainId] : undefined;
     const amountToApprove = useMemo(() => (trade && trade.inputAmount.currency.isToken ? trade.maximumAmountIn(allowedSlippage) : undefined), [trade, allowedSlippage]);
     return useApproveCallback(amountToApprove, chainId ? (trade instanceof V3Trade ? v3SwapRouterAddress : undefined) : undefined);

@@ -4,7 +4,7 @@ import { getPositionPeriod } from "../../utils/time";
 import stc from "string-to-color";
 import "./index.scss";
 import { ChevronDown, Layers } from "react-feather";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { t, Trans } from "@lingui/macro";
 
 interface PositionsSelectProps {
@@ -17,7 +17,7 @@ interface PositionsSelectProps {
 }
 
 export default function PositionsSelect({ positions: { closed, opened }, setSelected, selected }: PositionsSelectProps) {
-    const { account } = useWeb3React();
+    const { address } = useAccount();
 
     const _opened = useMemo(() => {
         const res: any[] = [];
@@ -28,7 +28,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
             });
         }
         return res;
-    }, [opened, account]);
+    }, [opened, address]);
 
     const _closed = useMemo(() => {
         const res: any[] = [];
@@ -40,7 +40,7 @@ export default function PositionsSelect({ positions: { closed, opened }, setSele
             });
         }
         return res;
-    }, [closed, account]);
+    }, [closed, address]);
 
     const closeHandler = useCallback((e: any) => {
         const target = e.target.control;

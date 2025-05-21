@@ -164,7 +164,7 @@ export default function BarChart({ data, activeTickIdx, dimensions }: BarChartPr
 
                 InfoRectPriceLocked.property(
                     "innerHTML",
-                    t`${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${isLowerTVL ? v.tvlToken0.toFixed(4) : v.tvlToken0.toFixed(2)} ${v.index >= activeTickIdxInRange ? token1 : token0}`
+                    token0 && token1 && t`${v.index < activeTickIdxInRange ? token0 : token1} Locked: ${isLowerTVL ? v.tvlToken0.toFixed(4) : v.tvlToken0.toFixed(2)} ${v.index >= activeTickIdxInRange ? token1 : token0}`
                 );
             })
             .on("mouseleave", (d, v) => {

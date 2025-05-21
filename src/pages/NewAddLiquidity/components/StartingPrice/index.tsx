@@ -328,9 +328,9 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
                 ) : !basePriceUSD && !quotePriceUSD ? (
                     <span className={"not-auto-fetched"}>{t`Can't auto-fetch prices.`}</span>
                 ) : !basePriceUSD ? (
-                    <span className={"not-auto-fetched"}>{t`Can't auto-fetch ${currencyA?.symbol} price.`}</span>
+                    <span className={"not-auto-fetched"}>{t`Can't auto-fetch ${currencyA?.symbol || ''} price.`}</span>
                 ) : !quotePriceUSD ? (
-                    <span className={"not-auto-fetched"}>{t`Can't auto-fetch ${currencyB?.symbol} price.`}</span>
+                    <span className={"not-auto-fetched"}>{t`Can't auto-fetch ${currencyB?.symbol || ''} price.`}</span>
                 ) : null}
             </div>
             <div className={"br-8 mt-1 f c"}>

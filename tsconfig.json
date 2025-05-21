@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2019",
+    "target": "es2020",
     "lib": [
       "dom",
       "dom.iterable",
@@ -27,22 +27,20 @@
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
     "types": [
-      "react-spring",
       "jest"
     ],
     "typeRoots": [
-      "./node_modules/@types",
-      "src/*"
+      "./node_modules/@types"
     ],
     "baseUrl": "src",
   },
-   "exclude": [
-     "node_modules",
-     "cypress",
-   ],
+  "exclude": [
+    "node_modules",
+    "cypress",
+  ],
   "include": [
-     "./src/**/*.ts",
-     "./src/**/*.tsx",
-     "src/components/Confetti/index.js"
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "src/components/Confetti/index.js"
   ]
 }

@@ -17,10 +17,9 @@ import { useCurrencyBalance } from "state/wallet/hooks";
 import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { CurrencyAmount } from "@uniswap/sdk-core";
 import { FARMING_CENTER } from "constants/addresses";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { Token } from "@uniswap/sdk-core";
-import { formatUnits } from "ethers/lib/utils";
-import { BigNumber } from "ethers";
+import { formatUnits } from "ethers";
 
 import { t, Trans } from "@lingui/macro";
 
@@ -30,6 +29,7 @@ import { useToken } from "../../hooks/Tokens";
 import useUSDCPrice from "../../hooks/useUSDCPrice";
 import { Position } from "lib/src";
 import { usePool } from "../../hooks/usePools";
+import { NEVER_RELOAD } from "../../state/multicall/hooks";
 
 interface FarmModalProps {
     event: {
@@ -71,7 +71,7 @@ export function FarmModal({
     closeHandler,
     farmingType,
 }: FarmModalProps) {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const isTierFarming = useMemo(
         () => Boolean((+tier1Multiplier || +tier2Multiplier || +tier3Multiplier) && (+tokenAmountForTier1 || +tokenAmountForTier2 || +tokenAmountForTier3)),
@@ -201,27 +201,31 @@ export function FarmModal({
     const approveNFTs = useCallback(() => {
         setSubmitLoader(true);
         setSubmitState(0);
-        approveHandler(selectedNFT);
-    }, [selectedNFT, submitState]);
+        if (selectedNFT && selectedNFT.id) {
+            approveHandler(selectedNFT as { id: string; onFarmingCenter?: boolean });
+        }
+    }, [selectedNFT, approveHandler]);
 
     const farmNFTs = useCallback(
         (eventType: FarmingType) => {
             setSubmitLoader(true);
             setSubmitState(2);
-            farmHandler(
-                selectedNFT,
-                {
-                    pool: pool.id,
-                    rewardToken: rewardToken.id,
-                    bonusRewardToken: bonusRewardToken.id,
-                    startTime,
-                    endTime,
-                },
-                eventType,
-                selectedTier || 0
-            );
+            if (selectedNFT && selectedNFT.id) {
+                farmHandler(
+                    selectedNFT as { id: string; onFarmingCenter?: boolean },
+                    {
+                        pool: pool.id,
+                        rewardToken: rewardToken.id,
+                        bonusRewardToken: bonusRewardToken.id,
+                        startTime,
+                        endTime,
+                    },
+                    eventType,
+                    selectedTier || 0
+                );
+            }
         },
-        [selectedNFT, submitState, selectedTier]
+        [selectedNFT, pool, rewardToken, bonusRewardToken, startTime, endTime, farmHandler, selectedTier]
     );
 
     const balance = useCurrencyBalance(
@@ -236,15 +240,15 @@ export function FarmModal({
 
         switch (selectedTier) {
             case tokenAmountForTier1:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForTier1), multiplierToken.decimals);
+                return +_balance >= +formatUnits(BigInt(tokenAmountForTier1), multiplierToken.decimals);
             case tokenAmountForTier2:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForTier2), multiplierToken.decimals);
+                return +_balance >= +formatUnits(BigInt(tokenAmountForTier2), multiplierToken.decimals);
             case tokenAmountForTier3:
-                return +_balance >= +formatUnits(BigNumber.from(tokenAmountForTier3), multiplierToken.decimals);
+                return +_balance >= +formatUnits(BigInt(tokenAmountForTier3), multiplierToken.decimals);
             default:
                 return true;
         }
-    }, [balance, selectedTier, tokenAmountForTier1, tokenAmountForTier2, tokenAmountForTier3]);
+    }, [balance, selectedTier, tokenAmountForTier1, tokenAmountForTier2, tokenAmountForTier3, multiplierToken?.decimals]);
 
     const tierSelectionHandler = useCallback(
         (tier) => {
@@ -293,7 +297,7 @@ export function FarmModal({
                     </div>
                     <div className={"h-400 f c f-ac f-jc"}>
                         <CheckCircle size={55} stroke={"var(--green)"} />
-                        <p className={"mt-05"}>{t`Position #${selectedNFT?.id} deposited succesfully!`}</p>
+                        {selectedNFT?.id && <p className={"mt-05"}>{t`Position #${selectedNFT.id} deposited succesfully!`}</p>}
                     </div>
                 </div>
             ) : positionsForPoolLoading ? (
@@ -459,28 +463,40 @@ export function FarmModal({
     );
 }
 
+// Internal component for displaying individual NFT position to stake
 const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, submitLoader, setSelectedNFT }) => {
-    const { loading, position: positionDetails } = useV3PositionFromTokenId(token.id);
+    // token here is the selectedNFT from the modal's state (type NTFInterface)
 
-    const { token0: token0Address, token1: token1Address, liquidity, tickLower, tickUpper } = { ...positionDetails };
+    // Get the detailed, on-chain position data for the selected NFT
+    const { loading: positionLoading, position: positionDetails }
+        = useV3PositionFromTokenId(token?.id ? BigInt(token.id) : undefined) || {};
 
-    const token0 = useToken(token0Address);
-    const token1 = useToken(token1Address);
-    const [, pool] = usePool(token0 ?? undefined, token1 ?? undefined);
-    const price0 = useUSDCPrice(token0 ?? undefined);
-    const price1 = useUSDCPrice(token1 ?? undefined);
+    const token0Address = positionDetails?.token0;
+    const token1Address = positionDetails?.token1;
+
+    const currency0 = useToken(token0Address);
+    const currency1 = useToken(token1Address);
+
+    // usePool will use NEVER_RELOAD because we modified it to accept ListenerOptions
+    const [, poolInstance] = usePool(currency0 ?? undefined, currency1 ?? undefined, NEVER_RELOAD);
+
+    const { liquidity, tickLower, tickUpper } = { ...positionDetails };
+
+    const price0 = useUSDCPrice(currency0 ?? undefined);
+    const price1 = useUSDCPrice(currency1 ?? undefined);
 
     const fiatValueOfLiquidity: () => CurrencyAmount<Token> | null = () => {
-        if (loading || !price0 || !price1 || !pool || !liquidity || typeof tickLower !== "number" || typeof tickUpper !== "number") return null;
-        const position = new Position({
-            pool,
+        if (positionLoading || !price0 || !price1 || !poolInstance || !liquidity || typeof tickLower !== "number" || typeof tickUpper !== "number") return null;
+        const positionSDK = new Position({
+            pool: poolInstance,
             liquidity: liquidity.toString(),
             tickLower,
             tickUpper,
         });
-        const amount0 = price0.quote(position.amount0);
-        const amount1 = price1.quote(position.amount1);
-        return amount0.add(amount1);
+        // Ensure amounts are quoted correctly to get their fiat value
+        const fiatAmount0 = price0.quote(positionSDK.amount0);
+        const fiatAmount1 = price1.quote(positionSDK.amount1);
+        return fiatAmount0.add(fiatAmount1);
     };
 
     return (
@@ -495,9 +511,9 @@ const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, 
                         old && old.id === token.id
                             ? null
                             : {
-                                  onFarmingCenter: token.onFarmingCenter,
-                                  id: token.id,
-                              }
+                                onFarmingCenter: token.onFarmingCenter,
+                                id: token.id,
+                            }
                     );
                 }
             }}
@@ -505,7 +521,7 @@ const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, 
             <NFTPositionIcon name={token.id}>{token.id}</NFTPositionIcon>
             <div style={{ marginLeft: "10px" }}>
                 <p style={{ fontWeight: "bold" }}>
-                    {token0?.symbol} / {token1?.symbol}
+                    {currency0?.symbol} / {currency1?.symbol}
                 </p>
                 <p style={{ fontSize: "13px", marginTop: "6px" }}>${fiatValueOfLiquidity()?.toSignificant()}</p>
             </div>

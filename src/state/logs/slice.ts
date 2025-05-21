@@ -7,12 +7,12 @@ export interface LogsState {
             listeners: number
             fetchingBlockNumber?: number
             results?:
-                | {
+            | {
                 blockNumber: number
                 logs: Log[]
                 error?: undefined
             }
-                | {
+            | {
                 blockNumber: number
                 logs?: undefined
                 error: true
@@ -62,7 +62,11 @@ const slice = createSlice({
             const key = filterToKey(filter)
             const fetchState = state[chainId][key]
             if (!fetchState || (fetchState.results && fetchState.results.blockNumber > results.blockNumber)) return
-            fetchState.results = results
+            fetchState.results = {
+                blockNumber: results.blockNumber,
+                logs: results.logs.map(log => ({ ...log, topics: [...log.topics] })),
+                error: undefined
+            }
         },
         fetchedLogsError(
             state,

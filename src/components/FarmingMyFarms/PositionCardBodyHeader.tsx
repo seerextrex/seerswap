@@ -5,8 +5,7 @@ import CurrencyLogo from "../CurrencyLogo";
 import { Token } from "@uniswap/sdk-core";
 import { WrappedCurrency } from "../../models/types";
 import { formatAmountTokens } from "../../utils/numbers";
-import { formatUnits } from "ethers/lib/utils";
-import { BigNumber } from "ethers";
+import { formatUnits } from "ethers";
 import BachelorTierIcon from "../../assets/images/bachelor-tier-icon.png";
 import MasterTierIcon from "../../assets/images/master-tier-icon.png";
 import ProfessorTierIcon from "../../assets/images/professor-tier-icon.png";
@@ -115,7 +114,7 @@ export default function PositionCardBodyHeader({ el, farmingType, date, enteredI
                                 LOCKED
                             </div>
                             <div className={"fs-1"}>{`${formatAmountTokens(
-                                +formatUnits(BigNumber.from(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal), tierMultiplierToken.decimals)
+                                +formatUnits(BigInt(farmingType === FarmingType.LIMIT ? el?.tokensLockedLimit : el?.tokensLockedEternal || '0'), tierMultiplierToken.decimals)
                             )} ${tierMultiplierToken.symbol}`}</div>
                         </div>
                     </div>

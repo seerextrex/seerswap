@@ -1,6 +1,8 @@
-import { namehash } from 'ethers/lib/utils'
+import { namehash } from 'ethers'
 import { useMemo } from 'react'
-import { useSingleCallResult } from '../state/multicall/hooks'
+import { useAccount } from 'wagmi'
+import { gnosis } from 'wagmi/chains'
+import { useSingleCallResult, NEVER_RELOAD } from '../state/multicall/hooks'
 import { isAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useENSRegistrarContract, useENSResolverContract } from './useContract'
@@ -11,7 +13,11 @@ import useDebounce from './useDebounce'
  * Note this is not the same as looking up an ENS name to find an address.
  */
 export default function useENSName(address?: string): { ENSName: string | null; loading: boolean } {
+    const { chainId } = useAccount()
+    const isGnosis = chainId === gnosis.id
+
     const debouncedAddress = useDebounce(address, 200)
+
     const ensNodeArgument = useMemo(() => {
         if (!debouncedAddress || !isAddress(debouncedAddress)) return [undefined]
         try {
@@ -20,16 +26,34 @@ export default function useENSName(address?: string): { ENSName: string | null; 
             return [undefined]
         }
     }, [debouncedAddress])
+
     const registrarContract = useENSRegistrarContract(false)
-    const resolverAddress = useSingleCallResult(registrarContract, 'resolver', ensNodeArgument)
+    const resolverAddress = useSingleCallResult(
+        isGnosis ? undefined : registrarContract, // Pass undefined contract if Gnosis
+        'resolver',
+        ensNodeArgument,
+        NEVER_RELOAD
+    )
     const resolverAddressResult = resolverAddress.result?.[0]
+
     const resolverContract = useENSResolverContract(
-        resolverAddressResult && !isZero(resolverAddressResult) ? resolverAddressResult : undefined,
+        isGnosis ? undefined : (resolverAddressResult && !isZero(resolverAddressResult) ? resolverAddressResult : undefined),
         false
     )
-    const name = useSingleCallResult(resolverContract, 'name', ensNodeArgument)
+
+    const name = useSingleCallResult(
+        isGnosis ? undefined : resolverContract, // Pass undefined contract if Gnosis
+        'name',
+        ensNodeArgument,
+        NEVER_RELOAD
+    )
 
     const changed = debouncedAddress !== address
+
+    if (isGnosis) {
+        return { ENSName: null, loading: false }
+    }
+
     return {
         ENSName: changed ? null : name.result?.[0] ?? null,
         loading: changed || resolverAddress.loading || name.loading

@@ -2,7 +2,7 @@ import React from 'react'
 import { ExternalLink } from '../../theme'
 import { CircleWrapper, GreenCircle, IconWrapper } from './styled'
 
-interface OptionProps {
+export interface OptionProps {
     link?: string | null
     clickable?: boolean
     size?: number | null

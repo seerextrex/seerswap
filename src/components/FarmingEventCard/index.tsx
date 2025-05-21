@@ -14,11 +14,17 @@ import "./index.scss";
 import { Link } from "react-router-dom";
 
 import { Trans, t } from "@lingui/macro";
-import { formatUnits } from "ethers/lib/utils";
-import { BigNumber } from "ethers";
+import { formatUnits } from "ethers";
 
 import AlgebraConfig from "algebra.config";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
+
+// Define a more specific type for items in rewardList
+interface RewardListItem {
+    token: any; // Should ideally be TokenSubgraph
+    amount?: number; // Or string if pre-formatted
+    rewardRate?: number;
+}
 
 interface FarmingEventCardProps {
     active?: boolean;
@@ -51,50 +57,88 @@ export function FarmingEventCard({
     refreshing,
     farmHandler,
     now,
-    event: { pool, createdAtTimestamp, rewardToken, bonusRewardToken, reward, bonusReward, startTime, endTime, apr, locked, enterStartTime, tvl, dailyRewardRate, dailyBonusRewardRate } = {},
+    event,
     eternal,
 }: FarmingEventCardProps) {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
     const toggleWalletModal = useWalletModalToggle();
+
+    const {
+        pool,
+        createdAtTimestamp,
+        rewardToken,
+        bonusRewardToken,
+        reward,
+        bonusReward,
+        startTime,
+        endTime,
+        apr,
+        locked,
+        enterStartTime,
+        tvl,
+        dailyRewardRate,
+        dailyBonusRewardRate
+    } = event || {};
 
     const _startTime = useMemo(() => {
         if (!startTime) return [];
-
         const date = new Date(+startTime * 1000);
-
         return [convertLocalDate(date), convertDateTime(date)];
     }, [startTime]);
 
     const _endTime = useMemo(() => {
         if (!endTime) return [];
-
         const date = new Date(+endTime * 1000);
-
         return [convertLocalDate(date), convertDateTime(date)];
     }, [endTime]);
 
     const _enterTime = useMemo(() => {
-        if (!enterStartTime) return [];
-
+        if (enterStartTime === undefined || enterStartTime === null) return [undefined, undefined];
         const date = new Date(+enterStartTime * 1000);
-
         return [convertLocalDate(date), convertDateTime(date)];
-    }, [startTime]);
+    }, [enterStartTime]);
 
-    const rewardList = useMemo(() => {
-        if (!eternal && (!reward || !bonusReward)) return;
+    const rewardList: RewardListItem[] = useMemo(() => {
+        const currentEvent = event || {};
+        const {
+            rewardToken: currentRewardToken,
+            bonusRewardToken: currentBonusRewardToken,
+            reward: currentReward,
+            bonusReward: currentBonusReward,
+            dailyRewardRate: currentDailyRewardRate,
+            dailyBonusRewardRate: currentDailyBonusRewardRate
+        } = currentEvent;
 
-        if (eternal && !dailyRewardRate && !dailyBonusRewardRate) return;
+        if (!currentRewardToken) return [];
 
-        if (rewardToken.id === bonusRewardToken.id) {
-            return [{ token: rewardToken, rewardRate: (dailyRewardRate || 0) + (dailyBonusRewardRate || 0), amount: formatUnits(BigNumber.from(reward).add(BigNumber.from(bonusReward)), 18) }];
+        if (!eternal && (currentReward === undefined || currentBonusReward === undefined)) return [];
+        if (eternal && (currentDailyRewardRate === undefined && currentDailyBonusRewardRate === undefined)) return [];
+
+        const list: RewardListItem[] = []; // Explicitly type the list
+
+        if (currentBonusRewardToken && currentRewardToken.id === currentBonusRewardToken.id) {
+            const totalReward = BigInt(currentReward || 0) + BigInt(currentBonusReward || 0);
+            const formattedAmount = currentRewardToken.decimals ? formatUnits(totalReward, Number(currentRewardToken.decimals)) : '0';
+            list.push({ token: currentRewardToken, rewardRate: (currentDailyRewardRate || 0) + (currentDailyBonusRewardRate || 0), amount: parseFloat(formattedAmount) });
+            return list;
         }
 
-        return [
-            { token: rewardToken, amount: reward, rewardRate: dailyRewardRate },
-            { token: bonusRewardToken, amount: bonusReward, rewardRate: dailyBonusRewardRate },
-        ];
-    }, [reward, bonusReward, rewardToken, bonusRewardToken]);
+        if (currentRewardToken) {
+            list.push({ token: currentRewardToken, amount: currentReward, rewardRate: currentDailyRewardRate });
+        }
+        if (currentBonusRewardToken) {
+            list.push({ token: currentBonusRewardToken, amount: currentBonusReward, rewardRate: currentDailyBonusRewardRate });
+        }
+        return list;
+
+    }, [event, eternal]);
+
+    if (!event || !event.pool || !event.pool.token0 || !event.pool.token1 || !event.rewardToken) {
+        console.warn("FarmingEventCard: Missing critical event data (pool or rewardToken)", { event });
+        return <div className={"farming-event-card p-1 br-12"}><Trans>Loading farm data...</Trans></div>;
+    }
+
+    const isFarmButtonDisabled = locked || (enterStartTime !== undefined && new Date(+enterStartTime * 1000).getTime() > Date.now());
 
     return (
         <div className={"farming-event-card p-1 br-12"} data-refreshing={refreshing}>
@@ -128,8 +172,8 @@ export function FarmingEventCard({
             )}
             <div className={"f mb-1"}>
                 <div className={"f mr-1"}>
-                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token0.id, 18, pool.token0.symbol) as WrappedCurrency} size={"30px"} />
-                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token1.id, 18, pool.token1.symbol) as WrappedCurrency} size={"30px"} />
+                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token0.id, Number(pool.token0.decimals), pool.token0.symbol) as WrappedCurrency} size={"30px"} />
+                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token1.id, Number(pool.token1.decimals), pool.token1.symbol) as WrappedCurrency} size={"30px"} />
                 </div>
                 <div>
                     <h3 className={"fs-075 b"}>
@@ -137,7 +181,7 @@ export function FarmingEventCard({
                     </h3>
                     <div style={{ marginTop: "2px" }}>{`${pool.token0.symbol}/${pool.token1.symbol}`}</div>
                 </div>
-                {apr && apr > 0 ? (
+                {(apr !== undefined && apr > 0) ? (
                     <div className={"farming-event-card__reward-apr p-05 br-8 ml-a fs-085"}>
                         <span>{Math.round(apr)}%</span>
                         <span style={{ marginLeft: "5px" }}>APR</span>
@@ -149,13 +193,16 @@ export function FarmingEventCard({
                     <Trans>REWARDS</Trans>
                 </div>
                 <ul className="farming-event-card__reward-list">
-                    {rewardList?.map((reward: any, i) =>
-                        reward.rewardRate ? (
+                    {rewardList?.map((rewardItem: RewardListItem, i: number) =>
+                        rewardItem && rewardItem.token && (rewardItem.rewardRate !== undefined || rewardItem.amount !== undefined) ? (
                             <li key={i} className="farming-event-card__reward-list-item f">
-                                <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, reward.token.id, 18, reward.token.symbol) as WrappedCurrency} size={"30px"} />
-                                <span className="farming-event-card__reward-list-item__symbol ml-05">{reward.token.symbol}</span>
-                                <div className={"m-a mr-0 fs-085"} title={reward.amount.toString()}>
-                                    {eternal ? <span>{formatAmountTokens(reward.rewardRate, false)} per day</span> : <span>{formatAmountTokens(reward.amount, false)}</span>}
+                                <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, rewardItem.token.id, Number(rewardItem.token.decimals), rewardItem.token.symbol) as WrappedCurrency} size={"30px"} />
+                                <span className="farming-event-card__reward-list-item__symbol ml-05">{rewardItem.token.symbol}</span>
+                                <div className={"m-a mr-0 fs-085"} title={rewardItem.amount?.toString() || 'N/A'}>
+                                    {eternal ?
+                                        (rewardItem.rewardRate !== undefined ? <span>{formatAmountTokens(rewardItem.rewardRate, false)} per day</span> : <Trans>N/A</Trans>) :
+                                        (rewardItem.amount !== undefined ? <span>{formatAmountTokens(rewardItem.amount, false)}</span> : <Trans>N/A</Trans>)
+                                    }
                                 </div>
                             </li>
                         ) : null
@@ -177,13 +224,12 @@ export function FarmingEventCard({
                     </div>
                     <div className="w-100 f mt-05">
                         <div className="f f-ac f-jc farming-event-card__timeline-circle">
-                            <div className={`farming-event-card__timeline-circle__inner ${!active ? "active" : ""}`}></div>
+                            <div className={`farming-event-card__timeline-circle__inner ${!active && enterStartTime !== undefined && (new Date(+enterStartTime * 1000).getTime() < Date.now()) ? "active" : ""}`}></div>
                         </div>
                         <div className="farming-event-card__timeline-line">
-                            {/*@ts-ignore*/}
                             <div
                                 className="farming-event-card__timeline-line__inner"
-                                style={{ width: active ? "100%" : new Date(+enterStartTime! * 1000).getTime() >= Date.now() ? "0%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}
+                                style={{ width: active ? "100%" : (enterStartTime !== undefined && new Date(+enterStartTime * 1000).getTime() >= Date.now()) ? "0%" : `${getProgress(Number(createdAtTimestamp), startTime, now)}%` }}
                             ></div>
                         </div>
                         <div className="f f-ac f-jc farming-event-card__timeline-circle">{active && <div className="farming-event-card__timeline-circle__inner active" />}</div>
@@ -195,20 +241,20 @@ export function FarmingEventCard({
                     <div className="w-100 f fs-085" style={{ marginTop: "10px" }}>
                         <div className="w-100 f f-ac">
                             <div className="farming-event-card__timeline-calendar first ta-c">
-                                <div className="farming-event-card__timeline-calendar-day">{_enterTime[0]}</div>
-                                <div className="farming-event-card__timeline-calendar-hour">{_enterTime[1]}</div>
+                                <div className="farming-event-card__timeline-calendar-day">{_enterTime[0] || 'N/A'}</div>
+                                <div className="farming-event-card__timeline-calendar-hour">{_enterTime[1] || '--:--'}</div>
                             </div>
                         </div>
                         <div className="w-100 f f-ac f-jc">
                             <div className="farming-event-card__timeline-calendar second ta-c">
-                                <div className="farming-event-card__timeline-calendar-day">{_startTime[0]}</div>
-                                <div className="farming-event-card__timeline-calendar-hour">{_startTime[1]}</div>
+                                <div className="farming-event-card__timeline-calendar-day">{_startTime[0] || 'N/A'}</div>
+                                <div className="farming-event-card__timeline-calendar-hour">{_startTime[1] || '--:--'}</div>
                             </div>
                         </div>
                         <div className="w-100 f f-jc" style={{ justifyContent: "flex-end" }}>
                             <div className="farming-event-card__timeline-calendar third ta-c">
-                                <div className="farming-event-card__timeline-calendar-day">{_endTime[0]}</div>
-                                <div className="farming-event-card__timeline-calendar-hour">{_endTime[1]}</div>
+                                <div className="farming-event-card__timeline-calendar-day">{_endTime[0] || 'N/A'}</div>
+                                <div className="farming-event-card__timeline-calendar-hour">{_endTime[1] || '--:--'}</div>
                             </div>
                         </div>
                     </div>
@@ -216,14 +262,9 @@ export function FarmingEventCard({
             )}
             {account && !active ? (
                 <>
-                    {/* <div style={{ marginTop: "9px", border: "none", lineHeight: "19px" }} className={`w-100 b br-8 fs-085 ${!eternal ? "mt-05" : ""}`}>
-                        <span>TVL : </span>
-                        <span>{formatDollarAmount(tvl)}</span>
-                    </div> */}
                     <button
                         style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
-                        //@ts-ignore
-                        disabled={locked || new Date(+enterStartTime * 1000).getTime() > Date.now()}
+                        disabled={isFarmButtonDisabled}
                         className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
                         onClick={farmHandler}
                     >

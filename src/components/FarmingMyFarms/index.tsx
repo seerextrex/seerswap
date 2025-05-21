@@ -2,11 +2,11 @@ import { isAddress } from "@ethersproject/address";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Frown } from "react-feather";
 import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useAllTransactions } from "../../state/transactions/hooks";
 import Loader from "../Loader";
 import Modal from "../Modal";
-import { Deposit, RewardInterface, UnfarmingInterface } from "../../models/interfaces";
+import { Deposit, RewardInterface, UnfarmingInterface, DefaultFarming, DefaultFarmingWithError } from "../../models/interfaces";
 import { FarmingType } from "../../models/enums";
 import { getCountdownTime } from "../../utils/time";
 import { getProgress } from "../../utils/getProgress";
@@ -28,17 +28,17 @@ interface FarmingMyFarmsProps {
 }
 
 export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingMyFarmsProps) {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const {
         getRewardsHash,
-        sendNFTL2Handler,
+        transferNFTFromFarmingCenterHandler,
         eternalCollectRewardHandler,
         withdrawHandler,
         exitHandler,
         claimRewardsHandler,
         claimRewardHash,
-        sendNFTL2Hash,
+        transferedHash,
         eternalCollectRewardHash,
         withdrawnHash,
     } = useFarmingHandlers() || {};
@@ -64,14 +64,16 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
     }, [shallowPositions]);
 
     const sendNFTHandler = useCallback(
-        (v) => {
+        (v: any) => {
             if (!isAddress(recipient) || recipient === account) {
                 return;
             }
-
-            sendNFTL2Handler(recipient, v);
+            if (transferNFTFromFarmingCenterHandler) {
+                transferNFTFromFarmingCenterHandler(recipient, v.id);
+                setSending({ id: v.id, state: "pending" });
+            }
         },
-        [recipient]
+        [recipient, account, transferNFTFromFarmingCenterHandler]
     );
 
     useEffect(() => {
@@ -83,16 +85,24 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
     }, [data]);
 
     useEffect(() => {
-        if (!sending.state) return;
+        if (!sending.state || sending.state !== 'pending' || !sending.id) return;
 
-        if (typeof sendNFTL2Hash === "string") {
-            setSending({ id: null, state: null });
-        } else if (sendNFTL2Hash && confirmed.includes(String(sendNFTL2Hash.hash))) {
-            setSending({ id: sendNFTL2Hash.id, state: "done" });
-            if (!shallowPositions) return;
-            setShallowPositions(shallowPositions.filter((el) => el.L2tokenId !== sendNFTL2Hash.id));
+        if (typeof transferedHash === "string") {
+            console.error("Send NFT Error (raw string from transferedHash):", transferedHash);
+            setSending({ id: sending.id, state: "error" });
+        } else if (transferedHash && typeof transferedHash === 'object' && 'hash' in transferedHash && transferedHash.hash && confirmed.includes(String(transferedHash.hash))) {
+            if (transferedHash.id === sending.id) {
+                setSending({ id: transferedHash.id, state: "done" });
+                if (shallowPositions) {
+                    setShallowPositions(shallowPositions.filter((el) => el.id !== transferedHash.id));
+                }
+            }
+        } else if (transferedHash && typeof transferedHash === 'object' && 'error' in transferedHash && transferedHash.error && transferedHash.id === sending.id) {
+            const errorObj = transferedHash as DefaultFarmingWithError;
+            console.error("Send NFT Error (from transferedHash.error):", errorObj.error);
+            setSending({ id: sending.id, state: "error" });
         }
-    }, [sendNFTL2Hash, confirmed]);
+    }, [transferedHash, confirmed, shallowPositions, sending.id, sending.state]);
 
     useEffect(() => {
         if (!eternalCollectReward.state) return;
@@ -231,108 +241,6 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                     <div className={"my-farms__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
                                         <PositionHeader el={el} setUnstaking={setUnfarming} setSendModal={setSendModal} unstaking={unfarming} withdrawHandler={withdrawHandler} />
                                         <div className={"f cg-1 rg-1 mxs_fd-c"}>
-                                            {/* <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
-                                                <PositionCardBodyHeader el={el} farmingType={FarmingType.LIMIT} date={date} />
-                                                {el.limitFarming ? (
-                                                    <>
-                                                        <PositionCardBodyStat
-                                                            rewardToken={el.limitRewardToken}
-                                                            earned={el.limitEarned}
-                                                            bonusEarned={el.limitBonusEarned}
-                                                            bonusRewardToken={el.limitBonusRewardToken}
-                                                        />
-                                                        <div className={"f mxs_fd-c"}>
-                                                            {!el.ended && el.limitEndTime * 1000 > Date.now() && (
-                                                                <div className={"f w-100"}>
-                                                                    <div className={"w-100"} data-started={el.started || el.limitStartTime * 1000 < Date.now()}>
-                                                                        {!el.started && el.limitStartTime * 1000 > Date.now() && (
-                                                                            <div className={"mb-05 p-r fs-075"}>{t`Starts in ${getCountdownTime(el.limitStartTime, now)}`}</div>
-                                                                        )}
-                                                                        {(el.started || el.limitStartTime * 1000 < Date.now()) && (
-                                                                            <div className={"mb-05 p-r fs-075"}>{t`Ends in ${getCountdownTime(el.limitEndTime, now)}`}</div>
-                                                                        )}
-                                                                        <div className={"my-farms__position-card__body__event-progress w-100 br-8 p-025 mt-05"}>
-                                                                            {!el.started && el.limitStartTime * 1000 > Date.now() ? (
-                                                                                <div className={"br-8"} style={{ width: `${getProgress(el.createdAtTimestamp, el.limitStartTime, now)}%` }} />
-                                                                            ) : (
-                                                                                <div className={"br-8"} style={{ width: `${getProgress(el.limitStartTime, el.limitEndTime, now)}%` }} />
-                                                                            )}
-                                                                        </div>
-                                                                    </div>
-                                                                    {!el.started && el.limitStartTime * 1000 > Date.now() && (
-                                                                        <button
-                                                                            className={"btn primary w-100 ml-1 br-8 b pv-075"}
-                                                                            disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.LIMIT && gettingReward.state !== "done"}
-                                                                            onClick={() => {
-                                                                                setGettingReward({
-                                                                                    id: el.id,
-                                                                                    state: "pending",
-                                                                                    farmingType: FarmingType.LIMIT,
-                                                                                });
-                                                                                exitHandler(el.id, { ...el }, FarmingType.LIMIT);
-                                                                            }}
-                                                                        >
-                                                                            {gettingReward &&
-                                                                            gettingReward.farmingType === FarmingType.LIMIT &&
-                                                                            gettingReward.id === el.id &&
-                                                                            gettingReward.state !== "done" ? (
-                                                                                <span>
-                                                                                    <Loader size={"13px"} stroke={"white"} style={{ margin: "auto" }} />
-                                                                                </span>
-                                                                            ) : (
-                                                                                <span>
-                                                                                    <Trans>Withdraw</Trans>
-                                                                                </span>
-                                                                            )}
-                                                                        </button>
-                                                                    )}
-                                                                </div>
-                                                            )}
-                                                            {(el.ended || el.limitEndTime * 1000 < Date.now()) && (
-                                                                <button
-                                                                    className={"btn primary b w-100 pv-075 ph-1"}
-                                                                    disabled={
-                                                                        (gettingReward.id === el.id && gettingReward.farmingType === FarmingType.LIMIT && gettingReward.state !== "done") ||
-                                                                        +el.limitReward == 0
-                                                                    }
-                                                                    onClick={() => {
-                                                                        setGettingReward({
-                                                                            id: el.id,
-                                                                            state: "pending",
-                                                                            farmingType: FarmingType.LIMIT,
-                                                                        });
-                                                                        claimRewardsHandler(el.id, { ...el }, FarmingType.LIMIT);
-                                                                    }}
-                                                                >
-                                                                    {gettingReward &&
-                                                                    gettingReward.farmingType === FarmingType.LIMIT &&
-                                                                    gettingReward.id === el.id &&
-                                                                    gettingReward.state !== "done" ? (
-                                                                        <div className={"f f-jc f-ac cg-05"}>
-                                                                            <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                            <Trans>Collecting</Trans>
-                                                                        </div>
-                                                                    ) : (
-                                                                        <span>
-                                                                            <Trans>Collect rewards & Withdraw</Trans>
-                                                                        </span>
-                                                                    )}
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div className={"my-farms__position-card__empty f c f-ac f-jc"}>
-                                                        {el.limitAvailable ? (
-                                                            <CheckOut link={"limit-farms"} />
-                                                        ) : (
-                                                            <span>
-                                                                <Trans>No limit farms for now</Trans>
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div> */}
                                             <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
                                                 <PositionCardBodyHeader
                                                     farmingType={FarmingType.ETERNAL}

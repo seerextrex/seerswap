@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { useBlockNumber } from "../../state/application/hooks";
 import { ExternalLink } from "../../theme";
 import { ExplorerDataType, getExplorerLink } from "../../utils/getExplorerLink";
 import { Spinner, StyledPolling, StyledPollingDot, StyledPollingNumber } from "./styled";
 
 export default function Polling() {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     const blockNumber = useBlockNumber();
 

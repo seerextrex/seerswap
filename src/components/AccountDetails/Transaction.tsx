@@ -5,10 +5,11 @@ import Loader from "../Loader";
 import { useAppDispatch } from "../../state/hooks";
 import { clearOneTransaction } from "../../state/transactions/actions";
 import { ExternalLink } from "../../theme";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 
 export default function Transaction({ hash }: { hash: string }) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
     const allTransactions = useAllTransactions();
     const dispatch = useAppDispatch();
 

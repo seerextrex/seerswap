@@ -1,5 +1,5 @@
 import CurrencyLogo from "components/CurrencyLogo";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import { WrappedCurrency } from "models/types";
 import { useCallback, useMemo, useState } from "react";
 import { useCurrencyBalance } from "state/wallet/hooks";
@@ -32,7 +32,7 @@ interface StakeModalFarmingTiersProps {
 }
 
 export default function StakeModalFarmingTiers({ tiersLimits, tiersMultipliers, selectTier, multiplierToken }: StakeModalFarmingTiersProps) {
-    const { account } = useWeb3React();
+    const { address: account } = useAccount();
 
     const [selectedTier, setSelectedTier] = useState<number | undefined>(0);
 

@@ -13,11 +13,10 @@ import { AutoColumn } from "../Column";
 import Circle from "../../assets/images/blue-loader.svg";
 // @ts-ignore
 import MetaMaskLogo from "../../assets/svg/metamask-logo.svg";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount } from "wagmi";
 import useAddTokenToMetamask from "hooks/useAddTokenToMetamask";
 import { Trans } from "@lingui/macro";
 import { BottomSection, ConfirmedIcon, Section, StyledLogo, Wrapper } from "./styled";
-import { injected } from "../../connectors";
 
 interface ConfirmationPendingContentProps {
     onDismiss: () => void;
@@ -61,7 +60,7 @@ interface TransactionSubmittedContentProps {
 function TransactionSubmittedContent({ onDismiss, chainId, hash, currencyToAdd, inline }: TransactionSubmittedContentProps) {
     const theme = useContext(ThemeContext);
 
-    const { connector } = useWeb3React();
+    const { connector: activeConnector } = useAccount();
 
     const { addToken, success } = useAddTokenToMetamask(currencyToAdd);
 
@@ -87,7 +86,7 @@ function TransactionSubmittedContent({ onDismiss, chainId, hash, currencyToAdd, 
                         </Text>
                     </ExternalLink>
                 )}
-                {currencyToAdd && connector === injected && (
+                {currencyToAdd && (activeConnector?.id === 'injected' || activeConnector?.id === 'metaMask') && (
                     <ButtonLight mt="12px" padding="6px 12px" width="fit-content" onClick={addToken}>
                         {!success ? (
                             <RowFixed>
@@ -176,7 +175,8 @@ interface ConfirmationModalProps {
 }
 
 export default function TransactionConfirmationModal({ isOpen, onDismiss, attemptingTxn, hash, pendingText, content, currencyToAdd }: ConfirmationModalProps) {
-    const { chainId } = useWeb3React();
+    const { chain } = useAccount();
+    const chainId = chain?.id;
 
     // if on L2 and txn is submitted, close automatically (if open)
     useEffect(() => {

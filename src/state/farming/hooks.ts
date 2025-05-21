@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { useClients } from "../../hooks/subgraph/useClients";
 import { HAS_TRANSFERED_POSITIONS, ONE_ETERNAL_FARMING, ONE_FARMING_EVENT } from "../../utils/graphql-queries";
 import { isFarming, hasTransferredPositions } from "./actions";
-import { useWeb3React } from "@web3-react/core";
+import { useAccount as useWagmiAccount } from "wagmi";
 
 export function useFarmingActionsHandlers(): {
     onIsFarming: () => void;
@@ -13,7 +13,7 @@ export function useFarmingActionsHandlers(): {
     const { farmingClient } = useClients();
     const { startTime } = useAppSelector((state) => state.farming);
 
-    const { account } = useWeb3React();
+    const { address: account } = useWagmiAccount();
 
     const isFarmingAdd = useCallback(async () => {
         try {
@@ -21,7 +21,7 @@ export function useFarmingActionsHandlers(): {
                 data: { limitFarmings },
                 error,
             } = await farmingClient.query({
-                query: ONE_FARMING_EVENT(),
+                query: ONE_FARMING_EVENT,
                 fetchPolicy: "network-only",
                 variables: {
                     time: Math.round(Date.now() / 1000),
@@ -36,7 +36,7 @@ export function useFarmingActionsHandlers(): {
                 data: { eternalFarmings },
                 error: eternalError,
             } = await farmingClient.query({
-                query: ONE_ETERNAL_FARMING(),
+                query: ONE_ETERNAL_FARMING,
                 fetchPolicy: "network-only",
             });
 
@@ -64,7 +64,7 @@ export function useFarmingActionsHandlers(): {
                 data: { deposits },
                 error,
             } = await farmingClient.query({
-                query: HAS_TRANSFERED_POSITIONS(),
+                query: HAS_TRANSFERED_POSITIONS,
                 fetchPolicy: "network-only",
                 variables: {
                     account,

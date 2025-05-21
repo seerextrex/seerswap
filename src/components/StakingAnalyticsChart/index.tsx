@@ -2,8 +2,7 @@ import Chart from './Chart'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { map, min } from 'd3'
 import Brush from './Brush'
-import { BigNumber } from 'ethers'
-import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
+import { formatEther, formatUnits, parseUnits } from 'ethers'
 import { isMobile } from 'react-device-detect'
 import RangeButtons from './RangeButtons'
 import { HistoryStakingSubgraph } from '../../models/interfaces'
@@ -53,35 +52,42 @@ export default function StakingAnalyticsChart({ stakeHistoriesResult, type, colo
 
         if (type === 'apr') {
             setChartData(stakeHistoriesResult.map(item => {
-                const aprBigNumber = BigNumber.from(item.ALGBfromVault).mul(BigNumber.from(parseUnits('365', 18))).mul(BigNumber.from(100)).div(BigNumber.from(item.ALGBbalance))
+                const algbFromVault = BigInt(item.ALGBfromVault || '0');
+                const algbBalance = BigInt(item.ALGBbalance || '1');
+                if (algbBalance === 0n) {
+                    return { value: '0', date: convertDate(new Date(+item.date * 1000)) };
+                }
+                const daysFactor = parseUnits('365', 18);
+                const hundredFactor = 100n;
+                const aprScaled = (algbFromVault * daysFactor * hundredFactor) / algbBalance;
                 return {
-                    value: Math.floor(+formatEther(aprBigNumber)).toString(),
+                    value: Math.floor(Number(formatEther(aprScaled))).toString(),
                     date: convertDate(new Date(+item.date * 1000))
                 }
             }))
         } else if (type === 'xALGBminted') {
             setChartData(stakeHistoriesResult.map(item => {
                 return {
-                    value: formatUnits(BigNumber.from(item[type]), 18),
+                    value: formatUnits(BigInt(item[type] || '0'), 18),
                     date: convertDate(new Date(+item.date * 1000))
                 }
             }))
             setChart2Data(stakeHistoriesResult.map(item => {
                 return {
-                    value: formatUnits(BigNumber.from(item['xALGBburned']), 18),
+                    value: formatUnits(BigInt(item['xALGBburned'] || '0'), 18),
                     date: convertDate(new Date(+item.date * 1000))
                 }
             }))
         } else {
             setChartData(stakeHistoriesResult.map(item => {
                 return {
-                    value: formatUnits(BigNumber.from(item[type]), 18),
+                    value: formatUnits(BigInt(item[type] || '0'), 18),
                     date: convertDate(new Date(+item.date * 1000))
                 }
             }))
         }
 
-    }, [stakeHistoriesResult])
+    }, [stakeHistoriesResult, type])
 
     let prevData = ''
     const fullDateData = useMemo(() => getArrayDays(min(chartData.map(item => item.date)), new Date()).map(item => {

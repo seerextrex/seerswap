@@ -9,16 +9,25 @@ import { useRemoveUserAddedToken, useUserAddedTokens } from "state/user/hooks";
 import { Token } from "@uniswap/sdk-core";
 import CurrencyLogo from "components/CurrencyLogo";
 import { isAddress } from "utils";
-import { useWeb3React } from "@web3-react/core";
 import Card from "components/Card";
 import ImportRow from "./ImportRow";
 import useTheme from "../../hooks/useTheme";
 import { Trans } from "@lingui/macro";
 import { CurrencyModalView } from "./CurrencySearchModal";
 import { WrappedCurrency } from "../../models/types";
+import { useAccount } from "wagmi";
+import { Trash } from "react-feather";
+import ReactGA from "react-ga";
+import { Text } from "rebass";
+import styled from "styled-components/macro";
+import ListLogo from "../ListLogo/index";
 
 export default function ManageTokens({ setModalView, setImportToken }: { setModalView: (view: CurrencyModalView) => void; setImportToken: (token: Token) => void }) {
-    const { chainId } = useWeb3React();
+    const {
+        // @ts-ignore
+        chain
+    } = useAccount();
+    const chainId = chain?.id;
 
     const [searchQuery, setSearchQuery] = useState<string>("");
     const theme = useTheme();

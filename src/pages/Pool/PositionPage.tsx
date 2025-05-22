@@ -23,7 +23,7 @@ import { TransactionResponse } from "ethers";
 import { Dots } from "components/swap/styled";
 import { getPriceOrderingFromPositionForUI } from "../../components/PositionListItem";
 import RateToggle from "../../components/RateToggle";
-import { useSingleCallResult, NEVER_RELOAD } from "../../state/multicall/hooks";
+import { useSingleCallResult, NEVER_RELOAD, DEFAULT_LISTENER_OPTIONS } from "../../state/multicall/hooks";
 import RangeBadge from "../../components/Badge/RangeBadge";
 import { SwitchLocaleLink } from "../../components/SwitchLocaleLink";
 import useUSDCPrice from "hooks/useUSDCPrice";
@@ -43,11 +43,6 @@ import { LinkedCurrency } from "./LinkedCurrency";
 import { CurrentPriceCard } from "./CurrentPriceCard";
 import { WrappedCurrency } from "../../models/types";
 import Card from "../../shared/components/Card/Card";
-import { RowBetween, RowFixed } from "components/Row";
-import { ApplicationModal } from "../../state/application/actions";
-import { useModalOpen, useToggleModal } from "../../state/application/hooks";
-import { isAddress } from "../../utils";
-import { DEFAULT_LISTENER_OPTIONS } from "state/multicall/hooks";
 
 function useQuery() {
     const { search } = useLocation();
@@ -67,7 +62,7 @@ export default function PositionPage({
 
     const query = useQuery();
 
-    const isOnFarming = useMemo(() => query.get("onFarming"), [tokenIdFromUrl, query]);
+    const isOnFarming = useMemo(() => query.get("onFarming"), [query]);
 
     const parsedTokenId = tokenIdFromUrl ? BigInt(tokenIdFromUrl) : undefined;
     const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId);
@@ -92,7 +87,7 @@ export default function PositionPage({
             return { ...prevPositionDetails };
         }
         return { ...positionDetails };
-    }, [positionDetails]);
+    }, [positionDetails, prevPositionDetails]);
 
     const removed = _liquidity === 0n;
 
@@ -113,7 +108,7 @@ export default function PositionPage({
             return [prevPoolState, prevPool];
         }
         return [poolState, pool];
-    }, [pool, poolState]);
+    }, [pool, poolState, prevPool, prevPoolState]);
 
     const position = useMemo(() => {
         if (_pool && _liquidity && typeof _tickLower === "number" && typeof _tickUpper === "number") {
@@ -155,7 +150,6 @@ export default function PositionPage({
     const [collecting, setCollecting] = useState<boolean>(false);
     const [collectMigrationHash, setCollectMigrationHash] = useState<string | null>(null);
     const isCollectPending = useIsTransactionPending(collectMigrationHash ?? undefined);
-    const [showConfirm, setShowConfirm] = useState(false);
 
     // usdc prices always in terms of tokens
     const price0 = useUSDCPrice(token0 ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
@@ -181,7 +175,7 @@ export default function PositionPage({
             return prevFiatValueOfFees;
         }
         return fiatValueOfFees;
-    }, [fiatValueOfFees]);
+    }, [fiatValueOfFees, prevFiatValueOfFees]);
 
     const fiatValueOfLiquidity: CurrencyAmount<Token> | null = useMemo(() => {
         if (!price0 || !price1 || !position) return null;
@@ -196,7 +190,7 @@ export default function PositionPage({
             return prevFiatValueOfLiquidity;
         }
         return fiatValueOfLiquidity;
-    }, [fiatValueOfLiquidity]);
+    }, [fiatValueOfLiquidity, prevFiatValueOfLiquidity]);
 
     const addTransaction = useTransactionAdder();
     const positionManager = useV3NFTPositionManagerContract();
@@ -250,7 +244,7 @@ export default function PositionPage({
                 setCollecting(false);
                 console.error(error);
             });
-    }, [chainId, feeValue0, feeValue1, positionManager, account, tokenId, addTransaction, signer, gasPrice]);
+    }, [chainId, feeValue0, feeValue1, positionManager, account, tokenId, addTransaction, signer, gasPrice, isOnFarming]);
 
     const owner = useSingleCallResult(
         !!tokenId ? positionManager : null,
@@ -269,35 +263,6 @@ export default function PositionPage({
     const inRange: boolean = typeof below === "boolean" && typeof above === "boolean" ? !below && !above : false;
 
     // const removeLiquidityModalOpen = useModalOpen(ApplicationModal.POOL_REMOVE_LIQUIDITY); // Commented out due to missing enum member
-
-    function modalHeader() {
-        return (
-            <>
-                <Card isDark classes={"p-1 br-12 card-bg"}>
-                    <div className={"flex-s-between mb-1"}>
-                        <div className={"f f-ac"}>
-                            <CurrencyLogo currency={feeValueUpper?.currency as WrappedCurrency} size={"24px"} />
-                            <span className={"ml-05 c-w"}>{feeValueUpper ? formatCurrencyAmount(feeValueUpper, 4) : "-"}</span>
-                        </div>
-                        <span className={"c-w"}>{feeValueUpper?.currency?.symbol}</span>
-                    </div>
-                    <div className={"flex-s-between"}>
-                        <div className={"f f-ac"}>
-                            <CurrencyLogo currency={feeValueLower?.currency as WrappedCurrency} size={"24px"} />
-                            <span className={"c-w ml-05"}>{feeValueLower ? formatCurrencyAmount(feeValueLower, 4) : "-"}</span>
-                        </div>
-                        <span className={"c-w"}>{feeValueLower?.currency?.symbol}</span>
-                    </div>
-                </Card>
-                <div className={"c-p mv-05 fs-075"}>
-                    <Trans>Collecting fees will withdraw currently available fees for you.</Trans>
-                </div>
-                <button className={"btn primary pv-05 br-8 b w-100"} onClick={collect}>
-                    <Trans>Collect</Trans>
-                </button>
-            </>
-        );
-    }
 
     const showCollectAsWeth = Boolean(
         (ownsNFT || isOnFarming) && (feeValue0?.greaterThan(0) || feeValue1?.greaterThan(0)) && currency0 && currency1 && (currency0.isNative || currency1.isNative) && !collectMigrationHash
@@ -453,7 +418,7 @@ export default function PositionPage({
                                     </div>
                                 )}
                             </Card>
-                            <Card isDark={false} classes={"p-1 br-12 card-bg"}>
+                            <Card isDark={false} classes={"p-1 br-12"}>
                                 <div className={"flex-s-between mb-1 fs-085"}>
                                     <div className={"f f-ac mxs_fd-c"}>
                                         <div className={"mr-05 fs-1 mxs_w-100 mxs_mr-0"}>

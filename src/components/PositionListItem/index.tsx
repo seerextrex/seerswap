@@ -1,8 +1,7 @@
 import { useEffect, useMemo, memo } from "react";
-import { Position } from "lib/src";
+import { Position, Pool } from "lib/src";
 import DoubleCurrencyLogo from "components/DoubleLogo";
-import { usePool } from "hooks/usePools";
-import { useToken } from "hooks/Tokens";
+import { PoolState, usePool } from "hooks/usePools";
 import { Price, Token } from "@uniswap/sdk-core";
 import { formatTickPrice } from "utils/formatTickPrice";
 import JSBI from 'jsbi';
@@ -20,21 +19,27 @@ import Card from "../../shared/components/Card/Card";
 import RangeBadge from "../Badge/RangeBadge";
 import "./index.scss";
 import { useAppDispatch } from "state/hooks";
+import { useToken } from "../../hooks/Tokens";
 import { NEVER_RELOAD } from "../../state/multicall/hooks";
 
 // Production-mode logger that only logs in development
 const logger = {
     debug: (process.env.NODE_ENV === 'development')
         ? (...args: any[]) => console.debug(...args)
-        : () => { },
+        : () => { /* no-op in production */ },
     warn: (...args: any[]) => console.warn(...args),
     error: (...args: any[]) => console.error(...args),
 };
 
 interface PositionListItemProps {
     positionDetails: PositionPool;
+    tokenMap?: { [address: string]: Token | null | undefined };
+    areTokensLoaded?: boolean;
+    poolMap?: { [key: string]: [PoolState, Pool | null] };
     newestPosition?: number | undefined;
     highlightNewest?: boolean;
+    onShiftClick?: () => void;
+    onClick?: () => void;
 }
 
 export function getPriceOrderingFromPositionForUI(position?: Position): {
@@ -91,7 +96,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     };
 }
 
-function PositionListItemInner({ positionDetails, newestPosition, highlightNewest }: PositionListItemProps) {
+function PositionListItemInner({ positionDetails, newestPosition, highlightNewest, onShiftClick, onClick }: PositionListItemProps) {
     const dispatch = useAppDispatch();
 
     const prevPositionDetails = usePrevious({ ...positionDetails });
@@ -111,25 +116,18 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
 
     logger.debug('[PositionListItem] token0:', _token0Address, 'token1:', _token1Address);
 
+    // Use individual token hooks for stability
     const token0 = useToken(_token0Address);
     const token1 = useToken(_token1Address);
 
-    const currency0 = useMemo(() =>
-        token0 ? unwrappedToken(token0) : undefined,
-        [token0]
-    );
+    const currency0 = useMemo(() => token0 ? unwrappedToken(token0) : undefined, [token0]);
+    const currency1 = useMemo(() => token1 ? unwrappedToken(token1) : undefined, [token1]);
 
-    const currency1 = useMemo(() =>
-        token1 ? unwrappedToken(token1) : undefined,
-        [token1]
-    );
-
-    // construct Position from details returned
-    // Ensure currencies are defined before calling usePool
+    // Use the pool hook directly with stable reference memoization
     const [poolState, pool] = usePool(
-        currency0 && currency1 ? currency0 : undefined,
-        currency0 && currency1 ? currency1 : undefined,
-        NEVER_RELOAD
+        currency0 ?? undefined,
+        currency1 ?? undefined,
+        { blocksPerFetch: 10 } // Reduce fetch frequency
     );
 
     const prevPool = usePrevious(pool);
@@ -141,7 +139,7 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
     }, [pool, prevPool]);
 
     const position = useMemo(() => {
-        if (!_pool || _liquidity === undefined) return undefined;
+        if (!_pool || _liquidity === undefined || poolState !== PoolState.EXISTS) return undefined;
 
         try {
             return new Position({
@@ -154,11 +152,10 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
             logger.error('[PositionListItem] Error creating Position object:', error);
             return undefined;
         }
-    }, [_pool, _liquidity, _tickLower, _tickUpper]);
+    }, [_pool, _liquidity, _tickLower, _tickUpper, poolState]);
 
     const tickAtLimit = useIsTickAtLimit(_tickLower, _tickUpper);
 
-    // prices
     const { priceLower, priceUpper, quote, base } = useMemo(() =>
         getPriceOrderingFromPositionForUI(position),
         [position]
@@ -174,15 +171,19 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
         [base]
     );
 
-    // check if price is within range
     const outOfRange: boolean = useMemo(() =>
-        _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false,
-        [_pool, _tickLower, _tickUpper]
+        _pool && poolState === PoolState.EXISTS ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false,
+        [_pool, _tickLower, _tickUpper, poolState]
     );
 
     const positionSummaryLink = useMemo(() =>
         `/pool/${positionDetails.tokenId}${_onFarming ? "?onFarming=true" : ""}`,
         [positionDetails.tokenId, _onFarming]
+    );
+
+    const positionSummaryLinkNew = useMemo(() =>
+        `/positions/${positionDetails.tokenId}`,
+        [positionDetails.tokenId]
     );
 
     const farmingLink = useMemo(() =>
@@ -207,7 +208,15 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
         }
     }, [newestPosition, highlightNewest, dispatch]);
 
-    if (!currency0 || !currency1) {
+    const isLoading = useMemo(() => {
+        if (!token0 || !token1) return true;
+        if (poolState === PoolState.LOADING) return true;
+        return false;
+    }, [token0, token1, poolState]);
+
+    const showFarmBadge = positionDetails.onFarming || positionDetails.oldFarming;
+
+    if (isLoading) {
         return (
             <Card isDark={false} classes={"br-24 mv-05 card-bg-hover position-list-card"}>
                 <div className={"f c f-ac f-jc w-100 h-100 p-1"}>
@@ -218,69 +227,64 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
         );
     }
 
+    const cardContent = (
+        <Card isDark={false} classes={"br-24 mv-05 card-bg-hover position-list-card"}>
+            <div className={"position-list-item__header f f-ac"}>
+                <div className={"f f-ac"}>
+                    <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin />
+                    <div className={"b fs-125 mh-05 c-w"}>
+                        &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
+                    </div>
+                    &nbsp;
+                </div>
+                <div className={"position-list-item__header__badges flex-s-between w-100"}>
+                    {_onFarming ? (
+                        <NavLink className={"flex-s-between btn primary fs-085 p-025 br-8"} to={farmingLink}>
+                            <span>
+                                <Trans>Farming</Trans>
+                            </span>
+                            <ArrowRight size={14} color={"white"} style={{ marginLeft: "5px" }} />
+                        </NavLink>
+                    ) : (
+                        <div />
+                    )}
+                    <RangeBadge removed={removed} inRange={!outOfRange} />
+                </div>
+            </div>
+
+            <div className={"position-list-item__bottom f fs-085 mt-025 c-w mt-05 mxs_fd-c mxs_f-ac"}>
+                <div className={"f mxs_mb-05"}>
+                    <div className={"position-list-item__prefix mr-025"}>
+                        <Trans>Min:</Trans>
+                    </div>
+                    <span className={"position-list-item__amount"}>
+                        <Trans>{`${formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
+                    </span>
+                </div>
+                <div className={"position-list-item__arrow mh-05"}>⟷</div>
+                <div className={"f"}>
+                    <span className={"position-list-item__prefix mh-025"}>
+                        <Trans>Max:</Trans>
+                    </span>
+                    <span className={"position-list-item__amount"}>
+                        <Trans>{`${formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
+                    </span>
+                </div>
+            </div>
+        </Card>
+    );
+
+    if (_onFarming) {
+        return (
+            <div className={"w-100"} id={isNewest && highlightNewest ? "newest" : ""}>
+                {cardContent}
+            </div>
+        );
+    }
+
     return (
         <NavLink className={"w-100"} to={positionSummaryLink} id={isNewest && highlightNewest ? "newest" : ""}>
-            <Card isDark={false} classes={"br-24 mv-05 card-bg-hover position-list-card"}>
-                <div className={"position-list-item__header f f-ac"}>
-                    <div className={"f f-ac"}>
-                        <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin />
-                        <div className={"b fs-125 mh-05 c-w"}>
-                            &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
-                        </div>
-                        &nbsp;
-                    </div>
-                    <div className={"position-list-item__header__badges flex-s-between w-100"}>
-                        {_onFarming ? (
-                            <NavLink className={"flex-s-between btn primary fs-085 p-025 br-8"} to={farmingLink}>
-                                <span>
-                                    <Trans>Farming</Trans>
-                                </span>
-                                <ArrowRight size={14} color={"white"} style={{ marginLeft: "5px" }} />
-                            </NavLink>
-                        ) : removed ? (
-                            <RangeBadge removed={true} inRange={false} />
-                        ) : outOfRange ? (
-                            <RangeBadge
-                                removed={false}
-                                inRange={false}
-                            />
-                        ) : (
-                            <RangeBadge
-                                removed={false}
-                                inRange={true}
-                            />
-                        )}
-                    </div>
-                </div>
-                <div className={"position-list-item__info f mxs_fd-c justify-between"}>
-                    <div className={"position-list-item__info__col"}>
-                        <div className={"f-jb f-wrap"}>
-                            <span className={"position-list-item__info__col__text-sec"}>
-                                <Trans>Price range</Trans>
-                            </span>
-                        </div>
-                        <div className={"f-jb mxs_fw-wrap"}>
-                            <div className={"mr-1 mxs_mb-05"}>
-                                <div className={"position-list-item__info__col__text-main nowrap"}>
-                                    {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)}
-                                </div>
-                                <div className={"position-list-item__info__col__text-sec"}>
-                                    <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
-                                </div>
-                            </div>
-                            <div className={"position-list-item__info__arrow mxs_hide"}>{"->"}</div>
-                            <div className={"ml-1 mxs_mb-05"}>
-                                <div className={"position-list-item__info__col__text-main nowrap"}>
-                                    {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}
-                                </div>
-                                <div className={"position-list-item__info__col__text-sec"}>
-                                    <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Card>
+            {cardContent}
         </NavLink>
     );
 }

@@ -1,6 +1,6 @@
 import { POOL_DEPLOYER_ADDRESS } from "../constants/addresses";
 import { Currency, Token } from "@uniswap/sdk-core";
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { ListenerOptions, useMultipleContractSingleData } from "../state/multicall/hooks";
 
@@ -17,7 +17,7 @@ import { safeConvertToBigInt, deepEqual } from "../utils/bigintUtils";
 const logger = {
     debug: (process.env.NODE_ENV === 'development')
         ? (...args: any[]) => console.debug(...args)
-        : () => { },
+        : () => { /* no-op in production */ },
     warn: (...args: any[]) => console.warn(...args),
     error: (...args: any[]) => console.error(...args),
 };
@@ -31,14 +31,57 @@ export enum PoolState {
     INVALID,
 }
 
+// Global pool cache to prevent duplicate calls
+// This exists across component renders and hook instances
+const poolCache = new Map<string, { state: PoolState, pool: Pool | null, timestamp: number }>();
+
+// Cache expiration time - 2 minutes
+const CACHE_EXPIRY_MS = 2 * 60 * 1000;
+
+// Helper to generate a stable, unique key for a currency pair
+function getPoolCacheKey(chainId: number | undefined, currencyA: Currency | undefined, currencyB: Currency | undefined): string | null {
+    if (!chainId || !currencyA || !currencyB) return null;
+
+    const tokenA = currencyA.wrapped;
+    const tokenB = currencyB.wrapped;
+
+    if (!tokenA || !tokenB || tokenA.equals(tokenB)) return null;
+
+    const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
+    return `${chainId}:${token0.address.toLowerCase()}:${token1.address.toLowerCase()}`;
+}
+
+// Helper to check if currencies are valid for pool lookup
+function areCurrenciesValid(chainId: number | undefined, currencyA: Currency | undefined, currencyB: Currency | undefined): boolean {
+    if (!chainId || !currencyA || !currencyB) return false;
+
+    const tokenA = currencyA.wrapped;
+    const tokenB = currencyB.wrapped;
+
+    return Boolean(tokenA && tokenB && !tokenA.equals(tokenB));
+}
+
 export function usePools(poolKeys: [Currency | undefined, Currency | undefined][], listenerOptions?: ListenerOptions): [PoolState, Pool | null][] {
     const { chain } = useAccount();
     const chainId = chain?.id;
 
-    logger.debug('usePools: Input poolKeys:', poolKeys);
-    logger.debug('usePools: chainId:', chainId);
+    // Avoid excessive logging
+    if (process.env.NODE_ENV === 'development') {
+        logger.debug('usePools: Input poolKeys:', poolKeys);
+        logger.debug('usePools: chainId:', chainId);
+    }
 
-    // Transform currencies to tokens
+    // Get or create pool deployer address
+    const poolDeployerAddress = useMemo(() => {
+        if (!chainId) return undefined;
+        return POOL_DEPLOYER_ADDRESS[chainId];
+    }, [chainId]);
+
+    if (process.env.NODE_ENV === 'development') {
+        logger.debug('usePools: poolDeployerAddress:', poolDeployerAddress);
+    }
+
+    // Transform currencies to tokens with stability check
     const transformed: ([Token, Token] | null)[] = useMemo(() => {
         return poolKeys.map(([currencyA, currencyB]): [Token, Token] | null => {
             if (!chainId || !currencyA || !currencyB) return null;
@@ -51,29 +94,90 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
         });
     }, [chainId, poolKeys]);
 
-    // Compute pool addresses from token pairs
-    const poolAddresses: (string | undefined)[] = useMemo(() => {
-        const poolDeployerAddress = chainId && POOL_DEPLOYER_ADDRESS[chainId];
-        logger.debug('usePools: poolDeployerAddress:', poolDeployerAddress);
+    // Cache pool addresses to prevent address recalculation
+    const poolAddressesCache = useRef<Map<string, string>>(new Map());
 
-        return transformed.map((value) => {
-            if (!poolDeployerAddress || !value) return undefined;
-            try {
-                return computePoolAddress({
-                    poolDeployer: poolDeployerAddress,
-                    tokenA: value[0],
-                    tokenB: value[1],
-                });
-            } catch (error) {
-                logger.error('usePools: Error in computePoolAddress:', error);
-                return undefined;
-            }
-        });
-    }, [chainId, transformed]);
-
-    // Fetch global states
-    const globalState0s = useMultipleContractSingleData(
+    // Check for cached pools and generate pool addresses for non-cached pairs
+    const {
         poolAddresses,
+        shouldFetchData,
+        cachedResults
+    } = useMemo(() => {
+        const addresses: (string | undefined)[] = [];
+        const shouldFetch: boolean[] = [];
+        const cachedResults: [PoolState, Pool | null][] = [];
+
+        if (!poolDeployerAddress) {
+            return {
+                poolAddresses: Array(transformed.length).fill(undefined),
+                shouldFetchData: Array(transformed.length).fill(false),
+                cachedResults: Array(transformed.length).fill([PoolState.INVALID, null])
+            };
+        }
+
+        for (let i = 0; i < transformed.length; i++) {
+            const tokenPair = transformed[i];
+
+            if (!tokenPair) {
+                addresses.push(undefined);
+                shouldFetch.push(false);
+                cachedResults.push([PoolState.INVALID, null]);
+                continue;
+            }
+
+            const [token0, token1] = tokenPair;
+            const cacheKey = `${chainId}:${token0.address.toLowerCase()}:${token1.address.toLowerCase()}`;
+
+            // Check if we have a cached result
+            const cachedPool = poolCache.get(cacheKey);
+            if (cachedPool && Date.now() - cachedPool.timestamp < CACHE_EXPIRY_MS) {
+                addresses.push(undefined);
+                shouldFetch.push(false);
+                cachedResults.push([cachedPool.state, cachedPool.pool]);
+                continue;
+            }
+
+            // Check if we've already computed this pool address
+            let poolAddress = poolAddressesCache.current.get(cacheKey);
+
+            if (!poolAddress) {
+                // Compute the pool address if we haven't already
+                try {
+                    poolAddress = computePoolAddress({
+                        poolDeployer: poolDeployerAddress,
+                        tokenA: token0,
+                        tokenB: token1,
+                    });
+                    poolAddressesCache.current.set(cacheKey, poolAddress);
+                } catch (error) {
+                    logger.error('usePools: Error in computePoolAddress:', error);
+                    addresses.push(undefined);
+                    shouldFetch.push(false);
+                    cachedResults.push([PoolState.INVALID, null]);
+                    continue;
+                }
+            }
+
+            addresses.push(poolAddress);
+            shouldFetch.push(true);
+            cachedResults.push([PoolState.LOADING, null]);
+        }
+
+        return {
+            poolAddresses: addresses,
+            shouldFetchData: shouldFetch,
+            cachedResults
+        };
+    }, [chainId, poolDeployerAddress, transformed]);
+
+    // Get only the addresses that need fetching
+    const fetchAddresses = useMemo(() => {
+        return poolAddresses.filter((addr, i) => shouldFetchData[i] && addr !== undefined) as string[];
+    }, [poolAddresses, shouldFetchData]);
+
+    // Fetch global states only for addresses that need fetching
+    const globalState0s = useMultipleContractSingleData(
+        fetchAddresses,
         POOL_STATE_INTERFACE,
         "globalState",
         undefined,
@@ -115,9 +219,9 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
         return globalState0s;
     }, [globalState0s, prevGlobalState0s]);
 
-    // Fetch liquidities
+    // Fetch liquidities only for addresses that need fetching
     const liquidities = useMultipleContractSingleData(
-        poolAddresses,
+        fetchAddresses,
         POOL_STATE_INTERFACE,
         "liquidity",
         undefined,
@@ -157,24 +261,63 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
         return liquidities;
     }, [liquidities, prevLiquidities]);
 
+    // Create a map to associate fetched results with their original indices
+    const fetchResultsMap = useMemo(() => {
+        const resultMap = new Map<string, { globalState: any, liquidity: any }>();
+
+        let fetchIndex = 0;
+        for (let i = 0; i < poolAddresses.length; i++) {
+            const address = poolAddresses[i];
+            if (!shouldFetchData[i] || !address) continue;
+
+            resultMap.set(address, {
+                globalState: _globalState0s[fetchIndex],
+                liquidity: _liquidities[fetchIndex]
+            });
+
+            fetchIndex++;
+        }
+
+        return resultMap;
+    }, [poolAddresses, shouldFetchData, _globalState0s, _liquidities]);
+
     // Process pool data and create Pool instances
     return useMemo(() => {
-        return poolKeys.map((_key, index) => {
-            const [token0, token1] = transformed[index] ?? [];
+        const results: [PoolState, Pool | null][] = [];
 
-            // Skip if tokens are invalid
-            if (!token0 || !token1) {
-                logger.debug(`usePools index ${index}: Invalid token pair.`);
-                return [PoolState.INVALID, null];
+        for (let i = 0; i < poolKeys.length; i++) {
+            // Use cached result if available
+            if (!shouldFetchData[i]) {
+                results.push(cachedResults[i]);
+                continue;
             }
 
-            const globalStateResult = _globalState0s[index];
-            const liquidityResult = _liquidities[index];
+            const [currencyA, currencyB] = poolKeys[i];
+            const [token0, token1] = transformed[i] ?? [];
+            const poolAddress = poolAddresses[i];
+
+            // Skip if tokens or pool address are invalid
+            if (!token0 || !token1 || !poolAddress) {
+                logger.debug(`usePools index ${i}: Invalid token pair.`);
+                results.push([PoolState.INVALID, null]);
+                continue;
+            }
+
+            const cacheKey = `${chainId}:${token0.address.toLowerCase()}:${token1.address.toLowerCase()}`;
+            const fetchedResults = fetchResultsMap.get(poolAddress);
+
+            if (!fetchedResults) {
+                results.push([PoolState.INVALID, null]);
+                continue;
+            }
+
+            const { globalState: globalStateResult, liquidity: liquidityResult } = fetchedResults;
 
             // Skip if results are invalid
             if (!globalStateResult || !liquidityResult) {
-                logger.debug(`usePools index ${index}: Missing results`);
-                return [PoolState.INVALID, null];
+                logger.debug(`usePools index ${i}: Missing results`);
+                results.push([PoolState.INVALID, null]);
+                continue;
             }
 
             const { result: globalState, loading: globalStateLoading, valid: globalStateValid } = globalStateResult;
@@ -182,21 +325,32 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
 
             // Return appropriate state based on result validity and loading state
             if (!globalStateValid || !liquidityValid) {
-                return [PoolState.INVALID, null];
+                const result: [PoolState, Pool | null] = [PoolState.INVALID, null];
+                results.push(result);
+                poolCache.set(cacheKey, { state: result[0], pool: result[1], timestamp: Date.now() });
+                continue;
             }
 
             if (globalStateLoading || liquidityLoading) {
-                return [PoolState.LOADING, null];
+                const result: [PoolState, Pool | null] = [PoolState.LOADING, null];
+                results.push(result);
+                continue;
             }
 
             // Ensure results are present
             if (!globalState || !liquidity) {
-                return [PoolState.NOT_EXISTS, null];
+                const result: [PoolState, Pool | null] = [PoolState.NOT_EXISTS, null];
+                results.push(result);
+                poolCache.set(cacheKey, { state: result[0], pool: result[1], timestamp: Date.now() });
+                continue;
             }
 
             // A pool must have a non-zero price to be valid
             if (!globalState.price || globalState.price === 0n) {
-                return [PoolState.NOT_EXISTS, null];
+                const result: [PoolState, Pool | null] = [PoolState.NOT_EXISTS, null];
+                results.push(result);
+                poolCache.set(cacheKey, { state: result[0], pool: result[1], timestamp: Date.now() });
+                continue;
             }
 
             try {
@@ -206,7 +360,9 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
                 const priceAsString = globalState.price.toString();
                 const liquidityAsString = liquidity[0].toString();
 
-                logger.debug(`usePools index ${index}: Creating Pool with: token0: ${token0.symbol}, token1: ${token1.symbol}, fee: ${feeAsNumber}, tick: ${tickAsNumber}`);
+                if (process.env.NODE_ENV === 'development') {
+                    logger.debug(`usePools index ${i}: Creating Pool with: token0: ${token0.symbol}, token1: ${token1.symbol}, fee: ${feeAsNumber}, tick: ${tickAsNumber}`);
+                }
 
                 const poolInstance = new Pool(
                     token0,
@@ -217,13 +373,21 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
                     tickAsNumber
                 );
 
-                return [PoolState.EXISTS, poolInstance];
+                const result: [PoolState, Pool | null] = [PoolState.EXISTS, poolInstance];
+                results.push(result);
+                poolCache.set(cacheKey, { state: result[0], pool: result[1], timestamp: Date.now() });
+                continue;
             } catch (error) {
-                logger.error(`usePools index ${index}: Error constructing pool:`, error);
-                return [PoolState.NOT_EXISTS, null];
+                logger.error(`usePools index ${i}: Error constructing pool:`, error);
+                const result: [PoolState, Pool | null] = [PoolState.NOT_EXISTS, null];
+                results.push(result);
+                poolCache.set(cacheKey, { state: result[0], pool: result[1], timestamp: Date.now() });
+                continue;
             }
-        });
-    }, [_globalState0s, _liquidities, poolKeys, transformed]);
+        }
+
+        return results;
+    }, [poolKeys, transformed, poolAddresses, shouldFetchData, fetchResultsMap, cachedResults, chainId]);
 }
 
 export function usePool(
@@ -231,7 +395,28 @@ export function usePool(
     currencyB: Currency | undefined,
     listenerOptions?: ListenerOptions
 ): [PoolState, Pool | null] {
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+
+    // IMPORTANT: Always call hooks at the top level - unconditionally
+    // Call usePools first to follow React's rules of hooks
     const pools = usePools([[currencyA, currencyB]], listenerOptions);
+
+    // Then handle early returns with cached or invalid data
+    const cacheKey = getPoolCacheKey(chainId, currencyA, currencyB);
+    const cachedPool = cacheKey ? poolCache.get(cacheKey) : null;
+
+    // For undefined inputs, return INVALID 
+    if (!areCurrenciesValid(chainId, currencyA, currencyB)) {
+        return [PoolState.INVALID, null];
+    }
+
+    // Use cache if available and not expired
+    if (cachedPool && Date.now() - cachedPool.timestamp < CACHE_EXPIRY_MS) {
+        return [cachedPool.state, cachedPool.pool];
+    }
+
+    // Otherwise use the result from the usePools call
     return pools[0];
 }
 

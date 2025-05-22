@@ -2,6 +2,7 @@ import { Currency, CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { useMemo } from "react";
 import { useBestV3TradeExactOut } from "./useBestV3Trade";
 import { useAccount } from "wagmi";
+import { ListenerOptions } from "../state/multicall/hooks";
 
 import { STABLE_TOKEN_FOR_USD_PRICE } from "constants/tokens";
 
@@ -17,14 +18,14 @@ const STABLECOIN_AMOUNT_OUT_FILTERED: CurrencyAmount<Token> = CurrencyAmount.fro
  * Returns the price in USDC of the input currency
  * @param currency currency to compute the USDC price of
  */
-export default function useUSDCPrice(currency?: Currency, allLiquidity?: boolean): Price<Currency, Token> | undefined {
+export default function useUSDCPrice(currency?: Currency, allLiquidity?: boolean, listenerOptions?: ListenerOptions): Price<Currency, Token> | undefined {
     const { chain } = useAccount();
     const chainId = chain?.id;
 
     const amountOut = chainId ? (allLiquidity ? STABLECOIN_AMOUNT_OUT_ALL : STABLECOIN_AMOUNT_OUT_FILTERED) : undefined;
     const stablecoin = amountOut?.currency;
 
-    const v3USDCTrade = useBestV3TradeExactOut(currency, amountOut);
+    const v3USDCTrade = useBestV3TradeExactOut(currency, amountOut, listenerOptions);
 
     return useMemo(() => {
         if (!currency || !stablecoin) {
@@ -45,8 +46,8 @@ export default function useUSDCPrice(currency?: Currency, allLiquidity?: boolean
     }, [currency, stablecoin, v3USDCTrade.trade]);
 }
 
-export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null, allLiquidity = false) {
-    const price = useUSDCPrice(currencyAmount?.currency, allLiquidity);
+export function useUSDCValue(currencyAmount: CurrencyAmount<Currency> | undefined | null, allLiquidity = false, listenerOptions?: ListenerOptions) {
+    const price = useUSDCPrice(currencyAmount?.currency, allLiquidity, listenerOptions);
 
     return useMemo(() => {
         if (!price || !currencyAmount) return null;

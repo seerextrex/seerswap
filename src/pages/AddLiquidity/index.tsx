@@ -19,7 +19,6 @@ import { Review } from "./Review";
 import { useCurrency } from "../../hooks/Tokens";
 import { ApprovalState, useApproveCallback } from "../../hooks/useApproveCallback";
 import useTransactionDeadline from "../../hooks/useTransactionDeadline";
-import { useWalletModalToggle } from "../../state/application/hooks";
 import { Bound, Field } from "../../state/mint/v3/actions";
 import { useTransactionAdder } from "../../state/transactions/hooks";
 import { useIsExpertMode, useUserSlippageToleranceWithDefault } from "../../state/user/hooks";
@@ -44,6 +43,7 @@ import { WrappedCurrency } from "../../models/types";
 import Card from "../../shared/components/Card/Card";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { publicClientToProvider, walletClientToSigner } from "../../utils/ethersAdapters";
+import { ConnectKitButton } from 'connectkit';
 
 const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
@@ -58,7 +58,6 @@ export default function AddLiquidity({
     const { data: walletClient } = useWalletClient({ chainId });
 
     const theme = useContext(ThemeContext);
-    const toggleWalletModal = useWalletModalToggle();
     const expertMode = useIsExpertMode();
     const addTransaction = useTransactionAdder();
     const positionManager = useV3NFTPositionManagerContract();
@@ -223,11 +222,9 @@ export default function AddLiquidity({
 
     const Buttons = () =>
         !account ? (
-            <button className={"btn primary pv-1 br-12 b"} onClick={toggleWalletModal}>
-                <Trans>Connect wallet</Trans>
-            </button>
+            <ConnectKitButton />
         ) : (
-            <AutoColumn gap={"md"}>
+            <AutoColumn gap="md">
                 {(approvalA === ApprovalState.NOT_APPROVED || approvalA === ApprovalState.PENDING || approvalB === ApprovalState.NOT_APPROVED || approvalB === ApprovalState.PENDING) && isValid && (
                     <RowBetween>
                         {showApprovalA && (

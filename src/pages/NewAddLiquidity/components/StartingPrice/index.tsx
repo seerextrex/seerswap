@@ -5,6 +5,7 @@ import Toggle from "components/Toggle";
 
 import useUSDCPrice from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { DEFAULT_LISTENER_OPTIONS } from "state/multicall/hooks";
 
 import "./index.scss";
 import { Lock } from "react-feather";
@@ -164,8 +165,8 @@ export default function StartingPrice({ currencyA, currencyB, startPriceHandler,
     const initialUSDPrices = useInitialUSDPrices();
     const initialTokenPrice = useInitialTokenPrice();
 
-    const basePriceUSD = useUSDCPrice(currencyA ?? undefined);
-    const quotePriceUSD = useUSDCPrice(currencyB ?? undefined);
+    const basePriceUSD = useUSDCPrice(currencyA ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
+    const quotePriceUSD = useUSDCPrice(currencyB ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
 
     const isSorted = currencyA && currencyB && currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
 

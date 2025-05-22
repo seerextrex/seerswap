@@ -96,7 +96,8 @@ export function useEthPrices(): EthPrices | undefined {
     const { dataClient } = useClients();
 
     const [t24, t48, tWeek] = useDeltaTimestamps();
-    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek]);
+    const timestamps = useMemo(() => [t24, t48, tWeek], [t24, t48, tWeek]);
+    const { blocks, error: blockError } = useBlocksFromTimestamps(timestamps);
 
     // index on active network
     const { chain } = useAccount();
@@ -108,7 +109,7 @@ export function useEthPrices(): EthPrices | undefined {
             return blocks
                 .reverse()
                 .sort((a, b) => +b.timestamp - +a.timestamp)
-                .map((b) => parseFloat(b.number));
+                .map((b) => b.number);
         }
         return undefined;
     }, [blocks]);

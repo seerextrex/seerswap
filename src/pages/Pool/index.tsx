@@ -5,7 +5,6 @@ import { useV3Positions } from "hooks/useV3Positions";
 import { useAccount } from "wagmi";
 import { useCallback, useEffect, useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { useWalletModalToggle } from "state/application/hooks";
 import { useUserHideClosedPositions, useUserHideFarmingPositions } from "state/user/hooks";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/Loader";
@@ -17,10 +16,10 @@ import { SwapPoolTabs } from "../../components/NavigationTabs";
 import "./index.scss";
 import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
 import { EthereumWindow } from "models/types";
+import { ConnectKitButton } from 'connectkit';
 
 export default function Pool() {
     const { address: account } = useAccount();
-    const toggleWalletModal = useWalletModalToggle();
 
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions();
     const [hideFarmingPositions, setHideFarmingPositions] = useUserHideFarmingPositions();
@@ -124,9 +123,7 @@ export default function Pool() {
                             <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>
                                 <Trans>You do not have any liquidity positions.</Trans>
                                 {showConnectAWallet ? (
-                                    <button className={"btn primary pv-05 ph-1 mt-1 w-100"} onClick={toggleWalletModal}>
-                                        <Trans>Connect Wallet</Trans>
-                                    </button>
+                                    <ConnectKitButton />
                                 ) : (
                                     <NavLink style={{ textAlign: "center" }} className={"btn primary pv-05 ph-1 mt-1 w-100"} to={`/add`}>
                                         + <Trans>New Position</Trans>

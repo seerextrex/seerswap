@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAccount, usePublicClient } from "wagmi";
 import { useClients } from "./useClients";
 import {
@@ -80,9 +80,10 @@ export function useInfoSubgraph() {
     const publicClient = usePublicClient();
     const [t24, t48, tWeek] = useDeltaTimestamps();
 
-    const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek]);
+    const timestamps = useMemo(() => [t24, t48, tWeek], [t24, t48, tWeek]);
+    const { blocks, error: blockError } = useBlocksFromTimestamps(timestamps);
     const [block24, block48, blockWeek] = blocks?.sort((a, b) => +b.timestamp - +a.timestamp) ?? [];
-    console.log("[useInfoSubgraph] Initial blocks from useBlocksFromTimestamps (for ethPrices). block24:", block24);
+    // console.log("[useInfoSubgraph] Initial blocks from useBlocksFromTimestamps (for ethPrices). block24:", block24);
 
     const ethPrices = useEthPrices();
 
@@ -109,9 +110,9 @@ export function useInfoSubgraph() {
 
     const [positionsRange, setPositionsRange] = useState<{ closed: PriceRangeChart | null; opened: PriceRangeChart | null }>({ closed: null, opened: null });
 
-    const addressForCheck = AlgebraConfig.DEFAULT_TOKEN_LIST.filterForScamTokens.tokensForCheck;
+    // const addressForCheck = AlgebraConfig.DEFAULT_TOKEN_LIST.filterForScamTokens.tokensForCheck;
 
-    const possibleNames = AlgebraConfig.DEFAULT_TOKEN_LIST.filterForScamTokens.possibleFakeNames;
+    // const possibleNames = AlgebraConfig.DEFAULT_TOKEN_LIST.filterForScamTokens.possibleFakeNames;
 
     async function fetchInfoPools() {
         // ethPrices depends on 'blocks', publicClient is for latest block.
@@ -201,13 +202,13 @@ export function useInfoSubgraph() {
                 const { symbol: token0Symbol, name: token0Name, id: token0Id } = pool.token0;
                 const { symbol: token1Symbol, name: token1Name, id: token1Id } = pool.token1;
 
-                if (token0Symbol.toUpperCase() in addressForCheck || possibleNames.some((el) => el.names.includes(token0Name))) {
-                    return token0Id.toLowerCase() === addressForCheck[token0Symbol.toUpperCase()];
-                }
+                // if (token0Symbol.toUpperCase() in addressForCheck || possibleNames.some((el) => el.names.includes(token0Name))) {
+                //     return token0Id.toLowerCase() === addressForCheck[token0Symbol.toUpperCase()];
+                // }
 
-                if (token1Symbol.toUpperCase() in addressForCheck || possibleNames.some((el) => el.names.includes(token1Name))) {
-                    return token1Id.toLowerCase() === addressForCheck[token1Symbol.toUpperCase()];
-                }
+                // if (token1Symbol.toUpperCase() in addressForCheck || possibleNames.some((el) => el.names.includes(token1Name))) {
+                //     return token1Id.toLowerCase() === addressForCheck[token1Symbol.toUpperCase()];
+                // }
 
                 return true;
             });
@@ -402,9 +403,9 @@ export function useInfoSubgraph() {
             const rawTokens = tokensFromAddressesResult.data.tokens;
 
             const tokens = rawTokens.filter((token) => {
-                if (token.symbol.toUpperCase() in addressForCheck || possibleNames.some((el) => el.names.includes(token.name))) {
-                    return token.id.toLowerCase() === addressForCheck[token.symbol.toUpperCase()];
-                }
+                // if (token.symbol.toUpperCase() in addressForCheck || possibleNames.some((el) => el.names.includes(token.name))) {
+                //     return token.id.toLowerCase() === addressForCheck[token.symbol.toUpperCase()];
+                // }
 
                 return true;
             });

@@ -11,6 +11,7 @@ import { useCurrencyBalance } from "state/wallet/hooks";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { PriceFormats } from "../PriceFomatToggler";
 import { t, Trans } from "@lingui/macro";
+import { DEFAULT_LISTENER_OPTIONS } from "state/multicall/hooks";
 
 interface ITokenCard {
     handleTokenSelection: (currency: Currency) => void;
@@ -25,7 +26,8 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
     const { address: account } = useAccount();
 
     const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
-    const balanceUSD = useUSDCPrice(currency ?? undefined);
+    const currencyUSD = useUSDCPrice(currency ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
+    const fiatValue = useUSDCValue(balance ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
 
     const handleDismissSearch = useCallback(() => {
         toggleSelectModal(false);
@@ -33,8 +35,8 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
 
     const _balance = useMemo(() => {
         if (priceFormat === PriceFormats.USD) {
-            if (balance && balanceUSD) {
-                return parseFloat(Number(+balance?.toSignificant(5) * +balanceUSD.toSignificant(5)).toFixed(4));
+            if (balance && currencyUSD) {
+                return parseFloat(Number(+balance?.toSignificant(5) * +currencyUSD.toSignificant(5)).toFixed(4));
             }
         }
         if (balance) {
@@ -42,7 +44,7 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
         }
 
         return "0";
-    }, [priceFormat, balance, balanceUSD]);
+    }, [priceFormat, balance, currencyUSD]);
 
     return (
         <div className="token-card p-1 mxs_w-100 mm_w-100" onClick={() => toggleSelectModal(true)}>

@@ -6,6 +6,7 @@ import { useAllV3Routes } from "./useAllV3Routes";
 import { useV3Quoter } from "./useContract";
 import { useAccount } from "wagmi";
 import usePrevious from "./usePrevious";
+import { ListenerOptions } from "../state/multicall/hooks";
 
 export enum V3TradeState {
     LOADING,
@@ -22,12 +23,12 @@ const DEFAULT_GAS_QUOTE = 2_000_000;
  * @param amountIn the amount to swap in
  * @param currencyOut the desired output currency
  */
-export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, currencyOut?: Currency): { state: V3TradeState; trade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null } {
+export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, currencyOut?: Currency, listenerOptions?: ListenerOptions): { state: V3TradeState; trade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null } {
     const { chain } = useAccount();
     const chainId = chain?.id;
     const quoter = useV3Quoter();
 
-    const { routes, loading: routesLoading } = useAllV3Routes(amountIn?.currency, currencyOut);
+    const { routes, loading: routesLoading } = useAllV3Routes(amountIn?.currency, currencyOut, listenerOptions);
 
     const quoteExactInInputs = useMemo(() => {
         return routes.map((route) => [encodeRouteToPath(route, false), amountIn ? `0x${amountIn.quotient.toString(16)}` : undefined]);
@@ -113,12 +114,12 @@ export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
  * @param currencyIn the desired input currency
  * @param amountOut the amount to swap out
  */
-export function useBestV3TradeExactOut(currencyIn?: Currency, amountOut?: CurrencyAmount<Currency>): { state: V3TradeState; trade: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null } {
+export function useBestV3TradeExactOut(currencyIn?: Currency, amountOut?: CurrencyAmount<Currency>, listenerOptions?: ListenerOptions): { state: V3TradeState; trade: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null } {
     const { chain } = useAccount();
     const chainId = chain?.id;
     const quoter = useV3Quoter();
 
-    const { routes, loading: routesLoading } = useAllV3Routes(currencyIn, amountOut?.currency);
+    const { routes, loading: routesLoading } = useAllV3Routes(currencyIn, amountOut?.currency, listenerOptions);
 
     const quoteExactOutInputs = useMemo(() => {
         return routes.map((route) => [encodeRouteToPath(route, true), amountOut ? `0x${amountOut.quotient.toString(16)}` : undefined]);

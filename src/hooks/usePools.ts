@@ -1,6 +1,6 @@
 import { POOL_DEPLOYER_ADDRESS } from "../constants/addresses";
 import { Currency, Token } from "@uniswap/sdk-core";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useAccount } from "wagmi";
 import { ListenerOptions, useMultipleContractSingleData } from "../state/multicall/hooks";
 
@@ -11,6 +11,16 @@ import { computePoolAddress } from "./computePoolAddress";
 import { useInternet } from "./useInternet";
 import { useToken } from "./Tokens";
 import { usePreviousNonEmptyArray, usePreviousNonErroredArray } from "./usePrevious";
+import { safeConvertToBigInt, deepEqual } from "../utils/bigintUtils";
+
+// Production-mode logger that only logs in development
+const logger = {
+    debug: (process.env.NODE_ENV === 'development')
+        ? (...args: any[]) => console.debug(...args)
+        : () => { },
+    warn: (...args: any[]) => console.warn(...args),
+    error: (...args: any[]) => console.error(...args),
+};
 
 const POOL_STATE_INTERFACE = new Interface(abi);
 
@@ -25,11 +35,12 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
     const { chain } = useAccount();
     const chainId = chain?.id;
 
-    console.log('[usePools] Input poolKeys:', poolKeys);
-    console.log('[usePools] chainId:', chainId);
+    logger.debug('usePools: Input poolKeys:', poolKeys);
+    logger.debug('usePools: chainId:', chainId);
 
+    // Transform currencies to tokens
     const transformed: ([Token, Token] | null)[] = useMemo(() => {
-        const result = poolKeys.map(([currencyA, currencyB]): [Token, Token] | null => {
+        return poolKeys.map(([currencyA, currencyB]): [Token, Token] | null => {
             if (!chainId || !currencyA || !currencyB) return null;
 
             const tokenA = currencyA?.wrapped;
@@ -38,15 +49,14 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
             const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
             return [token0, token1];
         });
-        console.log('[usePools] transformed tokens:', result);
-        return result;
     }, [chainId, poolKeys]);
 
+    // Compute pool addresses from token pairs
     const poolAddresses: (string | undefined)[] = useMemo(() => {
         const poolDeployerAddress = chainId && POOL_DEPLOYER_ADDRESS[chainId];
-        console.log('[usePools] poolDeployerAddress:', poolDeployerAddress);
+        logger.debug('usePools: poolDeployerAddress:', poolDeployerAddress);
 
-        const result = transformed.map((value) => {
+        return transformed.map((value) => {
             if (!poolDeployerAddress || !value) return undefined;
             try {
                 return computePoolAddress({
@@ -55,126 +65,184 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
                     tokenB: value[1],
                 });
             } catch (error) {
-                console.error('[usePools] Error in computePoolAddress:', error, 'for tokens:', value);
+                logger.error('usePools: Error in computePoolAddress:', error);
                 return undefined;
             }
         });
-        console.log('[usePools] computed poolAddresses:', result);
-        return result;
     }, [chainId, transformed]);
 
-    const globalState0s = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, "globalState", undefined, listenerOptions);
-    // console.log('[usePools] Raw globalState0s results:', JSON.stringify(globalState0s));
+    // Fetch global states
+    const globalState0s = useMultipleContractSingleData(
+        poolAddresses,
+        POOL_STATE_INTERFACE,
+        "globalState",
+        undefined,
+        listenerOptions
+    );
+
     const prevGlobalState0s = usePreviousNonErroredArray(globalState0s);
 
+    // Optimize globalState0s to avoid unnecessary re-renders
     const _globalState0s = useMemo(() => {
-        if (!prevGlobalState0s || !globalState0s || globalState0s.length === 1) return globalState0s;
-        if (globalState0s.every((el) => el.error) && !prevGlobalState0s.every((el) => el.error)) return prevGlobalState0s;
+        if (!globalState0s) return globalState0s;
+        if (globalState0s.every((el) => !el.valid || el.loading)) return globalState0s;
+
+        if (prevGlobalState0s && prevGlobalState0s.length === globalState0s.length &&
+            globalState0s.every((el, i) => {
+                const prevEl = prevGlobalState0s[i];
+                if (!el.valid || el.loading || !prevEl || !prevEl.valid || prevEl.loading) {
+                    return false;
+                }
+
+                try {
+                    // Compare prices, ticks, and fees without JSON.stringify
+                    const currentResult = el.result as { price: bigint, tick: bigint, fee: bigint } | undefined;
+                    const prevResult = prevEl.result as { price: bigint, tick: bigint, fee: bigint } | undefined;
+
+                    if (!currentResult || !prevResult) return false;
+
+                    return currentResult.price === prevResult.price &&
+                        currentResult.tick === prevResult.tick &&
+                        currentResult.fee === prevResult.fee;
+                } catch (e) {
+                    return false;
+                }
+            })
+        ) {
+            return prevGlobalState0s;
+        }
+
         return globalState0s;
-    }, [poolAddresses, globalState0s, prevGlobalState0s]); // Added prevGlobalState0s to dependency
-    console.log('[usePools] Effective _globalState0s results:', JSON.stringify(_globalState0s, (key, value) => typeof value === 'bigint' ? value.toString() : value));
+    }, [globalState0s, prevGlobalState0s]);
 
+    // Fetch liquidities
+    const liquidities = useMultipleContractSingleData(
+        poolAddresses,
+        POOL_STATE_INTERFACE,
+        "liquidity",
+        undefined,
+        listenerOptions
+    );
 
-    const liquidities = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, "liquidity", undefined, listenerOptions);
-    // console.log('[usePools] Raw liquidities results:', JSON.stringify(liquidities));
     const prevLiquidities = usePreviousNonErroredArray(liquidities);
 
+    // Optimize liquidities to avoid unnecessary re-renders
     const _liquidities = useMemo(() => {
-        if (!prevLiquidities || !liquidities || liquidities.length === 1) return liquidities;
-        if (liquidities.every((el) => el.error) && !prevLiquidities.every((el) => el.error)) return prevLiquidities;
+        if (!liquidities) return liquidities;
+        if (liquidities.every((el) => !el.valid || el.loading)) return liquidities;
+
+        if (prevLiquidities && prevLiquidities.length === liquidities.length &&
+            liquidities.every((el, i) => {
+                const prevEl = prevLiquidities[i];
+                if (!el.valid || el.loading || !prevEl || !prevEl.valid || prevEl.loading) {
+                    return false;
+                }
+
+                try {
+                    // Compare liquidity values directly
+                    const currentResult = el.result as [bigint] | undefined;
+                    const prevResult = prevEl.result as [bigint] | undefined;
+
+                    if (!currentResult || !prevResult) return false;
+
+                    return currentResult[0] === prevResult[0];
+                } catch (e) {
+                    return false;
+                }
+            })
+        ) {
+            return prevLiquidities;
+        }
+
         return liquidities;
-    }, [poolAddresses, liquidities, prevLiquidities]); // Added prevLiquidities to dependency
-    console.log('[usePools] Effective _liquidities results:', JSON.stringify(_liquidities, (key, value) => typeof value === 'bigint' ? value.toString() : value));
+    }, [liquidities, prevLiquidities]);
 
-
+    // Process pool data and create Pool instances
     return useMemo(() => {
-        const finalResult: [PoolState, Pool | null][] = poolKeys.map((_key, index) => {
+        return poolKeys.map((_key, index) => {
             const [token0, token1] = transformed[index] ?? [];
-            console.log(`[usePools] Processing index ${index}: token0:`, token0?.symbol, 'token1:', token1?.symbol);
 
+            // Skip if tokens are invalid
             if (!token0 || !token1) {
-                console.log(`[usePools] index ${index}: Invalid token pair.`);
+                logger.debug(`usePools index ${index}: Invalid token pair.`);
                 return [PoolState.INVALID, null];
             }
 
             const globalStateResult = _globalState0s[index];
             const liquidityResult = _liquidities[index];
 
-            console.log(`[usePools] index ${index}: globalStateResult:`, JSON.stringify(globalStateResult, (key, value) => typeof value === 'bigint' ? value.toString() : value));
-            console.log(`[usePools] index ${index}: liquidityResult:`, JSON.stringify(liquidityResult, (key, value) => typeof value === 'bigint' ? value.toString() : value));
-
-
+            // Skip if results are invalid
             if (!globalStateResult || !liquidityResult) {
-                console.log(`[usePools] index ${index}: globalStateResult or liquidityResult is undefined`);
-                return [PoolState.INVALID, null]; // Should ideally not happen if arrays are same length
+                logger.debug(`usePools index ${index}: Missing results`);
+                return [PoolState.INVALID, null];
             }
 
             const { result: globalState, loading: globalStateLoading, valid: globalStateValid } = globalStateResult;
             const { result: liquidity, loading: liquidityLoading, valid: liquidityValid } = liquidityResult;
 
+            // Return appropriate state based on result validity and loading state
             if (!globalStateValid || !liquidityValid) {
-                console.log(`[usePools] index ${index}: globalState or liquidity not valid. globalStateValid: ${globalStateValid}, liquidityValid: ${liquidityValid}`);
                 return [PoolState.INVALID, null];
             }
+
             if (globalStateLoading || liquidityLoading) {
-                console.log(`[usePools] index ${index}: globalState or liquidity loading. globalStateLoading: ${globalStateLoading}, liquidityLoading: ${liquidityLoading}`);
                 return [PoolState.LOADING, null];
             }
 
-            // Ensure results themselves are present
+            // Ensure results are present
             if (!globalState || !liquidity) {
-                console.log(`[usePools] index ${index}: globalState or liquidity result array is null/undefined.`);
-                // It's possible globalState or liquidity is an empty object if the contract call failed softly with valid=true but no result array.
-                // Or, if the result from useMultipleContractSingleData was not an array as expected.
-                // This log helps catch that. The primary check for loading/valid is above.
                 return [PoolState.NOT_EXISTS, null];
             }
 
-            // globalState.price is uint160, liquidity[0] is uint128. Both are BigInts from Ethers v6.
-            // A pool must have a non-zero price to be valid.
+            // A pool must have a non-zero price to be valid
             if (!globalState.price || globalState.price === 0n) {
-                console.log(`[usePools] index ${index}: globalState.price is null, undefined, or zero. Price:`, globalState.price);
                 return [PoolState.NOT_EXISTS, null];
             }
-            // Liquidity being 0 (i.e., liquidity[0] === 0n) is a valid state for an empty pool.
-            // The Pool constructor can handle this. No specific check to return NOT_EXISTS for 0 liquidity.
 
             try {
-                // Convert globalState.fee (BigInt) to Number for the Pool constructor
+                // Create Pool instance with properly converted values
                 const feeAsNumber = Number(globalState.fee);
-                const tickAsNumber = Number(globalState.tick); // Convert tick to number
-                const priceAsString = globalState.price.toString(); // Convert price to string for JSBI
-                console.log(`[usePools] CHECKING TICK: value is '${globalState.tick}' (original type: ${typeof globalState.tick}), Converted tick value is '${tickAsNumber}' (type: ${typeof tickAsNumber})`);
-                console.log(`[usePools] CHECKING PRICE: value is '${globalState.price}' (original type: ${typeof globalState.price}), Converted price value is '${priceAsString}' (type: ${typeof priceAsString})`);
-                console.log(`[usePools] index ${index}: Attempting to create Pool with: token0: ${token0.symbol}, token1: ${token1.symbol}, fee (original): ${globalState.fee}, fee (as number): ${feeAsNumber}, price (original): ${globalState.price}, price (as string): ${priceAsString}, liquidity: ${liquidity[0].toString()}, tick (original): ${globalState.tick}, tick (as number): ${tickAsNumber}`);
-                const poolInstance = new Pool(token0, token1, feeAsNumber, priceAsString, liquidity[0].toString(), tickAsNumber);
-                console.log(`[usePools] index ${index}: Pool created successfully:`, poolInstance);
+                const tickAsNumber = Number(globalState.tick);
+                const priceAsString = globalState.price.toString();
+                const liquidityAsString = liquidity[0].toString();
+
+                logger.debug(`usePools index ${index}: Creating Pool with: token0: ${token0.symbol}, token1: ${token1.symbol}, fee: ${feeAsNumber}, tick: ${tickAsNumber}`);
+
+                const poolInstance = new Pool(
+                    token0,
+                    token1,
+                    feeAsNumber,
+                    priceAsString,
+                    liquidityAsString,
+                    tickAsNumber
+                );
+
                 return [PoolState.EXISTS, poolInstance];
             } catch (error) {
-                console.error(`[usePools] index ${index}: Error constructing pool for ${token0.symbol}/${token1.symbol}:`, error);
+                logger.error(`usePools index ${index}: Error constructing pool:`, error);
                 return [PoolState.NOT_EXISTS, null];
             }
         });
-        console.log('[usePools] Final results for all poolKeys:', finalResult.map(r => ([r[0], r[1] ? 'Pool Instance' : null])));
-        return finalResult;
-    }, [_liquidities, poolKeys, _globalState0s, transformed]);
+    }, [_globalState0s, _liquidities, poolKeys, transformed]);
 }
 
 export function usePool(
     currencyA: Currency | undefined,
     currencyB: Currency | undefined,
     listenerOptions?: ListenerOptions
-    // feeAmount: FeeAmount | undefined
 ): [PoolState, Pool | null] {
-    const poolKeys: [Currency | undefined, Currency | undefined][] = useMemo(() => [[currencyA, currencyB]], [currencyA, currencyB]);
-
-    return usePools(poolKeys, listenerOptions)[0];
+    const pools = usePools([[currencyA, currencyB]], listenerOptions);
+    return pools[0];
 }
 
 export function useTokensSymbols(token0: string, token1: string) {
-    const internet = useInternet();
     const _token0 = useToken(token0);
     const _token1 = useToken(token1);
 
-    return useMemo(() => [_token0, _token1], [_token0, _token1, internet]);
+    return useMemo(() => {
+        return {
+            token0Symbol: _token0?.symbol,
+            token1Symbol: _token1?.symbol,
+        };
+    }, [_token0, _token1]);
 }

@@ -3,6 +3,7 @@ import { Pool } from 'lib/src'
 import { useMemo } from 'react'
 import { useAllCurrencyCombinations } from './useAllCurrencyCombinations'
 import { PoolState, usePools } from './usePools'
+import { ListenerOptions } from 'state/multicall/hooks'
 
 /**
  * Returns all the existing pools that should be considered for swapping between an input currency and an output currency
@@ -12,7 +13,8 @@ import { PoolState, usePools } from './usePools'
 
 export function useV3SwapPools(
     currencyIn?: Currency,
-    currencyOut?: Currency
+    currencyOut?: Currency,
+    listenerOptions?: ListenerOptions
 ): {
     pools: Pool[]
     loading: boolean
@@ -24,7 +26,7 @@ export function useV3SwapPools(
         currencyOut
     );
 
-    const pools = usePools(allCurrencyCombinations)
+    const pools = usePools(allCurrencyCombinations, listenerOptions)
 
     return useMemo(() => {
         // If currencyIn or currencyOut are undefined, allCurrencyCombinations will be empty,

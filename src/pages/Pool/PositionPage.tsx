@@ -47,6 +47,7 @@ import { RowBetween, RowFixed } from "components/Row";
 import { ApplicationModal } from "../../state/application/actions";
 import { useModalOpen, useToggleModal } from "../../state/application/hooks";
 import { isAddress } from "../../utils";
+import { DEFAULT_LISTENER_OPTIONS } from "state/multicall/hooks";
 
 function useQuery() {
     const { search } = useLocation();
@@ -157,8 +158,8 @@ export default function PositionPage({
     const [showConfirm, setShowConfirm] = useState(false);
 
     // usdc prices always in terms of tokens
-    const price0 = useUSDCPrice(token0 ?? undefined);
-    const price1 = useUSDCPrice(token1 ?? undefined);
+    const price0 = useUSDCPrice(token0 ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
+    const price1 = useUSDCPrice(token1 ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
 
     const fiatValueOfFees: CurrencyAmount<Currency> | null = useMemo(() => {
         if (!price0 || !price1 || !feeValue0 || !feeValue1) return null;

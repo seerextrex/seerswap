@@ -143,7 +143,15 @@ export default function Header() {
                             {_userEthBalance?.toFixed(2)} {!isMobile && chainValue}
                         </BalanceText>
                     ) : null}
-                    <ConnectKitButton />
+                    <ConnectKitButton
+                        customTheme={{
+                            "--ck-connectbutton-hover-background": "#40444f",
+                            "--ck-overlay-background": "rgba(0, 0, 0, 0.8)",
+                            "--ck-modal-box-shadow": "0px 4px 16px rgba(0, 0, 0, 0.2)",
+                        }}
+                        mode="light"
+                        theme="midnight"
+                    />
                 </div>
             </div>
         </>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, memo } from "react";
 import { Position } from "lib/src";
 import DoubleCurrencyLogo from "components/DoubleLogo";
 import { usePool } from "hooks/usePools";
@@ -21,6 +21,15 @@ import RangeBadge from "../Badge/RangeBadge";
 import "./index.scss";
 import { useAppDispatch } from "state/hooks";
 import { NEVER_RELOAD } from "../../state/multicall/hooks";
+
+// Production-mode logger that only logs in development
+const logger = {
+    debug: (process.env.NODE_ENV === 'development')
+        ? (...args: any[]) => console.debug(...args)
+        : () => { },
+    warn: (...args: any[]) => console.warn(...args),
+    error: (...args: any[]) => console.error(...args),
+};
 
 interface PositionListItemProps {
     positionDetails: PositionPool;
@@ -53,8 +62,6 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     }
 
     // if token1 is an ETH-/BTC-stable asset, set it as the base token
-    //TODO
-    // const bases = [...Object.values(WMATIC_EXTENDED), WBTC]
     const bases = [...Object.values(WXDAI_EXTENDED)];
     if (bases.some((base) => base.equals(token1))) {
         return {
@@ -84,7 +91,7 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     };
 }
 
-export default function PositionListItem({ positionDetails, newestPosition, highlightNewest }: PositionListItemProps) {
+function PositionListItemInner({ positionDetails, newestPosition, highlightNewest }: PositionListItemProps) {
     const dispatch = useAppDispatch();
 
     const prevPositionDetails = usePrevious({ ...positionDetails });
@@ -100,24 +107,30 @@ export default function PositionListItem({ positionDetails, newestPosition, high
             return { ...prevPositionDetails };
         }
         return { ...positionDetails };
-    }, [positionDetails]);
+    }, [positionDetails, prevPositionDetails]);
 
-    console.log('[PositionListItem] positionDetails.tokenId:', positionDetails?.tokenId, 'token0:', _token0Address, 'token1:', _token1Address);
+    logger.debug('[PositionListItem] token0:', _token0Address, 'token1:', _token1Address);
 
     const token0 = useToken(_token0Address);
     const token1 = useToken(_token1Address);
 
-    console.log('[PositionListItem] token0 object:', token0, 'token1 object:', token1);
+    const currency0 = useMemo(() =>
+        token0 ? unwrappedToken(token0) : undefined,
+        [token0]
+    );
 
-    const currency0 = token0 ? unwrappedToken(token0) : undefined;
-    const currency1 = token1 ? unwrappedToken(token1) : undefined;
-
-    console.log('[PositionListItem] currency0 object:', currency0, 'currency1 object:', currency1);
+    const currency1 = useMemo(() =>
+        token1 ? unwrappedToken(token1) : undefined,
+        [token1]
+    );
 
     // construct Position from details returned
-    const [poolState, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined, NEVER_RELOAD);
-
-    console.log('[PositionListItem] poolState:', poolState, 'pool object:', pool);
+    // Ensure currencies are defined before calling usePool
+    const [poolState, pool] = usePool(
+        currency0 && currency1 ? currency0 : undefined,
+        currency0 && currency1 ? currency1 : undefined,
+        NEVER_RELOAD
+    );
 
     const prevPool = usePrevious(pool);
     const _pool = useMemo(() => {
@@ -125,44 +138,85 @@ export default function PositionListItem({ positionDetails, newestPosition, high
             return prevPool;
         }
         return pool;
-    }, [pool]);
+    }, [pool, prevPool]);
 
     const position = useMemo(() => {
-        if (_pool) {
+        if (!_pool || _liquidity === undefined) return undefined;
+
+        try {
             return new Position({
                 pool: _pool,
                 liquidity: _liquidity.toString(),
                 tickLower: _tickLower,
                 tickUpper: _tickUpper,
             });
+        } catch (error) {
+            logger.error('[PositionListItem] Error creating Position object:', error);
+            return undefined;
         }
-        return undefined;
-    }, [_liquidity, _pool, _tickLower, _tickUpper]);
+    }, [_pool, _liquidity, _tickLower, _tickUpper]);
 
     const tickAtLimit = useIsTickAtLimit(_tickLower, _tickUpper);
 
     // prices
-    const { priceLower, priceUpper, quote, base } = getPriceOrderingFromPositionForUI(position);
-    const currencyQuote = quote && unwrappedToken(quote);
-    const currencyBase = base && unwrappedToken(base);
+    const { priceLower, priceUpper, quote, base } = useMemo(() =>
+        getPriceOrderingFromPositionForUI(position),
+        [position]
+    );
+
+    const currencyQuote = useMemo(() =>
+        quote ? unwrappedToken(quote) : undefined,
+        [quote]
+    );
+
+    const currencyBase = useMemo(() =>
+        base ? unwrappedToken(base) : undefined,
+        [base]
+    );
 
     // check if price is within range
-    const outOfRange: boolean = _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false;
+    const outOfRange: boolean = useMemo(() =>
+        _pool ? _pool.tickCurrent < _tickLower || _pool.tickCurrent >= _tickUpper : false,
+        [_pool, _tickLower, _tickUpper]
+    );
 
-    const positionSummaryLink = `/pool/${positionDetails.tokenId}${_onFarming ? "?onFarming=true" : ""}`;
+    const positionSummaryLink = useMemo(() =>
+        `/pool/${positionDetails.tokenId}${_onFarming ? "?onFarming=true" : ""}`,
+        [positionDetails.tokenId, _onFarming]
+    );
 
-    const farmingLink = `/farming/farms#${positionDetails.tokenId}`;
+    const farmingLink = useMemo(() =>
+        `/farming/farms#${positionDetails.tokenId}`,
+        [positionDetails.tokenId]
+    );
 
-    const isNewest = newestPosition ? newestPosition === Number(positionDetails.tokenId) : undefined;
+    const isNewest = useMemo(() =>
+        newestPosition ? newestPosition === Number(positionDetails.tokenId) : undefined,
+        [newestPosition, positionDetails.tokenId]
+    );
 
-    const removed = position ? JSBI.equal(position.liquidity, JSBI.BigInt(0)) : false;
+    const removed = useMemo(() =>
+        position ? JSBI.equal(position.liquidity, JSBI.BigInt(0)) : false,
+        [position]
+    );
 
     useEffect(() => {
         if (newestPosition && highlightNewest) {
             dispatch(setShowNewestPosition({ showNewestPosition: false }));
             document.querySelector("#newest")?.scrollIntoView({ behavior: "smooth" });
         }
-    }, []);
+    }, [newestPosition, highlightNewest, dispatch]);
+
+    if (!currency0 || !currency1) {
+        return (
+            <Card isDark={false} classes={"br-24 mv-05 card-bg-hover position-list-card"}>
+                <div className={"f c f-ac f-jc w-100 h-100 p-1"}>
+                    <Loader size={"1.5rem"} stroke={"var(--text-primary)"} />
+                    <span className={"ml-05 c-text-primary fs-085"}><Trans>Loading token data...</Trans></span>
+                </div>
+            </Card>
+        );
+    }
 
     return (
         <NavLink className={"w-100"} to={positionSummaryLink} id={isNewest && highlightNewest ? "newest" : ""}>
@@ -183,39 +237,54 @@ export default function PositionListItem({ positionDetails, newestPosition, high
                                 </span>
                                 <ArrowRight size={14} color={"white"} style={{ marginLeft: "5px" }} />
                             </NavLink>
+                        ) : removed ? (
+                            <RangeBadge removed={true} inRange={false} />
+                        ) : outOfRange ? (
+                            <RangeBadge
+                                removed={false}
+                                inRange={false}
+                            />
                         ) : (
-                            <div />
+                            <RangeBadge
+                                removed={false}
+                                inRange={true}
+                            />
                         )}
-                        <RangeBadge removed={removed} inRange={!outOfRange} />
                     </div>
                 </div>
-
-                {priceLower && priceUpper ? (
-                    <div className={"position-list-item__bottom f fs-085 mt-025 c-w mt-05 mxs_fd-c mxs_f-ac"}>
-                        <div className={"f mxs_mb-05"}>
-                            <div className={"position-list-item__prefix mr-025"}>
-                                <Trans>Min:</Trans>
+                <div className={"position-list-item__info f mxs_fd-c justify-between"}>
+                    <div className={"position-list-item__info__col"}>
+                        <div className={"f-jb f-wrap"}>
+                            <span className={"position-list-item__info__col__text-sec"}>
+                                <Trans>Price range</Trans>
+                            </span>
+                        </div>
+                        <div className={"f-jb mxs_fw-wrap"}>
+                            <div className={"mr-1 mxs_mb-05"}>
+                                <div className={"position-list-item__info__col__text-main nowrap"}>
+                                    {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)}
+                                </div>
+                                <div className={"position-list-item__info__col__text-sec"}>
+                                    <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
+                                </div>
                             </div>
-                            <span className={"position-list-item__amount"}>
-                                <Trans>{`${formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
-                            </span>
-                        </div>
-                        <div className={"position-list-item__arrow mh-05"}>⟷</div>
-                        <div className={"f"}>
-                            <span className={"position-list-item__prefix mh-025"}>
-                                <Trans>Max:</Trans>
-                            </span>
-                            <span className={"position-list-item__amount"}>
-                                <Trans>{`${formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
-                            </span>
+                            <div className={"position-list-item__info__arrow mxs_hide"}>{"->"}</div>
+                            <div className={"ml-1 mxs_mb-05"}>
+                                <div className={"position-list-item__info__col__text-main nowrap"}>
+                                    {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)}
+                                </div>
+                                <div className={"position-list-item__info__col__text-sec"}>
+                                    <Trans>{currencyQuote?.symbol} per {currencyBase?.symbol}</Trans>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                ) : (
-                    <div className={"f c f-ac f-jc w-100"}>
-                        <Loader size={"1rem"} stroke={"var(--white)"} />
-                    </div>
-                )}
+                </div>
             </Card>
         </NavLink>
     );
 }
+
+// Memoize the component to prevent unnecessary re-renders
+const PositionListItem = memo(PositionListItemInner);
+export default PositionListItem;

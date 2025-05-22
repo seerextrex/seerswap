@@ -70,13 +70,11 @@ describe('application reducer', () => {
     })
 
     describe('setOpenModal', () => {
-        it('set wallet modal', () => {
-            store.dispatch(setOpenModal(ApplicationModal.WALLET))
-            expect(store.getState().openModal).toEqual(ApplicationModal.WALLET)
-            store.dispatch(setOpenModal(ApplicationModal.WALLET))
-            expect(store.getState().openModal).toEqual(ApplicationModal.WALLET)
+        it('sets and clears other modal types', () => {
             store.dispatch(setOpenModal(ApplicationModal.CLAIM_POPUP))
             expect(store.getState().openModal).toEqual(ApplicationModal.CLAIM_POPUP)
+            store.dispatch(setOpenModal(ApplicationModal.SETTINGS))
+            expect(store.getState().openModal).toEqual(ApplicationModal.SETTINGS)
             store.dispatch(setOpenModal(null))
             expect(store.getState().openModal).toEqual(null)
         })

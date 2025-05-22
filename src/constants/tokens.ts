@@ -4,11 +4,20 @@ import { WNATIVE } from "../lib/src/entities/wnative";
 
 import AlgebraConfig from "algebra.config";
 
+interface TokenDetails {
+    name: string;
+    symbol: string;
+    decimals: number;
+}
+
 export const [DEFAULT_TOKENS, TOKENS_FOR_MULTIHOP, STABLE_TOKENS] = [
     AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens,
     AlgebraConfig.DEFAULT_TOKEN_LIST.tokensForMultihop,
     AlgebraConfig.DEFAULT_TOKEN_LIST.stableTokens,
-].map((tokens) => Object.entries(tokens).map(([address, { name, symbol, decimals }]) => new Token(AlgebraConfig.CHAIN_PARAMS.chainId, address, decimals, symbol, name)));
+].map((tokens) => Object.entries(tokens).map(([address, tokenDetails]) => {
+    const { name, symbol, decimals } = tokenDetails as TokenDetails;
+    return new Token(AlgebraConfig.CHAIN_PARAMS.chainId, address, decimals, symbol, name);
+}));
 
 export const STABLE_TOKEN_FOR_USD_PRICE = new Token(
     AlgebraConfig.CHAIN_PARAMS.chainId,

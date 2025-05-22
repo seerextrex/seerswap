@@ -6,7 +6,6 @@ import { AlignJustify, Calendar, Zap } from "react-feather";
 import { useAccount } from "wagmi";
 import { FarmingMyFarms } from "../../components/FarmingMyFarms";
 import { FarmingEventsPage } from "../FarmingEventsPage";
-import { useWalletModalToggle } from "../../state/application/hooks";
 import { Helmet } from "react-helmet";
 import EternalFarmsPage from "../EternalFarmsPage";
 import EventsHistory from "../EventsHistory";
@@ -16,6 +15,7 @@ import Card from "../../shared/components/Card/Card";
 import Menu from "../../components/Menu";
 import { useAppSelector } from "state/hooks";
 import { t, Trans } from "@lingui/macro";
+import { ConnectKitButton } from 'connectkit';
 
 export const InfinityIcon = forwardRef(({ color = "currentColor", size = 18, ...rest }: { color?: string; size: number }, ref: any) => {
     return (
@@ -66,7 +66,6 @@ const farmingMenuList = [
 export default function FarmingPage() {
     const { address: account } = useAccount();
     const { path } = useRouteMatch();
-    const toggleWalletModal = useWalletModalToggle();
 
     const hasTransferred = useAppSelector((state) => state.farming.hasTransferred);
 
@@ -133,9 +132,7 @@ export default function FarmingPage() {
                                 <p className={"mb-1"}>
                                     <Trans>Connect your account to view farms</Trans>
                                 </p>
-                                <button className={"btn primary pv-05 ph-2 br-8 b"} onClick={toggleWalletModal}>
-                                    <Trans>Connect Wallet</Trans>
-                                </button>
+                                <ConnectKitButton />
                             </div>
                         )}
                     </Route>

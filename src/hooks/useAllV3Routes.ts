@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useUserSingleHopOnly } from "../state/user/hooks";
 import { useAccount } from "wagmi";
 import { useV3SwapPools } from "./useV3SwapPools";
+import { ListenerOptions } from "../state/multicall/hooks";
 
 /**
  * Returns true if poolA is equivalent to poolB
@@ -48,10 +49,10 @@ function computeAllRoutes(
  * @param currencyIn the input currency
  * @param currencyOut the output currency
  */
-export function useAllV3Routes(currencyIn?: Currency, currencyOut?: Currency): { loading: boolean; routes: Route<Currency, Currency>[] } {
+export function useAllV3Routes(currencyIn?: Currency, currencyOut?: Currency, listenerOptions?: ListenerOptions): { loading: boolean; routes: Route<Currency, Currency>[] } {
     const { chain } = useAccount();
     const chainId = chain?.id;
-    const { pools, loading: poolsLoading } = useV3SwapPools(currencyIn, currencyOut);
+    const { pools, loading: poolsLoading } = useV3SwapPools(currencyIn, currencyOut, listenerOptions);
 
     const [singleHopOnly] = useUserSingleHopOnly();
 

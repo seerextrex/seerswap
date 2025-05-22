@@ -14,6 +14,7 @@ export enum BadgeVariant {
 
 interface BadgeProps {
     variant?: BadgeVariant;
+    className?: string;
 }
 
 function pickBackgroundColor(variant: BadgeVariant | undefined, theme: DefaultTheme): Color {

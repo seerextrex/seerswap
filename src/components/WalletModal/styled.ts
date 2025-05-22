@@ -107,7 +107,7 @@ export const OptionCardLeft = styled.div`
     justify-content: center;
     height: 100%;
 `;
-export const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
+export const OptionCardClickable = styled(OptionCard as any) <{ clickable?: boolean }>`
     margin-top: 0;
     &:hover {
         cursor: ${({ clickable }) => (clickable ? "pointer" : "")};
@@ -134,7 +134,7 @@ export const CircleWrapper = styled.div`
     justify-content: center;
     align-items: center;
 `;
-export const HeaderText = styled.div`
+export const HeaderText = styled.div< { color?: string } >`
     ${({ theme }) => theme.flexRowNoWrap};
     color: ${(props) => (props.color === "blue" ? ({ theme }) => theme.primary1 : ({ theme }) => theme.text1)};
     font-size: 1rem;

@@ -1,5 +1,5 @@
 import PositionListItem from "components/PositionListItem";
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import { Trans } from "@lingui/macro";
 import { PositionPool } from "../../models/interfaces";
 import { useShowNewestPosition } from "state/mint/v3/hooks";
@@ -9,9 +9,10 @@ type PositionListProps = React.PropsWithChildren<{
     newestPosition: number | undefined;
 }>;
 
-export default function PositionList({ positions, newestPosition }: PositionListProps) {
+function PositionListInner({ positions, newestPosition }: PositionListProps) {
     const showNewestPosition = useShowNewestPosition();
 
+    // This memoization prevents unnecessary recalculations when parent components render
     const _positions = useMemo(() => {
         if (!positions) {
             return [];
@@ -19,6 +20,20 @@ export default function PositionList({ positions, newestPosition }: PositionList
 
         return positions;
     }, [positions]);
+
+    // Creating stable identity for position IDs to prevent unnecessary re-renders
+    const positionItems = useMemo(() => {
+        return _positions.map((p) => {
+            return (
+                <PositionListItem
+                    newestPosition={newestPosition}
+                    highlightNewest={showNewestPosition}
+                    key={p.tokenId.toString()}
+                    positionDetails={p}
+                />
+            );
+        });
+    }, [_positions, newestPosition, showNewestPosition]);
 
     return (
         <>
@@ -31,9 +46,11 @@ export default function PositionList({ positions, newestPosition }: PositionList
                     <Trans>Status</Trans>
                 </span>
             </div>
-            {_positions.map((p) => {
-                return <PositionListItem newestPosition={newestPosition} highlightNewest={showNewestPosition} key={p.tokenId.toString()} positionDetails={p} />;
-            })}
+            {positionItems}
         </>
     );
 }
+
+// Use React.memo to prevent unnecessary re-renders of the entire list
+const PositionList = memo(PositionListInner);
+export default PositionList;

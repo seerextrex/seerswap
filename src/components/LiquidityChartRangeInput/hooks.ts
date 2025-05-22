@@ -6,6 +6,7 @@ import { ChartEntry } from './types'
 import JSBI from 'jsbi'
 import { PriceFormats } from 'pages/NewAddLiquidity/components/PriceFomatToggler'
 import useUSDCPrice from 'hooks/useUSDCPrice'
+import { DEFAULT_LISTENER_OPTIONS } from "state/multicall/hooks"
 
 export interface TickProcessed {
     liquidityActive: JSBI
@@ -31,21 +32,22 @@ export function useDensityChartData({
         data
     } = usePoolActiveLiquidity(currencyA, currencyB, feeAmount)
 
-    const currencyBUSD = useUSDCPrice(currencyB)
+    const currencyAUsdPrice = useUSDCPrice(currencyA, undefined, DEFAULT_LISTENER_OPTIONS)
+    const currencyBUsdPrice = useUSDCPrice(currencyB, undefined, DEFAULT_LISTENER_OPTIONS)
 
     const formatData = useCallback(() => {
         if (!data?.length) {
             return undefined
         }
 
-        if (priceFormat === PriceFormats.USD && !currencyBUSD) return
+        if (priceFormat === PriceFormats.USD && !currencyBUsdPrice) return
 
         const newData: ChartEntry[] = []
 
         for (let i = 0; i < data.length; i++) {
             const t: TickProcessed = data[i]
 
-            const formattedPrice = priceFormat === PriceFormats.USD && currencyBUSD ? (parseFloat(t.price0) * +currencyBUSD.toSignificant(5)) : parseFloat(t.price0) 
+            const formattedPrice = priceFormat === PriceFormats.USD && currencyBUsdPrice ? (parseFloat(t.price0) * +currencyBUsdPrice.toSignificant(5)) : parseFloat(t.price0)
 
             const chartEntry = {
                 activeLiquidity: parseFloat(t.liquidityActive.toString()),
@@ -56,9 +58,9 @@ export function useDensityChartData({
                 newData.push(chartEntry)
             }
         }
-        
+
         return newData
-    }, [data, currencyBUSD, priceFormat])
+    }, [data, currencyBUsdPrice, priceFormat])
 
     return useMemo(() => {
         return {

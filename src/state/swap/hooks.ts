@@ -18,6 +18,7 @@ import { useCurrencyBalances } from "../wallet/hooks";
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from "./actions";
 import { SwapState } from "./reducer";
 import { useAppDispatch, useAppSelector } from "state/hooks";
+import { ListenerOptions } from "../multicall/hooks";
 
 import AlgebraConfig from "algebra.config";
 
@@ -132,6 +133,9 @@ export function useDerivedSwapInfo(): {
     const isExactIn: boolean = independentField === Field.INPUT;
     const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
 
+    // Define listener options for fetching pool data less frequently
+    const tradeListenerOptions: ListenerOptions = useMemo(() => ({ blocksPerFetch: 5 }), []);
+
     // const bestV2TradeExactIn = useV2TradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, {
     //   maxHops: singleHopOnly ? 1 : undefined,
     // })
@@ -139,8 +143,8 @@ export function useDerivedSwapInfo(): {
     //   maxHops: singleHopOnly ? 1 : undefined,
     // })
 
-    const bestV3TradeExactIn = useBestV3TradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined);
-    const bestV3TradeExactOut = useBestV3TradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined);
+    const bestV3TradeExactIn = useBestV3TradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, tradeListenerOptions);
+    const bestV3TradeExactOut = useBestV3TradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, tradeListenerOptions);
 
     // const v2Trade = isExactIn ? bestV2TradeExactIn : bestV2TradeExactOut
     const v3Trade = (isExactIn ? bestV3TradeExactIn : bestV3TradeExactOut) ?? undefined;

@@ -173,9 +173,9 @@ export default function Updater(): null {
             blockNumber: latestBlockNumber,
             cancellations: chunkedCalls.map((chunk, index) => {
                 const { cancel, promise } = retry(() => fetchChunk(multicall2Contract, chunk, latestBlockNumber), {
-                    n: Infinity,
-                    minWait: 1000,
-                    maxWait: 2500,
+                    n: 5,
+                    minWait: 1500,
+                    maxWait: 3000,
                 });
                 promise
                     .then((returnData) => {
@@ -186,39 +186,47 @@ export default function Updater(): null {
                         const slice = outdatedCallKeys.slice(firstCallKeyIndex, lastCallKeyIndex);
 
                         // split the returned slice into errors and success
-                        const { erroredCalls, results } = slice.reduce<{
-                            erroredCalls: Call[];
+                        const { erroredCallKeys, results } = slice.reduce<{
+                            erroredCallKeys: string[]; // Store keys of errored calls
                             results: { [callKey: string]: string | null };
                         }>(
                             (memo, callKey, i) => {
                                 if (returnData[i].success) {
                                     memo.results[callKey] = returnData[i].returnData ?? null;
                                 } else {
-                                    memo.erroredCalls.push(parseCallKey(callKey));
+                                    // For errored call, still add it to results with null,
+                                    // so its blockNumber gets updated by updateMulticallResults.
+                                    // This prevents immediate re-fetch by outdatedListeningKeys.
+                                    memo.results[callKey] = null;
+                                    memo.erroredCallKeys.push(callKey);
                                 }
                                 return memo;
                             },
-                            { erroredCalls: [], results: {} }
+                            { erroredCallKeys: [], results: {} }
                         );
 
-                        // dispatch any new results
-                        if (Object.keys(results).length > 0)
+                        // Dispatch all results (success or marked as null for error) to updateMulticallResults
+                        // This ensures blockNumber is set for all attempted calls, preventing immediate refetch loops.
+                        if (Object.keys(results).length > 0) {
                             dispatch(
                                 updateMulticallResults({
                                     chainId,
-                                    results,
+                                    results, // This now includes null for errored calls
                                     blockNumber: latestBlockNumber,
                                 })
                             );
+                        }
 
-                        // dispatch any errored calls
-                        if (erroredCalls.length > 0) {
-                            console.debug("Calls errored in fetch", erroredCalls);
+                        // If there were specific errors, and errorFetchingMulticallResults action is used 
+                        // for more than just logging (e.g. specific UI feedback or different state updates),
+                        // it can be dispatched here. Ensure its reducer does not counteract the blockNumber update.
+                        if (erroredCallKeys.length > 0) {
+                            console.debug("Calls errored in fetch", erroredCallKeys.map(key => parseCallKey(key)));
                             dispatch(
                                 errorFetchingMulticallResults({
-                                    calls: erroredCalls,
+                                    calls: erroredCallKeys.map(key => parseCallKey(key)),
                                     chainId,
-                                    fetchingBlockNumber: latestBlockNumber,
+                                    fetchingBlockNumber: latestBlockNumber, // Consider if this action/payload is still ideal
                                 })
                             );
                         }

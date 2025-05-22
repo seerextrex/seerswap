@@ -1,5 +1,4 @@
 import { Lock, Plus } from "react-feather";
-import { useWalletModalToggle } from "../../state/application/hooks";
 import { convertDateTime, getCountdownTime } from "../../utils/time";
 import { getProgress } from "../../utils/getProgress";
 import Loader from "../Loader";
@@ -18,6 +17,7 @@ import { formatUnits } from "ethers";
 
 import AlgebraConfig from "algebra.config";
 import { useAccount } from "wagmi";
+import { ConnectKitButton } from 'connectkit';
 
 // Define a more specific type for items in rewardList
 interface RewardListItem {
@@ -61,7 +61,6 @@ export function FarmingEventCard({
     eternal,
 }: FarmingEventCardProps) {
     const { address: account } = useAccount();
-    const toggleWalletModal = useWalletModalToggle();
 
     const {
         pool,
@@ -260,25 +259,31 @@ export function FarmingEventCard({
                     </div>
                 </div>
             )}
-            {account && !active ? (
-                <>
-                    <button
-                        style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}
-                        disabled={isFarmButtonDisabled}
-                        className={`btn primary w-100 b br-8 fs-085 pv-05 ${!eternal ? "mt-05" : ""}`}
-                        onClick={farmHandler}
-                    >
-                        <span>{locked ? t`Filled` : t`Farm`}</span>
-                    </button>
-                </>
-            ) : active ? (
-                <div className={"mt-1 fs-085 p-05 br-8 ta-c mt-1 bg-pw"} style={{ marginTop: "9px", border: "none", lineHeight: "19px", height: "36px" }}>
-                    <Trans>Started!</Trans>
-                </div>
-            ) : (
-                <button className={`btn primary w-100 b pv-05 ${!eternal ? "mt-05" : ""}`} onClick={toggleWalletModal}>
-                    <Trans>Connect Wallet</Trans>
+            <div className="f f-ac w-100 farming-event-card__countdown">
+                {active ? (
+                    <>
+                        <span className="mr-05">
+                            <Trans>Ending in:</Trans>
+                        </span>
+                        <span className="b">{endTime && now ? getCountdownTime(endTime, now) : "N/A"}</span>
+                    </>
+                ) : (
+                    <>
+                        <span className="mr-05">
+                            <Trans>Starts in:</Trans>
+                        </span>
+                        <span className="b">{startTime && now ? getCountdownTime(startTime, now) : "N/A"}</span>
+                    </>
+                )}
+            </div>
+            {account ? (
+                <button className={"btn primary w-100 mt-1"} onClick={farmHandler} disabled={isFarmButtonDisabled}>
+                    <Trans>Farm</Trans>
                 </button>
+            ) : (
+                <div className="w-100 mt-1">
+                    <ConnectKitButton />
+                </div>
             )}
         </div>
     );

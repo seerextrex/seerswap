@@ -5,8 +5,10 @@ import { useAppDispatch, useAppSelector } from "state/hooks";
 import { useAccount } from "wagmi";
 import { useBlockNumber } from "../application/hooks";
 import { addMulticallListeners, ListenerOptions, removeMulticallListeners } from "./actions";
-export type { ListenerOptions };
+import { AppState } from "../index";
 import { Call, parseCallKey, toCallKey } from "./utils";
+
+export type { ListenerOptions };
 
 export interface Result extends ReadonlyArray<any> {
     readonly [key: string]: any;
@@ -37,6 +39,8 @@ const INVALID_RESULT: CallResult = { valid: false, blockNumber: undefined, data:
 export const NEVER_RELOAD: ListenerOptions = {
     blocksPerFetch: Infinity,
 };
+
+export const DEFAULT_LISTENER_OPTIONS: ListenerOptions = { blocksPerFetch: 5 };
 
 // the lowest level call for subscribing to contract data
 function useCallsData(calls: (Call | undefined)[], { blocksPerFetch }: ListenerOptions = { blocksPerFetch: 1 }, methodName?: string): CallResult[] {

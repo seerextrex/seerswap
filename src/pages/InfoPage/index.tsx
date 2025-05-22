@@ -73,7 +73,7 @@ function InfoPage() {
                         render={(e) => (
                             <PoolInfoPage
                                 {...e}
-                                fetchTotalStatsFn={fetchInfoPoolsFn}
+                                fetchTotalStatsFn={fetchTotalStatsFn}
                                 fetchInfoPoolsFn={fetchInfoPoolsFn}
                                 blocksFetched={blocksFetched}
                                 totalStatsLoading={totalStatsLoading}

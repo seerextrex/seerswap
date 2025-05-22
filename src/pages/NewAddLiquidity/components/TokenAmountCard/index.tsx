@@ -17,6 +17,7 @@ import { useBestV3TradeExactIn } from "hooks/useBestV3Trade";
 import { STABLE_TOKEN_FOR_USD_PRICE } from "constants/tokens";
 import { useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { t, Trans } from "@lingui/macro";
+import { DEFAULT_LISTENER_OPTIONS } from "state/multicall/hooks";
 
 interface ITokenAmountCard {
     currency: Currency | undefined | null;
@@ -61,11 +62,11 @@ export function TokenAmountCard({
     const [localUSDValue, setLocalUSDValue] = useState("");
     const [localTokenValue, setLocalTokenValue] = useState("");
 
-    const valueUSD = useUSDCValue(tryParseAmount(value, currency ? (currency.isNative ? currency.wrapped : currency) : undefined), true);
-    const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", STABLE_TOKEN_FOR_USD_PRICE), currency ?? undefined);
+    const valueUSD = useUSDCValue(tryParseAmount(value, currency ? (currency.isNative ? currency.wrapped : currency) : undefined), true, DEFAULT_LISTENER_OPTIONS);
+    const tokenValue = useBestV3TradeExactIn(tryParseAmount("1", STABLE_TOKEN_FOR_USD_PRICE), currency ?? undefined, DEFAULT_LISTENER_OPTIONS);
 
-    const currencyPrice = useUSDCPrice(currency ?? undefined);
-    const otherCurrencyPrice = useUSDCPrice(otherCurrency ?? undefined);
+    const currencyPrice = useUSDCPrice(currency ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
+    const otherCurrencyPrice = useUSDCPrice(otherCurrency ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
 
     const initialUSDPrices = useInitialUSDPrices();
     const initialTokenPrice = useInitialTokenPrice();

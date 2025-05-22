@@ -3,6 +3,7 @@ import "@reach/dialog/styles.css";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
 import Blocklist from "./components/Blocklist";
@@ -54,8 +55,11 @@ const gnosisChainCustom = {
 // Wagmi config - Manually creating config instead of getDefaultConfig
 const wagmiConfig = createConfig({
     chains: [gnosisChainCustom],
+    pollingInterval: 12000, // Poll every 12 seconds
     connectors: [
-        injected(),
+        injected({
+            shimDisconnect: true,
+        }),
         walletConnect({
             projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || "YOUR_WALLETCONNECT_PROJECT_ID",
             metadata: {
@@ -64,6 +68,17 @@ const wagmiConfig = createConfig({
                 url: 'https://algebra.finance',
                 icons: ['/logo.png']
             },
+            showQrModal: false,
+            // Set event listeners limits higher to prevent warnings
+            qrModalOptions: {
+                themeMode: 'light',
+                themeVariables: {
+                    '--wcm-z-index': '9999', // Make sure it's highest z-index
+                },
+                // Simplify the UI to reduce complexity
+                explorerRecommendedWalletIds: [],
+                enableExplorer: false,
+            },
         }),
     ],
     transports: {
@@ -71,8 +86,17 @@ const wagmiConfig = createConfig({
     },
 });
 
-// React Query client
-const queryClient = new QueryClient();
+// React Query client with optimized settings
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: 2,
+            staleTime: 30000, // 30 seconds
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        },
+    },
+});
 
 function Updaters() {
     return (
@@ -88,29 +112,47 @@ function Updaters() {
     );
 }
 
-ReactDOM.render(
-    <StrictMode>
-        <WagmiProvider config={wagmiConfig}>
-            <QueryClientProvider client={queryClient}>
-                <ConnectKitProvider options={{ truncateLongENSAddress: false }}>
-                    <ApolloProvider client={apolloClient}>
-                        <Provider store={store}>
-                            <HashRouter>
-                                <LanguageProvider>
-                                    <Blocklist>
-                                        <Updaters />
-                                        <ThemeProvider>
-                                            <ThemedGlobalStyle />
-                                            <App />
-                                        </ThemeProvider>
-                                    </Blocklist>
-                                </LanguageProvider>
-                            </HashRouter>
-                        </Provider>
-                    </ApolloProvider>
-                </ConnectKitProvider>
-            </QueryClientProvider>
-        </WagmiProvider>
-    </StrictMode>,
-    document.getElementById("root")
-);
+const container = document.getElementById("root");
+if (container) {
+    const root = createRoot(container);
+    root.render(
+        <StrictMode>
+            <WagmiProvider config={wagmiConfig}>
+                <QueryClientProvider client={queryClient}>
+                    <ConnectKitProvider
+                        options={{
+                            truncateLongENSAddress: false,
+                            hideNoWalletCTA: true,
+                            hideQuestionMarkCTA: true,
+                            walletConnectCTA: 'modal',
+                            hideTooltips: true,
+                            initialChainId: AlgebraConfig.CHAIN_PARAMS.chainId
+                        }}
+                        mode="light"
+                        customTheme={{
+                            "--ck-overlay-background": "rgba(0, 0, 0, 0.8)",
+                            "--ck-overlay-z-index": "9990",
+                            "--ck-modal-z-index": "9991",
+                        }}
+                    >
+                        <ApolloProvider client={apolloClient}>
+                            <Provider store={store}>
+                                <HashRouter>
+                                    <LanguageProvider>
+                                        <Blocklist>
+                                            <Updaters />
+                                            <ThemeProvider>
+                                                <ThemedGlobalStyle />
+                                                <App />
+                                            </ThemeProvider>
+                                        </Blocklist>
+                                    </LanguageProvider>
+                                </HashRouter>
+                            </Provider>
+                        </ApolloProvider>
+                    </ConnectKitProvider>
+                </QueryClientProvider>
+            </WagmiProvider>
+        </StrictMode>
+    );
+}

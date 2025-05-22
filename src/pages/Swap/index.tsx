@@ -34,7 +34,6 @@ import useToggledVersion, { Version } from "../../hooks/useToggledVersion";
 import { useUSDCValue } from "../../hooks/useUSDCPrice";
 import useWrapCallback, { WrapType } from "../../hooks/useWrapCallback";
 import { useAccount } from 'wagmi';
-import { useWalletModalToggle } from "../../state/application/hooks";
 import { Field } from "../../state/swap/actions";
 import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from "../../state/swap/hooks";
 import { useExpertModeManager, useUserSingleHopOnly } from "../../state/user/hooks";
@@ -50,6 +49,7 @@ import Card from "../../shared/components/Card/Card";
 import "./index.scss";
 import NewCurrencyInputPanel from "../../components/CurrencyInputPanel/NewCurrencyInputPanel";
 import { ReactComponent as DoubleArrow } from "../../assets/svg/double-arrow.svg";
+import { ConnectKitButton } from 'connectkit';
 
 export default function Swap({ history }: RouteComponentProps) {
     const { address: account, isConnected } = useAccount();
@@ -72,9 +72,6 @@ export default function Swap({ history }: RouteComponentProps) {
         });
 
     const theme = useContext(ThemeContext);
-
-    // toggle wallet when disconnected
-    const toggleWalletModal = useWalletModalToggle();
 
     // for expert mode
     const [isExpertMode] = useExpertModeManager();
@@ -434,9 +431,7 @@ export default function Swap({ history }: RouteComponentProps) {
                             </div>
                             <div>
                                 {!account ? (
-                                    <button className={"btn primary w-100 b"} style={{ padding: "16px" }} onClick={toggleWalletModal}>
-                                        <Trans>Connect Wallet</Trans>
-                                    </button>
+                                    null
                                 ) : showWrap ? (
                                     <button className={"btn primary w-100 pv-1 b"} disabled={Boolean(wrapInputError)} onClick={onWrap}>
                                         {wrapInputError ?? (wrapType === WrapType.WRAP ? <Trans>Wrap</Trans> : wrapType === WrapType.UNWRAP ? <Trans>Unwrap</Trans> : null)}
@@ -497,7 +492,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         {approvalState === ApprovalState.APPROVED || signatureState === UseERC20PermitState.SIGNED ? (
                                                             <Trans>You can now trade {currencies[Field.INPUT]?.symbol}</Trans>
                                                         ) : (
-                                                            <Trans>Allow SeerSwapto use your {currencies[Field.INPUT]?.symbol}</Trans>
+                                                            <Trans>Allow SeerSwap to use your {currencies[Field.INPUT]?.symbol}</Trans>
                                                         )}
                                                     </span>
                                                     {approvalState === ApprovalState.PENDING ? (
@@ -508,7 +503,7 @@ export default function Swap({ history }: RouteComponentProps) {
                                                         <MouseoverTooltip
                                                             text={
                                                                 <Trans>
-                                                                    You must give the SeerSwapsmart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once per
+                                                                    You must give the SeerSwap smart contracts permission to use your {currencies[Field.INPUT]?.symbol}. You only have to do this once per
                                                                     token.
                                                                 </Trans>
                                                             }

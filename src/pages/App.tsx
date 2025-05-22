@@ -11,10 +11,12 @@ import { Pool } from "lib/src";
 import React, { useEffect } from "react";
 import { useIsNetworkFailed } from "../hooks/useIsNetworkFailed";
 import Loader from "../components/Loader";
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 import { GlobalStyle, Marginer, NetworkFailedCard } from "./styled";
 import Footer from "components/Footer";
 import { t, Trans } from "@lingui/macro";
+import { useNetworkChangeHandler } from '../hooks/useNetworkChangeHandler';
+import { cleanupWalletConnectSessions, handleWalletConnectError } from '../utils/walletCleanup';
 
 import "./index.scss";
 
@@ -34,7 +36,23 @@ export default function App() {
         },
     });
     const { address: account } = useAccount();
+    const { error: connectError } = useConnect();
     const networkFailed = useIsNetworkFailed();
+
+    // Use the network change handler to clear caches when network or account changes
+    useNetworkChangeHandler();
+
+    // Handle connection errors and clean up stale WalletConnect sessions
+    useEffect(() => {
+        if (connectError) {
+            handleWalletConnectError(connectError);
+        }
+    }, [connectError]);
+
+    // Clean up stale WalletConnect sessions on component mount
+    useEffect(() => {
+        cleanupWalletConnectSessions();
+    }, []);
 
     useEffect(() => {
         if (!account) return;

@@ -65,10 +65,12 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
     const { chain } = useAccount();
     const chainId = chain?.id;
 
-    // Avoid excessive logging
-    if (process.env.NODE_ENV === 'development') {
+    // Reduce logging in production
+    const logOnce = useRef(false);
+    if (process.env.NODE_ENV === 'development' && !logOnce.current) {
         logger.debug('usePools: Input poolKeys:', poolKeys);
         logger.debug('usePools: chainId:', chainId);
+        logOnce.current = true;
     }
 
     // Get or create pool deployer address
@@ -76,10 +78,6 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
         if (!chainId) return undefined;
         return POOL_DEPLOYER_ADDRESS[chainId];
     }, [chainId]);
-
-    if (process.env.NODE_ENV === 'development') {
-        logger.debug('usePools: poolDeployerAddress:', poolDeployerAddress);
-    }
 
     // Transform currencies to tokens with stability check
     const transformed: ([Token, Token] | null)[] = useMemo(() => {
@@ -175,13 +173,19 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
         return poolAddresses.filter((addr, i) => shouldFetchData[i] && addr !== undefined) as string[];
     }, [poolAddresses, shouldFetchData]);
 
+    // Add custom listener options to reduce fetch frequency
+    const customListenerOptions = useMemo(() => ({
+        ...listenerOptions,
+        blocksPerFetch: 10, // Reduce fetch frequency
+    }), [listenerOptions]);
+
     // Fetch global states only for addresses that need fetching
     const globalState0s = useMultipleContractSingleData(
         fetchAddresses,
         POOL_STATE_INTERFACE,
         "globalState",
         undefined,
-        listenerOptions
+        customListenerOptions
     );
 
     const prevGlobalState0s = usePreviousNonErroredArray(globalState0s);
@@ -225,7 +229,7 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
         POOL_STATE_INTERFACE,
         "liquidity",
         undefined,
-        listenerOptions
+        customListenerOptions
     );
 
     const prevLiquidities = usePreviousNonErroredArray(liquidities);
@@ -298,7 +302,6 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
 
             // Skip if tokens or pool address are invalid
             if (!token0 || !token1 || !poolAddress) {
-                logger.debug(`usePools index ${i}: Invalid token pair.`);
                 results.push([PoolState.INVALID, null]);
                 continue;
             }
@@ -315,7 +318,6 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
 
             // Skip if results are invalid
             if (!globalStateResult || !liquidityResult) {
-                logger.debug(`usePools index ${i}: Missing results`);
                 results.push([PoolState.INVALID, null]);
                 continue;
             }
@@ -359,10 +361,6 @@ export function usePools(poolKeys: [Currency | undefined, Currency | undefined][
                 const tickAsNumber = Number(globalState.tick);
                 const priceAsString = globalState.price.toString();
                 const liquidityAsString = liquidity[0].toString();
-
-                if (process.env.NODE_ENV === 'development') {
-                    logger.debug(`usePools index ${i}: Creating Pool with: token0: ${token0.symbol}, token1: ${token1.symbol}, fee: ${feeAsNumber}, tick: ${tickAsNumber}`);
-                }
 
                 const poolInstance = new Pool(
                     token0,

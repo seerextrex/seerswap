@@ -44,6 +44,12 @@ export function SelectPair({
 }: ISelectPair) {
     const history = useHistory();
 
+    console.log('SelectPair Render:', {
+        baseCurrencyPropSymbol: baseCurrency?.symbol,
+        quoteCurrencyPropSymbol: quoteCurrency?.symbol,
+        isCompletedProp: isCompleted
+    });
+
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 
     const {
@@ -56,9 +62,15 @@ export function SelectPair({
     }, []);
 
     const feeString = useMemo(() => {
+        if (!mintInfo) return <Loader stroke="#22cbdc" />;
+
         if (mintInfo.poolState === PoolState.INVALID || mintInfo.poolState === PoolState.LOADING) return <Loader stroke="#22cbdc" />;
 
         if (mintInfo.noLiquidity) return t`0.01% fee`;
+
+        if (typeof mintInfo.dynamicFee !== 'number') {
+            return <Loader stroke="#22cbdc" />;
+        }
 
         return t`${(mintInfo.dynamicFee / 10000).toFixed(3)}% fee`;
     }, [mintInfo]);
@@ -75,13 +87,7 @@ export function SelectPair({
         return aprs[poolAddress] ? `${aprs[poolAddress].toFixed(2)}% APR` : undefined;
     }, [baseCurrency, quoteCurrency, aprs]);
 
-    useEffect(() => {
-        return () => {
-            if (history.action === "POP") {
-                history.push("/pool");
-            }
-        };
-    }, []);
+    /* Commenting out this useEffect as it might be causing unexpected redirects to /pool\n    useEffect(() => {\n        return () => {\n            if (history.action === \"POP\") {\n                history.push(\"/pool\");\n            }\n        };\n    }, []); // Empty dependency array means this cleanup runs only on unmount\n    */
 
     return (
         <div className="select-pair-wrapper f c">

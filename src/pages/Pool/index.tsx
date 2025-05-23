@@ -89,6 +89,11 @@ export default function Pool() {
                         )}
                     </div>
                 </div>
+                <NavLink
+                    to="/add"
+                    className={"btn primary pv-05 ph-1 br-8 mh-a"}>
+                    + <Trans>New Position</Trans>
+                </NavLink>
             </AutoColumn>
             <SwitchLocaleLink />
         </>

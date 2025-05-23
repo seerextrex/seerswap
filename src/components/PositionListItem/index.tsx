@@ -55,45 +55,44 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     const token0 = position.amount0.currency;
     const token1 = position.amount1.currency;
 
-    // if token0 is a dollar-stable asset, set it as the quote token
-    const stables = [...STABLE_TOKENS];
-    if (stables.some((stable) => stable.equals(token0))) {
+    // Pool price is always in terms of token1 per token0
+    // We handle display here
+
+    // if token0 is stable and token1 not, we should invert
+    const stables = [WXDAI_EXTENDED[100], ...STABLE_TOKENS];
+    const stable0 = stables.some((stableToken) => stableToken && stableToken.equals(token0));
+    const stable1 = stables.some((stableToken) => stableToken && stableToken.equals(token1));
+
+    if (stable0 && !stable1) {
         return {
-            priceLower: position.token0PriceUpper.invert(),
-            priceUpper: position.token0PriceLower.invert(),
+            priceLower: position.token0PriceLower.invert(),
+            priceUpper: position.token0PriceUpper.invert(),
             quote: token0,
             base: token1,
         };
     }
-
-    // if token1 is an ETH-/BTC-stable asset, set it as the base token
-    const bases = [...Object.values(WXDAI_EXTENDED)];
-    if (bases.some((base) => base.equals(token1))) {
-        return {
-            priceLower: position.token0PriceUpper.invert(),
-            priceUpper: position.token0PriceLower.invert(),
-            quote: token0,
-            base: token1,
-        };
-    }
-
-    // if both prices are below 1, invert
-    if (position.token0PriceUpper.lessThan(1)) {
-        return {
-            priceLower: position.token0PriceUpper.invert(),
-            priceUpper: position.token0PriceLower.invert(),
-            quote: token0,
-            base: token1,
-        };
-    }
-
-    // otherwise, just return the default
+    // otherwise, the default
     return {
-        priceLower: position.token0PriceLower,
-        priceUpper: position.token0PriceUpper,
+        priceLower: position.token0PriceUpper.invert(),
+        priceUpper: position.token0PriceLower.invert(),
         quote: token1,
         base: token0,
     };
+}
+
+// Check if a position is closed
+export function isClosed(position: Position): boolean {
+    try {
+        return JSBI.equal(position.liquidity, JSBI.BigInt(0));
+    } catch {
+        return false;
+    }
+}
+
+// Check if a position is out of range
+export function isOutOfRange(pool: Pool | null | undefined, tickLower?: number, tickUpper?: number): boolean {
+    if (!pool || tickLower === undefined || tickUpper === undefined) return false;
+    return pool.tickCurrent < tickLower || pool.tickCurrent >= tickUpper;
 }
 
 function PositionListItemInner({ positionDetails, newestPosition, highlightNewest, onShiftClick, onClick }: PositionListItemProps) {
@@ -114,7 +113,12 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
         return { ...positionDetails };
     }, [positionDetails, prevPositionDetails]);
 
-    logger.debug('[PositionListItem] token0:', _token0Address, 'token1:', _token1Address);
+    // Debug only in development and only once per component
+    useMemo(() => {
+        if (process.env.NODE_ENV === 'development') {
+            logger.debug('[PositionListItem] token0:', _token0Address, 'token1:', _token1Address);
+        }
+    }, [_token0Address, _token1Address]);
 
     // Use individual token hooks for stability
     const token0 = useToken(_token0Address);
@@ -123,11 +127,11 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
     const currency0 = useMemo(() => token0 ? unwrappedToken(token0) : undefined, [token0]);
     const currency1 = useMemo(() => token1 ? unwrappedToken(token1) : undefined, [token1]);
 
-    // Use the pool hook directly with stable reference memoization
+    // Use the pool hook directly with stable reference memoization and reduced fetch frequency
     const [poolState, pool] = usePool(
         currency0 ?? undefined,
         currency1 ?? undefined,
-        { blocksPerFetch: 10 } // Reduce fetch frequency
+        { blocksPerFetch: 20 } // Significantly reduce fetch frequency
     );
 
     const prevPool = usePrevious(pool);
@@ -209,10 +213,11 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
     }, [newestPosition, highlightNewest, dispatch]);
 
     const isLoading = useMemo(() => {
+        // Only show loading if we don't have token data yet
         if (!token0 || !token1) return true;
-        if (poolState === PoolState.LOADING) return true;
+        // Don't show loading if we're just waiting for pool data but have tokens
         return false;
-    }, [token0, token1, poolState]);
+    }, [token0, token1]);
 
     const showFarmBadge = positionDetails.onFarming || positionDetails.oldFarming;
 
@@ -233,7 +238,7 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
                 <div className={"f f-ac"}>
                     <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={24} margin />
                     <div className={"b fs-125 mh-05 c-w"}>
-                        &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
+                        &nbsp;{currencyQuote?.symbol || '...'}&nbsp;/&nbsp;{currencyBase?.symbol || '...'}
                     </div>
                     &nbsp;
                 </div>
@@ -258,7 +263,7 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
                         <Trans>Min:</Trans>
                     </div>
                     <span className={"position-list-item__amount"}>
-                        <Trans>{`${formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
+                        <Trans>{`${formatTickPrice(priceLower, tickAtLimit, Bound.LOWER)} ${currencyQuote?.symbol || '...'} per ${currencyBase?.symbol || '...'}`}</Trans>
                     </span>
                 </div>
                 <div className={"position-list-item__arrow mh-05"}>⟷</div>
@@ -267,7 +272,7 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
                         <Trans>Max:</Trans>
                     </span>
                     <span className={"position-list-item__amount"}>
-                        <Trans>{`${formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)} ${currencyQuote?.symbol} per ${currencyBase?.symbol}`}</Trans>
+                        <Trans>{`${formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER)} ${currencyQuote?.symbol || '...'} per ${currencyBase?.symbol || '...'}`}</Trans>
                     </span>
                 </div>
             </div>

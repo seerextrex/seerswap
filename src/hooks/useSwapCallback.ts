@@ -68,6 +68,14 @@ function useSwapCallArguments(
     return useMemo(() => {
         if (!trade || !recipient || !account || !chainId || !deadline) return [];
 
+        // --- BEGIN DEBUG LOG --- G
+        console.log("[Debug: useSwapCallArguments] Trade object:", JSON.parse(JSON.stringify(trade, (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value // return everything else unchanged
+        )));
+        // --- END DEBUG LOG ---
+
         const swapRouterAddress = chainId ? SWAP_ROUTER_ADDRESSES[chainId] : undefined;
 
         if (!swapRouterAddress) return [];
@@ -105,6 +113,12 @@ function useSwapCallArguments(
             })
         );
 
+        // --- BEGIN DEBUG LOG ---
+        if (swapMethods[0]) {
+            console.log("[Debug: useSwapCallArguments] swapMethods[0] (feeOnTransfer: false):", { calldata: swapMethods[0].calldata, value: swapMethods[0].value });
+        }
+        // --- END DEBUG LOG ---
+
         if (trade.tradeType === TradeType.EXACT_INPUT) {
             swapMethods.push(
                 SwapRouter.swapCallParameters(trade, {
@@ -134,6 +148,11 @@ function useSwapCallArguments(
                         : {}),
                 })
             );
+            // --- BEGIN DEBUG LOG ---
+            if (swapMethods[1]) {
+                console.log("[Debug: useSwapCallArguments] swapMethods[1] (feeOnTransfer: true):", { calldata: swapMethods[1].calldata, value: swapMethods[1].value });
+            }
+            // --- END DEBUG LOG ---
         }
 
         return swapMethods.map(({ calldata, value }) => {
@@ -202,9 +221,10 @@ export function useSwapCallback(
     const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName, signatureData);
     const addTransaction = useTransactionAdder();
 
-    const gasPriceState = useAppSelector((state) => {
-        if (!state.application.gasPrice.fetched) return BigInt(36 * 10 ** 9);
-        return state.application.gasPrice.override ? BigInt(36 * 10 ** 9) : BigInt(state.application.gasPrice.fetched * 10 ** 9);
+    // Get the gas price in GWEI from the Redux store
+    const gasPriceInGwei = useAppSelector((state) => {
+        if (!state.application.gasPrice.fetched) return 36; // Default to 36 GWEI
+        return state.application.gasPrice.override ? 36 : state.application.gasPrice.fetched;
     });
 
     const { address: recipientAddress } = useENS(recipientAddressOrName);
@@ -253,31 +273,48 @@ export function useSwapCallback(
                             data: calldata,
                             ...(value && !isZero(value) ? { value: value } : {}),
                         };
+                        // Attempt to estimate gas
                         return finalSigner.estimateGas(tx)
-                            .then((gasEstimate) => ({ call, gasEstimate }))
+                            .then((gasEstimate) => {
+                                console.debug("Gas estimate successful", call, gasEstimate);
+                                return { call, gasEstimate };
+                            })
                             .catch((gasError) => {
-                                console.debug("Gas estimate failed, trying eth_call to extract error", call, gasError);
+                                console.debug("Gas estimate failed, attempting eth_call to extract error for debugging", call, gasError);
+                                // Fallback to eth_call ONLY for error reporting, not for gas estimation itself
                                 return ethersProvider.call(tx)
                                     .then((result) => {
-                                        console.debug("Unexpected successful call after failed estimate gas", call, gasError, result);
-                                        return { call, error: new Error(t`Unexpected issue with estimating gas. Please try again.`) };
+                                        console.debug("eth_call successful after failed estimateGas (unexpected for gas estimation strategy)", call, gasError, result);
+                                        // Return an error here, as eth_call is not a substitute for estimateGas
+                                        return { call, error: new Error(t`Gas estimation failed. The transaction might fail or require a manual gas limit.`) };
                                     })
                                     .catch((callError) => {
-                                        console.debug("Call failed", call, callError);
-                                        return { call, error: new Error(swapErrorToUserReadableMessage(callError)) };
+                                        console.debug("eth_call also failed", call, callError);
+                                        return { call, error: new Error(swapErrorToUserReadableMessage(callError)) }; // Use the error from eth_call if estimateGas also failed
                                     });
                             });
                     })
                 );
 
-                const successfulEstimation = estimatedCalls.find((el): el is SuccessfulCall => "gasEstimate" in el);
+                // Ensure we have at least one successful gas estimation
+                const successfulEstimation = estimatedCalls.find((el): el is SuccessfulCall => "gasEstimate" in el && el.gasEstimate !== undefined);
+
                 if (!successfulEstimation) {
                     const errorCalls = estimatedCalls.filter((call): call is FailedCall => "error" in call);
-                    if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error;
-                    throw new Error(t`Unexpected error. Could not estimate gas for the swap.`);
+                    if (errorCalls.length > 0 && errorCalls[0].error) {
+                        // Prioritize showing the first error encountered during estimation attempts
+                        throw errorCalls[0].error;
+                    }
+                    throw new Error(t`Unable to estimate gas for the swap. The transaction may fail.`);
                 }
 
                 const { call, gasEstimate } = successfulEstimation;
+
+                // --- BEGIN DEBUG LOG ---
+                console.log("[Debug: useSwapCallback] gasPriceInGwei from Redux:", gasPriceInGwei.toString());
+                const calculatedGasPrice = BigInt(gasPriceInGwei) * BigInt(GAS_PRICE_MULTIPLIER); // GWEI to WEI
+                console.log("[Debug: useSwapCallback] Calculated gasPrice for transaction (Wei):", calculatedGasPrice.toString());
+                // --- END DEBUG LOG ---
 
                 const tx = {
                     from: account,
@@ -285,8 +322,14 @@ export function useSwapCallback(
                     data: call.calldata,
                     gasLimit: calculateGasMargin(chainId, gasEstimate),
                     ...(call.value && !isZero(call.value) ? { value: call.value } : {}),
-                    gasPrice: gasPriceState * BigInt(GAS_PRICE_MULTIPLIER)
+                    gasPrice: calculatedGasPrice // Use the correctly calculated gas price in Wei
                 };
+
+                // --- BEGIN DEBUG LOG ---
+                console.log("[Debug: useSwapCallback] Final transaction object to be sent:", JSON.parse(JSON.stringify(tx, (key, value) =>
+                    typeof value === 'bigint' ? value.toString() : value
+                )));
+                // --- END DEBUG LOG ---
 
                 const response = await finalSigner.sendTransaction(tx);
 
@@ -321,5 +364,5 @@ export function useSwapCallback(
             },
             error: null,
         };
-    }, [trade, account, chainId, publicClient, walletClient, recipient, recipientAddressOrName, swapCalls, addTransaction, gasPriceState]);
+    }, [trade, account, chainId, publicClient, walletClient, recipient, recipientAddressOrName, swapCalls, addTransaction, gasPriceInGwei]);
 }

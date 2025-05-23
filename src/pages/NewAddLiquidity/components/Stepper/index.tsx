@@ -71,89 +71,103 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
         if (!currencyA || !currencyB || !mintInfo) return _steps;
 
         if (currencyA && currencyB && completedSteps.length >= 1) {
-            _steps[0].title = `${currencyA.symbol} / ${currencyB.symbol}`;
+            if (_steps.length > 0) {
+                _steps[0].title = `${currencyA.symbol} / ${currencyB.symbol}`;
+            }
         }
 
         if (mintInfo.noLiquidity) {
             const rangeUSD = initialUSDPrices.CURRENCY_B || rangeTokenUSD?.toSignificant(8);
 
             if (mintInfo.price && rangeUSD && completedSteps.length >= 2) {
-                _steps[1].title = t`Initial price: 1 ${currencyA?.symbol || ''} = ${isUSD ? "$" : ""}${isUSD
-                    ? isSorted
-                        ? parseFloat(mintInfo.price.toSignificant(8))
-                        : parseFloat((+mintInfo.price.invert().toSignificant(8) * +rangeUSD).toFixed(4))
-                    : isSorted
-                        ? parseFloat(mintInfo.price.toSignificant(5))
-                        : parseFloat(mintInfo.price.invert().toSignificant(5))
-                    } ${isUSD ? "" : ` ${currencyB.symbol}`}`;
+                if (_steps.length > 1) {
+                    _steps[1].title = t`Initial price: 1 ${currencyA?.symbol || ''} = ${isUSD ? "$" : ""}${isUSD
+                        ? isSorted
+                            ? parseFloat(mintInfo.price.toSignificant(8))
+                            : parseFloat((+mintInfo.price.invert().toSignificant(8) * +rangeUSD).toFixed(4))
+                        : isSorted
+                            ? parseFloat(mintInfo.price.toSignificant(5))
+                            : parseFloat(mintInfo.price.invert().toSignificant(5))
+                        } ${isUSD ? "" : ` ${currencyB.symbol}`}`;
+                }
             }
 
             if (mintInfo.price && !rangeUSD && completedSteps.length >= 2) {
-                _steps[1].title = t`Initial price: 1 ${currencyA?.symbol || ''} = ${isSorted ? parseFloat(mintInfo.price.toSignificant(8)) : parseFloat(mintInfo.price.invert().toSignificant(8))} ${currencyB?.symbol || ''}`;
+                if (_steps.length > 1) {
+                    _steps[1].title = t`Initial price: 1 ${currencyA?.symbol || ''} = ${isSorted ? parseFloat(mintInfo.price.toSignificant(8)) : parseFloat(mintInfo.price.invert().toSignificant(8))} ${currencyB?.symbol || ''}`;
+                }
             }
 
             if (leftPrice && rightPrice && completedSteps.length >= 3) {
-                if (preset !== Presets.FULL && rightPrice.toSignificant(5) !== "3384900000000000000000000000000000000000000000000") {
-                    _steps[2].title = t`Range: ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)
-                        } — ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+rightPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`;
-                } else {
-                    _steps[2].title = t`Range: 0 — ∞`;
+                if (_steps.length > 2) {
+                    if (preset !== Presets.FULL && rightPrice.toSignificant(5) !== "3384900000000000000000000000000000000000000000000") {
+                        _steps[2].title = t`Range: ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : +leftPrice.toSignificant(8)
+                            } — ${isUSD && rangeUSD ? "$" : ""}${isUSD && rangeUSD && !isUSDCB ? (+rightPrice.toSignificant(8) * +rangeUSD).toFixed(6).slice(0, -1) : rightPrice.toSignificant(8)}`;
+                    } else {
+                        _steps[2].title = t`Range: 0 — ∞`;
+                    }
                 }
             }
 
             if (baseTokenUSD && rangeUSD && mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
-                const parsedA = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5)).toFixed(4)));
-                const parsedB = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5)).toFixed(4)));
+                if (_steps.length > 3) {
+                    const parsedA = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5)).toFixed(4)));
+                    const parsedB = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5)).toFixed(4)));
 
-                let tokenA;
-                let tokenB;
+                    let tokenA;
+                    let tokenB;
 
-                if (isUSD) {
-                    const tokenAUSD = Number(baseTokenUSD.toSignificant(5)).toFixed(4);
-                    const tokenBUSD = Number(rangeUSD).toFixed(4);
+                    if (isUSD) {
+                        const tokenAUSD = Number(baseTokenUSD.toSignificant(5)).toFixed(4);
+                        const tokenBUSD = Number(rangeUSD).toFixed(4);
 
-                    tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
-                    tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
+                        tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
+                        tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
 
-                    _steps[3].title = t`Liquidity: $${tokenA + tokenB}`;
-                } else {
-                    tokenA = parsedA;
-                    tokenB = parsedB;
+                        _steps[3].title = t`Liquidity: $${tokenA + tokenB}`;
+                    } else {
+                        tokenA = parsedA;
+                        tokenB = parsedB;
 
-                    _steps[3].title = t`Liquidity: ${tokenA} ${currencyA?.symbol || ''}, ${tokenB} ${currencyB?.symbol || ''}`;
+                        _steps[3].title = t`Liquidity: ${tokenA} ${currencyA?.symbol || ''}, ${tokenB} ${currencyB?.symbol || ''}`;
+                    }
                 }
             }
         } else {
             if (leftPrice && rightPrice && completedSteps.length >= 2) {
-                if (preset !== Presets.FULL) {
-                    _steps[1].title = t`Range: ${isUSD ? "$" : ""}${isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : Number(leftPrice.toSignificant(8)).toFixed(4)
-                        } — ${isUSD ? "$" : ""}${isUSD && rangeTokenUSD && !isUSDCB ? (+rightPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : Number(rightPrice.toSignificant(8)).toFixed(4)
-                        }`;
-                } else {
-                    _steps[1].title = t`Range: 0 — ∞`;
+                if (_steps.length > 1) {
+                    if (preset !== Presets.FULL) {
+                        _steps[1].title = t`Range: ${isUSD ? "$" : ""}${isUSD && rangeTokenUSD && !isUSDCB ? (+leftPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : Number(leftPrice.toSignificant(8)).toFixed(4)
+                            } — ${isUSD ? "$" : ""}${isUSD && rangeTokenUSD && !isUSDCB ? (+rightPrice.toSignificant(8) * +rangeTokenUSD.toSignificant(8)).toFixed(6).slice(0, -1) : Number(rightPrice.toSignificant(8)).toFixed(4)
+                            }`;
+                    } else {
+                        _steps[1].title = t`Range: 0 — ∞`;
+                    }
                 }
             }
 
             if (baseTokenUSD && rangeTokenUSD && mintInfo.parsedAmounts.CURRENCY_A && mintInfo.parsedAmounts.CURRENCY_B && end) {
-                const parsedA = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5)).toFixed(4)));
-                const parsedB = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5)).toFixed(4)));
+                if (_steps.length > 2) {
+                    const parsedA = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_A.toSignificant(5)).toFixed(4)));
+                    const parsedB = parseFloat(String(Number(mintInfo.parsedAmounts.CURRENCY_B.toSignificant(5)).toFixed(4)));
 
-                let tokenA;
-                let tokenB;
+                    let tokenA;
+                    let tokenB;
 
-                if (isUSD) {
-                    const tokenAUSD = Number(baseTokenUSD.toSignificant(5)).toFixed(4);
-                    const tokenBUSD = Number(rangeTokenUSD.toSignificant(5)).toFixed(4);
+                    if (isUSD) {
+                        const tokenAUSD = Number(baseTokenUSD.toSignificant(5)).toFixed(4);
+                        const tokenBUSD = Number(rangeTokenUSD.toSignificant(5)).toFixed(4);
 
-                    tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
-                    tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
+                        tokenA = isUSDCA ? parsedA : parseFloat((parsedA * +tokenAUSD).toFixed(4));
+                        tokenB = isUSDCB ? parsedB : parseFloat((parsedB * +tokenBUSD).toFixed(4));
 
-                    _steps[2].title = t`Liquidity: $${tokenA + tokenB}`;
-                } else {
-                    tokenA = parsedA;
-                    tokenB = parsedB;
+                        _steps[2].title = t`Liquidity: $${tokenA + tokenB}`;
+                    } else {
+                        tokenA = parsedA;
+                        tokenB = parsedB;
 
-                    _steps[2].title = t`Liquidity: ${tokenA} ${currencyA?.symbol || ''}, ${tokenB} ${currencyB?.symbol || ''}`;
+                        _steps[2].title = t`Liquidity: ${tokenA} ${currencyA?.symbol || ''}, ${tokenB} ${currencyB?.symbol || ''}`;
+                    }
                 }
             }
         }
@@ -163,19 +177,27 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
         }
 
         if (mintInfo.invalidRange) {
-            _steps[2].error = true;
-            _steps[2].description = t`Invalid range selected. The min price must be lower than the max price.`;
+            if (_steps.length > 2) {
+                _steps[2].error = true;
+                _steps[2].description = t`Invalid range selected. The min price must be lower than the max price.`;
+            }
         } else if (mintInfo.outOfRange) {
-            _steps[2].title = t`Range: ${leftPrice?.toSignificant(5) || '...'} - ${rightPrice?.toSignificant(5) || '...'} ${currencyB?.symbol || ''}`;
-            _steps[2].description = t`Your position will not earn fees or be used in trades until the market price moves into your range.`;
+            if (_steps.length > 2) {
+                _steps[2].title = t`Range: ${leftPrice?.toSignificant(5) || '...'} - ${rightPrice?.toSignificant(5) || '...'} ${currencyB?.symbol || ''}`;
+                _steps[2].description = t`Your position will not earn fees or be used in trades until the market price moves into your range.`;
+            }
         } else if (completedSteps.length >= 3) {
-            _steps[2].title = t`Range: ${leftPrice?.toSignificant(5) || '...'} - ${rightPrice?.toSignificant(5) || '...'} ${currencyB?.symbol || ''}`;
-            _steps[2].description = "";
+            if (_steps.length > 2) {
+                _steps[2].title = t`Range: ${leftPrice?.toSignificant(5) || '...'} - ${rightPrice?.toSignificant(5) || '...'} ${currencyB?.symbol || ''}`;
+                _steps[2].description = "";
+            }
         }
 
         if ((!mintInfo.parsedAmounts.CURRENCY_A && !mintInfo.parsedAmounts.CURRENCY_B && completedSteps.length === 4) || (mintInfo.errorMessage && completedSteps.length === 4)) {
-            _steps[3].title = t`Amounts: ${mintInfo.parsedAmounts.CURRENCY_A?.toSignificant(5) || '...'} ${currencyA?.symbol || ''} and ${mintInfo.parsedAmounts.CURRENCY_B?.toSignificant(5) || '...'} ${currencyB?.symbol || ''}`;
-            _steps[3].description = "";
+            if (_steps.length > 3) {
+                _steps[3].title = t`Amounts: ${mintInfo.parsedAmounts.CURRENCY_A?.toSignificant(5) || '...'} ${currencyA?.symbol || ''} and ${mintInfo.parsedAmounts.CURRENCY_B?.toSignificant(5) || '...'} ${currencyB?.symbol || ''}`;
+                _steps[3].description = "";
+            }
         }
 
         return _steps;
@@ -199,11 +221,11 @@ export function Stepper({ completedSteps, stepLinks, currencyA, currencyB, mintI
 
                     <div className={"ml-1"}>
                         <h3 style={{ whiteSpace: "break-spaces", lineHeight: "1.1rem" }} className={"mb-025"}>
-                            {steps[completedSteps.length]?.title}
+                            {completedSteps.length === steps.length ? t`All steps completed` : steps[completedSteps.length]?.title}
                         </h3>
                         <h4 className={"fs-085 c-lg l"}>
-                            <Trans>Next step: </Trans>
-                            {steps[completedSteps.length + 1] ? steps[completedSteps.length + 1].title : t`Finish`}
+                            {completedSteps.length === steps.length ? "" : <Trans>Next step: </Trans>}
+                            {completedSteps.length < steps.length - 1 ? steps[completedSteps.length + 1]?.title : completedSteps.length === steps.length ? "" : t`Finish`}
                         </h4>
                     </div>
                 </div>

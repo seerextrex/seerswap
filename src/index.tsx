@@ -63,9 +63,9 @@ const wagmiConfig = createConfig({
         walletConnect({
             projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || "YOUR_WALLETCONNECT_PROJECT_ID",
             metadata: {
-                name: 'Algebra Interface',
-                description: 'Algebra DEX Interface',
-                url: 'https://algebra.finance',
+                name: 'SeerSwap',
+                description: 'SeerSwap DEX Interface',
+                url: 'localhost:3000',
                 icons: ['/logo.png']
             },
             showQrModal: false,

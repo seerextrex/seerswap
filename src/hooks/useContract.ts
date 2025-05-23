@@ -36,7 +36,6 @@ export function useContract<T extends Contract = Contract>(addressOrAddressMap: 
         if (!contractAddress) return null;
 
         if (!publicClient) {
-            // console.warn("Public client not available yet in useContract."); // For debugging
             return null;
         }
 
@@ -44,9 +43,10 @@ export function useContract<T extends Contract = Contract>(addressOrAddressMap: 
             const ethersProvider = publicClientToProvider(publicClient);
 
             if (withSignerIfPossible && accountAddress && walletClient) {
-                // The getContract utility in utils/index.ts will internally create a signer 
-                // if an accountAddress is provided with the ethersProvider.
-                return getContract(contractAddress, ABI, ethersProvider, accountAddress) as T;
+                // Create a signer directly from the wallet client, which should have
+                // the necessary signing capabilities
+                const ethersSigner = walletClientToSigner(walletClient);
+                return new Contract(contractAddress, ABI, ethersSigner) as T;
             } else {
                 return getContract(contractAddress, ABI, ethersProvider) as T;
             }

@@ -23,6 +23,14 @@ export function shortenAddress(address: string, chars = 4): string {
 
 // account is not optional
 function getSigner(provider: Provider, account: string): JsonRpcSigner {
+    // For BrowserProvider instances, use the getSigner method
+    if (provider instanceof BrowserProvider) {
+        // Need to handle this asynchronously in the component that uses it
+        return new JsonRpcSigner(provider as any, account);
+    }
+
+    // For other providers, try to create a signer directly
+    // This might not work for all provider types
     return new JsonRpcSigner(provider as any, account);
 }
 

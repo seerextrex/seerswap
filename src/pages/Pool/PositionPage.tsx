@@ -128,7 +128,7 @@ export default function PositionPage({
     const [manuallyInverted, setManuallyInverted] = useState(false);
 
     // handle manual inversion
-    const { priceLower, priceUpper, base } = useInverter({
+    const { priceLower, priceUpper, base, quote } = useInverter({
         priceLower: pricesFromPosition.priceLower,
         priceUpper: pricesFromPosition.priceUpper,
         quote: pricesFromPosition.quote,
@@ -140,9 +140,40 @@ export default function PositionPage({
     const currencyQuote = inverted ? currency0 : currency1;
     const currencyBase = inverted ? currency1 : currency0;
 
+    const currentPoolPriceForRatio = useMemo(() => {
+        if (!base || !quote || !_pool || !_pool.token0 || !_pool.token1) return undefined;
+        // 'base' and 'quote' are the tokens from useInverter's output.
+        // 'priceLower' and 'priceUpper' (from useInverter) are prices of 'base' in terms of 'quote'.
+        // We need the current pool price, also expressed as 'base' in terms of 'quote'.
+        if (base.equals(_pool.token0) && quote.equals(_pool.token1)) {
+            return _pool.token0Price; // This is price of token0 in terms of token1. Matches base/quote.
+        } else if (base.equals(_pool.token1) && quote.equals(_pool.token0)) {
+            return _pool.token0Price?.invert(); // This is price of token1 in terms of token0. Matches base/quote.
+        }
+        // Fallback for safety, though less likely for a direct position page.
+        if (_pool.involvesToken(base) && _pool.involvesToken(quote)) {
+            // This case might occur if base/quote are not exactly pool.token0 and pool.token1 in order
+            // but are still the constituents of the pool.
+            // priceOf(base) gives price of base in terms of the *other* pool token.
+            // If the other pool token is 'quote', then pool.priceOf(base) is what we need.
+            const otherToken = base.equals(_pool.token0) ? _pool.token1 : _pool.token0;
+            if (otherToken.equals(quote)) {
+                return _pool.priceOf(base);
+            }
+        }
+        console.warn("currentPoolPriceForRatio: Could not determine current pool price for the given base/quote from useInverter.");
+        return undefined;
+    }, [base, quote, _pool]);
+
     const ratio = useMemo(() => {
-        return priceLower && _pool && priceUpper ? getRatio(inverted ? priceUpper.invert() : priceLower, _pool.token0Price, inverted ? priceLower.invert() : priceUpper) : undefined;
-    }, [inverted, _pool, priceLower, priceUpper]);
+        // priceLower and priceUpper are from useInverter, and are prices of 'base' (from useInverter) in terms of 'quote' (from useInverter).
+        // currentPoolPriceForRatio is also price of 'base' in terms of 'quote'.
+        // All three prices are consistently oriented.
+        if (priceLower && currentPoolPriceForRatio && priceUpper) {
+            return getRatio(priceLower, currentPoolPriceForRatio, priceUpper);
+        }
+        return undefined;
+    }, [priceLower, priceUpper, currentPoolPriceForRatio]);
 
     // fees
     const [feeValue0, feeValue1] = useV3PositionFees(_pool ?? undefined, positionDetails?.tokenId, receiveWETH);
@@ -152,8 +183,8 @@ export default function PositionPage({
     const isCollectPending = useIsTransactionPending(collectMigrationHash ?? undefined);
 
     // usdc prices always in terms of tokens
-    const price0 = useUSDCPrice(token0 ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
-    const price1 = useUSDCPrice(token1 ?? undefined, undefined, DEFAULT_LISTENER_OPTIONS);
+    const price0 = useUSDCPrice(token0 ?? undefined);
+    const price1 = useUSDCPrice(token1 ?? undefined);
 
     const fiatValueOfFees: CurrencyAmount<Currency> | null = useMemo(() => {
         if (!price0 || !price1 || !feeValue0 || !feeValue1) return null;

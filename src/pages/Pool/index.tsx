@@ -3,7 +3,7 @@ import PositionList from "components/PositionList";
 import { SwitchLocaleLink } from "components/SwitchLocaleLink";
 import { useV3Positions } from "hooks/useV3Positions";
 import { useAccount } from "wagmi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { useUserHideClosedPositions, useUserHideFarmingPositions } from "state/user/hooks";
 import { Helmet } from "react-helmet";
@@ -14,87 +14,118 @@ import Card from "../../shared/components/Card/Card";
 import AutoColumn from "../../shared/components/AutoColumn";
 import { SwapPoolTabs } from "../../components/NavigationTabs";
 import "./index.scss";
+import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
+import { usePositionTokens } from "../../hooks/usePositionTokens";
 
 export default function Pool() {
     const { address: account } = useAccount();
 
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions();
-    const [userHideFarmingPositions, setUserHideFarmingPositions] = useUserHideFarmingPositions();
+    const [hideFarmingPositions, setHideFarmingPositions] = useUserHideFarmingPositions();
 
-    const { positions = [], loading: positionsLoading } = useV3Positions(account);
+    const { positions, loading: positionsLoading } = useV3Positions(account);
 
-    const filteredPositions = useMemo(() => {
-        return positions.filter((position) => {
-            if (userHideClosedPositions && position.liquidity === 0n) {
-                return false;
-            }
-            if (userHideFarmingPositions && position.onFarming) {
-                return false;
-            }
-            return true;
-        });
-    }, [positions, userHideClosedPositions, userHideFarmingPositions]);
+    const prevAccount = usePrevious(account);
+
+    const [openPositions, closedPositions] = positions?.reduce<[PositionPool[], PositionPool[]]>(
+        (acc, p) => {
+            acc[p.liquidity === 0n ? 1 : 0].push(p);
+            return acc;
+        },
+        [[], []]
+    ) ?? [[], []];
+
+    const filters = [
+        {
+            method: setUserHideClosedPositions,
+            checkValue: userHideClosedPositions,
+        },
+        // {
+        //     title: t`Farming`,
+        //     method: setHideFarmingPositions,
+        //     checkValue: hideFarmingPositions,
+        // },
+    ];
+
+    const farmingPositions = useMemo(() => positions?.filter((el) => el.onFarming), [positions]);
+    const inRangeWithOutFarmingPositions = useMemo(() => openPositions.filter((el) => !el.onFarming), [openPositions]);
+
+    const filteredPositions = useMemo(
+        () => [...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions), ...inRangeWithOutFarmingPositions, ...(userHideClosedPositions ? [] : closedPositions)],
+        [inRangeWithOutFarmingPositions, userHideClosedPositions, hideFarmingPositions, farmingPositions, closedPositions]
+    );
+
+    const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions);
+
+    const _filteredPositions = useMemo(() => {
+        if (account !== prevAccount) return filteredPositions;
+
+        if (filteredPositions.length === 0 && prevFilteredPositions) {
+            return prevFilteredPositions;
+        }
+        return filteredPositions;
+    }, [account, prevAccount, filteredPositions, prevFilteredPositions]);
+
+    // Batch load all tokens for the filtered positions
+    const positionTokens = usePositionTokens(_filteredPositions || []);
+
+    const newestPosition = useMemo(() => {
+        return _filteredPositions.length > 0 ? Math.max(..._filteredPositions.map((position) => Number(position.tokenId))) : undefined;
+    }, [_filteredPositions]);
+
+    const hasPositions = _filteredPositions && _filteredPositions.length > 0;
 
     return (
         <>
             <Helmet>
                 <title>{t`Pool`}</title>
             </Helmet>
-            <SwapPoolTabs active={"pool"} />
-            <AutoColumn gap="2" justify="center">
-                <div className="w-100">
-                    <div className={"card-wrapper"}>
-                        {!account ? (
-                            <Card classes={"br-24 card-bg p-2"}>
-                                <div className={"c-w fs-125"}>
-                                    <Trans>Connect to a wallet to view your liquidity.</Trans>
-                                </div>
-                            </Card>
-                        ) : positionsLoading ? (
-                            <Card classes={"br-24 mh-400 f c f-ac f-jc"}>
-                                <Loader stroke={"white"} size={"1.5rem"} />
-                            </Card>
-                        ) : (
-                            <>
-                                <Card classes={"br-24 card-bg"}>
-                                    <Card classes={"p-1"}>
-                                        <div className={"f f-ac mb-1"}>
-                                            <div className={"f f-ac fs-125 b"}>
-                                                <Trans>Your positions</Trans> {filteredPositions && ` (${filteredPositions.length})`}
-                                            </div>
-                                            <NavLink
-                                                to={"/positions"}
-                                                className={"btn primary pv-025 ph-05 br-8 ml-a"}>
-                                                <Trans>View Analytics</Trans>
-                                            </NavLink>
-                                        </div>
-                                        <div className={"flex-s-between mb-1"}>
-                                            <FilterPanelItem
-                                                method={setUserHideClosedPositions}
-                                                checkValue={!userHideClosedPositions}
-                                            />
-                                        </div>
-                                        <div className={"mb-1"}>
-                                            <FilterPanelItem
-                                                method={setUserHideFarmingPositions}
-                                                checkValue={!userHideFarmingPositions}
-                                            />
-                                        </div>
-                                    </Card>
-                                    <div className={"mh-400"}>
-                                        <PositionList positions={filteredPositions} />
-                                    </div>
-                                </Card>
-                            </>
+            <Card classes={"card-gradient-shadow br-24 ph-2 pv-1 mxs_ph-1 mv-2"}>
+                <SwapPoolTabs active={"pool"} />
+                <AutoColumn gap="1">
+                    <div className={"pool__header flex-s-between"}>
+                        <span className={"fs-125"}>
+                            <Trans>Positions Overview</Trans>
+                        </span>
+                        {hasPositions && (
+                            <div className={"flex-s-between mxs_mv-05"}>
+                                <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>
+                                    + <Trans>New Position</Trans>
+                                </NavLink>
+                            </div>
                         )}
                     </div>
-                </div>
-                <NavLink
-                    to="/add"
-                    className={"btn primary pv-05 ph-1 br-8 mh-a"}>
-                    + <Trans>New Position</Trans>
-                </NavLink>
-            </AutoColumn>
+                    {account && (
+                        <div className={"f mb-05 rg-2 cg-2 mxs_f-jc"}>
+                            {filters.map((item, key) => (
+                                <FilterPanelItem item={item} key={key} />
+                            ))}
+                        </div>
+                    )}
+                    <main className={"f c f-ac"}>
+                        {!account ? (
+                            <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>
+                                <Trans>Connect to a wallet to view your liquidity.</Trans>
+                            </div>
+                        ) : positionsLoading ? (
+                            <Loader style={{ margin: "auto" }} stroke="white" size={"2rem"} />
+                        ) : hasPositions ? (
+                            <PositionList
+                                positions={_filteredPositions.sort((posA, posB) => Number(posA.tokenId) - Number(posB.tokenId))}
+                                newestPosition={newestPosition}
+                                positionTokens={positionTokens}
+                            />
+                        ) : (
+                            <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>
+                                <Trans>You do not have any liquidity positions.</Trans>
+                                <NavLink style={{ textAlign: "center" }} className={"btn primary pv-05 ph-1 mt-1 w-100"} to={`/add`}>
+                                    + <Trans>New Position</Trans>
+                                </NavLink>
+                            </div>
+                        )}
+                    </main>
+                </AutoColumn>
+            </Card>
             <SwitchLocaleLink />
         </>
     );

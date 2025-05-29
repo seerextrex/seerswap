@@ -2,21 +2,56 @@ import { Token } from "@uniswap/sdk-core";
 import { useMultipleContractSingleData, NEVER_RELOAD } from "../state/multicall/hooks";
 import { useMemo } from "react";
 import { isAddress } from "../utils";
-import { useTokenContract } from "./useContract";
-import { decodeBytes32String, getBytes, Interface } from "ethers";
+import { Interface } from "ethers";
 import ERC20_ABI from "../abis/erc20.json";
+import { useAccount } from "wagmi";
+import { useAllTokens } from "./Tokens";
+import AlgebraConfig from "algebra.config";
 
 const ERC20_INTERFACE = new Interface(ERC20_ABI);
 
-// Cache token data across component instances
-const tokenCache = new Map<string, Token>();
+// Parse string or bytes32 result
+function parseStringOrBytes32(str: any, bytes32: any, fallback: string): string {
+    if (str && str.length > 0) return str;
+    if (bytes32 && bytes32.length > 0) {
+        try {
+            // Try to decode as bytes32
+            const decoded = new TextDecoder('utf-8').decode(new Uint8Array(bytes32));
+            return decoded.replace(/\0/g, '') || fallback;
+        } catch {
+            return fallback;
+        }
+    }
+    return fallback;
+}
 
 export function useTokensBatch(addresses: (string | undefined)[]): (Token | undefined)[] {
-    // Filter and normalize addresses
-    const validAddresses = useMemo(() => {
-        return addresses
-            .map(addr => addr && isAddress(addr))
-            .filter((addr): addr is string => !!addr);
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+    const allTokens = useAllTokens();
+
+    // Filter and normalize addresses, remove duplicates
+    const { validAddresses, addressMap } = useMemo(() => {
+        const uniqueAddresses = new Set<string>();
+        const addressMap = new Map<string, number[]>();
+
+        addresses.forEach((addr, index) => {
+            const validAddr = addr && isAddress(addr);
+            if (validAddr) {
+                const lowerAddr = validAddr.toLowerCase();
+                uniqueAddresses.add(validAddr);
+
+                if (!addressMap.has(validAddr)) {
+                    addressMap.set(validAddr, []);
+                }
+                addressMap.get(validAddr)!.push(index);
+            }
+        });
+
+        return {
+            validAddresses: Array.from(uniqueAddresses),
+            addressMap
+        };
     }, [addresses]);
 
     // Get token names
@@ -28,7 +63,7 @@ export function useTokensBatch(addresses: (string | undefined)[]): (Token | unde
         NEVER_RELOAD
     );
 
-    // Get token symbols
+    // Get token symbols  
     const symbolResults = useMultipleContractSingleData(
         validAddresses,
         ERC20_INTERFACE,
@@ -46,79 +81,90 @@ export function useTokensBatch(addresses: (string | undefined)[]): (Token | unde
         NEVER_RELOAD
     );
 
-    return useMemo(() => {
-        return addresses.map((address, index) => {
-            if (!address || !isAddress(address)) return undefined;
+    // Create tokens map
+    const tokensMap = useMemo(() => {
+        const map = new Map<string, Token | undefined>();
 
-            // Check cache first
-            const cached = tokenCache.get(address.toLowerCase());
-            if (cached) return cached;
+        if (!chainId) return map;
 
-            // Find the index in validAddresses
-            const validIndex = validAddresses.findIndex(addr => addr.toLowerCase() === address.toLowerCase());
-            if (validIndex === -1) return undefined;
+        validAddresses.forEach((address, index) => {
+            const lowerAddr = address.toLowerCase();
 
-            const nameResult = nameResults[validIndex];
-            const symbolResult = symbolResults[validIndex];
-            const decimalsResult = decimalsResults[validIndex];
-
-            // If any result is loading or invalid, return undefined
-            if (
-                !nameResult?.valid || nameResult.loading ||
-                !symbolResult?.valid || symbolResult.loading ||
-                !decimalsResult?.valid || decimalsResult.loading
-            ) {
-                return undefined;
+            // Check if token exists in token lists first
+            if (allTokens[address]) {
+                map.set(address, allTokens[address]);
+                return;
             }
 
-            try {
-                const name = nameResult.result?.[0];
-                const symbol = symbolResult.result?.[0];
-                const decimals = decimalsResult.result?.[0];
-
-                if (!name || !symbol || decimals === undefined) return undefined;
-
-                // Handle bytes32 encoded strings
-                const parsedName = typeof name === 'string' ? name : parseBytes32String(name);
-                const parsedSymbol = typeof symbol === 'string' ? symbol : parseBytes32String(symbol);
-
-                const token = new Token(
-                    100, // Gnosis chain ID
+            // Check default token list
+            if (lowerAddr in AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens) {
+                const defaultConfig = AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[lowerAddr];
+                map.set(address, new Token(
+                    chainId,
                     address,
-                    decimals,
-                    parsedSymbol,
-                    parsedName
-                );
+                    defaultConfig.decimals,
+                    defaultConfig.symbol,
+                    defaultConfig.name
+                ));
+                return;
+            }
 
-                // Cache the token
-                tokenCache.set(address.toLowerCase(), token);
+            // Get results from multicalls
+            const nameResult = nameResults[index];
+            const symbolResult = symbolResults[index];
+            const decimalsResult = decimalsResults[index];
 
-                return token;
-            } catch (error) {
-                console.error(`Error creating token for address ${address}:`, error);
-                return undefined;
+            // If still loading, set as undefined
+            if (nameResult?.loading || symbolResult?.loading || decimalsResult?.loading) {
+                map.set(address, undefined);
+                return;
+            }
+
+            // If we have decimals, create the token
+            if (decimalsResult?.result?.[0] !== undefined) {
+                try {
+                    const token = new Token(
+                        chainId,
+                        address,
+                        Number(decimalsResult.result[0]),
+                        parseStringOrBytes32(symbolResult?.result?.[0], null, "UNKNOWN"),
+                        parseStringOrBytes32(nameResult?.result?.[0], null, "Unknown Token")
+                    );
+                    map.set(address, token);
+                } catch (error) {
+                    console.warn(`Error creating token for ${address}:`, error);
+                    map.set(address, undefined);
+                }
+            } else {
+                map.set(address, undefined);
             }
         });
-    }, [addresses, validAddresses, nameResults, symbolResults, decimalsResults]);
+
+        return map;
+    }, [validAddresses, nameResults, symbolResults, decimalsResults, chainId, allTokens]);
+
+    // Map back to original order
+    return useMemo(() => {
+        return addresses.map((address) => {
+            if (!address) return undefined;
+            const validAddr = isAddress(address);
+            if (!validAddr) return undefined;
+            return tokensMap.get(validAddr);
+        });
+    }, [addresses, tokensMap]);
 }
 
-function parseBytes32String(value: any): string {
-    try {
-        // If it's already a string, return it
-        if (typeof value === 'string' && !value.startsWith('0x')) {
-            return value;
-        }
-        // Otherwise try to decode as bytes32
-        return decodeBytes32String(value);
-    } catch {
-        // If decoding fails, try to convert raw bytes
-        try {
-            const bytes = getBytes(value);
-            // Remove null bytes
-            const filtered = bytes.filter(b => b !== 0);
-            return new TextDecoder().decode(new Uint8Array(filtered));
-        } catch {
-            return 'Unknown';
-        }
-    }
+// Hook to get tokens by their addresses with caching
+export function useTokens(addresses: string[]): Record<string, Token | undefined> {
+    const tokens = useTokensBatch(addresses);
+
+    return useMemo(() => {
+        const result: Record<string, Token | undefined> = {};
+        addresses.forEach((address, index) => {
+            if (address) {
+                result[address] = tokens[index];
+            }
+        });
+        return result;
+    }, [addresses, tokens]);
 } 

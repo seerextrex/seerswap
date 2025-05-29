@@ -105,20 +105,32 @@ export function NewAddLiquidityPage({
     const usdPriceA = useUSDCPrice(baseCurrency ?? undefined);
     const usdPriceB = useUSDCPrice(quoteCurrency ?? undefined);
 
+    // Stabilize resetState function to prevent infinite loops
     const resetState = useCallback(() => {
         dispatch(updateSelectedPreset({ preset: null }));
         dispatch(setInitialTokenPrice({ typedValue: "" }));
         dispatch(setInitialUSDPrices({ field: Field.CURRENCY_A, typedValue: "" }));
         dispatch(setInitialUSDPrices({ field: Field.CURRENCY_B, typedValue: "" }));
-        onStartPriceInput("");
-    }, [dispatch, onStartPriceInput]);
+        // Call onStartPriceInput with empty string to clear the start price
+        if (onStartPriceInput) {
+            onStartPriceInput("");
+        }
+    }, [dispatch, onStartPriceInput]); // Keep onStartPriceInput but guard the call
 
+    // Store previous currency IDs to prevent unnecessary resets
+    const prevCurrencyIdA = usePrevious(currencyIdA);
+    const prevCurrencyIdB = usePrevious(currencyIdB);
+
+    // Clear form inputs when currencies change
     useEffect(() => {
-        onFieldAInput("");
-        onFieldBInput("");
-        onLeftRangeInput("");
-        onRightRangeInput("");
-    }, [currencyIdA, currencyIdB]);
+        if (currencyIdA !== prevCurrencyIdA || currencyIdB !== prevCurrencyIdB) {
+            onFieldAInput("");
+            onFieldBInput("");
+            onLeftRangeInput("");
+            onRightRangeInput("");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currencyIdA, currencyIdB, prevCurrencyIdA, prevCurrencyIdB]); // Removed action handlers from dependencies to prevent infinite loops
 
     const handleCurrencySelect = useCallback(
         (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
@@ -197,40 +209,29 @@ export function NewAddLiquidityPage({
         history.push(`${basePath}/${_stepLink}`);
     }, [currencyIdA, currencyIdB, history]);
 
+    // Handle step synchronization with URL - simplified to prevent infinite loops
     useEffect(() => {
         const matchedStep = stepLinks.find(sl => sl.link === stepFromUrl);
 
-        if (matchedStep) {
-            if (matchedStep.step !== currentStep) {
-                dispatch(updateCurrentStep({ currentStep: matchedStep.step }));
-            }
-        } else {
-            let targetPath = "/add/";
-            if (currencyIdA) targetPath += `${currencyIdA}/`;
-            if (currencyIdB && currencyIdA) targetPath += `${currencyIdB}/`;
-            targetPath += "select-pair";
-
-            const currentHistoryPath = history.location.pathname + history.location.search + history.location.hash;
-            const newPathForHistory = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
-            const newHashForComparison = `#${newPathForHistory}`;
-
-            if (currentHistoryPath !== newHashForComparison && currentHistoryPath !== newPathForHistory) {
-                history.push(newPathForHistory);
-            }
+        if (matchedStep && matchedStep.step !== currentStep) {
+            dispatch(updateCurrentStep({ currentStep: matchedStep.step }));
         }
-    }, [stepFromUrl, stepLinks, currentStep, dispatch, currencyIdA, currencyIdB, history]);
+    }, [stepFromUrl, stepLinks, currentStep, dispatch]);
 
+    // Reset state only when currencies actually change, not on every render
     useEffect(() => {
-        resetState();
-        dispatch(updateCurrentStep({ currentStep: 0 }));
-    }, [currencyIdA, currencyIdB, dispatch, resetState]);
-
-    useEffect(() => {
-        return () => {
+        if (currencyIdA !== prevCurrencyIdA || currencyIdB !== prevCurrencyIdB) {
             resetState();
             dispatch(updateCurrentStep({ currentStep: 0 }));
+        }
+    }, [currencyIdA, currencyIdB, prevCurrencyIdA, prevCurrencyIdB, dispatch, resetState]);
+
+    // Cleanup on unmount only
+    useEffect(() => {
+        return () => {
+            dispatch(updateCurrentStep({ currentStep: 0 }));
         };
-    }, [dispatch, resetState]);
+    }, []); // Empty dependency array for unmount only
 
     const stepPair = useMemo(() => Boolean(baseCurrency && quoteCurrency && mintInfo.poolState !== PoolState.INVALID && mintInfo.poolState !== PoolState.LOADING), [baseCurrency, quoteCurrency, mintInfo.poolState]);
     const stepInitialPrice = useMemo(() => mintInfo.noLiquidity ? Boolean(startPriceTypedValue && account) : true, [mintInfo.noLiquidity, startPriceTypedValue, account]);
@@ -399,7 +400,19 @@ export function NewAddLiquidityPage({
                             isRejected={isRejected}
                             setRejected={setRejected}
                         />} />
-                    <Redirect to={currencyIdA && currencyIdB ? `/add/${currencyIdA}/${currencyIdB}/select-pair` : (currencyIdA ? `/add/${currencyIdA}/select-pair` : '/add/select-pair')} />
+                    <Route exact path={`/add`} render={() =>
+                        <RouterGuard redirect={'/add'} Component={SelectPairContainer}
+                            allowance={true}
+                            baseCurrency={baseCurrency}
+                            quoteCurrency={quoteCurrency}
+                            mintInfo={mintInfo}
+                            isCompleted={stepPair}
+                            priceFormat={priceFormat}
+                            handleCurrencySwap={handleCurrencySwap}
+                            handleCurrencyASelect={handleCurrencyASelect}
+                            handleCurrencyBSelect={handleCurrencyBSelect}
+                            handlePopularPairSelection={handlePopularPairSelection}
+                        />} />
                 </Switch>
             )}
 

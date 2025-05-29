@@ -19,8 +19,8 @@ import Card from "../../shared/components/Card/Card";
 import RangeBadge from "../Badge/RangeBadge";
 import "./index.scss";
 import { useAppDispatch } from "state/hooks";
-import { useToken } from "../../hooks/Tokens";
-import { NEVER_RELOAD } from "../../state/multicall/hooks";
+import { PositionTokens } from "../../hooks/usePositionTokens";
+import { usePositionTokensFallback } from "../../hooks/usePositionTokensFallback";
 
 // Production-mode logger that only logs in development
 const logger = {
@@ -40,6 +40,7 @@ interface PositionListItemProps {
     highlightNewest?: boolean;
     onShiftClick?: () => void;
     onClick?: () => void;
+    tokens?: PositionTokens;
 }
 
 export function getPriceOrderingFromPositionForUI(position?: Position): {
@@ -73,8 +74,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     }
     // otherwise, the default
     return {
-        priceLower: position.token0PriceUpper.invert(),
-        priceUpper: position.token0PriceLower.invert(),
+        priceLower: position.token0PriceLower,
+        priceUpper: position.token0PriceUpper,
         quote: token1,
         base: token0,
     };
@@ -95,7 +96,7 @@ export function isOutOfRange(pool: Pool | null | undefined, tickLower?: number, 
     return pool.tickCurrent < tickLower || pool.tickCurrent >= tickUpper;
 }
 
-function PositionListItemInner({ positionDetails, newestPosition, highlightNewest, onShiftClick, onClick }: PositionListItemProps) {
+function PositionListItemInner({ positionDetails, newestPosition, highlightNewest, onShiftClick, onClick, tokens }: PositionListItemProps) {
     const dispatch = useAppDispatch();
 
     const prevPositionDetails = usePrevious({ ...positionDetails });
@@ -120,9 +121,11 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
         }
     }, [_token0Address, _token1Address]);
 
-    // Use individual token hooks for stability
-    const token0 = useToken(_token0Address);
-    const token1 = useToken(_token1Address);
+    // Use batch-loaded tokens with fallback to individual loading
+    const effectiveTokens = usePositionTokensFallback(positionDetails, tokens);
+    const token0 = effectiveTokens.token0;
+    const token1 = effectiveTokens.token1;
+    const tokensLoading = effectiveTokens.isLoading;
 
     const currency0 = useMemo(() => token0 ? unwrappedToken(token0) : undefined, [token0]);
     const currency1 = useMemo(() => token1 ? unwrappedToken(token1) : undefined, [token1]);
@@ -212,25 +215,33 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
         }
     }, [newestPosition, highlightNewest, dispatch]);
 
-    const isLoading = useMemo(() => {
-        // Only show loading if we don't have token data yet
-        if (!token0 || !token1) return true;
-        // Don't show loading if we're just waiting for pool data but have tokens
-        return false;
-    }, [token0, token1]);
+    // Show loading state if tokens are still being fetched
+    const tokensAvailable = token0 && token1;
 
-    const showFarmBadge = positionDetails.onFarming || positionDetails.oldFarming;
-
-    if (isLoading) {
+    // Early return for loading state
+    if (tokensLoading) {
         return (
-            <Card isDark={false} classes={"br-24 mv-05 card-bg-hover position-list-card"}>
-                <div className={"f c f-ac f-jc w-100 h-100 p-1"}>
-                    <Loader size={"1.5rem"} stroke={"var(--text-primary)"} />
-                    <span className={"ml-05 c-text-primary fs-085"}><Trans>Loading token data...</Trans></span>
+            <div className={"position-list-item f f-ac p-1 br-12 mb-1 card-bg trans-opacity"}>
+                <div className={"position-list-item__left f f-ac"}>
+                    <Loader size="20px" stroke="white" />
+                    <span className="ml-1">Loading position...</span>
                 </div>
-            </Card>
+            </div>
         );
     }
+
+    // Early return if tokens couldn't be loaded
+    if (!tokensAvailable) {
+        return (
+            <div className={"position-list-item f f-ac p-1 br-12 mb-1 card-bg trans-opacity"}>
+                <div className={"position-list-item__left f f-ac"}>
+                    <span>Position with tokens: {positionDetails?.token0?.slice(0, 6)}.../{positionDetails?.token1?.slice(0, 6)}...</span>
+                </div>
+            </div>
+        );
+    }
+
+    const showFarmBadge = positionDetails.onFarming || positionDetails.oldFarming;
 
     const cardContent = (
         <Card isDark={false} classes={"br-24 mv-05 card-bg-hover position-list-card"}>
@@ -278,14 +289,6 @@ function PositionListItemInner({ positionDetails, newestPosition, highlightNewes
             </div>
         </Card>
     );
-
-    if (_onFarming) {
-        return (
-            <div className={"w-100"} id={isNewest && highlightNewest ? "newest" : ""}>
-                {cardContent}
-            </div>
-        );
-    }
 
     return (
         <NavLink className={"w-100"} to={positionSummaryLink} id={isNewest && highlightNewest ? "newest" : ""}>

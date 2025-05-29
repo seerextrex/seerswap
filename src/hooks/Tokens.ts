@@ -1,5 +1,5 @@
 import { Currency, Token } from "@uniswap/sdk-core";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { createTokenFilterFunction } from "../components/SearchModal/filtering";
 import { ExtendedEther, WXDAI_EXTENDED } from "../constants/tokens";
 import { TokenAddressMap, useAllLists, useCombinedActiveList, useInactiveListUrls } from "../state/lists/hooks";
@@ -144,88 +144,35 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
     const symbolBytes32Call = useSingleCallResult(tokenFromList || !tokenContractBytes32 ? undefined : tokenContractBytes32, "symbol", undefined, NEVER_RELOAD);
     const decimalsCall = useSingleCallResult(tokenFromList || !tokenContract ? undefined : tokenContract, "decimals", undefined, NEVER_RELOAD);
 
-    const tokenDescriptor = useMemo(() => {
-        if (tokenFromList) return { type: 'list', token: tokenFromList } as const;
-        if (!chainId || !address || !_lowkeyAddress) return { type: 'undefined' } as const;
+    return useMemo(() => {
+        if (tokenFromList) return tokenFromList;
+        if (!chainId || !address || !_lowkeyAddress) return undefined;
 
         if (_lowkeyAddress && (_lowkeyAddress in AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens)) {
             const defaultConfig = AlgebraConfig.DEFAULT_TOKEN_LIST.defaultTokens[_lowkeyAddress];
-            return {
-                type: 'constructed',
-                chainId,
-                address,
-                decimals: defaultConfig.decimals,
-                symbol: defaultConfig.symbol,
-                name: defaultConfig.name,
-            } as const;
+            return new Token(chainId, address, defaultConfig.decimals, defaultConfig.symbol, defaultConfig.name);
         }
 
-        if (decimalsCall.loading || symbolCall.loading || nameCall.loading) {
-            return { type: 'loading' } as const;
-        }
+        if (decimalsCall.loading || symbolCall.loading || nameCall.loading) return null;
 
         if (decimalsCall.result) {
-            return {
-                type: 'constructed',
+            return new Token(
                 chainId,
                 address,
-                decimals: Number(decimalsCall.result[0]),
-                symbol: parseStringOrBytes32(symbolCall.result?.[0], symbolBytes32Call.result?.[0], "UNKNOWN"),
-                name: parseStringOrBytes32(nameCall.result?.[0], nameBytes32Call.result?.[0], "Unknown Token"),
-            } as const;
+                Number(decimalsCall.result[0]),
+                parseStringOrBytes32(symbolCall.result?.[0], symbolBytes32Call.result?.[0], "UNKNOWN"),
+                parseStringOrBytes32(nameCall.result?.[0], nameBytes32Call.result?.[0], "Unknown Token")
+            );
         }
-        return { type: 'undefined' } as const;
+
+        return undefined;
     }, [
         tokenFromList, chainId, address, _lowkeyAddress,
-        decimalsCall, symbolCall, nameCall, // main calls
-        nameBytes32Call, symbolBytes32Call // include Bytes32 calls as they are part of parameter derivation
+        decimalsCall.loading, decimalsCall.result,
+        symbolCall.loading, symbolCall.result,
+        nameCall.loading, nameCall.result,
+        symbolBytes32Call.result, nameBytes32Call.result
     ]);
-
-    const [memoizedToken, setMemoizedToken] = useState<Token | null | undefined>(() => {
-        if (tokenDescriptor.type === 'list') return tokenDescriptor.token;
-        if (tokenDescriptor.type === 'loading') return null;
-        if (tokenDescriptor.type === 'constructed') {
-            return new Token(tokenDescriptor.chainId, tokenDescriptor.address, tokenDescriptor.decimals, tokenDescriptor.symbol, tokenDescriptor.name);
-        }
-        return undefined;
-    });
-
-    useEffect(() => {
-        if (tokenDescriptor.type === 'list') {
-            if (memoizedToken !== tokenDescriptor.token) {
-                setMemoizedToken(tokenDescriptor.token);
-            }
-        } else if (tokenDescriptor.type === 'loading') {
-            if (memoizedToken !== null) {
-                setMemoizedToken(null);
-            }
-        } else if (tokenDescriptor.type === 'constructed') {
-            if (
-                !(memoizedToken instanceof Token) ||
-                memoizedToken.chainId !== tokenDescriptor.chainId ||
-                memoizedToken.address.toLowerCase() !== tokenDescriptor.address.toLowerCase() ||
-                memoizedToken.decimals !== tokenDescriptor.decimals ||
-                memoizedToken.symbol !== tokenDescriptor.symbol ||
-                memoizedToken.name !== tokenDescriptor.name
-            ) {
-                setMemoizedToken(
-                    new Token(
-                        tokenDescriptor.chainId,
-                        tokenDescriptor.address,
-                        tokenDescriptor.decimals,
-                        tokenDescriptor.symbol,
-                        tokenDescriptor.name
-                    )
-                );
-            }
-        } else { // type 'undefined'
-            if (memoizedToken !== undefined) {
-                setMemoizedToken(undefined);
-            }
-        }
-    }, [tokenDescriptor, memoizedToken]);
-
-    return memoizedToken;
 }
 
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {

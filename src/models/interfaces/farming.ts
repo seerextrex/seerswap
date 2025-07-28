@@ -24,7 +24,7 @@ export interface EternalFarming {
     id: string
     rewardToken: string
     bonusRewardToken: string
-    pool: string
+    pool: { id: string }
     startTime: string
     endTime: string
     reward: string

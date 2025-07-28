@@ -62,6 +62,13 @@ export interface Colors {
     winterDisabledButton: Color
 }
 
+// Add missing Grids interface
+export interface Grids {
+    sm: number
+    md: number
+    lg: number
+}
+
 declare module 'styled-components/macro' {
     export interface DefaultTheme extends Colors {
         grids: Grids

@@ -472,12 +472,18 @@ export function useFarmingSubgraph() {
 
             positionsTransferred.forEach(pos => {
                 if (pos.limitFarming) {
-                    uniqueLimitFarmIds.add(pos.limitFarming);
+                    const limitFarmingId = typeof pos.limitFarming === 'string'
+                        ? pos.limitFarming
+                        : (pos.limitFarming as any).id;
+                    uniqueLimitFarmIds.add(limitFarmingId);
                 } else if (typeof pos.pool === 'string') {
                     poolIdsForLimitAvailabilityCheck.add(pos.pool);
                 }
                 if (pos.eternalFarming) {
-                    uniqueEternalFarmIds.add(pos.eternalFarming);
+                    const eternalFarmingId = typeof pos.eternalFarming === 'string'
+                        ? pos.eternalFarming
+                        : (pos.eternalFarming as any).id;
+                    uniqueEternalFarmIds.add(eternalFarmingId);
                 } else if (typeof pos.pool === 'string') {
                     poolIdsForEternalAvailabilityCheck.add(pos.pool);
                 }
@@ -527,7 +533,7 @@ export function useFarmingSubgraph() {
                             if (farmDetail.rewardToken) allTokenIdsForBatching.add(farmDetail.rewardToken);
                             if (farmDetail.bonusRewardToken) allTokenIdsForBatching.add(farmDetail.bonusRewardToken);
                             if (farmDetail.multiplierToken) allTokenIdsForBatching.add(farmDetail.multiplierToken);
-                            if (farmDetail.pool) allPoolIdsForGeneralBatching.add(farmDetail.pool);
+                            if (farmDetail.pool) allPoolIdsForGeneralBatching.add(farmDetail.pool.id);
                         });
                     } else {
                         console.warn("Batch fetch eternal farms returned no data and no error.");
@@ -584,7 +590,7 @@ export function useFarmingSubgraph() {
                     });
                     if (availableFarmError) throw availableFarmError;
                     poolIdsToCheck.forEach(poolId => {
-                        const hasUpcomingFarm = availableLimitFarms.some((farm: any) => farm.pool === poolId && Math.round(Date.now() / 1000) < farm.startTime);
+                        const hasUpcomingFarm = availableLimitFarms.some((farm: any) => farm.pool.id === poolId && Math.round(Date.now() / 1000) < farm.startTime);
                         limitFarmAvailabilityMap.set(poolId, hasUpcomingFarm);
                     });
                 } catch (e) {
@@ -603,7 +609,7 @@ export function useFarmingSubgraph() {
                     });
                     if (availableEternalFarmError) throw availableEternalFarmError;
                     poolIdsToCheck.forEach(poolId => {
-                        const hasActiveFarm = availableEternalFarms.some((farm: any) => farm.pool === poolId && (+farm.rewardRate || +farm.bonusRewardRate) && !farm.isDetached);
+                        const hasActiveFarm = availableEternalFarms.some((farm: any) => farm.pool.id === poolId && (+farm.rewardRate || +farm.bonusRewardRate) && !farm.isDetached);
                         eternalFarmAvailabilityMap.set(poolId, hasActiveFarm);
                     });
                 } catch (e) {
@@ -619,8 +625,16 @@ export function useFarmingSubgraph() {
                         const mappedPool = poolMap.get(poolObj);
                         if (mappedPool) poolObj = mappedPool;
                     }
-                    const limitFarm = position.limitFarming ? limitFarmDetailsMap.get(position.limitFarming) : undefined;
-                    const eternalFarm = position.eternalFarming ? eternalFarmDetailsMap.get(position.eternalFarming) : undefined;
+                    const limitFarm = position.limitFarming ? limitFarmDetailsMap.get(
+                        typeof position.limitFarming === 'string'
+                            ? position.limitFarming
+                            : (position.limitFarming as any).id
+                    ) : undefined;
+                    const eternalFarm = position.eternalFarming ? eternalFarmDetailsMap.get(
+                        typeof position.eternalFarming === 'string'
+                            ? position.eternalFarming
+                            : (position.eternalFarming as any).id
+                    ) : undefined;
                     let limitAvailable = false;
                     let eternalAvailable = false;
                     if (!position.limitFarming && poolObj && typeof poolObj === 'object' && poolObj.id) {
@@ -651,24 +665,46 @@ export function useFarmingSubgraph() {
             const limitRewardPromises = positionsWithTvl.map(pos => {
                 if (pos.limitFarm) {
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime } = pos.limitFarm;
+                    // Extract pool ID if pool is an object
+                    const limitPoolId = typeof pool === 'object' && pool && 'id' in pool ? (pool as any).id : pool;
+                    console.log(`[DEBUG] Making limit farm contract call for position ${pos.id}:`, {
+                        account,
+                        rewardToken,
+                        bonusRewardToken,
+                        pool: limitPoolId,
+                        startTime: +startTime,
+                        endTime: +endTime
+                    });
                     return new Contract(FINITE_FARMING[chainId], FINITE_FARMING_ABI, provider).getRewardInfo.staticCall(
                         account,
                         rewardToken,
                         bonusRewardToken,
-                        pool,
+                        limitPoolId,
                         +startTime,
                         +endTime
-                    ).catch(e => ({ error: e }));
+                    ).catch(e => {
+                        console.error(`[DEBUG] Limit farm contract call failed for position ${pos.id}:`, e);
+                        return { error: e };
+                    });
                 }
                 return null;
             });
             const eternalRewardPromises = positionsWithTvl.map(pos => {
                 if (pos.eternalFarm) {
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime } = pos.eternalFarm;
+                    // Extract pool ID if pool is an object
+                    const eternalPoolId = typeof pool === 'object' && pool && 'id' in pool ? (pool as any).id : pool;
+                    console.log(`[DEBUG] Making eternal farm contract call for position ${pos.id}:`, {
+                        rewardParams: [rewardToken, bonusRewardToken, eternalPoolId, startTime, endTime],
+                        positionId: +pos.id
+                    });
                     return new Contract(FARMING_CENTER[chainId], FARMING_CENTER_ABI, provider).collectRewards.staticCall(
-                        [rewardToken, bonusRewardToken, pool, startTime, endTime],
+                        [rewardToken, bonusRewardToken, eternalPoolId, startTime, endTime],
                         +pos.id
-                    ).catch(e => ({ error: e }));
+                    ).catch(e => {
+                        console.error(`[DEBUG] Eternal farm contract call failed for position ${pos.id}:`, e);
+                        return { error: e };
+                    });
                 }
                 return null;
             });
@@ -684,6 +720,19 @@ export function useFarmingSubgraph() {
             const finalPositions = positionsWithTvl.map((pos, i) => {
                 // Use a local object to accumulate warnings/errors
                 const extra: any = {};
+
+                // Debug the position and its pool data structure
+                console.log(`[DEBUG] Processing position ${pos.id}:`, {
+                    positionId: pos.id,
+                    poolData: pos.pool,
+                    poolType: typeof pos.pool,
+                    poolId: typeof pos.pool === 'object' ? pos.pool?.id : pos.pool,
+                    hasLimitFarm: !!pos.limitFarm,
+                    hasEternalFarm: !!pos.eternalFarm,
+                    limitFarmPool: pos.limitFarm?.pool,
+                    eternalFarmPool: pos.eternalFarm?.pool
+                });
+
                 // NFT details
                 const nft = nftResults[i];
                 if (nft && !nft.error) {
@@ -692,9 +741,17 @@ export function useFarmingSubgraph() {
                     extra.liquidity = nft.liquidity;
                     extra.token0 = nft.token0;
                     extra.token1 = nft.token1;
+
+                    console.log(`[DEBUG] NFT data for position ${pos.id}:`, {
+                        token0Address: nft.token0,
+                        token1Address: nft.token1,
+                        liquidity: nft.liquidity?.toString()
+                    });
                 } else {
                     extra.nftError = nft && nft.error ? nft.error : undefined;
+                    console.log(`[DEBUG] NFT error for position ${pos.id}:`, nft?.error);
                 }
+
                 // Limit farming rewards
                 if (pos.limitFarm) {
                     const rewardInfo = limitRewardResults[i];
@@ -702,6 +759,35 @@ export function useFarmingSubgraph() {
                     const _bonusRewardToken = tokenMap.get(pos.limitFarm.bonusRewardToken);
                     const _multiplierToken = tokenMap.get(pos.limitFarm.multiplierToken);
                     const _pool = poolMap.get(pos.limitFarm.pool);
+
+                    // Debug token resolution for limit farming
+                    console.log(`[DEBUG] Limit Farm Token Resolution for position ${pos.id}:`, {
+                        rewardTokenAddress: pos.limitFarm.rewardToken,
+                        rewardTokenFound: !!_rewardToken,
+                        rewardTokenSymbol: _rewardToken?.symbol,
+                        bonusRewardTokenAddress: pos.limitFarm.bonusRewardToken,
+                        bonusRewardTokenFound: !!_bonusRewardToken,
+                        bonusRewardTokenSymbol: _bonusRewardToken?.symbol,
+                        poolId: pos.limitFarm.pool,
+                        poolFound: !!_pool,
+                        poolToken0: _pool?.token0?.symbol,
+                        poolToken1: _pool?.token1?.symbol,
+                        tokenMapSize: tokenMap.size,
+                        poolMapSize: poolMap.size
+                    });
+
+                    // Debug logging for limit farming rewards
+                    console.log(`[DEBUG] Limit Farm Rewards for position ${pos.id}:`, {
+                        rewardInfo,
+                        hasError: rewardInfo?.error,
+                        reward0: rewardInfo?.[0]?.toString(),
+                        reward1: rewardInfo?.[1]?.toString(),
+                        rewardToken: _rewardToken?.symbol,
+                        bonusRewardToken: _bonusRewardToken?.symbol,
+                        farmStartTime: pos.limitFarm.startTime,
+                        farmEndTime: pos.limitFarm.endTime
+                    });
+
                     if (_rewardToken && _bonusRewardToken && _pool) {
                         Object.assign(extra, {
                             pool: _pool,
@@ -724,15 +810,62 @@ export function useFarmingSubgraph() {
                         });
                     } else {
                         extra.limitFarmError = 'Missing token or pool data';
+                        console.warn(`[DEBUG] Limit farm error for position ${pos.id}: Missing token or pool data`);
                     }
                 }
+
                 // Eternal farming rewards
                 if (pos.eternalFarm) {
                     const rewardInfo = eternalRewardResults[i];
                     const _rewardToken = tokenMap.get(pos.eternalFarm.rewardToken);
                     const _bonusRewardToken = tokenMap.get(pos.eternalFarm.bonusRewardToken);
                     const _multiplierToken = tokenMap.get(pos.eternalFarm.multiplierToken);
-                    const _pool = poolMap.get(pos.eternalFarm.pool);
+                    const _pool = poolMap.get(pos.eternalFarm.pool.id);
+
+                    // Debug token resolution for eternal farming
+                    console.log(`[DEBUG] Eternal Farm Token Resolution for position ${pos.id}:`, {
+                        rewardTokenAddress: pos.eternalFarm.rewardToken,
+                        rewardTokenFound: !!_rewardToken,
+                        rewardTokenSymbol: _rewardToken?.symbol,
+                        rewardTokenDecimals: _rewardToken?.decimals,
+                        bonusRewardTokenAddress: pos.eternalFarm.bonusRewardToken,
+                        bonusRewardTokenFound: !!_bonusRewardToken,
+                        bonusRewardTokenSymbol: _bonusRewardToken?.symbol,
+                        bonusRewardTokenDecimals: _bonusRewardToken?.decimals,
+                        poolId: pos.eternalFarm.pool.id,
+                        poolFound: !!_pool,
+                        poolToken0: _pool?.token0,
+                        poolToken1: _pool?.token1,
+                        poolToken0Symbol: _pool?.token0?.symbol,
+                        poolToken1Symbol: _pool?.token1?.symbol,
+                        tokenMapKeys: Array.from(tokenMap.keys()).slice(0, 5), // First 5 keys
+                        poolMapKeys: Array.from(poolMap.keys()).slice(0, 5),   // First 5 keys
+                        eternalFarmPoolObject: pos.eternalFarm.pool
+                    });
+
+                    // Debug logging for eternal farming rewards
+                    console.log(`[DEBUG] Eternal Farm Rewards for position ${pos.id}:`, {
+                        rewardInfo,
+                        hasError: rewardInfo?.error,
+                        errorMessage: rewardInfo?.error?.message,
+                        reward: rewardInfo?.reward?.toString(),
+                        bonusReward: rewardInfo?.bonusReward?.toString(),
+                        rewardToken: _rewardToken?.symbol,
+                        bonusRewardToken: _bonusRewardToken?.symbol,
+                        farmStartTime: pos.eternalFarm.startTime,
+                        farmEndTime: pos.eternalFarm.endTime,
+                        contractCallParameters: {
+                            rewardParams: [
+                                pos.eternalFarm.rewardToken,
+                                pos.eternalFarm.bonusRewardToken,
+                                pos.eternalFarm.pool.id,
+                                pos.eternalFarm.startTime,
+                                pos.eternalFarm.endTime
+                            ],
+                            positionId: +pos.id
+                        }
+                    });
+
                     if (_rewardToken && _bonusRewardToken && _pool) {
                         Object.assign(extra, {
                             pool: _pool,
@@ -752,20 +885,66 @@ export function useFarmingSubgraph() {
                         });
                     } else {
                         extra.eternalFarmError = 'Missing token or pool data';
+                        console.warn(`[DEBUG] Eternal farm error for position ${pos.id}: Missing token or pool data`, {
+                            rewardTokenMissing: !_rewardToken,
+                            bonusRewardTokenMissing: !_bonusRewardToken,
+                            poolMissing: !_pool
+                        });
                     }
                 }
-                // Final pool check
+
+                // Final pool check with detailed debugging
                 if (typeof pos.pool === 'object' && pos.pool !== null) {
                     if (!pos.pool.token0 || !pos.pool.token1) {
                         extra.poolWarning = `Resolved pool for position ${pos.id} (ID: ${pos.pool.id}) is missing token0/token1 details after all processing.`;
+                        console.warn(`[DEBUG] Pool missing tokens for position ${pos.id}:`, {
+                            poolId: pos.pool.id,
+                            hasToken0: !!pos.pool.token0,
+                            hasToken1: !!pos.pool.token1,
+                            token0Data: pos.pool.token0,
+                            token1Data: pos.pool.token1
+                        });
                     }
                 } else if (typeof pos.pool === 'string') {
                     extra.poolWarning = `Pool for position ${pos.id} remained a string ID: ${pos.pool}. This position might be incomplete.`;
+                    console.warn(`[DEBUG] Pool still string for position ${pos.id}:`, pos.pool);
                 }
+
                 return { ...pos, ...extra };
             });
 
-            setTransferredPositions(finalPositions);
+            // Filter out positions with incomplete pool data to prevent UI crashes
+            const validPositions = finalPositions.filter(position => {
+                // Check if position has valid pool data
+                const hasValidPool = position.pool &&
+                    typeof position.pool === 'object' &&
+                    position.pool.token0 &&
+                    position.pool.token1 &&
+                    position.pool.token0.symbol &&
+                    position.pool.token1.symbol;
+
+                if (!hasValidPool) {
+                    console.warn(`[DEBUG] Filtering out position ${position.id} due to incomplete pool data:`, {
+                        poolExists: !!position.pool,
+                        poolType: typeof position.pool,
+                        hasToken0: !!(position.pool as any)?.token0,
+                        hasToken1: !!(position.pool as any)?.token1,
+                        token0Symbol: (position.pool as any)?.token0?.symbol,
+                        token1Symbol: (position.pool as any)?.token1?.symbol,
+                        poolWarning: position.poolWarning,
+                        nftError: position.nftError,
+                        eternalFarmError: position.eternalFarmError,
+                        limitFarmError: position.limitFarmError
+                    });
+                    return false;
+                }
+
+                return true;
+            });
+
+            console.log(`[DEBUG] Position filtering results: ${finalPositions.length} total → ${validPositions.length} valid (filtered out ${finalPositions.length - validPositions.length})`);
+
+            setTransferredPositions(validPositions);
         } catch (err: any) {
             setTransferredPositions([]);
             setTransferredPositionsLoading(false);
@@ -808,9 +987,12 @@ export function useFarmingSubgraph() {
 
                 const positionDataFromContract = await nftContract.positions.staticCall(+position.id);
 
-                const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(String(position.eternalFarming));
+                const eternalFarmingId = typeof position.eternalFarming === 'string'
+                    ? position.eternalFarming
+                    : (position.eternalFarming as any).id;
+                const { rewardToken, bonusRewardToken, pool, startTime, endTime } = await fetchEternalFarming(String(eternalFarmingId));
 
-                const _pool = await fetchPool(pool);
+                const _pool = await fetchPool(pool.id);
                 const _rewardToken = await fetchToken(rewardToken);
                 const _bonusRewardToken = await fetchToken(bonusRewardToken);
 
@@ -902,7 +1084,7 @@ export function useFarmingSubgraph() {
             }
 
             // Collect all unique IDs from fetchedEternalEvents
-            const poolIds = [...new Set(fetchedEternalEvents.map(farm => farm.pool))];
+            const poolIds = [...new Set(fetchedEternalEvents.map(farm => farm.pool.id))];
             const rewardTokenIds = [...new Set(fetchedEternalEvents.map(farm => farm.rewardToken))];
             const bonusRewardTokenIds = [...new Set(fetchedEternalEvents.map(farm => farm.bonusRewardToken))];
             const multiplierTokenIds = [...new Set(fetchedEternalEvents.map(farm => farm.multiplierToken))];
@@ -939,16 +1121,40 @@ export function useFarmingSubgraph() {
             console.log('[fetchEternalFarms] Fetched Tokens Data Count (batch):', fetchedTokensData.length);
             console.log('[fetchEternalFarms] Fetched Token IDs (batch):', JSON.stringify(fetchedTokensData.map(t => t.id)));
 
-            // Create maps for easy lookup
+            // Create maps for easy lookup during position processing
             const poolMap = new Map(fetchedPoolsData.map(p => [p.id, p]));
             const tokenMap = new Map(fetchedTokensData.map(t => [t.id, t]));
+
+            // Debug the maps to see what's available
+            console.log('[DEBUG] Token Map Contents:', {
+                size: tokenMap.size,
+                keys: Array.from(tokenMap.keys()),
+                sampleEntries: Array.from(tokenMap.entries()).slice(0, 3).map(([key, token]) => ({
+                    address: key,
+                    symbol: (token as any).symbol,
+                    decimals: (token as any).decimals,
+                    name: (token as any).name
+                }))
+            });
+
+            console.log('[DEBUG] Pool Map Contents:', {
+                size: poolMap.size,
+                keys: Array.from(poolMap.keys()),
+                sampleEntries: Array.from(poolMap.entries()).slice(0, 3).map(([key, pool]) => ({
+                    id: key,
+                    token0Symbol: (pool as any).token0?.symbol,
+                    token1Symbol: (pool as any).token1?.symbol,
+                    token0Address: (pool as any).token0?.id,
+                    token1Address: (pool as any).token1?.id
+                }))
+            });
 
             const aprs: Aprs = {};
 
             const _newEternalFarmings: FormattedEternalFarming[] = [];
 
             for (const farmEvent of fetchedEternalEvents) {
-                const pool = poolMap.get(farmEvent.pool);
+                const pool = poolMap.get(farmEvent.pool.id);
                 const rewardToken = tokenMap.get(farmEvent.rewardToken);
 
                 const bonusRewardTokenAddress = farmEvent.bonusRewardToken;
@@ -967,7 +1173,7 @@ export function useFarmingSubgraph() {
                 ) {
                     console.warn(
                         `[fetchEternalFarms] Skipping farm ID: ${farmEvent.id} due to missing or unresolved critical token data for a non-zero address.`,
-                        `Pool: ${!!pool} (ID: ${farmEvent.pool})`,
+                        `Pool: ${!!pool} (ID: ${farmEvent.pool.id})`,
                         `RewardToken: ${!!rewardToken} (ID: ${farmEvent.rewardToken})`,
                         `BonusRewardToken: ${!!bonusRewardToken} (Address: ${bonusRewardTokenAddress}, Is Zero: ${isBonusTokenZeroAddress})`,
                         `MultiplierToken: ${!!multiplierToken} (Address: ${multiplierTokenAddress}, Is Zero: ${isMultiplierTokenZeroAddress})`,

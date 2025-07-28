@@ -40,3 +40,6 @@ package-lock.json
 cypress/videos
 cypress/screenshots
 cypress/fixtures/example.json
+ethersv5-READONLY/*
+contracts/*
+/.env

@@ -73,7 +73,9 @@ export const FETCH_ETERNAL_FARM = gql`
         eternalFarmings(where: { id: $farmId }) {
             id
             isDetached
-            pool
+            pool {
+                id
+            }
             rewardToken
             bonusRewardToken
             rewardRate
@@ -93,14 +95,16 @@ export const FETCH_ETERNAL_FARM = gql`
 `;
 
 export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
-  query eternalFarmingsFromPools($pools: [Bytes!]!, $currentTime: BigInt!) {
+  query eternalFarmingsFromPools($pools: [String!]!, $currentTime: BigInt!) {
     eternalFarmings(
       where: {pool_in: $pools, isDetached: false, endTime_gt: $currentTime, endTimeImplied_gt: $currentTime}
     ) {
       id
       rewardToken
       bonusRewardToken
-      pool
+      pool {
+        id
+      }
       startTime
       endTime
       reward
@@ -198,7 +202,7 @@ export const FETCH_TOKENS_BY_IDS = gql`
 `;
 
 export const CHART_FEE_POOL_DATA = gql`
-    query feeHourData($pool: String, $startTimestamp: BigInt, $endTimestamp: BigInt) {
+    query feeHourData($pool: String!, $startTimestamp: BigInt!, $endTimestamp: BigInt!) {
         feeHourDatas(first: 1000, where: { pool: $pool, timestamp_gte: $startTimestamp, timestamp_lte: $endTimestamp }) {
             id
             pool
@@ -214,7 +218,7 @@ export const CHART_FEE_POOL_DATA = gql`
 `;
 
 export const CHART_FEE_LAST_ENTRY = gql`
-    query lastFeeHourData($pool: String) {
+    query lastFeeHourData($pool: String!) {
         feeHourDatas(first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: $pool }) {
             id
             pool
@@ -229,7 +233,7 @@ export const CHART_FEE_LAST_ENTRY = gql`
     }
 `;
 export const CHART_FEE_LAST_NOT_EMPTY = gql`
-    query lastNotEmptyHourData($pool: String, $timestamp: BigInt) {
+    query lastNotEmptyHourData($pool: String!, $timestamp: BigInt!) {
         feeHourDatas(first: 1, orderBy: timestamp, orderDirection: desc, where: { pool: $pool, timestamp_lt: $timestamp }) {
             id
             pool
@@ -245,8 +249,8 @@ export const CHART_FEE_LAST_NOT_EMPTY = gql`
 `;
 
 export const CHART_POOL_LAST_NOT_EMPTY = gql`
-    query lastNotEmptyPoolHourData($pool: String, $timestamp: Int) {
-        poolHourDatas(first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool: $pool, periodStartUnix_lt: $timestamp }) {
+    query lastNotEmptyPoolHourData($pool: ID!, $timestamp: Int!) {
+        poolHourDatas(first: 1, orderBy: periodStartUnix, orderDirection: desc, where: { pool_: { id: $pool }, periodStartUnix_lt: $timestamp }) {
             periodStartUnix
             volumeUSD
             tvlUSD
@@ -259,8 +263,8 @@ export const CHART_POOL_LAST_NOT_EMPTY = gql`
 `;
 
 export const CHART_POOL_LAST_ENTRY = gql`
-    query lastPoolHourData($pool: String) {
-        poolHourDatas(first: 1, where: { pool: $pool }, orderBy: periodStartUnix, orderDirection: desc) {
+    query lastPoolHourData($pool: ID!) {
+        poolHourDatas(first: 1, where: { pool_: { id: $pool } }, orderBy: periodStartUnix, orderDirection: desc) {
             periodStartUnix
             volumeUSD
             tvlUSD
@@ -271,10 +275,10 @@ export const CHART_POOL_LAST_ENTRY = gql`
 `;
 
 export const CHART_POOL_DATA = gql`
-    query poolHourData($pool: String, $startTimestamp: Int, $endTimestamp: Int) {
+    query poolHourData($pool: ID!, $startTimestamp: Int!, $endTimestamp: Int!) {
         poolHourDatas(
             first: 1000
-            where: { pool: $pool, periodStartUnix_gte: $startTimestamp, periodStartUnix_lte: $endTimestamp }
+            where: { pool_: { id: $pool }, periodStartUnix_gte: $startTimestamp, periodStartUnix_lte: $endTimestamp }
             orderBy: periodStartUnix
             orderDirection: asc
             subgraphError: allow
@@ -380,20 +384,26 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
         deposits (orderBy: id, orderDirection: desc, where: {owner: $account, onFarmingCenter: true}) {
             id
             owner
-            pool
+            pool {
+              id
+            }
             L2tokenId
-            limitFarming
-            eternalFarming
+            limitFarming {
+              id
+            }
+            eternalFarming {
+              id
+            }
             onFarmingCenter
             ${tierFarming
-        ? `
+    ? `
               enteredInEternalFarming
               tokensLockedEternal
               tokensLockedLimit
               tierLimit
               tierEternal`
-        : ""
-    }
+    : ""
+  }
     }
 }
 `;
@@ -411,9 +421,13 @@ export const POSITIONS_ON_ETERNAL_FARMING = gql`
         deposits(orderBy: id, orderDirection: desc, where: { owner: $account, onFarmingCenter: true, eternalFarming_not: null }) {
             id
             owner
-            pool
+            pool {
+              id
+            }
             L2tokenId
-            eternalFarming
+            eternalFarming {
+              id
+            }
             onFarmingCenter
             enteredInEternalFarming
         }
@@ -421,14 +435,20 @@ export const POSITIONS_ON_ETERNAL_FARMING = gql`
 `;
 
 export const TRANSFERED_POSITIONS_FOR_POOL = gql`
-    query transferedPositionsForPool($account: Bytes!, $pool: Bytes!) {
-        deposits(orderBy: id, orderDirection: desc, where: { owner: $account, pool: $pool, liquidity_not: "0" }) {
+    query transferedPositionsForPool($account: Bytes!, $pool: ID!) {
+        deposits(orderBy: id, orderDirection: desc, where: { owner: $account, pool_: { id: $pool }, liquidity_not: "0" }) {
             id
             owner
-            pool
+            pool {
+              id
+            }
             L2tokenId
-            limitFarming
-            eternalFarming
+            limitFarming {
+              id
+            }
+            eternalFarming {
+              id
+            }
             onFarmingCenter
             enteredInEternalFarming
             tokensLockedLimit
@@ -442,8 +462,8 @@ export const TRANSFERED_POSITIONS_FOR_POOL = gql`
 //Info
 
 export const POSITIONS_ON_FARMING = gql`
-    query positionsOnFarming($account: Bytes!, $pool: Bytes!) {
-        deposits(orderBy: id, orderDirection: desc, where: { owner: $account, pool: $pool, onFarmingCenter: true }) {
+    query positionsOnFarming($account: Bytes!, $pool: ID!) {
+        deposits(orderBy: id, orderDirection: desc, where: { owner: $account, pool_: { id: $pool }, onFarmingCenter: true }) {
             id
         }
     }
@@ -504,7 +524,9 @@ export const INFINITE_EVENTS = gql`
             id
             rewardToken
             bonusRewardToken
-            pool
+            pool {
+              id
+            }
             startTime
             endTime
             reward
@@ -746,7 +768,9 @@ export const FETCH_ETERNAL_FARMS_BY_IDS = (farmIds: string[]) => gql`
         eternalFarmings(where: { id_in: $farmIds }) {
             id
             isDetached
-            pool
+            pool {
+                id
+            }
             rewardToken
             bonusRewardToken
             rewardRate

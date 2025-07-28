@@ -14,70 +14,18 @@ export interface EthPrices {
     oneWeek: number;
 }
 
-export const ETH_PRICES = gql`
-    query prices($block24: Int!, $block48: Int!, $blockWeek: Int!) {
-        current: bundles(first: 1, subgraphError: allow) {
-            maticPriceUSD
-        }
-        oneDay: bundles(first: 1, block: { number: $block24 }, subgraphError: allow) {
-            maticPriceUSD
-        }
-        twoDay: bundles(first: 1, block: { number: $block48 }, subgraphError: allow) {
-            maticPriceUSD
-        }
-        oneWeek: bundles(first: 1, block: { number: $blockWeek }, subgraphError: allow) {
-            maticPriceUSD
-        }
-    }
-`;
-
-interface PricesResponse {
-    current: {
-        maticPriceUSD: string;
-    }[];
-    oneDay: {
-        maticPriceUSD: string;
-    }[];
-    twoDay: {
-        maticPriceUSD: string;
-    }[];
-    oneWeek: {
-        maticPriceUSD: string;
-    }[];
-}
-
 async function fetchEthPrices(blocks: [number, number, number, number], client: ApolloClient<NormalizedCacheObject>): Promise<{ data: EthPrices | undefined; error: boolean }> {
     try {
-        const { data, error } = await client.query<PricesResponse>({
-            query: ETH_PRICES,
-            variables: {
-                block24: blocks[0],
-                block48: blocks[1],
-                blockWeek: blocks[2],
-            },
-        });
 
-        if (error) {
-            return {
-                error: true,
-                data: undefined,
-            };
-        } else if (data) {
-            return {
-                data: {
-                    current: parseFloat(data.current[0].maticPriceUSD ?? 0),
-                    oneDay: parseFloat(data.oneDay[0]?.maticPriceUSD ?? 0),
-                    twoDay: parseFloat(data.twoDay[0]?.maticPriceUSD ?? 0),
-                    oneWeek: parseFloat(data.oneWeek[0]?.maticPriceUSD ?? 0),
-                },
-                error: false,
-            };
-        } else {
-            return {
-                data: undefined,
-                error: true,
-            };
-        }
+        return {
+            data: {
+                current: 1,
+                oneDay: 1,
+                twoDay: 1,
+                oneWeek: 1,
+            },
+            error: false,
+        };
     } catch (e) {
         console.log(e);
         return {

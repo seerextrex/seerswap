@@ -95,11 +95,17 @@ export function FarmModal({
         if (!positionsForPool) return [];
 
         return positionsForPool.filter((position) => {
-            if (position.pool !== pool.id) return;
+            // Handle both string and object formats for position.pool
+            const positionPoolId = typeof position.pool === 'string' ? position.pool : position.pool.id;
 
-            if (farmingType === FarmingType.ETERNAL && position.eternalFarming) return;
+            // Exclude positions that are not for this pool
+            if (positionPoolId !== pool.id) return false;
 
-            if (farmingType === FarmingType.LIMIT && position.limitFarming) return;
+            // Exclude positions that are already in eternal farming when trying to do eternal farming
+            if (farmingType === FarmingType.ETERNAL && position.eternalFarming) return false;
+
+            // Exclude positions that are already in limit farming when trying to do limit farming
+            if (farmingType === FarmingType.LIMIT && position.limitFarming) return false;
 
             return true;
         });

@@ -56,12 +56,12 @@ export default function Modal({ isOpen, onDismiss, minHeight = false, maxHeight 
                             <StyledDialogContent
                                 {...(isMobile
                                     ? {
-                                          ...bind(),
-                                          style: { transform: `translateY(-3rem)` },
-                                      }
+                                        ...bind(),
+                                        style: { transform: `translateY(-3rem)` },
+                                    }
                                     : {
-                                          style: { width: fitContent ? "unset" : "400px" },
-                                      })}
+                                        style: { width: fitContent ? "unset" : "400px" },
+                                    })}
                                 aria-label="dialog content"
                                 minHeight={minHeight}
                                 maxHeight={maxHeight}

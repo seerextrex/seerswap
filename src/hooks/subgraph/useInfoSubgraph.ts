@@ -74,6 +74,23 @@ function parseTokensData(tokenData: TokenInSubgraph[] | string) {
         : {};
 }
 
+// Type for the raw GraphQL response where pool is an object with id
+interface EternalFarmingByPoolRaw {
+    bonusReward: string
+    bonusRewardRate: string
+    bonusRewardToken: string
+    endTime: string
+    id: string
+    isDetached: boolean
+    pool: {
+        id: string
+    }
+    reward: string
+    rewardRate: string
+    rewardToken: string
+    startTime: string
+}
+
 export function useInfoSubgraph() {
     const { address: account } = useAccount();
     const { dataClient, farmingClient } = useClients();
@@ -795,7 +812,7 @@ export function useInfoSubgraph() {
     async function fetchEternalFarmingsAPRByPool(poolAddresses: string[]): Promise<EternalFarmingByPool[]> {
         if (!dataClient) return [];
         try {
-            const { data, error } = await farmingClient.query<SubgraphResponse<EternalFarmingByPool[]>>({
+            const { data, error } = await farmingClient.query<SubgraphResponse<EternalFarmingByPoolRaw[]>>({
                 query: FETCH_ETERNAL_FARM_FROM_POOL,
                 variables: { pools: poolAddresses, currentTime: Math.floor(Date.now() / 1000) },
                 fetchPolicy: "network-only",
@@ -805,7 +822,12 @@ export function useInfoSubgraph() {
                 console.error("Error fetching eternal farmings APR by pool:", error);
                 return [];
             }
-            return data.eternalFarmings;
+
+            // Transform the response to match our interface
+            return data.eternalFarmings.map(farm => ({
+                ...farm,
+                pool: farm.pool.id  // Extract the id from the pool object
+            }));
         } catch (e) {
             console.error("Exception fetching eternal farmings APR by pool:", e);
             return [];

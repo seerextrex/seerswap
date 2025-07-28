@@ -116,6 +116,18 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
             id
           }
         }
+        market1 {
+          id
+          marketName
+          image {
+            id
+            cidMarket
+            cidOutcomes
+          }
+          tokens {
+            id
+          }
+        }
       }
       startTime
       endTime
@@ -179,6 +191,22 @@ export const FETCH_POOL = gql`
                 image {
                     id
                     cidMarket
+                    cidOutcomes
+                }
+                tokens {
+                    id
+                }
+            }
+            market1 {
+                id
+                marketName
+                image {
+                    id
+                    cidMarket
+                    cidOutcomes
+                }
+                tokens {
+                    id
                 }
             }
         }
@@ -205,7 +233,20 @@ export const FETCH_POOLS_BY_IDS = gql`
             tick
             feesUSD
             untrackedFeesUSD
+            totalValueLockedUSD
             market0 {
+                id
+                marketName
+                image {
+                    id
+                    cidMarket
+                    cidOutcomes
+                }
+                tokens {
+                  id
+                }
+            }
+                            market1 {
                 id
                 marketName
                 image {
@@ -559,6 +600,18 @@ export const INFINITE_EVENTS = gql`
             pool {
               id
               market0 {
+                id
+                marketName
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                }
+              }
+              market1 {
                 id
                 marketName
                 image {

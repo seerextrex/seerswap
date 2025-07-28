@@ -13108,6 +13108,17 @@ export type EternalFarmingsFromPoolsQuery = (
     & { pool: (
       { __typename?: 'Pool' }
       & Pick<Pool, 'id'>
+      & { market0?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        )> }
+      )> }
     ) }
   )> }
 );
@@ -13162,7 +13173,7 @@ export type FetchPoolsByIdsQuery = (
   { __typename?: 'Query' }
   & { pools: Array<(
     { __typename?: 'Pool' }
-    & Pick<Pool, 'id' | 'fee' | 'sqrtPrice' | 'liquidity' | 'tick' | 'feesUSD' | 'untrackedFeesUSD'>
+    & Pick<Pool, 'id' | 'fee' | 'sqrtPrice' | 'liquidity' | 'tick' | 'feesUSD' | 'untrackedFeesUSD' | 'totalValueLockedUSD'>
     & { token0: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
@@ -13170,6 +13181,16 @@ export type FetchPoolsByIdsQuery = (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
     ), market0?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )>, tokens: Array<(
+        { __typename?: 'Token' }
+        & Pick<Token, 'id'>
+      )> }
+    )>, market1?: Maybe<(
       { __typename?: 'Market' }
       & Pick<Market, 'id' | 'marketName'>
       & { image: Array<(
@@ -13811,6 +13832,18 @@ export const EternalFarmingsFromPoolsDocument = `
     bonusRewardToken
     pool {
       id
+      market0 {
+        id
+        marketName
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+        }
+      }
     }
     startTime
     endTime
@@ -13899,7 +13932,20 @@ export const FetchPoolsByIdsDocument = `
     tick
     feesUSD
     untrackedFeesUSD
+    totalValueLockedUSD
     market0 {
+      id
+      marketName
+      image {
+        id
+        cidMarket
+        cidOutcomes
+      }
+      tokens {
+        id
+      }
+    }
+    market1 {
       id
       marketName
       image {

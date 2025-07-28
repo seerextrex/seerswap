@@ -178,6 +178,205 @@
   }
 }
 
+// Market Farms List Styles
+.market-farms-list {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.market-farms-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.market-farms-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.market-farm-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.farm-header-item,
+.farm-item {
+  display: flex;
+  align-items: center;
+  color: white;
+
+  &.token-pair {
+    justify-content: flex-start;
+  }
+
+  &.apr,
+  &.tvl {
+    justify-content: center;
+  }
+
+  &.rewards {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &.action {
+    justify-content: center;
+  }
+}
+
+// Token Pair Display
+.token-pair-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.token-pair-images {
+  display: flex;
+  align-items: center;
+
+  .token-image-container:not(:first-child) {
+    margin-left: -8px;
+  }
+}
+
+.token-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.token-image {
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+
+  &.loading {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.token-image-placeholder {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.token-pair-symbols {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+}
+
+.token-pair-fallback {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+// Farm Values
+.apr-value {
+  color: #22dc22;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.apr-placeholder,
+.tvl-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+.tvl-value {
+  color: #4fc3f7;
+  font-weight: 500;
+}
+
+.reward-amount {
+  font-weight: 500;
+  color: #ffb74d;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.bonus-reward {
+  font-size: 0.8rem;
+  color: rgba(255, 183, 77, 0.7);
+  text-align: center;
+}
+
+// Farm Action Button
+.farm-action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #29b6f6, #0288d1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+
+  .market-farms-header,
+  .market-farm-row {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+
+    .farm-header-item.rewards,
+    .farm-item.rewards {
+      display: none;
+    }
+  }
+}
+
 @media screen and (max-width: 768px) {
   .eternal-page {
 
@@ -214,6 +413,31 @@
       right: 1rem;
     }
 
+  }
+
+  .market-farms-header,
+  .market-farm-row {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+
+    .farm-header-item.tvl,
+    .farm-item.tvl,
+    .farm-header-item.rewards,
+    .farm-item.rewards {
+      display: none;
+    }
+  }
+
+  .token-pair-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .token-pair-symbols,
+  .token-pair-fallback {
+    font-size: 0.9rem;
   }
 }
 
@@ -252,5 +476,24 @@
       grid-template-columns: repeat(1, 1fr);
     }
 
+  }
+
+  .market-farms-header {
+    font-size: 0.8rem;
+  }
+
+  .market-farms-header,
+  .market-farm-row {
+    grid-template-columns: 1fr 1fr;
+
+    .farm-header-item.apr,
+    .farm-item.apr {
+      display: none;
+    }
+  }
+
+  .farm-action-button {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
 }

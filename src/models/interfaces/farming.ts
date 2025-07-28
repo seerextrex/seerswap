@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { PoolChartSubgraph, PoolSubgraph, TokenSubgraph } from './responseSubgraph'
+import { Market } from '../../state/data/generated'
 
 interface DefaultFarmingEvent {
     id: string

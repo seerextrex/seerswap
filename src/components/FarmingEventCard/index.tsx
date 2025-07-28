@@ -4,7 +4,7 @@ import { getProgress } from "../../utils/getProgress";
 import Loader from "../Loader";
 import CurrencyLogo from "../CurrencyLogo";
 import { LoadingShim } from "./styled";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { convertLocalDate } from "../../utils/convertDate";
 import { Token } from "@uniswap/sdk-core";
 import { WrappedCurrency } from "../../models/types";
@@ -25,6 +25,99 @@ interface RewardListItem {
     amount?: number; // Or string if pre-formatted
     rewardRate?: number;
 }
+
+const TokenImage = ({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: string | null, tokenSymbol: string, size?: number }) => {
+    const [imageError, setImageError] = useState(false);
+    const [imageLoading, setImageLoading] = useState(true);
+
+    const handleImageError = () => {
+        setImageError(true);
+        setImageLoading(false);
+    };
+
+    const handleImageLoad = () => {
+        setImageLoading(false);
+    };
+
+    if (!imageUrl || imageError) {
+        return (
+            <div
+                className="token-image-placeholder"
+                style={{
+                    width: size,
+                    height: size,
+                    fontSize: size * 0.4,
+                    borderRadius: size * 0.5
+                }}
+            >
+                {tokenSymbol.charAt(0).toUpperCase()}
+            </div>
+        );
+    }
+
+    return (
+        <div className="token-image-container" style={{ width: size, height: size }}>
+            {imageLoading && (
+                <div
+                    className="token-image-placeholder"
+                    style={{
+                        width: size,
+                        height: size,
+                        fontSize: size * 0.4,
+                        borderRadius: size * 0.5
+                    }}
+                >
+                    {tokenSymbol.charAt(0).toUpperCase()}
+                </div>
+            )}
+            <img
+                src={imageUrl}
+                alt={tokenSymbol}
+                className={`token-image ${imageLoading ? 'loading' : ''}`}
+                style={{ width: size, height: size, borderRadius: size * 0.5 }}
+                onError={handleImageError}
+                onLoad={handleImageLoad}
+            />
+        </div>
+    );
+};
+
+const TokenPairImages = ({ pool }: { pool: any }) => {
+    if (!pool?.market0?.tokens || !pool?.market0?.image?.[0]?.cidOutcomes) {
+        return null;
+    }
+
+    const market = pool.market0;
+    const marketTokens = market.tokens;
+    const cidOutcomes = market.image[0].cidOutcomes;
+
+    // Find indices of token0 and token1 in the market's tokens array
+    const token0Index = marketTokens.findIndex((token: any) => token.id.toLowerCase() === pool.token0?.id?.toLowerCase());
+    const token1Index = marketTokens.findIndex((token: any) => token.id.toLowerCase() === pool.token1?.id?.toLowerCase());
+
+    const token0ImageUrl = token0Index >= 0 && cidOutcomes[token0Index]
+        ? `https://ipfs.io${cidOutcomes[token0Index]}`
+        : null;
+
+    const token1ImageUrl = token1Index >= 0 && cidOutcomes[token1Index]
+        ? `https://ipfs.io${cidOutcomes[token1Index]}`
+        : null;
+
+    return (
+        <div className="token-pair-images">
+            <TokenImage
+                imageUrl={token0ImageUrl}
+                tokenSymbol={pool.token0?.symbol || 'T0'}
+                size={28}
+            />
+            <TokenImage
+                imageUrl={token1ImageUrl}
+                tokenSymbol={pool.token1?.symbol || 'T1'}
+                size={28}
+            />
+        </div>
+    );
+};
 
 interface FarmingEventCardProps {
     active?: boolean;
@@ -171,8 +264,7 @@ export function FarmingEventCard({
             )}
             <div className={"f mb-1"}>
                 <div className={"f mr-1"}>
-                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token0.id, Number(pool.token0.decimals), pool.token0.symbol) as WrappedCurrency} size={"30px"} />
-                    <CurrencyLogo currency={new Token(AlgebraConfig.CHAIN_PARAMS.chainId, pool.token1.id, Number(pool.token1.decimals), pool.token1.symbol) as WrappedCurrency} size={"30px"} />
+                    <TokenPairImages pool={pool} />
                 </div>
                 <div>
                     <h3 className={"fs-075 b"}>

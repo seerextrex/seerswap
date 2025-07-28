@@ -1,3 +1,5 @@
+import { Market, Image } from '../../state/data/generated'
+
 export interface PoolSubgraph {
     fee: string
     feesUSD: string
@@ -34,6 +36,7 @@ export interface PoolChartSubgraph {
     tick: string
     feesUSD: string
     untrackedFeesUSD: string
+    market0?: Market
 }
 
 export interface SubgraphResponse<T> {

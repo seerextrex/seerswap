@@ -20,15 +20,18 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "noImplicitReturns": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "types": [],
+    "types": [
+      "jest"
+    ],
     "typeRoots": [
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "./src/types"
     ],
     "baseUrl": "src",
   },

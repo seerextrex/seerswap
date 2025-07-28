@@ -89,18 +89,9 @@ export default {
     },
 
     SUBGRAPH: {
-        // Deployed on https://thegraph.com/studio/subgraph/swapr-v3/
-        //https://api.studio.thegraph.com/query/63508/algebra-v19/version/latest
-        //infoURL: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/YwkNWffc8UTH77wDqGWgMShMq1uXdiQsD5wrD5MzKwJ`,
-        //farmingURL: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/4WysHZ1gFJcv1HLAobLMx3dS9B6aovExzyG3n7kRjwKT`,
         blocklyticsURL: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/FSFGfeobVFdtoWnGkULtLQ5vYu38tc9BxYR1e1yXjVPZ`,
-        //infoURL: `https://api.studio.thegraph.com/query/111511/seer-fast/version/latest`,
         infoURL: `https://api.studio.thegraph.com/query/111511/seer-fast/version/latest`,
-        //infoURL: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/YwkNWffc8UTH77wDqGWgMShMq1uXdiQsD5wrD5MzKwJ`,
-        //infoURL: `https://api.studio.thegraph.com/query/63508/algebra-v19/version/latest`, // Changed from seer-swap
-        //farmingURL: `https://api.studio.thegraph.com/query/111511/seer-fast/version/latest`,
         farmingURL: `https://api.studio.thegraph.com/query/111511/seer-fast/version/latest`,
-        //blocklyticsURL: `https://api.studio.thegraph.com/query/111511/seer-fast/version/latest`,
     },
 
     API: {

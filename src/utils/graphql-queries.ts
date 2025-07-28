@@ -104,6 +104,18 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
       bonusRewardToken
       pool {
         id
+        market0 {
+          id
+          marketName
+          image {
+            id
+            cidMarket
+            cidOutcomes
+          }
+          tokens {
+            id
+          }
+        }
       }
       startTime
       endTime
@@ -161,6 +173,14 @@ export const FETCH_POOL = gql`
             tick
             feesUSD
             untrackedFeesUSD
+            market0 {
+                id
+                marketName
+                image {
+                    id
+                    cidMarket
+                }
+            }
         }
     }
 `;
@@ -185,6 +205,18 @@ export const FETCH_POOLS_BY_IDS = gql`
             tick
             feesUSD
             untrackedFeesUSD
+            market0 {
+                id
+                marketName
+                image {
+                    id
+                    cidMarket
+                    cidOutcomes
+                }
+                tokens {
+                  id
+                }
+            }
         }
     }
 `;
@@ -526,6 +558,18 @@ export const INFINITE_EVENTS = gql`
             bonusRewardToken
             pool {
               id
+              market0 {
+                id
+                marketName
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                }
+              }
             }
             startTime
             endTime

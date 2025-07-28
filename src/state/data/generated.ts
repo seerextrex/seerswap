@@ -13142,7 +13142,14 @@ export type FetchPoolQuery = (
     ), token1: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
-    ) }
+    ), market0?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket'>
+      )> }
+    )> }
   )> }
 );
 
@@ -13162,7 +13169,17 @@ export type FetchPoolsByIdsQuery = (
     ), token1: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
-    ) }
+    ), market0?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )>, tokens: Array<(
+        { __typename?: 'Token' }
+        & Pick<Token, 'id'>
+      )> }
+    )> }
   )> }
 );
 
@@ -13458,6 +13475,17 @@ export type InfiniteFarmsQuery = (
     & { pool: (
       { __typename?: 'Pool' }
       & Pick<Pool, 'id'>
+      & { market0?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        )> }
+      )> }
     ) }
   )> }
 );
@@ -13840,6 +13868,14 @@ export const FetchPoolDocument = `
     tick
     feesUSD
     untrackedFeesUSD
+    market0 {
+      id
+      marketName
+      image {
+        id
+        cidMarket
+      }
+    }
   }
 }
     `;
@@ -13863,6 +13899,18 @@ export const FetchPoolsByIdsDocument = `
     tick
     feesUSD
     untrackedFeesUSD
+    market0 {
+      id
+      marketName
+      image {
+        id
+        cidMarket
+        cidOutcomes
+      }
+      tokens {
+        id
+      }
+    }
   }
 }
     `;
@@ -14206,6 +14254,18 @@ export const InfiniteFarmsDocument = `
     bonusRewardToken
     pool {
       id
+      market0 {
+        id
+        marketName
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+        }
+      }
     }
     startTime
     endTime

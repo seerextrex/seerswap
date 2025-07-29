@@ -471,6 +471,47 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
             owner
             pool {
               id
+              token0 {
+                id
+                symbol
+                decimals
+              }
+              token1 {
+                id
+                symbol
+                decimals
+              }
+              totalValueLockedUSD
+              market0 {
+                id
+                marketName
+                wrappedTokensString
+                totalValueLockedUSD
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                  name
+                }
+              }
+              market1 {
+                id
+                marketName
+                wrappedTokensString
+                totalValueLockedUSD
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                  name
+                }
+              }
             }
             L2tokenId
             limitFarming {
@@ -508,6 +549,47 @@ export const POSITIONS_ON_ETERNAL_FARMING = gql`
             owner
             pool {
               id
+              token0 {
+                id
+                symbol
+                decimals
+              }
+              token1 {
+                id
+                symbol
+                decimals
+              }
+              totalValueLockedUSD
+              market0 {
+                id
+                marketName
+                wrappedTokensString
+                totalValueLockedUSD
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                  name
+                }
+              }
+              market1 {
+                id
+                marketName
+                wrappedTokensString
+                totalValueLockedUSD
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                  name
+                }
+              }
             }
             L2tokenId
             eternalFarming {
@@ -526,6 +608,47 @@ export const TRANSFERED_POSITIONS_FOR_POOL = gql`
             owner
             pool {
               id
+              token0 {
+                id
+                symbol
+                decimals
+              }
+              token1 {
+                id
+                symbol
+                decimals
+              }
+              totalValueLockedUSD
+              market0 {
+                id
+                marketName
+                wrappedTokensString
+                totalValueLockedUSD
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                  name
+                }
+              }
+              market1 {
+                id
+                marketName
+                wrappedTokensString
+                totalValueLockedUSD
+                image {
+                  id
+                  cidMarket
+                  cidOutcomes
+                }
+                tokens {
+                  id
+                  name
+                }
+              }
             }
             L2tokenId
             limitFarming {
@@ -629,8 +752,8 @@ export const INFINITE_EVENTS = gql`
               market1 {
                 id
                 marketName
-                wrappedTokensString
                 totalValueLockedUSD
+                wrappedTokensString
                 image {
                   id
                   cidMarket

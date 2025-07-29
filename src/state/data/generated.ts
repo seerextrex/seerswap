@@ -13382,7 +13382,34 @@ export type TransferedPositionsQuery = (
     & Pick<Deposit, 'id' | 'owner' | 'L2tokenId' | 'onFarmingCenter'>
     & { pool: (
       { __typename?: 'Pool' }
-      & Pick<Pool, 'id'>
+      & Pick<Pool, 'id' | 'totalValueLockedUSD'>
+      & { token0: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+      ), token1: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+      ), market0?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )>, market1?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )> }
     ), limitFarming?: Maybe<(
       { __typename?: 'LimitFarming' }
       & Pick<LimitFarming, 'id'>
@@ -13418,7 +13445,34 @@ export type PositionsOnEternalFarmingQuery = (
     & Pick<Deposit, 'id' | 'owner' | 'L2tokenId' | 'onFarmingCenter' | 'enteredInEternalFarming'>
     & { pool: (
       { __typename?: 'Pool' }
-      & Pick<Pool, 'id'>
+      & Pick<Pool, 'id' | 'totalValueLockedUSD'>
+      & { token0: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+      ), token1: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+      ), market0?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )>, market1?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )> }
     ), eternalFarming?: Maybe<(
       { __typename?: 'EternalFarming' }
       & Pick<EternalFarming, 'id'>
@@ -13439,7 +13493,34 @@ export type TransferedPositionsForPoolQuery = (
     & Pick<Deposit, 'id' | 'owner' | 'L2tokenId' | 'onFarmingCenter' | 'enteredInEternalFarming' | 'tokensLockedLimit' | 'tokensLockedEternal' | 'tierLimit' | 'tierEternal'>
     & { pool: (
       { __typename?: 'Pool' }
-      & Pick<Pool, 'id'>
+      & Pick<Pool, 'id' | 'totalValueLockedUSD'>
+      & { token0: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+      ), token1: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+      ), market0?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )>, market1?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )> }
     ), limitFarming?: Maybe<(
       { __typename?: 'LimitFarming' }
       & Pick<LimitFarming, 'id'>
@@ -13539,7 +13620,7 @@ export type InfiniteFarmsQuery = (
         )> }
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & Pick<Market, 'id' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
         & { image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
@@ -14244,6 +14325,47 @@ export const TransferedPositionsDocument = `
     owner
     pool {
       id
+      token0 {
+        id
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        symbol
+        decimals
+      }
+      totalValueLockedUSD
+      market0 {
+        id
+        marketName
+        wrappedTokensString
+        totalValueLockedUSD
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
+      market1 {
+        id
+        marketName
+        wrappedTokensString
+        totalValueLockedUSD
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
     }
     L2tokenId
     limitFarming {
@@ -14274,6 +14396,47 @@ export const PositionsOnEternalFarmingDocument = `
     owner
     pool {
       id
+      token0 {
+        id
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        symbol
+        decimals
+      }
+      totalValueLockedUSD
+      market0 {
+        id
+        marketName
+        wrappedTokensString
+        totalValueLockedUSD
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
+      market1 {
+        id
+        marketName
+        wrappedTokensString
+        totalValueLockedUSD
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
     }
     L2tokenId
     eternalFarming {
@@ -14295,6 +14458,47 @@ export const TransferedPositionsForPoolDocument = `
     owner
     pool {
       id
+      token0 {
+        id
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        symbol
+        decimals
+      }
+      totalValueLockedUSD
+      market0 {
+        id
+        marketName
+        wrappedTokensString
+        totalValueLockedUSD
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
+      market1 {
+        id
+        marketName
+        wrappedTokensString
+        totalValueLockedUSD
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
     }
     L2tokenId
     limitFarming {
@@ -14399,8 +14603,8 @@ export const InfiniteFarmsDocument = `
       market1 {
         id
         marketName
-        wrappedTokensString
         totalValueLockedUSD
+        wrappedTokensString
         image {
           id
           cidMarket

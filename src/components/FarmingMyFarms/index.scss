@@ -2,6 +2,233 @@
 
 .my-farms {
 
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  &__sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__sort-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  &__sort-select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:focus {
+      outline: 2px solid rgba(255, 255, 255, 0.3);
+      outline-offset: 2px;
+    }
+
+    option {
+      background: #1a1a1a;
+      color: white;
+    }
+  }
+
+  &__toggle-all {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &__market-group {
+    margin-bottom: 2rem;
+  }
+
+  &__market-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus {
+      outline: 2px solid rgba(255, 255, 255, 0.3);
+      outline-offset: 2px;
+    }
+  }
+
+  &__market-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__market-image-container {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  &__market-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: opacity 0.3s ease;
+
+    &.loading {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  &__market-image-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  &__market-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  &__market-title {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__market-count {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    width: fit-content;
+  }
+
+  &__market-tvl {
+    margin-left: 0.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: normal;
+  }
+
+  &__market-toggle {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.8);
+    transition: transform 0.2s ease;
+  }
+
+  &__market-content {
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    &.expanded {
+      max-height: none;
+      opacity: 1;
+    }
+
+    &.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+  }
+
+  // Token image styles
+  .token-image-container {
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .token-image {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .token-image-placeholder {
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+  }
+
   &__nft-send {
 
     input {
@@ -67,7 +294,6 @@
           height: 100%;
 
           @include skeleton-gradient()
-
         }
       }
     }
@@ -105,9 +331,7 @@
       }
     }
 
-    &__nft-send {
-
-    }
+    &__nft-send {}
 
 
     &__position-card {
@@ -122,9 +346,7 @@
         }
       }
 
-      &__body {
-
-      }
+      &__body {}
     }
   }
 
@@ -134,7 +356,7 @@
     justify-content: start;
     text-align: start;
 
-    & > span {
+    &>span {
       margin-top: .25rem;
       margin-bottom: .25rem;
 

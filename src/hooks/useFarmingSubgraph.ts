@@ -85,6 +85,86 @@ export function useFarmingSubgraph() {
 
     const ethPrices = useEthPrices();
 
+    // Utility function to validate token data
+    const isValidToken = (token: any): boolean => {
+        return token &&
+            typeof token.id === 'string' &&
+            typeof token.symbol === 'string' &&
+            typeof token.decimals !== 'undefined' &&
+            Number.isInteger(Number(token.decimals)) &&
+            Number(token.decimals) >= 0;
+    };
+
+    // Utility function to detect retryable contract call errors
+    const isRetryableError = (error: any): boolean => {
+        if (!error || typeof error.message !== 'string') return false;
+        const message = error.message.toLowerCase();
+
+        // Network/RPC related errors that should be retried
+        return message.includes('missing revert data') ||
+            message.includes('call_exception') ||
+            message.includes('network error') ||
+            message.includes('timeout') ||
+            message.includes('connection') ||
+            message.includes('rpc') ||
+            error.code === 'CALL_EXCEPTION';
+    };
+
+    // Enhanced retry wrapper with data refresh capability
+    const retryContractCallWithRefresh = async <T>(
+        contractCall: () => Promise<T>,
+        refreshDataFn?: () => Promise<void>,
+        maxRetries = 3,
+        delayMs = 1000
+    ): Promise<T | { error: any }> => {
+        let lastError: any = null;
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                const result = await contractCall();
+                if (attempt > 1) {
+                    console.log(`[DEBUG] ✅ Contract call succeeded on attempt ${attempt}/${maxRetries} (retry successful!)`);
+                }
+                return result;
+            } catch (error) {
+                lastError = error;
+
+                if (isRetryableError(error) && attempt < maxRetries) {
+                    const errorTyped = error as any;
+                    console.warn(`[DEBUG] 🔄 Retryable error on attempt ${attempt}/${maxRetries}, retrying in ${delayMs}ms:`, {
+                        errorType: errorTyped.code || 'unknown',
+                        errorMessage: errorTyped.message?.substring(0, 100) + '...',
+                        nextAttemptIn: delayMs,
+                        willRefreshData: attempt === 2 && !!refreshDataFn // Refresh data on 2nd attempt
+                    });
+
+                    // On the second attempt, try refreshing underlying data
+                    if (attempt === 2 && refreshDataFn) {
+                        try {
+                            console.log(`[DEBUG] 🔄 Refreshing underlying data before retry...`);
+                            await refreshDataFn();
+                        } catch (refreshError) {
+                            console.warn(`[DEBUG] ⚠️ Data refresh failed:`, refreshError);
+                        }
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                    delayMs *= 1.5; // Exponential backoff
+                } else {
+                    if (attempt === maxRetries) {
+                        console.error(`[DEBUG] ❌ All ${maxRetries} retry attempts failed`);
+                    } else {
+                        console.error(`[DEBUG] ❌ Non-retryable error, aborting retries`);
+                    }
+                    break;
+                }
+            }
+        }
+
+        console.error(`[DEBUG] Contract call failed after ${maxRetries} attempts:`, lastError);
+        return { error: lastError };
+    };
+
     const fetchPositionsOnFarmer = useCallback(async (account: string) => {
         try {
             setPositionsOnFarmerLoading(true);
@@ -446,6 +526,8 @@ export function useFarmingSubgraph() {
         try {
             setTransferredPositionsLoading(true);
 
+            console.log(`[DEBUG] Starting fetchTransferredPositions`);
+
             const {
                 data: { deposits: positionsTransferred },
                 error,
@@ -658,9 +740,51 @@ export function useFarmingSubgraph() {
                 })
             );
 
+            // Create targeted refresh functions for contract calls
+            const refreshTokensAndPools = async () => {
+                console.log(`[DEBUG] 🔄 Refreshing tokens and pools data...`);
+
+                try {
+                    // Re-fetch the most recent pool and token data
+                    if (allPoolIdsForGeneralBatching.size > 0) {
+                        const {
+                            data: { pools: refreshedPools },
+                        } = await dataClient.query<SubgraphResponse<PoolSubgraph[]>>({
+                            query: FETCH_POOLS_BY_IDS,
+                            variables: { poolIds: Array.from(allPoolIdsForGeneralBatching) },
+                            fetchPolicy: "network-only", // Force fresh data
+                        });
+
+                        // Update the maps with fresh data
+                        refreshedPools.forEach(pool => poolMap.set(pool.id, pool));
+                        console.log(`[DEBUG] ✅ Refreshed ${refreshedPools.length} pools`);
+                    }
+
+                    if (allTokenIdsForBatching.size > 0) {
+                        const {
+                            data: { tokens: refreshedTokens },
+                        } = await dataClient.query<SubgraphResponse<TokenSubgraph[]>>({
+                            query: FETCH_TOKENS_BY_IDS,
+                            variables: { tokenIds: Array.from(allTokenIdsForBatching) },
+                            fetchPolicy: "network-only", // Force fresh data
+                        });
+
+                        // Update the maps with fresh data
+                        refreshedTokens.forEach(token => tokenMap.set(token.id, token));
+                        console.log(`[DEBUG] ✅ Refreshed ${refreshedTokens.length} tokens`);
+                    }
+                } catch (refreshError) {
+                    console.warn(`[DEBUG] ⚠️ Failed to refresh data:`, refreshError);
+                    throw refreshError; // Re-throw so retry knows refresh failed
+                }
+            };
+
             // 2. Prepare all on-chain contract calls in parallel
             const nftPromises = positionsWithTvl.map(pos =>
-                new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId], NON_FUN_POS_MAN, provider).positions.staticCall(+pos.id).catch(e => ({ error: e }))
+                retryContractCallWithRefresh(() =>
+                    new Contract(NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId], NON_FUN_POS_MAN, provider).positions.staticCall(+pos.id),
+                    refreshTokensAndPools // Refresh data on 2nd attempt
+                ).catch(e => ({ error: e }))
             );
             const limitRewardPromises = positionsWithTvl.map(pos => {
                 if (pos.limitFarm) {
@@ -675,13 +799,16 @@ export function useFarmingSubgraph() {
                         startTime: +startTime,
                         endTime: +endTime
                     });
-                    return new Contract(FINITE_FARMING[chainId], FINITE_FARMING_ABI, provider).getRewardInfo.staticCall(
-                        account,
-                        rewardToken,
-                        bonusRewardToken,
-                        limitPoolId,
-                        +startTime,
-                        +endTime
+                    return retryContractCallWithRefresh(() =>
+                        new Contract(FINITE_FARMING[chainId], FINITE_FARMING_ABI, provider).getRewardInfo.staticCall(
+                            account,
+                            rewardToken,
+                            bonusRewardToken,
+                            limitPoolId,
+                            +startTime,
+                            +endTime
+                        ),
+                        refreshTokensAndPools // Refresh data on 2nd attempt
                     ).catch(e => {
                         console.error(`[DEBUG] Limit farm contract call failed for position ${pos.id}:`, e);
                         return { error: e };
@@ -689,7 +816,7 @@ export function useFarmingSubgraph() {
                 }
                 return null;
             });
-            const eternalRewardPromises = positionsWithTvl.map(pos => {
+            const eternalRewardPromises = positionsWithTvl.map(async (pos) => {
                 if (pos.eternalFarm) {
                     const { rewardToken, bonusRewardToken, pool, startTime, endTime } = pos.eternalFarm;
                     // Extract pool ID if pool is an object
@@ -698,13 +825,51 @@ export function useFarmingSubgraph() {
                         rewardParams: [rewardToken, bonusRewardToken, eternalPoolId, startTime, endTime],
                         positionId: +pos.id
                     });
-                    return new Contract(FARMING_CENTER[chainId], FARMING_CENTER_ABI, provider).collectRewards.staticCall(
-                        [rewardToken, bonusRewardToken, eternalPoolId, startTime, endTime],
-                        +pos.id
-                    ).catch(e => {
-                        console.error(`[DEBUG] Eternal farm contract call failed for position ${pos.id}:`, e);
-                        return { error: e };
-                    });
+
+                    const result = await retryContractCallWithRefresh(
+                        () => {
+                            // Add parameter validation logging
+                            console.log(`[DEBUG] 🔍 Contract call parameters for position ${pos.id}:`, {
+                                contractAddress: FARMING_CENTER[chainId],
+                                method: 'collectRewards',
+                                rewardToken,
+                                bonusRewardToken,
+                                poolId: eternalPoolId,
+                                startTime,
+                                endTime,
+                                positionId: +pos.id,
+                                farmingExists: !!pos.eternalFarm,
+                                parametersValid: {
+                                    rewardTokenNotZero: rewardToken !== '0x0000000000000000000000000000000000000000',
+                                    bonusRewardIsZero: bonusRewardToken === '0x0000000000000000000000000000000000000000',
+                                    poolIdExists: !!eternalPoolId,
+                                    timesValid: startTime && endTime && +startTime < +endTime,
+                                    positionIdValid: +pos.id > 0
+                                }
+                            });
+
+                            return new Contract(FARMING_CENTER[chainId], FARMING_CENTER_ABI, provider).collectRewards.staticCall(
+                                [rewardToken, bonusRewardToken, eternalPoolId, startTime, endTime],
+                                +pos.id
+                            );
+                        },
+                        refreshTokensAndPools // Refresh data on 2nd attempt
+                    );
+
+                    // Check if retry wrapper returned an error
+                    if (result && typeof result === 'object' && 'error' in result) {
+                        console.error(`[DEBUG] All eternal farm contract call attempts failed for position ${pos.id}:`, result.error);
+                        return result; // Return the error result
+                    }
+
+                    // Validate the successful result structure
+                    if (result && (result.reward !== undefined || result.bonusReward !== undefined)) {
+                        console.log(`[DEBUG] Eternal farm contract call succeeded for position ${pos.id}`);
+                        return result;
+                    } else {
+                        console.warn(`[DEBUG] Invalid reward result structure for position ${pos.id}:`, result);
+                        return { error: new Error(`Invalid reward result structure`) };
+                    }
                 }
                 return null;
             });
@@ -733,94 +898,64 @@ export function useFarmingSubgraph() {
                     eternalFarmPool: pos.eternalFarm?.pool
                 });
 
-                // NFT details
-                const nft = nftResults[i];
-                if (nft && !nft.error) {
-                    extra.tickLower = nft.tickLower;
-                    extra.tickUpper = nft.tickUpper;
-                    extra.liquidity = nft.liquidity;
-                    extra.token0 = nft.token0;
-                    extra.token1 = nft.token1;
-
+                // Process NFT data
+                const nftResult = nftResults[i];
+                if (nftResult && !nftResult.error) {
                     console.log(`[DEBUG] NFT data for position ${pos.id}:`, {
-                        token0Address: nft.token0,
-                        token1Address: nft.token1,
-                        liquidity: nft.liquidity?.toString()
+                        token0Address: nftResult.token0,
+                        token1Address: nftResult.token1,
+                        liquidity: nftResult.liquidity.toString()
+                    });
+                    Object.assign(extra, {
+                        token0: nftResult.token0,
+                        token1: nftResult.token1,
+                        liquidity: nftResult.liquidity.toString(),
+                        tickLower: Number(nftResult.tickLower),
+                        tickUpper: Number(nftResult.tickUpper),
+                        fee: nftResult.fee,
                     });
                 } else {
-                    extra.nftError = nft && nft.error ? nft.error : undefined;
-                    console.log(`[DEBUG] NFT error for position ${pos.id}:`, nft?.error);
+                    extra.nftError = nftResult?.error || 'Failed to fetch NFT data';
+                    console.warn(`[DEBUG] NFT error for position ${pos.id}:`, extra.nftError);
                 }
 
                 // Limit farming rewards
                 if (pos.limitFarm) {
                     const rewardInfo = limitRewardResults[i];
-                    const _rewardToken = tokenMap.get(pos.limitFarm.rewardToken);
-                    const _bonusRewardToken = tokenMap.get(pos.limitFarm.bonusRewardToken);
-                    const _multiplierToken = tokenMap.get(pos.limitFarm.multiplierToken);
-                    const _pool = poolMap.get(pos.limitFarm.pool);
-
-                    // Debug token resolution for limit farming
-                    console.log(`[DEBUG] Limit Farm Token Resolution for position ${pos.id}:`, {
-                        rewardTokenAddress: pos.limitFarm.rewardToken,
-                        rewardTokenFound: !!_rewardToken,
-                        rewardTokenSymbol: _rewardToken?.symbol,
-                        bonusRewardTokenAddress: pos.limitFarm.bonusRewardToken,
-                        bonusRewardTokenFound: !!_bonusRewardToken,
-                        bonusRewardTokenSymbol: _bonusRewardToken?.symbol,
-                        poolId: pos.limitFarm.pool,
-                        poolFound: !!_pool,
-                        poolToken0: _pool?.token0?.symbol,
-                        poolToken1: _pool?.token1?.symbol,
-                        tokenMapSize: tokenMap.size,
-                        poolMapSize: poolMap.size
-                    });
-
-                    // Debug logging for limit farming rewards
                     console.log(`[DEBUG] Limit Farm Rewards for position ${pos.id}:`, {
                         rewardInfo,
                         hasError: rewardInfo?.error,
-                        reward0: rewardInfo?.[0]?.toString(),
-                        reward1: rewardInfo?.[1]?.toString(),
-                        rewardToken: _rewardToken?.symbol,
-                        bonusRewardToken: _bonusRewardToken?.symbol,
-                        farmStartTime: pos.limitFarm.startTime,
-                        farmEndTime: pos.limitFarm.endTime
+                        errorMessage: rewardInfo?.error?.message
                     });
 
-                    if (_rewardToken && _bonusRewardToken && _pool) {
-                        Object.assign(extra, {
-                            pool: _pool,
-                            limitRewardToken: _rewardToken,
-                            limitBonusRewardToken: _bonusRewardToken,
-                            limitStartTime: +pos.limitFarm.startTime,
-                            limitEndTime: +pos.limitFarm.endTime,
-                            started: +pos.limitFarm.startTime * 1000 < Date.now(),
-                            ended: +pos.limitFarm.endTime * 1000 < Date.now(),
-                            createdAtTimestamp: +pos.limitFarm.createdAtTimestamp,
-                            limitEarned: rewardInfo && !rewardInfo.error && rewardInfo[0] ? formatUnits(BigInt(rewardInfo[0]), Number(_rewardToken.decimals)) : "0",
-                            limitBonusEarned: rewardInfo && !rewardInfo.error && rewardInfo[1] ? formatUnits(BigInt(rewardInfo[1]), Number(_bonusRewardToken.decimals)) : "0",
-                            multiplierToken: _multiplierToken,
-                            limitTokenAmountForTier1: pos.limitFarm.tokenAmountForTier1,
-                            limitTokenAmountForTier2: pos.limitFarm.tokenAmountForTier2,
-                            limitTokenAmountForTier3: pos.limitFarm.tokenAmountForTier3,
-                            limitTier1Multiplier: pos.limitFarm.tier1Multiplier,
-                            limitTier2Multiplier: pos.limitFarm.tier2Multiplier,
-                            limitTier3Multiplier: pos.limitFarm.tier3Multiplier,
-                        });
+                    if (rewardInfo && !rewardInfo.error) {
+                        extra.limitEarned = rewardInfo.reward ? formatUnits(BigInt(rewardInfo.reward), 18) : "0";
+                        extra.limitBonusEarned = rewardInfo.bonusReward ? formatUnits(BigInt(rewardInfo.bonusReward), 18) : "0";
+                        console.log(`[DEBUG] Calculated limit earned for position ${pos.id}: ${extra.limitEarned}, bonus: ${extra.limitBonusEarned}`);
                     } else {
-                        extra.limitFarmError = 'Missing token or pool data';
-                        console.warn(`[DEBUG] Limit farm error for position ${pos.id}: Missing token or pool data`);
+                        extra.limitEarned = "0";
+                        extra.limitBonusEarned = "0";
+                        extra.limitRewardError = rewardInfo?.error || 'Failed to fetch limit rewards';
+                        console.warn(`[DEBUG] Limit reward error for position ${pos.id}:`, extra.limitRewardError);
                     }
                 }
 
-                // Eternal farming rewards
+                // Eternal farming rewards  
                 if (pos.eternalFarm) {
                     const rewardInfo = eternalRewardResults[i];
+
+                    console.log(`[DEBUG] Eternal Farm Rewards for position ${pos.id}:`, {
+                        rewardInfo,
+                        hasError: rewardInfo?.error,
+                        errorMessage: rewardInfo?.error?.message,
+                        reward: rewardInfo?.reward,
+                        bonusReward: rewardInfo?.bonusReward,
+                    });
+
                     const _rewardToken = tokenMap.get(pos.eternalFarm.rewardToken);
                     const _bonusRewardToken = tokenMap.get(pos.eternalFarm.bonusRewardToken);
                     const _multiplierToken = tokenMap.get(pos.eternalFarm.multiplierToken);
-                    const _pool = poolMap.get(pos.eternalFarm.pool.id);
+                    const _pool = poolMap.get(typeof pos.eternalFarm.pool === 'object' ? pos.eternalFarm.pool.id : pos.eternalFarm.pool);
 
                     // Debug token resolution for eternal farming
                     console.log(`[DEBUG] Eternal Farm Token Resolution for position ${pos.id}:`, {
@@ -832,41 +967,73 @@ export function useFarmingSubgraph() {
                         bonusRewardTokenFound: !!_bonusRewardToken,
                         bonusRewardTokenSymbol: _bonusRewardToken?.symbol,
                         bonusRewardTokenDecimals: _bonusRewardToken?.decimals,
-                        poolId: pos.eternalFarm.pool.id,
+                        poolId: typeof pos.eternalFarm.pool === 'object' ? pos.eternalFarm.pool.id : pos.eternalFarm.pool,
                         poolFound: !!_pool,
-                        poolToken0: _pool?.token0,
-                        poolToken1: _pool?.token1,
-                        poolToken0Symbol: _pool?.token0?.symbol,
-                        poolToken1Symbol: _pool?.token1?.symbol,
-                        tokenMapKeys: Array.from(tokenMap.keys()).slice(0, 5), // First 5 keys
-                        poolMapKeys: Array.from(poolMap.keys()).slice(0, 5),   // First 5 keys
-                        eternalFarmPoolObject: pos.eternalFarm.pool
-                    });
-
-                    // Debug logging for eternal farming rewards
-                    console.log(`[DEBUG] Eternal Farm Rewards for position ${pos.id}:`, {
-                        rewardInfo,
-                        hasError: rewardInfo?.error,
-                        errorMessage: rewardInfo?.error?.message,
-                        reward: rewardInfo?.reward?.toString(),
-                        bonusReward: rewardInfo?.bonusReward?.toString(),
-                        rewardToken: _rewardToken?.symbol,
-                        bonusRewardToken: _bonusRewardToken?.symbol,
-                        farmStartTime: pos.eternalFarm.startTime,
-                        farmEndTime: pos.eternalFarm.endTime,
-                        contractCallParameters: {
-                            rewardParams: [
-                                pos.eternalFarm.rewardToken,
-                                pos.eternalFarm.bonusRewardToken,
-                                pos.eternalFarm.pool.id,
-                                pos.eternalFarm.startTime,
-                                pos.eternalFarm.endTime
-                            ],
-                            positionId: +pos.id
-                        }
+                        poolToken0: _pool?.token0?.symbol,
+                        poolToken1: _pool?.token1?.symbol,
+                        tokenMapSize: tokenMap.size,
+                        poolMapSize: poolMap.size
                     });
 
                     if (_rewardToken && _bonusRewardToken && _pool) {
+                        // Validate token data before using it
+                        const isRewardTokenValid = isValidToken(_rewardToken);
+                        const isBonusTokenValid = isValidToken(_bonusRewardToken) || _bonusRewardToken.id === '0x0000000000000000000000000000000000000000';
+
+                        if (!isRewardTokenValid) {
+                            console.error(`[DEBUG] Invalid reward token data for position ${pos.id}:`, _rewardToken);
+                        }
+                        if (!isBonusTokenValid && _bonusRewardToken.id !== '0x0000000000000000000000000000000000000000') {
+                            console.error(`[DEBUG] Invalid bonus reward token data for position ${pos.id}:`, _bonusRewardToken);
+                        }
+
+                        // Calculate rewards with more robust error handling and state protection
+                        let eternalEarned = "0";
+                        let eternalBonusEarned = "0";
+                        let hasValidRewardData = false;
+
+                        try {
+                            if (rewardInfo && !rewardInfo.error && rewardInfo.reward && isRewardTokenValid) {
+                                const rewardAmount = BigInt(rewardInfo.reward);
+                                const decimals = Number(_rewardToken.decimals);
+                                if (rewardAmount > 0 && decimals >= 0) {
+                                    eternalEarned = formatUnits(rewardAmount, decimals);
+                                    hasValidRewardData = true;
+                                    console.log(`[DEBUG] ✅ Calculated eternal earned for position ${pos.id}: ${eternalEarned}`);
+                                }
+                            } else if (rewardInfo && rewardInfo.error) {
+                                console.warn(`[DEBUG] ⚠️ Reward info has error for position ${pos.id}:`, rewardInfo.error);
+                            } else if (!isRewardTokenValid) {
+                                console.warn(`[DEBUG] ⚠️ Skipping reward calculation due to invalid reward token for position ${pos.id}`);
+                            }
+                        } catch (err) {
+                            console.error(`[DEBUG] ❌ Error formatting eternal reward for position ${pos.id}:`, err);
+                            eternalEarned = "0";
+                        }
+
+                        // Bonus reward handling - simplified and less noisy
+                        try {
+                            if (_bonusRewardToken.id === '0x0000000000000000000000000000000000000000') {
+                                // Zero address bonus token is normal, just set to 0 without logging
+                                eternalBonusEarned = "0";
+                            } else if (rewardInfo && !rewardInfo.error && rewardInfo.bonusReward && isBonusTokenValid) {
+                                const bonusAmount = BigInt(rewardInfo.bonusReward);
+                                const decimals = Number(_bonusRewardToken.decimals);
+                                if (bonusAmount > 0 && decimals >= 0) {
+                                    eternalBonusEarned = formatUnits(bonusAmount, decimals);
+                                    console.log(`[DEBUG] Calculated eternal bonus earned for position ${pos.id}: ${eternalBonusEarned}`);
+                                }
+                            } else if (rewardInfo && rewardInfo.error) {
+                                // Only log bonus reward errors if the bonus token is not zero address
+                                if (_bonusRewardToken.id !== '0x0000000000000000000000000000000000000000') {
+                                    console.warn(`[DEBUG] Bonus reward info has error for position ${pos.id}:`, rewardInfo.error);
+                                }
+                            }
+                        } catch (err) {
+                            console.error(`[DEBUG] Error formatting eternal bonus reward for position ${pos.id}:`, err);
+                            eternalBonusEarned = "0";
+                        }
+
                         Object.assign(extra, {
                             pool: _pool,
                             eternalRewardToken: _rewardToken,
@@ -880,9 +1047,21 @@ export function useFarmingSubgraph() {
                             eternalTokenAmountForTier1: pos.eternalFarm.tokenAmountForTier1,
                             eternalTokenAmountForTier2: pos.eternalFarm.tokenAmountForTier2,
                             eternalTokenAmountForTier3: pos.eternalFarm.tokenAmountForTier3,
-                            eternalEarned: rewardInfo && !rewardInfo.error && rewardInfo.reward ? formatUnits(BigInt(rewardInfo.reward), Number(_rewardToken.decimals)) : "0",
-                            eternalBonusEarned: rewardInfo && !rewardInfo.error && rewardInfo.bonusReward ? formatUnits(BigInt(rewardInfo.bonusReward), Number(_bonusRewardToken.decimals)) : "0",
+                            // Only update rewards if we have valid data or no existing data
+                            eternalEarned: hasValidRewardData ? eternalEarned : (pos.eternalEarned && parseFloat(String(pos.eternalEarned)) > 0 ? String(pos.eternalEarned) : eternalEarned),
+                            eternalBonusEarned: eternalBonusEarned,
+                            // Add metadata about the reward calculation
+                            rewardDataSource: hasValidRewardData ? 'fresh_contract_call' : (pos.eternalEarned && parseFloat(String(pos.eternalEarned)) > 0 ? 'preserved_existing' : 'failed_calculation')
                         });
+
+                        // Log reward data handling for debugging race conditions
+                        if (hasValidRewardData) {
+                            console.log(`[DEBUG] 🆕 Using fresh reward data for position ${pos.id}: ${eternalEarned}`);
+                        } else if (pos.eternalEarned && parseFloat(String(pos.eternalEarned)) > 0) {
+                            console.log(`[DEBUG] 🔒 Preserving existing reward data for position ${pos.id}: ${pos.eternalEarned} (avoiding race condition)`);
+                        } else {
+                            console.log(`[DEBUG] ⚪ No valid reward data for position ${pos.id}, using zero`);
+                        }
                     } else {
                         extra.eternalFarmError = 'Missing token or pool data';
                         console.warn(`[DEBUG] Eternal farm error for position ${pos.id}: Missing token or pool data`, {
@@ -945,10 +1124,22 @@ export function useFarmingSubgraph() {
             console.log(`[DEBUG] Position filtering results: ${finalPositions.length} total → ${validPositions.length} valid (filtered out ${finalPositions.length - validPositions.length})`);
 
             setTransferredPositions(validPositions);
+
+            // Log retry statistics
+            const totalContractCalls = finalPositions.length * 3; // NFT + limit + eternal per position
+            const failedCalls = finalPositions.reduce((count, pos) => {
+                return count +
+                    (pos.nftError ? 1 : 0) +
+                    (pos.limitRewardError ? 1 : 0) +
+                    (pos.eternalFarmError ? 1 : 0);
+            }, 0);
+
+            console.log(`[DEBUG] 📊 Contract Call Summary: ${totalContractCalls - failedCalls}/${totalContractCalls} successful, ${failedCalls} failed after retries`);
         } catch (err: any) {
+            console.warn(`[DEBUG] fetchTransferredPositions failed:`, err);
             setTransferredPositions([]);
             setTransferredPositionsLoading(false);
-            throw new Error("Transferred positions " + "code: " + err.code + ", " + err.message);
+            console.error("Error fetching transferred positions:", err.message || err);
         } finally {
             setTransferredPositionsLoading(false);
         }

@@ -13529,7 +13529,7 @@ export type InfiniteFarmsQuery = (
       & Pick<Pool, 'id'>
       & { market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+        & Pick<Market, 'id' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
         & { image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
@@ -13539,7 +13539,7 @@ export type InfiniteFarmsQuery = (
         )> }
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
         & { image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
@@ -14384,6 +14384,7 @@ export const InfiniteFarmsDocument = `
       market0 {
         id
         marketName
+        totalValueLockedUSD
         wrappedTokensString
         image {
           id
@@ -14399,6 +14400,7 @@ export const InfiniteFarmsDocument = `
         id
         marketName
         wrappedTokensString
+        totalValueLockedUSD
         image {
           id
           cidMarket

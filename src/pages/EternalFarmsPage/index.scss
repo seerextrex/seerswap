@@ -8,8 +8,47 @@
 
   &__controls {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1rem;
+  }
+
+  &__sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__sort-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  &__sort-select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:focus {
+      outline: 2px solid rgba(255, 255, 255, 0.3);
+      outline-offset: 2px;
+    }
+
+    option {
+      background: #1a1a1a;
+      color: white;
+    }
   }
 
   &__toggle-all {
@@ -133,6 +172,20 @@
     padding: 0.25rem 0.75rem;
     border-radius: 16px;
     width: fit-content;
+  }
+
+  &__market-tvl {
+    margin-left: 0.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: normal;
+  }
+
+  &__market-rewards {
+    margin-left: 0.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: normal;
   }
 
   &__market-toggle {

@@ -116,18 +116,8 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
                 return null;
             }
 
-            // Debug: Show what wrappedTokensString contains
-            console.log(`[TokenPairDisplay] 🔍 Debug ${marketName}:`, {
-                hasWrappedTokensString: !!market.wrappedTokensString,
-                wrappedTokensStringLength: market.wrappedTokensString?.length || 0,
-                wrappedTokensString: market.wrappedTokensString,
-                cidOutcomesLength: market.image[0].cidOutcomes.length,
-                tokensLength: market.tokens.length
-            });
-
             // Use wrappedTokensString if available (preferred method)
             if (market.wrappedTokensString && market.wrappedTokensString.length > 0) {
-                console.log(`[TokenPairDisplay] ✅ Using wrappedTokensString for ${marketName}`);
                 const wrappedTokens = market.wrappedTokensString.map((token: string) => token.toLowerCase());
                 const tokenIndex = wrappedTokens.findIndex((wrappedTokenId: string) =>
                     wrappedTokenId === tokenId?.toLowerCase()
@@ -135,20 +125,12 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
 
                 if (tokenIndex >= 0 && market.image[0].cidOutcomes[tokenIndex]) {
                     const imageUrl = `https://ipfs.io${market.image[0].cidOutcomes[tokenIndex]}`;
-                    console.log(`[TokenPairDisplay] 🔍 Found ${tokenId} in ${marketName}[${tokenIndex}] via wrappedTokensString: ${imageUrl}`);
                     return imageUrl;
-                } else {
-                    if (tokenIndex >= 0) {
-                        console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} found in ${marketName} wrappedTokensString[${tokenIndex}] but no corresponding cidOutcome (${market.image[0].cidOutcomes.length} images available)`);
-                    } else {
-                        console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} not found in ${marketName} wrappedTokensString: [${wrappedTokens.join(', ')}]`);
-                    }
-                    return null;
                 }
+                return null;
             }
 
             // Fallback: Filter out SER-INVALID tokens as they don't count towards cidOutcomes index
-            console.log(`[TokenPairDisplay] ⚠️ Using SER-INVALID filtering fallback for ${marketName}`);
             const validTokens = market.tokens.filter((token: any) =>
                 token.name !== 'SER-INVALID' && !token.name?.includes('SER-INVALID')
             );
@@ -159,19 +141,10 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
 
             if (tokenIndex >= 0 && market.image[0].cidOutcomes[tokenIndex]) {
                 const imageUrl = `https://ipfs.io${market.image[0].cidOutcomes[tokenIndex]}`;
-                console.log(`[TokenPairDisplay] 🔍 Found ${tokenId} in ${marketName}[${tokenIndex}] (filtered fallback): ${imageUrl}`);
                 return imageUrl;
-            } else {
-                const originalIndex = market.tokens.findIndex((token: any) =>
-                    token.id.toLowerCase() === tokenId?.toLowerCase()
-                );
-                if (originalIndex >= 0) {
-                    console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} found in ${marketName} but no valid image (filtered tokens: ${validTokens.length}, original: ${market.tokens.length})`);
-                } else {
-                    console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} not found in ${marketName} (${validTokens.length} valid tokens, ${market.tokens.length} total)`);
-                }
-                return null;
             }
+
+            return null;
         };
 
         // Try to find token images in market0 first, then market1
@@ -253,7 +226,7 @@ const MarketFarmsList = memo(({ farms, onFarmClick }: { farms: any[], onFarmClic
                     <Trans>TVL</Trans>
                 </div>
                 <div className="farm-header-item rewards">
-                    <Trans>Daily Rewards</Trans>
+                    <Trans>Daily Rewards (SEER-LPP)</Trans>
                 </div>
                 <div className="farm-header-item action">
                     <Trans>Action</Trans>
@@ -281,13 +254,8 @@ const MarketFarmsList = memo(({ farms, onFarmClick }: { farms: any[], onFarmClic
                         </div>
                         <div className="farm-item rewards">
                             <div className="reward-amount">
-                                {farm.dailyRewardRate ? `${farm.dailyRewardRate.toLocaleString()} SEER-LPP` : '-'}
+                                {farm.dailyRewardRate ? `${farm.dailyRewardRate.toLocaleString()}` : '-'}
                             </div>
-                            {farm.dailyBonusRewardRate && farm.dailyBonusRewardRate > 0 && (
-                                <div className="bonus-reward">
-                                    + {farm.dailyBonusRewardRate.toLocaleString()} bonus
-                                </div>
-                            )}
                         </div>
                         <div className="farm-item action">
                             <button
@@ -351,6 +319,7 @@ const MarketImage = memo(({ market, marketName }: { market: Market | undefined, 
 export default function EternalFarmsPage({ data, refreshing, priceFetched, fetchHandler }: EternalFarmsPageProps) {
     const [modalForPool, setModalForPool] = useState<any>(null);
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
+    const [sortBy, setSortBy] = useState<'name' | 'tvl' | 'rewards'>('tvl'); // Default sort by TVL
 
     useEffect(() => {
         // if (priceFetched) {
@@ -362,7 +331,9 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
     const groupedFarms = useMemo(() => {
         if (!data || data.length === 0) return {};
 
-        return data.reduce((groups: any, event: any) => {
+        const poolTVLMap = new Map<string, number>(); // Track unique pool TVLs
+
+        const groups = data.reduce((groups: any, event: any) => {
             const marketName = event.pool?.market0?.marketName || 'Unknown Market';
             const marketId = event.pool?.market0?.id || 'unknown';
             const marketKey = `${marketId}-${marketName}`;
@@ -372,29 +343,71 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                     marketName,
                     marketId,
                     market: event.pool?.market0 as Market | undefined,
-                    farms: []
+                    farms: [],
+                    poolIds: new Set<string>()
                 };
             }
 
             groups[marketKey].farms.push(event);
+
+            // Track unique pools for TVL calculation
+            const poolId = event.pool?.id;
+            if (poolId && !groups[marketKey].poolIds.has(poolId)) {
+                groups[marketKey].poolIds.add(poolId);
+                const poolTVL = parseFloat(event.pool?.totalValueLockedUSD || '0');
+                if (poolTVL > 0) {
+                    poolTVLMap.set(poolId, poolTVL);
+                }
+            }
+
             return groups;
         }, {});
+
+        // Calculate total TVL for each market
+        Object.values(groups).forEach((group: any) => {
+            group.totalTVL = Array.from(group.poolIds).reduce((total: number, poolId) => {
+                return total + (poolTVLMap.get(poolId as string) || 0);
+            }, 0);
+
+            // Calculate total daily rewards for this market
+            group.totalDailyRewards = group.farms.reduce((total: number, farm: any) => {
+                return total + (farm.dailyRewardRate || 0);
+            }, 0);
+
+            // Remove the poolIds set as we don't need it in the final object
+            delete group.poolIds;
+        });
+
+        return groups;
     }, [data]);
 
     const sortedMarketKeys = useMemo(() => {
         const keys = Object.keys(groupedFarms).sort((a, b) => {
-            const marketA = groupedFarms[a].marketName;
-            const marketB = groupedFarms[b].marketName;
+            const marketA = groupedFarms[a];
+            const marketB = groupedFarms[b];
 
-            // Put "Unknown Market" at the end
-            if (marketA === 'Unknown Market' && marketB !== 'Unknown Market') return 1;
-            if (marketA !== 'Unknown Market' && marketB === 'Unknown Market') return -1;
+            // Always put "Unknown Market" at the end regardless of sort criteria
+            if (marketA.marketName === 'Unknown Market' && marketB.marketName !== 'Unknown Market') return 1;
+            if (marketA.marketName !== 'Unknown Market' && marketB.marketName === 'Unknown Market') return -1;
 
-            return marketA.localeCompare(marketB);
+            switch (sortBy) {
+                case 'tvl':
+                    // Sort by TVL (descending - highest first)
+                    return (marketB.totalTVL || 0) - (marketA.totalTVL || 0);
+
+                case 'rewards':
+                    // Sort by total daily rewards (descending - highest first)
+                    return (marketB.totalDailyRewards || 0) - (marketA.totalDailyRewards || 0);
+
+                case 'name':
+                default:
+                    // Sort alphabetically by name
+                    return marketA.marketName.localeCompare(marketB.marketName);
+            }
         });
 
         return keys;
-    }, [groupedFarms]);
+    }, [groupedFarms, sortBy]);
 
     const toggleMarket = (marketKey: string) => {
         const newExpanded = new Set(expandedMarkets);
@@ -436,6 +449,18 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                 <div className={"eternal-page__container mb-1 w-100"}>
                     {sortedMarketKeys.length > 1 && (
                         <div className="eternal-page__controls">
+                            <div className="eternal-page__sort-controls">
+                                <span className="eternal-page__sort-label">Sort by:</span>
+                                <select
+                                    className="eternal-page__sort-select"
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value as 'name' | 'tvl' | 'rewards')}
+                                >
+                                    <option value="tvl">TVL (Highest)</option>
+                                    <option value="rewards">Rewards (Highest)</option>
+                                    <option value="name">Name (A-Z)</option>
+                                </select>
+                            </div>
                             <button
                                 className="eternal-page__toggle-all"
                                 onClick={toggleAllMarkets}
@@ -483,6 +508,16 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                             </h3>
                                             <span className="eternal-page__market-count">
                                                 {marketGroup.farms.length} pool{marketGroup.farms.length !== 1 ? 's' : ''}
+                                                {marketGroup.totalTVL > 0 && (
+                                                    <span className="eternal-page__market-tvl">
+                                                        • {formatDollarAmount(marketGroup.totalTVL)} TVL
+                                                    </span>
+                                                )}
+                                                {marketGroup.totalDailyRewards > 0 && (
+                                                    <span className="eternal-page__market-rewards">
+                                                        • {marketGroup.totalDailyRewards.toLocaleString()} SEER-LPP/day
+                                                    </span>
+                                                )}
                                             </span>
                                         </div>
                                     </div>

@@ -614,6 +614,7 @@ export const INFINITE_EVENTS = gql`
               market0 {
                 id
                 marketName
+                totalValueLockedUSD
                 wrappedTokensString
                 image {
                   id
@@ -629,6 +630,7 @@ export const INFINITE_EVENTS = gql`
                 id
                 marketName
                 wrappedTokensString
+                totalValueLockedUSD
                 image {
                   id
                   cidMarket
@@ -646,6 +648,7 @@ export const INFINITE_EVENTS = gql`
             bonusReward
             rewardRate
             bonusRewardRate
+
             tokenAmountForTier1
             tokenAmountForTier2
             tokenAmountForTier3

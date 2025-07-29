@@ -5396,6 +5396,7 @@ export type Market = {
   volume: Scalars['BigDecimal'];
   volumeUSD: Scalars['BigDecimal'];
   wrappedTokens: Array<Token>;
+  wrappedTokensString: Array<Scalars['String']>;
 };
 
 
@@ -6252,6 +6253,12 @@ export type Market_Filter = {
   volume_not?: Maybe<Scalars['BigDecimal']>;
   volume_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   wrappedTokens?: Maybe<Array<Scalars['String']>>;
+  wrappedTokensString?: Maybe<Array<Scalars['String']>>;
+  wrappedTokensString_contains?: Maybe<Array<Scalars['String']>>;
+  wrappedTokensString_contains_nocase?: Maybe<Array<Scalars['String']>>;
+  wrappedTokensString_not?: Maybe<Array<Scalars['String']>>;
+  wrappedTokensString_not_contains?: Maybe<Array<Scalars['String']>>;
+  wrappedTokensString_not_contains_nocase?: Maybe<Array<Scalars['String']>>;
   wrappedTokens_?: Maybe<Token_Filter>;
   wrappedTokens_contains?: Maybe<Array<Scalars['String']>>;
   wrappedTokens_contains_nocase?: Maybe<Array<Scalars['String']>>;
@@ -6378,7 +6385,8 @@ export enum Market_OrderBy {
   UpperBound = 'upperBound',
   Volume = 'volume',
   VolumeUsd = 'volumeUSD',
-  WrappedTokens = 'wrappedTokens'
+  WrappedTokens = 'wrappedTokens',
+  WrappedTokensString = 'wrappedTokensString'
 }
 
 export type MarketsCount = {
@@ -13110,13 +13118,23 @@ export type EternalFarmingsFromPoolsQuery = (
       & Pick<Pool, 'id'>
       & { market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName'>
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
         & { image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
           { __typename?: 'Token' }
-          & Pick<Token, 'id'>
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )>, market1?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
         )> }
       )> }
     ) }
@@ -13155,10 +13173,23 @@ export type FetchPoolQuery = (
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
     ), market0?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'marketName'>
+      & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
       & { image: Array<(
         { __typename?: 'Image' }
-        & Pick<Image, 'id' | 'cidMarket'>
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )>, tokens: Array<(
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'name'>
+      )> }
+    )>, market1?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )>, tokens: Array<(
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'name'>
       )> }
     )> }
   )> }
@@ -13182,23 +13213,23 @@ export type FetchPoolsByIdsQuery = (
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
     ), market0?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'marketName'>
+      & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
       & { image: Array<(
         { __typename?: 'Image' }
         & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
       )>, tokens: Array<(
         { __typename?: 'Token' }
-        & Pick<Token, 'id'>
+        & Pick<Token, 'id' | 'name'>
       )> }
     )>, market1?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'marketName'>
+      & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
       & { image: Array<(
         { __typename?: 'Image' }
         & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
       )>, tokens: Array<(
         { __typename?: 'Token' }
-        & Pick<Token, 'id'>
+        & Pick<Token, 'id' | 'name'>
       )> }
     )> }
   )> }
@@ -13498,13 +13529,23 @@ export type InfiniteFarmsQuery = (
       & Pick<Pool, 'id'>
       & { market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName'>
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
         & { image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
           { __typename?: 'Token' }
-          & Pick<Token, 'id'>
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )>, market1?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+        & { image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
         )> }
       )> }
     ) }
@@ -13840,8 +13881,24 @@ export const EternalFarmingsFromPoolsDocument = `
           cidMarket
           cidOutcomes
         }
+        wrappedTokensString
         tokens {
           id
+          name
+        }
+      }
+      market1 {
+        id
+        marketName
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        wrappedTokensString
+        tokens {
+          id
+          name
         }
       }
     }
@@ -13904,9 +13961,29 @@ export const FetchPoolDocument = `
     market0 {
       id
       marketName
+      wrappedTokensString
       image {
         id
         cidMarket
+        cidOutcomes
+      }
+      tokens {
+        id
+        name
+      }
+    }
+    market1 {
+      id
+      marketName
+      wrappedTokensString
+      image {
+        id
+        cidMarket
+        cidOutcomes
+      }
+      tokens {
+        id
+        name
       }
     }
   }
@@ -13936,6 +14013,7 @@ export const FetchPoolsByIdsDocument = `
     market0 {
       id
       marketName
+      wrappedTokensString
       image {
         id
         cidMarket
@@ -13943,11 +14021,13 @@ export const FetchPoolsByIdsDocument = `
       }
       tokens {
         id
+        name
       }
     }
     market1 {
       id
       marketName
+      wrappedTokensString
       image {
         id
         cidMarket
@@ -13955,6 +14035,7 @@ export const FetchPoolsByIdsDocument = `
       }
       tokens {
         id
+        name
       }
     }
   }
@@ -14303,6 +14384,7 @@ export const InfiniteFarmsDocument = `
       market0 {
         id
         marketName
+        wrappedTokensString
         image {
           id
           cidMarket
@@ -14310,6 +14392,21 @@ export const InfiniteFarmsDocument = `
         }
         tokens {
           id
+          name
+        }
+      }
+      market1 {
+        id
+        marketName
+        wrappedTokensString
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
         }
       }
     }

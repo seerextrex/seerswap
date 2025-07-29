@@ -2,7 +2,7 @@ overrideExisting: true
 schema:
   [
     "https://gateway.thegraph.com/api/a8441e20c7c42cf9aa2e532f596a33c4/subgraphs/id/FSFGfeobVFdtoWnGkULtLQ5vYu38tc9BxYR1e1yXjVPZ",
-    "https://api.studio.thegraph.com/query/111511/seer-fast/version/latest"
+    "https://api.studio.thegraph.com/query/111511/seer-swap/version/latest"
   ]
 documents: "src/**/!(*.d).{ts,tsx}"
 generates:

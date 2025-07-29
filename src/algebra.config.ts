@@ -90,8 +90,8 @@ export default {
 
     SUBGRAPH: {
         blocklyticsURL: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/FSFGfeobVFdtoWnGkULtLQ5vYu38tc9BxYR1e1yXjVPZ`,
-        infoURL: `https://api.studio.thegraph.com/query/111511/seer-fast/version/latest`,
-        farmingURL: `https://api.studio.thegraph.com/query/111511/seer-fast/version/latest`,
+        infoURL: `https://api.studio.thegraph.com/query/111511/seer-swap/version/latest`,
+        farmingURL: `https://api.studio.thegraph.com/query/111511/seer-swap/version/latest`,
     },
 
     API: {

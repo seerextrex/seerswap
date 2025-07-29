@@ -112,8 +112,10 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
             cidMarket
             cidOutcomes
           }
+          wrappedTokensString
           tokens {
             id
+            name
           }
         }
         market1 {
@@ -124,8 +126,10 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
             cidMarket
             cidOutcomes
           }
+          wrappedTokensString
           tokens {
             id
+            name
           }
         }
       }
@@ -188,6 +192,7 @@ export const FETCH_POOL = gql`
             market0 {
                 id
                 marketName
+                wrappedTokensString
                 image {
                     id
                     cidMarket
@@ -195,11 +200,13 @@ export const FETCH_POOL = gql`
                 }
                 tokens {
                     id
+                    name
                 }
             }
             market1 {
                 id
                 marketName
+                wrappedTokensString
                 image {
                     id
                     cidMarket
@@ -207,6 +214,7 @@ export const FETCH_POOL = gql`
                 }
                 tokens {
                     id
+                    name
                 }
             }
         }
@@ -237,6 +245,7 @@ export const FETCH_POOLS_BY_IDS = gql`
             market0 {
                 id
                 marketName
+                wrappedTokensString
                 image {
                     id
                     cidMarket
@@ -244,11 +253,13 @@ export const FETCH_POOLS_BY_IDS = gql`
                 }
                 tokens {
                   id
+                  name
                 }
             }
-                            market1 {
+            market1 {
                 id
                 marketName
+                wrappedTokensString
                 image {
                     id
                     cidMarket
@@ -256,6 +267,7 @@ export const FETCH_POOLS_BY_IDS = gql`
                 }
                 tokens {
                   id
+                  name
                 }
             }
         }
@@ -602,6 +614,7 @@ export const INFINITE_EVENTS = gql`
               market0 {
                 id
                 marketName
+                wrappedTokensString
                 image {
                   id
                   cidMarket
@@ -609,11 +622,13 @@ export const INFINITE_EVENTS = gql`
                 }
                 tokens {
                   id
+                  name
                 }
               }
               market1 {
                 id
                 marketName
+                wrappedTokensString
                 image {
                   id
                   cidMarket
@@ -621,6 +636,7 @@ export const INFINITE_EVENTS = gql`
                 }
                 tokens {
                   id
+                  name
                 }
               }
             }

@@ -1,15 +1,16 @@
-import { useEffect, useState, useMemo } from "react";
-import { Frown, ChevronDown, ChevronUp, ExternalLink } from "react-feather";
-import Loader from "../../components/Loader";
-import Modal from "../../components/Modal";
-import { FarmModal } from "../../components/FarmModal";
-import { FarmingType } from "../../models/enums";
-import { Market } from "../../state/data/generated";
-import { formatDollarAmount } from "../../utils/numbers";
-import SDAI_LOGO from "../../assets/images/sdai-logo.svg";
-import "./index.scss";
-
-import { Trans } from "@lingui/macro";
+import React, { useEffect, useState, useMemo, useCallback, memo } from 'react';
+import { Trans } from '@lingui/macro';
+import { Frown, ChevronDown, ChevronUp, ExternalLink } from 'react-feather';
+import Loader from '../../components/Loader';
+import Modal from '../../components/Modal';
+import { FarmModal } from '../../components/FarmModal';
+import { FarmingType } from '../../models/enums';
+import { useFarmingSubgraph } from '../../hooks/useFarmingSubgraph';
+import { FormattedEternalFarming } from '../../models/interfaces/farming';
+import { formatDollarAmount } from '../../utils/numbers';
+import './index.scss';
+import SDAI_LOGO from '../../assets/images/sdai-logo.svg';
+import { Market, Image } from '../../state/data/generated';
 
 interface EternalFarmsPageProps {
     data: any[] | null;
@@ -18,21 +19,24 @@ interface EternalFarmsPageProps {
     fetchHandler: () => any;
 }
 
-const TokenImage = ({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: string | null, tokenSymbol: string, size?: number }) => {
+const TokenImage = memo(({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: string | null, tokenSymbol: string, size?: number }) => {
     const [imageError, setImageError] = useState(false);
     const [imageLoading, setImageLoading] = useState(true);
 
-    const handleImageError = () => {
+    const handleImageError = useCallback(() => {
+        console.warn(`[TokenImage] ❌ Failed to load image for ${tokenSymbol}:`, imageUrl);
         setImageError(true);
         setImageLoading(false);
-    };
+    }, [tokenSymbol, imageUrl]);
 
-    const handleImageLoad = () => {
+    const handleImageLoad = useCallback(() => {
+        console.log(`[TokenImage] ✅ Successfully loaded image for ${tokenSymbol}:`, imageUrl);
         setImageLoading(false);
-    };
+    }, [tokenSymbol, imageUrl]);
 
     // Special case for sDAI - use imported logo
     if (tokenSymbol.toLowerCase() === 'sdai') {
+        console.log(`[TokenImage] 🎯 Using imported sDAI logo for ${tokenSymbol}`);
         return (
             <img
                 src={SDAI_LOGO}
@@ -44,6 +48,9 @@ const TokenImage = ({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: string | n
     }
 
     if (!imageUrl || imageError) {
+        if (!imageUrl) {
+            console.log(`[TokenImage] 📋 No IPFS URL found for ${tokenSymbol}, using placeholder`);
+        }
         return (
             <div
                 className="token-image-placeholder"
@@ -84,9 +91,123 @@ const TokenImage = ({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: string | n
             />
         </div>
     );
-};
+});
 
-const TokenPairDisplay = ({ pool }: { pool: any }) => {
+const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
+    const { token0ImageUrl, token1ImageUrl } = useMemo(() => {
+        console.log(`[TokenPairDisplay] 🔍 Analyzing pool ${pool?.id} (${pool?.token0?.symbol}/${pool?.token1?.symbol}):`, {
+            hasMarket0: !!pool?.market0,
+            hasMarket1: !!pool?.market1,
+            market0TokenCount: pool?.market0?.tokens?.length || 0,
+            market1TokenCount: pool?.market1?.tokens?.length || 0,
+            market0ImageCount: pool?.market0?.image?.[0]?.cidOutcomes?.length || 0,
+            market1ImageCount: pool?.market1?.image?.[0]?.cidOutcomes?.length || 0
+        });
+
+        if (!pool?.market0 && !pool?.market1) {
+            console.warn(`[TokenPairDisplay] ⚠️ No markets found for pool ${pool?.id}`);
+            return { token0ImageUrl: null, token1ImageUrl: null };
+        }
+
+        // Helper function to find token image in a market
+        const findTokenImage = (market: Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'> & { image: Array<Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>>; tokens: Array<{ id: string; name: string }> } | null | undefined, tokenId: string, marketName: string) => {
+            if (!market?.tokens || !market?.image?.[0]?.cidOutcomes) {
+                console.log(`[TokenPairDisplay] 📊 ${marketName} missing data: tokens=${!!market?.tokens}, images=${!!market?.image?.[0]?.cidOutcomes}`);
+                return null;
+            }
+
+            // Debug: Show what wrappedTokensString contains
+            console.log(`[TokenPairDisplay] 🔍 Debug ${marketName}:`, {
+                hasWrappedTokensString: !!market.wrappedTokensString,
+                wrappedTokensStringLength: market.wrappedTokensString?.length || 0,
+                wrappedTokensString: market.wrappedTokensString,
+                cidOutcomesLength: market.image[0].cidOutcomes.length,
+                tokensLength: market.tokens.length
+            });
+
+            // Use wrappedTokensString if available (preferred method)
+            if (market.wrappedTokensString && market.wrappedTokensString.length > 0) {
+                console.log(`[TokenPairDisplay] ✅ Using wrappedTokensString for ${marketName}`);
+                const wrappedTokens = market.wrappedTokensString.map((token: string) => token.toLowerCase());
+                const tokenIndex = wrappedTokens.findIndex((wrappedTokenId: string) =>
+                    wrappedTokenId === tokenId?.toLowerCase()
+                );
+
+                if (tokenIndex >= 0 && market.image[0].cidOutcomes[tokenIndex]) {
+                    const imageUrl = `https://ipfs.io${market.image[0].cidOutcomes[tokenIndex]}`;
+                    console.log(`[TokenPairDisplay] 🔍 Found ${tokenId} in ${marketName}[${tokenIndex}] via wrappedTokensString: ${imageUrl}`);
+                    return imageUrl;
+                } else {
+                    if (tokenIndex >= 0) {
+                        console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} found in ${marketName} wrappedTokensString[${tokenIndex}] but no corresponding cidOutcome (${market.image[0].cidOutcomes.length} images available)`);
+                    } else {
+                        console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} not found in ${marketName} wrappedTokensString: [${wrappedTokens.join(', ')}]`);
+                    }
+                    return null;
+                }
+            }
+
+            // Fallback: Filter out SER-INVALID tokens as they don't count towards cidOutcomes index
+            console.log(`[TokenPairDisplay] ⚠️ Using SER-INVALID filtering fallback for ${marketName}`);
+            const validTokens = market.tokens.filter((token: any) =>
+                token.name !== 'SER-INVALID' && !token.name?.includes('SER-INVALID')
+            );
+
+            const tokenIndex = validTokens.findIndex((token: any) =>
+                token.id.toLowerCase() === tokenId?.toLowerCase()
+            );
+
+            if (tokenIndex >= 0 && market.image[0].cidOutcomes[tokenIndex]) {
+                const imageUrl = `https://ipfs.io${market.image[0].cidOutcomes[tokenIndex]}`;
+                console.log(`[TokenPairDisplay] 🔍 Found ${tokenId} in ${marketName}[${tokenIndex}] (filtered fallback): ${imageUrl}`);
+                return imageUrl;
+            } else {
+                const originalIndex = market.tokens.findIndex((token: any) =>
+                    token.id.toLowerCase() === tokenId?.toLowerCase()
+                );
+                if (originalIndex >= 0) {
+                    console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} found in ${marketName} but no valid image (filtered tokens: ${validTokens.length}, original: ${market.tokens.length})`);
+                } else {
+                    console.log(`[TokenPairDisplay] 🔍 Token ${tokenId} not found in ${marketName} (${validTokens.length} valid tokens, ${market.tokens.length} total)`);
+                }
+                return null;
+            }
+        };
+
+        // Try to find token images in market0 first, then market1
+        let token0Url: string | null = null;
+        let token1Url: string | null = null;
+        let token0Source = 'none';
+        let token1Source = 'none';
+
+        if (pool.market0) {
+            token0Url = findTokenImage(pool.market0, pool.token0?.id, 'market0');
+            token1Url = findTokenImage(pool.market0, pool.token1?.id, 'market0');
+            if (token0Url) token0Source = 'market0';
+            if (token1Url) token1Source = 'market0';
+        }
+
+        // If not found in market0, try market1
+        if (!token0Url && pool.market1) {
+            console.log(`[TokenPairDisplay] 🔄 Token0 ${pool.token0?.symbol} not in market0, trying market1...`);
+            token0Url = findTokenImage(pool.market1, pool.token0?.id, 'market1');
+            if (token0Url) token0Source = 'market1';
+        }
+        if (!token1Url && pool.market1) {
+            console.log(`[TokenPairDisplay] 🔄 Token1 ${pool.token1?.symbol} not in market0, trying market1...`);
+            token1Url = findTokenImage(pool.market1, pool.token1?.id, 'market1');
+            if (token1Url) token1Source = 'market1';
+        }
+
+        // Summary log for this token pair
+        console.log(`[TokenPairDisplay] 📋 Final results for ${pool.token0?.symbol}/${pool.token1?.symbol}:`, {
+            token0: { found: !!token0Url, source: token0Source, url: token0Url || 'none' },
+            token1: { found: !!token1Url, source: token1Source, url: token1Url || 'none' }
+        });
+
+        return { token0ImageUrl: token0Url, token1ImageUrl: token1Url };
+    }, [pool?.market0, pool?.market1, pool?.token0?.id, pool?.token1?.id, pool?.token0?.symbol, pool?.token1?.symbol]);
+
     if (!pool?.market0 && !pool?.market1) {
         return (
             <div className="token-pair-display">
@@ -95,36 +216,6 @@ const TokenPairDisplay = ({ pool }: { pool: any }) => {
                 </div>
             </div>
         );
-    }
-
-    // Helper function to find token image in a market
-    const findTokenImage = (market: any, tokenId: string) => {
-        if (!market?.tokens || !market?.image?.[0]?.cidOutcomes) return null;
-
-        const tokenIndex = market.tokens.findIndex((token: any) =>
-            token.id.toLowerCase() === tokenId?.toLowerCase()
-        );
-
-        return tokenIndex >= 0 && market.image[0].cidOutcomes[tokenIndex]
-            ? `https://ipfs.io${market.image[0].cidOutcomes[tokenIndex]}`
-            : null;
-    };
-
-    // Try to find token images in market0 first, then market1
-    let token0ImageUrl: string | null = null;
-    let token1ImageUrl: string | null = null;
-
-    if (pool.market0) {
-        token0ImageUrl = findTokenImage(pool.market0, pool.token0?.id);
-        token1ImageUrl = findTokenImage(pool.market0, pool.token1?.id);
-    }
-
-    // If not found in market0, try market1
-    if (!token0ImageUrl && pool.market1) {
-        token0ImageUrl = findTokenImage(pool.market1, pool.token0?.id);
-    }
-    if (!token1ImageUrl && pool.market1) {
-        token1ImageUrl = findTokenImage(pool.market1, pool.token1?.id);
     }
 
     return (
@@ -146,9 +237,9 @@ const TokenPairDisplay = ({ pool }: { pool: any }) => {
             </div>
         </div>
     );
-};
+});
 
-const MarketFarmsList = ({ farms, onFarmClick }: { farms: any[], onFarmClick: (farm: any) => void }) => {
+const MarketFarmsList = memo(({ farms, onFarmClick }: { farms: any[], onFarmClick: (farm: any) => void }) => {
     return (
         <div className="market-farms-list">
             <div className="market-farms-header">
@@ -212,9 +303,9 @@ const MarketFarmsList = ({ farms, onFarmClick }: { farms: any[], onFarmClick: (f
             </div>
         </div>
     );
-};
+});
 
-const MarketImage = ({ market, marketName }: { market: Market | undefined, marketName: string }) => {
+const MarketImage = memo(({ market, marketName }: { market: Market | undefined, marketName: string }) => {
     const [imageError, setImageError] = useState(false);
     const [imageLoading, setImageLoading] = useState(true);
 
@@ -222,14 +313,14 @@ const MarketImage = ({ market, marketName }: { market: Market | undefined, marke
         ? `https://ipfs.io${market.image[0].cidMarket}`
         : null;
 
-    const handleImageError = () => {
+    const handleImageError = useCallback(() => {
         setImageError(true);
         setImageLoading(false);
-    };
+    }, []);
 
-    const handleImageLoad = () => {
+    const handleImageLoad = useCallback(() => {
         setImageLoading(false);
-    };
+    }, []);
 
     if (!imageUrl || imageError) {
         return (
@@ -255,7 +346,7 @@ const MarketImage = ({ market, marketName }: { market: Market | undefined, marke
             />
         </div>
     );
-};
+});
 
 export default function EternalFarmsPage({ data, refreshing, priceFetched, fetchHandler }: EternalFarmsPageProps) {
     const [modalForPool, setModalForPool] = useState<any>(null);

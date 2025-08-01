@@ -299,7 +299,7 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
                     <TokenImage
                         imageUrl={outcomeImageUrl}
                         tokenSymbol={outcomeName || outcomeToken.symbol || outcomeToken.name || 'TOKEN'}
-                        size={32}
+                        size={40}
                     />
                     <div className="outcome-token-symbol">
                         {displayName}
@@ -358,7 +358,7 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
                         <TokenImage
                             imageUrl={outcomeImageUrl}
                             tokenSymbol={outcomeName || outcomeToken.symbol || outcomeToken.name || 'TOKEN'}
-                            size={32}
+                            size={40}
                         />
                         <div className="outcome-token-symbol">
                             {displayName}
@@ -376,12 +376,12 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
                 <TokenImage
                     imageUrl={token0ImageUrl}
                     tokenSymbol={pool.token0?.symbol || 'T0'}
-                    size={32}
+                    size={40}
                 />
                 <TokenImage
                     imageUrl={token1ImageUrl}
                     tokenSymbol={pool.token1?.symbol || 'T1'}
-                    size={32}
+                    size={40}
                 />
             </div>
             <div className="token-pair-symbols">

@@ -13214,7 +13214,16 @@ export type FetchPoolsByIdsQuery = (
     ), market0?: Maybe<(
       { __typename?: 'Market' }
       & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
-      & { image: Array<(
+      & { collateralToken: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id'>
+      ), childMarkets: Array<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id'>
+      )>, parentMarket?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id'>
+      )>, image: Array<(
         { __typename?: 'Image' }
         & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
       )>, tokens: Array<(
@@ -13224,7 +13233,16 @@ export type FetchPoolsByIdsQuery = (
     )>, market1?: Maybe<(
       { __typename?: 'Market' }
       & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
-      & { image: Array<(
+      & { collateralToken: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id'>
+      ), childMarkets: Array<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id'>
+      )>, parentMarket?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id'>
+      )>, image: Array<(
         { __typename?: 'Image' }
         & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
       )>, tokens: Array<(
@@ -13611,7 +13629,16 @@ export type InfiniteFarmsQuery = (
       & { market0?: Maybe<(
         { __typename?: 'Market' }
         & Pick<Market, 'id' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
-        & { image: Array<(
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -13621,7 +13648,16 @@ export type InfiniteFarmsQuery = (
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
         & Pick<Market, 'id' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
-        & { image: Array<(
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -14093,6 +14129,15 @@ export const FetchPoolsByIdsDocument = `
     totalValueLockedUSD
     market0 {
       id
+      collateralToken {
+        id
+      }
+      childMarkets {
+        id
+      }
+      parentMarket {
+        id
+      }
       marketName
       wrappedTokensString
       image {
@@ -14107,6 +14152,15 @@ export const FetchPoolsByIdsDocument = `
     }
     market1 {
       id
+      collateralToken {
+        id
+      }
+      childMarkets {
+        id
+      }
+      parentMarket {
+        id
+      }
       marketName
       wrappedTokensString
       image {
@@ -14590,6 +14644,15 @@ export const InfiniteFarmsDocument = `
       id
       market0 {
         id
+        collateralToken {
+          id
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         totalValueLockedUSD
         wrappedTokensString
@@ -14605,6 +14668,15 @@ export const InfiniteFarmsDocument = `
       }
       market1 {
         id
+        collateralToken {
+          id
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         totalValueLockedUSD
         wrappedTokensString

@@ -12,7 +12,7 @@ import { useHandleSort } from '../../hooks/useHandleSort';
 import { useHandleArrow } from '../../hooks/useHandleArrow';
 import './index.scss';
 import SDAI_LOGO from '../../assets/images/sdai-logo.svg';
-import { Market, Image } from '../../state/data/generated';
+import { Market, Image, Token } from '../../state/data/generated';
 
 // Magic number representing infinity in the subgraph
 const INFINITY_TIMESTAMP = "18446744073709551615";
@@ -428,6 +428,7 @@ const MarketImage = memo(({ market, marketName }: { market: Market | undefined, 
 export default function EternalFarmsPage({ data, refreshing, priceFetched, fetchHandler }: EternalFarmsPageProps) {
     const [modalForPool, setModalForPool] = useState<any>(null);
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
+    const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
     const [sortBy, setSortBy] = useState<'name' | 'tvl' | 'rewards'>('tvl'); // Default sort by TVL
 
     useEffect(() => {
@@ -436,59 +437,273 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
         // }
     }, [priceFetched]);
 
-    // Group farms by market
+    // Helper function to detect if a pool represents a conditional market relationship
+    const isConditionalMarketPool = useCallback((farm: any): {
+        parentMarket: Market;
+        childMarket: Market;
+        relationship: 'parent-child';
+    } | null => {
+        const market0: Market | null | undefined = farm.pool?.market0;
+        const market1: Market | null | undefined = farm.pool?.market1;
+
+        if (!market0 || !market1) return null;
+
+        // Get token IDs for both markets (handle nullable tokens)
+        const market0TokenIds = market0.tokens?.map((t: Token) => t.id) || [];
+        const market1TokenIds = market1.tokens?.map((t: Token) => t.id) || [];
+        const market0CollateralId = market0.collateralToken?.id;
+        const market1CollateralId = market1.collateralToken?.id;
+
+        // Strategy 1: Check collateral token relationships (most reliable)
+        // If market0's collateralToken matches any token in market1 → market1 is parent
+        const market0UsesMarket1Token = market0CollateralId && market1TokenIds.includes(market0CollateralId);
+        // If market1's collateralToken matches any token in market0 → market0 is parent  
+        const market1UsesMarket0Token = market1CollateralId && market0TokenIds.includes(market1CollateralId);
+
+        // Strategy 2: Check explicit parent-child relationships from schema
+        const market0HasChildMarkets = market0.childMarkets && market0.childMarkets.length > 0;
+        const market1HasChildMarkets = market1.childMarkets && market1.childMarkets.length > 0;
+        const market0HasParent = !!market0.parentMarket?.id;
+        const market1HasParent = !!market1.parentMarket?.id;
+
+        // Strategy 3: Check if parent-child IDs match
+        const market0IsParentOfMarket1 = market0HasChildMarkets && market0.childMarkets?.some(child => child.id === market1.id);
+        const market1IsParentOfMarket0 = market1HasChildMarkets && market1.childMarkets?.some(child => child.id === market0.id);
+        const market0IsChildOfMarket1 = market0HasParent && market0.parentMarket?.id === market1.id;
+        const market1IsChildOfMarket0 = market1HasParent && market1.parentMarket?.id === market0.id;
+
+        // Determine parent-child relationship with PRIORITY-BASED GROUPING
+        let parentMarket: Market | null = null;
+        let childMarket: Market | null = null;
+
+        // PRIORITY 1: Direct collateral token relationships (most reliable)
+        if (market1UsesMarket0Token) {
+            parentMarket = market0;
+            childMarket = market1;
+        } else if (market0UsesMarket1Token) {
+            parentMarket = market1;
+            childMarket = market0;
+        }
+        // PRIORITY 2: Explicit parent-child ID relationships
+        else if (market0IsParentOfMarket1 || market1IsChildOfMarket0) {
+            parentMarket = market0;
+            childMarket = market1;
+        } else if (market1IsParentOfMarket0 || market0IsChildOfMarket1) {
+            parentMarket = market1;
+            childMarket = market0;
+        }
+        // PRIORITY 3: Schema indicators with validation
+        else if (market0HasChildMarkets && market1HasParent) {
+            // Verify with collateral token if available
+            if (!market1CollateralId || market0TokenIds.includes(market1CollateralId)) {
+                parentMarket = market0;
+                childMarket = market1;
+            }
+        } else if (market1HasChildMarkets && market0HasParent) {
+            // Verify with collateral token if available
+            if (!market0CollateralId || market1TokenIds.includes(market0CollateralId)) {
+                parentMarket = market1;
+                childMarket = market0;
+            }
+        }
+
+        if (parentMarket && childMarket) {
+            console.log(`[ConditionalMarket] 🎯 FOUND: ${parentMarket.marketName} → ${childMarket.marketName}`);
+            return {
+                parentMarket,
+                childMarket,
+                relationship: 'parent-child' as const
+            };
+        }
+
+        return null;
+    }, []);
+
+    // Group farms by market with hierarchical structure for conditional markets
     const groupedFarms = useMemo(() => {
-        if (!data || data.length === 0) return {};
+        if (!data || data.length === 0) {
+            console.log('[EternalFarms] ❌ No data available for grouping');
+            return {};
+        }
+
+        console.log(`[EternalFarms] 🚀 Processing ${data.length} farms for hierarchical grouping...`);
 
         const poolTVLMap = new Map<string, number>(); // Track unique pool TVLs
+        const groups: any = {};
 
-        const groups = data.reduce((groups: any, event: any) => {
-            const marketName = event.pool?.market0?.marketName || 'Unknown Market';
-            const marketId = event.pool?.market0?.id || 'unknown';
-            const marketKey = `${marketId}-${marketName}`;
+        data.forEach((farm: any) => {
+            const conditionalRelationship = isConditionalMarketPool(farm);
 
-            if (!groups[marketKey]) {
-                groups[marketKey] = {
-                    marketName,
-                    marketId,
-                    market: event.pool?.market0 as Market | undefined,
-                    farms: [],
-                    poolIds: new Set<string>()
-                };
-            }
+            if (conditionalRelationship) {
+                // Handle conditional markets with parent-child relationship
+                const { parentMarket, childMarket } = conditionalRelationship;
+                const parentKey = `${parentMarket.id}-${parentMarket.marketName}`;
+                const childKey = `${childMarket.id}-${childMarket.marketName}`;
 
-            groups[marketKey].farms.push(event);
+                // Create parent group if it doesn't exist
+                if (!groups[parentKey]) {
+                    groups[parentKey] = {
+                        marketName: parentMarket.marketName,
+                        marketId: parentMarket.id,
+                        market: parentMarket as Market | undefined,
+                        farms: [],
+                        poolIds: new Set<string>(),
+                        isParent: true,
+                        childMarkets: {}
+                    };
+                }
 
-            // Track unique pools for TVL calculation
-            const poolId = event.pool?.id;
-            if (poolId && !groups[marketKey].poolIds.has(poolId)) {
-                groups[marketKey].poolIds.add(poolId);
-                const poolTVL = parseFloat(event.pool?.totalValueLockedUSD || '0');
-                if (poolTVL > 0) {
-                    poolTVLMap.set(poolId, poolTVL);
+                // Create child group under parent
+                if (!groups[parentKey].childMarkets[childKey]) {
+                    groups[parentKey].childMarkets[childKey] = {
+                        marketName: childMarket.marketName,
+                        marketId: childMarket.id,
+                        market: childMarket as Market | undefined,
+                        farms: [],
+                        poolIds: new Set<string>(),
+                        isChild: true,
+                        parentKey: parentKey
+                    };
+                }
+
+                // Add farm to child market
+                groups[parentKey].childMarkets[childKey].farms.push(farm);
+
+                // Track pools for TVL calculation in both parent and child
+                const poolId = farm.pool?.id;
+                if (poolId) {
+                    const poolTVL = parseFloat(farm.pool?.totalValueLockedUSD || '0');
+
+                    if (!groups[parentKey].childMarkets[childKey].poolIds.has(poolId)) {
+                        groups[parentKey].childMarkets[childKey].poolIds.add(poolId);
+                        if (poolTVL > 0) {
+                            poolTVLMap.set(poolId, poolTVL);
+                        }
+                    }
+
+                    if (!groups[parentKey].poolIds.has(poolId)) {
+                        groups[parentKey].poolIds.add(poolId);
+                    }
+                }
+            } else {
+                // Handle regular markets with SMART MARKET SELECTION
+                // Priority: Choose the market that has more complete data or is a parent market
+                let selectedMarket: Market | null = null;
+
+                const market0 = farm.pool?.market0;
+                const market1 = farm.pool?.market1;
+
+                if (market0 && market1) {
+                    // PRIORITY 1: Choose parent market if one exists
+                    const market0IsParent = (market0.childMarkets && market0.childMarkets.length > 0);
+                    const market1IsParent = (market1.childMarkets && market1.childMarkets.length > 0);
+
+                    if (market0IsParent && !market1IsParent) {
+                        selectedMarket = market0;
+                    } else if (market1IsParent && !market0IsParent) {
+                        selectedMarket = market1;
+                    }
+                    // PRIORITY 2: Choose market with more complete data
+                    else if (!selectedMarket) {
+                        const market0Score = (market0.tokens?.length || 0) + (market0.collateralToken ? 1 : 0) + (market0.image?.length || 0);
+                        const market1Score = (market1.tokens?.length || 0) + (market1.collateralToken ? 1 : 0) + (market1.image?.length || 0);
+
+                        selectedMarket = market0Score >= market1Score ? market0 : market1;
+                    }
+                } else {
+                    selectedMarket = market0 || market1;
+                }
+
+                const marketName = selectedMarket?.marketName || 'Unknown Market';
+                const marketId = selectedMarket?.id || 'unknown';
+                const marketKey = `${marketId}-${marketName}`;
+
+                if (!groups[marketKey]) {
+                    groups[marketKey] = {
+                        marketName,
+                        marketId,
+                        market: selectedMarket as Market | undefined,
+                        farms: [],
+                        poolIds: new Set<string>(),
+                        isParent: false,
+                        childMarkets: {}
+                    };
+                }
+
+                groups[marketKey].farms.push(farm);
+
+                // Track unique pools for TVL calculation
+                const poolId = farm.pool?.id;
+                if (poolId && !groups[marketKey].poolIds.has(poolId)) {
+                    groups[marketKey].poolIds.add(poolId);
+                    const poolTVL = parseFloat(farm.pool?.totalValueLockedUSD || '0');
+                    if (poolTVL > 0) {
+                        poolTVLMap.set(poolId, poolTVL);
+                    }
                 }
             }
+        });
 
-            return groups;
-        }, {});
+        // Debug summary
+        const parentGroups = Object.keys(groups).filter(key => groups[key].isParent);
+        const regularGroups = Object.keys(groups).filter(key => !groups[key].isParent);
+        console.log(`[EternalFarms] 📈 FINAL SUMMARY: ${parentGroups.length} parent markets, ${regularGroups.length} regular markets`);
 
-        // Calculate total TVL for each market
+        if (parentGroups.length > 0) {
+            console.log(`[EternalFarms] 🏛️ Parent markets found:`, parentGroups.map(key => ({
+                name: groups[key].marketName,
+                id: groups[key].marketId,
+                childCount: Object.keys(groups[key].childMarkets).length,
+                directFarms: groups[key].farms.length,
+                childDetails: Object.keys(groups[key].childMarkets).map(childKey => ({
+                    name: groups[key].childMarkets[childKey].marketName,
+                    farms: groups[key].childMarkets[childKey].farms.length
+                }))
+            })));
+        } else {
+            console.log(`[EternalFarms] ⚠️ No parent markets detected! This might indicate conditional market detection isn't working.`);
+        }
+
+        console.log(`[EternalFarms] 🏪 Regular markets:`, regularGroups.map(key => ({
+            name: groups[key].marketName,
+            id: groups[key].marketId,
+            farms: groups[key].farms.length
+        })));
+
+        // Calculate total TVL and total daily rewards for each market group
         Object.values(groups).forEach((group: any) => {
+            // Calculate for parent market
             group.totalTVL = Array.from(group.poolIds).reduce((total: number, poolId) => {
                 return total + (poolTVLMap.get(poolId as string) || 0);
             }, 0);
 
-            // Calculate total daily rewards for this market
             group.totalDailyRewards = group.farms.reduce((total: number, farm: any) => {
                 return total + (farm.dailyRewardRate || 0);
             }, 0);
+
+            // Calculate for child markets
+            Object.values(group.childMarkets).forEach((childGroup: any) => {
+                childGroup.totalTVL = Array.from(childGroup.poolIds).reduce((total: number, poolId) => {
+                    return total + (poolTVLMap.get(poolId as string) || 0);
+                }, 0);
+
+                childGroup.totalDailyRewards = childGroup.farms.reduce((total: number, farm: any) => {
+                    return total + (farm.dailyRewardRate || 0);
+                }, 0);
+
+                // Add child totals to parent totals
+                group.totalDailyRewards += childGroup.totalDailyRewards;
+
+                // Remove the poolIds set as we don't need it in the final object
+                delete childGroup.poolIds;
+            });
 
             // Remove the poolIds set as we don't need it in the final object
             delete group.poolIds;
         });
 
         return groups;
-    }, [data]);
+    }, [data, isConditionalMarketPool]);
 
     const sortedMarketKeys = useMemo(() => {
         const keys = Object.keys(groupedFarms).sort((a, b) => {
@@ -528,13 +743,35 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
         setExpandedMarkets(newExpanded);
     };
 
+    const toggleChildMarket = (childKey: string) => {
+        const newExpanded = new Set(expandedChildMarkets);
+        if (newExpanded.has(childKey)) {
+            newExpanded.delete(childKey);
+        } else {
+            newExpanded.add(childKey);
+        }
+        setExpandedChildMarkets(newExpanded);
+    };
+
     const toggleAllMarkets = () => {
         if (expandedMarkets.size === sortedMarketKeys.length) {
             // Collapse all
             setExpandedMarkets(new Set());
+            setExpandedChildMarkets(new Set());
         } else {
-            // Expand all
+            // Expand all parent markets
             setExpandedMarkets(new Set(sortedMarketKeys));
+            // Expand all child markets
+            const allChildKeys: string[] = [];
+            sortedMarketKeys.forEach(parentKey => {
+                const parentGroup = groupedFarms[parentKey];
+                if (parentGroup.isParent) {
+                    Object.keys(parentGroup.childMarkets).forEach(childKey => {
+                        allChildKeys.push(childKey);
+                    });
+                }
+            });
+            setExpandedChildMarkets(new Set(allChildKeys));
         }
     };
 
@@ -614,9 +851,24 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                         <div className="eternal-page__market-text">
                                             <h3 className="eternal-page__market-title">
                                                 {marketGroup.marketName}
+                                                {marketGroup.isParent && Object.keys(marketGroup.childMarkets).length > 0 && (
+                                                    <span className="eternal-page__parent-market-badge">
+                                                        <Trans>Parent Market</Trans>
+                                                    </span>
+                                                )}
                                             </h3>
                                             <span className="eternal-page__market-count">
-                                                {marketGroup.farms.length} pool{marketGroup.farms.length !== 1 ? 's' : ''}
+                                                {(() => {
+                                                    const directPools = marketGroup.farms.length;
+                                                    const childPools = Object.values(marketGroup.childMarkets).reduce((sum: number, child: any) => sum + child.farms.length, 0);
+                                                    const totalPools = directPools + childPools;
+
+                                                    if (marketGroup.isParent && childPools > 0) {
+                                                        return `${totalPools} pool${totalPools !== 1 ? 's' : ''} (${directPools} direct, ${childPools} in child markets)`;
+                                                    } else {
+                                                        return `${directPools} pool${directPools !== 1 ? 's' : ''}`;
+                                                    }
+                                                })()}
                                                 {marketGroup.totalTVL > 0 && (
                                                     <span className="eternal-page__market-tvl">
                                                         • {formatDollarAmount(marketGroup.totalTVL)} TVL
@@ -639,10 +891,80 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                     </div>
                                 </div>
                                 <div className={`eternal-page__market-content ${isExpanded ? 'expanded' : 'collapsed'}`}>
-                                    <MarketFarmsList
-                                        farms={marketGroup.farms}
-                                        onFarmClick={setModalForPool}
-                                    />
+                                    {/* Render direct farms for this market (non-conditional or parent market farms) */}
+                                    {marketGroup.farms.length > 0 && (
+                                        <MarketFarmsList
+                                            farms={marketGroup.farms}
+                                            onFarmClick={setModalForPool}
+                                        />
+                                    )}
+
+                                    {/* Render child markets if this is a parent market */}
+                                    {marketGroup.isParent && Object.keys(marketGroup.childMarkets).length > 0 && (
+                                        <div className="eternal-page__child-markets">
+                                            {Object.entries(marketGroup.childMarkets).map(([childKey, childGroup]: [string, any]) => {
+                                                const isChildExpanded = expandedChildMarkets.has(childKey);
+
+                                                return (
+                                                    <div key={childKey} className="eternal-page__child-market-group">
+                                                        <div
+                                                            className="eternal-page__child-market-header"
+                                                            onClick={() => toggleChildMarket(childKey)}
+                                                            role="button"
+                                                            tabIndex={0}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                                    e.preventDefault();
+                                                                    toggleChildMarket(childKey);
+                                                                }
+                                                            }}
+                                                        >
+                                                            <div className="eternal-page__child-market-info">
+                                                                <MarketImage
+                                                                    market={childGroup.market}
+                                                                    marketName={childGroup.marketName}
+                                                                />
+                                                                <div className="eternal-page__child-market-text">
+                                                                    <h4 className="eternal-page__child-market-title">
+                                                                        {childGroup.marketName}
+                                                                        <span className="eternal-page__child-market-badge">
+                                                                            <Trans>Child Market</Trans>
+                                                                        </span>
+                                                                    </h4>
+                                                                    <span className="eternal-page__child-market-count">
+                                                                        {childGroup.farms.length} pool{childGroup.farms.length !== 1 ? 's' : ''}
+                                                                        {childGroup.totalTVL > 0 && (
+                                                                            <span className="eternal-page__child-market-tvl">
+                                                                                • {formatDollarAmount(childGroup.totalTVL)} TVL
+                                                                            </span>
+                                                                        )}
+                                                                        {childGroup.totalDailyRewards > 0 && (
+                                                                            <span className="eternal-page__child-market-rewards">
+                                                                                • {childGroup.totalDailyRewards.toLocaleString()} SEER-LPP/day
+                                                                            </span>
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="eternal-page__child-market-toggle">
+                                                                {isChildExpanded ? (
+                                                                    <ChevronUp size={16} />
+                                                                ) : (
+                                                                    <ChevronDown size={16} />
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className={`eternal-page__child-market-content ${isChildExpanded ? 'expanded' : 'collapsed'}`}>
+                                                            <MarketFarmsList
+                                                                farms={childGroup.farms}
+                                                                onFarmClick={setModalForPool}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         );

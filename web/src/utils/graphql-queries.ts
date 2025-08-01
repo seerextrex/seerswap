@@ -244,6 +244,15 @@ export const FETCH_POOLS_BY_IDS = gql`
             totalValueLockedUSD
             market0 {
                 id
+                collateralToken {
+                    id
+                }
+                childMarkets {
+                    id
+                }
+                parentMarket {
+                    id
+                }
                 marketName
                 wrappedTokensString
                 image {
@@ -258,6 +267,15 @@ export const FETCH_POOLS_BY_IDS = gql`
             }
             market1 {
                 id
+                collateralToken {
+                    id
+                }
+                childMarkets {
+                    id
+                }
+                parentMarket {
+                    id
+                }
                 marketName
                 wrappedTokensString
                 image {
@@ -739,6 +757,15 @@ export const INFINITE_EVENTS = gql`
               id
               market0 {
                 id
+                collateralToken {
+                  id
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 totalValueLockedUSD
                 wrappedTokensString
@@ -754,6 +781,15 @@ export const INFINITE_EVENTS = gql`
               }
               market1 {
                 id
+                collateralToken {
+                  id
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 totalValueLockedUSD
                 wrappedTokensString

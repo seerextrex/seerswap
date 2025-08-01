@@ -163,6 +163,10 @@
     font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
   &__market-count {
@@ -209,6 +213,215 @@
       opacity: 0;
       margin-bottom: 0;
     }
+  }
+
+  // Child markets styles
+  &__child-markets {
+    margin-top: 1.5rem;
+    padding-left: 0;
+    position: relative;
+
+    // Add a visual connector line on the left
+    &::before {
+      content: '';
+      position: absolute;
+      left: 24px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom,
+          rgba(99, 102, 241, 0.4),
+          rgba(99, 102, 241, 0.1));
+      border-radius: 1px;
+    }
+  }
+
+  &__child-market-group {
+    margin-bottom: 2rem;
+    margin-left: 2rem;
+    position: relative;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    // Add connector dots
+    &::before {
+      content: '';
+      position: absolute;
+      left: -14px;
+      top: 20px;
+      width: 8px;
+      height: 8px;
+      background: rgba(99, 102, 241, 0.6);
+      border-radius: 50%;
+      border: 2px solid var(--ebony-clay);
+    }
+  }
+
+  &__child-market-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg,
+        rgba(99, 102, 241, 0.08),
+        rgba(99, 102, 241, 0.04));
+    border-radius: 10px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+
+    // Add subtle inner glow
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.02),
+          transparent);
+      border-radius: 9px;
+      pointer-events: none;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg,
+          rgba(99, 102, 241, 0.12),
+          rgba(99, 102, 241, 0.06));
+      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus {
+      outline: 2px solid rgba(99, 102, 241, 0.4);
+      outline-offset: 2px;
+    }
+  }
+
+  &__child-market-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__child-market-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  &__child-market-title {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    // Add child indicator
+    &::before {
+      content: '└';
+      color: rgba(99, 102, 241, 0.7);
+      font-size: 1rem;
+      font-weight: normal;
+      margin-right: 0.25rem;
+    }
+  }
+
+  &__child-market-count {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    background: rgba(99, 102, 241, 0.15);
+    padding: 0.25rem 0.75rem;
+    border-radius: 14px;
+    width: fit-content;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  &__child-market-tvl,
+  &__child-market-rewards {
+    margin-left: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    font-weight: normal;
+  }
+
+  &__child-market-toggle {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+    padding: 0.25rem;
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+  }
+
+  &__child-market-content {
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+    position: relative;
+
+    &.expanded {
+      max-height: none;
+      opacity: 1;
+    }
+
+    &.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    // Style the child market's farm list
+    .market-farms-list {
+      border-left: 3px solid rgba(99, 102, 241, 0.3);
+      background: rgba(99, 102, 241, 0.02);
+    }
+  }
+
+  // Add badges to distinguish parent and child markets
+  &__parent-market-badge {
+    background: linear-gradient(135deg,
+        rgba(34, 197, 94, 0.2),
+        rgba(34, 197, 94, 0.1));
+    color: rgba(34, 197, 94, 0.9);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    flex-shrink: 0;
+  }
+
+  &__child-market-badge {
+    background: linear-gradient(135deg,
+        rgba(99, 102, 241, 0.2),
+        rgba(99, 102, 241, 0.1));
+    color: rgba(99, 102, 241, 0.9);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    flex-shrink: 0;
   }
 
   &__row {
@@ -515,6 +728,80 @@
       position: absolute;
       top: 1rem;
       right: 1rem;
+    }
+
+    // Mobile responsive child markets
+    &__child-markets {
+      margin-top: 1rem;
+
+      &::before {
+        left: 12px;
+      }
+    }
+
+    &__child-market-group {
+      margin-left: 1rem;
+      margin-bottom: 1.5rem;
+
+      &::before {
+        left: -8px;
+        width: 6px;
+        height: 6px;
+      }
+    }
+
+    &__child-market-header {
+      padding: 0.75rem 1rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    &__child-market-info {
+      width: 100%;
+      gap: 0.75rem;
+    }
+
+    &__child-market-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    &__child-market-title {
+      font-size: 1rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+
+      &::before {
+        margin-right: 0;
+      }
+    }
+
+    &__child-market-toggle {
+      align-self: center;
+      margin-top: -2.5rem;
+      margin-right: 0.5rem;
+    }
+
+    &__parent-market-badge,
+    &__child-market-badge {
+      font-size: 0.6rem;
+      padding: 0.1rem 0.3rem;
+    }
+
+    // Mobile responsive market titles
+    &__market-title {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    &__market-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
     }
 
   }

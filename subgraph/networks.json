@@ -1,0 +1,104 @@
+{
+  "gnosis": {
+    "EternalFarming": {
+      "address": "0x607BbfD4CEbd869AaD04331F8a2AD0C3C396674b",
+      "startBlock": 36404701
+    },
+    "NonfungiblePositionManager": {
+      "address": "0x91fD594c46D8B01E62dBDeBed2401dde01817834",
+      "startBlock": 36404701
+    },
+    "Factory": {
+      "address": "0xA0864cCA6E114013AB0e27cbd5B6f4c8947da766",
+      "startBlock": 36404701
+    },
+    "LimitFarming": {
+      "address": "0xA01e2785d2D04cC0a09Bde9C3eA49Bf0aD7811F2",
+      "startBlock": 36404701
+    },
+    "FarmingCenter": {
+      "address": "0xDe51dDF1aE7d5BBD7bF1A0e40aAA1F6C12579106",
+      "startBlock": 36404701
+    },
+    "MarketFactory": {
+      "address": "0x83183DA839Ce8228E31Ae41222EaD9EDBb5cDcf1",
+      "startBlock": 36404701
+    },
+    "Reality": {
+      "address": "0xE78996A233895bE74a66F451f1019cA9734205cc",
+      "startBlock": 36404701
+    },
+    "ConditionalTokens": {
+      "address": "0xCeAfDD6bc0bEF976fdCd1112955828E00543c0Ce",
+      "startBlock": 36404701
+    },
+    "LightGeneralizedTCR": {
+      "address": "0x5aAF9E23A11440F8C1Ad6D2E2e5109C7e52CC672",
+      "startBlock": 36336124
+    },
+    "LightGTCRFactory": {
+      "address": "0x08e58Bc26CFB0d346bABD253A1799866F269805a",
+      "startBlock": 36336124
+    },
+    "Realitio_v2_1_ArbitratorWithAppeals": {
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 36404701
+    },
+    "RealitioForeignArbitrationProxyWithAppeals": {
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 36404701
+    }
+  },
+  "mainnet": {
+    "MarketFactory": {
+      "address": "0x1F728c2fD6a3008935c1446a965a313E657b7904",
+      "startBlock": 20894990
+    },
+    "Reality": {
+      "address": "0x5b7dd1e86623548af054a4985f7fc8ccbb554e2c",
+      "startBlock": 20894990
+    },
+    "ConditionalTokens": {
+      "address": "0xC59b0e4De5F1248C1140964E0fF287B192407E0C",
+      "startBlock": 20894990
+    },
+    "LightGeneralizedTCR": {
+      "address": "0x4A9f8e73b3c4c9d7fA0210b9de457b1c493a3AdA",
+      "startBlock": 20893866
+    },
+    "Realitio_v2_1_ArbitratorWithAppeals": {
+      "address": "0x2018038203aEE8e7a29dABd73771b0355D4F85ad",
+      "startBlock": 20892368
+    },
+    "RealitioForeignArbitrationProxyWithAppeals": {
+      "address": "0xFe0eb5fC686f929Eb26D541D75Bb59F816c0Aa68",
+      "startBlock": 20922529
+    }
+  },
+  "sepolia": {
+    "MarketFactory": {
+      "address": "0x221456ACFD185EE168052B3DA899939303775C7a",
+      "startBlock": 6992825
+    },
+    "Reality": {
+      "address": "0xaf33DcB6E8c5c4D9dDF579f53031b514d19449CA",
+      "startBlock": 6992825
+    },
+    "ConditionalTokens": {
+      "address": "0x8bdC504dC3A05310059c1c67E0A2667309D27B93",
+      "startBlock": 6992825
+    },
+    "LightGeneralizedTCR": {
+      "address": "0x06140fb869486363818196B61704493a8790F73C",
+      "startBlock": 7894106
+    },
+    "Realitio_v2_1_ArbitratorWithAppeals": {
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 36404701
+    },
+    "RealitioForeignArbitrationProxyWithAppeals": {
+      "address": "0x0000000000000000000000000000000000000000",
+      "startBlock": 36404701
+    }
+  }
+}

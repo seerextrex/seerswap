@@ -13118,20 +13118,26 @@ export type EternalFarmingsFromPoolsQuery = (
       & Pick<Pool, 'id'>
       & { market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString'>
         & { image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, wrappedTokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
         )>, tokens: Array<(
           { __typename?: 'Token' }
           & Pick<Token, 'id' | 'name'>
         )> }
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString'>
         & { image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, wrappedTokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
         )>, tokens: Array<(
           { __typename?: 'Token' }
           & Pick<Token, 'id' | 'name'>
@@ -13213,7 +13219,7 @@ export type FetchPoolsByIdsQuery = (
       & Pick<Token, 'id' | 'decimals' | 'symbol'>
     ), market0?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString'>
       & { collateralToken: (
         { __typename?: 'Token' }
         & Pick<Token, 'id'>
@@ -13223,6 +13229,9 @@ export type FetchPoolsByIdsQuery = (
       )>, parentMarket?: Maybe<(
         { __typename?: 'Market' }
         & Pick<Market, 'id'>
+      )>, wrappedTokens: Array<(
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'name'>
       )>, image: Array<(
         { __typename?: 'Image' }
         & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
@@ -13232,7 +13241,7 @@ export type FetchPoolsByIdsQuery = (
       )> }
     )>, market1?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'>
+      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString'>
       & { collateralToken: (
         { __typename?: 'Token' }
         & Pick<Token, 'id'>
@@ -13242,6 +13251,9 @@ export type FetchPoolsByIdsQuery = (
       )>, parentMarket?: Maybe<(
         { __typename?: 'Market' }
         & Pick<Market, 'id'>
+      )>, wrappedTokens: Array<(
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'name'>
       )>, image: Array<(
         { __typename?: 'Image' }
         & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
@@ -13628,7 +13640,7 @@ export type InfiniteFarmsQuery = (
       & Pick<Pool, 'id'>
       & { market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
         & { collateralToken: (
           { __typename?: 'Token' }
           & Pick<Token, 'id'>
@@ -13647,7 +13659,7 @@ export type InfiniteFarmsQuery = (
         )> }
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'totalValueLockedUSD' | 'wrappedTokensString'>
         & { collateralToken: (
           { __typename?: 'Token' }
           & Pick<Token, 'id'>
@@ -13657,6 +13669,9 @@ export type InfiniteFarmsQuery = (
         )>, parentMarket?: Maybe<(
           { __typename?: 'Market' }
           & Pick<Market, 'id'>
+        )>, wrappedTokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
         )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
@@ -13843,6 +13858,51 @@ export type EternalFarmingsByIdsQuery = (
     & { pool: (
       { __typename?: 'Pool' }
       & Pick<Pool, 'id'>
+      & { market0?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, wrappedTokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )>, image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )>, market1?: Maybe<(
+        { __typename?: 'Market' }
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, wrappedTokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )>, image: Array<(
+          { __typename?: 'Image' }
+          & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+        )>, tokens: Array<(
+          { __typename?: 'Token' }
+          & Pick<Token, 'id' | 'name'>
+        )> }
+      )> }
     ) }
   )> }
 );
@@ -13992,6 +14052,7 @@ export const EternalFarmingsFromPoolsDocument = `
       id
       market0 {
         id
+        outcomes
         marketName
         image {
           id
@@ -13999,6 +14060,10 @@ export const EternalFarmingsFromPoolsDocument = `
           cidOutcomes
         }
         wrappedTokensString
+        wrappedTokens {
+          id
+          name
+        }
         tokens {
           id
           name
@@ -14006,6 +14071,7 @@ export const EternalFarmingsFromPoolsDocument = `
       }
       market1 {
         id
+        outcomes
         marketName
         image {
           id
@@ -14013,6 +14079,10 @@ export const EternalFarmingsFromPoolsDocument = `
           cidOutcomes
         }
         wrappedTokensString
+        wrappedTokens {
+          id
+          name
+        }
         tokens {
           id
           name
@@ -14129,6 +14199,7 @@ export const FetchPoolsByIdsDocument = `
     totalValueLockedUSD
     market0 {
       id
+      outcomes
       collateralToken {
         id
       }
@@ -14140,6 +14211,10 @@ export const FetchPoolsByIdsDocument = `
       }
       marketName
       wrappedTokensString
+      wrappedTokens {
+        id
+        name
+      }
       image {
         id
         cidMarket
@@ -14152,6 +14227,7 @@ export const FetchPoolsByIdsDocument = `
     }
     market1 {
       id
+      outcomes
       collateralToken {
         id
       }
@@ -14163,6 +14239,10 @@ export const FetchPoolsByIdsDocument = `
       }
       marketName
       wrappedTokensString
+      wrappedTokens {
+        id
+        name
+      }
       image {
         id
         cidMarket
@@ -14644,6 +14724,7 @@ export const InfiniteFarmsDocument = `
       id
       market0 {
         id
+        outcomes
         collateralToken {
           id
         }
@@ -14668,6 +14749,7 @@ export const InfiniteFarmsDocument = `
       }
       market1 {
         id
+        outcomes
         collateralToken {
           id
         }
@@ -14680,6 +14762,10 @@ export const InfiniteFarmsDocument = `
         marketName
         totalValueLockedUSD
         wrappedTokensString
+        wrappedTokens {
+          id
+          name
+        }
         image {
           id
           cidMarket
@@ -14930,6 +15016,62 @@ export const EternalFarmingsByIdsDocument = `
     isDetached
     pool {
       id
+      market0 {
+        id
+        outcomes
+        collateralToken {
+          id
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
+        marketName
+        wrappedTokensString
+        wrappedTokens {
+          id
+          name
+        }
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
+      market1 {
+        id
+        outcomes
+        collateralToken {
+          id
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
+        marketName
+        wrappedTokensString
+        wrappedTokens {
+          id
+          name
+        }
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+      }
     }
     rewardToken
     bonusRewardToken

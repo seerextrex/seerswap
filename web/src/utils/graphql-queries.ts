@@ -106,6 +106,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
         id
         market0 {
           id
+          outcomes
           marketName
           image {
             id
@@ -113,6 +114,10 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
             cidOutcomes
           }
           wrappedTokensString
+          wrappedTokens {
+            id
+            name
+          }
           tokens {
             id
             name
@@ -120,6 +125,7 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
         }
         market1 {
           id
+          outcomes
           marketName
           image {
             id
@@ -127,6 +133,10 @@ export const FETCH_ETERNAL_FARM_FROM_POOL = gql`
             cidOutcomes
           }
           wrappedTokensString
+          wrappedTokens {
+            id
+            name
+          }
           tokens {
             id
             name
@@ -244,6 +254,7 @@ export const FETCH_POOLS_BY_IDS = gql`
             totalValueLockedUSD
             market0 {
                 id
+                outcomes
                 collateralToken {
                     id
                 }
@@ -255,6 +266,10 @@ export const FETCH_POOLS_BY_IDS = gql`
                 }
                 marketName
                 wrappedTokensString
+                wrappedTokens {
+                  id
+                  name
+                }
                 image {
                     id
                     cidMarket
@@ -267,6 +282,7 @@ export const FETCH_POOLS_BY_IDS = gql`
             }
             market1 {
                 id
+                outcomes
                 collateralToken {
                     id
                 }
@@ -278,6 +294,10 @@ export const FETCH_POOLS_BY_IDS = gql`
                 }
                 marketName
                 wrappedTokensString
+                wrappedTokens {
+                  id
+                  name
+                }
                 image {
                     id
                     cidMarket
@@ -757,6 +777,7 @@ export const INFINITE_EVENTS = gql`
               id
               market0 {
                 id
+                outcomes
                 collateralToken {
                   id
                 }
@@ -781,6 +802,7 @@ export const INFINITE_EVENTS = gql`
               }
               market1 {
                 id
+                outcomes
                 collateralToken {
                   id
                 }
@@ -793,6 +815,10 @@ export const INFINITE_EVENTS = gql`
                 marketName
                 totalValueLockedUSD
                 wrappedTokensString
+                wrappedTokens {
+                  id
+                  name
+                }
                 image {
                   id
                   cidMarket
@@ -1048,6 +1074,62 @@ export const FETCH_ETERNAL_FARMS_BY_IDS = (farmIds: string[]) => gql`
             isDetached
             pool {
                 id
+                market0 {
+                    id
+                    outcomes
+                    collateralToken {
+                        id
+                    }
+                    childMarkets {
+                        id
+                    }
+                    parentMarket {
+                        id
+                    }
+                    marketName
+                    wrappedTokensString
+                    wrappedTokens {
+                        id
+                        name
+                    }
+                    image {
+                        id
+                        cidMarket
+                        cidOutcomes
+                    }
+                    tokens {
+                        id
+                        name
+                    }
+                }
+                market1 {
+                    id
+                    outcomes
+                    collateralToken {
+                        id
+                    }
+                    childMarkets {
+                        id
+                    }
+                    parentMarket {
+                        id
+                    }
+                    marketName
+                    wrappedTokensString
+                    wrappedTokens {
+                        id
+                        name
+                    }
+                    image {
+                        id
+                        cidMarket
+                        cidOutcomes
+                    }
+                    tokens {
+                        id
+                        name
+                    }
+                }
             }
             rewardToken
             bonusRewardToken

@@ -138,25 +138,49 @@ const TokenImage = memo(({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: strin
 });
 
 const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
-    const { token0ImageUrl, token1ImageUrl } = useMemo(() => {
-        console.log(`[TokenPairDisplay] 🔍 Analyzing pool ${pool?.id} (${pool?.token0?.symbol}/${pool?.token1?.symbol}):`, {
-            hasMarket0: !!pool?.market0,
-            hasMarket1: !!pool?.market1,
-            market0TokenCount: pool?.market0?.tokens?.length || 0,
-            market1TokenCount: pool?.market1?.tokens?.length || 0,
-            market0ImageCount: pool?.market0?.image?.[0]?.cidOutcomes?.length || 0,
-            market1ImageCount: pool?.market1?.image?.[0]?.cidOutcomes?.length || 0
-        });
+    // Helper function to get better outcome name from outcomes array
+    const getOutcomeName = (market: Market | null | undefined, tokenId: string): string | null => {
+        if (!market?.outcomes || !market?.wrappedTokensString || !tokenId) {
+            return null;
+        }
+
+        try {
+            // Handle wrappedTokensString as either string or array
+            let wrappedTokenIds: string[];
+            const wrappedTokensString = market.wrappedTokensString as any;
+
+            if (Array.isArray(wrappedTokensString)) {
+                wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
+            } else if (typeof wrappedTokensString === 'string') {
+                wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
+            } else {
+                return null;
+            }
+
+            const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
+
+            if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
+                return market.outcomes[tokenPosition];
+            }
+        } catch (error) {
+            console.warn('Error getting outcome name:', error);
+        }
+
+        return null;
+    };
+
+    const { token0ImageUrl, token1ImageUrl, conditionalMarketInfo } = useMemo(() => {
+
 
         if (!pool?.market0 && !pool?.market1) {
-            console.warn(`[TokenPairDisplay] ⚠️ No markets found for pool ${pool?.id}`);
-            return { token0ImageUrl: null, token1ImageUrl: null };
+
+            return { token0ImageUrl: null, token1ImageUrl: null, conditionalMarketInfo: null };
         }
 
         // Helper function to find token image in a market
         const findTokenImage = (market: Pick<Market, 'id' | 'marketName' | 'wrappedTokensString'> & { image: Array<Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>>; tokens: Array<{ id: string; name: string }> } | null | undefined, tokenId: string, marketName: string) => {
             if (!market?.tokens || !market?.image?.[0]?.cidOutcomes) {
-                console.log(`[TokenPairDisplay] 📊 ${marketName} missing data: tokens=${!!market?.tokens}, images=${!!market?.image?.[0]?.cidOutcomes}`);
+
                 return null;
             }
 
@@ -191,6 +215,34 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
             return null;
         };
 
+        // Check for conditional market relationship
+        const market0 = pool?.market0;
+        const market1 = pool?.market1;
+        const token0 = pool?.token0;
+        const token1 = pool?.token1;
+
+        let conditionalInfo: { outcomeToken: any; outcomeMarket: any; collateralToken: any; collateralMarket: any } | null = null;
+
+        if (market0 && market1 && token0 && token1) {
+            const market0CollateralId = market0.collateralToken?.id;
+            const market1CollateralId = market1.collateralToken?.id;
+
+            // Check if this is a conditional market (one token is the collateral of the other market)
+            if (market0CollateralId === token0.id) {
+                // token0 is market0's collateral, so token1 is the outcome from market1
+                conditionalInfo = { outcomeToken: token1, outcomeMarket: market1, collateralToken: token0, collateralMarket: market0 };
+            } else if (market0CollateralId === token1.id) {
+                // token1 is market0's collateral, so token0 is the outcome from market1
+                conditionalInfo = { outcomeToken: token0, outcomeMarket: market1, collateralToken: token1, collateralMarket: market0 };
+            } else if (market1CollateralId === token0.id) {
+                // token0 is market1's collateral, so token1 is the outcome from market0
+                conditionalInfo = { outcomeToken: token1, outcomeMarket: market0, collateralToken: token0, collateralMarket: market1 };
+            } else if (market1CollateralId === token1.id) {
+                // token1 is market1's collateral, so token0 is the outcome from market0
+                conditionalInfo = { outcomeToken: token0, outcomeMarket: market0, collateralToken: token1, collateralMarket: market1 };
+            }
+        }
+
         // Try to find token images in market0 first, then market1
         let token0Url: string | null = null;
         let token1Url: string | null = null;
@@ -206,23 +258,19 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
 
         // If not found in market0, try market1
         if (!token0Url && pool.market1) {
-            console.log(`[TokenPairDisplay] 🔄 Token0 ${pool.token0?.symbol} not in market0, trying market1...`);
+
             token0Url = findTokenImage(pool.market1, pool.token0?.id, 'market1');
             if (token0Url) token0Source = 'market1';
         }
         if (!token1Url && pool.market1) {
-            console.log(`[TokenPairDisplay] 🔄 Token1 ${pool.token1?.symbol} not in market0, trying market1...`);
+
             token1Url = findTokenImage(pool.market1, pool.token1?.id, 'market1');
             if (token1Url) token1Source = 'market1';
         }
 
-        // Summary log for this token pair
-        console.log(`[TokenPairDisplay] 📋 Final results for ${pool.token0?.symbol}/${pool.token1?.symbol}:`, {
-            token0: { found: !!token0Url, source: token0Source, url: token0Url || 'none' },
-            token1: { found: !!token1Url, source: token1Source, url: token1Url || 'none' }
-        });
 
-        return { token0ImageUrl: token0Url, token1ImageUrl: token1Url };
+
+        return { token0ImageUrl: token0Url, token1ImageUrl: token1Url, conditionalMarketInfo: conditionalInfo };
     }, [pool?.market0, pool?.market1, pool?.token0?.id, pool?.token1?.id, pool?.token0?.symbol, pool?.token1?.symbol]);
 
     if (!pool?.market0 && !pool?.market1) {
@@ -235,6 +283,93 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
         );
     }
 
+    // For conditional markets, show only the outcome token
+    if (conditionalMarketInfo) {
+        const { outcomeToken, outcomeMarket } = conditionalMarketInfo;
+        const outcomeIsToken0 = outcomeToken.id === pool?.token0?.id;
+        const outcomeImageUrl = outcomeIsToken0 ? token0ImageUrl : token1ImageUrl;
+
+        // Try to get better outcome name from outcomes array
+        const outcomeName = getOutcomeName(outcomeMarket, outcomeToken.id);
+        const displayName = outcomeName || outcomeToken.symbol || outcomeToken.name || outcomeToken.id?.slice(0, 8) + '...';
+
+        return (
+            <div className="token-pair-display">
+                <div className="outcome-token-display">
+                    <TokenImage
+                        imageUrl={outcomeImageUrl}
+                        tokenSymbol={outcomeName || outcomeToken.symbol || outcomeToken.name || 'TOKEN'}
+                        size={32}
+                    />
+                    <div className="outcome-token-symbol">
+                        {displayName}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // For top-level markets, show only the outcome token (non-collateral token)
+    const market0 = pool?.market0;
+    const market1 = pool?.market1;
+
+    if (market0 || market1) {
+        // Determine which token is the outcome token (not the collateral)
+        let outcomeToken: any = null;
+        let outcomeImageUrl: string | null = null;
+
+        if (market0?.collateralToken?.id) {
+            // market0 has collateral, so find the non-collateral token
+            if (market0.collateralToken.id.toLowerCase() === pool.token0?.id?.toLowerCase()) {
+                // token0 is collateral, token1 is outcome
+                outcomeToken = pool.token1;
+                outcomeImageUrl = token1ImageUrl;
+            } else {
+                // token1 is collateral, token0 is outcome
+                outcomeToken = pool.token0;
+                outcomeImageUrl = token0ImageUrl;
+            }
+        } else if (market1?.collateralToken?.id) {
+            // market1 has collateral, so find the non-collateral token
+            if (market1.collateralToken.id.toLowerCase() === pool.token0?.id?.toLowerCase()) {
+                // token0 is collateral, token1 is outcome
+                outcomeToken = pool.token1;
+                outcomeImageUrl = token1ImageUrl;
+            } else {
+                // token1 is collateral, token0 is outcome  
+                outcomeToken = pool.token0;
+                outcomeImageUrl = token0ImageUrl;
+            }
+        } else {
+            // No collateral token info, default to token0 as outcome
+            outcomeToken = pool.token0;
+            outcomeImageUrl = token0ImageUrl;
+        }
+
+        if (outcomeToken) {
+            // Try to get better outcome name from outcomes array
+            const outcomeMarket = market0 || market1;
+            const outcomeName = getOutcomeName(outcomeMarket, outcomeToken.id);
+            const displayName = outcomeName || outcomeToken.symbol || outcomeToken.name || outcomeToken.id?.slice(0, 8) + '...';
+
+            return (
+                <div className="token-pair-display">
+                    <div className="outcome-token-display">
+                        <TokenImage
+                            imageUrl={outcomeImageUrl}
+                            tokenSymbol={outcomeName || outcomeToken.symbol || outcomeToken.name || 'TOKEN'}
+                            size={32}
+                        />
+                        <div className="outcome-token-symbol">
+                            {displayName}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    // Fallback: show both tokens if no market info available
     return (
         <div className="token-pair-display">
             <div className="token-pair-images">
@@ -859,14 +994,14 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                             </h3>
                                             <span className="eternal-page__market-count">
                                                 {(() => {
-                                                    const directPools = marketGroup.farms.length;
-                                                    const childPools = Object.values(marketGroup.childMarkets).reduce((sum: number, child: any) => sum + child.farms.length, 0);
-                                                    const totalPools = directPools + childPools;
+                                                    const directOutcomes = marketGroup.farms.length;
+                                                    const childOutcomes = Object.values(marketGroup.childMarkets).reduce((sum: number, child: any) => sum + child.farms.length, 0);
+                                                    const totalOutcomes = directOutcomes + childOutcomes;
 
-                                                    if (marketGroup.isParent && childPools > 0) {
-                                                        return `${totalPools} pool${totalPools !== 1 ? 's' : ''} (${directPools} direct, ${childPools} in child markets)`;
+                                                    if (marketGroup.isParent && childOutcomes > 0) {
+                                                        return `${totalOutcomes} outcome${totalOutcomes !== 1 ? 's' : ''} (${directOutcomes} direct, ${childOutcomes} in child markets)`;
                                                     } else {
-                                                        return `${directPools} pool${directPools !== 1 ? 's' : ''}`;
+                                                        return `${directOutcomes} outcome${directOutcomes !== 1 ? 's' : ''}`;
                                                     }
                                                 })()}
                                                 {marketGroup.totalTVL > 0 && (
@@ -877,6 +1012,38 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                                 {marketGroup.totalDailyRewards > 0 && (
                                                     <span className="eternal-page__market-rewards">
                                                         • {marketGroup.totalDailyRewards.toLocaleString()} SEER-LPP/day
+                                                    </span>
+                                                )}
+                                                {marketGroup.market?.collateralToken && (
+                                                    <span className="eternal-page__market-collateral">
+                                                        • Collateral: {(() => {
+                                                            const collateralToken = marketGroup.market.collateralToken;
+                                                            // Check if it's sDAI by address
+                                                            if (collateralToken.id === '0x83fe227d7c59ce6c7b12d7e4c600f4b5e8b09e6b') {
+                                                                return 'sDAI';
+                                                            }
+                                                            // First, try to find the token in the pool's tokens to get symbol/name
+                                                            const poolTokens = [
+                                                                ...Object.values(marketGroup.childMarkets).flatMap((child: any) =>
+                                                                    child.farms.flatMap((farm: any) => [farm.pool?.token0, farm.pool?.token1])
+                                                                ),
+                                                                ...marketGroup.farms.flatMap((farm: any) => [farm.pool?.token0, farm.pool?.token1])
+                                                            ].filter(Boolean);
+
+                                                            const matchingToken = poolTokens.find((token: any) =>
+                                                                token?.id?.toLowerCase() === collateralToken.id?.toLowerCase()
+                                                            );
+
+                                                            if (matchingToken?.symbol) {
+                                                                return matchingToken.symbol;
+                                                            }
+                                                            if (matchingToken?.name) {
+                                                                return matchingToken.name;
+                                                            }
+
+                                                            // Fallback to truncated address if no symbol/name found
+                                                            return collateralToken.id.slice(0, 8) + '...';
+                                                        })()}
                                                     </span>
                                                 )}
                                             </span>
@@ -932,7 +1099,7 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                                                         </span>
                                                                     </h4>
                                                                     <span className="eternal-page__child-market-count">
-                                                                        {childGroup.farms.length} pool{childGroup.farms.length !== 1 ? 's' : ''}
+                                                                        {childGroup.farms.length} outcome{childGroup.farms.length !== 1 ? 's' : ''}
                                                                         {childGroup.totalTVL > 0 && (
                                                                             <span className="eternal-page__child-market-tvl">
                                                                                 • {formatDollarAmount(childGroup.totalTVL)} TVL
@@ -941,6 +1108,33 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                                                         {childGroup.totalDailyRewards > 0 && (
                                                                             <span className="eternal-page__child-market-rewards">
                                                                                 • {childGroup.totalDailyRewards.toLocaleString()} SEER-LPP/day
+                                                                            </span>
+                                                                        )}
+                                                                        {childGroup.market?.collateralToken && (
+                                                                            <span className="eternal-page__child-market-collateral">
+                                                                                • Collateral: {(() => {
+                                                                                    const collateralToken = childGroup.market.collateralToken;
+                                                                                    // Check if it's sDAI by address
+                                                                                    if (collateralToken.id === '0x83fe227d7c59ce6c7b12d7e4c600f4b5e8b09e6b') {
+                                                                                        return 'sDAI';
+                                                                                    }
+                                                                                    // Try to find the token in the child market's pool tokens to get symbol/name
+                                                                                    const poolTokens = childGroup.farms.flatMap((farm: any) => [farm.pool?.token0, farm.pool?.token1]).filter(Boolean);
+
+                                                                                    const matchingToken = poolTokens.find((token: any) =>
+                                                                                        token?.id?.toLowerCase() === collateralToken.id?.toLowerCase()
+                                                                                    );
+
+                                                                                    if (matchingToken?.symbol) {
+                                                                                        return matchingToken.symbol;
+                                                                                    }
+                                                                                    if (matchingToken?.name) {
+                                                                                        return matchingToken.name;
+                                                                                    }
+
+                                                                                    // Fallback to truncated address if no symbol/name found
+                                                                                    return collateralToken.id.slice(0, 8) + '...';
+                                                                                })()}
                                                                             </span>
                                                                         )}
                                                                     </span>

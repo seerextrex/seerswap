@@ -152,6 +152,20 @@
     flex-shrink: 0;
   }
 
+  &__market-images {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  &__child-market-images {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+
   &__market-text {
     display: flex;
     flex-direction: column;

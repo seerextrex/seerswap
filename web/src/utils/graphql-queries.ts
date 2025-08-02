@@ -522,6 +522,34 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
               totalValueLockedUSD
               market0 {
                 id
+                outcomes
+                collateralToken {
+                  id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 wrappedTokensString
                 totalValueLockedUSD
@@ -537,6 +565,34 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
               }
               market1 {
                 id
+                outcomes
+                collateralToken {
+                  id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 wrappedTokensString
                 totalValueLockedUSD
@@ -600,6 +656,34 @@ export const POSITIONS_ON_ETERNAL_FARMING = gql`
               totalValueLockedUSD
               market0 {
                 id
+                outcomes
+                collateralToken {
+                  id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 wrappedTokensString
                 totalValueLockedUSD
@@ -615,6 +699,34 @@ export const POSITIONS_ON_ETERNAL_FARMING = gql`
               }
               market1 {
                 id
+                outcomes
+                collateralToken {
+                  id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 wrappedTokensString
                 totalValueLockedUSD
@@ -659,6 +771,34 @@ export const TRANSFERED_POSITIONS_FOR_POOL = gql`
               totalValueLockedUSD
               market0 {
                 id
+                outcomes
+                collateralToken {
+                  id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 wrappedTokensString
                 totalValueLockedUSD
@@ -674,6 +814,34 @@ export const TRANSFERED_POSITIONS_FOR_POOL = gql`
               }
               market1 {
                 id
+                outcomes
+                collateralToken {
+                  id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
+                }
+                childMarkets {
+                  id
+                }
+                parentMarket{
+                  id
+                }
                 marketName
                 wrappedTokensString
                 totalValueLockedUSD
@@ -1115,6 +1283,24 @@ export const FETCH_ETERNAL_FARMS_BY_IDS = (farmIds: string[]) => gql`
                     outcomes
                     collateralToken {
                         id
+                        market{
+                            id
+                            outcomes
+                            wrappedTokensString
+                            wrappedTokens {
+                                id
+                                name
+                            }
+                            image {
+                                id
+                                cidMarket
+                                cidOutcomes
+                            }
+                            tokens {
+                                id
+                                name
+                            }
+                        }
                     }
                     childMarkets {
                         id
@@ -1143,6 +1329,24 @@ export const FETCH_ETERNAL_FARMS_BY_IDS = (farmIds: string[]) => gql`
                     outcomes
                     collateralToken {
                         id
+                        market{
+                            id
+                            outcomes
+                            wrappedTokensString
+                            wrappedTokens {
+                                id
+                                name
+                            }
+                            image {
+                                id
+                                cidMarket
+                                cidOutcomes
+                            }
+                            tokens {
+                                id
+                                name
+                            }
+                        }
                     }
                     childMarkets {
                         id

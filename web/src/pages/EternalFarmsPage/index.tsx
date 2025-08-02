@@ -720,6 +720,67 @@ const getOrderedOutcomes = (outcomes: string[]): string[] => {
     return outcomes;
 };
 
+// Collateral Token Image Component - displays collateral token following the same pattern as outcome tokens
+const CollateralTokenImage = memo(({ market, parentMarket, size = 32 }: {
+    market: Market | undefined;
+    parentMarket?: Market | undefined;
+    size?: number
+}) => {
+    const { collateralImageUrl, collateralSymbol } = useMemo(() => {
+        const collateralToken = market?.collateralToken;
+        if (!collateralToken) return { collateralImageUrl: null, collateralSymbol: '' };
+
+        // For child markets, get collateral info from parent market
+        if (parentMarket) {
+            const parentTokens = parentMarket.tokens;
+            const parentCidOutcomes = parentMarket.image?.[0]?.cidOutcomes;
+            const parentOutcomes = parentMarket.outcomes;
+
+            if (parentTokens && parentCidOutcomes && parentOutcomes) {
+                // Find the collateral token in parent market's tokens array
+                const collateralIndex = parentTokens.findIndex((token: any) =>
+                    token.id.toLowerCase() === collateralToken.id.toLowerCase()
+                );
+
+                if (collateralIndex >= 0 && collateralIndex < parentOutcomes.length) {
+                    // Use the human readable outcome name from parent market
+                    const outcomeName = parentOutcomes[collateralIndex] || '';
+                    const imageUrl = parentCidOutcomes[collateralIndex]
+                        ? `https://ipfs.io${parentCidOutcomes[collateralIndex]}`
+                        : null;
+
+                    return { collateralImageUrl: imageUrl, collateralSymbol: outcomeName };
+                }
+            }
+        }
+
+        // For normal markets (non-child), handle collateral token directly
+        const collateralTokenName = collateralToken.market?.tokens?.[0]?.name ||
+            collateralToken.market?.wrappedTokens?.[0]?.name || '';
+
+        // Use the collateral token's market image if available
+        const imageUrl = collateralToken.market?.image?.[0]?.cidMarket
+            ? `https://ipfs.io${collateralToken.market.image[0].cidMarket}`
+            : null;
+
+        return {
+            collateralImageUrl: imageUrl,
+            collateralSymbol: collateralTokenName || 'Token'
+        };
+    }, [market?.collateralToken, parentMarket]);
+
+    if (!market?.collateralToken) return null;
+
+    // Use the existing TokenImage component that already handles sDAI and fallbacks
+    return (
+        <TokenImage
+            imageUrl={collateralImageUrl}
+            tokenSymbol={collateralSymbol}
+            size={size}
+        />
+    );
+});
+
 export default function EternalFarmsPage({ data, refreshing, priceFetched, fetchHandler }: EternalFarmsPageProps) {
     const [modalForPool, setModalForPool] = useState<any>(null);
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
@@ -1273,10 +1334,17 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                                             }}
                                                         >
                                                             <div className="eternal-page__child-market-info">
-                                                                <MarketImage
-                                                                    market={childGroup.market}
-                                                                    marketName={childGroup.marketName}
-                                                                />
+                                                                <div className="eternal-page__child-market-images">
+                                                                    <MarketImage
+                                                                        market={childGroup.market}
+                                                                        marketName={childGroup.marketName}
+                                                                    />
+                                                                    <CollateralTokenImage
+                                                                        market={childGroup.market}
+                                                                        parentMarket={marketGroup.market}
+                                                                        size={32}
+                                                                    />
+                                                                </div>
                                                                 <div className="eternal-page__child-market-text">
                                                                     <h4 className="eternal-page__child-market-title">
                                                                         {childGroup.marketName}
@@ -1298,7 +1366,24 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                                                         )}
                                                                         {childGroup.market?.collateralToken && (
                                                                             <span className="eternal-page__child-market-collateral">
-                                                                                • Collateral: {getCollateralTokenDisplayName(childGroup.market.collateralToken.id)}
+                                                                                • Collateral: {(() => {
+                                                                                    // For child markets, get the outcome name from parent market
+                                                                                    const collateralToken = childGroup.market.collateralToken;
+                                                                                    const parentMarket = marketGroup.market;
+
+                                                                                    if (parentMarket?.tokens && parentMarket?.outcomes) {
+                                                                                        const collateralIndex = parentMarket.tokens.findIndex((token: any) =>
+                                                                                            token.id.toLowerCase() === collateralToken.id.toLowerCase()
+                                                                                        );
+
+                                                                                        if (collateralIndex >= 0 && collateralIndex < parentMarket.outcomes.length) {
+                                                                                            return parentMarket.outcomes[collateralIndex];
+                                                                                        }
+                                                                                    }
+
+                                                                                    // Fallback to original logic
+                                                                                    return getCollateralTokenDisplayName(collateralToken.id);
+                                                                                })()}
                                                                             </span>
                                                                         )}
                                                                     </span>

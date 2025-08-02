@@ -401,7 +401,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
     });
 
     // Market Image Component
-    const MarketImage = memo(({ market, marketName }: { market: any; marketName: string }) => {
+    const MarketImage = memo(({ market, marketName }: { market: Market | null | undefined; marketName: string }) => {
         const [hasError, setHasError] = useState(false);
 
         const marketImageUrl = useMemo(() => {

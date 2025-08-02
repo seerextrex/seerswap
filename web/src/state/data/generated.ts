@@ -13445,8 +13445,31 @@ export type TransferedPositionsQuery = (
         & Pick<Token, 'id' | 'symbol' | 'decimals'>
       ), market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
-        & { image: Array<(
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -13455,8 +13478,31 @@ export type TransferedPositionsQuery = (
         )> }
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
-        & { image: Array<(
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -13508,8 +13554,31 @@ export type PositionsOnEternalFarmingQuery = (
         & Pick<Token, 'id' | 'symbol' | 'decimals'>
       ), market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
-        & { image: Array<(
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -13518,8 +13587,31 @@ export type PositionsOnEternalFarmingQuery = (
         )> }
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
-        & { image: Array<(
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -13556,8 +13648,31 @@ export type TransferedPositionsForPoolQuery = (
         & Pick<Token, 'id' | 'symbol' | 'decimals'>
       ), market0?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
-        & { image: Array<(
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -13566,8 +13681,31 @@ export type TransferedPositionsForPoolQuery = (
         )> }
       )>, market1?: Maybe<(
         { __typename?: 'Market' }
-        & Pick<Market, 'id' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
-        & { image: Array<(
+        & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
+        & { collateralToken: (
+          { __typename?: 'Token' }
+          & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
+        ), childMarkets: Array<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, parentMarket?: Maybe<(
+          { __typename?: 'Market' }
+          & Pick<Market, 'id'>
+        )>, image: Array<(
           { __typename?: 'Image' }
           & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
         )>, tokens: Array<(
@@ -13916,6 +14054,20 @@ export type EternalFarmingsByIdsQuery = (
         & { collateralToken: (
           { __typename?: 'Token' }
           & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
         ), childMarkets: Array<(
           { __typename?: 'Market' }
           & Pick<Market, 'id'>
@@ -13938,6 +14090,20 @@ export type EternalFarmingsByIdsQuery = (
         & { collateralToken: (
           { __typename?: 'Token' }
           & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
         ), childMarkets: Array<(
           { __typename?: 'Market' }
           & Pick<Market, 'id'>
@@ -14524,6 +14690,34 @@ export const TransferedPositionsDocument = `
       totalValueLockedUSD
       market0 {
         id
+        outcomes
+        collateralToken {
+          id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         wrappedTokensString
         totalValueLockedUSD
@@ -14539,6 +14733,34 @@ export const TransferedPositionsDocument = `
       }
       market1 {
         id
+        outcomes
+        collateralToken {
+          id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         wrappedTokensString
         totalValueLockedUSD
@@ -14595,6 +14817,34 @@ export const PositionsOnEternalFarmingDocument = `
       totalValueLockedUSD
       market0 {
         id
+        outcomes
+        collateralToken {
+          id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         wrappedTokensString
         totalValueLockedUSD
@@ -14610,6 +14860,34 @@ export const PositionsOnEternalFarmingDocument = `
       }
       market1 {
         id
+        outcomes
+        collateralToken {
+          id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         wrappedTokensString
         totalValueLockedUSD
@@ -14657,6 +14935,34 @@ export const TransferedPositionsForPoolDocument = `
       totalValueLockedUSD
       market0 {
         id
+        outcomes
+        collateralToken {
+          id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         wrappedTokensString
         totalValueLockedUSD
@@ -14672,6 +14978,34 @@ export const TransferedPositionsForPoolDocument = `
       }
       market1 {
         id
+        outcomes
+        collateralToken {
+          id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+        }
         marketName
         wrappedTokensString
         totalValueLockedUSD
@@ -15109,6 +15443,24 @@ export const EternalFarmingsByIdsDocument = `
         outcomes
         collateralToken {
           id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
         }
         childMarkets {
           id
@@ -15137,6 +15489,24 @@ export const EternalFarmingsByIdsDocument = `
         outcomes
         collateralToken {
           id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
         }
         childMarkets {
           id

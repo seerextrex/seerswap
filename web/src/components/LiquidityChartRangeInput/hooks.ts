@@ -21,7 +21,7 @@ export function useDensityChartData({
 }: {
     currencyA: Currency | undefined
     currencyB: Currency | undefined
-    feeAmount: FeeAmount | undefined
+    feeAmount: number | undefined
     priceFormat: PriceFormats
 }) {
     const {

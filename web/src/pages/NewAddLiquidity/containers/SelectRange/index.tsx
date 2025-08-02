@@ -18,7 +18,6 @@ import { tryParseAmount } from "state/swap/hooks";
 import { useHistory } from "react-router-dom";
 import { t, Trans } from "@lingui/macro";
 import { Helmet } from "react-helmet";
-
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
     currencyB: Currency | null | undefined;
@@ -114,14 +113,25 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
 
             dispatch(updateSelectedPreset({ preset: preset ? preset.type : null }));
 
-            if (preset && preset.type === Presets.FULL) {
-                getSetFullRange();
+            if (preset) {
+                // For FULL preset (0 to 1), set literal values instead of multiplying by price
+                if (preset.type === Presets.FULL) {
+                    onLeftRangeInput("0");
+                    onRightRangeInput("1");
+                } else {
+                    // For other presets, multiply by current price and clip max at 1
+                    const lowerValue = +price * preset.min;
+                    const upperValue = Math.min(+price * preset.max, 1);
+
+                    onLeftRangeInput(String(lowerValue));
+                    onRightRangeInput(String(upperValue));
+                }
             } else {
-                onLeftRangeInput(preset ? String(+price * preset.min) : "");
-                onRightRangeInput(preset ? String(+price * preset.max) : "");
+                onLeftRangeInput("");
+                onRightRangeInput("");
             }
         },
-        [price]
+        [price, onLeftRangeInput, onRightRangeInput, dispatch]
     );
 
     useEffect(() => {

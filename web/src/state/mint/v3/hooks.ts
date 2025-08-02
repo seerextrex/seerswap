@@ -432,7 +432,7 @@ export function useV3DerivedMintInfo(
 export function useRangeHopCallbacks(
     baseCurrency: Currency | undefined,
     quoteCurrency: Currency | undefined,
-    feeAmount: FeeAmount | undefined,
+    feeAmount: number | undefined,
     tickLower: number | undefined,
     tickUpper: number | undefined,
     pool?: Pool | undefined | null

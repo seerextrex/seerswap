@@ -32,9 +32,18 @@ export function Chart({
     const maxXScale = useMemo(() => series.reduce((acc, el) => (el.price0 > acc ? el.price0 : acc), 0), [series]);
 
     const { xScale, yScale } = useMemo(() => {
+        // Enforce absolute maximum of 1.05 in token format (shows a bit beyond 1.0 for clarity)
+        const isTokenFormat = priceFormat === 0; // PriceFormats.TOKEN
+        const maxPrice = isTokenFormat
+            ? Math.min(current * zoomLevels.initialMax, 1.05)
+            : current * zoomLevels.initialMax;
+
+        // Start from 0 for token format, use calculated min for other formats
+        const minPrice = isTokenFormat ? 0 : current * zoomLevels.initialMin;
+
         const scales = {
             xScale: scaleLinear()
-                .domain([current * zoomLevels.initialMin, current * zoomLevels.initialMax] as number[])
+                .domain([minPrice, maxPrice] as number[])
                 .range([0, innerWidth]),
             yScale: scaleLinear()
                 .domain([0, max(series, yAccessor)] as number[])
@@ -43,11 +52,15 @@ export function Chart({
 
         if (zoom) {
             const newXscale = zoom.rescaleX(scales.xScale);
-            scales.xScale.domain(newXscale.domain());
+            const [domainMin, domainMax] = newXscale.domain();
+            // Ensure zoomed domain doesn't go below 0 or exceed 1.05 in token format
+            const clampedMin = isTokenFormat ? Math.max(domainMin, 0) : domainMin;
+            const clampedMax = isTokenFormat ? Math.min(domainMax, 1.05) : domainMax;
+            scales.xScale.domain([clampedMin, clampedMax]);
         }
 
         return scales;
-    }, [current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom]);
+    }, [current, zoomLevels.initialMin, zoomLevels.initialMax, innerWidth, series, innerHeight, zoom, priceFormat]);
 
     useEffect(() => {
         // reset zoom as necessary

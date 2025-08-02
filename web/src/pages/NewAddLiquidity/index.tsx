@@ -18,7 +18,7 @@ import { WXDAI_EXTENDED } from "constants/tokens";
 import { setInitialTokenPrice, setInitialUSDPrices, updateCurrentStep, updateSelectedPreset } from "state/mint/v3/actions";
 import { Field } from "state/mint/actions";
 import useUSDCPrice from "hooks/useUSDCPrice";
-import { PriceFormats, PriceFormatToggler } from "./components/PriceFomatToggler";
+import { PriceFormats } from "./components/PriceFomatToggler";
 import { AddLiquidityButton } from "./containers/AddLiquidityButton";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "react-feather";
 import { PoolState } from "hooks/usePools";
@@ -249,24 +249,7 @@ export function NewAddLiquidityPage({
         return status;
     }, [stepPair, stepInitialPrice, stepRange, stepAmounts, mintInfo.noLiquidity]);
 
-    const handlePriceFormat = useCallback((_priceFormat: PriceFormats) => setPriceFormat(_priceFormat), []);
 
-    const hidePriceFormatter = useMemo(() => {
-        const currentActualStepIndex = currentStep;
-        if (mintInfo.noLiquidity) {
-            if (currentActualStepIndex === 1) return false;
-        } else {
-            if (currentActualStepIndex === 1) return false;
-        }
-        return Boolean((mintInfo.noLiquidity ? stepInitialPrice : stepPair) && !initialUSDPrices.CURRENCY_A && !initialUSDPrices.CURRENCY_B && !usdPriceA && !usdPriceB) ||
-            (currentActualStepIndex !== (mintInfo.noLiquidity ? 1 : 1));
-    }, [mintInfo.noLiquidity, stepInitialPrice, stepPair, currentStep, initialUSDPrices, usdPriceA, usdPriceB]);
-
-    useEffect(() => {
-        if (hidePriceFormatter) {
-            handlePriceFormat(PriceFormats.TOKEN);
-        }
-    }, [hidePriceFormatter, handlePriceFormat]);
 
     const notConnected = useMemo(() => !Boolean(account), [account]);
 
@@ -323,7 +306,6 @@ export function NewAddLiquidityPage({
                     </span>
                 </div>
                 <div className={"add-liquidity-v3__header__right flex-s-between"}>
-                    {!isMobileOnly && !hidePriceFormatter && <PriceFormatToggler currentFormat={priceFormat} handlePriceFormat={handlePriceFormat} />}
                     <SettingsTabMRS />
                 </div>
             </div>

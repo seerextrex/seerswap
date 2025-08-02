@@ -8,6 +8,9 @@ import { useAllV3TicksQuery } from 'state/data/enhanced'
 import { skipToken } from '@reduxjs/toolkit/query/react'
 import ms from 'ms.macro'
 import { AllV3TicksQuery } from 'state/data/generated'
+import { computePoolAddress } from './computePoolAddress'
+import { POOL_DEPLOYER_ADDRESS } from 'constants/addresses'
+import { useAccount } from 'wagmi'
 
 const PRICE_FIXED_DIGITS = 8
 
@@ -19,17 +22,39 @@ export interface TickProcessed {
     price0: string
 }
 
-const getActiveTick = (tickCurrent: number | undefined, feeAmount: FeeAmount | undefined) =>
-    tickCurrent && feeAmount ? Math.floor(tickCurrent / 60) * 60 : undefined
+const getActiveTick = (tickCurrent: number | undefined) =>
+    tickCurrent !== undefined ? Math.floor(tickCurrent / 60) * 60 : undefined
 
 // Fetches all ticks for a given pool
 export function useAllV3Ticks(
     currencyA: Currency | undefined,
     currencyB: Currency | undefined,
-    feeAmount: FeeAmount | undefined
+    feeAmount: number | undefined
 ) {
-    const poolAddress =
-        currencyA && currencyB && feeAmount ? Pool.getAddress(currencyA?.wrapped, currencyB?.wrapped, feeAmount) : undefined
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+
+    const poolAddress = useMemo(() => {
+        if (!currencyA || !currencyB || !chainId) return undefined;
+
+        const tokenA = currencyA?.wrapped;
+        const tokenB = currencyB?.wrapped;
+        if (!tokenA || !tokenB || tokenA.equals(tokenB)) return undefined;
+
+        const poolDeployerAddress = POOL_DEPLOYER_ADDRESS[chainId];
+        if (!poolDeployerAddress) return undefined;
+
+        try {
+            return computePoolAddress({
+                poolDeployer: poolDeployerAddress,
+                tokenA,
+                tokenB,
+            });
+        } catch (error) {
+            console.error('Error computing pool address:', error);
+            return undefined;
+        }
+    }, [currencyA, currencyB, chainId])
 
     //TODO(judo): determine if pagination is necessary for this query
     const { isLoading, isError, error, isUninitialized, data } = useAllV3TicksQuery(
@@ -51,7 +76,7 @@ export function useAllV3Ticks(
 export function usePoolActiveLiquidity(
     currencyA: Currency | undefined,
     currencyB: Currency | undefined,
-    feeAmount: FeeAmount | undefined
+    feeAmount: number | undefined
 ): {
     isLoading: boolean
     isUninitialized: boolean
@@ -63,7 +88,7 @@ export function usePoolActiveLiquidity(
     const pool = usePool(currencyA, currencyB)
 
     // Find nearest valid tick for pool in case tick is not initialized.
-    const activeTick = useMemo(() => getActiveTick(pool[1]?.tickCurrent, feeAmount), [pool, feeAmount])
+    const activeTick = useMemo(() => getActiveTick(pool[1]?.tickCurrent), [pool])
 
     const {
         isLoading,

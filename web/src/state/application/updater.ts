@@ -4,7 +4,7 @@ import { useAppDispatch } from "state/hooks";
 import useDebounce from "../../hooks/useDebounce";
 import useIsWindowVisible from "../../hooks/useIsWindowVisible";
 import { useAccount, usePublicClient } from "wagmi";
-import { updateBlockNumber } from "./actions";
+import { updateBlockNumber, updateChainId } from "./actions";
 import { publicClientToProvider } from "../../utils/ethersAdapters";
 
 function useQueryCacheInvalidator() {
@@ -42,6 +42,9 @@ export default function Updater(): null {
     useQueryCacheInvalidator();
 
     useEffect(() => {
+        // Always dispatch chainId updates to Redux store
+        dispatch(updateChainId({ chainId: currentChainId || null }));
+
         setInternalState(prevState => {
             if (prevState.chainId !== currentChainId) {
                 console.log(`ApplicationUpdater: Chain ID changed from ${prevState.chainId} to ${currentChainId}. Resetting block number.`);
@@ -49,7 +52,7 @@ export default function Updater(): null {
             }
             return prevState;
         });
-    }, [currentChainId]);
+    }, [currentChainId, dispatch]);
 
     const blockNumberCallback = useCallback(
         (blockNumber: number) => {

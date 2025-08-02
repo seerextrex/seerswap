@@ -47,7 +47,7 @@ export function PresetRanges({ isStablecoinPair, activePreset, handlePresetRange
                 type: Presets.FULL,
                 title: t`Full range`,
                 min: 0,
-                max: Infinity,
+                max: 1,
                 risk: PresetProfits.VERY_LOW,
                 profit: PresetProfits.VERY_LOW,
             },

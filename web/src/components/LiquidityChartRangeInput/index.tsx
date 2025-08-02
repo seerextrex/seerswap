@@ -43,7 +43,7 @@ function InfoBox({ message, icon }: { message?: ReactNode; icon: ReactNode }) {
 interface LiquidityChartRangeInputProps {
     currencyA: Currency | undefined;
     currencyB: Currency | undefined;
-    feeAmount?: FeeAmount;
+    feeAmount?: number;
     ticksAtLimit: { [bound in Bound]?: boolean | undefined };
     price: number | undefined;
     priceLower?: Price<Token, Token>;

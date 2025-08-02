@@ -44,11 +44,7 @@ export function SelectPair({
 }: ISelectPair) {
     const history = useHistory();
 
-    console.log('SelectPair Render:', {
-        baseCurrencyPropSymbol: baseCurrency?.symbol,
-        quoteCurrencyPropSymbol: quoteCurrency?.symbol,
-        isCompletedProp: isCompleted
-    });
+
 
     const [aprs, setAprs] = useState<undefined | { [key: string]: number }>();
 

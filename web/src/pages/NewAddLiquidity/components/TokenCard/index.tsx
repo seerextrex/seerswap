@@ -47,7 +47,7 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
     }, [priceFormat, balance, currencyUSD]);
 
     return (
-        <div className="token-card p-1 mxs_w-100 mm_w-100" onClick={() => toggleSelectModal(true)}>
+        <div className="token-card p-1 mxs_w-100 mm_w-100">
             {selectModal && (
                 <CurrencySearchModal
                     isOpen={selectModal}
@@ -60,6 +60,7 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
                     disableNonToken={true}
                 ></CurrencySearchModal>
             )}
+
             <div className="f mb-1">
                 <div className="token-card-logo">
                     <CurrencyLogo size={"35px"} currency={currency as WrappedCurrency}></CurrencyLogo>
@@ -67,15 +68,15 @@ export function TokenCard({ handleTokenSelection, currency, otherCurrency, price
                 <div className={"f c f-jc ml-1"}>
                     {currency && (
                         <div className="token-card__balance b">
-                            <Trans>BALANCE</Trans> ({currency.symbol})
+                            <Trans>BALANCE</Trans>
                         </div>
                     )}
-                    <div>{`${priceFormat === PriceFormats.USD && currency ? "$" : ""} ${currency ? _balance : t`No token selected (Debug: currency is ${currency === null ? 'null' : currency === undefined ? 'undefined' : 'present'})`}`}</div>
+                    <div>{`${priceFormat === PriceFormats.USD && currency ? "$" : ""} ${currency ? _balance : t`Not selected`}`}</div>
                 </div>
             </div>
             <div className="token-card-selector">
                 <button className="token-card-selector__btn f f-ac w-100 f-jb" onClick={() => toggleSelectModal(true)}>
-                    <span>{currency ? `${currency.symbol} (Selected)` : "Select a token (Debug)"}</span>
+                    <span>{currency ? currency.symbol : "Select a token"}</span>
                     <span className="token-card-selector__btn-chevron">
                         <ChevronRight className="ml-05" size={18} />
                     </span>

@@ -38,7 +38,7 @@ export default function CurrencySearchModal({
     showCurrencyAmount = true,
     disableNonToken = false,
 }: CurrencySearchModalProps) {
-    const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
+    const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search);
     const lastOpen = useLast(isOpen);
 
     useEffect(() => {

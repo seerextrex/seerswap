@@ -50,7 +50,6 @@ export default function Modal({ isOpen, onDismiss, minHeight = false, maxHeight 
                             onDismiss={onDismiss}
                             initialFocusRef={initialFocusRef}
                             dangerouslyBypassFocusLock={dangerouslyBypassFocusLock}
-                            unstable_lockFocusAcrossFrames={false}
                             onClick={onHide}
                         >
                             <StyledDialogContent

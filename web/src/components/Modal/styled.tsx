@@ -42,13 +42,13 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
 
         max-width: 750px;
         ${({ maxHeight }) =>
-            maxHeight &&
-            css`
+        maxHeight &&
+        css`
                 max-height: ${maxHeight}vh;
             `}
         ${({ minHeight }) =>
-            minHeight &&
-            css`
+        minHeight &&
+        css`
                 min-height: ${minHeight}vh;
             `}
         display: flex;
@@ -59,16 +59,15 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
     `}
         ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
       width:  85vw;
-      ${
-          mobile &&
-          css`
+      ${mobile &&
+        css`
               width: 100vw;
               border-radius: 20px 20px 0 0;
               padding-bottom: 3rem;
               padding-top: 4rem;
               overflow-y: auto;
           `
-      }
+        }
     `}
     }
 `;

@@ -10,6 +10,7 @@ import { FormattedEternalFarming } from '../../models/interfaces/farming';
 import { formatDollarAmount } from '../../utils/numbers';
 import { useHandleSort } from '../../hooks/useHandleSort';
 import { useHandleArrow } from '../../hooks/useHandleArrow';
+import { useTokensBatch } from '../../hooks/useTokensBatch';
 import './index.scss';
 import SDAI_LOGO from '../../assets/images/sdai-logo.svg';
 import { Market, Image, Token } from '../../state/data/generated';
@@ -137,37 +138,87 @@ const TokenImage = memo(({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: strin
     );
 });
 
-const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
-    // Helper function to get better outcome name from outcomes array
-    const getOutcomeName = (market: Market | null | undefined, tokenId: string): string | null => {
-        if (!market?.outcomes || !market?.wrappedTokensString || !tokenId) {
+// Helper function to get better outcome name from outcomes array
+const getOutcomeName = (market: Market | null | undefined, tokenId: string): string | null => {
+    if (!market?.outcomes || !market?.wrappedTokensString || !tokenId) {
+        return null;
+    }
+
+    try {
+        // Handle wrappedTokensString as either string or array
+        let wrappedTokenIds: string[];
+        const wrappedTokensString = market.wrappedTokensString as any;
+
+        if (Array.isArray(wrappedTokensString)) {
+            wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
+        } else if (typeof wrappedTokensString === 'string') {
+            wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
+        } else {
             return null;
         }
 
-        try {
-            // Handle wrappedTokensString as either string or array
-            let wrappedTokenIds: string[];
-            const wrappedTokensString = market.wrappedTokensString as any;
+        const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
 
-            if (Array.isArray(wrappedTokensString)) {
-                wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
-            } else if (typeof wrappedTokensString === 'string') {
-                wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
-            } else {
-                return null;
+        if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
+            // Apply special ordering for UP/DOWN outcomes
+            const orderedOutcomes = getOrderedOutcomes(market.outcomes);
+
+            // Debug log for UP/DOWN ordering
+            if (market.outcomes.length === 2 &&
+                market.outcomes.some(o => o.toUpperCase() === 'UP') &&
+                market.outcomes.some(o => o.toUpperCase() === 'DOWN')) {
+                console.log('UP/DOWN Token Position Mapping:', {
+                    marketId: market.id,
+                    tokenId: tokenId,
+                    originalOutcomes: market.outcomes,
+                    orderedOutcomes: orderedOutcomes,
+                    tokenPosition: tokenPosition,
+                    wasReordered: orderedOutcomes[0] !== market.outcomes[0]
+                });
             }
 
-            const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
+            // If outcomes were reordered (UP/DOWN case), we need to find the correct position in the reordered array
+            if (market.outcomes.length === 2 &&
+                orderedOutcomes[0] !== market.outcomes[0]) {
+                // Outcomes were reordered, so we need to find which outcome the token represents
+                // in the original array and map it to the correct position in the ordered array
+                const originalOutcome = market.outcomes[tokenPosition];
+                const reorderedPosition = orderedOutcomes.findIndex(outcome => outcome === originalOutcome);
 
-            if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
-                return market.outcomes[tokenPosition];
+                if (reorderedPosition !== -1) {
+                    const finalResult = orderedOutcomes[reorderedPosition];
+
+                    console.log('Position mapping applied:', {
+                        tokenPosition: tokenPosition,
+                        originalOutcome: originalOutcome,
+                        reorderedPosition: reorderedPosition,
+                        finalResult: finalResult
+                    });
+
+                    return finalResult;
+                }
             }
-        } catch (error) {
-            console.warn('Error getting outcome name:', error);
+
+            // Use the ordered outcomes directly with the token position
+            const finalResult = orderedOutcomes[tokenPosition];
+
+            console.log('Using ordered outcomes directly:', {
+                tokenPosition: tokenPosition,
+                finalResult: finalResult
+            });
+
+            return finalResult;
         }
+    } catch (error) {
+        console.warn('Error getting outcome name:', error);
+    }
 
-        return null;
-    };
+    return null;
+};
+
+const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
+
+
 
     const { token0ImageUrl, token1ImageUrl, conditionalMarketInfo } = useMemo(() => {
 
@@ -290,7 +341,20 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
         const outcomeImageUrl = outcomeIsToken0 ? token0ImageUrl : token1ImageUrl;
 
         // Try to get better outcome name from outcomes array
-        const outcomeName = getOutcomeName(outcomeMarket, outcomeToken.id);
+        // For conditional markets, try both markets to find which one contains the token
+        let outcomeName = getOutcomeName(outcomeMarket, outcomeToken.id);
+        let resolvedMarket = outcomeMarket;
+
+        // If not found in outcomeMarket, try the other market
+        if (!outcomeName) {
+            const otherMarket = pool?.market0?.id === outcomeMarket?.id ? pool?.market1 : pool?.market0;
+            outcomeName = getOutcomeName(otherMarket, outcomeToken.id);
+            if (outcomeName) {
+                resolvedMarket = otherMarket;
+            }
+        }
+
+
         const displayName = outcomeName || outcomeToken.symbol || outcomeToken.name || outcomeToken.id?.slice(0, 8) + '...';
 
         return (
@@ -348,8 +412,19 @@ const TokenPairDisplay = memo(({ pool }: { pool: any }) => {
 
         if (outcomeToken) {
             // Try to get better outcome name from outcomes array
-            const outcomeMarket = market0 || market1;
-            const outcomeName = getOutcomeName(outcomeMarket, outcomeToken.id);
+            // Try both markets to find which one contains the token
+            let outcomeName = getOutcomeName(market0, outcomeToken.id);
+            let resolvedMarket = market0;
+
+            // If not found in market0, try market1
+            if (!outcomeName && market1) {
+                outcomeName = getOutcomeName(market1, outcomeToken.id);
+                if (outcomeName) {
+                    resolvedMarket = market1;
+                }
+            }
+
+
             const displayName = outcomeName || outcomeToken.symbol || outcomeToken.name || outcomeToken.id?.slice(0, 8) + '...';
 
             return (
@@ -399,9 +474,54 @@ const MarketFarmsList = memo(({ farms, onFarmClick }: { farms: any[], onFarmClic
     const handleSort = useHandleSort(sortField, sortDirection, setSortDirection, setSortField, setSortIndex);
     const arrow = useHandleArrow(sortField, sortIndex, sortDirection);
 
+    // Helper function to get outcome name for a farm
+    const getFarmOutcomeName = (farm: any): string | null => {
+        if (!farm?.pool) return null;
+
+        // Try to get outcome name from either market
+        const markets = [farm.pool.market0, farm.pool.market1].filter(Boolean);
+
+        for (const market of markets) {
+            if (!market?.outcomes) continue;
+
+            // Check token0
+            if (farm.pool.token0?.id) {
+                const outcomeToken0 = getOutcomeName(market, farm.pool.token0.id);
+                if (outcomeToken0) return outcomeToken0;
+            }
+
+            // Check token1
+            if (farm.pool.token1?.id) {
+                const outcomeToken1 = getOutcomeName(market, farm.pool.token1.id);
+                if (outcomeToken1) return outcomeToken1;
+            }
+        }
+
+        return null;
+    };
+
     // Sort the farms based on current sort criteria
     const sortedFarms = useMemo(() => {
         return [...farms].sort((a, b) => {
+            // First, apply special UP/DOWN ordering - UP should always come before DOWN
+            const outcomeA = getFarmOutcomeName(a);
+            const outcomeB = getFarmOutcomeName(b);
+
+            if (outcomeA && outcomeB) {
+                const isUpDownPair = (outcomeA.toUpperCase() === 'UP' && outcomeB.toUpperCase() === 'DOWN') ||
+                    (outcomeA.toUpperCase() === 'DOWN' && outcomeB.toUpperCase() === 'UP');
+
+                if (isUpDownPair) {
+                    // If this is an UP/DOWN pair, ensure UP comes first
+                    if (outcomeA.toUpperCase() === 'UP' && outcomeB.toUpperCase() === 'DOWN') {
+                        return -1; // A (UP) comes before B (DOWN)
+                    } else if (outcomeA.toUpperCase() === 'DOWN' && outcomeB.toUpperCase() === 'UP') {
+                        return 1; // B (UP) comes before A (DOWN)
+                    }
+                }
+            }
+
+            // Then apply the selected sort criteria
             let valueA: number, valueB: number;
 
             switch (sortField) {
@@ -560,6 +680,46 @@ const MarketImage = memo(({ market, marketName }: { market: Market | undefined, 
     );
 });
 
+// Helper function to handle special ordering for UP/DOWN outcomes
+const getOrderedOutcomes = (outcomes: string[]): string[] => {
+    if (!outcomes || outcomes.length !== 2) {
+        return outcomes;
+    }
+
+    const upperOutcomes = outcomes.map(o => o.toUpperCase());
+    const hasUp = upperOutcomes.includes('UP');
+    const hasDown = upperOutcomes.includes('DOWN');
+
+    // Debug log for UP/DOWN detection
+    console.log('getOrderedOutcomes called:', {
+        originalOutcomes: outcomes,
+        upperOutcomes: upperOutcomes,
+        hasUp: hasUp,
+        hasDown: hasDown
+    });
+
+    // Special case: if we have UP and DOWN, ensure UP comes first
+    if (hasUp && hasDown) {
+        const upIndex = upperOutcomes.indexOf('UP');
+        const downIndex = upperOutcomes.indexOf('DOWN');
+
+        console.log('UP/DOWN detected - reordering:', {
+            upIndex: upIndex,
+            downIndex: downIndex,
+            needsReordering: upIndex > downIndex,
+            originalOrder: outcomes,
+            resultOrder: upIndex > downIndex ? [outcomes[upIndex], outcomes[downIndex]] : outcomes
+        });
+
+        if (upIndex > downIndex) {
+            // UP is after DOWN, so reverse the array
+            return [outcomes[upIndex], outcomes[downIndex]];
+        }
+    }
+
+    return outcomes;
+};
+
 export default function EternalFarmsPage({ data, refreshing, priceFetched, fetchHandler }: EternalFarmsPageProps) {
     const [modalForPool, setModalForPool] = useState<any>(null);
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
@@ -571,6 +731,59 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
         fetchHandler();
         // }
     }, [priceFetched]);
+
+    // Collect all unique collateral token addresses for batch resolution
+    const collateralTokenAddresses = useMemo(() => {
+        if (!data || data.length === 0) return [];
+
+        const addresses = new Set<string>();
+
+        data.forEach((farm: any) => {
+            const market0 = farm.pool?.market0;
+            const market1 = farm.pool?.market1;
+
+            if (market0?.collateralToken?.id) {
+                addresses.add(market0.collateralToken.id);
+            }
+            if (market1?.collateralToken?.id) {
+                addresses.add(market1.collateralToken.id);
+            }
+        });
+
+        return Array.from(addresses);
+    }, [data]);
+
+    // Batch resolve collateral token information
+    const resolvedCollateralTokens = useTokensBatch(collateralTokenAddresses);
+
+    // Create a mapping for easy lookup
+    const collateralTokensMap = useMemo(() => {
+        const map = new Map<string, any>();
+        collateralTokenAddresses.forEach((address, index) => {
+            const token = resolvedCollateralTokens[index];
+            if (token) {
+                map.set(address.toLowerCase(), token);
+            }
+        });
+        return map;
+    }, [collateralTokenAddresses, resolvedCollateralTokens]);
+
+    // Helper function to get collateral token display name
+    const getCollateralTokenDisplayName = useCallback((collateralTokenId: string): string => {
+        // Check if it's sDAI by address
+        if (collateralTokenId === '0x83fe227d7c59ce6c7b12d7e4c600f4b5e8b09e6b') {
+            return 'sDAI';
+        }
+
+        // Get resolved token from the map
+        const resolvedToken = collateralTokensMap.get(collateralTokenId.toLowerCase());
+        if (resolvedToken) {
+            return resolvedToken.symbol || resolvedToken.name || (collateralTokenId.slice(0, 8) + '...');
+        }
+
+        // Fallback to truncated address
+        return collateralTokenId.slice(0, 8) + '...';
+    }, [collateralTokensMap]);
 
     // Helper function to detect if a pool represents a conditional market relationship
     const isConditionalMarketPool = useCallback((farm: any): {
@@ -1016,34 +1229,7 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                                 )}
                                                 {marketGroup.market?.collateralToken && (
                                                     <span className="eternal-page__market-collateral">
-                                                        • Collateral: {(() => {
-                                                            const collateralToken = marketGroup.market.collateralToken;
-                                                            // Check if it's sDAI by address
-                                                            if (collateralToken.id === '0x83fe227d7c59ce6c7b12d7e4c600f4b5e8b09e6b') {
-                                                                return 'sDAI';
-                                                            }
-                                                            // First, try to find the token in the pool's tokens to get symbol/name
-                                                            const poolTokens = [
-                                                                ...Object.values(marketGroup.childMarkets).flatMap((child: any) =>
-                                                                    child.farms.flatMap((farm: any) => [farm.pool?.token0, farm.pool?.token1])
-                                                                ),
-                                                                ...marketGroup.farms.flatMap((farm: any) => [farm.pool?.token0, farm.pool?.token1])
-                                                            ].filter(Boolean);
-
-                                                            const matchingToken = poolTokens.find((token: any) =>
-                                                                token?.id?.toLowerCase() === collateralToken.id?.toLowerCase()
-                                                            );
-
-                                                            if (matchingToken?.symbol) {
-                                                                return matchingToken.symbol;
-                                                            }
-                                                            if (matchingToken?.name) {
-                                                                return matchingToken.name;
-                                                            }
-
-                                                            // Fallback to truncated address if no symbol/name found
-                                                            return collateralToken.id.slice(0, 8) + '...';
-                                                        })()}
+                                                        • Collateral: {getCollateralTokenDisplayName(marketGroup.market.collateralToken.id)}
                                                     </span>
                                                 )}
                                             </span>
@@ -1112,29 +1298,7 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
                                                                         )}
                                                                         {childGroup.market?.collateralToken && (
                                                                             <span className="eternal-page__child-market-collateral">
-                                                                                • Collateral: {(() => {
-                                                                                    const collateralToken = childGroup.market.collateralToken;
-                                                                                    // Check if it's sDAI by address
-                                                                                    if (collateralToken.id === '0x83fe227d7c59ce6c7b12d7e4c600f4b5e8b09e6b') {
-                                                                                        return 'sDAI';
-                                                                                    }
-                                                                                    // Try to find the token in the child market's pool tokens to get symbol/name
-                                                                                    const poolTokens = childGroup.farms.flatMap((farm: any) => [farm.pool?.token0, farm.pool?.token1]).filter(Boolean);
-
-                                                                                    const matchingToken = poolTokens.find((token: any) =>
-                                                                                        token?.id?.toLowerCase() === collateralToken.id?.toLowerCase()
-                                                                                    );
-
-                                                                                    if (matchingToken?.symbol) {
-                                                                                        return matchingToken.symbol;
-                                                                                    }
-                                                                                    if (matchingToken?.name) {
-                                                                                        return matchingToken.name;
-                                                                                    }
-
-                                                                                    // Fallback to truncated address if no symbol/name found
-                                                                                    return collateralToken.id.slice(0, 8) + '...';
-                                                                                })()}
+                                                                                • Collateral: {getCollateralTokenDisplayName(childGroup.market.collateralToken.id)}
                                                                             </span>
                                                                         )}
                                                                     </span>

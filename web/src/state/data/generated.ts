@@ -1449,6 +1449,8 @@ export enum Deposit_OrderBy {
   L2tokenId = 'L2tokenId',
   EnteredInEternalFarming = 'enteredInEternalFarming',
   EternalFarming = 'eternalFarming',
+  EternalFarmingAmount0 = 'eternalFarming__amount0',
+  EternalFarmingAmount1 = 'eternalFarming__amount1',
   EternalFarmingBonusReward = 'eternalFarming__bonusReward',
   EternalFarmingBonusRewardRate = 'eternalFarming__bonusRewardRate',
   EternalFarmingBonusRewardToken = 'eternalFarming__bonusRewardToken',
@@ -1611,6 +1613,8 @@ export enum Deposit_OrderBy {
 
 export type EternalFarming = {
   __typename?: 'EternalFarming';
+  amount0: Scalars['BigDecimal'];
+  amount1: Scalars['BigDecimal'];
   bonusReward: Scalars['BigInt'];
   bonusRewardRate: Scalars['BigInt'];
   bonusRewardToken: Scalars['Bytes'];
@@ -1652,6 +1656,22 @@ export type EternalFarmingDepositsArgs = {
 export type EternalFarming_Filter = {
   /** Filter for the block changed event. */
   _change_block?: Maybe<BlockChangedFilter>;
+  amount0?: Maybe<Scalars['BigDecimal']>;
+  amount0_gt?: Maybe<Scalars['BigDecimal']>;
+  amount0_gte?: Maybe<Scalars['BigDecimal']>;
+  amount0_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  amount0_lt?: Maybe<Scalars['BigDecimal']>;
+  amount0_lte?: Maybe<Scalars['BigDecimal']>;
+  amount0_not?: Maybe<Scalars['BigDecimal']>;
+  amount0_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  amount1?: Maybe<Scalars['BigDecimal']>;
+  amount1_gt?: Maybe<Scalars['BigDecimal']>;
+  amount1_gte?: Maybe<Scalars['BigDecimal']>;
+  amount1_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  amount1_lt?: Maybe<Scalars['BigDecimal']>;
+  amount1_lte?: Maybe<Scalars['BigDecimal']>;
+  amount1_not?: Maybe<Scalars['BigDecimal']>;
+  amount1_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   and?: Maybe<Array<Maybe<EternalFarming_Filter>>>;
   bonusReward?: Maybe<Scalars['BigInt']>;
   bonusRewardRate?: Maybe<Scalars['BigInt']>;
@@ -1883,6 +1903,8 @@ export type EternalFarming_Filter = {
 };
 
 export enum EternalFarming_OrderBy {
+  Amount0 = 'amount0',
+  Amount1 = 'amount1',
   BonusReward = 'bonusReward',
   BonusRewardRate = 'bonusRewardRate',
   BonusRewardToken = 'bonusRewardToken',
@@ -8163,6 +8185,8 @@ export enum Pool_OrderBy {
   CreatedAtBlockNumber = 'createdAtBlockNumber',
   CreatedAtTimestamp = 'createdAtTimestamp',
   EternalFarm = 'eternalFarm',
+  EternalFarmAmount0 = 'eternalFarm__amount0',
+  EternalFarmAmount1 = 'eternalFarm__amount1',
   EternalFarmBonusReward = 'eternalFarm__bonusReward',
   EternalFarmBonusRewardRate = 'eternalFarm__bonusRewardRate',
   EternalFarmBonusRewardToken = 'eternalFarm__bonusRewardToken',
@@ -13644,6 +13668,20 @@ export type InfiniteFarmsQuery = (
         & { collateralToken: (
           { __typename?: 'Token' }
           & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
         ), childMarkets: Array<(
           { __typename?: 'Market' }
           & Pick<Market, 'id'>
@@ -13663,6 +13701,20 @@ export type InfiniteFarmsQuery = (
         & { collateralToken: (
           { __typename?: 'Token' }
           & Pick<Token, 'id'>
+          & { market?: Maybe<(
+            { __typename?: 'Market' }
+            & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
+            & { wrappedTokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )>, image: Array<(
+              { __typename?: 'Image' }
+              & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+            )>, tokens: Array<(
+              { __typename?: 'Token' }
+              & Pick<Token, 'id' | 'name'>
+            )> }
+          )> }
         ), childMarkets: Array<(
           { __typename?: 'Market' }
           & Pick<Market, 'id'>
@@ -14727,6 +14779,24 @@ export const InfiniteFarmsDocument = `
         outcomes
         collateralToken {
           id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
         }
         childMarkets {
           id
@@ -14752,6 +14822,24 @@ export const InfiniteFarmsDocument = `
         outcomes
         collateralToken {
           id
+          market {
+            id
+            outcomes
+            wrappedTokensString
+            wrappedTokens {
+              id
+              name
+            }
+            image {
+              id
+              cidMarket
+              cidOutcomes
+            }
+            tokens {
+              id
+              name
+            }
+          }
         }
         childMarkets {
           id

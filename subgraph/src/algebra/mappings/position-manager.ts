@@ -13,7 +13,7 @@ import { convertTokenToDecimal, loadTransaction } from '../utils'
 import { FarmingCenterAddress } from '../../algebra-farming/utils/constants'
 
 
-function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
+export function getPosition(event: ethereum.Event, tokenId: BigInt): Position | null {
 
 
   let position = Position.load(tokenId.toString())
@@ -174,11 +174,10 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
       log.error("Token not found for pool {}", [event.transaction.hash.toHexString() + '#' + (event.logIndex.minus(BigInt.fromI32(2))).toString()])
       return
     }
+    let netAmount0 = position.depositedToken0.minus(position.withdrawnToken0)
+    let netAmount1 = position.depositedToken1.minus(position.withdrawnToken1)
 
-    recalculatedMintUSD = convertTokenToDecimal(event.params.amount0, token0!.decimals)
-      .times(token0!.derivedMatic)
-      .plus(convertTokenToDecimal(event.params.amount1, token1!.decimals)
-        .times(token1!.derivedMatic))
+    recalculatedMintUSD = netAmount0.times(token0!.derivedMatic).plus(netAmount1.times(token1!.derivedMatic))
     log.info("Recalculated mint USD: {}", [recalculatedMintUSD.toString()])
     entity.mintUSD = recalculatedMintUSD;
     if (mint === null) {
@@ -223,7 +222,6 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   else
     amount0 = convertTokenToDecimal(event.params.amount0, token0!.decimals)
 
-
   if (pools_list.includes(position.pool))
     amount1 = convertTokenToDecimal(event.params.amount0, token1!.decimals)
   else
@@ -233,6 +231,17 @@ export function handleDecreaseLiquidity(event: DecreaseLiquidity): void {
   position.liquidity = position.liquidity.minus(event.params.liquidity)
   position.withdrawnToken0 = position.withdrawnToken0.plus(amount0)
   position.withdrawnToken1 = position.withdrawnToken1.plus(amount1)
+
+
+  // update mint amount
+  let netAmount0 = position.depositedToken0.minus(position.withdrawnToken0)
+  let netAmount1 = position.depositedToken1.minus(position.withdrawnToken1)
+
+  let entity = Deposit.load(event.params.tokenId.toString());
+  if (entity) {
+    entity.mintUSD = netAmount0.times(token0!.derivedMatic).plus(netAmount1.times(token1!.derivedMatic))
+    entity.save()
+  }
 
   position = updateFeeVars(position, event, event.params.tokenId)
   // recalculatePosition(position)

@@ -780,6 +780,24 @@ export const INFINITE_EVENTS = gql`
                 outcomes
                 collateralToken {
                   id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
                 }
                 childMarkets {
                   id
@@ -805,6 +823,24 @@ export const INFINITE_EVENTS = gql`
                 outcomes
                 collateralToken {
                   id
+                  market{
+                    id
+                    outcomes
+                    wrappedTokensString
+                    wrappedTokens {
+                      id
+                      name
+                    }
+                    image {
+                      id
+                      cidMarket
+                      cidOutcomes
+                    }
+                    tokens {
+                      id
+                      name
+                    }
+                  }
                 }
                 childMarkets {
                   id

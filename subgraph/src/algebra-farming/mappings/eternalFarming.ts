@@ -14,6 +14,7 @@ import { Deposit, Mint, Reward, EternalFarming, Pool, Token } from '../../../gen
 import { createTokenEntity } from '../utils/token'
 import { ADDRESS_ZERO } from '../../algebra/utils/constants';
 import { EternalVirtualPool } from '../../../generated/EternalFarming/EternalVirtualPool';
+import { getPosition } from '../../algebra/mappings/position-manager';
 
 const infinity = BigInt.fromString("18446744073709551615");
 
@@ -93,11 +94,16 @@ export function handleTokenStaked(event: FarmEntered): void {
     let eternalFarming = EternalFarming.load(event.params.incentiveId.toHexString())
     if (eternalFarming) {
       let mint = Mint.load(entity.mint)
+
+
+      let position = getPosition(event, event.params.tokenId)
+      let netAmount0 = position!.depositedToken0.minus(position!.withdrawnToken0)
+      let netAmount1 = position!.depositedToken1.minus(position!.withdrawnToken1)
       if (mint === null) {
         log.warning("Mint entity not found in handleTokenStaked", [])
       } else {
-        eternalFarming.amount0 = eternalFarming.amount0.plus(mint.amount0)
-        eternalFarming.amount1 = eternalFarming.amount1.plus(mint.amount1)
+        eternalFarming.amount0 = eternalFarming.amount0.plus(netAmount0)
+        eternalFarming.amount1 = eternalFarming.amount1.plus(netAmount1)
       }
       eternalFarming.totalLiquidity = eternalFarming.totalLiquidity.plus(event.params.liquidity)
       let pool = Pool.load(eternalFarming.pool)
@@ -137,8 +143,11 @@ export function handleTokenUnstaked(event: FarmEnded): void {
       let pool = Pool.load(eternalFarming.pool)
       let token0 = Token.load(pool!.token0)
       let token1 = Token.load(pool!.token1)
-      let amount0 = mint!.amount0.minus(eternalFarming.amount0)
-      let amount1 = mint!.amount1.minus(eternalFarming.amount1)
+      let position = getPosition(event, event.params.tokenId)
+      let netAmount0 = position!.depositedToken0.minus(position!.withdrawnToken0)
+      let netAmount1 = position!.depositedToken1.minus(position!.withdrawnToken1)
+      let amount0 = eternalFarming.amount0.minus(netAmount0)
+      let amount1 = eternalFarming.amount1.minus(netAmount1)
       eternalFarming.amount0 = amount0
       eternalFarming.amount1 = amount1
       eternalFarming.totalAmountUSDEstimated = amount0.times(token0!.derivedMatic).plus(amount1.times(token1!.derivedMatic))

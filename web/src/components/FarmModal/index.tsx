@@ -52,6 +52,150 @@ interface FarmModalProps {
     farmingType: FarmingType;
 }
 
+// Helper function to get outcome name for a farm (copied from EternalFarmsPage)
+const getOutcomeName = (market: any, tokenId: string): string | null => {
+    if (!market?.outcomes || !market?.wrappedTokensString || !tokenId) {
+        return null;
+    }
+
+    try {
+        // Handle wrappedTokensString as either string or array
+        let wrappedTokenIds: string[];
+        const wrappedTokensString = market.wrappedTokensString as any;
+
+        if (Array.isArray(wrappedTokensString)) {
+            wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
+        } else if (typeof wrappedTokensString === 'string') {
+            wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
+        } else {
+            return null;
+        }
+
+        const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
+
+        if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
+            // Apply special ordering for UP/DOWN outcomes
+            const orderedOutcomes = getOrderedOutcomes(market.outcomes);
+
+            // Debug log for UP/DOWN ordering
+            if (market.outcomes.length === 2 &&
+                market.outcomes.some(o => o.toUpperCase() === 'UP') &&
+                market.outcomes.some(o => o.toUpperCase() === 'DOWN')) {
+                console.log('UP/DOWN Token Position Mapping:', {
+                    marketId: market.id,
+                    tokenId: tokenId,
+                    originalOutcomes: market.outcomes,
+                    orderedOutcomes: orderedOutcomes,
+                    tokenPosition: tokenPosition,
+                    wasReordered: orderedOutcomes[0] !== market.outcomes[0]
+                });
+            }
+
+            // If outcomes were reordered (UP/DOWN case), we need to find the correct position in the reordered array
+            if (market.outcomes.length === 2 &&
+                orderedOutcomes[0] !== market.outcomes[0]) {
+                // Outcomes were reordered, so we need to find which outcome the token represents
+                // in the original array and map it to the correct position in the ordered array
+                const originalOutcome = market.outcomes[tokenPosition];
+                const reorderedPosition = orderedOutcomes.findIndex(outcome => outcome === originalOutcome);
+
+                if (reorderedPosition !== -1) {
+                    const finalResult = orderedOutcomes[reorderedPosition];
+
+                    console.log('Position mapping applied:', {
+                        tokenPosition: tokenPosition,
+                        originalOutcome: originalOutcome,
+                        reorderedPosition: reorderedPosition,
+                        finalResult: finalResult
+                    });
+
+                    return finalResult;
+                }
+            }
+
+            // Use the ordered outcomes directly with the token position
+            const finalResult = orderedOutcomes[tokenPosition];
+
+            console.log('Using ordered outcomes directly:', {
+                tokenPosition: tokenPosition,
+                finalResult: finalResult
+            });
+
+            return finalResult;
+        }
+    } catch (error) {
+        console.warn('Error getting outcome name:', error);
+    }
+
+    return null;
+};
+
+// Helper function to handle special ordering for UP/DOWN outcomes (copied from EternalFarmsPage)
+const getOrderedOutcomes = (outcomes: string[]): string[] => {
+    if (!outcomes || outcomes.length !== 2) {
+        return outcomes;
+    }
+
+    const upperOutcomes = outcomes.map(o => o.toUpperCase());
+    const hasUp = upperOutcomes.includes('UP');
+    const hasDown = upperOutcomes.includes('DOWN');
+
+    // Debug log for UP/DOWN detection
+    console.log('getOrderedOutcomes called:', {
+        originalOutcomes: outcomes,
+        upperOutcomes: upperOutcomes,
+        hasUp: hasUp,
+        hasDown: hasDown
+    });
+
+    // Special case: if we have UP and DOWN, ensure UP comes first
+    if (hasUp && hasDown) {
+        const upIndex = upperOutcomes.indexOf('UP');
+        const downIndex = upperOutcomes.indexOf('DOWN');
+
+        console.log('UP/DOWN detected - reordering:', {
+            upIndex: upIndex,
+            downIndex: downIndex,
+            needsReordering: upIndex > downIndex,
+            originalOrder: outcomes,
+            resultOrder: upIndex > downIndex ? [outcomes[upIndex], outcomes[downIndex]] : outcomes
+        });
+
+        if (upIndex > downIndex) {
+            // UP is after DOWN, so reverse the array
+            return [outcomes[upIndex], outcomes[downIndex]];
+        }
+    }
+
+    return outcomes;
+};
+
+// Helper function to get outcome name for a farm
+const getFarmOutcomeName = (farm: any): string | null => {
+    if (!farm?.pool) return null;
+
+    // Try to get outcome name from either market
+    const markets = [farm.pool.market0, farm.pool.market1].filter(Boolean);
+
+    for (const market of markets) {
+        if (!market?.outcomes) continue;
+
+        // Check token0
+        if (farm.pool.token0?.id) {
+            const outcomeToken0 = getOutcomeName(market, farm.pool.token0.id);
+            if (outcomeToken0) return outcomeToken0;
+        }
+
+        // Check token1
+        if (farm.pool.token1?.id) {
+            const outcomeToken1 = getOutcomeName(market, farm.pool.token1.id);
+            if (outcomeToken1) return outcomeToken1;
+        }
+    }
+
+    return null;
+};
+
 export function FarmModal({
     event: {
         pool,
@@ -292,6 +436,9 @@ export function FarmModal({
 
     const linkToProviding = `/add/${pool.token0.id}/${pool.token1.id}`;
 
+    // Get the outcome name for this farm
+    const outcomeName = getFarmOutcomeName({ pool });
+
     return (
         <>
             {submitState === 3 ? (
@@ -353,7 +500,7 @@ export function FarmModal({
                                         <Trans>To take part in this farming event, you need to</Trans>
                                     </p>
                                     <NavLink className={"flex-s-between c-w ph-1 pv-05 bg-p br-8 mt-1 hover-c-ph"} to={linkToProviding}>
-                                        <span>{t`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
+                                        <span>{outcomeName ? t`Provide liquidity for ${outcomeName}` : t`Provide liquidity for ${pool.token0.symbol} / ${pool.token1.symbol}`}</span>
                                         <ArrowRight className={"ml-05"} size={16} />
                                     </NavLink>
                                 </div>

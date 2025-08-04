@@ -1,7 +1,7 @@
 import { useCurrency } from "hooks/Tokens";
 import usePrevious from "hooks/usePrevious";
 import { useAccount } from "wagmi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { NavLink, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import { useV3DerivedMintInfo, useV3MintState, useV3MintActionHandlers, useInitialUSDPrices, useCurrentStep } from "state/mint/v3/hooks";
 import { currencyId } from "utils/currencyId";
@@ -38,7 +38,7 @@ const DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE = new Percent(50, 10_000);
 
 export function NewAddLiquidityPage({
     match: {
-        params: { currencyIdA, currencyIdB },
+        params: { currencyIdA, currencyIdB, step },
     },
     history,
 }: RouteComponentProps<{
@@ -58,6 +58,7 @@ export function NewAddLiquidityPage({
     const currentStep = useCurrentStep();
 
     const [end, setEnd] = useState(false);
+    const stepInitialized = useRef(false);
 
     const [priceFormat, setPriceFormat] = useState(PriceFormats.TOKEN);
 
@@ -66,6 +67,8 @@ export function NewAddLiquidityPage({
         onFieldBInput("");
         onLeftRangeInput("");
         onRightRangeInput("");
+        // Reset step initialization when currencies change
+        stepInitialized.current = false;
     }, [currencyIdA, currencyIdB]);
 
     const baseCurrency = useCurrency(currencyIdA);
@@ -90,6 +93,37 @@ export function NewAddLiquidityPage({
             ...derivedMintInfo,
         };
     }, [derivedMintInfo, baseCurrency, quoteCurrency]);
+
+    // Initialize currentStep based on URL step parameter (only once)
+    useEffect(() => {
+        if (step && currencyIdA && currencyIdB && baseCurrency && quoteCurrency && !stepInitialized.current) {
+            let targetStep = 0;
+            switch (step) {
+                case 'select-pair':
+                    targetStep = 0;
+                    break;
+                case 'initial-price':
+                    targetStep = 1;
+                    break;
+                case 'select-range':
+                    // For pools with liquidity, select-range is step 1
+                    // For pools without liquidity, select-range is step 2 (after initial-price)
+                    targetStep = mintInfo.noLiquidity ? 2 : 1;
+                    break;
+                case 'enter-amounts':
+                    // For pools with liquidity, enter-amounts is step 2
+                    // For pools without liquidity, enter-amounts is step 3
+                    targetStep = mintInfo.noLiquidity ? 3 : 2;
+                    break;
+            }
+            
+            // Only dispatch if currentStep is different from targetStep
+            if (currentStep !== targetStep) {
+                dispatch(updateCurrentStep({ currentStep: targetStep }));
+                stepInitialized.current = true;
+            }
+        }
+    }, [step, currencyIdA, currencyIdB, dispatch, currentStep, mintInfo.noLiquidity, baseCurrency, quoteCurrency]);
 
     const initialUSDPrices = useInitialUSDPrices();
     const usdPriceA = useUSDCPrice(baseCurrency ?? undefined);
@@ -269,6 +303,7 @@ export function NewAddLiquidityPage({
         return () => {
             resetState();
             dispatch(updateCurrentStep({ currentStep: 0 }));
+            stepInitialized.current = false;
         };
     }, []);
 

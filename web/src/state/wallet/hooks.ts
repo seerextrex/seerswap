@@ -68,8 +68,8 @@ export function useTokenBalancesWithLoadingIndicator(address?: string, tokens?: 
     const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens]);
     const erc20Interface = new Interface(ERC20ABI);
 
-    // Memoize callInputs array
-    const callInputs = useMemo(() => (address ? [address] : undefined), [address]);
+    // Memoize callInputs array - always provide [address] even if address is undefined
+    const callInputs = useMemo(() => [address], [address]);
 
     const balances = useMultipleContractSingleData(validatedTokenAddresses, erc20Interface, "balanceOf", callInputs, {
         gasRequired: 100_000,
@@ -92,12 +92,12 @@ export function useTokenBalancesWithLoadingIndicator(address?: string, tokens?: 
     );
     const prevBalances = usePreviousNonEmptyObject(_balances);
 
-    const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [_balances]);
+    const anyLoading: boolean = useMemo(() => balances.some((callState) => callState.loading), [balances]);
 
     return useMemo(() => {
         if (!prevBalances) return [_balances, anyLoading];
 
-        if (Object.keys(_balances).length === 0 && Object.keys(_balances).length !== 0) return [prevBalances, anyLoading];
+        if (Object.keys(_balances).length === 0 && Object.keys(prevBalances).length !== 0) return [prevBalances, anyLoading];
 
         return [_balances, anyLoading];
     }, [anyLoading, _balances]);

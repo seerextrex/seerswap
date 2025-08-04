@@ -231,6 +231,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                             error={currencyAError}
                             priceFormat={priceFormat}
                             isBase={false}
+                            balance={mintInfo.currencyBalances[Field.CURRENCY_A]}
                         />
                     </div>
                     <div>
@@ -250,6 +251,7 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
                             error={currencyBError}
                             priceFormat={priceFormat}
                             isBase={true}
+                            balance={mintInfo.currencyBalances[Field.CURRENCY_B]}
                         />
                     </div>
                 </div>

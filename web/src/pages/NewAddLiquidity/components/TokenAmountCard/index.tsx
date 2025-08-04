@@ -5,7 +5,6 @@ import { Currency, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import "./index.scss";
 import CurrencyLogo from "components/CurrencyLogo";
 import { WrappedCurrency } from "models/types";
-import { useCurrencyBalance } from "state/wallet/hooks";
 import { useAccount } from "wagmi";
 import useUSDCPrice, { useUSDCValue } from "hooks/useUSDCPrice";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -35,6 +34,7 @@ interface ITokenAmountCard {
     error: string | undefined;
     priceFormat: PriceFormats;
     isBase: boolean;
+    balance?: CurrencyAmount<Currency> | undefined;
 }
 
 export function TokenAmountCard({
@@ -53,10 +53,12 @@ export function TokenAmountCard({
     error,
     priceFormat,
     isBase,
+    balance: providedBalance,
 }: ITokenAmountCard) {
     const { address: account } = useAccount();
 
-    const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
+    // Use provided balance (from mintInfo.currencyBalances) if available, otherwise fallback to individual balance call
+    const balance = providedBalance;
     const balanceUSD = useUSDCPrice(currency ?? undefined);
 
     const [localUSDValue, setLocalUSDValue] = useState("");
@@ -123,7 +125,16 @@ export function TokenAmountCard({
     }, [initialTokenPrice, initialUSDPrices, currencyPrice, otherCurrencyPrice, value]);
 
     const balanceString = useMemo(() => {
-        if (!balance || !currency) return <Loader stroke={"white"} />;
+        // Show loader only when we have currency but balance is still loading (undefined/null) and user is connected
+        if ((balance === undefined || balance === null) && currency && account) return <Loader stroke={"white"} />;
+        
+        // If no currency, show empty string
+        if (!currency) return "";
+        
+        // If no balance object, show 0
+        if (!balance) {
+            return `${isUSD ? "$ " : ""}0${isUSD ? "" : ` ${currency.symbol}`}`;
+        }
 
         const _balance =
             isUSD && balanceUSD
@@ -142,7 +153,7 @@ export function TokenAmountCard({
         }
 
         return `${isUSD ? "$ " : ""}${_balance}${isUSD ? "" : ` ${currency.symbol}`}`;
-    }, [balance, isUSD, fiatValue, currency]);
+    }, [balance, isUSD, fiatValue, currency, account]);
 
     return (
         <div className="token-amount-card-wrapper p-1 f c pos-r mxs_w-100 ms_w-100 mm_w-100">

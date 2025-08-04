@@ -434,7 +434,7 @@ export function FarmModal({
 
     const showApproval = approval !== ApprovalState.APPROVED && !!_amountForApprove;
 
-    const linkToProviding = `/add/${pool.token0.id}/${pool.token1.id}`;
+    const linkToProviding = `/add/${pool.token0.id}/${pool.token1.id}/select-range`;
 
     // Get the outcome name for this farm
     const outcomeName = getFarmOutcomeName({ pool });

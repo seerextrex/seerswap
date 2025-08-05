@@ -22,12 +22,9 @@ import GasUpdater from "./state/application/gasUpdater";
 import "./assets/styles/index.scss";
 
 import AlgebraConfig from "algebra.config";
-import { WagmiProvider, createConfig, http } from 'wagmi';
-import { gnosis as wagmiGnosisChain } from 'wagmi/chains';
+import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { injected } from 'wagmi/connectors';
-import { walletConnect } from 'wagmi/connectors';
-import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
+import { ConnectKitProvider } from 'connectkit';
 
 type __window = Window & { ethereum: any };
 
@@ -37,53 +34,11 @@ if (_window.ethereum) {
     _window.ethereum.autoRefreshOnNetworkChange = false;
 }
 
+import { wagmiConfig } from "./wagmi.config";
+
 const apolloClient = new ApolloClient({
     uri: AlgebraConfig.SUBGRAPH.infoURL,
     cache: new InMemoryCache(),
-});
-
-// Create a custom Gnosis chain definition
-const gnosisChainCustom = {
-    ...wagmiGnosisChain,
-    contracts: {
-        ...wagmiGnosisChain.contracts,
-        ensRegistry: undefined,
-        ensUniversalResolver: undefined,
-    },
-};
-
-// Wagmi config - Manually creating config instead of getDefaultConfig
-const wagmiConfig = createConfig({
-    chains: [gnosisChainCustom],
-    pollingInterval: 12000, // Poll every 12 seconds
-    connectors: [
-        injected({
-            shimDisconnect: true,
-        }),
-        walletConnect({
-            projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || "YOUR_WALLETCONNECT_PROJECT_ID",
-            metadata: {
-                name: 'SeerSwap',
-                description: 'SeerSwap DEX Interface',
-                url: 'localhost:3000',
-                icons: ['/logo.png']
-            },
-            showQrModal: false,
-            // Set event listeners limits higher to prevent warnings
-            qrModalOptions: {
-                themeMode: 'light',
-                themeVariables: {
-                    '--wcm-z-index': '9999', // Make sure it's highest z-index
-                },
-                // Simplify the UI to reduce complexity
-                explorerRecommendedWalletIds: [],
-                enableExplorer: false,
-            },
-        }),
-    ],
-    transports: {
-        [gnosisChainCustom.id]: http(AlgebraConfig.CHAIN_PARAMS.rpcURL),
-    },
 });
 
 // React Query client with optimized settings

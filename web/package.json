@@ -157,6 +157,7 @@
     "@apollo/client": "^3.4.11",
     "@fontsource/montserrat": "^4.5.1",
     "@graphql-codegen/typescript-rtk-query": "^3.1.1",
+    "@wagmi/core": "^2.17.2",
     "algebra-packeges": "^2.1.4",
     "lodash.keyby": "^4.6.0",
     "make-plural": "^7.4.0",

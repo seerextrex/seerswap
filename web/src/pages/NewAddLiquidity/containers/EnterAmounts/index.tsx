@@ -12,7 +12,7 @@ import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "constants/addresses";
 import { useAccount } from "wagmi";
 import { Bound, updateCurrentStep } from "state/mint/v3/actions";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { tryParseAmount } from "state/swap/hooks";
 
 import { StepTitle } from "pages/NewAddLiquidity/components/StepTitle";
@@ -20,6 +20,7 @@ import { PriceFormats } from "pages/NewAddLiquidity/components/PriceFomatToggler
 import { useHistory } from "react-router-dom";
 import { useAppDispatch } from "state/hooks";
 import { t, Trans } from "@lingui/macro";
+import { useBatchLiquidityAddition } from "hooks/useBatchLiquidityAddition";
 
 interface IEnterAmounts {
     currencyA: Currency | undefined;
@@ -34,6 +35,20 @@ interface IEnterAmounts {
 export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, additionalStep, priceFormat, backStep }: IEnterAmounts) {
     const { chain } = useAccount();
     const chainId = chain?.id;
+    
+    // Check if batch execution will be used
+    const { shouldUseBatchExecution } = useBatchLiquidityAddition();
+    const [willUseBatch, setWillUseBatch] = useState(false);
+    
+    useEffect(() => {
+        const checkBatch = async () => {
+            if (currencyA && currencyB && mintInfo) {
+                const useBatch = await shouldUseBatchExecution(currencyA, currencyB, mintInfo);
+                setWillUseBatch(useBatch);
+            }
+        };
+        checkBatch();
+    }, [currencyA, currencyB, mintInfo, shouldUseBatchExecution]);
 
     const { independentField, typedValue } = useV3MintState();
 
@@ -90,20 +105,26 @@ export function EnterAmounts({ currencyA, currencyB, mintInfo, isCompleted, addi
     );
 
     const showApprovalA = useMemo(() => {
+        // Hide approval UI when batch execution will be used
+        if (willUseBatch) return false;
+        
         if (approvalA === ApprovalState.UNKNOWN) return undefined;
 
         if (approvalA === ApprovalState.NOT_APPROVED) return true;
 
         return approvalA !== ApprovalState.APPROVED;
-    }, [approvalA]);
+    }, [approvalA, willUseBatch]);
 
     const showApprovalB = useMemo(() => {
+        // Hide approval UI when batch execution will be used
+        if (willUseBatch) return false;
+        
         if (approvalB === ApprovalState.UNKNOWN) return undefined;
 
         if (approvalB === ApprovalState.NOT_APPROVED) return true;
 
         return approvalB !== ApprovalState.APPROVED;
-    }, [approvalB]);
+    }, [approvalB, willUseBatch]);
 
     const [token0Ratio, token1Ratio] = useMemo(() => {
         const currentPrice = mintInfo.price?.toSignificant();

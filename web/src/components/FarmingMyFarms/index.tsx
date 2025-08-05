@@ -2,6 +2,7 @@ import { isAddress } from "@ethersproject/address";
 import React, { useCallback, useEffect, useMemo, useState, memo } from "react";
 import { Frown, ChevronDown, ChevronUp } from "react-feather";
 import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
+import { useBatchRewardsClaiming } from "../../hooks/useBatchRewardsClaiming";
 import { useAccount } from "wagmi";
 import { useAllTransactions } from "../../state/transactions/hooks";
 import Loader from "../Loader";
@@ -47,6 +48,15 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
         withdrawnHash,
     } = useFarmingHandlers() || {};
 
+    const {
+        executeBatchClaim,
+        getClaimablePositions,
+        getTotalClaimableRewards,
+        batchClaimState,
+        resetBatchClaimState,
+        supports7702,
+    } = useBatchRewardsClaiming();
+
     const [sendModal, setSendModal] = useState<string | null>(null);
     const [recipient, setRecipient] = useState<string>("");
     const [sending, setSending] = useState<UnfarmingInterface>({ id: null, state: null });
@@ -71,6 +81,28 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
         const _positions = shallowPositions.filter((v) => v.onFarmingCenter);
         return _positions.length > 0 ? _positions : [];
     }, [shallowPositions]);
+
+    // Calculate claimable positions and total rewards
+    const claimablePositions = useMemo(() => {
+        if (!farmedNFTs) return [];
+        return getClaimablePositions(farmedNFTs);
+    }, [farmedNFTs, getClaimablePositions]);
+
+    const totalClaimableRewards = useMemo(() => {
+        if (!farmedNFTs) return 0;
+        return getTotalClaimableRewards(farmedNFTs);
+    }, [farmedNFTs, getTotalClaimableRewards]);
+
+    // Handle batch claim
+    const handleBatchClaim = useCallback(async () => {
+        if (!farmedNFTs || claimablePositions.length === 0) return;
+        
+        try {
+            await executeBatchClaim(farmedNFTs);
+        } catch (error) {
+            console.error("Batch claim failed:", error);
+        }
+    }, [farmedNFTs, claimablePositions.length, executeBatchClaim]);
 
     // Helper function to detect if a pool represents a conditional market relationship
     const isConditionalMarketPool = useCallback((position: any): {
@@ -567,6 +599,31 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
         }
     }, [getRewardsHash, confirmed]);
 
+    // Handle batch claim success
+    useEffect(() => {
+        if (batchClaimState.hash && confirmed.includes(batchClaimState.hash)) {
+            // Update positions to reflect claimed rewards
+            if (shallowPositions) {
+                const updatedPositions = shallowPositions.map((position) => {
+                    if (getClaimablePositions([position]).length > 0) {
+                        // Reset earned rewards for this position
+                        return {
+                            ...position,
+                            eternalEarned: 0,
+                            eternalBonusEarned: 0,
+                            limitEarned: 0,
+                            limitBonusEarned: 0,
+                        };
+                    }
+                    return position;
+                });
+                setShallowPositions(updatedPositions);
+            }
+            // Reset batch claim state after successful confirmation
+            resetBatchClaimState();
+        }
+    }, [batchClaimState.hash, confirmed, shallowPositions, getClaimablePositions, resetBatchClaimState]);
+
     return (
         <>
             <Modal
@@ -604,6 +661,43 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                 <>
                     {farmedNFTs && sortedMarketKeys.length > 0 ? (
                         <div className="my-farms__container">
+                            {/* Batch claim controls */}
+                            <div className="my-farms__batch-controls">
+                                {claimablePositions.length > 0 && (
+                                    <div className="my-farms__batch-claim-section">
+                                        <div className="my-farms__batch-claim-info">
+                                            <span className="my-farms__claimable-summary">
+                                                {claimablePositions.length} position{claimablePositions.length !== 1 ? 's' : ''} with {formatReward(totalClaimableRewards)} SEER-LPP claimable
+                                                {supports7702 && (
+                                                    <span className="my-farms__eip7702-badge" title="EIP-7702 batch transactions supported">
+                                                        ⚡ Batch Ready
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </div>
+                                        <button
+                                            className="my-farms__claim-all-btn btn primary"
+                                            onClick={handleBatchClaim}
+                                            disabled={batchClaimState.isLoading || claimablePositions.length === 0}
+                                        >
+                                            {batchClaimState.isLoading ? (
+                                                <div className="f f-jc f-ac cg-05">
+                                                    <Loader size="18px" stroke="var(--white)" />
+                                                    <Trans>Claiming All...</Trans>
+                                                </div>
+                                            ) : (
+                                                <Trans>Claim All Rewards</Trans>
+                                            )}
+                                        </button>
+                                        {batchClaimState.error && (
+                                            <div className="my-farms__error-message">
+                                                {batchClaimState.error}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                            
                             {sortedMarketKeys.length > 1 && (
                                 <div className="my-farms__controls">
                                     <div className="my-farms__sort-controls">

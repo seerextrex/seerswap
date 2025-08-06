@@ -1,6 +1,5 @@
 import React from "react";
 import { Trans } from "@lingui/macro";
-import Toggle from "../../components/Toggle";
 
 interface FilterPanelProps {
     item: {
@@ -11,9 +10,16 @@ interface FilterPanelProps {
 
 const FilterPanelItem = ({ item: { method, checkValue } }: FilterPanelProps) => {
     return (
-        <div>
-            <Toggle isActive={checkValue} toggle={() => method(!checkValue)} checked={<Trans>All positions</Trans>} unchecked={<Trans>Active positions</Trans>} />
-        </div>
+        <label className="filter-checkbox">
+            <input 
+                type="checkbox" 
+                checked={checkValue} 
+                onChange={(e) => method(e.target.checked)}
+            />
+            <span className="filter-label">
+                <Trans>Hide closed positions</Trans>
+            </span>
+        </label>
     );
 };
 

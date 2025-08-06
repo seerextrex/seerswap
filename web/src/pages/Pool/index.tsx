@@ -1,79 +1,71 @@
 import { t, Trans } from "@lingui/macro";
-import PositionList from "components/PositionList";
 import { SwitchLocaleLink } from "components/SwitchLocaleLink";
-import { useV3Positions } from "hooks/useV3Positions";
+import { useSubgraphPositions, useSubgraphPositionsByMarket } from "hooks/useSubgraphPositionsV2";
 import { useAccount } from "wagmi";
-import { useCallback, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { useUserHideClosedPositions, useUserHideFarmingPositions } from "state/user/hooks";
+import { useUserHideClosedPositions, useUserHideLowValuePositions } from "state/user/hooks";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/Loader";
 import FilterPanelItem from "./FilterPanelItem";
-import { PositionPool } from "../../models/interfaces";
+import LowValueFilter from "./LowValueFilter";
 import Card from "../../shared/components/Card/Card";
 import AutoColumn from "../../shared/components/AutoColumn";
 import { SwapPoolTabs } from "../../components/NavigationTabs";
 import "./index.scss";
-import usePrevious, { usePreviousNonEmptyArray } from "../../hooks/usePrevious";
-import { usePositionTokens } from "../../hooks/usePositionTokens";
+import MarketPositionsView from "../../components/MarketPositionsView";
+import { Frown } from "react-feather";
+import { PositionPoolExtended } from "../../hooks/useSubgraphPositionsV2";
+import { calculatePositionValueUSD } from "../../utils/position";
 
 export default function Pool() {
     const { address: account } = useAccount();
 
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions();
-    const [hideFarmingPositions, setHideFarmingPositions] = useUserHideFarmingPositions();
+    const [userHideLowValuePositions, setUserHideLowValuePositions] = useUserHideLowValuePositions();
 
-    const { positions, loading: positionsLoading } = useV3Positions(account);
-
-    const prevAccount = usePrevious(account);
-
-    const [openPositions, closedPositions] = positions?.reduce<[PositionPool[], PositionPool[]]>(
-        (acc, p) => {
-            acc[p.liquidity === 0n ? 1 : 0].push(p);
-            return acc;
-        },
-        [[], []]
-    ) ?? [[], []];
+    const { loading: positionsLoading, error, refetch } = useSubgraphPositions(account);
+    const { positionsByMarket: rawPositionsByMarket } = useSubgraphPositionsByMarket(account);
 
     const filters = [
         {
             method: setUserHideClosedPositions,
             checkValue: userHideClosedPositions,
         },
-        // {
-        //     title: t`Farming`,
-        //     method: setHideFarmingPositions,
-        //     checkValue: hideFarmingPositions,
-        // },
     ];
 
-    const farmingPositions = useMemo(() => positions?.filter((el) => el.onFarming), [positions]);
-    const inRangeWithOutFarmingPositions = useMemo(() => openPositions.filter((el) => !el.onFarming), [openPositions]);
+    // Filter positionsByMarket for market view
+    const positionsByMarket = useMemo(() => {
+        if (!rawPositionsByMarket) return undefined;
+        
+        const filteredMap = new Map<string, PositionPoolExtended[]>();
+        
+        rawPositionsByMarket.forEach((positions, marketId) => {
+            let filtered = positions;
+            
+            if (userHideClosedPositions) {
+                filtered = filtered.filter(p => p.liquidity > 0n);
+            }
+            
+            if (userHideLowValuePositions) {
+                filtered = filtered.filter(p => {
+                    const value = calculatePositionValueUSD(p);
+                    // Show positions where value can't be determined
+                    if (value === null) return true;
+                    return value >= 1; // Fixed $1 threshold
+                });
+            }
+            
+            // Only add markets that have positions after filtering
+            if (filtered.length > 0) {
+                filteredMap.set(marketId, filtered);
+            }
+        });
+        
+        return filteredMap;
+    }, [rawPositionsByMarket, userHideClosedPositions, userHideLowValuePositions]);
 
-    const filteredPositions = useMemo(
-        () => [...(hideFarmingPositions || !farmingPositions ? [] : farmingPositions), ...inRangeWithOutFarmingPositions, ...(userHideClosedPositions ? [] : closedPositions)],
-        [inRangeWithOutFarmingPositions, userHideClosedPositions, hideFarmingPositions, farmingPositions, closedPositions]
-    );
-
-    const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions);
-
-    const _filteredPositions = useMemo(() => {
-        if (account !== prevAccount) return filteredPositions;
-
-        if (filteredPositions.length === 0 && prevFilteredPositions) {
-            return prevFilteredPositions;
-        }
-        return filteredPositions;
-    }, [account, prevAccount, filteredPositions, prevFilteredPositions]);
-
-    // Batch load all tokens for the filtered positions
-    const positionTokens = usePositionTokens(_filteredPositions || []);
-
-    const newestPosition = useMemo(() => {
-        return _filteredPositions.length > 0 ? Math.max(..._filteredPositions.map((position) => Number(position.tokenId))) : undefined;
-    }, [_filteredPositions]);
-
-    const hasPositions = _filteredPositions && _filteredPositions.length > 0;
+    const hasPositions = positionsByMarket && positionsByMarket.size > 0;
 
     return (
         <>
@@ -87,19 +79,23 @@ export default function Pool() {
                         <span className={"fs-125"}>
                             <Trans>Positions Overview</Trans>
                         </span>
-                        {hasPositions && (
-                            <div className={"flex-s-between mxs_mv-05"}>
+                        <div className={"flex-s-between gap-1 mxs_mv-05"}>
+                            {hasPositions && (
                                 <NavLink className={"btn primary p-05 br-8"} id="join-pool-button" to={`/add`}>
                                     + <Trans>New Position</Trans>
                                 </NavLink>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                     {account && (
-                        <div className={"f mb-05 rg-2 cg-2 mxs_f-jc"}>
+                        <div className={"f mb-05 rg-2 cg-2 mxs_f-jc f-wrap"}>
                             {filters.map((item, key) => (
                                 <FilterPanelItem item={item} key={key} />
                             ))}
+                            <LowValueFilter
+                                isActive={userHideLowValuePositions}
+                                onToggle={setUserHideLowValuePositions}
+                            />
                         </div>
                     )}
                     <main className={"f c f-ac"}>
@@ -109,12 +105,16 @@ export default function Pool() {
                             </div>
                         ) : positionsLoading ? (
                             <Loader style={{ margin: "auto" }} stroke="white" size={"2rem"} />
+                        ) : error ? (
+                            <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>
+                                <Frown size={48} />
+                                <Trans>Error loading positions</Trans>
+                                <button onClick={refetch} className="btn btn-sm mt-1">
+                                    <Trans>Retry</Trans>
+                                </button>
+                            </div>
                         ) : hasPositions ? (
-                            <PositionList
-                                positions={_filteredPositions.sort((posA, posB) => Number(posA.tokenId) - Number(posB.tokenId))}
-                                newestPosition={newestPosition}
-                                positionTokens={positionTokens}
-                            />
+                            <MarketPositionsView positionsByMarket={positionsByMarket} />
                         ) : (
                             <div className={"f c f-ac f-jc h-400 w-100 maw-300"}>
                                 <Trans>You do not have any liquidity positions.</Trans>

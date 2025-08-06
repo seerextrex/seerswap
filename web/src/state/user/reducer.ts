@@ -12,6 +12,8 @@ import {
     updateArbitrumAlphaAcknowledged,
     updateHideClosedPositions,
     updateHideFarmingPositions,
+    updateHideLowValuePositions,
+    updateLowValuePositionThreshold,
     updateMatchesDarkMode,
     updateUserDarkMode,
     updateUserDeadline,
@@ -42,6 +44,8 @@ export interface UserState {
     // hides closed (inactive) positions across the app
     userHideClosedPositions: boolean
     userHideFarmingPositions: boolean
+    userHideLowValuePositions: boolean
+    lowValueThreshold: number // threshold in USD below which positions are hidden
 
     // user defined slippage tolerance in bips, used in all txns
     userSlippageTolerance: number | 'auto'
@@ -81,6 +85,8 @@ export const initialState: UserState = {
     userSingleHopOnly: false,
     userHideClosedPositions: false,
     userHideFarmingPositions: false,
+    userHideLowValuePositions: false,
+    lowValueThreshold: 10, // $10 USD default threshold
     userSlippageTolerance: 'auto',
     userSlippageToleranceHasBeenMigratedToAuto: true,
     userDeadline: DEFAULT_DEADLINE_FROM_NOW,
@@ -163,6 +169,12 @@ export default createReducer(initialState, (builder) =>
         })
         .addCase(updateHideFarmingPositions, (state, action) => {
             state.userHideFarmingPositions = action.payload.userHideFarmingPositions
+        })
+        .addCase(updateHideLowValuePositions, (state, action) => {
+            state.userHideLowValuePositions = action.payload.userHideLowValuePositions
+        })
+        .addCase(updateLowValuePositionThreshold, (state, action) => {
+            state.lowValueThreshold = action.payload.lowValueThreshold
         })
         .addCase(addSerializedToken, (state, { payload: { serializedToken } }) => {
             if (!state.tokens) {

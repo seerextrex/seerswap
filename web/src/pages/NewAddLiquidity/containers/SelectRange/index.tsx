@@ -114,17 +114,18 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
             dispatch(updateSelectedPreset({ preset: preset ? preset.type : null }));
 
             if (preset) {
-                // For FULL preset (0 to 1), set literal values instead of multiplying by price
                 if (preset.type === Presets.FULL) {
+                    // Full range should always be 0 to 1 in the display terms (collateral terms)
                     onLeftRangeInput("0");
                     onRightRangeInput("1");
                 } else {
-                    // For other presets, multiply by current price and clip max at 1
+                    // For other presets, the price shown is already in collateral terms
+                    // So we can apply the multipliers directly to the displayed price
                     const lowerValue = +price * preset.min;
-                    const upperValue = Math.min(+price * preset.max, 1);
+                    const upperValue = +price * preset.max;
 
-                    onLeftRangeInput(String(lowerValue));
-                    onRightRangeInput(String(upperValue));
+                    onLeftRangeInput(String(Math.max(lowerValue, 0))); // Ensure not negative
+                    onRightRangeInput(String(Math.min(upperValue, 1))); // Cap at 1 for prediction markets
                 }
             } else {
                 onLeftRangeInput("");

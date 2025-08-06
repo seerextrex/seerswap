@@ -14,6 +14,7 @@ import { Bound, Field, setFullRange, typeInput, typeLeftRangeInput, typeRightRan
 import { tryParseTick } from "./utils";
 import { usePool } from "hooks/usePools";
 import { useAppDispatch, useAppSelector } from "state/hooks";
+import { shouldInvertPriceForCollateral, isCollateralToken } from "utils/collateralToken";
 
 export interface IDerivedMintInfo {
     pool?: Pool | null;
@@ -181,12 +182,28 @@ export function useV3DerivedMintInfo(
     // pool
     //TODO
     const [poolState, pool] = usePool(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
+    const { chain } = useAccount();
+    const chainId = chain?.id;
+    
     const noLiquidity = poolState === PoolState.NOT_EXISTS;
 
     const dynamicFee = pool ? pool.fee : 100;
 
     // note to parse inputs in reverse
-    const invertPrice = Boolean(baseToken && token0 && !baseToken.equals(token0));
+    // Modified to prioritize collateral token display regardless of token0/token1 order
+    const invertPrice = useMemo(() => {
+        // First, check if we should invert based on collateral token logic
+        // This ensures prices are always shown in terms of collateral tokens (like sDAI)
+        const collateralBasedInvert = shouldInvertPriceForCollateral(currencyA, currencyB, chainId);
+        
+        // If we have a definitive answer from collateral logic, use it
+        if (collateralBasedInvert !== null) {
+            return collateralBasedInvert;
+        }
+        
+        // Fallback to original logic for non-prediction market pairs
+        return Boolean(baseToken && token0 && !baseToken.equals(token0));
+    }, [currencyA, currencyB, baseToken, token0, chainId]);
 
     // always returns the price with 0 as base token
     const price: Price<Token, Token> | undefined = useMemo(() => {

@@ -19,6 +19,8 @@ import {
     SerializedToken,
     updateHideClosedPositions,
     updateHideFarmingPositions,
+    updateHideLowValuePositions,
+    updateLowValuePositionThreshold,
     updateUserDarkMode,
     updateUserDeadline,
     updateUserExpertMode,
@@ -195,6 +197,36 @@ export function useUserHideFarmingPositions(): [boolean, (newHideFarmingPosition
     );
 
     return [hideFarmingPositions, setHideFarmingPositions];
+}
+
+export function useUserHideLowValuePositions(): [boolean, (newHideLowValuePositions: boolean) => void] {
+    const dispatch = useAppDispatch();
+
+    const hideLowValuePositions = useAppSelector((state) => state.user.userHideLowValuePositions);
+
+    const setHideLowValuePositions = useCallback(
+        (newHideLowValuePositions: boolean) => {
+            dispatch(updateHideLowValuePositions({ userHideLowValuePositions: newHideLowValuePositions }));
+        },
+        [dispatch]
+    );
+
+    return [hideLowValuePositions, setHideLowValuePositions];
+}
+
+export function useLowValuePositionThreshold(): [number, (threshold: number) => void] {
+    const dispatch = useAppDispatch();
+
+    const threshold = useAppSelector((state) => state.user.lowValueThreshold);
+
+    const setThreshold = useCallback(
+        (newThreshold: number) => {
+            dispatch(updateLowValuePositionThreshold({ lowValueThreshold: newThreshold }));
+        },
+        [dispatch]
+    );
+
+    return [threshold, setThreshold];
 }
 
 /**

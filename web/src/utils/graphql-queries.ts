@@ -932,6 +932,119 @@ export const FULL_POSITIONS = gql`
   }
 `;
 
+export const USER_FARMING_POSITIONS = gql`
+  query userFarmingPositions($user: Bytes!, $first: Int = 100, $skip: Int = 0) {
+    deposits(where: { owner: $user, onFarmingCenter: true }, first: $first, skip: $skip, orderBy: id, orderDirection: desc) {
+      id
+      owner
+      L2tokenId
+      liquidity
+      onFarmingCenter
+      eternalFarming {
+        id
+      }
+      limitFarming {
+        id
+      }
+      pool {
+        id
+        token0 {
+          id
+          symbol
+          decimals
+          derivedMatic
+        }
+        token1 {
+          id
+          symbol
+          decimals
+          derivedMatic
+        }
+        fee
+        sqrtPrice
+        liquidity
+        tick
+        totalValueLockedUSD
+        market0 {
+          id
+          outcomes
+          collateralToken {
+            id
+          }
+          childMarkets {
+            id
+          }
+          parentMarket{
+            id
+          }
+          marketName
+          wrappedTokensString
+          totalValueLockedUSD
+          image {
+            id
+            cidMarket
+            cidOutcomes
+          }
+          tokens {
+            id
+            name
+          }
+        }
+        market1 {
+          id
+          outcomes
+          collateralToken {
+            id
+          }
+          childMarkets {
+            id
+          }
+          parentMarket{
+            id
+          }
+          marketName
+          wrappedTokensString
+          totalValueLockedUSD
+          image {
+            id
+            cidMarket
+            cidOutcomes
+          }
+          tokens {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const POSITIONS_BY_IDS = gql`
+  query positionsByIds($ids: [ID!]!) {
+    positions(where: { id_in: $ids }) {
+      id
+      tickLower {
+        tickIdx
+      }
+      tickUpper {
+        tickIdx
+      }
+      liquidity
+      depositedToken0
+      depositedToken1
+      withdrawnToken0
+      withdrawnToken1
+      collectedFeesToken0
+      collectedFeesToken1
+      token0Tvl
+      token1Tvl
+      feeGrowthInside0LastX128
+      feeGrowthInside1LastX128
+    }
+  }
+`;
+
 export const USER_POSITIONS = gql`
   query userPositions($user: Bytes!, $first: Int = 100, $skip: Int = 0) {
     positions(where: { owner: $user }, first: $first, skip: $skip, orderBy: id, orderDirection: desc) {

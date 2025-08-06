@@ -97,6 +97,15 @@
             font-weight: 500;
             color: #4fe3c1;
         }
+
+        .farming-indicator {
+            color: #ffd700;
+            font-weight: 500;
+            margin-left: 0.25rem;
+            font-size: 0.85rem;
+            opacity: 0.9;
+            animation: pulse 2s ease-in-out infinite;
+        }
     }
 }
 
@@ -161,6 +170,16 @@
         border-color: rgba(255, 255, 255, 0.05);
         background: rgba(128, 128, 128, 0.05);
     }
+
+    &.farming {
+        border-color: rgba(255, 215, 0, 0.3);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 165, 0, 0.05));
+        
+        &:hover {
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+        }
+    }
 }
 
 .position-header {
@@ -207,6 +226,26 @@
         background: rgba(128, 128, 128, 0.2);
         color: rgba(255, 255, 255, 0.6);
         border: 1px solid rgba(128, 128, 128, 0.3);
+    }
+
+    .farming-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 500;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+        color: #ffd700;
+        border: 1px solid rgba(255, 215, 0, 0.4);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.8;
+        }
     }
 }
 
@@ -330,6 +369,14 @@
         color: rgba(255, 255, 255, 0.6);
         margin-left: auto;
         margin-right: 1rem;
+
+        .farming-indicator {
+            color: #ffd700;
+            font-weight: 500;
+            font-size: 0.85rem;
+            opacity: 0.9;
+            animation: pulse 2s ease-in-out infinite;
+        }
     }
 }
 

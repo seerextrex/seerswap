@@ -199,6 +199,11 @@ const OutcomeGroup = memo(({ outcomeName, outcomeToken, positions, market, isExp
         }, 0);
     }, [positions]);
 
+    // Count farming positions
+    const farmingCount = useMemo(() => {
+        return positions.filter(pos => pos.onFarming === true).length;
+    }, [positions]);
+
     const tokenImageUrl = findTokenImageUrl(market, outcomeToken.id);
 
     return (
@@ -212,7 +217,13 @@ const OutcomeGroup = memo(({ outcomeName, outcomeToken, positions, market, isExp
                     />
                     <span className="outcome-name">{outcomeName}</span>
                     <span className="outcome-stats">
-                        {positions.length} position{positions.length !== 1 ? 's' : ''} • {formatDollarAmount(totalLiquidity)}
+                        {positions.length} position{positions.length !== 1 ? 's' : ''}
+                        {farmingCount > 0 && (
+                            <span className="farming-indicator">
+                                {' '}(🌾 {farmingCount} farming)
+                            </span>
+                        )}
+                        {' '}• {formatDollarAmount(totalLiquidity)}
                     </span>
                 </div>
                 <div className="expand-toggle">
@@ -232,6 +243,11 @@ const OutcomeGroup = memo(({ outcomeName, outcomeToken, positions, market, isExp
 
 const MarketGroup = memo(({ market, positions, isExpanded, onToggle }: MarketGroupProps) => {
     const [expandedOutcomes, setExpandedOutcomes] = useState<Set<string>>(new Set());
+
+    // Count farming positions
+    const farmingCount = useMemo(() => {
+        return positions.filter(pos => pos.onFarming === true).length;
+    }, [positions]);
 
     // Group positions by outcome token
     const positionsByOutcome = useMemo(() => {
@@ -297,7 +313,14 @@ const MarketGroup = memo(({ market, positions, isExpanded, onToggle }: MarketGro
                 <div className="market-info">
                     <h3 className="market-name">{market?.marketName || 'Unknown Market'}</h3>
                     <div className="market-stats">
-                        <span className="position-count">{positions.length} positions</span>
+                        <span className="position-count">
+                            {positions.length} positions
+                            {farmingCount > 0 && (
+                                <span className="farming-indicator">
+                                    {' '}(🌾 {farmingCount} farming)
+                                </span>
+                            )}
+                        </span>
                         <span className="market-tvl">{formatDollarAmount(totalLiquidity)}</span>
                     </div>
                 </div>
@@ -344,10 +367,16 @@ const PositionCard = memo(({ position, market }: PositionCardProps) => {
     const positionValue = calculatePositionValueUSD(position);
     const isClosed = position.liquidity === 0n;
     const inRange = pool.tick && position.tickLower <= Number(pool.tick) && Number(pool.tick) < position.tickUpper;
+    const isFarming = position.onFarming === true;
 
     return (
-        <div className={`position-card compact ${inRange ? 'in-range' : 'out-of-range'} ${isClosed ? 'closed' : ''}`}>
+        <div className={`position-card compact ${inRange ? 'in-range' : 'out-of-range'} ${isClosed ? 'closed' : ''} ${isFarming ? 'farming' : ''}`}>
             <div className="position-header">
+                {isFarming && (
+                    <span className="farming-badge">
+                        🌾 <Trans>Farming</Trans>
+                    </span>
+                )}
                 {isClosed && (
                     <span className="closed-badge">
                         <Trans>Closed</Trans>

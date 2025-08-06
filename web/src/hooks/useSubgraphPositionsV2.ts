@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
-import { useUserPositionsQuery, UserPositionsQuery } from "../state/data/generated";
+import { useUserPositionsQuery, UserPositionsQuery, useUserFarmingPositionsQuery, UserFarmingPositionsQuery, usePositionsByIdsQuery } from "../state/data/generated";
 import { PositionPool } from "../models/interfaces";
 import { safeConvertToBigInt } from "../utils/bigintUtils";
 
@@ -38,67 +38,161 @@ export function useSubgraphPositions(passedAccount?: string | null): UseSubgraph
     const { address: connectedAccount } = useAccount();
     const account = passedAccount ?? connectedAccount;
 
-    // Use the generated RTK Query hook
-    const { data, isLoading, error, refetch } = useUserPositionsQuery(
+    // Fetch regular positions
+    const { data: regularData, isLoading: regularLoading, error: regularError, refetch: refetchRegular } = useUserPositionsQuery(
         { user: account?.toLowerCase() || '' },
         { skip: !account }
     );
 
-    // Transform the data to match our PositionPoolExtended format
-    const positions = useMemo(() => {
-        if (!data?.positions) return undefined;
+    // Fetch farming positions
+    const { data: farmingData, isLoading: farmingLoading, error: farmingError, refetch: refetchFarming } = useUserFarmingPositionsQuery(
+        { user: account?.toLowerCase() || '' },
+        { skip: !account }
+    );
 
-        return data.positions.map((pos): PositionPoolExtended => {
-            // Extract tokenId from the position id (format: "tokenId#blockNumber")
-            // WARNING: This parsing is fragile and assumes the subgraph ID format won't change
-            let tokenId: bigint;
-            try {
-                const idParts = pos.id.split('#');
-                if (idParts.length === 0 || !idParts[0]) {
-                    console.error('Invalid position ID format:', pos.id);
+    // Extract deposit IDs for position lookup
+    const depositIds = useMemo(() => {
+        if (!farmingData?.deposits) return [];
+        return farmingData.deposits.map(d => d.id);
+    }, [farmingData]);
+
+    // Fetch position data for farming deposits
+    const { data: farmingPositionsData, isLoading: farmingPositionsLoading, error: farmingPositionsError } = usePositionsByIdsQuery(
+        { ids: depositIds },
+        { skip: depositIds.length === 0 }
+    );
+
+    // Log error if position data fetch fails
+    if (farmingPositionsError && depositIds.length > 0) {
+        console.error('Failed to fetch position data for farming deposits:', farmingPositionsError);
+        console.error('Deposit IDs that failed:', depositIds);
+    }
+
+    // Transform and combine the data
+    const positions = useMemo(() => {
+        const allPositions: PositionPoolExtended[] = [];
+        
+        // Add regular positions
+        if (regularData?.positions) {
+            regularData.positions.forEach((pos) => {
+                // Extract tokenId from the position id (format: "tokenId#blockNumber")
+                let tokenId: bigint;
+                try {
+                    const idParts = pos.id.split('#');
+                    if (idParts.length === 0 || !idParts[0]) {
+                        console.error('Invalid position ID format:', pos.id);
+                        tokenId = 0n;
+                    } else {
+                        tokenId = safeConvertToBigInt(idParts[0]);
+                    }
+                } catch (error) {
+                    console.error('Error parsing position ID:', pos.id, error);
                     tokenId = 0n;
-                } else {
-                    tokenId = safeConvertToBigInt(idParts[0]);
                 }
-            } catch (error) {
-                console.error('Error parsing position ID:', pos.id, error);
-                tokenId = 0n;
+
+                allPositions.push({
+                    tokenId,
+                    nonce: 0n,
+                    operator: "0x0000000000000000000000000000000000000000",
+                    token0: pos.pool.token0.id,
+                    token1: pos.pool.token1.id,
+                    fee: pos.pool.fee,
+                    tickLower: Number(pos.tickLower.tickIdx),
+                    tickUpper: Number(pos.tickUpper.tickIdx),
+                    liquidity: safeConvertToBigInt(pos.liquidity),
+                    feeGrowthInside0LastX128: safeConvertToBigInt(pos.feeGrowthInside0LastX128),
+                    feeGrowthInside1LastX128: safeConvertToBigInt(pos.feeGrowthInside1LastX128),
+                    tokensOwed0: 0n,
+                    tokensOwed1: 0n,
+                    onFarming: false, // Regular positions are not farming
+                    // Additional fields from subgraph
+                    pool: pos.pool,
+                    depositedToken0: pos.depositedToken0,
+                    depositedToken1: pos.depositedToken1,
+                    withdrawnToken0: pos.withdrawnToken0,
+                    withdrawnToken1: pos.withdrawnToken1,
+                    collectedFeesToken0: pos.collectedFeesToken0,
+                    collectedFeesToken1: pos.collectedFeesToken1,
+                    token0Tvl: pos.token0Tvl,
+                    token1Tvl: pos.token1Tvl,
+                    timestamp: pos.transaction.timestamp,
+                });
+            });
+        }
+        
+        // Add farming positions with position data
+        if (farmingData?.deposits) {
+            // Create a map of position data by ID
+            const positionMap = new Map();
+            if (farmingPositionsData?.positions) {
+                farmingPositionsData.positions.forEach(pos => {
+                    positionMap.set(pos.id, pos);
+                });
             }
 
-            return {
-                tokenId,
-                nonce: 0n, // Not available from subgraph
-                operator: "0x0000000000000000000000000000000000000000", // Not available from subgraph
-                token0: pos.pool.token0.id,
-                token1: pos.pool.token1.id,
-                fee: pos.pool.fee, // Fee tier from the pool
-                tickLower: Number(pos.tickLower.tickIdx),
-                tickUpper: Number(pos.tickUpper.tickIdx),
-                liquidity: safeConvertToBigInt(pos.liquidity),
-                feeGrowthInside0LastX128: safeConvertToBigInt(pos.feeGrowthInside0LastX128),
-                feeGrowthInside1LastX128: safeConvertToBigInt(pos.feeGrowthInside1LastX128),
-                tokensOwed0: 0n, // TODO: Not available from subgraph, requires RPC call for real-time data
-                tokensOwed1: 0n, // TODO: Not available from subgraph, requires RPC call for real-time data
-                // Additional fields from subgraph
-                pool: pos.pool,
-                depositedToken0: pos.depositedToken0,
-                depositedToken1: pos.depositedToken1,
-                withdrawnToken0: pos.withdrawnToken0,
-                withdrawnToken1: pos.withdrawnToken1,
-                collectedFeesToken0: pos.collectedFeesToken0,
-                collectedFeesToken1: pos.collectedFeesToken1,
-                token0Tvl: pos.token0Tvl,
-                token1Tvl: pos.token1Tvl,
-                timestamp: pos.transaction.timestamp,
-            };
-        });
-    }, [data]);
+            // Track deposits without matching positions for debugging
+            const depositsWithoutPositions: string[] = [];
+
+            farmingData.deposits.forEach((deposit) => {
+                // The deposit.id is the actual NFT Token ID (per schema comment)
+                const tokenId = safeConvertToBigInt(deposit.id);
+                const positionData = positionMap.get(deposit.id);
+                
+                // Log warning if position data is missing
+                if (!positionData && farmingPositionsData?.positions) {
+                    depositsWithoutPositions.push(deposit.id);
+                }
+                
+                allPositions.push({
+                    tokenId,
+                    nonce: 0n,
+                    operator: "0x0000000000000000000000000000000000000000",
+                    token0: deposit.pool.token0.id,
+                    token1: deposit.pool.token1.id,
+                    fee: deposit.pool.fee,
+                    tickLower: positionData ? Number(positionData.tickLower.tickIdx) : 0,
+                    tickUpper: positionData ? Number(positionData.tickUpper.tickIdx) : 0,
+                    liquidity: safeConvertToBigInt(deposit.liquidity),
+                    feeGrowthInside0LastX128: positionData ? safeConvertToBigInt(positionData.feeGrowthInside0LastX128) : 0n,
+                    feeGrowthInside1LastX128: positionData ? safeConvertToBigInt(positionData.feeGrowthInside1LastX128) : 0n,
+                    tokensOwed0: 0n,
+                    tokensOwed1: 0n,
+                    onFarming: true, // Mark as farming position
+                    // Additional fields from position data
+                    pool: deposit.pool,
+                    depositedToken0: positionData?.depositedToken0,
+                    depositedToken1: positionData?.depositedToken1,
+                    withdrawnToken0: positionData?.withdrawnToken0,
+                    withdrawnToken1: positionData?.withdrawnToken1,
+                    collectedFeesToken0: positionData?.collectedFeesToken0,
+                    collectedFeesToken1: positionData?.collectedFeesToken1,
+                    token0Tvl: positionData?.token0Tvl,
+                    token1Tvl: positionData?.token1Tvl,
+                    timestamp: undefined,
+                });
+            });
+            
+            // Log warning if any deposits don't have matching positions
+            if (depositsWithoutPositions.length > 0) {
+                console.warn(
+                    `Found ${depositsWithoutPositions.length} farming deposits without matching position data:`,
+                    depositsWithoutPositions
+                );
+                console.warn('These positions will use fallback TVL calculation based on pool share.');
+            }
+        }
+        
+        return allPositions.length > 0 ? allPositions : undefined;
+    }, [regularData, farmingData, farmingPositionsData]);
 
     return {
         positions,
-        loading: isLoading,
-        error: error as Error | undefined,
-        refetch,
+        loading: regularLoading || farmingLoading || farmingPositionsLoading,
+        error: (regularError || farmingError || farmingPositionsError) as Error | undefined,
+        refetch: () => {
+            refetchRegular();
+            refetchFarming();
+        },
     };
 }
 

@@ -5,18 +5,25 @@ import { ChevronDown, ChevronUp } from 'react-feather';
 import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
-import { Token, Market, Pool, getOutcomeName, GroupedMarketPools, groupPoolsByMarketAndOutcome, formatIpfsUrl } from '../../utils/market';
+import { Token, Market, Pool, getOutcomeName, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
 import Loader from '../Loader';
 import './index.scss';
 
-interface MarketGroupProps {
-  groupedMarket: GroupedMarketPools;
+interface ChildMarketGroupProps {
+  childMarket: GroupedMarketPools;
+  parentMarket: Market;
   isExpanded: boolean;
-  onToggle: (marketId: string) => void;
-  marketId: string;
+  onToggle: (childKey: string) => void;
+  childKey: string;
 }
 
-const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ groupedMarket, isExpanded, onToggle, marketId }) => {
+const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({ 
+  childMarket, 
+  parentMarket,
+  isExpanded, 
+  onToggle, 
+  childKey 
+}) => {
   const [expandedOutcomes, setExpandedOutcomes] = useState<Set<string>>(new Set());
   const [imageError, setImageError] = useState(false);
 
@@ -32,13 +39,160 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ groupedMarket, isE
     });
   }, []);
 
-  const { market, poolsByOutcome, totalTVL, totalVolume, totalFees } = groupedMarket;
+  const handleToggle = useCallback(() => {
+    onToggle(childKey);
+  }, [onToggle, childKey]);
+
+  const marketImageUrl = childMarket.market?.image?.[0]?.cidMarket ? 
+    formatIpfsUrl(childMarket.market.image[0].cidMarket) : null;
+
+  // Get collateral token info (which should be from parent market)
+  const getCollateralTokenName = useCallback(() => {
+    const collateralToken = childMarket.market?.collateralToken;
+    if (!collateralToken || !parentMarket) return 'Unknown';
+
+    // Try to find the collateral token in parent market's tokens
+    if (parentMarket.tokens && parentMarket.outcomes) {
+      const collateralIndex = parentMarket.tokens.findIndex((token: any) =>
+        token.id.toLowerCase() === collateralToken.id.toLowerCase()
+      );
+
+      if (collateralIndex >= 0 && collateralIndex < parentMarket.outcomes.length) {
+        return parentMarket.outcomes[collateralIndex];
+      }
+    }
+
+    return collateralToken.symbol || collateralToken.name || 'Unknown';
+  }, [childMarket.market, parentMarket]);
+
+  return (
+    <div className="child-market-group">
+      <div className="child-market-header" onClick={handleToggle}>
+        <div className="child-market-info">
+          <div className="child-market-images">
+            {marketImageUrl && !imageError ? (
+              <img 
+                src={marketImageUrl} 
+                alt={childMarket.market.marketName}
+                className="child-market-image"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="child-market-image-placeholder">
+                {childMarket.market.marketName ? 
+                  childMarket.market.marketName.slice(0, 1).toUpperCase() : '?'}
+              </div>
+            )}
+          </div>
+          <div className="child-market-details">
+            <h4 className="child-market-name">
+              {childMarket.market.marketName || 'Unknown Market'}
+              <span className="child-market-badge">Child Market</span>
+            </h4>
+            <div className="child-market-stats">
+              <span className="stat-item">
+                {Array.from(childMarket.poolsByOutcome.values()).flat().length} pools
+              </span>
+              {childMarket.totalTVL > 0 && (
+                <span className="stat-item">
+                  • {formatDollarAmount(childMarket.totalTVL)} TVL
+                </span>
+              )}
+              {childMarket.totalVolume > 0 && (
+                <span className="stat-item">
+                  • {formatDollarAmount(childMarket.totalVolume)} Volume
+                </span>
+              )}
+              <span className="stat-item">
+                • Collateral: {getCollateralTokenName()}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="expand-toggle">
+          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </div>
+      </div>
+
+      {isExpanded && (
+        <div className="child-market-outcomes">
+          {Array.from(childMarket.poolsByOutcome.entries()).map(([outcomeKey, pools]) => {
+            const isOutcomeExpanded = expandedOutcomes.has(outcomeKey);
+
+            return (
+              <div key={outcomeKey} className="outcome-group">
+                <div className="outcome-header" onClick={() => toggleOutcome(outcomeKey)}>
+                  <div className="outcome-info">
+                    <h4 className="outcome-name">{outcomeKey}</h4>
+                    <span className="pool-count">{pools.length} pools</span>
+                  </div>
+                  <div className="expand-toggle">
+                    {isOutcomeExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </div>
+                </div>
+
+                {isOutcomeExpanded && (
+                  <div className="outcome-pools">
+                    {pools.map((pool) => (
+                      <PoolCard key={pool.id} pool={pool} market={childMarket.market} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+});
+
+interface MarketGroupProps {
+  groupedMarket: GroupedMarketPools;
+  isExpanded: boolean;
+  onToggle: (marketId: string) => void;
+  marketId: string;
+  expandedChildMarkets: Set<string>;
+  toggleChildMarket: (childKey: string) => void;
+}
+
+const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ 
+  groupedMarket, 
+  isExpanded, 
+  onToggle, 
+  marketId,
+  expandedChildMarkets,
+  toggleChildMarket
+}) => {
+  const [expandedOutcomes, setExpandedOutcomes] = useState<Set<string>>(new Set());
+  const [imageError, setImageError] = useState(false);
+
+  const toggleOutcome = useCallback((outcomeKey: string) => {
+    setExpandedOutcomes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(outcomeKey)) {
+        newSet.delete(outcomeKey);
+      } else {
+        newSet.add(outcomeKey);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const { market, poolsByOutcome, totalTVL, totalVolume, totalFees, isParent, childMarkets } = groupedMarket;
   
   const handleToggle = useCallback(() => {
     onToggle(marketId);
   }, [onToggle, marketId]);
 
   const marketImageUrl = market?.image?.[0]?.cidMarket ? formatIpfsUrl(market.image[0].cidMarket) : null;
+
+  // Calculate total pools including child markets
+  const directPools = Array.from(poolsByOutcome.values()).flat().length;
+  const childPools = childMarkets ? 
+    Array.from(childMarkets.values()).reduce((sum, child) => 
+      sum + Array.from(child.poolsByOutcome.values()).flat().length, 0) : 0;
+  const totalPools = directPools + childPools;
 
   return (
     <div className="market-group">
@@ -59,8 +213,18 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ groupedMarket, isE
             )}
           </div>
           <div className="market-details">
-            <h3 className="market-name">{market.marketName || 'Unknown Market'}</h3>
+            <h3 className="market-name">
+              {market.marketName || 'Unknown Market'}
+              {isParent && childMarkets && childMarkets.size > 0 && (
+                <span className="parent-market-badge">Parent Market</span>
+              )}
+            </h3>
             <div className="market-stats">
+              <span className="stat-item">
+                {isParent && childPools > 0 ? 
+                  `${totalPools} pools (${directPools} direct, ${childPools} in child markets)` :
+                  `${directPools} pools`}
+              </span>
               <span className="stat-item">
                 <label>TVL:</label>
                 <span>{formatDollarAmount(totalTVL)}</span>
@@ -73,7 +237,11 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ groupedMarket, isE
                 <label>Fees:</label>
                 <span>{formatDollarAmount(totalFees)}</span>
               </span>
-              <span className="pool-count">{Array.from(poolsByOutcome.values()).flat().length} pools</span>
+              {market.collateralToken && (
+                <span className="stat-item">
+                  • Collateral: {market.collateralToken.symbol || market.collateralToken.name}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -83,33 +251,57 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ groupedMarket, isE
       </div>
 
       {isExpanded && (
-        <div className="market-outcomes">
-          {Array.from(poolsByOutcome.entries()).map(([outcomeKey, pools]) => {
-            const outcomeName = outcomeKey; // Now outcomeKey is just the outcome name
-            const isOutcomeExpanded = expandedOutcomes.has(outcomeKey);
+        <div className="market-content">
+          {/* Render direct pools for this market */}
+          {directPools > 0 && (
+            <div className="market-outcomes">
+              {Array.from(poolsByOutcome.entries()).map(([outcomeKey, pools]) => {
+                const isOutcomeExpanded = expandedOutcomes.has(outcomeKey);
 
-            return (
-              <div key={outcomeKey} className="outcome-group">
-                <div className="outcome-header" onClick={() => toggleOutcome(outcomeKey)}>
-                  <div className="outcome-info">
-                    <h4 className="outcome-name">{outcomeName}</h4>
-                    <span className="pool-count">{pools.length} pools</span>
-                  </div>
-                  <div className="expand-toggle">
-                    {isOutcomeExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  </div>
-                </div>
+                return (
+                  <div key={outcomeKey} className="outcome-group">
+                    <div className="outcome-header" onClick={() => toggleOutcome(outcomeKey)}>
+                      <div className="outcome-info">
+                        <h4 className="outcome-name">{outcomeKey}</h4>
+                        <span className="pool-count">{pools.length} pools</span>
+                      </div>
+                      <div className="expand-toggle">
+                        {isOutcomeExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </div>
+                    </div>
 
-                {isOutcomeExpanded && (
-                  <div className="outcome-pools">
-                    {pools.map((pool) => (
-                      <PoolCard key={pool.id} pool={pool} market={market} />
-                    ))}
+                    {isOutcomeExpanded && (
+                      <div className="outcome-pools">
+                        {pools.map((pool) => (
+                          <PoolCard key={pool.id} pool={pool} market={market} />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          )}
+
+          {/* Render child markets if this is a parent market */}
+          {isParent && childMarkets && childMarkets.size > 0 && (
+            <div className="child-markets">
+              {Array.from(childMarkets.entries()).map(([childKey, childGroup]) => {
+                const isChildExpanded = expandedChildMarkets.has(childKey);
+
+                return (
+                  <ChildMarketGroup
+                    key={childKey}
+                    childMarket={childGroup}
+                    parentMarket={market}
+                    isExpanded={isChildExpanded}
+                    onToggle={toggleChildMarket}
+                    childKey={childKey}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -178,6 +370,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
   hideLowValue = false 
 }) => {
   const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
+  const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMoreItems, setHasMoreItems] = useState(true);
   const ITEMS_PER_PAGE = 100;
@@ -195,7 +388,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
     
     // Type the pools array properly
     const pools = data.pools as Pool[];
-    return groupPoolsByMarketAndOutcome(pools, hideLowValue, minTVL);
+    return groupPoolsByMarketWithHierarchy(pools, hideLowValue, minTVL);
   }, [data, hideLowValue, minTVL]);
 
   const toggleMarket = useCallback((marketId: string) => {
@@ -205,6 +398,18 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
         newSet.delete(marketId);
       } else {
         newSet.add(marketId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const toggleChildMarket = useCallback((childKey: string) => {
+    setExpandedChildMarkets(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(childKey)) {
+        newSet.delete(childKey);
+      } else {
+        newSet.add(childKey);
       }
       return newSet;
     });
@@ -274,6 +479,8 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
           isExpanded={expandedMarkets.has(groupedMarket.market.id)}
           onToggle={toggleMarket}
           marketId={groupedMarket.market.id}
+          expandedChildMarkets={expandedChildMarkets}
+          toggleChildMarket={toggleChildMarket}
         />
       ))}
       

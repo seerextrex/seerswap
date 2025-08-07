@@ -98,7 +98,11 @@ const TOKEN_MARKET_INFO_QUERY = gql`
           id
           symbol
         }
-        wrappedTokens
+        wrappedTokens {
+          id
+          symbol
+          name
+        }
       }
     }
     token1: token(id: $token1) {
@@ -118,7 +122,11 @@ const TOKEN_MARKET_INFO_QUERY = gql`
           id
           symbol
         }
-        wrappedTokens
+        wrappedTokens {
+          id
+          symbol
+          name
+        }
       }
     }
   }

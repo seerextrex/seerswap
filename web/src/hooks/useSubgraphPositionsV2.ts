@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
-import { useUserPositionsQuery, UserPositionsQuery, useUserFarmingPositionsQuery, UserFarmingPositionsQuery, usePositionsByIdsQuery } from "../state/data/generated";
+import { useUserPositionsQuery, UserPositionsQuery, useUserFarmingPositionsQuery, usePositionsByIdsQuery } from "../state/data/generated";
 import { PositionPool } from "../models/interfaces";
 import { safeConvertToBigInt } from "../utils/bigintUtils";
 

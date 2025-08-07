@@ -37,6 +37,12 @@ export interface PoolChartSubgraph {
     feesUSD: string
     untrackedFeesUSD: string
     market0?: Market
+    market1?: Market
+    totalValueLockedUSD?: string
+    totalValueLockedToken0?: string
+    totalValueLockedToken1?: string
+    token0Price?: string
+    token1Price?: string
 }
 
 export interface SubgraphResponse<T> {

@@ -144,6 +144,11 @@ export interface Deposit {
     tickUpper: number
     token0: string
     token1: string
+    mint?: {
+        tickLower: number
+        tickUpper: number
+        timestamp?: string
+    }
     l2TokenId: string | null
     tokensLockedEternal: string
     tokensLockedLimit: string

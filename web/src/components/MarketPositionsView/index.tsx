@@ -233,7 +233,7 @@ const OutcomeGroup = memo(({ outcomeName, outcomeToken, positions, market, isExp
             {isExpanded && (
                 <div className="outcome-positions">
                     {positions.map((position) => (
-                        <PositionCard key={position.tokenId.toString()} position={position} market={market} />
+                        <PositionCard key={position.tokenId.toString()} position={position} />
                     ))}
                 </div>
             )}
@@ -357,10 +357,9 @@ const MarketGroup = memo(({ market, positions, isExpanded, onToggle }: MarketGro
 
 interface PositionCardProps {
     position: PositionPoolExtended;
-    market: Market | null | undefined;
 }
 
-const PositionCard = memo(({ position, market }: PositionCardProps) => {
+const PositionCard = memo(({ position }: PositionCardProps) => {
     const pool = position.pool;
     if (!pool) return null;
     

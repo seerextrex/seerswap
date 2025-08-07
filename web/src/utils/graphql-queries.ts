@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client";
-import { logDOM } from "@testing-library/react";
 
 //Farming
 
@@ -507,18 +506,31 @@ export const TRANSFERED_POSITIONS = (tierFarming: boolean) => gql`
         deposits (orderBy: id, orderDirection: desc, where: {owner: $account, onFarmingCenter: true}) {
             id
             owner
+            liquidity
+            mint {
+              tickLower
+              tickUpper
+              timestamp
+            }
             pool {
               id
+              sqrtPrice
+              tick
+              liquidity
               token0 {
                 id
                 symbol
                 decimals
+                derivedMatic
               }
               token1 {
                 id
                 symbol
                 decimals
+                derivedMatic
               }
+              token0Price
+              token1Price
               totalValueLockedUSD
               market0 {
                 id

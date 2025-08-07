@@ -1,5 +1,5 @@
 import { isAddress } from "@ethersproject/address";
-import React, { useCallback, useEffect, useMemo, useState, memo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Frown, ChevronDown, ChevronUp } from "react-feather";
 import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
 import { useBatchRewardsClaiming } from "../../hooks/useBatchRewardsClaiming";
@@ -9,21 +9,24 @@ import Loader from "../Loader";
 import Modal from "../Modal";
 import { Deposit, RewardInterface, UnfarmingInterface, DefaultFarming, DefaultFarmingWithError } from "../../models/interfaces";
 import { FarmingType } from "../../models/enums";
-import { getCountdownTime } from "../../utils/time";
-import { getProgress } from "../../utils/getProgress";
-import { CheckOut } from "./CheckOut";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useSortedRecentTransactions } from "../../hooks/useSortedRecentTransactions";
 import { formatDollarAmount } from "../../utils/numbers";
 import { formatReward } from "../../utils/formatReward";
-import { Market, Image, Pool, Token } from "../../state/data/generated";
-import SDAI_LOGO from "../../assets/images/sdai-logo.svg";
+import { Market, Token } from "../../state/data/generated";
+import { detectConditionalMarketRelationship } from "../../utils/markets";
+import { calculateFarmingPositionValue, calculateTotalFarmingValue } from "../../utils/farmingPositionSimpleSDK";
 import "./index.scss";
 import ModalBody from "./ModalBody";
-import PositionHeader from "./PositionHeader";
-import PositionCardBodyHeader from "./PositionCardBodyHeader";
-import PositionCardBodyStat from "./PositionCardBodyStat";
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
+import { 
+    TokenImage,
+    MarketImage,
+    PositionCard,
+    useGroupedFarmingPositions,
+    useOutcomeGrouping,
+    useHierarchicalExpandState
+} from "./components";
 
 interface FarmingMyFarmsProps {
     data: Deposit[] | null;
@@ -65,10 +68,8 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
     const [eternalCollectReward, setEternalCollectReward] = useState<UnfarmingInterface>({ id: null, state: null });
     const [unfarming, setUnfarming] = useState<UnfarmingInterface>({ id: null, state: null });
 
-    // Market grouping state
-    const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
-    const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
-    const [sortBy, setSortBy] = useState<'name' | 'tvl' | 'positions' | 'rewards'>('tvl');
+    // Consolidated expand/collapse state management
+    const expandState = useHierarchicalExpandState();
 
     const allTransactions = useAllTransactions();
     const sortedRecentTransactions = useSortedRecentTransactions();
@@ -92,6 +93,12 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
         if (!farmedNFTs) return 0;
         return getTotalClaimableRewards(farmedNFTs);
     }, [farmedNFTs, getTotalClaimableRewards]);
+    
+    // Calculate total portfolio value
+    const totalPortfolioValue = useMemo(() => {
+        if (!farmedNFTs) return 0;
+        return calculateTotalFarmingValue(farmedNFTs);
+    }, [farmedNFTs]);
 
     // Handle batch claim
     const handleBatchClaim = useCallback(async () => {
@@ -104,270 +111,29 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
         }
     }, [farmedNFTs, claimablePositions.length, executeBatchClaim]);
 
-    // Helper function to detect if a pool represents a conditional market relationship
-    const isConditionalMarketPool = useCallback((position: any): {
-        parentMarket: Market;
-        childMarket: Market;
-        relationship: 'parent-child';
-    } | null => {
-        const market0: Market | null | undefined = position.pool?.market0;
-        const market1: Market | null | undefined = position.pool?.market1;
 
-        if (!market0 || !market1) return null;
+    // Use the grouped farming positions hook
+    const { groupedPositions, sortedMarketKeys, sortBy, setSortBy } = useGroupedFarmingPositions({
+        positions: farmedNFTs || null,
+        isConditionalMarketPool: detectConditionalMarketRelationship,
+    });
 
-        // Get token IDs for both markets (handle nullable tokens)
-        const market0TokenIds = market0.tokens?.map((t: Token) => t.id) || [];
-        const market1TokenIds = market1.tokens?.map((t: Token) => t.id) || [];
-        const market0CollateralId = market0.collateralToken?.id;
-        const market1CollateralId = market1.collateralToken?.id;
+    // Initialize outcome grouping hook at the top level
+    const { groupPositionsByOutcome: groupByOutcome } = useOutcomeGrouping({ 
+        market: null // We'll pass the market when calling the function
+    });
 
-        // Check if market0's collateralToken matches any token in market1 (market1 is parent)
-        const market0UsesMarket1Token = market0CollateralId && market1TokenIds.includes(market0CollateralId);
-
-        // Check if market1's collateralToken matches any token in market0 (market0 is parent)
-        const market1UsesMarket0Token = market1CollateralId && market0TokenIds.includes(market1CollateralId);
-
-        // Also check explicit parent-child relationships from schema
-        const market0HasChildMarkets = market0.childMarkets && market0.childMarkets.length > 0;
-        const market1HasChildMarkets = market1.childMarkets && market1.childMarkets.length > 0;
-        const market0HasParent = market0.parentMarket;
-        const market1HasParent = market1.parentMarket;
-
-        // Determine parent-child relationship
-        let parentMarket: Market | null = null;
-        let childMarket: Market | null = null;
-
-        if (market1UsesMarket0Token) {
-            // market0 is parent, market1 is child
-            parentMarket = market0;
-            childMarket = market1;
-        } else if (market0UsesMarket1Token) {
-            // market1 is parent, market0 is child
-            parentMarket = market1;
-            childMarket = market0;
-        } else if (market0HasChildMarkets && market1HasParent) {
-            // Explicit relationship: market0 is parent, market1 is child
-            // Verify with collateral token if available
-            if (!market1CollateralId || market0TokenIds.includes(market1CollateralId)) {
-                parentMarket = market0;
-                childMarket = market1;
-            }
-        } else if (market1HasChildMarkets && market0HasParent) {
-            // Explicit relationship: market1 is parent, market0 is child
-            // Verify with collateral token if available
-            if (!market0CollateralId || market1TokenIds.includes(market0CollateralId)) {
-                parentMarket = market1;
-                childMarket = market0;
-            }
-        }
-
-        if (parentMarket && childMarket) {
-            return {
-                parentMarket,
-                childMarket,
-                relationship: 'parent-child' as const
-            };
-        }
-
-        return null;
-    }, []);
-
-    // Group positions by market with hierarchical structure for conditional markets
-    const groupedPositions = useMemo(() => {
-        if (!farmedNFTs || farmedNFTs.length === 0) return {};
-
-        const poolTVLMap = new Map<string, number>(); // Track unique pool TVLs
-        const groups: any = {};
-
-        farmedNFTs.forEach((position: any) => {
-            const conditionalRelationship = isConditionalMarketPool(position);
-
-            if (conditionalRelationship) {
-                // Handle conditional markets with parent-child relationship
-                const { parentMarket, childMarket } = conditionalRelationship;
-                const parentKey = `${parentMarket.id}-${parentMarket.marketName}`;
-                const childKey = `${childMarket.id}-${childMarket.marketName}`;
-
-                // Create parent group if it doesn't exist
-                if (!groups[parentKey]) {
-                    groups[parentKey] = {
-                        marketName: parentMarket.marketName,
-                        marketId: parentMarket.id,
-                        market: parentMarket as Market | undefined,
-                        positions: [],
-                        poolIds: new Set<string>(),
-                        isParent: true,
-                        childMarkets: {}
-                    };
-                }
-
-                // Create child group under parent
-                if (!groups[parentKey].childMarkets[childKey]) {
-                    groups[parentKey].childMarkets[childKey] = {
-                        marketName: childMarket.marketName,
-                        marketId: childMarket.id,
-                        market: childMarket as Market | undefined,
-                        positions: [],
-                        poolIds: new Set<string>(),
-                        isChild: true,
-                        parentKey: parentKey
-                    };
-                }
-
-                // Add position to child market
-                groups[parentKey].childMarkets[childKey].positions.push(position);
-
-                // Track pools for TVL calculation in both parent and child
-                const poolId = position.pool?.id;
-                if (poolId) {
-                    const poolTVL = parseFloat(position.pool?.totalValueLockedUSD || '0');
-
-                    if (!groups[parentKey].childMarkets[childKey].poolIds.has(poolId)) {
-                        groups[parentKey].childMarkets[childKey].poolIds.add(poolId);
-                        if (poolTVL > 0) {
-                            poolTVLMap.set(poolId, poolTVL);
-                        }
-                    }
-
-                    if (!groups[parentKey].poolIds.has(poolId)) {
-                        groups[parentKey].poolIds.add(poolId);
-                    }
-                }
-            } else {
-                // Handle regular markets (fallback to market0)
-                const market = position.pool?.market0;
-                const marketName = market?.marketName || 'Unknown Market';
-                const marketId = market?.id || 'unknown';
-                const marketKey = `${marketId}-${marketName}`;
-
-                if (!groups[marketKey]) {
-                    groups[marketKey] = {
-                        marketName,
-                        marketId,
-                        market: market as Market | undefined,
-                        positions: [],
-                        poolIds: new Set<string>(),
-                        isParent: false,
-                        childMarkets: {}
-                    };
-                }
-
-                groups[marketKey].positions.push(position);
-
-                // Track unique pools for TVL calculation
-                const poolId = position.pool?.id;
-                if (poolId && !groups[marketKey].poolIds.has(poolId)) {
-                    groups[marketKey].poolIds.add(poolId);
-                    const poolTVL = parseFloat(position.pool?.totalValueLockedUSD || '0');
-                    if (poolTVL > 0) {
-                        poolTVLMap.set(poolId, poolTVL);
-                    }
-                }
-            }
-        });
-
-        // Calculate total TVL and total earned rewards for each market group
-        Object.values(groups).forEach((group: any) => {
-            // Calculate for parent market
-            group.totalTVL = Array.from(group.poolIds).reduce((total: number, poolId) => {
-                return total + (poolTVLMap.get(poolId as string) || 0);
-            }, 0);
-
-            group.totalEarnedRewards = group.positions.reduce((total: number, position: any) => {
-                const eternalEarned = parseFloat(position.eternalEarned || '0');
-                const eternalBonusEarned = parseFloat(position.eternalBonusEarned || '0');
-                return total + eternalEarned + eternalBonusEarned;
-            }, 0);
-
-            // Calculate for child markets
-            Object.values(group.childMarkets).forEach((childGroup: any) => {
-                childGroup.totalTVL = Array.from(childGroup.poolIds).reduce((total: number, poolId) => {
-                    return total + (poolTVLMap.get(poolId as string) || 0);
-                }, 0);
-
-                childGroup.totalEarnedRewards = childGroup.positions.reduce((total: number, position: any) => {
-                    const eternalEarned = parseFloat(position.eternalEarned || '0');
-                    const eternalBonusEarned = parseFloat(position.eternalBonusEarned || '0');
-                    return total + eternalEarned + eternalBonusEarned;
-                }, 0);
-
-                // Add child totals to parent totals
-                group.totalEarnedRewards += childGroup.totalEarnedRewards;
-
-                // Remove the poolIds set as we don't need it in the final object
-                delete childGroup.poolIds;
-            });
-
-            // Remove the poolIds set as we don't need it in the final object
-            delete group.poolIds;
-        });
-
-        return groups;
-    }, [farmedNFTs, farmedNFTs?.map(p => `${p.eternalEarned}-${p.eternalBonusEarned}`).join(','), isConditionalMarketPool]);
-
-    const sortedMarketKeys = useMemo(() => {
-        const keys = Object.keys(groupedPositions).sort((a, b) => {
-            const marketA = groupedPositions[a];
-            const marketB = groupedPositions[b];
-
-            // Always put "Unknown Market" at the end regardless of sort criteria
-            if (marketA.marketName === 'Unknown Market' && marketB.marketName !== 'Unknown Market') return 1;
-            if (marketA.marketName !== 'Unknown Market' && marketB.marketName === 'Unknown Market') return -1;
-
-            switch (sortBy) {
-                case 'tvl':
-                    // Sort by TVL (descending - highest first)
-                    return (marketB.totalTVL || 0) - (marketA.totalTVL || 0);
-
-                case 'positions':
-                    // Sort by number of positions (descending - most first)
-                    const totalPositionsA = marketA.positions.length + Object.values(marketA.childMarkets).reduce((sum: number, child: any) => sum + child.positions.length, 0);
-                    const totalPositionsB = marketB.positions.length + Object.values(marketB.childMarkets).reduce((sum: number, child: any) => sum + child.positions.length, 0);
-                    return totalPositionsB - totalPositionsA;
-
-                case 'rewards':
-                    // Sort by total earned rewards (descending - highest first)
-                    return (marketB.totalEarnedRewards || 0) - (marketA.totalEarnedRewards || 0);
-
-                case 'name':
-                default:
-                    // Sort alphabetically by name
-                    return marketA.marketName.localeCompare(marketB.marketName);
-            }
-        });
-
-        return keys;
-    }, [groupedPositions, sortBy]);
-
-    const toggleMarket = (marketKey: string) => {
-        const newExpanded = new Set(expandedMarkets);
-        if (newExpanded.has(marketKey)) {
-            newExpanded.delete(marketKey);
-        } else {
-            newExpanded.add(marketKey);
-        }
-        setExpandedMarkets(newExpanded);
-    };
-
-    const toggleChildMarket = (childKey: string) => {
-        const newExpanded = new Set(expandedChildMarkets);
-        if (newExpanded.has(childKey)) {
-            newExpanded.delete(childKey);
-        } else {
-            newExpanded.add(childKey);
-        }
-        setExpandedChildMarkets(newExpanded);
-    };
+    // Delegate to consolidated state management
+    const toggleMarket = expandState.toggleMarket;
+    const toggleChildMarket = expandState.toggleChildMarket;
+    const toggleOutcome = expandState.toggleOutcome;
 
     const toggleAllMarkets = () => {
-        if (expandedMarkets.size === sortedMarketKeys.length) {
+        if (expandState.markets.expandedKeys.size === sortedMarketKeys.length) {
             // Collapse all
-            setExpandedMarkets(new Set());
-            setExpandedChildMarkets(new Set());
+            expandState.collapseAllHierarchy();
         } else {
-            // Expand all parent markets
-            setExpandedMarkets(new Set(sortedMarketKeys));
-            // Expand all child markets
+            // Expand all parent markets and child markets
             const allChildKeys: string[] = [];
             sortedMarketKeys.forEach(parentKey => {
                 const parentGroup = groupedPositions[parentKey];
@@ -377,96 +143,15 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                     });
                 }
             });
-            setExpandedChildMarkets(new Set(allChildKeys));
+            // Don't auto-expand outcomes to keep UI cleaner
+            expandState.expandAllHierarchy(sortedMarketKeys, allChildKeys);
         }
     };
 
-    // Token Image Component
-    const TokenImage = memo(({ imageUrl, tokenSymbol, size = 24 }: { imageUrl: string | null; tokenSymbol: string; size?: number }) => {
-        const [hasError, setHasError] = useState(false);
 
-        const handleImageError = useCallback(() => {
-            setHasError(true);
-        }, []);
-
-        const handleImageLoad = useCallback(() => {
-            setHasError(false);
-        }, []);
-
-        // Special case for sDAI token
-        if (tokenSymbol === 'sDAI') {
-            return (
-                <div className="token-image-container" style={{ width: size, height: size }}>
-                    <img
-                        src={SDAI_LOGO}
-                        alt={tokenSymbol}
-                        className="token-image"
-                        style={{ width: size, height: size }}
-                    />
-                </div>
-            );
-        }
-
-        if (!imageUrl || hasError) {
-            return (
-                <div
-                    className="token-image-placeholder"
-                    style={{ width: size, height: size, fontSize: Math.max(8, size * 0.4) }}
-                >
-                    {tokenSymbol.slice(0, 2).toUpperCase()}
-                </div>
-            );
-        }
-
-        return (
-            <div className="token-image-container" style={{ width: size, height: size }}>
-                <img
-                    src={imageUrl}
-                    alt={tokenSymbol}
-                    className="token-image"
-                    style={{ width: size, height: size }}
-                    onError={handleImageError}
-                    onLoad={handleImageLoad}
-                />
-            </div>
-        );
-    });
-
-    // Market Image Component
-    const MarketImage = memo(({ market, marketName }: { market: Market | null | undefined; marketName: string }) => {
-        const [hasError, setHasError] = useState(false);
-
-        const marketImageUrl = useMemo(() => {
-            if (!market?.image?.[0]?.cidMarket) return null;
-            return `https://ipfs.io${market.image[0].cidMarket}`;
-        }, [market?.image]);
-
-        const handleImageError = useCallback(() => {
-            setHasError(true);
-        }, []);
-
-        if (!marketImageUrl || hasError) {
-            return (
-                <div className="my-farms__market-image-placeholder">
-                    {marketName.slice(0, 1).toUpperCase()}
-                </div>
-            );
-        }
-
-        return (
-            <div className="my-farms__market-image-container">
-                <img
-                    src={marketImageUrl}
-                    alt={marketName}
-                    className="my-farms__market-image"
-                    onError={handleImageError}
-                />
-            </div>
-        );
-    });
 
     const sendNFTHandler = useCallback(
-        (v: any) => {
+        (v: Deposit) => {
             if (!isAddress(recipient) || recipient === account) {
                 return;
             }
@@ -477,6 +162,29 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
         },
         [recipient, account, transferNFTFromFarmingCenterHandler]
     );
+
+    // PositionCard action handlers
+    const handleUnfarm = useCallback((id: string) => {
+        setUnfarming({ id, state: "pending" });
+    }, []);
+
+    const handleSendModal = useCallback((id: string) => {
+        setSendModal(id);
+    }, []);
+
+    const handleCollectReward = useCallback((id: string, position: Deposit) => {
+        setEternalCollectReward({ id, state: "pending" });
+        if (eternalCollectRewardHandler) {
+            eternalCollectRewardHandler(id, { ...position });
+        }
+    }, [eternalCollectRewardHandler]);
+
+    const handleClaimRewards = useCallback((id: string, position: Deposit) => {
+        setGettingReward({ id, state: "pending", farmingType: FarmingType.ETERNAL });
+        if (claimRewardsHandler) {
+            claimRewardsHandler(id, { ...position }, FarmingType.ETERNAL);
+        }
+    }, [claimRewardsHandler]);
 
     useEffect(() => {
         fetchHandler();
@@ -661,6 +369,21 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                 <>
                     {farmedNFTs && sortedMarketKeys.length > 0 ? (
                         <div className="my-farms__container">
+                            {/* Portfolio summary */}
+                            <div className="my-farms__portfolio-summary" style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                background: 'var(--bg2)',
+                                borderRadius: '12px',
+                                fontSize: '1.2rem',
+                                fontWeight: '600'
+                            }}>
+                                <div>Total Portfolio Value: {formatDollarAmount(totalPortfolioValue)}</div>
+                                <div style={{ fontSize: '0.9rem', fontWeight: '400', marginTop: '0.5rem' }}>
+                                    {farmedNFTs.length} farming position{farmedNFTs.length !== 1 ? 's' : ''}
+                                </div>
+                            </div>
+                            
                             {/* Batch claim controls */}
                             <div className="my-farms__batch-controls">
                                 {claimablePositions.length > 0 && (
@@ -717,7 +440,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                         className="my-farms__toggle-all"
                                         onClick={toggleAllMarkets}
                                     >
-                                        {expandedMarkets.size === sortedMarketKeys.length ? (
+                                        {expandState.markets.expandedKeys.size === sortedMarketKeys.length ? (
                                             <>
                                                 <ChevronUp size={16} />
                                                 <Trans>Collapse All</Trans>
@@ -733,7 +456,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                             )}
                             {sortedMarketKeys.map((marketKey) => {
                                 const marketGroup = groupedPositions[marketKey];
-                                const isExpanded = expandedMarkets.has(marketKey);
+                                const isExpanded = expandState.markets.isExpanded(marketKey);
 
                                 return (
                                     <div key={marketKey} className="my-farms__market-group">
@@ -775,11 +498,9 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                 return `${directPositions} position${directPositions !== 1 ? 's' : ''}`;
                                                             }
                                                         })()}
-                                                        {marketGroup.totalTVL > 0 && (
-                                                            <span className="my-farms__market-tvl">
-                                                                • {formatDollarAmount(marketGroup.totalTVL)} TVL
-                                                            </span>
-                                                        )}
+                                                        <span className="my-farms__market-tvl" style={{ fontWeight: '600' }}>
+                                                            • Value: {formatDollarAmount(marketGroup.totalTVL)}
+                                                        </span>
                                                         <span className="my-farms__market-rewards">
                                                             • {formatReward(marketGroup.totalEarnedRewards)} SEER-LPP earned
                                                         </span>
@@ -795,103 +516,82 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                             </div>
                                         </div>
                                         <div className={`my-farms__market-content ${isExpanded ? 'expanded' : 'collapsed'}`}>
-                                            {/* Render direct positions for this market (non-conditional or parent market positions) */}
-                                            {marketGroup.positions.map((el: any, i: number) => {
-                                                const date = new Date(+el.enteredInEternalFarming * 1000).toLocaleString();
-
-                                                return (
-                                                    <div className={"my-farms__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
-                                                        <PositionHeader el={el} setUnstaking={setUnfarming} setSendModal={setSendModal} unstaking={unfarming} withdrawHandler={withdrawHandler} />
-                                                        <div className={"f cg-1 rg-1 mxs_fd-c"}>
-                                                            <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
-                                                                <PositionCardBodyHeader
-                                                                    farmingType={FarmingType.ETERNAL}
-                                                                    date={date}
-                                                                    enteredInEternalFarming={el.enteredInEternalFarming}
-                                                                    eternalFarming={el.eternalFarming}
-                                                                    el={el}
-                                                                />
-                                                                {el.eternalFarming ? (
-                                                                    <>
-                                                                        <PositionCardBodyStat
-                                                                            rewardToken={el.eternalRewardToken}
-                                                                            earned={el.eternalEarned}
-                                                                            bonusEarned={el.eternalBonusEarned}
-                                                                            bonusRewardToken={el.eternalBonusRewardToken}
-                                                                        />
-                                                                        <div className={"f mxs_fd-c w-100"}>
-                                                                            <button
-                                                                                className={"btn primary w-100 b br-8 pv-075"}
-                                                                                disabled={
-                                                                                    (eternalCollectReward.id === el.id && eternalCollectReward.state !== "done") ||
-                                                                                    (el.eternalEarned == 0 && el.eternalBonusEarned == 0)
-                                                                                }
-                                                                                onClick={() => {
-                                                                                    setEternalCollectReward({
-                                                                                        id: el.id,
-                                                                                        state: "pending",
-                                                                                    });
-                                                                                    eternalCollectRewardHandler(el.id, { ...el });
-                                                                                }}
-                                                                            >
-                                                                                {eternalCollectReward && eternalCollectReward.id === el.id && eternalCollectReward.state !== "done" ? (
-                                                                                    <div className={"f f-jc f-ac cg-05"}>
-                                                                                        <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                                        <Trans>Collecting</Trans>
-                                                                                    </div>
-                                                                                ) : (
-                                                                                    <span>
-                                                                                        <Trans>Collect rewards</Trans>
-                                                                                    </span>
-                                                                                )}
-                                                                            </button>
-                                                                            <button
-                                                                                className={"btn primary w-100 b br-8 ml-1 mxs_ml-0 mxs_mt-1 pv-075"}
-                                                                                disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== "done"}
-                                                                                onClick={() => {
-                                                                                    setGettingReward({
-                                                                                        id: el.id,
-                                                                                        state: "pending",
-                                                                                        farmingType: FarmingType.ETERNAL,
-                                                                                    });
-                                                                                    claimRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL);
-                                                                                }}
-                                                                            >
-                                                                                {gettingReward && gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== "done" ? (
-                                                                                    <div className={"f f-jc f-ac cg-05"}>
-                                                                                        <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                                        <Trans>Withdrawing</Trans>
-                                                                                    </div>
-                                                                                ) : (
-                                                                                    <span>
-                                                                                        <Trans>Withdraw</Trans>
-                                                                                    </span>
-                                                                                )}
-                                                                            </button>
-                                                                        </div>
-                                                                    </>
-                                                                ) : (
-                                                                    <div className={"my-farms__position-card__empty f c f-ac f-jc"}>
-                                                                        {el.eternalAvailable ? (
-                                                                            <CheckOut link={"infinite-farms"} />
-                                                                        ) : (
-                                                                            <div>
-                                                                                <Trans>No infinite farms for now</Trans>
-                                                                            </div>
+                                            {/* Group and render positions by outcome */}
+                                            {(() => {
+                                                const outcomeGroups = groupByOutcome(marketGroup.positions, marketGroup.market);
+                                                
+                                                if (outcomeGroups.size === 0) {
+                                                    return <div className="my-farms__no-positions"><Trans>No positions in this market</Trans></div>;
+                                                }
+                                                
+                                                return Array.from(outcomeGroups.entries()).map(([outcomeId, outcomeData]) => {
+                                                    const outcomeKey = `${marketKey}-outcome-${outcomeId}`;
+                                                    const isOutcomeExpanded = expandState.outcomes.isExpanded(outcomeKey);
+                                                    const totalOutcomeValue = calculateTotalFarmingValue(outcomeData.positions);
+                                                    const totalOutcomeRewards = outcomeData.positions.reduce((sum, pos) => {
+                                                        const eternalEarned = parseFloat(String(pos.eternalEarned || '0'));
+                                                        const eternalBonusEarned = parseFloat(String(pos.eternalBonusEarned || '0'));
+                                                        return sum + eternalEarned + eternalBonusEarned;
+                                                    }, 0);
+                                                    
+                                                    return (
+                                                        <div key={outcomeId} className="my-farms__outcome-group">
+                                                            <div 
+                                                                className="my-farms__outcome-header"
+                                                                onClick={() => toggleOutcome(outcomeKey)}
+                                                                role="button"
+                                                                tabIndex={0}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                                        e.preventDefault();
+                                                                        toggleOutcome(outcomeKey);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <div className="my-farms__outcome-info">
+                                                                    <TokenImage 
+                                                                        imageUrl={outcomeData.imageUrl} 
+                                                                        tokenSymbol={outcomeData.name} 
+                                                                        size={28} 
+                                                                    />
+                                                                    <span className="my-farms__outcome-name">{outcomeData.name}</span>
+                                                                    <span className="my-farms__outcome-stats">
+                                                                        {outcomeData.positions.length} position{outcomeData.positions.length !== 1 ? 's' : ''}
+                                                                        <span style={{ fontWeight: '600' }}> • Value: {formatDollarAmount(totalOutcomeValue)}</span>
+                                                                        {totalOutcomeRewards > 0 && (
+                                                                            <span> • {formatReward(totalOutcomeRewards)} earned</span>
                                                                         )}
-                                                                    </div>
-                                                                )}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="my-farms__outcome-toggle">
+                                                                    {isOutcomeExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                                                </div>
+                                                            </div>
+                                                            <div className={`my-farms__outcome-content ${isOutcomeExpanded ? 'expanded' : 'collapsed'}`}>
+                                                                {outcomeData.positions.map((position, i) => (
+                                                                    <PositionCard
+                                                                        key={i}
+                                                                        position={position}
+                                                                        onUnfarm={handleUnfarm}
+                                                                        onSendModal={handleSendModal}
+                                                                        onCollectReward={handleCollectReward}
+                                                                        onClaimRewards={handleClaimRewards}
+                                                                        eternalCollectReward={eternalCollectReward}
+                                                                        gettingReward={gettingReward}
+                                                                        unfarming={unfarming}
+                                                                    />
+                                                                ))}
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                );
-                                            })}
+                                                    );
+                                                });
+                                            })()}
 
                                             {/* Render child markets if this is a parent market */}
                                             {marketGroup.isParent && Object.keys(marketGroup.childMarkets).length > 0 && (
                                                 <div className="my-farms__child-markets">
                                                     {Object.entries(marketGroup.childMarkets).map(([childKey, childGroup]: [string, any]) => {
-                                                        const isChildExpanded = expandedChildMarkets.has(childKey);
+                                                        const isChildExpanded = expandState.childMarkets.isExpanded(childKey);
 
                                                         return (
                                                             <div key={childKey} className="my-farms__child-market-group">
@@ -921,11 +621,9 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                             </h4>
                                                                             <span className="my-farms__child-market-count">
                                                                                 {childGroup.positions.length} position{childGroup.positions.length !== 1 ? 's' : ''}
-                                                                                {childGroup.totalTVL > 0 && (
-                                                                                    <span className="my-farms__child-market-tvl">
-                                                                                        • {formatDollarAmount(childGroup.totalTVL)} TVL
-                                                                                    </span>
-                                                                                )}
+                                                                                <span className="my-farms__child-market-tvl" style={{ fontWeight: '600' }}>
+                                                                                    • Value: {formatDollarAmount(childGroup.totalTVL)}
+                                                                                </span>
                                                                                 <span className="my-farms__child-market-rewards">
                                                                                     • {formatReward(childGroup.totalEarnedRewards)} SEER-LPP earned
                                                                                 </span>
@@ -941,96 +639,76 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                     </div>
                                                                 </div>
                                                                 <div className={`my-farms__child-market-content ${isChildExpanded ? 'expanded' : 'collapsed'}`}>
-                                                                    {childGroup.positions.map((el: any, i: number) => {
-                                                                        const date = new Date(+el.enteredInEternalFarming * 1000).toLocaleString();
-
-                                                                        return (
-                                                                            <div className={"my-farms__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
-                                                                                <PositionHeader el={el} setUnstaking={setUnfarming} setSendModal={setSendModal} unstaking={unfarming} withdrawHandler={withdrawHandler} />
-                                                                                <div className={"f cg-1 rg-1 mxs_fd-c"}>
-                                                                                    <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
-                                                                                        <PositionCardBodyHeader
-                                                                                            farmingType={FarmingType.ETERNAL}
-                                                                                            date={date}
-                                                                                            enteredInEternalFarming={el.enteredInEternalFarming}
-                                                                                            eternalFarming={el.eternalFarming}
-                                                                                            el={el}
-                                                                                        />
-                                                                                        {el.eternalFarming ? (
-                                                                                            <>
-                                                                                                <PositionCardBodyStat
-                                                                                                    rewardToken={el.eternalRewardToken}
-                                                                                                    earned={el.eternalEarned}
-                                                                                                    bonusEarned={el.eternalBonusEarned}
-                                                                                                    bonusRewardToken={el.eternalBonusRewardToken}
-                                                                                                />
-                                                                                                <div className={"f mxs_fd-c w-100"}>
-                                                                                                    <button
-                                                                                                        className={"btn primary w-100 b br-8 pv-075"}
-                                                                                                        disabled={
-                                                                                                            (eternalCollectReward.id === el.id && eternalCollectReward.state !== "done") ||
-                                                                                                            (el.eternalEarned == 0 && el.eternalBonusEarned == 0)
-                                                                                                        }
-                                                                                                        onClick={() => {
-                                                                                                            setEternalCollectReward({
-                                                                                                                id: el.id,
-                                                                                                                state: "pending",
-                                                                                                            });
-                                                                                                            eternalCollectRewardHandler(el.id, { ...el });
-                                                                                                        }}
-                                                                                                    >
-                                                                                                        {eternalCollectReward && eternalCollectReward.id === el.id && eternalCollectReward.state !== "done" ? (
-                                                                                                            <div className={"f f-jc f-ac cg-05"}>
-                                                                                                                <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                                                                <Trans>Collecting</Trans>
-                                                                                                            </div>
-                                                                                                        ) : (
-                                                                                                            <span>
-                                                                                                                <Trans>Collect rewards</Trans>
-                                                                                                            </span>
-                                                                                                        )}
-                                                                                                    </button>
-                                                                                                    <button
-                                                                                                        className={"btn primary w-100 b br-8 ml-1 mxs_ml-0 mxs_mt-1 pv-075"}
-                                                                                                        disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== "done"}
-                                                                                                        onClick={() => {
-                                                                                                            setGettingReward({
-                                                                                                                id: el.id,
-                                                                                                                state: "pending",
-                                                                                                                farmingType: FarmingType.ETERNAL,
-                                                                                                            });
-                                                                                                            claimRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL);
-                                                                                                        }}
-                                                                                                    >
-                                                                                                        {gettingReward && gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== "done" ? (
-                                                                                                            <div className={"f f-jc f-ac cg-05"}>
-                                                                                                                <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                                                                <Trans>Withdrawing</Trans>
-                                                                                                            </div>
-                                                                                                        ) : (
-                                                                                                            <span>
-                                                                                                                <Trans>Withdraw</Trans>
-                                                                                                            </span>
-                                                                                                        )}
-                                                                                                    </button>
-                                                                                                </div>
-                                                                                            </>
-                                                                                        ) : (
-                                                                                            <div className={"my-farms__position-card__empty f c f-ac f-jc"}>
-                                                                                                {el.eternalAvailable ? (
-                                                                                                    <CheckOut link={"infinite-farms"} />
-                                                                                                ) : (
-                                                                                                    <div>
-                                                                                                        <Trans>No infinite farms for now</Trans>
-                                                                                                    </div>
+                                                                    {(() => {
+                                                                        const outcomeGroups = groupByOutcome(childGroup.positions, childGroup.market, marketGroup.market);
+                                                                        
+                                                                        if (outcomeGroups.size === 0) {
+                                                                            return <div className="my-farms__no-positions"><Trans>No positions in this child market</Trans></div>;
+                                                                        }
+                                                                        
+                                                                        return Array.from(outcomeGroups.entries()).map(([outcomeId, outcomeData]) => {
+                                                                            const outcomeKey = `${childKey}-outcome-${outcomeId}`;
+                                                                            const isOutcomeExpanded = expandState.outcomes.isExpanded(outcomeKey);
+                                                                            const totalOutcomeValue = calculateTotalFarmingValue(outcomeData.positions);
+                                                                            const totalOutcomeRewards = outcomeData.positions.reduce((sum, pos) => {
+                                                                                const eternalEarned = parseFloat(String(pos.eternalEarned || '0'));
+                                                                                const eternalBonusEarned = parseFloat(String(pos.eternalBonusEarned || '0'));
+                                                                                return sum + eternalEarned + eternalBonusEarned;
+                                                                            }, 0);
+                                                                            
+                                                                            return (
+                                                                                <div key={outcomeId} className="my-farms__outcome-group">
+                                                                                    <div 
+                                                                                        className="my-farms__outcome-header"
+                                                                                        onClick={() => toggleOutcome(outcomeKey)}
+                                                                                        role="button"
+                                                                                        tabIndex={0}
+                                                                                        onKeyDown={(e) => {
+                                                                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                                                                e.preventDefault();
+                                                                                                toggleOutcome(outcomeKey);
+                                                                                            }
+                                                                                        }}
+                                                                                    >
+                                                                                        <div className="my-farms__outcome-info">
+                                                                                            <TokenImage 
+                                                                                                imageUrl={outcomeData.imageUrl} 
+                                                                                                tokenSymbol={outcomeData.name} 
+                                                                                                size={28} 
+                                                                                            />
+                                                                                            <span className="my-farms__outcome-name">{outcomeData.name}</span>
+                                                                                            <span className="my-farms__outcome-stats">
+                                                                                                {outcomeData.positions.length} position{outcomeData.positions.length !== 1 ? 's' : ''}
+                                                                                                <span style={{ fontWeight: '600' }}> • Value: {formatDollarAmount(totalOutcomeValue)}</span>
+                                                                                                {totalOutcomeRewards > 0 && (
+                                                                                                    <span> • {formatReward(totalOutcomeRewards)} earned</span>
                                                                                                 )}
-                                                                                            </div>
-                                                                                        )}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div className="my-farms__outcome-toggle">
+                                                                                            {isOutcomeExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className={`my-farms__outcome-content ${isOutcomeExpanded ? 'expanded' : 'collapsed'}`}>
+                                                                                        {outcomeData.positions.map((position, i) => (
+                                                                                            <PositionCard
+                                                                                                key={i}
+                                                                                                position={position}
+                                                                                                parentMarket={marketGroup.market}
+                                                                                                onUnfarm={handleUnfarm}
+                                                                                                onSendModal={handleSendModal}
+                                                                                                onCollectReward={handleCollectReward}
+                                                                                                onClaimRewards={handleClaimRewards}
+                                                                                                eternalCollectReward={eternalCollectReward}
+                                                                                                gettingReward={gettingReward}
+                                                                                                unfarming={unfarming}
+                                                                                            />
+                                                                                        ))}
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
-                                                                        );
-                                                                    })}
+                                                                            );
+                                                                        });
+                                                                    })()}
                                                                 </div>
                                                             </div>
                                                         );
@@ -1045,96 +723,19 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                     ) : farmedNFTs && farmedNFTs.length > 0 ? (
                         // Fallback: render positions ungrouped if no market data
                         <div>
-                            {farmedNFTs.map((el, i) => {
-                                const date = new Date(+el.enteredInEternalFarming * 1000).toLocaleString();
-
-                                return (
-                                    <div className={"my-farms__position-card p-1 br-12 mb-1"} key={i} data-navigatedto={hash == `#${el.id}`}>
-                                        <PositionHeader el={el} setUnstaking={setUnfarming} setSendModal={setSendModal} unstaking={unfarming} withdrawHandler={withdrawHandler} />
-                                        <div className={"f cg-1 rg-1 mxs_fd-c"}>
-                                            <div className={"my-farms__position-card__body w-100 p-1 br-8"}>
-                                                <PositionCardBodyHeader
-                                                    farmingType={FarmingType.ETERNAL}
-                                                    date={date}
-                                                    enteredInEternalFarming={el.enteredInEternalFarming}
-                                                    eternalFarming={el.eternalFarming}
-                                                    el={el}
-                                                />
-                                                {el.eternalFarming ? (
-                                                    <>
-                                                        <PositionCardBodyStat
-                                                            rewardToken={el.eternalRewardToken}
-                                                            earned={el.eternalEarned}
-                                                            bonusEarned={el.eternalBonusEarned}
-                                                            bonusRewardToken={el.eternalBonusRewardToken}
-                                                        />
-                                                        <div className={"f mxs_fd-c w-100"}>
-                                                            <button
-                                                                className={"btn primary w-100 b br-8 pv-075"}
-                                                                disabled={
-                                                                    (eternalCollectReward.id === el.id && eternalCollectReward.state !== "done") ||
-                                                                    (el.eternalEarned == 0 && el.eternalBonusEarned == 0)
-                                                                }
-                                                                onClick={() => {
-                                                                    setEternalCollectReward({
-                                                                        id: el.id,
-                                                                        state: "pending",
-                                                                    });
-                                                                    eternalCollectRewardHandler(el.id, { ...el });
-                                                                }}
-                                                            >
-                                                                {eternalCollectReward && eternalCollectReward.id === el.id && eternalCollectReward.state !== "done" ? (
-                                                                    <div className={"f f-jc f-ac cg-05"}>
-                                                                        <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                        <Trans>Collecting</Trans>
-                                                                    </div>
-                                                                ) : (
-                                                                    <span>
-                                                                        <Trans>Collect rewards</Trans>
-                                                                    </span>
-                                                                )}
-                                                            </button>
-                                                            <button
-                                                                className={"btn primary w-100 b br-8 ml-1 mxs_ml-0 mxs_mt-1 pv-075"}
-                                                                disabled={gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== "done"}
-                                                                onClick={() => {
-                                                                    setGettingReward({
-                                                                        id: el.id,
-                                                                        state: "pending",
-                                                                        farmingType: FarmingType.ETERNAL,
-                                                                    });
-                                                                    claimRewardsHandler(el.id, { ...el }, FarmingType.ETERNAL);
-                                                                }}
-                                                            >
-                                                                {gettingReward && gettingReward.id === el.id && gettingReward.farmingType === FarmingType.ETERNAL && gettingReward.state !== "done" ? (
-                                                                    <div className={"f f-jc f-ac cg-05"}>
-                                                                        <Loader size={"18px"} stroke={"var(--white)"} />
-                                                                        <Trans>Withdrawing</Trans>
-                                                                    </div>
-                                                                ) : (
-                                                                    <span>
-                                                                        <Trans>Withdraw</Trans>
-                                                                    </span>
-                                                                )}
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div className={"my-farms__position-card__empty f c f-ac f-jc"}>
-                                                        {el.eternalAvailable ? (
-                                                            <CheckOut link={"infinite-farms"} />
-                                                        ) : (
-                                                            <div>
-                                                                <Trans>No infinite farms for now</Trans>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            {farmedNFTs.map((position, i) => (
+                                <PositionCard
+                                    key={i}
+                                    position={position}
+                                    onUnfarm={handleUnfarm}
+                                    onSendModal={handleSendModal}
+                                    onCollectReward={handleCollectReward}
+                                    onClaimRewards={handleClaimRewards}
+                                    eternalCollectReward={eternalCollectReward}
+                                    gettingReward={gettingReward}
+                                    unfarming={unfarming}
+                                />
+                            ))}
                         </div>
                     ) : null}
                 </>

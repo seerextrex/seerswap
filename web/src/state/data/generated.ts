@@ -13433,16 +13433,19 @@ export type TransferedPositionsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'owner' | 'L2tokenId' | 'onFarmingCenter'>
-    & { pool: (
+    & Pick<Deposit, 'id' | 'owner' | 'liquidity' | 'L2tokenId' | 'onFarmingCenter'>
+    & { mint: (
+      { __typename?: 'Mint' }
+      & Pick<Mint, 'tickLower' | 'tickUpper' | 'timestamp'>
+    ), pool: (
       { __typename?: 'Pool' }
-      & Pick<Pool, 'id' | 'totalValueLockedUSD'>
+      & Pick<Pool, 'id' | 'sqrtPrice' | 'tick' | 'liquidity' | 'token0Price' | 'token1Price' | 'totalValueLockedUSD'>
       & { token0: (
         { __typename?: 'Token' }
-        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+        & Pick<Token, 'id' | 'symbol' | 'decimals' | 'derivedMatic'>
       ), token1: (
         { __typename?: 'Token' }
-        & Pick<Token, 'id' | 'symbol' | 'decimals'>
+        & Pick<Token, 'id' | 'symbol' | 'decimals' | 'derivedMatic'>
       ), market0?: Maybe<(
         { __typename?: 'Market' }
         & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'wrappedTokensString' | 'totalValueLockedUSD'>
@@ -14866,18 +14869,31 @@ export const TransferedPositionsDocument = `
   ) {
     id
     owner
+    liquidity
+    mint {
+      tickLower
+      tickUpper
+      timestamp
+    }
     pool {
       id
+      sqrtPrice
+      tick
+      liquidity
       token0 {
         id
         symbol
         decimals
+        derivedMatic
       }
       token1 {
         id
         symbol
         decimals
+        derivedMatic
       }
+      token0Price
+      token1Price
       totalValueLockedUSD
       market0 {
         id

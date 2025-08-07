@@ -10,6 +10,7 @@ import { Bound, updateSelectedPreset } from "state/mint/v3/actions";
 import { IDerivedMintInfo, useInitialTokenPrice, useInitialUSDPrices } from "state/mint/v3/hooks";
 import { tryParseAmount } from "state/swap/hooks";
 import { PriceFormats } from "../PriceFomatToggler";
+import { useMarketAwareCurrencySymbols } from "hooks/useMarketAwarePrice";
 
 import "./index.scss";
 
@@ -30,6 +31,8 @@ interface IRangeSelector {
     isAfterPrice: boolean;
     priceFormat: PriceFormats;
     mintInfo: IDerivedMintInfo;
+    isMarketPool?: boolean;
+    collateralSymbol?: string;
 }
 
 interface IRangePart {
@@ -73,6 +76,29 @@ export function RangeSelector({
 }: IRangeSelector) {
     const tokenA = (currencyA ?? undefined)?.wrapped;
     const tokenB = (currencyB ?? undefined)?.wrapped;
+    
+    // Get market-aware currency symbols and ordering for proper display
+    const { baseSymbol, quoteSymbol, isMarketPool } = useMarketAwareCurrencySymbols(
+        currencyA ?? undefined, 
+        currencyB ?? undefined
+    );
+    
+    // For market pools, we need to swap the actual currencies to show outcome/collateral
+    const [baseCurrency, quoteCurrency] = useMemo(() => {
+        if (isMarketPool) {
+            // baseSymbol is the outcome token, quoteSymbol is the collateral
+            // We need to determine which actual currency corresponds to each
+            if (baseSymbol === currencyB?.symbol) {
+                // currencyB is the outcome (base), currencyA is collateral (quote)
+                return [currencyB, currencyA];
+            } else {
+                // currencyA is the outcome (base), currencyB is collateral (quote)
+                return [currencyA, currencyB];
+            }
+        }
+        // For non-market pools, use the default ordering
+        return [currencyA, currencyB];
+    }, [currencyA, currencyB, baseSymbol, isMarketPool]);
 
     const isUSD = useMemo(() => priceFormat === PriceFormats.USD, [priceFormat]);
     const currentPriceInUSD = useUSDCValue(
@@ -114,6 +140,7 @@ export function RangeSelector({
         let _price;
 
         if (!isUSD) {
+            // Keep the original price calculation - it was already correct
             _price =
                 isUSD && currentPriceInUSD
                     ? parseFloat(currentPriceInUSD?.toSignificant(5))
@@ -130,12 +157,13 @@ export function RangeSelector({
             }
         }
 
+        // Just update the symbol to use quoteCurrency which is now the collateral for market pools
         if (Number(_price) <= 0.0001) {
-            return `< ${isUSD && (currentPriceInUSD || isInitialInUSD) ? "$ " : ""}0.0001${isUSD && (currentPriceInUSD || isInitialInUSD) ? "" : ` ${currencyB?.symbol}`}`;
+            return `< ${isUSD && (currentPriceInUSD || isInitialInUSD) ? "$ " : ""}0.0001${isUSD && (currentPriceInUSD || isInitialInUSD) ? "" : ` ${quoteCurrency?.symbol}`}`;
         } else {
-            return `${isUSD && (currentPriceInUSD || isInitialInUSD) ? "$ " : ""}${_price}${isUSD && (currentPriceInUSD || isInitialInUSD) ? "" : ` ${currencyB?.symbol}`}`;
+            return `${isUSD && (currentPriceInUSD || isInitialInUSD) ? "$ " : ""}${_price}${isUSD && (currentPriceInUSD || isInitialInUSD) ? "" : ` ${quoteCurrency?.symbol}`}`;
         }
-    }, [mintInfo.price, isUSD, initialUSDPrices, initialTokenPrice, currentPriceInUSD]);
+    }, [mintInfo.price, isUSD, initialUSDPrices, initialTokenPrice, currentPriceInUSD, quoteCurrency]);
 
     return (
         <div className="f f-jb mxs_fd-c">
@@ -148,7 +176,7 @@ export function RangeSelector({
                     increment={isSorted ? getIncrementLower : getDecrementUpper}
                     decrementDisabled={mintInfo.ticksAtLimit[Bound.LOWER]}
                     incrementDisabled={mintInfo.ticksAtLimit[Bound.LOWER]}
-                    label={leftPrice ? `${currencyB?.symbol}` : "-"}
+                    label={leftPrice ? `${quoteSymbol || currencyB?.symbol}` : "-"}
                     tokenA={currencyA ?? undefined}
                     tokenB={currencyB ?? undefined}
                     initialPrice={mintInfo.price}
@@ -160,7 +188,7 @@ export function RangeSelector({
             {mintInfo.price && (
                 <div className="current-price f f-ac mxs_fd-c" style={{ order: isAfterPrice ? 1 : isBeforePrice ? 3 : 2 }}>
                     <div className="mb-05 mxs_mt-05" style={{ whiteSpace: "nowrap" }}>
-                        {initial ? t`Initial ${currencyA?.symbol || ''} to ${isUSD ? "USD" : currencyB?.symbol || ''} price` : t`Current ${currencyA?.symbol || ''} to ${isUSD ? "USD" : currencyB?.symbol || ''} price`}
+                        {initial ? t`Initial ${baseCurrency?.symbol || ''} price in ${isUSD ? "USD" : quoteCurrency?.symbol || ''}` : t`Current ${baseCurrency?.symbol || ''} price in ${isUSD ? "USD" : quoteCurrency?.symbol || ''}`}
                     </div>
                     <div className="current-price-tip ta-c">{`${currentPrice || t`Loading...`}`}</div>
                 </div>
@@ -173,7 +201,7 @@ export function RangeSelector({
                     increment={isSorted ? getIncrementUpper : getDecrementLower}
                     incrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
                     decrementDisabled={mintInfo.ticksAtLimit[Bound.UPPER]}
-                    label={rightPrice ? `${currencyB?.symbol}` : "-"}
+                    label={rightPrice ? `${quoteSymbol || currencyB?.symbol}` : "-"}
                     tokenA={currencyA ?? undefined}
                     tokenB={currencyB ?? undefined}
                     initialPrice={mintInfo.price}

@@ -1,4 +1,6 @@
 import { Currency } from "@uniswap/sdk-core";
+import { useQuery, gql } from "@apollo/client";
+import { useMemo } from "react";
 
 // Common collateral token addresses - add more as needed
 const COLLATERAL_TOKEN_ADDRESSES: { [chainId: number]: string[] } = {
@@ -74,4 +76,140 @@ export function shouldInvertPriceForCollateral(
   
   // If both or neither are collateral, return null to use default logic
   return null;
+}
+
+// GraphQL query to check if tokens are part of a market and get collateral info
+const TOKEN_MARKET_INFO_QUERY = gql`
+  query TokenMarketInfo($token0: ID!, $token1: ID!) {
+    token0: token(id: $token0) {
+      id
+      symbol
+      market {
+        id
+        collateralToken {
+          id
+          symbol
+        }
+        collateralToken1 {
+          id
+          symbol
+        }
+        collateralToken2 {
+          id
+          symbol
+        }
+        wrappedTokens
+      }
+    }
+    token1: token(id: $token1) {
+      id
+      symbol
+      market {
+        id
+        collateralToken {
+          id
+          symbol
+        }
+        collateralToken1 {
+          id
+          symbol
+        }
+        collateralToken2 {
+          id
+          symbol
+        }
+        wrappedTokens
+      }
+    }
+  }
+`;
+
+/**
+ * Hook to determine market-aware token ordering for price display
+ * For pools with market tokens, ensures price is always shown in terms of collateral
+ */
+export function useMarketAwareTokenOrder(
+  currencyA: Currency | undefined,
+  currencyB: Currency | undefined
+) {
+  const { data, loading } = useQuery(TOKEN_MARKET_INFO_QUERY, {
+    variables: {
+      token0: currencyA?.isToken ? currencyA.address.toLowerCase() : '',
+      token1: currencyB?.isToken ? currencyB.address.toLowerCase() : ''
+    },
+    skip: !currencyA?.isToken || !currencyB?.isToken
+  });
+
+  return useMemo(() => {
+    if (loading || !data) {
+      // Fallback to basic collateral detection
+      return {
+        shouldInvert: shouldInvertPriceForCollateral(currencyA, currencyB, currencyA?.chainId),
+        isMarketPool: false,
+        collateralToken: null,
+        outcomeToken: null
+      };
+    }
+
+    const token0Data = data.token0;
+    const token1Data = data.token1;
+
+    // Check if either token is an outcome token (has a market)
+    const token0Market = token0Data?.market;
+    const token1Market = token1Data?.market;
+
+    if (token0Market || token1Market) {
+      // This is a market pool
+      let collateralTokenAddress: string | null = null;
+      let outcomeTokenAddress: string | null = null;
+      let shouldInvert = false;
+
+      if (token0Market) {
+        // Token0 is the outcome token
+        outcomeTokenAddress = token0Data.id;
+        // Token1 should be the collateral
+        collateralTokenAddress = token1Data?.id || null;
+        // We want collateral as base, so if token1 is collateral, don't invert
+        shouldInvert = false;
+      } else if (token1Market) {
+        // Token1 is the outcome token
+        outcomeTokenAddress = token1Data.id;
+        // Token0 should be the collateral
+        collateralTokenAddress = token0Data?.id || null;
+        // We want collateral as base, so if token0 is collateral, invert
+        shouldInvert = true;
+      }
+
+      // Verify the collateral token matches the market's collateral
+      if (token0Market && collateralTokenAddress) {
+        const marketCollateral = token0Market.collateralToken?.id || 
+                                token0Market.collateralToken1?.id || 
+                                token0Market.collateralToken2?.id;
+        if (marketCollateral?.toLowerCase() !== collateralTokenAddress.toLowerCase()) {
+          // Mismatch - fall back to basic detection
+          return {
+            shouldInvert: shouldInvertPriceForCollateral(currencyA, currencyB, currencyA?.chainId),
+            isMarketPool: false,
+            collateralToken: null,
+            outcomeToken: null
+          };
+        }
+      }
+
+      return {
+        shouldInvert,
+        isMarketPool: true,
+        collateralToken: collateralTokenAddress,
+        outcomeToken: outcomeTokenAddress
+      };
+    }
+
+    // Not a market pool, use basic collateral detection
+    return {
+      shouldInvert: shouldInvertPriceForCollateral(currencyA, currencyB, currencyA?.chainId),
+      isMarketPool: false,
+      collateralToken: null,
+      outcomeToken: null
+    };
+  }, [data, loading, currencyA, currencyB]);
 }

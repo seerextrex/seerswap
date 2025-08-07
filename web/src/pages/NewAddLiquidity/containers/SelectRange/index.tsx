@@ -18,6 +18,7 @@ import { tryParseAmount } from "state/swap/hooks";
 import { useHistory } from "react-router-dom";
 import { t, Trans } from "@lingui/macro";
 import { Helmet } from "react-helmet";
+import { useMarketAwarePriceRange } from "hooks/useMarketAwarePrice";
 interface IRangeSelector {
     currencyA: Currency | null | undefined;
     currencyB: Currency | null | undefined;
@@ -79,18 +80,24 @@ export function SelectRange({ currencyA, currencyB, mintInfo, isCompleted, addit
         return tokenA && tokenB && tokenA.sortsBefore(tokenB);
     }, [tokenA, tokenB, mintInfo]);
 
-    const leftPrice = useMemo(() => {
-        return isSorted ? priceLower : priceUpper?.invert();
-    }, [isSorted, priceLower, priceUpper, mintInfo]);
-
-    const rightPrice = useMemo(() => {
-        return isSorted ? priceUpper : priceLower?.invert();
-    }, [isSorted, priceUpper, priceLower, mintInfo]);
+    // Use market-aware price range to ensure prices are in collateral terms
+    const { leftPrice, rightPrice, isMarketPool } = useMarketAwarePriceRange(
+        priceLower,
+        priceUpper, 
+        currencyA ?? undefined,
+        currencyB ?? undefined,
+        isSorted
+    );
 
     const price = useMemo(() => {
         if (!mintInfo.price) return;
-
-        return mintInfo.invertPrice ? mintInfo.price.invert().toSignificant(5) : mintInfo.price.toSignificant(5);
+        
+        const displayPrice = mintInfo.invertPrice ? mintInfo.price.invert() : mintInfo.price;
+        
+        // For market pools, the price orientation is handled by the pool itself
+        // and the market-aware range hook ensures consistency
+        
+        return displayPrice.toSignificant(5);
     }, [mintInfo]);
 
     const currentPriceInUSD = useUSDCValue(tryParseAmount(Number(price).toFixed(5), currencyB ?? undefined), true);

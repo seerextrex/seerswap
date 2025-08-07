@@ -1,0 +1,319 @@
+.market-pools-view {
+  width: 100%;
+  
+  .loading-state,
+  .error-state,
+  .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    color: var(--white);
+  }
+
+  .market-group {
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    .market-header {
+      padding: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .market-info {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .market-image-wrapper {
+          flex-shrink: 0;
+          
+          .market-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+          }
+          
+          .market-image-placeholder {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(79, 227, 193, 0.2) 0%, rgba(79, 227, 193, 0.1) 100%);
+            border: 2px solid rgba(79, 227, 193, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+          }
+        }
+
+        .market-details {
+          flex: 1;
+
+          .market-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--white);
+            margin: 0 0 0.5rem 0;
+          }
+
+          .market-stats {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            font-size: 0.875rem;
+
+          .stat-item {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+
+            label {
+              color: rgba(255, 255, 255, 0.6);
+            }
+
+            span {
+              color: var(--white);
+              font-weight: 500;
+            }
+          }
+
+          .pool-count {
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
+          }
+          }
+        }
+      }
+
+      .expand-toggle {
+        color: rgba(255, 255, 255, 0.6);
+        transition: transform 0.2s;
+      }
+    }
+
+    .market-outcomes {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+      .outcome-group {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .outcome-header {
+          padding: 1rem 1.25rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          cursor: pointer;
+          background: rgba(255, 255, 255, 0.02);
+          transition: background 0.2s;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.05);
+          }
+
+          .outcome-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .outcome-name {
+              font-size: 1rem;
+              font-weight: 500;
+              color: var(--white);
+              margin: 0;
+            }
+
+            .pool-count {
+              padding: 0.2rem 0.4rem;
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 6px;
+              color: rgba(255, 255, 255, 0.7);
+              font-size: 0.7rem;
+            }
+          }
+
+          .expand-toggle {
+            color: rgba(255, 255, 255, 0.5);
+          }
+        }
+
+        .outcome-pools {
+          padding: 0.75rem;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          gap: 1rem;
+          background: rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+
+  .pool-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .pool-header {
+      margin-bottom: 0.75rem;
+
+      .pool-tokens {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .token-pair {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: var(--white);
+        }
+
+        .fee-badge {
+          padding: 0.2rem 0.4rem;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 6px;
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.8);
+        }
+      }
+    }
+
+    .pool-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+
+      .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        label {
+          font-size: 0.7rem;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: uppercase;
+        }
+
+        span {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--white);
+        }
+      }
+    }
+
+    .pool-actions {
+      display: flex;
+      gap: 0.5rem;
+
+      .btn {
+        flex: 1;
+        padding: 0.5rem;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+
+        &.btn-sm {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--white);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.15);
+          }
+
+          &.primary {
+            background: var(--primary);
+            color: var(--white);
+
+            &:hover {
+              background: var(--primary-hover);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .load-more-btn {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .market-group {
+      .market-header {
+        padding: 1rem;
+
+        .market-info {
+          .market-stats {
+            flex-wrap: wrap;
+            gap: 0.75rem;
+          }
+        }
+      }
+
+      .market-outcomes {
+        .outcome-pools {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+
+    .pool-card {
+      .pool-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

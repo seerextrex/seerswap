@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp, Frown } from 'react-feather';
 import { useAccount } from 'wagmi';
 import { useSubgraphPositionsByMarket, PositionPoolExtended } from '../../hooks/useSubgraphPositions';
 import { useUserHideClosedPositions } from '../../state/user/hooks';
-import { Market } from '../../state/data/generated';
+import { Market, getOutcomeName } from '../../utils/market';
 import { formatDollarAmount } from '../../utils/numbers';
 import Loader from '../../components/Loader';
 import Card from '../../shared/components/Card/Card';
@@ -16,38 +16,8 @@ import FilterPanelItem from './FilterPanelItem';
 import { SwitchLocaleLink } from '../../components/SwitchLocaleLink';
 import './MarketPositionsPage.scss';
 
-// Helper function to get outcome name (similar to farms page)
-const getOutcomeName = (market: Market | null | undefined, tokenId: string): string | null => {
-    if (!market?.outcomes || !market?.wrappedTokensString || !tokenId) {
-        return null;
-    }
-
-    try {
-        let wrappedTokenIds: string[];
-        const wrappedTokensString = market.wrappedTokensString as any;
-
-        if (Array.isArray(wrappedTokensString)) {
-            wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
-        } else if (typeof wrappedTokensString === 'string') {
-            wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
-        } else {
-            return null;
-        }
-
-        const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
-
-        if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
-            return market.outcomes[tokenPosition];
-        }
-    } catch (e) {
-        console.error('Error parsing outcome name:', e);
-    }
-
-    return null;
-};
-
 interface MarketGroupProps {
-    market: any;
+    market: Market;
     positions: PositionPoolExtended[];
     isExpanded: boolean;
     onToggle: () => void;
@@ -109,7 +79,7 @@ const MarketGroup = memo(({ market, positions, isExpanded, onToggle }: MarketGro
 
 interface PositionCardProps {
     position: PositionPoolExtended;
-    market: any;
+    market: Market;
 }
 
 const PositionCard = memo(({ position, market }: PositionCardProps) => {
@@ -117,13 +87,12 @@ const PositionCard = memo(({ position, market }: PositionCardProps) => {
     if (!pool) return null;
 
     // Determine outcome token
-    let outcomeToken: any = null;
     let outcomeTokenSymbol = '';
 
     if (pool.token0 && pool.token1) {
         // Check which token is the outcome token (not collateral)
-        const isToken0Outcome = pool.market0?.id === market?.id || pool.market1?.id === market?.id;
-        outcomeToken = isToken0Outcome ? pool.token0 : pool.token1;
+        const isToken0Outcome = pool.market0?.id === market?.id;
+        const outcomeToken = isToken0Outcome ? pool.token0 : pool.token1;
         
         // Try to get outcome name
         const outcomeName = getOutcomeName(market, outcomeToken.id);

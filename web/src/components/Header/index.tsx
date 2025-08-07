@@ -127,7 +127,7 @@ export default function Header() {
                         <span className={"header__farming-circle"} />
                     </NavLink>
                     <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
-                        <Trans>Pools</Trans>
+                        <Trans>Markets</Trans>
                     </NavLink>
                     {/* <a className={"header__links__link hover-op"} id={`info-nav-link`} href="https://swapr.eth.limo" target="_blank" style={{ display: "flex", alignItems: "center" }}>
                     <Trans>Swap</Trans>

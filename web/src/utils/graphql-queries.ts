@@ -1532,6 +1532,101 @@ export const FETCH_POPULAR_POOLS = gql`
     }
 `;
 
+export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
+  query fetchPoolsGroupedByMarket($first: Int = 100, $skip: Int = 0) {
+    pools(first: $first, skip: $skip, orderBy: totalValueLockedUSD, orderDirection: desc) {
+      id
+      fee
+      liquidity
+      sqrtPrice
+      tick
+      totalValueLockedUSD
+      volumeUSD
+      feesUSD
+      token0 {
+        id
+        symbol
+        name
+        decimals
+        derivedMatic
+      }
+      token1 {
+        id
+        symbol
+        name
+        decimals
+        derivedMatic
+      }
+      market0 {
+        id
+        outcomes
+        marketName
+        collateralToken {
+          id
+          symbol
+          name
+          decimals
+        }
+        wrappedTokensString
+        wrappedTokens {
+          id
+          name
+          symbol
+        }
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+          marketName
+        }
+      }
+      market1 {
+        id
+        outcomes
+        marketName
+        collateralToken {
+          id
+          symbol
+          name
+          decimals
+        }
+        wrappedTokensString
+        wrappedTokens {
+          id
+          name
+          symbol
+        }
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+        childMarkets {
+          id
+        }
+        parentMarket {
+          id
+          marketName
+        }
+      }
+    }
+  }
+`;
+
 export const FETCH_ETERNAL_FARMS_BY_IDS = (farmIds: string[]) => gql`
     query eternalFarmingsByIds($farmIds: [ID!]!) {
         eternalFarmings(where: { id_in: $farmIds }) {

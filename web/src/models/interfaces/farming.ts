@@ -28,6 +28,7 @@ export interface EternalFarming {
     pool: { id: string }
     startTime: string
     endTime: string
+    endTimeImplied?: string
     reward: string
     bonusReward: string
     rewardRate: string
@@ -120,10 +121,12 @@ export interface Deposit {
     eternalEarned: string | number
     eternalEndTime: string
     eternalFarming: string | null
+    eternalFarm?: EternalFarming | DetachedEternalFarming
     eternalRewardToken: TokenSubgraph
     eternalStartTime: string
     id: string
     limitFarming: null | string
+    limitFarm?: any
     limitRewardToken: TokenSubgraph
     limitEarned: string | number
     limitBonusEarned: string | number

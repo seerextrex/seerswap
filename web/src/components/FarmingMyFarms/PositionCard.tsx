@@ -8,9 +8,7 @@ import PositionHeader from "./PositionHeader";
 import PositionCardBodyHeader from "./PositionCardBodyHeader";
 import PositionCardBodyStat from "./PositionCardBodyStat";
 import { CheckOut } from "./CheckOut";
-import { calculateFarmingPositionValueWithMetadata } from "../../utils/farmingPositionSimpleSDK";
-import { formatDollarAmount } from "../../utils/numbers";
-import { AlertCircle } from "react-feather";
+import { AlertTriangle } from "react-feather";
 
 export const PositionCard: React.FC<PositionCardProps> = ({
     position,
@@ -25,17 +23,20 @@ export const PositionCard: React.FC<PositionCardProps> = ({
     const { hash } = useLocation();
     const date = new Date(+position.enteredInEternalFarming * 1000).toLocaleString();
     
-    // Calculate position value with metadata
-    const { positionValue, showWarning, warningMessage } = useMemo(() => {
-        const result = calculateFarmingPositionValueWithMetadata(position);
-        const value = result.value > 0 ? formatDollarAmount(result.value) : '--';
-        const warning = result.missingPriceData || (result.hasError && result.value === 0);
-        return {
-            positionValue: value,
-            showWarning: warning,
-            warningMessage: result.errorReason || 'Unable to calculate value'
-        };
-    }, [position]);
+    // Check if farm is expired
+    const isExpired = useMemo(() => {
+        if (!position.eternalFarm) return false;
+        
+        // Use endTimeImplied if available, otherwise use endTime
+        const endTimeValue = position.eternalFarm.endTimeImplied || position.eternalFarm.endTime;
+        if (!endTimeValue) return false;
+        
+        const endTimestamp = Number(endTimeValue) * 1000; // Convert to milliseconds
+        const now = Date.now();
+        
+        return now > endTimestamp;
+    }, [position.eternalFarm]);
+    
 
     return (
         <div 
@@ -53,42 +54,24 @@ export const PositionCard: React.FC<PositionCardProps> = ({
                 unstaking={unfarming} 
                 withdrawHandler={onUnfarm} 
             />
-            <div className="my-farms__position-value" style={{ 
-                padding: '0.75rem 1rem', 
-                fontSize: '1.2rem', 
-                fontWeight: '600',
-                color: 'var(--text1)',
-                backgroundColor: 'var(--bg0)',
-                border: '2px solid var(--primary1)',
-                borderRadius: '8px',
-                margin: '0.5rem 1rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}>
-                <span>Position Value:</span>
-                <span style={{ 
-                    color: 'var(--primary1)', 
-                    fontSize: '1.3rem',
-                    display: 'flex',
+            {position.eternalFarming && isExpired && (
+                <div style={{
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.5rem'
+                    gap: '6px',
+                    padding: '4px 12px',
+                    margin: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    backgroundColor: 'rgba(255, 87, 87, 0.1)',
+                    border: '1px solid rgba(255, 87, 87, 0.3)',
+                    fontSize: '0.9rem',
+                    color: '#ff5757',
+                    fontWeight: '500'
                 }}>
-                    {positionValue}
-                    {showWarning && (
-                        <span 
-                            title={warningMessage}
-                            style={{ 
-                                cursor: 'help',
-                                display: 'inline-flex',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <AlertCircle size={16} color="var(--warning)" />
-                        </span>
-                    )}
-                </span>
-            </div>
+                    <AlertTriangle size={14} />
+                    Farm Expired
+                </div>
+            )}
             <div className="f cg-1 rg-1 mxs_fd-c">
                 <div className="my-farms__position-card__body w-100 p-1 br-8">
                     <PositionCardBodyHeader
@@ -156,7 +139,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
                                 <CheckOut link="infinite-farms" />
                             ) : (
                                 <div>
-                                    <Trans>No infinite farms for now</Trans>
+                                    <Trans>No farms for now</Trans>
                                 </div>
                             )}
                         </div>

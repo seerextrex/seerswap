@@ -7,13 +7,12 @@ import {
     ChildMarketGroup 
 } from "./types";
 import { Market } from "../../state/data/generated";
-import { calculateFarmingPositionValue, calculateTotalFarmingValue } from "../../utils/farmingPositionSimpleSDK";
 
 export const useGroupedFarmingPositions = ({ 
     positions, 
     isConditionalMarketPool 
 }: UseGroupedFarmingPositionsParams): UseGroupedFarmingPositionsResult => {
-    const [sortBy, setSortBy] = useState<'name' | 'tvl' | 'positions' | 'rewards'>('tvl');
+    const [sortBy, setSortBy] = useState<'name' | 'positions' | 'rewards'>('positions');
 
     // Group positions by market with hierarchical structure for conditional markets
     const groupedPositions = useMemo((): GroupedPositions => {
@@ -97,8 +96,6 @@ export const useGroupedFarmingPositions = ({
         marketMap.forEach((marketData, marketId) => {
             const { market, positions: marketPositions, parentId } = marketData;
             
-            // Calculate TVL (sum of position values) and rewards for this market's positions
-            const totalTVL = calculateTotalFarmingValue(marketPositions);
             let totalEarnedRewards = 0;
             
             marketPositions.forEach(position => {
@@ -120,7 +117,6 @@ export const useGroupedFarmingPositions = ({
                         marketId: parentId,
                         market: parentMarketData.market,
                         positions: [],
-                        totalTVL: 0,
                         totalEarnedRewards: 0,
                         isParent: true,
                         childMarkets: {}
@@ -134,14 +130,12 @@ export const useGroupedFarmingPositions = ({
                     marketId: marketId,
                     market: market,
                     positions: marketPositions,
-                    totalTVL,
                     totalEarnedRewards,
                     isChild: true,
                     parentKey: parentKey
                 };
                 
                 // Add child's totals to parent
-                groups[parentKey].totalTVL += totalTVL;
                 groups[parentKey].totalEarnedRewards += totalEarnedRewards;
                 
             } else if (!Array.from(marketMap.values()).some(m => m.parentId === marketId)) {
@@ -157,8 +151,7 @@ export const useGroupedFarmingPositions = ({
                         marketId: marketId,
                         market: market,
                         positions: marketPositions,
-                        totalTVL,
-                        totalEarnedRewards,
+                            totalEarnedRewards,
                         isParent: hasChildren,
                         childMarkets: {}
                     };
@@ -173,8 +166,7 @@ export const useGroupedFarmingPositions = ({
                         marketId: marketId,
                         market: market,
                         positions: marketPositions,
-                        totalTVL,
-                        totalEarnedRewards,
+                            totalEarnedRewards,
                         isParent: true,
                         childMarkets: {}
                     };
@@ -194,8 +186,6 @@ export const useGroupedFarmingPositions = ({
             const groupB = groupedPositions[b];
             
             switch (sortBy) {
-                case 'tvl':
-                    return groupB.totalTVL - groupA.totalTVL;
                 case 'positions':
                     const positionsA = groupA.positions.length + 
                         Object.values(groupA.childMarkets).reduce((sum, child) => sum + child.positions.length, 0);

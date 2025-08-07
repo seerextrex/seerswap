@@ -15,7 +15,6 @@ export interface ChildMarketGroup {
     marketId: string;
     market?: Market;
     positions: Deposit[];
-    totalTVL: number;
     totalEarnedRewards: number;
     isChild: true;
     parentKey: string;
@@ -26,7 +25,6 @@ export interface MarketGroup {
     marketId: string;
     market?: Market;
     positions: Deposit[];
-    totalTVL: number;
     totalEarnedRewards: number;
     isParent: boolean;
     childMarkets: Record<string, ChildMarketGroup>;
@@ -68,8 +66,8 @@ export interface UseGroupedFarmingPositionsParams {
 export interface UseGroupedFarmingPositionsResult {
     groupedPositions: GroupedPositions;
     sortedMarketKeys: string[];
-    sortBy: 'name' | 'tvl' | 'positions' | 'rewards';
-    setSortBy: (sortBy: 'name' | 'tvl' | 'positions' | 'rewards') => void;
+    sortBy: 'name' | 'positions' | 'rewards';
+    setSortBy: (sortBy: 'name' | 'positions' | 'rewards') => void;
 }
 
 export interface UseOutcomeGroupingParams {

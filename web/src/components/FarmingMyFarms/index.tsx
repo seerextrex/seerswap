@@ -1,5 +1,6 @@
 import { isAddress } from "@ethersproject/address";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { AlertTriangle } from "react-feather";
 import { Frown, ChevronDown, ChevronUp } from "react-feather";
 import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
 import { useBatchRewardsClaiming } from "../../hooks/useBatchRewardsClaiming";
@@ -15,7 +16,6 @@ import { formatDollarAmount } from "../../utils/numbers";
 import { formatReward } from "../../utils/formatReward";
 import { Market, Token } from "../../state/data/generated";
 import { detectConditionalMarketRelationship } from "../../utils/markets";
-import { calculateFarmingPositionValue, calculateTotalFarmingValue } from "../../utils/farmingPositionSimpleSDK";
 import "./index.scss";
 import ModalBody from "./ModalBody";
 import { Trans } from "@lingui/macro";
@@ -34,6 +34,20 @@ interface FarmingMyFarmsProps {
     now: number;
     fetchHandler: () => any;
 }
+
+// Helper function to check if a farm is expired
+const checkFarmExpired = (position: Deposit): boolean => {
+    if (!position.eternalFarm) return false;
+    const endTimeValue = position.eternalFarm.endTimeImplied || position.eternalFarm.endTime;
+    if (!endTimeValue) return false;
+    const endTimestamp = Number(endTimeValue) * 1000;
+    return Date.now() > endTimestamp;
+};
+
+// Helper function to count expired farms in positions
+const countExpiredFarms = (positions: Deposit[]): number => {
+    return positions.filter(pos => pos.eternalFarming && checkFarmExpired(pos)).length;
+};
 
 export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingMyFarmsProps) {
     const { address: account } = useAccount();
@@ -67,6 +81,7 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
     const [gettingReward, setGettingReward] = useState<RewardInterface>({ id: null, state: null, farmingType: null });
     const [eternalCollectReward, setEternalCollectReward] = useState<UnfarmingInterface>({ id: null, state: null });
     const [unfarming, setUnfarming] = useState<UnfarmingInterface>({ id: null, state: null });
+    const [hideExpired, setHideExpired] = useState<boolean>(true);
 
     // Consolidated expand/collapse state management
     const expandState = useHierarchicalExpandState();
@@ -79,9 +94,15 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
 
     const farmedNFTs = useMemo(() => {
         if (!shallowPositions) return;
-        const _positions = shallowPositions.filter((v) => v.onFarmingCenter);
+        let _positions = shallowPositions.filter((v) => v.onFarmingCenter);
+        
+        // Filter out expired farms if hideExpired is enabled
+        if (hideExpired) {
+            _positions = _positions.filter(pos => !checkFarmExpired(pos));
+        }
+        
         return _positions.length > 0 ? _positions : [];
-    }, [shallowPositions]);
+    }, [shallowPositions, hideExpired]);
 
     // Calculate claimable positions and total rewards
     const claimablePositions = useMemo(() => {
@@ -94,11 +115,6 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
         return getTotalClaimableRewards(farmedNFTs);
     }, [farmedNFTs, getTotalClaimableRewards]);
     
-    // Calculate total portfolio value
-    const totalPortfolioValue = useMemo(() => {
-        if (!farmedNFTs) return 0;
-        return calculateTotalFarmingValue(farmedNFTs);
-    }, [farmedNFTs]);
 
     // Handle batch claim
     const handleBatchClaim = useCallback(async () => {
@@ -369,21 +385,6 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                 <>
                     {farmedNFTs && sortedMarketKeys.length > 0 ? (
                         <div className="my-farms__container">
-                            {/* Portfolio summary */}
-                            <div className="my-farms__portfolio-summary" style={{
-                                padding: '1rem',
-                                marginBottom: '1rem',
-                                background: 'var(--bg2)',
-                                borderRadius: '12px',
-                                fontSize: '1.2rem',
-                                fontWeight: '600'
-                            }}>
-                                <div>Total Portfolio Value: {formatDollarAmount(totalPortfolioValue)}</div>
-                                <div style={{ fontSize: '0.9rem', fontWeight: '400', marginTop: '0.5rem' }}>
-                                    {farmedNFTs.length} farming position{farmedNFTs.length !== 1 ? 's' : ''}
-                                </div>
-                            </div>
-                            
                             {/* Batch claim controls */}
                             <div className="my-farms__batch-controls">
                                 {claimablePositions.length > 0 && (
@@ -421,42 +422,70 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                 )}
                             </div>
                             
-                            {sortedMarketKeys.length > 1 && (
+                            {(sortedMarketKeys.length > 1 || shallowPositions?.some(v => v.onFarmingCenter && checkFarmExpired(v))) && (
                                 <div className="my-farms__controls">
-                                    <div className="my-farms__sort-controls">
-                                        <span className="my-farms__sort-label">Sort by:</span>
-                                        <select
-                                            className="my-farms__sort-select"
-                                            value={sortBy}
-                                            onChange={(e) => setSortBy(e.target.value as 'name' | 'tvl' | 'positions' | 'rewards')}
-                                        >
-                                            <option value="tvl">TVL (Highest)</option>
-                                            <option value="positions">Positions (Most)</option>
-                                            <option value="rewards">Rewards Earned (Highest)</option>
-                                            <option value="name">Name (A-Z)</option>
-                                        </select>
-                                    </div>
-                                    <button
-                                        className="my-farms__toggle-all"
-                                        onClick={toggleAllMarkets}
-                                    >
-                                        {expandState.markets.expandedKeys.size === sortedMarketKeys.length ? (
+                                    <div className="my-farms__sort-controls" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                                        {sortedMarketKeys.length > 1 && (
                                             <>
-                                                <ChevronUp size={16} />
-                                                <Trans>Collapse All</Trans>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <ChevronDown size={16} />
-                                                <Trans>Expand All</Trans>
+                                                <span className="my-farms__sort-label">Sort by:</span>
+                                                <select
+                                                    className="my-farms__sort-select"
+                                                    value={sortBy}
+                                                    onChange={(e) => setSortBy(e.target.value as 'name' | 'positions' | 'rewards')}
+                                                >
+                                                    <option value="positions">Positions (Most)</option>
+                                                    <option value="rewards">Rewards Earned (Highest)</option>
+                                                    <option value="name">Name (A-Z)</option>
+                                                </select>
                                             </>
                                         )}
-                                    </button>
+                                        <label style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem',
+                                            cursor: 'pointer',
+                                            marginLeft: sortedMarketKeys.length > 1 ? '0' : 'auto'
+                                        }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={hideExpired}
+                                                onChange={(e) => setHideExpired(e.target.checked)}
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                            <span>Hide expired farms</span>
+                                        </label>
+                                    </div>
+                                    {sortedMarketKeys.length > 1 && (
+                                        <button
+                                            className="my-farms__toggle-all"
+                                            onClick={toggleAllMarkets}
+                                        >
+                                            {expandState.markets.expandedKeys.size === sortedMarketKeys.length ? (
+                                                <>
+                                                    <ChevronUp size={16} />
+                                                    <Trans>Collapse All</Trans>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ChevronDown size={16} />
+                                                    <Trans>Expand All</Trans>
+                                                </>
+                                            )}
+                                        </button>
+                                    )}
                                 </div>
                             )}
                             {sortedMarketKeys.map((marketKey) => {
                                 const marketGroup = groupedPositions[marketKey];
                                 const isExpanded = expandState.markets.isExpanded(marketKey);
+                                
+                                // Count expired farms in this market (including child markets)
+                                const directExpiredCount = countExpiredFarms(marketGroup.positions);
+                                const childExpiredCount = Object.values(marketGroup.childMarkets).reduce((sum: number, child: any) => {
+                                    return sum + countExpiredFarms(child.positions);
+                                }, 0);
+                                const totalExpiredCount = directExpiredCount + childExpiredCount;
+                                const totalPositionCount = marketGroup.positions.length + Object.values(marketGroup.childMarkets).reduce((sum: number, child: any) => sum + child.positions.length, 0);
 
                                 return (
                                     <div key={marketKey} className="my-farms__market-group">
@@ -485,6 +514,24 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                 <Trans>Parent Market</Trans>
                                                             </span>
                                                         )}
+                                                        {totalExpiredCount > 0 && (
+                                                            <span style={{
+                                                                marginLeft: '8px',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '4px',
+                                                                padding: '3px 10px',
+                                                                borderRadius: '6px',
+                                                                backgroundColor: 'rgba(255, 87, 87, 0.1)',
+                                                                border: '1px solid rgba(255, 87, 87, 0.3)',
+                                                                fontSize: '0.85rem',
+                                                                color: '#ff5757',
+                                                                fontWeight: '500'
+                                                            }}>
+                                                                <AlertTriangle size={14} />
+                                                                {totalExpiredCount}/{totalPositionCount} farms expired
+                                                            </span>
+                                                        )}
                                                     </h3>
                                                     <span className="my-farms__market-count">
                                                         {(() => {
@@ -498,9 +545,6 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                 return `${directPositions} position${directPositions !== 1 ? 's' : ''}`;
                                                             }
                                                         })()}
-                                                        <span className="my-farms__market-tvl" style={{ fontWeight: '600' }}>
-                                                            • Value: {formatDollarAmount(marketGroup.totalTVL)}
-                                                        </span>
                                                         <span className="my-farms__market-rewards">
                                                             • {formatReward(marketGroup.totalEarnedRewards)} SEER-LPP earned
                                                         </span>
@@ -527,12 +571,13 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                 return Array.from(outcomeGroups.entries()).map(([outcomeId, outcomeData]) => {
                                                     const outcomeKey = `${marketKey}-outcome-${outcomeId}`;
                                                     const isOutcomeExpanded = expandState.outcomes.isExpanded(outcomeKey);
-                                                    const totalOutcomeValue = calculateTotalFarmingValue(outcomeData.positions);
                                                     const totalOutcomeRewards = outcomeData.positions.reduce((sum, pos) => {
                                                         const eternalEarned = parseFloat(String(pos.eternalEarned || '0'));
                                                         const eternalBonusEarned = parseFloat(String(pos.eternalBonusEarned || '0'));
                                                         return sum + eternalEarned + eternalBonusEarned;
                                                     }, 0);
+                                                    const expiredCount = countExpiredFarms(outcomeData.positions);
+                                                    const hasExpiredFarms = expiredCount > 0;
                                                     
                                                     return (
                                                         <div key={outcomeId} className="my-farms__outcome-group">
@@ -555,9 +600,25 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                         size={28} 
                                                                     />
                                                                     <span className="my-farms__outcome-name">{outcomeData.name}</span>
+                                                                    {hasExpiredFarms && (
+                                                                        <span style={{
+                                                                            display: 'inline-flex',
+                                                                            alignItems: 'center',
+                                                                            gap: '4px',
+                                                                            padding: '2px 8px',
+                                                                            borderRadius: '4px',
+                                                                            backgroundColor: 'rgba(255, 87, 87, 0.1)',
+                                                                            border: '1px solid rgba(255, 87, 87, 0.3)',
+                                                                            fontSize: '0.85rem',
+                                                                            color: '#ff5757',
+                                                                            fontWeight: '500'
+                                                                        }}>
+                                                                            <AlertTriangle size={12} />
+                                                                            {expiredCount} expired
+                                                                        </span>
+                                                                    )}
                                                                     <span className="my-farms__outcome-stats">
                                                                         {outcomeData.positions.length} position{outcomeData.positions.length !== 1 ? 's' : ''}
-                                                                        <span style={{ fontWeight: '600' }}> • Value: {formatDollarAmount(totalOutcomeValue)}</span>
                                                                         {totalOutcomeRewards > 0 && (
                                                                             <span> • {formatReward(totalOutcomeRewards)} earned</span>
                                                                         )}
@@ -621,9 +682,6 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                             </h4>
                                                                             <span className="my-farms__child-market-count">
                                                                                 {childGroup.positions.length} position{childGroup.positions.length !== 1 ? 's' : ''}
-                                                                                <span className="my-farms__child-market-tvl" style={{ fontWeight: '600' }}>
-                                                                                    • Value: {formatDollarAmount(childGroup.totalTVL)}
-                                                                                </span>
                                                                                 <span className="my-farms__child-market-rewards">
                                                                                     • {formatReward(childGroup.totalEarnedRewards)} SEER-LPP earned
                                                                                 </span>
@@ -649,12 +707,13 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                         return Array.from(outcomeGroups.entries()).map(([outcomeId, outcomeData]) => {
                                                                             const outcomeKey = `${childKey}-outcome-${outcomeId}`;
                                                                             const isOutcomeExpanded = expandState.outcomes.isExpanded(outcomeKey);
-                                                                            const totalOutcomeValue = calculateTotalFarmingValue(outcomeData.positions);
                                                                             const totalOutcomeRewards = outcomeData.positions.reduce((sum, pos) => {
                                                                                 const eternalEarned = parseFloat(String(pos.eternalEarned || '0'));
                                                                                 const eternalBonusEarned = parseFloat(String(pos.eternalBonusEarned || '0'));
                                                                                 return sum + eternalEarned + eternalBonusEarned;
                                                                             }, 0);
+                                                                            const expiredCount = countExpiredFarms(outcomeData.positions);
+                                                                            const hasExpiredFarms = expiredCount > 0;
                                                                             
                                                                             return (
                                                                                 <div key={outcomeId} className="my-farms__outcome-group">
@@ -677,10 +736,26 @@ export function FarmingMyFarms({ data, refreshing, now, fetchHandler }: FarmingM
                                                                                                 size={28} 
                                                                                             />
                                                                                             <span className="my-farms__outcome-name">{outcomeData.name}</span>
+                                                                                            {hasExpiredFarms && (
+                                                                                                <span style={{
+                                                                                                    display: 'inline-flex',
+                                                                                                    alignItems: 'center',
+                                                                                                    gap: '4px',
+                                                                                                    padding: '2px 8px',
+                                                                                                    borderRadius: '4px',
+                                                                                                    backgroundColor: 'rgba(255, 87, 87, 0.1)',
+                                                                                                    border: '1px solid rgba(255, 87, 87, 0.3)',
+                                                                                                    fontSize: '0.85rem',
+                                                                                                    color: '#ff5757',
+                                                                                                    fontWeight: '500'
+                                                                                                }}>
+                                                                                                    <AlertTriangle size={12} />
+                                                                                                    {expiredCount} expired
+                                                                                                </span>
+                                                                                            )}
                                                                                             <span className="my-farms__outcome-stats">
                                                                                                 {outcomeData.positions.length} position{outcomeData.positions.length !== 1 ? 's' : ''}
-                                                                                                <span style={{ fontWeight: '600' }}> • Value: {formatDollarAmount(totalOutcomeValue)}</span>
-                                                                                                {totalOutcomeRewards > 0 && (
+                                                                                                                        {totalOutcomeRewards > 0 && (
                                                                                                     <span> • {formatReward(totalOutcomeRewards)} earned</span>
                                                                                                 )}
                                                                                             </span>

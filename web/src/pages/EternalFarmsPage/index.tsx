@@ -1196,7 +1196,7 @@ export default function EternalFarmsPage({ data, refreshing, priceFetched, fetch
             ) : !data || data.length === 0 ? (
                 <div className={"eternal-page__loader"}>
                     <div>
-                        <Trans>No infinite farms</Trans>
+                        <Trans>No farms</Trans>
                     </div>
                     <Frown size={"2rem"} stroke={"white"} />
                 </div>

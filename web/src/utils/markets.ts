@@ -33,7 +33,7 @@ export function detectConditionalMarketRelationship(position: Deposit): Conditio
         return null;
     }
     
-    // Both markets are available - use the same logic as infinite farms
+    // Both markets are available - use the same logic as farms
     if (!market0 || !market1) return null;
     
     // Get token IDs for both markets
@@ -82,7 +82,7 @@ export function detectConditionalMarketRelationship(position: Deposit): Conditio
 
 /**
  * Detects if a farm has a conditional market relationship
- * Used in the infinite farms page
+ * Used in the farms page
  * 
  * @param farm - The farm data with pool.market0 and pool.market1
  * @returns The parent-child relationship if found, null otherwise

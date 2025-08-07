@@ -81,6 +81,7 @@ export const FETCH_ETERNAL_FARM = gql`
             bonusRewardRate
             startTime
             endTime
+            endTimeImplied
             virtualPool
             multiplierToken
             tokenAmountForTier1
@@ -1637,6 +1638,7 @@ export const FETCH_ETERNAL_FARMS_BY_IDS = (farmIds: string[]) => gql`
             bonusRewardRate
             startTime
             endTime
+            endTimeImplied
             virtualPool
             multiplierToken
             tokenAmountForTier1

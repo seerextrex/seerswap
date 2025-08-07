@@ -46,7 +46,7 @@ const farmingMenuList = [
         link: "farms",
     },
     {
-        title: t`Infinite Farms`,
+        title: t`Farms`,
         icon: <InfinityIcon size={18} />,
         link: "infinite-farms",
     },
@@ -144,7 +144,7 @@ export default function FarmingPage() {
                     </Route> */}
                     <Route exact path={`${path}/infinite-farms`}>
                         <Helmet>
-                            <title>{t`SeerSwap — Farming • Infinite Farms`}</title>
+                            <title>{t`SeerSwap — Farming • Farms`}</title>
                         </Helmet>
 
                         <EternalFarmsPage data={eternalFarms} refreshing={eternalFarmsLoading} priceFetched={ethPricesFecthed} fetchHandler={() => fetchEternalFarmsFn(true)} />

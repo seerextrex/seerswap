@@ -161,7 +161,7 @@ msgid "SeerSwap — Farming • Farms History history"
 msgstr "SeerSwap — Farming • Historial de Farms"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "SeerSwap — Farming • Infinite Farms"
+msgid "SeerSwap — Farming • Farms"
 msgstr "SeerSwap — Farming • Infinito Farms"
 
 #: src/pages/Staking/StakingPage.tsx
@@ -990,7 +990,7 @@ msgstr "Infinito"
 #: src/components/StakingMenu/index.tsx
 #: src/components/StakingMenu/index.tsx
 #: src/pages/Staking/StakingPage.tsx
-msgid "Infinite Farms"
+msgid "Farms"
 msgstr "Infinito Farms"
 
 #: src/components/StakerEventCard/index.tsx
@@ -1383,11 +1383,11 @@ msgid "No farms"
 msgstr "No farms"
 
 #: src/pages/EternalFarmsPage/index.tsx
-msgid "No infinite farms"
+msgid "No farms"
 msgstr "No hay infinito farms"
 
 #: src/components/StakerMyStakes/index.tsx
-msgid "No infinite farms for now"
+msgid "No farms for now"
 msgstr "No hay infinito farms por ahora"
 
 #: src/pages/FarmingEventsPage/index.tsx

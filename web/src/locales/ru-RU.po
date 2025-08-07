@@ -168,7 +168,7 @@ msgid "SeerSwap — Farming • Farms History history"
 msgstr "SeerSwap — Фарминг • Фарминг История история"
 
 #: src/pages/Staking/StakingPage.tsx
-msgid "SeerSwap — Farming • Infinite Farms"
+msgid "SeerSwap — Farming • Farms"
 msgstr "SeerSwap — Фарминг • Бессрочный фарминг"
 
 #: src/pages/Staking/StakingPage.tsx
@@ -993,7 +993,7 @@ msgstr "Бесконечный"
 #: src/components/StakingMenu/index.tsx
 #: src/components/StakingMenu/index.tsx
 #: src/pages/Staking/StakingPage.tsx
-msgid "Infinite Farms"
+msgid "Farms"
 msgstr "Бесконечные"
 
 #: src/components/StakerEventCard/index.tsx
@@ -1386,11 +1386,11 @@ msgid "No farms"
 msgstr "Нет фармингов"
 
 #: src/pages/EternalFarmsPage/index.tsx
-msgid "No infinite farms"
+msgid "No farms"
 msgstr "Нет бесконечных фармингов"
 
 #: src/components/StakerMyStakes/index.tsx
-msgid "No infinite farms for now"
+msgid "No farms for now"
 msgstr "В данный момент бесконечные фарминги отсутствуют"
 
 #: src/pages/FarmingEventsPage/index.tsx

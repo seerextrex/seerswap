@@ -8,7 +8,7 @@ SeerSwap merges two powerful DeFi primitives:
 - **Seer**: A prediction market platform for creating and trading on future outcomes
 - **Swapr**: A concentrated liquidity AMM forked from Algebra (similar to Uniswap V3)
 
-This creates a unique prediction market-focused DEX that allows users to provide liquidity and trade on prediction market outcomes with advanced features like concentrated liquidity and infinite farming.
+This creates a unique prediction market-focused DEX that allows users to provide liquidity and trade on prediction market outcomes with advanced features like concentrated liquidity and farming.
 
 ## Project Structure
 
@@ -36,13 +36,13 @@ This is a monorepo with three main workspaces:
 - React application migrated from Ethers v5 to Wagmi
 - TypeScript with generated GraphQL types
 - Concentrated liquidity interface with prediction market specialization
-- Features infinite farming (staking/yield farming) functionality
+- Features farming (staking/yield farming) functionality
 
 ## Key Features
 
 - **Prediction Market Trading**: Create and trade on prediction markets
 - **Concentrated Liquidity**: Provide liquidity in specific price ranges for better capital efficiency  
-- **Infinite Farming**: Advanced yield farming and staking mechanisms
+- **Farming**: Advanced yield farming and staking mechanisms
 - **Multi-chain Support**: Supports Ethereum, Gnosis Chain, and other networks
 - **Advanced Analytics**: Comprehensive pool and market analytics
 

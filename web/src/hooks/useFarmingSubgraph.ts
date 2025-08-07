@@ -387,7 +387,7 @@ export function useFarmingSubgraph() {
 
             return eternalFarmings[0];
         } catch (err: any) {
-            throw new Error("Fetch infinite farming " + err.message);
+            throw new Error("Fetch farming " + err.message);
         }
     }
 
@@ -1338,7 +1338,7 @@ export function useFarmingSubgraph() {
             
             setPositionsEternal(_positions);
         } catch (error: any) {
-            throw new Error("Infinite farms loading" + error.code + error.message);
+            throw new Error("Farms loading" + error.code + error.message);
         }
     }
 

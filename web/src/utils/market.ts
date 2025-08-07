@@ -82,6 +82,8 @@ export function getOutcomeName(market: Market | null | undefined, tokenId: strin
 
     const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
 
+    // IMPORTANT: This assumes the order of wrappedTokensString matches the order of outcomes
+    // If the subgraph data doesn't guarantee this ordering, this mapping may be incorrect
     if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
       return market.outcomes[tokenPosition];
     }
@@ -143,7 +145,8 @@ export function groupPoolsByMarketAndOutcome(
   pools.forEach((pool) => {
     const tvl = parseFloat(pool.totalValueLockedUSD || "0");
     
-    // Skip low value pools if filter is active
+    // First filter: Skip individual pools with low TVL
+    // This prevents low-value pools from being included in market groups
     if (hideLowValue && tvl < minTVL) return;
 
     const markets = [pool.market0, pool.market1].filter(Boolean) as Market[];
@@ -194,7 +197,23 @@ export function groupPoolsByMarketAndOutcome(
     });
   });
 
+  // Second filter: Remove market groups whose total TVL is below threshold
+  // This ensures that even if a market has some pools above threshold,
+  // the market itself must have sufficient total TVL to be displayed
   return Array.from(marketMap.values())
     .filter(group => !hideLowValue || group.totalTVL >= minTVL)
     .sort((a, b) => b.totalTVL - a.totalTVL);
+}
+
+/**
+ * Formats a CID for use with an IPFS gateway
+ * @param cid The CID to format
+ * @param gateway The IPFS gateway URL (defaults to ipfs.io)
+ * @returns The full IPFS URL
+ */
+export function formatIpfsUrl(cid: string, gateway = 'https://ipfs.io'): string {
+  if (!cid) return '';
+  // Remove any leading slashes from the CID
+  const cleanCid = cid.startsWith('/') ? cid : `/${cid}`;
+  return `${gateway}${cleanCid}`;
 }

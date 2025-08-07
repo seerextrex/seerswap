@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp } from 'react-feather';
 import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
-import { Token, Market, Pool, getOutcomeName, GroupedMarketPools, groupPoolsByMarketAndOutcome } from '../../utils/market';
+import { Token, Market, Pool, getOutcomeName, GroupedMarketPools, groupPoolsByMarketAndOutcome, formatIpfsUrl } from '../../utils/market';
 import Loader from '../Loader';
 import './index.scss';
 
@@ -38,7 +38,7 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ groupedMarket, isE
     onToggle(marketId);
   }, [onToggle, marketId]);
 
-  const marketImageUrl = market?.image?.[0]?.cidMarket ? `https://ipfs.io${market.image[0].cidMarket}` : null;
+  const marketImageUrl = market?.image?.[0]?.cidMarket ? formatIpfsUrl(market.image[0].cidMarket) : null;
 
   return (
     <div className="market-group">
@@ -179,6 +179,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
 }) => {
   const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(0);
+  const [hasMoreItems, setHasMoreItems] = useState(true);
   const ITEMS_PER_PAGE = 100;
 
   const { data, loading, error, fetchMore } = useQuery(FETCH_POOLS_GROUPED_BY_MARKET, {
@@ -209,21 +210,30 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
     });
   }, []);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     fetchMore({
       variables: {
         skip: (currentPage + 1) * ITEMS_PER_PAGE,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return prev;
+        if (!fetchMoreResult || fetchMoreResult.pools.length === 0) return prev;
         return {
           ...prev,
           pools: [...prev.pools, ...fetchMoreResult.pools],
         };
       },
+    }).then(result => {
+      if (result.data && result.data.pools.length > 0) {
+        setCurrentPage(currentPage + 1);
+        // If we got less than a full page, there are no more items
+        if (result.data.pools.length < ITEMS_PER_PAGE) {
+          setHasMoreItems(false);
+        }
+      } else {
+        setHasMoreItems(false);
+      }
     });
-    setCurrentPage(currentPage + 1);
-  };
+  }, [currentPage, fetchMore, ITEMS_PER_PAGE]);
 
   if (loading && !data) {
     return (
@@ -267,7 +277,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
         />
       ))}
       
-      {data?.pools?.length >= ITEMS_PER_PAGE && (
+      {hasMoreItems && data?.pools && data.pools.length > 0 && (
         <button
           className="load-more-btn"
           onClick={handleLoadMore}

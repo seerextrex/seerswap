@@ -1350,6 +1350,28 @@ export const POOLS_FROM_ADDRESSES_HISTORICAL = gql`
           decimals
           derivedMatic
       }
+      market0 {
+          id
+          marketName
+          outcomes
+          wrappedTokensString
+          image {
+              id
+              cidMarket
+              cidOutcomes
+          }
+      }
+      market1 {
+          id
+          marketName
+          outcomes
+          wrappedTokensString
+          image {
+              id
+              cidMarket
+              cidOutcomes
+          }
+      }
       token0Price
       token1Price
       volumeUSD
@@ -1391,6 +1413,28 @@ export const POOLS_FROM_ADDRESSES_LATEST = gql`
           name
           decimals
           derivedMatic
+      }
+      market0 {
+          id
+          marketName
+          outcomes
+          wrappedTokensString
+          image {
+              id
+              cidMarket
+              cidOutcomes
+          }
+      }
+      market1 {
+          id
+          marketName
+          outcomes
+          wrappedTokensString
+          image {
+              id
+              cidMarket
+              cidOutcomes
+          }
       }
       token0Price
       token1Price

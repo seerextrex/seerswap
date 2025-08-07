@@ -213,7 +213,7 @@ export function groupPoolsByMarketAndOutcome(
  */
 export function formatIpfsUrl(cid: string, gateway = 'https://ipfs.io'): string {
   if (!cid) return '';
-  // Remove any leading slashes from the CID
-  const cleanCid = cid.startsWith('/') ? cid : `/${cid}`;
-  return `${gateway}${cleanCid}`;
+  // The CID already includes the full path like /ipfs/Qm...
+  // So we just concatenate directly
+  return `${gateway}${cid}`;
 }

@@ -14096,7 +14096,21 @@ export type GetPoolsFromAddressesHistoricalQuery = (
     ), token1: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
-    ) }
+    ), market0?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName' | 'outcomes' | 'wrappedTokensString'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )> }
+    )>, market1?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName' | 'outcomes' | 'wrappedTokensString'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )> }
+    )> }
   )> }
 );
 
@@ -14116,7 +14130,21 @@ export type GetPoolsFromAddressesLatestQuery = (
     ), token1: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
-    ) }
+    ), market0?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName' | 'outcomes' | 'wrappedTokensString'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )> }
+    )>, market1?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName' | 'outcomes' | 'wrappedTokensString'>
+      & { image: Array<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'cidMarket' | 'cidOutcomes'>
+      )> }
+    )> }
   )> }
 );
 
@@ -15785,6 +15813,28 @@ export const GetPoolsFromAddressesHistoricalDocument = `
       decimals
       derivedMatic
     }
+    market0 {
+      id
+      marketName
+      outcomes
+      wrappedTokensString
+      image {
+        id
+        cidMarket
+        cidOutcomes
+      }
+    }
+    market1 {
+      id
+      marketName
+      outcomes
+      wrappedTokensString
+      image {
+        id
+        cidMarket
+        cidOutcomes
+      }
+    }
     token0Price
     token1Price
     volumeUSD
@@ -15824,6 +15874,28 @@ export const GetPoolsFromAddressesLatestDocument = `
       name
       decimals
       derivedMatic
+    }
+    market0 {
+      id
+      marketName
+      outcomes
+      wrappedTokensString
+      image {
+        id
+        cidMarket
+        cidOutcomes
+      }
+    }
+    market1 {
+      id
+      marketName
+      outcomes
+      wrappedTokensString
+      image {
+        id
+        cidMarket
+        cidOutcomes
+      }
     }
     token0Price
     token1Price

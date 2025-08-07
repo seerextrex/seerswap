@@ -11,6 +11,8 @@ export interface PoolSubgraph {
     token0Price: string
     token1: TokenSubgraph
     token1Price: string
+    market0?: Market
+    market1?: Market
     totalValueLockedToken0: string
     totalValueLockedToken1: string
     totalValueLockedUSD: string

@@ -306,6 +306,8 @@ export function useInfoSubgraph() {
                 accum[address] = {
                     token0: current.token0,
                     token1: current.token1,
+                    market0: current.market0,
+                    market1: current.market1,
                     fee: current.fee,
                     exists: !!current,
                     address,

@@ -4,7 +4,7 @@ import Table from "../Table";
 import { formatDollarAmount, formatPercent, formatAmountTokens } from "../../utils/numbers";
 import "../Table/index.scss";
 import "./index.scss";
-import { Pool } from "./PoolRow";
+import { EnhancedPoolCell } from "./EnhancedPoolCell";
 import { Apr } from "./AprHeader";
 import { useHandleSort } from "../../hooks/useHandleSort";
 import { useHandleArrow } from "../../hooks/useHandleArrow";
@@ -75,7 +75,16 @@ export function InfoPools({ data, fetchHandler, blocksFetched }: InfoPoolsProps)
             data &&
             Array.isArray(data) &&
             data.map((el: any, i: any) => {
-                const pool = Pool({ token0: el.token0, token1: el.token1, fee: el.fee, address: el.address });
+                const pool = (
+                    <EnhancedPoolCell
+                        token0={el.token0}
+                        token1={el.token1}
+                        market0={el.market0}
+                        market1={el.market1}
+                        fee={el.fee}
+                        address={el.address}
+                    />
+                );
                 const apr = el.apr > 0 ? <span style={{ color: "var(--green)" }}>{formatPercent(el.apr)}</span> : <span>-</span>;
 
                 let farmingContent;

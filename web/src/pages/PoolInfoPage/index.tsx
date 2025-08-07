@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import FeeChartRangeInput from "../../components/FeeChartRangeInput";
 import PoolInfoChartToolbar from "../../components/PoolInfoChartToolbar/PoolInfoChartToolbar";
-import { PoolInfoHeader } from "./PoolInfoHeader";
+import { EnhancedPoolInfoHeader } from "./EnhancedPoolInfoHeader";
 import { useInfoSubgraph } from "../../hooks/subgraph/useInfoSubgraph";
 import { useInfoPoolChart } from "../../hooks/useInfoPoolChart";
 import dayjs from "dayjs";
@@ -183,11 +183,12 @@ export default function PoolInfoPage({
             </NavLink>
             {poolResult ? (
                 <Card classes={"p-2 br-24 mxs_p-1 test"}>
-                    <PoolInfoHeader
+                    <EnhancedPoolInfoHeader
                         token0={_token0 ?? undefined}
                         token1={_token1 ?? undefined}
                         fee={poolResult.fee}
                         collectedFees={+poolResult.feesUSD < 1 ? poolResult.untrackedFeesUSD : poolResult.feesUSD}
+                        poolResult={poolResult}
                     />
                     <InfoTotalStats
                         data={totalStats}

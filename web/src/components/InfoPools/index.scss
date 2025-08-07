@@ -57,6 +57,21 @@
   }
 }
 
+// Enhanced pool row styles
+.enhanced-pool-row {
+  .link {
+    align-items: center;
+    
+    .pool-market-image {
+      flex-shrink: 0;
+    }
+    
+    .pool-market-placeholder {
+      flex-shrink: 0;
+    }
+  }
+}
+
 @media screen and (max-width: 960px) {
   .pools-table-wrapper {
     overflow: scroll;

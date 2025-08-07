@@ -1480,6 +1480,17 @@ export const TOKENS_FROM_ADDRESSES_HISTORICAL = gql`
       feesUSD
       totalValueLockedUSD
       totalValueLockedUSDUntracked
+      market {
+        id
+        marketName
+        outcomes
+        wrappedTokensString
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+      }
     }
   }
 `;
@@ -1505,6 +1516,17 @@ export const TOKENS_FROM_ADDRESSES_LATEST = gql`
       feesUSD
       totalValueLockedUSD
       totalValueLockedUSDUntracked
+      market {
+        id
+        marketName
+        outcomes
+        wrappedTokensString
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+      }
     }
   }
 `;

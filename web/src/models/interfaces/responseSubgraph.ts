@@ -69,6 +69,7 @@ export interface TokenInSubgraph {
     volumeUSD: string
     untrackedVolumeUSD: string
     totalValueLockedUSDUntracked: string
+    market?: Market
 }
 
 export interface TokenAddressSubgraph {

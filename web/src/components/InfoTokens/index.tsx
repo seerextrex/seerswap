@@ -6,6 +6,7 @@ import Percent from "../Percent";
 import "./index.scss";
 import { useHandleArrow } from "../../hooks/useHandleArrow";
 import { TokenRow } from "./TokenRow";
+import { EnhancedTokenRow } from "./EnhancedTokenRow";
 import Table from "../Table";
 import TableHeader from "../Table/TableHeader";
 import { t, Trans } from "@lingui/macro";
@@ -54,11 +55,37 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
         }
     }, [blocksFetched]);
 
+    // Find sDAI token price
+    const sdaiPrice = useMemo(() => {
+        if (!data) return null;
+        const sdaiToken = data.find((token: any) => 
+            token.address?.toLowerCase() === "0xaf204776c7245bf4147c2612bf6e5972ee483701" ||
+            token.symbol?.toLowerCase() === "sdai"
+        );
+        return sdaiToken?.priceUSD || null;
+    }, [data]);
+
     const _data = useMemo(() => {
         return (
             data &&
             data.map((el: any, i: number) => {
-                const token = TokenRow({ address: el.address, symbol: el.symbol, name: el.name });
+                const token = <EnhancedTokenRow 
+                    address={el.address} 
+                    symbol={el.symbol} 
+                    name={el.name}
+                    market={el.market}
+                />;
+
+                // Calculate price in sDAI
+                const priceInSdai = sdaiPrice && el.priceUSD ? el.priceUSD / sdaiPrice : el.priceUSD;
+                
+                // Special case for sDAI itself - show USD value
+                const isSdai = el.address?.toLowerCase() === "0xaf204776c7245bf4147c2612bf6e5972ee483701" || 
+                               el.symbol?.toLowerCase() === "sdai";
+                
+                const priceDisplay = isSdai 
+                    ? formatDollarAmount(el.priceUSD, 3)
+                    : (sdaiPrice ? `${(priceInSdai || 0).toFixed(4)} sDAI` : formatDollarAmount(el.priceUSD, 3));
 
                 return [
                     {
@@ -66,8 +93,8 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                         value: el.address,
                     },
                     {
-                        title: formatDollarAmount(el.priceUSD, 3),
-                        value: el.priceUSD,
+                        title: priceDisplay,
+                        value: priceInSdai || el.priceUSD,
                     },
                     {
                         title: <Percent key={i} value={el.priceUSDChange} fontWeight={400} />,
@@ -84,7 +111,7 @@ export function InfoTokens({ data, fetchHandler, blocksFetched }: InfoTokensProp
                 ];
             })
         );
-    }, [data]);
+    }, [data, sdaiPrice]);
 
     if (!data)
         return (

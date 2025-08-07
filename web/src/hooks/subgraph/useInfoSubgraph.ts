@@ -482,6 +482,7 @@ export function useInfoSubgraph() {
                     address,
                     name: current ? formatTokenName(address, current.name) : "",
                     symbol: current ? formatTokenSymbol(address, current.symbol) : "",
+                    market: current?.market,
                     volumeUSD,
                     volumeUSDChange,
                     // volumeUSDWeek,

@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { useQuery } from '@apollo/client';
 import { Trans } from '@lingui/macro';
-import { ChevronDown, ChevronUp } from 'react-feather';
+import { ChevronDown, ChevronUp, ExternalLink } from 'react-feather';
 import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
@@ -273,6 +273,16 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
             <h4 className="child-market-name">
               {childMarket.market.marketName || 'Unknown Market'}
               <span className="child-market-badge">Child Market</span>
+              <a
+                href={`https://app.seer.pm/markets/100/${childMarket.market.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="market-external-link"
+                onClick={(e) => e.stopPropagation()}
+                title="View on Seer"
+              >
+                <ExternalLink size={14} />
+              </a>
             </h4>
             <div className="child-market-stats">
               <span className="stat-item">
@@ -366,6 +376,16 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
               {isParent && childMarkets && childMarkets.size > 0 && (
                 <span className="parent-market-badge">Parent Market</span>
               )}
+              <a
+                href={`https://app.seer.pm/markets/100/${market.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="market-external-link"
+                onClick={(e) => e.stopPropagation()}
+                title="View on Seer"
+              >
+                <ExternalLink size={16} />
+              </a>
             </h3>
             <div className="market-stats">
               <span className="stat-item">

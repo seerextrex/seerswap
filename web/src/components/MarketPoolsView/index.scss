@@ -89,6 +89,25 @@
           margin: 0 0 0.5rem 0;
           display: flex;
           align-items: center;
+          gap: 0.5rem;
+          
+          .market-external-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.2s ease;
+            margin-left: 0.25rem;
+            
+            &:hover {
+              color: rgba(255, 255, 255, 1);
+            }
+            
+            svg {
+              stroke-width: 2;
+            }
+          }
+          align-items: center;
           gap: 0.75rem;
           flex-wrap: wrap;
 
@@ -409,6 +428,25 @@
                 font-weight: 600;
                 margin: 0 0 0.35rem 0;
                 display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                
+                .market-external-link {
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: rgba(255, 255, 255, 0.6);
+                  transition: color 0.2s ease;
+                  margin-left: 0.25rem;
+                  
+                  &:hover {
+                    color: rgba(255, 255, 255, 1);
+                  }
+                  
+                  svg {
+                    stroke-width: 2;
+                  }
+                }
                 align-items: center;
                 gap: 0.5rem;
 

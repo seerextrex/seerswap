@@ -5,9 +5,207 @@ import { ChevronDown, ChevronUp } from 'react-feather';
 import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
-import { Token, Market, Pool, getOutcomeName, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
+import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
 import Loader from '../Loader';
 import './index.scss';
+
+interface PoolCardProps {
+  pool: Pool;
+  market: Market;
+}
+
+const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
+  // Use the improved function to determine tokens
+  const tokenInfo = getPoolTokensForMarket(pool, market);
+  
+  if (!tokenInfo) {
+    return null; // Pool doesn't belong to this market
+  }
+  
+  const { outcomeToken, collateralToken, outcomeName } = tokenInfo;
+  const fee = parseFloat(pool.fee) / 10000; // Convert fee to percentage
+
+  return (
+    <div className="pool-card">
+      <div className="pool-header">
+        <div className="pool-tokens">
+          <span className="token-pair">
+            {outcomeName || outcomeToken.symbol} / {collateralToken.symbol}
+          </span>
+          <span className="fee-badge">{fee}%</span>
+        </div>
+      </div>
+
+      <div className="pool-stats">
+        <div className="stat">
+          <label><Trans>TVL</Trans></label>
+          <span>{formatDollarAmount(parseFloat(pool.totalValueLockedUSD))}</span>
+        </div>
+        <div className="stat">
+          <label><Trans>Volume 24h</Trans></label>
+          <span>{formatDollarAmount(parseFloat(pool.volumeUSD))}</span>
+        </div>
+        <div className="stat">
+          <label><Trans>Fees 24h</Trans></label>
+          <span>{formatDollarAmount(parseFloat(pool.feesUSD))}</span>
+        </div>
+      </div>
+
+      <div className="pool-actions">
+        <NavLink to={`/add/${outcomeToken.id}/${collateralToken.id}`} className="btn btn-sm primary">
+          <Trans>Add Liquidity</Trans>
+        </NavLink>
+        <NavLink to={`/swap?inputCurrency=${collateralToken.id}&outputCurrency=${outcomeToken.id}`} className="btn btn-sm">
+          <Trans>Swap</Trans>
+        </NavLink>
+      </div>
+    </div>
+  );
+};
+
+interface OutcomeGroupProps {
+  outcomeName: string;
+  outcomeImage: string | null;
+  pools: Pool[];
+  market: Market;
+}
+
+const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, pools, market }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded(prev => !prev);
+  }, []);
+
+  // Sort pools by TVL
+  const sortedPools = useMemo(() => {
+    return [...pools].sort((a, b) => {
+      const tvlA = parseFloat(a.totalValueLockedUSD || '0');
+      const tvlB = parseFloat(b.totalValueLockedUSD || '0');
+      return tvlB - tvlA;
+    });
+  }, [pools]);
+
+  // Calculate total stats for this outcome
+  const outcomeStats = useMemo(() => {
+    return pools.reduce(
+      (acc, pool) => ({
+        totalTVL: acc.totalTVL + parseFloat(pool.totalValueLockedUSD || '0'),
+        totalVolume: acc.totalVolume + parseFloat(pool.volumeUSD || '0'),
+        totalFees: acc.totalFees + parseFloat(pool.feesUSD || '0'),
+      }),
+      { totalTVL: 0, totalVolume: 0, totalFees: 0 }
+    );
+  }, [pools]);
+
+  return (
+    <div className="outcome-group">
+      <div className="outcome-header" onClick={toggleExpanded}>
+        <div className="outcome-info">
+          <div className="outcome-image-wrapper">
+            {outcomeImage && !imageError ? (
+              <img 
+                src={outcomeImage}
+                alt={outcomeName}
+                className="outcome-image"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="outcome-image-placeholder">
+                {outcomeName.slice(0, 1).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <h4 className="outcome-name">{outcomeName}</h4>
+          <div className="outcome-stats">
+            <span className="pool-count">{pools.length} pool{pools.length !== 1 ? 's' : ''}</span>
+            <span className="outcome-tvl">TVL: {formatDollarAmount(outcomeStats.totalTVL)}</span>
+          </div>
+        </div>
+        <div className="expand-toggle">
+          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </div>
+      </div>
+
+      {isExpanded && (
+        <div className="outcome-pools">
+          {sortedPools.map((pool) => (
+            <PoolCard key={pool.id} pool={pool} market={market} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface MarketOutcomesListProps {
+  groupedMarket: GroupedMarketPools;
+}
+
+const MarketOutcomesList: React.FC<MarketOutcomesListProps> = ({ groupedMarket }) => {
+  const { market, pools } = groupedMarket;
+
+  // Group pools by outcome
+  const outcomeGroups = useMemo(() => {
+    const groups = new Map<string, { pools: Pool[]; imageUrl: string | null; outcomeToken?: Token }>();
+
+    pools.forEach(pool => {
+      // Use improved token identification
+      const tokenInfo = getPoolTokensForMarket(pool, market);
+      
+      if (tokenInfo) {
+        const { outcomeToken, outcomeName } = tokenInfo;
+        // Use outcome name if available, otherwise use token symbol
+        const groupKey = outcomeName || outcomeToken.symbol || outcomeToken.name || 'Unknown';
+        const outcomeInfo = outcomeName ? getOutcomeInfo(market, outcomeToken.id) : null;
+        
+        if (!groups.has(groupKey)) {
+          groups.set(groupKey, {
+            pools: [],
+            imageUrl: outcomeInfo?.imageUrl || null,
+            outcomeToken
+          });
+        }
+        
+        groups.get(groupKey)!.pools.push(pool);
+      }
+    });
+
+    // Sort outcomes alphabetically, but ensure UP comes before DOWN
+    return Array.from(groups.entries()).sort(([nameA], [nameB]) => {
+      const upperA = nameA.toUpperCase();
+      const upperB = nameB.toUpperCase();
+      
+      if (upperA === 'UP' && upperB === 'DOWN') return -1;
+      if (upperA === 'DOWN' && upperB === 'UP') return 1;
+      
+      return nameA.localeCompare(nameB);
+    });
+  }, [pools, market]);
+
+  if (outcomeGroups.length === 0) {
+    return (
+      <div className="market-outcomes-empty">
+        <Trans>No pools available</Trans>
+      </div>
+    );
+  }
+
+  return (
+    <div className="market-outcomes-list">
+      {outcomeGroups.map(([outcomeName, { pools, imageUrl }]) => (
+        <OutcomeGroup
+          key={outcomeName}
+          outcomeName={outcomeName}
+          outcomeImage={imageUrl}
+          pools={pools}
+          market={market}
+        />
+      ))}
+    </div>
+  );
+};
 
 interface ChildMarketGroupProps {
   childMarket: GroupedMarketPools;
@@ -24,20 +222,7 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
   onToggle, 
   childKey 
 }) => {
-  const [expandedOutcomes, setExpandedOutcomes] = useState<Set<string>>(new Set());
   const [imageError, setImageError] = useState(false);
-
-  const toggleOutcome = useCallback((outcomeKey: string) => {
-    setExpandedOutcomes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(outcomeKey)) {
-        newSet.delete(outcomeKey);
-      } else {
-        newSet.add(outcomeKey);
-      }
-      return newSet;
-    });
-  }, []);
 
   const handleToggle = useCallback(() => {
     onToggle(childKey);
@@ -91,7 +276,7 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
             </h4>
             <div className="child-market-stats">
               <span className="stat-item">
-                {Array.from(childMarket.poolsByOutcome.values()).flat().length} pools
+                {childMarket.pools.length} pools
               </span>
               {childMarket.totalTVL > 0 && (
                 <span className="stat-item">
@@ -115,32 +300,8 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
       </div>
 
       {isExpanded && (
-        <div className="child-market-outcomes">
-          {Array.from(childMarket.poolsByOutcome.entries()).map(([outcomeKey, pools]) => {
-            const isOutcomeExpanded = expandedOutcomes.has(outcomeKey);
-
-            return (
-              <div key={outcomeKey} className="outcome-group">
-                <div className="outcome-header" onClick={() => toggleOutcome(outcomeKey)}>
-                  <div className="outcome-info">
-                    <h4 className="outcome-name">{outcomeKey}</h4>
-                    <span className="pool-count">{pools.length} pools</span>
-                  </div>
-                  <div className="expand-toggle">
-                    {isOutcomeExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  </div>
-                </div>
-
-                {isOutcomeExpanded && (
-                  <div className="outcome-pools">
-                    {pools.map((pool) => (
-                      <PoolCard key={pool.id} pool={pool} market={childMarket.market} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        <div className="child-market-content">
+          <MarketOutcomesList groupedMarket={childMarket} />
         </div>
       )}
     </div>
@@ -164,22 +325,9 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   expandedChildMarkets,
   toggleChildMarket
 }) => {
-  const [expandedOutcomes, setExpandedOutcomes] = useState<Set<string>>(new Set());
   const [imageError, setImageError] = useState(false);
 
-  const toggleOutcome = useCallback((outcomeKey: string) => {
-    setExpandedOutcomes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(outcomeKey)) {
-        newSet.delete(outcomeKey);
-      } else {
-        newSet.add(outcomeKey);
-      }
-      return newSet;
-    });
-  }, []);
-
-  const { market, poolsByOutcome, totalTVL, totalVolume, totalFees, isParent, childMarkets } = groupedMarket;
+  const { market, pools, totalTVL, totalVolume, totalFees, isParent, childMarkets } = groupedMarket;
   
   const handleToggle = useCallback(() => {
     onToggle(marketId);
@@ -188,10 +336,10 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   const marketImageUrl = market?.image?.[0]?.cidMarket ? formatIpfsUrl(market.image[0].cidMarket) : null;
 
   // Calculate total pools including child markets
-  const directPools = Array.from(poolsByOutcome.values()).flat().length;
+  const directPools = pools.length;
   const childPools = childMarkets ? 
     Array.from(childMarkets.values()).reduce((sum, child) => 
-      sum + Array.from(child.poolsByOutcome.values()).flat().length, 0) : 0;
+      sum + child.pools.length, 0) : 0;
   const totalPools = directPools + childPools;
 
   return (
@@ -252,34 +400,10 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
 
       {isExpanded && (
         <div className="market-content">
-          {/* Render direct pools for this market */}
+          {/* Render outcomes for this market */}
           {directPools > 0 && (
             <div className="market-outcomes">
-              {Array.from(poolsByOutcome.entries()).map(([outcomeKey, pools]) => {
-                const isOutcomeExpanded = expandedOutcomes.has(outcomeKey);
-
-                return (
-                  <div key={outcomeKey} className="outcome-group">
-                    <div className="outcome-header" onClick={() => toggleOutcome(outcomeKey)}>
-                      <div className="outcome-info">
-                        <h4 className="outcome-name">{outcomeKey}</h4>
-                        <span className="pool-count">{pools.length} pools</span>
-                      </div>
-                      <div className="expand-toggle">
-                        {isOutcomeExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </div>
-                    </div>
-
-                    {isOutcomeExpanded && (
-                      <div className="outcome-pools">
-                        {pools.map((pool) => (
-                          <PoolCard key={pool.id} pool={pool} market={market} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+              <MarketOutcomesList groupedMarket={groupedMarket} />
             </div>
           )}
 
@@ -307,58 +431,6 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
     </div>
   );
 });
-
-interface PoolCardProps {
-  pool: Pool;
-  market: Market;
-}
-
-const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
-  // Determine which token is the outcome token and which is collateral
-  const isToken0Market = pool.market0?.id === market.id;
-  const outcomeToken = isToken0Market ? pool.token0 : pool.token1;
-  const collateralToken = isToken0Market ? pool.token1 : pool.token0;
-  
-  const outcomeName = getOutcomeName(market, outcomeToken.id);
-  const fee = parseFloat(pool.fee) / 10000; // Convert fee to percentage
-
-  return (
-    <div className="pool-card">
-      <div className="pool-header">
-        <div className="pool-tokens">
-          <span className="token-pair">
-            {outcomeName || outcomeToken.symbol} / {collateralToken.symbol}
-          </span>
-          <span className="fee-badge">{fee}%</span>
-        </div>
-      </div>
-
-      <div className="pool-stats">
-        <div className="stat">
-          <label><Trans>TVL</Trans></label>
-          <span>{formatDollarAmount(parseFloat(pool.totalValueLockedUSD))}</span>
-        </div>
-        <div className="stat">
-          <label><Trans>Volume 24h</Trans></label>
-          <span>{formatDollarAmount(parseFloat(pool.volumeUSD))}</span>
-        </div>
-        <div className="stat">
-          <label><Trans>Fees 24h</Trans></label>
-          <span>{formatDollarAmount(parseFloat(pool.feesUSD))}</span>
-        </div>
-      </div>
-
-      <div className="pool-actions">
-        <NavLink to={`/add/${outcomeToken.id}/${collateralToken.id}`} className="btn btn-sm primary">
-          <Trans>Add Liquidity</Trans>
-        </NavLink>
-        <NavLink to={`/swap?inputCurrency=${collateralToken.id}&outputCurrency=${outcomeToken.id}`} className="btn btn-sm">
-          <Trans>Swap</Trans>
-        </NavLink>
-      </div>
-    </div>
-  );
-};
 
 interface MarketPoolsViewProps {
   minTVL?: number;

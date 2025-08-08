@@ -64,31 +64,54 @@ export interface Pool {
  * @returns The outcome name or null if not found
  */
 export function getOutcomeName(market: Market | null | undefined, tokenId: string): string | null {
-  if (!market?.outcomes || !market?.wrappedTokensString || !tokenId) {
+  if (!market?.outcomes || !tokenId) {
     return null;
   }
 
-  try {
-    let wrappedTokenIds: string[];
-    const wrappedTokensString = market.wrappedTokensString;
+  // First try using wrappedTokensString if available
+  if (market.wrappedTokensString) {
+    try {
+      let wrappedTokenIds: string[];
+      const wrappedTokensString = market.wrappedTokensString;
 
-    if (Array.isArray(wrappedTokensString)) {
-      wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
-    } else if (typeof wrappedTokensString === 'string') {
-      wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
-    } else {
-      return null;
+      if (Array.isArray(wrappedTokensString)) {
+        wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
+      } else if (typeof wrappedTokensString === 'string') {
+        wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
+      } else {
+        wrappedTokenIds = [];
+      }
+
+      const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
+
+      // IMPORTANT: This assumes the order of wrappedTokensString matches the order of outcomes
+      // If the subgraph data doesn't guarantee this ordering, this mapping may be incorrect
+      if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
+        return market.outcomes[tokenPosition];
+      }
+    } catch (e) {
+      console.error('Error parsing outcome name from wrappedTokensString:', e);
     }
+  }
 
-    const tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
-
-    // IMPORTANT: This assumes the order of wrappedTokensString matches the order of outcomes
-    // If the subgraph data doesn't guarantee this ordering, this mapping may be incorrect
-    if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
-      return market.outcomes[tokenPosition];
+  // Fallback: try using wrappedTokens array if available
+  if (market.wrappedTokens && Array.isArray(market.wrappedTokens)) {
+    const tokenIndex = market.wrappedTokens.findIndex(
+      (token: any) => token.id.toLowerCase() === tokenId.toLowerCase()
+    );
+    if (tokenIndex !== -1 && tokenIndex < market.outcomes.length) {
+      return market.outcomes[tokenIndex];
     }
-  } catch (e) {
-    console.error('Error parsing outcome name:', e);
+  }
+
+  // Another fallback: try using tokens array if available
+  if (market.tokens && Array.isArray(market.tokens)) {
+    const tokenIndex = market.tokens.findIndex(
+      (token: any) => token.id.toLowerCase() === tokenId.toLowerCase()
+    );
+    if (tokenIndex !== -1 && tokenIndex < market.outcomes.length) {
+      return market.outcomes[tokenIndex];
+    }
   }
 
   return null;
@@ -101,20 +124,155 @@ export function getOutcomeName(market: Market | null | undefined, tokenId: strin
  * @returns The outcome token and its name, or null if not found
  */
 export function getPoolOutcomeToken(pool: Pool, market: Market): { token: Token; outcomeName: string } | null {
-  // Check if token0 belongs to this market
-  if (pool.market0?.id === market.id) {
-    const outcomeName = getOutcomeName(market, pool.token0.id);
-    if (outcomeName) {
-      return { token: pool.token0, outcomeName };
+  // First, identify which token is the collateral token
+  const collateralTokenId = market.collateralToken?.id;
+  
+  if (!collateralTokenId) {
+    // Fallback to old logic if no collateral token specified
+    if (pool.market0?.id === market.id) {
+      const outcomeName = getOutcomeName(market, pool.token0.id);
+      if (outcomeName) {
+        return { token: pool.token0, outcomeName };
+      }
     }
+    
+    if (pool.market1?.id === market.id) {
+      const outcomeName = getOutcomeName(market, pool.token1.id);
+      if (outcomeName) {
+        return { token: pool.token1, outcomeName };
+      }
+    }
+    return null;
   }
   
-  // Check if token1 belongs to this market
-  if (pool.market1?.id === market.id) {
+  // If we have collateral token info, determine which token is NOT the collateral
+  const isToken0Collateral = pool.token0.id.toLowerCase() === collateralTokenId.toLowerCase();
+  const isToken1Collateral = pool.token1.id.toLowerCase() === collateralTokenId.toLowerCase();
+  
+  // The outcome token is the one that's NOT the collateral token
+  if (isToken0Collateral && !isToken1Collateral) {
+    // token1 is the outcome token
     const outcomeName = getOutcomeName(market, pool.token1.id);
     if (outcomeName) {
       return { token: pool.token1, outcomeName };
     }
+  } else if (isToken1Collateral && !isToken0Collateral) {
+    // token0 is the outcome token
+    const outcomeName = getOutcomeName(market, pool.token0.id);
+    if (outcomeName) {
+      return { token: pool.token0, outcomeName };
+    }
+  } else {
+    // Neither or both tokens match collateral (shouldn't happen normally)
+    // Try to find which token has a valid outcome name
+    const outcome0 = getOutcomeName(market, pool.token0.id);
+    const outcome1 = getOutcomeName(market, pool.token1.id);
+    
+    if (outcome0 && !outcome1) {
+      return { token: pool.token0, outcomeName: outcome0 };
+    } else if (outcome1 && !outcome0) {
+      return { token: pool.token1, outcomeName: outcome1 };
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Determines which token is the outcome token for a given market
+ * @param pool The pool to check
+ * @param market The market to check against
+ * @returns Object with outcomeToken, collateralToken, and outcomeName
+ */
+export function getPoolTokensForMarket(pool: Pool, market: Market): {
+  outcomeToken: Token;
+  collateralToken: Token;
+  outcomeName: string | null;
+} | null {
+  const collateralTokenId = market.collateralToken?.id;
+  
+  // Check if this pool belongs to this market at all
+  const poolBelongsToMarket = (pool.market0?.id === market.id) || (pool.market1?.id === market.id);
+  if (!poolBelongsToMarket) return null;
+  
+  if (collateralTokenId) {
+    // We know the collateral token, so identify tokens based on that
+    const isToken0Collateral = pool.token0.id.toLowerCase() === collateralTokenId.toLowerCase();
+    const isToken1Collateral = pool.token1.id.toLowerCase() === collateralTokenId.toLowerCase();
+    
+    if (isToken0Collateral && !isToken1Collateral) {
+      const outcomeName = getOutcomeName(market, pool.token1.id);
+      // Debug log for Unknown cases
+      if (!outcomeName) {
+        console.warn('Unknown outcome detected:', {
+          poolId: pool.id,
+          marketId: market.id,
+          token0: pool.token0.id,
+          token1: pool.token1.id,
+          collateralTokenId,
+          wrappedTokensString: market.wrappedTokensString,
+          outcomes: market.outcomes
+        });
+      }
+      return {
+        outcomeToken: pool.token1,
+        collateralToken: pool.token0,
+        outcomeName
+      };
+    } else if (isToken1Collateral && !isToken0Collateral) {
+      const outcomeName = getOutcomeName(market, pool.token0.id);
+      // Debug log for Unknown cases
+      if (!outcomeName) {
+        console.warn('Unknown outcome detected:', {
+          poolId: pool.id,
+          marketId: market.id,
+          token0: pool.token0.id,
+          token1: pool.token1.id,
+          collateralTokenId,
+          wrappedTokensString: market.wrappedTokensString,
+          outcomes: market.outcomes
+        });
+      }
+      return {
+        outcomeToken: pool.token0,
+        collateralToken: pool.token1,
+        outcomeName
+      };
+    }
+  }
+  
+  // Fallback: try to determine based on which token has an outcome name
+  const outcome0 = getOutcomeName(market, pool.token0.id);
+  const outcome1 = getOutcomeName(market, pool.token1.id);
+  
+  if (outcome0 && !outcome1) {
+    return {
+      outcomeToken: pool.token0,
+      collateralToken: pool.token1,
+      outcomeName: outcome0
+    };
+  } else if (outcome1 && !outcome0) {
+    return {
+      outcomeToken: pool.token1,
+      collateralToken: pool.token0,
+      outcomeName: outcome1
+    };
+  }
+  
+  // Last resort: if pool.market0 matches, assume token0 is outcome
+  // This maintains backward compatibility but may not always be correct
+  if (pool.market0?.id === market.id) {
+    return {
+      outcomeToken: pool.token0,
+      collateralToken: pool.token1,
+      outcomeName: outcome0
+    };
+  } else if (pool.market1?.id === market.id) {
+    return {
+      outcomeToken: pool.token1,
+      collateralToken: pool.token0,
+      outcomeName: outcome1
+    };
   }
   
   return null;
@@ -122,7 +280,8 @@ export function getPoolOutcomeToken(pool: Pool, market: Market): { token: Token;
 
 export interface GroupedMarketPools {
   market: Market;
-  poolsByOutcome: Map<string, Pool[]>;
+  pools: Pool[];  // Direct list of pools instead of grouping by outcome
+  poolsByOutcome: Map<string, Pool[]>;  // Keep for backwards compatibility
   totalTVL: number;
   totalVolume: number;
   totalFees: number;
@@ -241,6 +400,7 @@ export function groupPoolsByMarketAndOutcome(
       if (!marketMap.has(marketKey)) {
         marketMap.set(marketKey, {
           market,
+          pools: [],
           poolsByOutcome: new Map(),
           totalTVL: 0,
           totalVolume: 0,
@@ -250,32 +410,23 @@ export function groupPoolsByMarketAndOutcome(
 
       const marketGroup = marketMap.get(marketKey)!;
       
+      // Add pool directly to the pools array
+      marketGroup.pools.push(pool);
+      
       // Add stats to market totals
       marketGroup.totalTVL += tvl;
       marketGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
       marketGroup.totalFees += parseFloat(pool.feesUSD || "0");
 
-      // Find which outcome this pool belongs to
+      // Also group by outcome for backwards compatibility
       const outcomeInfo = getPoolOutcomeToken(pool, market);
-      
       if (outcomeInfo) {
-        // Group by the specific outcome
         const outcomeKey = outcomeInfo.outcomeName;
-        
-        if (!marketGroup.poolsByOutcome.has(outcomeKey)) {
-          marketGroup.poolsByOutcome.set(outcomeKey, []);
-        }
-        
-        marketGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
-      } else if (!market.outcomes || market.outcomes.length === 0) {
-        // If no outcomes defined, group under "Default"
-        const outcomeKey = 'Default';
         if (!marketGroup.poolsByOutcome.has(outcomeKey)) {
           marketGroup.poolsByOutcome.set(outcomeKey, []);
         }
         marketGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
       }
-      // If market has outcomes but pool doesn't match any, skip it
     });
   });
 
@@ -320,6 +471,7 @@ export function groupPoolsByMarketWithHierarchy(
       if (!groups.has(parentKey)) {
         groups.set(parentKey, {
           market: parentMarket,
+          pools: [],
           poolsByOutcome: new Map(),
           totalTVL: 0,
           totalVolume: 0,
@@ -335,6 +487,7 @@ export function groupPoolsByMarketWithHierarchy(
       if (!parentGroup.childMarkets!.has(childKey)) {
         parentGroup.childMarkets!.set(childKey, {
           market: childMarket,
+          pools: [],
           poolsByOutcome: new Map(),
           totalTVL: 0,
           totalVolume: 0,
@@ -346,14 +499,18 @@ export function groupPoolsByMarketWithHierarchy(
 
       const childGroup = parentGroup.childMarkets!.get(childKey)!;
       
-      // Add pool to child market
-      const outcomeInfo = getPoolOutcomeToken(pool, childMarket);
-      const outcomeKey = outcomeInfo?.outcomeName || 'Default';
+      // Add pool directly to child market's pools array
+      childGroup.pools.push(pool);
       
-      if (!childGroup.poolsByOutcome.has(outcomeKey)) {
-        childGroup.poolsByOutcome.set(outcomeKey, []);
+      // Also track by outcome for backwards compatibility
+      const outcomeInfo = getPoolOutcomeToken(pool, childMarket);
+      if (outcomeInfo) {
+        const outcomeKey = outcomeInfo.outcomeName;
+        if (!childGroup.poolsByOutcome.has(outcomeKey)) {
+          childGroup.poolsByOutcome.set(outcomeKey, []);
+        }
+        childGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
       }
-      childGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
 
       // Update child market stats
       childGroup.totalTVL += tvl;
@@ -405,6 +562,7 @@ export function groupPoolsByMarketWithHierarchy(
       if (!groups.has(marketKey)) {
         groups.set(marketKey, {
           market: selectedMarket,
+          pools: [],
           poolsByOutcome: new Map(),
           totalTVL: 0,
           totalVolume: 0,
@@ -416,14 +574,18 @@ export function groupPoolsByMarketWithHierarchy(
 
       const marketGroup = groups.get(marketKey)!;
       
-      // Find which outcome this pool belongs to
-      const outcomeInfo = getPoolOutcomeToken(pool, selectedMarket);
-      const outcomeKey = outcomeInfo?.outcomeName || 'Default';
+      // Add pool directly to pools array
+      marketGroup.pools.push(pool);
       
-      if (!marketGroup.poolsByOutcome.has(outcomeKey)) {
-        marketGroup.poolsByOutcome.set(outcomeKey, []);
+      // Also track by outcome for backwards compatibility
+      const outcomeInfo = getPoolOutcomeToken(pool, selectedMarket);
+      if (outcomeInfo) {
+        const outcomeKey = outcomeInfo.outcomeName;
+        if (!marketGroup.poolsByOutcome.has(outcomeKey)) {
+          marketGroup.poolsByOutcome.set(outcomeKey, []);
+        }
+        marketGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
       }
-      marketGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
 
       // Update market stats
       const poolId = pool.id;
@@ -453,4 +615,84 @@ export function formatIpfsUrl(cid: string, gateway = 'https://ipfs.io'): string 
   // The CID already includes the full path like /ipfs/Qm...
   // So we just concatenate directly
   return `${gateway}${cid}`;
+}
+
+/**
+ * Gets the outcome image URL for a specific outcome
+ * @param market The market containing outcome information
+ * @param outcomeIndex The index of the outcome
+ * @returns The IPFS URL for the outcome image or null
+ */
+export function getOutcomeImageUrl(market: Market | null | undefined, outcomeIndex: number): string | null {
+  if (!market?.image?.[0]?.cidOutcomes) return null;
+  
+  const cidOutcomes = market.image[0].cidOutcomes;
+  if (!cidOutcomes || outcomeIndex >= cidOutcomes.length) return null;
+  
+  const outcomeCid = cidOutcomes[outcomeIndex];
+  if (!outcomeCid) return null;
+  
+  return formatIpfsUrl(outcomeCid);
+}
+
+/**
+ * Gets outcome information including name and image for a token
+ * @param market The market containing outcome information
+ * @param tokenId The token ID to look up
+ * @returns Object with outcome name, index, and image URL or null
+ */
+export function getOutcomeInfo(market: Market | null | undefined, tokenId: string): {
+  name: string;
+  index: number;
+  imageUrl: string | null;
+} | null {
+  if (!market?.outcomes || !tokenId) {
+    return null;
+  }
+
+  let tokenPosition = -1;
+
+  // First try using wrappedTokensString if available
+  if (market.wrappedTokensString) {
+    try {
+      let wrappedTokenIds: string[];
+      const wrappedTokensString = market.wrappedTokensString;
+
+      if (Array.isArray(wrappedTokensString)) {
+        wrappedTokenIds = wrappedTokensString.map((id: string) => id.trim().toLowerCase());
+      } else if (typeof wrappedTokensString === 'string') {
+        wrappedTokenIds = wrappedTokensString.split(',').map((id: string) => id.trim().toLowerCase());
+      } else {
+        wrappedTokenIds = [];
+      }
+
+      tokenPosition = wrappedTokenIds.findIndex((id: string) => id === tokenId.toLowerCase());
+    } catch (e) {
+      console.error('Error parsing outcome info from wrappedTokensString:', e);
+    }
+  }
+
+  // Fallback: try using wrappedTokens array if available
+  if (tokenPosition === -1 && market.wrappedTokens && Array.isArray(market.wrappedTokens)) {
+    tokenPosition = market.wrappedTokens.findIndex(
+      (token: any) => token.id.toLowerCase() === tokenId.toLowerCase()
+    );
+  }
+
+  // Another fallback: try using tokens array if available
+  if (tokenPosition === -1 && market.tokens && Array.isArray(market.tokens)) {
+    tokenPosition = market.tokens.findIndex(
+      (token: any) => token.id.toLowerCase() === tokenId.toLowerCase()
+    );
+  }
+
+  if (tokenPosition !== -1 && tokenPosition < market.outcomes.length) {
+    return {
+      name: market.outcomes[tokenPosition],
+      index: tokenPosition,
+      imageUrl: getOutcomeImageUrl(market, tokenPosition)
+    };
+  }
+
+  return null;
 }

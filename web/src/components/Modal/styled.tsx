@@ -34,10 +34,12 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
         -webkit-backdrop-filter: blur(24px);
         backdrop-filter: blur(24px);
         box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
-        width: 60vw;
-        overflow-y: clip;
+        width: auto;
+        min-width: min(500px, 90vw);
+        max-width: min(600px, 95vw);
+        overflow-y: auto;
         overflow-x: hidden;
-        padding: 1rem;
+        padding: 0;
 
         align-self: ${({ mobile }) => (mobile ? "flex-end" : "center")};
 
@@ -55,7 +57,8 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
         display: flex;
         border-radius: 20px;
         ${({ theme }) => theme.mediaWidth.upToMedium`
-      width: 65vw;
+      min-width: min(450px, 85vw);
+      max-width: min(550px, 90vw);
       margin: 0;
     `}
         ${({ theme, mobile }) => theme.mediaWidth.upToSmall`

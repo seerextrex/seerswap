@@ -338,7 +338,7 @@ export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, p
   }, [isOpen, hasOpened]);
   
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80}>
+    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90} fitContent={true}>
       {isOpen && (
         <ZapModalContent
           market={market}

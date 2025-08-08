@@ -1598,8 +1598,133 @@ export const FETCH_POPULAR_POOLS = gql`
     }
 `;
 
+// Query to fetch pools for specific markets (used when expanding parent markets)
+export const FETCH_POOLS_FOR_MARKETS = gql`
+  query fetchPoolsForMarkets($marketIds: [String!]!, $first: Int = 1000, $skip: Int = 0) {
+    pools(
+      first: $first, 
+      skip: $skip, 
+      where: {
+        or: [
+          { market0_in: $marketIds },
+          { market1_in: $marketIds }
+        ]
+      },
+      orderBy: totalValueLockedUSD, 
+      orderDirection: desc
+    ) {
+      id
+      fee
+      liquidity
+      sqrtPrice
+      tick
+      totalValueLockedUSD
+      volumeUSD
+      feesUSD
+      token0 {
+        id
+        symbol
+        name
+        decimals
+        derivedMatic
+      }
+      token1 {
+        id
+        symbol
+        name
+        decimals
+        derivedMatic
+      }
+      market0 {
+        id
+        outcomes
+        marketName
+        finalizeTs
+        payoutReported
+        collateralToken {
+          id
+          symbol
+          name
+          decimals
+        }
+        wrappedTokensString
+        wrappedTokens {
+          id
+          name
+          symbol
+        }
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+        childMarkets {
+          id
+          marketName
+        }
+        parentMarket {
+          id
+          marketName
+          outcomes
+          wrappedTokensString
+          tokens {
+            id
+            name
+          }
+        }
+      }
+      market1 {
+        id
+        outcomes
+        marketName
+        finalizeTs
+        payoutReported
+        collateralToken {
+          id
+          symbol
+          name
+          decimals
+        }
+        wrappedTokensString
+        wrappedTokens {
+          id
+          name
+          symbol
+        }
+        image {
+          id
+          cidMarket
+          cidOutcomes
+        }
+        tokens {
+          id
+          name
+        }
+        childMarkets {
+          id
+          marketName
+        }
+        parentMarket {
+          id
+          marketName
+          outcomes
+          wrappedTokensString
+          tokens {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
-  query fetchPoolsGroupedByMarket($first: Int = 100, $skip: Int = 0) {
+  query fetchPoolsGroupedByMarket($first: Int = 500, $skip: Int = 0, $hideResolved: Boolean = false) {
     pools(first: $first, skip: $skip, orderBy: totalValueLockedUSD, orderDirection: desc) {
       id
       fee
@@ -1627,6 +1752,8 @@ export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
         id
         outcomes
         marketName
+        finalizeTs
+        payoutReported
         collateralToken {
           id
           symbol
@@ -1660,6 +1787,8 @@ export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
         id
         outcomes
         marketName
+        finalizeTs
+        payoutReported
         collateralToken {
           id
           symbol

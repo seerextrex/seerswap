@@ -17,7 +17,8 @@ import { t, Trans } from "@lingui/macro";
 function InfoPage() {
     const { path } = useRouteMatch();
     const MARKET_MIN_TVL = 100; // Hardcoded $100 threshold
-    const [hideMarketLowValue, setHideMarketLowValue] = React.useState(true);
+    const [hideMarketLowValue, setHideMarketLowValue] = React.useState(false);
+    const [hideResolvedMarkets, setHideResolvedMarkets] = React.useState(true);
     
     const {
         fetchInfoPools: { poolsLoading, fetchInfoPoolsFn, poolsResult },
@@ -79,6 +80,16 @@ function InfoPage() {
                                     <label className="filter-checkbox">
                                         <input 
                                             type="checkbox" 
+                                            checked={hideResolvedMarkets} 
+                                            onChange={(e) => setHideResolvedMarkets(e.target.checked)}
+                                        />
+                                        <span className="filter-label">
+                                            <Trans>Hide resolved markets</Trans>
+                                        </span>
+                                    </label>
+                                    <label className="filter-checkbox">
+                                        <input 
+                                            type="checkbox" 
                                             checked={hideMarketLowValue} 
                                             onChange={(e) => setHideMarketLowValue(e.target.checked)}
                                         />
@@ -88,7 +99,11 @@ function InfoPage() {
                                     </label>
                                 </div>
                             </div>
-                            <MarketPoolsView minTVL={MARKET_MIN_TVL} hideLowValue={hideMarketLowValue} />
+                            <MarketPoolsView 
+                                minTVL={MARKET_MIN_TVL} 
+                                hideLowValue={hideMarketLowValue}
+                                hideResolved={hideResolvedMarkets}
+                            />
                         </Card>
                     </Route>
                     <Route exact path={`${path}/pools`}>

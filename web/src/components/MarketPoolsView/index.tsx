@@ -455,17 +455,19 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
 interface MarketPoolsViewProps {
   minTVL?: number;
   hideLowValue?: boolean;
+  hideResolved?: boolean;
 }
 
 export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({ 
   minTVL = 0, 
-  hideLowValue = false 
+  hideLowValue = false,
+  hideResolved = false
 }) => {
   const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
   const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMoreItems, setHasMoreItems] = useState(true);
-  const ITEMS_PER_PAGE = 100;
+  const ITEMS_PER_PAGE = 500; // Increased to fetch more pools initially
 
   const { data, loading, error, fetchMore } = useQuery(FETCH_POOLS_GROUPED_BY_MARKET, {
     variables: {
@@ -480,8 +482,24 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
     
     // Type the pools array properly
     const pools = data.pools as Pool[];
-    return groupPoolsByMarketWithHierarchy(pools, hideLowValue, minTVL);
-  }, [data, hideLowValue, minTVL]);
+    let grouped = groupPoolsByMarketWithHierarchy(pools, hideLowValue, minTVL);
+    
+    // Filter out resolved markets if hideResolved is true
+    if (hideResolved) {
+      const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+      grouped = grouped.filter(group => {
+        const market = group.market;
+        // Market is resolved if finalizeTs exists and is in the past
+        // Markets with finalizeTs = 33260976000 are still pending
+        const isResolved = market.finalizeTs && 
+                          Number(market.finalizeTs) < currentTime && 
+                          Number(market.finalizeTs) !== 33260976000;
+        return !isResolved;
+      });
+    }
+    
+    return grouped;
+  }, [data, hideLowValue, minTVL, hideResolved]);
 
   const toggleMarket = useCallback((marketId: string) => {
     setExpandedMarkets(prev => {

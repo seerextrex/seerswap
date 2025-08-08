@@ -40,6 +40,8 @@ export interface Market {
     id: string;
     marketName: string;
   };
+  finalizeTs?: string | number;
+  payoutReported?: boolean;
 }
 
 export interface Pool {
@@ -456,8 +458,8 @@ export function groupPoolsByMarketWithHierarchy(
   pools.forEach((pool) => {
     const tvl = parseFloat(pool.totalValueLockedUSD || "0");
     
-    // Filter out low TVL pools if requested
-    if (hideLowValue && tvl < minTVL) return;
+    // Don't filter pools here - we need all pools to properly group markets
+    // Filtering will be applied at the parent market level later
 
     const conditionalRelationship = detectConditionalMarket(pool);
 
@@ -599,8 +601,21 @@ export function groupPoolsByMarketWithHierarchy(
   });
 
   // Filter and sort market groups
+  // Only filter parent markets by TVL, child markets are always included with their parent
   return Array.from(groups.values())
-    .filter(group => !hideLowValue || group.totalTVL >= minTVL)
+    .filter(group => {
+      // If filtering is disabled, show all markets
+      if (!hideLowValue) return true;
+      
+      // For parent markets or standalone markets, apply TVL filter
+      if (group.isParent || !group.childMarkets || group.childMarkets.size === 0) {
+        return group.totalTVL >= minTVL;
+      }
+      
+      // Child markets are handled by their parent, so they're always included
+      // when the parent is shown (this shouldn't happen as child markets are nested)
+      return true;
+    })
     .sort((a, b) => b.totalTVL - a.totalTVL);
 }
 

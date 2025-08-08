@@ -13009,6 +13009,40 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny'
 }
 
+export type GetMarketPoolsQueryVariables = Exact<{
+  marketId: Scalars['String'];
+}>;
+
+
+export type GetMarketPoolsQuery = (
+  { __typename?: 'Query' }
+  & { pools: Array<(
+    { __typename?: 'Pool' }
+    & Pick<Pool, 'id' | 'fee' | 'liquidity' | 'sqrtPrice' | 'tick' | 'totalValueLockedUSD' | 'volumeUSD' | 'feesUSD'>
+    & { token0: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
+    ), token1: (
+      { __typename?: 'Token' }
+      & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
+    ), market0?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName' | 'outcomes' | 'conditionId' | 'parentCollectionId' | 'wrappedTokensString'>
+      & { collateralToken: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
+      ) }
+    )>, market1?: Maybe<(
+      { __typename?: 'Market' }
+      & Pick<Market, 'id' | 'marketName' | 'outcomes' | 'conditionId' | 'parentCollectionId' | 'wrappedTokensString'>
+      & { collateralToken: (
+        { __typename?: 'Token' }
+        & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
+      ) }
+    )> }
+  )> }
+);
+
 export type AllV3TicksQueryVariables = Exact<{
   poolAddress: Scalars['String'];
   skip: Scalars['Int'];
@@ -14344,7 +14378,7 @@ export type FetchPoolsForMarketsQuery = (
       & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
     ), market0?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'wrappedTokensString'>
+      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'conditionId' | 'parentCollectionId' | 'wrappedTokensString'>
       & { collateralToken: (
         { __typename?: 'Token' }
         & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
@@ -14370,7 +14404,7 @@ export type FetchPoolsForMarketsQuery = (
       )> }
     )>, market1?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'wrappedTokensString'>
+      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'conditionId' | 'parentCollectionId' | 'wrappedTokensString'>
       & { collateralToken: (
         { __typename?: 'Token' }
         & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
@@ -14418,7 +14452,7 @@ export type FetchPoolsGroupedByMarketQuery = (
       & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
     ), market0?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'wrappedTokensString'>
+      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'conditionId' | 'parentCollectionId' | 'wrappedTokensString'>
       & { collateralToken: (
         { __typename?: 'Token' }
         & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
@@ -14440,7 +14474,7 @@ export type FetchPoolsGroupedByMarketQuery = (
       )> }
     )>, market1?: Maybe<(
       { __typename?: 'Market' }
-      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'wrappedTokensString'>
+      & Pick<Market, 'id' | 'outcomes' | 'marketName' | 'finalizeTs' | 'payoutReported' | 'conditionId' | 'parentCollectionId' | 'wrappedTokensString'>
       & { collateralToken: (
         { __typename?: 'Token' }
         & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals'>
@@ -14555,6 +14589,67 @@ export type EternalFarmingsByIdsQuery = (
 );
 
 
+export const GetMarketPoolsDocument = `
+    query GetMarketPools($marketId: String!) {
+  pools(
+    where: {or: [{market0: $marketId}, {market1: $marketId}]}
+    orderBy: totalValueLockedUSD
+    orderDirection: desc
+    first: 100
+  ) {
+    id
+    fee
+    liquidity
+    sqrtPrice
+    tick
+    totalValueLockedUSD
+    volumeUSD
+    feesUSD
+    token0 {
+      id
+      symbol
+      name
+      decimals
+      derivedMatic
+    }
+    token1 {
+      id
+      symbol
+      name
+      decimals
+      derivedMatic
+    }
+    market0 {
+      id
+      marketName
+      outcomes
+      conditionId
+      parentCollectionId
+      collateralToken {
+        id
+        symbol
+        name
+        decimals
+      }
+      wrappedTokensString
+    }
+    market1 {
+      id
+      marketName
+      outcomes
+      conditionId
+      parentCollectionId
+      collateralToken {
+        id
+        symbol
+        name
+        decimals
+      }
+      wrappedTokensString
+    }
+  }
+}
+    `;
 export const AllV3TicksDocument = `
     query allV3Ticks($poolAddress: String!, $skip: Int!) {
   ticks(
@@ -16286,6 +16381,8 @@ export const FetchPoolsForMarketsDocument = `
       marketName
       finalizeTs
       payoutReported
+      conditionId
+      parentCollectionId
       collateralToken {
         id
         symbol
@@ -16328,6 +16425,8 @@ export const FetchPoolsForMarketsDocument = `
       marketName
       finalizeTs
       payoutReported
+      conditionId
+      parentCollectionId
       collateralToken {
         id
         symbol
@@ -16403,6 +16502,8 @@ export const FetchPoolsGroupedByMarketDocument = `
       marketName
       finalizeTs
       payoutReported
+      conditionId
+      parentCollectionId
       collateralToken {
         id
         symbol
@@ -16438,6 +16539,8 @@ export const FetchPoolsGroupedByMarketDocument = `
       marketName
       finalizeTs
       payoutReported
+      conditionId
+      parentCollectionId
       collateralToken {
         id
         symbol
@@ -16591,6 +16694,9 @@ export const EternalFarmingsByIdsDocument = `
 
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
+    GetMarketPools: build.query<GetMarketPoolsQuery, GetMarketPoolsQueryVariables>({
+      query: (variables) => ({ document: GetMarketPoolsDocument, variables })
+    }),
     allV3Ticks: build.query<AllV3TicksQuery, AllV3TicksQueryVariables>({
       query: (variables) => ({ document: AllV3TicksDocument, variables })
     }),
@@ -16736,5 +16842,5 @@ const injectedRtkApi = api.injectEndpoints({
 });
 
 export { injectedRtkApi as api };
-export const { useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useTokenMarketInfoQuery, useLazyTokenMarketInfoQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useEternalFarmingsQuery, useLazyEternalFarmingsQuery, useEternalFarmingsFromPoolsQuery, useLazyEternalFarmingsFromPoolsQuery, useLimitFarmingsFromPoolsQuery, useLazyLimitFarmingsFromPoolsQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFetchPoolsByIdsQuery, useLazyFetchPoolsByIdsQuery, useFetchTokensByIdsQuery, useLazyFetchTokensByIdsQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useFullPositionsPriceRangeQuery, useLazyFullPositionsPriceRangeQuery, useUserFarmingPositionsQuery, useLazyUserFarmingPositionsQuery, usePositionsByIdsQuery, useLazyPositionsByIdsQuery, useUserPositionsQuery, useLazyUserPositionsQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useGetPoolsFromAddressesHistoricalQuery, useLazyGetPoolsFromAddressesHistoricalQuery, useGetPoolsFromAddressesLatestQuery, useLazyGetPoolsFromAddressesLatestQuery, useTopTokensQuery, useLazyTopTokensQuery, useGetTokensFromAddressesHistoricalQuery, useLazyGetTokensFromAddressesHistoricalQuery, useGetTokensFromAddressesLatestQuery, useLazyGetTokensFromAddressesLatestQuery, useTotalStatsHistoricalQuery, useLazyTotalStatsHistoricalQuery, useTotalStatsLatestQuery, useLazyTotalStatsLatestQuery, useGetBlockByTimestampRangeQuery, useLazyGetBlockByTimestampRangeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery, useFetchPoolsForMarketsQuery, useLazyFetchPoolsForMarketsQuery, useFetchPoolsGroupedByMarketQuery, useLazyFetchPoolsGroupedByMarketQuery, useEternalFarmingsByIdsQuery, useLazyEternalFarmingsByIdsQuery } = injectedRtkApi;
+export const { useGetMarketPoolsQuery, useLazyGetMarketPoolsQuery, useAllV3TicksQuery, useLazyAllV3TicksQuery, useFeeTierDistributionQuery, useLazyFeeTierDistributionQuery, useTokenMarketInfoQuery, useLazyTokenMarketInfoQuery, useLimitFarmQuery, useLazyLimitFarmQuery, useEternalFarmQuery, useLazyEternalFarmQuery, useFetchRewardsQuery, useLazyFetchRewardsQuery, useFetchTokenQuery, useLazyFetchTokenQuery, useFetchLimitQuery, useLazyFetchLimitQuery, useEternalFarmingsQuery, useLazyEternalFarmingsQuery, useEternalFarmingsFromPoolsQuery, useLazyEternalFarmingsFromPoolsQuery, useLimitFarmingsFromPoolsQuery, useLazyLimitFarmingsFromPoolsQuery, useFetchPoolQuery, useLazyFetchPoolQuery, useFetchPoolsByIdsQuery, useLazyFetchPoolsByIdsQuery, useFetchTokensByIdsQuery, useLazyFetchTokensByIdsQuery, useFeeHourDataQuery, useLazyFeeHourDataQuery, useLastFeeHourDataQuery, useLazyLastFeeHourDataQuery, useLastNotEmptyHourDataQuery, useLazyLastNotEmptyHourDataQuery, useLastNotEmptyPoolHourDataQuery, useLazyLastNotEmptyPoolHourDataQuery, useLastPoolHourDataQuery, useLazyLastPoolHourDataQuery, usePoolHourDataQuery, useLazyPoolHourDataQuery, useLastEventQuery, useLazyLastEventQuery, useFutureEventsQuery, useLazyFutureEventsQuery, useCurrentEventsQuery, useLazyCurrentEventsQuery, useTransferedPositionsQuery, useLazyTransferedPositionsQuery, useHasTransferedPositionsQuery, useLazyHasTransferedPositionsQuery, usePositionsOnEternalFarmingQuery, useLazyPositionsOnEternalFarmingQuery, useTransferedPositionsForPoolQuery, useLazyTransferedPositionsForPoolQuery, usePositionsOnFarmingQuery, useLazyPositionsOnFarmingQuery, useFullPositionsPriceRangeQuery, useLazyFullPositionsPriceRangeQuery, useUserFarmingPositionsQuery, useLazyUserFarmingPositionsQuery, usePositionsByIdsQuery, useLazyPositionsByIdsQuery, useUserPositionsQuery, useLazyUserPositionsQuery, useInfiniteFarmsQuery, useLazyInfiniteFarmsQuery, useTopPoolsQuery, useLazyTopPoolsQuery, useGetPoolsFromAddressesHistoricalQuery, useLazyGetPoolsFromAddressesHistoricalQuery, useGetPoolsFromAddressesLatestQuery, useLazyGetPoolsFromAddressesLatestQuery, useTopTokensQuery, useLazyTopTokensQuery, useGetTokensFromAddressesHistoricalQuery, useLazyGetTokensFromAddressesHistoricalQuery, useGetTokensFromAddressesLatestQuery, useLazyGetTokensFromAddressesLatestQuery, useTotalStatsHistoricalQuery, useLazyTotalStatsHistoricalQuery, useTotalStatsLatestQuery, useLazyTotalStatsLatestQuery, useGetBlockByTimestampRangeQuery, useLazyGetBlockByTimestampRangeQuery, useSurroundingTicksQuery, useLazySurroundingTicksQuery, usePopularPoolsQuery, useLazyPopularPoolsQuery, useFetchPoolsForMarketsQuery, useLazyFetchPoolsForMarketsQuery, useFetchPoolsGroupedByMarketQuery, useLazyFetchPoolsGroupedByMarketQuery, useEternalFarmingsByIdsQuery, useLazyEternalFarmingsByIdsQuery } = injectedRtkApi;
 

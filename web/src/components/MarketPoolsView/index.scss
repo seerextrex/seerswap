@@ -152,6 +152,12 @@
       }
     }
 
+    .market-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
     .expand-toggle {
       display: flex;
       align-items: center;

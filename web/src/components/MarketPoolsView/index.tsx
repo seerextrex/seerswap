@@ -6,6 +6,8 @@ import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
 import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
+import { ZapButton } from '../MarketZap/ZapButton';
+import { ZapModal } from '../MarketZap/ZapModal';
 import Loader from '../Loader';
 import './index.scss';
 
@@ -336,6 +338,7 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   toggleChildMarket
 }) => {
   const [imageError, setImageError] = useState(false);
+  const [zapModalOpen, setZapModalOpen] = useState(false);
 
   const { market, pools, totalTVL, totalVolume, totalFees, isParent, childMarkets } = groupedMarket;
   
@@ -354,8 +357,8 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
 
   return (
     <div className="market-group">
-      <div className="market-header" onClick={handleToggle}>
-        <div className="market-info">
+      <div className="market-header">
+        <div className="market-info" onClick={handleToggle}>
           <div className="market-image-wrapper">
             {marketImageUrl && !imageError ? (
               <img 
@@ -413,8 +416,14 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
             </div>
           </div>
         </div>
-        <div className="expand-toggle">
-          {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        <div className="market-actions">
+          <ZapButton 
+            market={market} 
+            onClick={() => setZapModalOpen(true)} 
+          />
+          <div className="expand-toggle" onClick={handleToggle}>
+            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </div>
         </div>
       </div>
 
@@ -448,6 +457,14 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
           )}
         </div>
       )}
+      
+      {/* Zap Modal */}
+      <ZapModal
+        isOpen={zapModalOpen}
+        onDismiss={() => setZapModalOpen(false)}
+        market={market}
+        pools={pools}
+      />
     </div>
   );
 });

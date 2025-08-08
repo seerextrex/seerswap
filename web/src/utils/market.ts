@@ -42,6 +42,8 @@ export interface Market {
   };
   finalizeTs?: string | number;
   payoutReported?: boolean;
+  conditionId?: string;
+  parentCollectionId?: string;
 }
 
 export interface Pool {

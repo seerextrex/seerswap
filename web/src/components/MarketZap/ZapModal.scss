@@ -1,0 +1,195 @@
+.zap-modal {
+  padding: 1.5rem;
+  
+  .zap-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .close-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        color: var(--text-primary);
+      }
+    }
+  }
+  
+  .zap-modal-content {
+    .market-info {
+      margin-bottom: 1.5rem;
+      
+      h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+      }
+      
+      .description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+    }
+    
+    .input-section {
+      margin-bottom: 1.5rem;
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .input-wrapper {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        background: var(--bg-input);
+        
+        .amount-input {
+          flex: 1;
+          border: none;
+          background: none;
+          font-size: 1.1rem;
+          font-weight: 500;
+          outline: none;
+          
+          &::placeholder {
+            color: var(--text-secondary);
+          }
+        }
+        
+        .currency-display {
+          margin-left: 0.5rem;
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+      }
+    }
+    
+    .pool-info {
+      margin-bottom: 1.5rem;
+      
+      h4 {
+        margin: 0 0 0.75rem 0;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      
+      .pool-list {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem;
+        max-height: 200px;
+        overflow-y: auto;
+        
+        .no-pools {
+          text-align: center;
+          color: var(--text-secondary);
+          padding: 1rem;
+          margin: 0;
+        }
+        
+        .pool-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem;
+          border-radius: 4px;
+          
+          &:hover {
+            background: var(--bg-hover);
+          }
+          
+          .pool-tokens {
+            font-weight: 500;
+          }
+          
+          .pool-tvl {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+    
+    .zap-confirm-button {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: var(--bg-disabled);
+      }
+    }
+  }
+}
+
+.confirmation-content {
+  padding: 1rem;
+  text-align: center;
+  
+  h3 {
+    margin: 0 0 1rem 0;
+  }
+  
+  p {
+    color: var(--text-secondary);
+    
+    &.error-message {
+      color: var(--error-color, #ff6464);
+    }
+  }
+  
+  .tx-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    color: var(--primary-color, #667eea);
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+    
+    svg {
+      transition: transform 0.2s ease;
+    }
+    
+    &:hover svg {
+      transform: translateX(2px);
+    }
+  }
+}

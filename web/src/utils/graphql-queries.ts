@@ -1641,6 +1641,8 @@ export const FETCH_POOLS_FOR_MARKETS = gql`
         marketName
         finalizeTs
         payoutReported
+        conditionId
+        parentCollectionId
         collateralToken {
           id
           symbol
@@ -1683,6 +1685,8 @@ export const FETCH_POOLS_FOR_MARKETS = gql`
         marketName
         finalizeTs
         payoutReported
+        conditionId
+        parentCollectionId
         collateralToken {
           id
           symbol
@@ -1754,6 +1758,8 @@ export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
         marketName
         finalizeTs
         payoutReported
+        conditionId
+        parentCollectionId
         collateralToken {
           id
           symbol
@@ -1789,6 +1795,8 @@ export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
         marketName
         finalizeTs
         payoutReported
+        conditionId
+        parentCollectionId
         collateralToken {
           id
           symbol

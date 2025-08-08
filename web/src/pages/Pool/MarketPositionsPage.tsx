@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp, Frown } from 'react-feather';
 import { useAccount } from 'wagmi';
 import { useSubgraphPositionsByMarket, PositionPoolExtended } from '../../hooks/useSubgraphPositions';
 import { useUserHideClosedPositions } from '../../state/user/hooks';
-import { Market, getOutcomeName } from '../../utils/market';
+import { Market, getOutcomeName, Pool } from '../../utils/market';
 import { formatDollarAmount } from '../../utils/numbers';
 import Loader from '../../components/Loader';
 import Card from '../../shared/components/Card/Card';
@@ -14,6 +14,9 @@ import AutoColumn from '../../shared/components/AutoColumn';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
 import FilterPanelItem from './FilterPanelItem';
 import { SwitchLocaleLink } from '../../components/SwitchLocaleLink';
+import { ZapButton } from '../../components/MarketZap/ZapButton';
+import { ZapModal } from '../../components/MarketZap/ZapModal';
+import { useMarketPools } from '../../hooks/useMarketPools';
 import './MarketPositionsPage.scss';
 
 interface MarketGroupProps {
@@ -21,9 +24,10 @@ interface MarketGroupProps {
     positions: PositionPoolExtended[];
     isExpanded: boolean;
     onToggle: () => void;
+    onZapClick: () => void;
 }
 
-const MarketGroup = memo(({ market, positions, isExpanded, onToggle }: MarketGroupProps) => {
+const MarketGroup = memo(({ market, positions, isExpanded, onToggle, onZapClick }: MarketGroupProps) => {
     const [userHideClosedPositions] = useUserHideClosedPositions();
 
     const filteredPositions = useMemo(() => {
@@ -46,16 +50,19 @@ const MarketGroup = memo(({ market, positions, isExpanded, onToggle }: MarketGro
 
     return (
         <div className="market-group">
-            <div className="market-header" onClick={onToggle}>
-                <div className="market-info">
+            <div className="market-header">
+                <div className="market-info" onClick={onToggle}>
                     <h3 className="market-name">{market?.marketName || 'Unknown Market'}</h3>
                     <div className="market-stats">
                         <span className="position-count">{filteredPositions.length} positions</span>
                         <span className="market-tvl">{formatDollarAmount(totalLiquidity)}</span>
                     </div>
                 </div>
-                <div className="expand-toggle">
-                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                <div className="market-actions">
+                    <ZapButton market={market} onClick={onZapClick} />
+                    <div className="expand-toggle" onClick={onToggle}>
+                        {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </div>
                 </div>
             </div>
             {isExpanded && (
@@ -133,6 +140,11 @@ export default function MarketPositionsPage() {
     const { positions, positionsByMarket, loading, error, refetch } = useSubgraphPositionsByMarket(account);
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
     const [userHideClosedPositions, setUserHideClosedPositions] = useUserHideClosedPositions();
+    const [zapModalOpen, setZapModalOpen] = useState(false);
+    const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
+    
+    // Fetch all pools for the selected market (not just user positions)
+    const { pools: marketPools } = useMarketPools(selectedMarket);
 
     const toggleMarket = useCallback((marketId: string) => {
         setExpandedMarkets(prev => {
@@ -144,6 +156,11 @@ export default function MarketPositionsPage() {
             }
             return newSet;
         });
+    }, []);
+
+    const handleZapClick = useCallback((market: Market) => {
+        setSelectedMarket(market);
+        setZapModalOpen(true);
     }, []);
 
     const filters = [
@@ -225,21 +242,36 @@ export default function MarketPositionsPage() {
                             </div>
                         ) : (
                             <div className="market-positions-container">
-                                {markets.map(([marketId, market]) => (
-                                    <MarketGroup
-                                        key={marketId}
-                                        market={market}
-                                        positions={positionsByMarket?.get(marketId) || []}
-                                        isExpanded={expandedMarkets.has(marketId)}
-                                        onToggle={() => toggleMarket(marketId)}
-                                    />
-                                ))}
+                                {markets.map(([marketId, market]) => {
+                                    const marketPositions = positionsByMarket?.get(marketId) || [];
+                                    return (
+                                        <MarketGroup
+                                            key={marketId}
+                                            market={market}
+                                            positions={marketPositions}
+                                            isExpanded={expandedMarkets.has(marketId)}
+                                            onToggle={() => toggleMarket(marketId)}
+                                            onZapClick={() => handleZapClick(market)}
+                                        />
+                                    );
+                                })}
                             </div>
                         )}
                     </main>
                 </AutoColumn>
             </Card>
             <SwitchLocaleLink />
+            {selectedMarket && (
+                <ZapModal
+                    isOpen={zapModalOpen}
+                    onDismiss={() => {
+                        setZapModalOpen(false);
+                        setSelectedMarket(null);
+                    }}
+                    market={selectedMarket}
+                    pools={marketPools || []}
+                />
+            )}
         </>
     );
 }

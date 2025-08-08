@@ -5,11 +5,8 @@ import { useAccount, useSendCalls } from 'wagmi';
 import { encodeFunctionData, Address, erc20Abi } from 'viem';
 import { wagmiConfig } from '../wagmi.config';
 import { Market, Pool, getPoolTokensForMarket } from '../utils/market';
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants/addresses';
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, CONDITIONAL_TOKENS_ADDRESS } from '../constants/addresses';
 import { useEIP7702Support, type Execution } from './useEIP7702Support';
-
-// ConditionalTokens contract address on Gnosis Chain
-// This is the standard ConditionalTokens contract used for prediction markets
 
 interface PoolAllocation {
   pool: Pool;
@@ -45,6 +42,13 @@ const CONDITIONAL_TOKENS_ABI = [
 
 // Position Manager ABI for adding liquidity
 const POSITION_MANAGER_ABI = [
+  {
+    inputs: [{ name: 'data', type: 'bytes[]' }],
+    name: 'multicall',
+    outputs: [{ name: 'results', type: 'bytes[]' }],
+    stateMutability: 'payable',
+    type: 'function'
+  },
   {
     inputs: [
       {
@@ -93,8 +97,6 @@ function getTickSpacing(fee: number): number {
   }
 }
 
-// ConditionalTokens contract address (from gnosis deployment)
-const CONDITIONAL_TOKENS_ADDRESS = '0xCeAfDD6bc0bEF976fdCd1112955828E00543c0Ce' as Address;
 
 export function useZapIntoMarket() {
   const { address: account, chain } = useAccount();
@@ -122,9 +124,10 @@ export function useZapIntoMarket() {
     try {
       const calls: Execution[] = [];
       const positionManagerAddress = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId];
+      const conditionalTokensAddress = CONDITIONAL_TOKENS_ADDRESS[chainId];
 
-      if (!positionManagerAddress) {
-        throw new Error('Position manager address not configured for this chain');
+      if (!positionManagerAddress || !conditionalTokensAddress) {
+        throw new Error('Required contract addresses not configured for this chain');
       }
 
       // Step 1: Approve collateral token to ConditionalTokens contract
@@ -135,7 +138,7 @@ export function useZapIntoMarket() {
         data: encodeFunctionData({
           abi: erc20Abi,
           functionName: 'approve',
-          args: [CONDITIONAL_TOKENS_ADDRESS, BigInt(amount.quotient.toString())]
+          args: [conditionalTokensAddress as Address, BigInt(amount.quotient.toString())]
         })
       });
 
@@ -153,7 +156,7 @@ export function useZapIntoMarket() {
       const parentCollectionId = market.parentCollectionId || '0x0000000000000000000000000000000000000000000000000000000000000000';
       
       calls.push({
-        to: CONDITIONAL_TOKENS_ADDRESS,
+        to: conditionalTokensAddress as Address,
         value: 0n,
         data: encodeFunctionData({
           abi: CONDITIONAL_TOKENS_ABI,
@@ -168,7 +171,10 @@ export function useZapIntoMarket() {
         })
       });
 
-      // Step 3: For each pool, approve tokens and add liquidity
+      // Step 3: Approve all outcome tokens and prepare mint calls for multicall
+      const mintCalls: `0x${string}`[] = [];
+      const txDeadline = deadline ? BigInt(deadline) : BigInt(Math.floor(Date.now() / 1000) + 3600);
+      
       for (const pool of validPools) {
         const poolTokens = getPoolTokensForMarket(pool, market);
         if (!poolTokens) continue;
@@ -213,29 +219,35 @@ export function useZapIntoMarket() {
         const slippageMultiplier = 1 - parseFloat(slippageTolerance.toFixed(4));
         const minOutcomeAmount = BigInt(Math.floor(Number(outcomeAmount) * slippageMultiplier));
         
-        // Add liquidity call
-        // For full range, we only need outcome tokens (collateral will be 0 at extremes)
-        const txDeadline = deadline ? BigInt(deadline) : BigInt(Math.floor(Date.now() / 1000) + 3600);
-        
+        // Prepare mint call for multicall
+        mintCalls.push(encodeFunctionData({
+          abi: POSITION_MANAGER_ABI,
+          functionName: 'mint',
+          args: [{
+            token0: pool.token0.id as Address,
+            token1: pool.token1.id as Address,
+            fee: Number(pool.fee) as 100 | 500 | 3000 | 10000,
+            tickLower,
+            tickUpper,
+            amount0Desired: isToken0Outcome ? outcomeAmount : 0n,
+            amount1Desired: isToken0Outcome ? 0n : outcomeAmount,
+            amount0Min: isToken0Outcome ? minOutcomeAmount : 0n,
+            amount1Min: isToken0Outcome ? 0n : minOutcomeAmount,
+            recipient: account,
+            deadline: txDeadline
+          }]
+        }));
+      }
+      
+      // Step 4: Execute all mint calls via multicall
+      if (mintCalls.length > 0) {
         calls.push({
           to: positionManagerAddress as Address,
           value: 0n,
           data: encodeFunctionData({
             abi: POSITION_MANAGER_ABI,
-            functionName: 'mint',
-            args: [{
-              token0: pool.token0.id as Address,
-              token1: pool.token1.id as Address,
-              fee: Number(pool.fee) as 100 | 500 | 3000 | 10000,
-              tickLower,
-              tickUpper,
-              amount0Desired: isToken0Outcome ? outcomeAmount : 0n,
-              amount1Desired: isToken0Outcome ? 0n : outcomeAmount,
-              amount0Min: isToken0Outcome ? minOutcomeAmount : 0n,
-              amount1Min: isToken0Outcome ? 0n : minOutcomeAmount,
-              recipient: account,
-              deadline: txDeadline
-            }]
+            functionName: 'multicall',
+            args: [mintCalls]
           })
         });
       }

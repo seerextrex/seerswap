@@ -7,7 +7,8 @@ import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
 import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
 import { ZapButton } from '../MarketZap/ZapButton';
-import { ZapModal } from '../MarketZap/ZapModal';
+import { ZapModal, ZapModalContent } from '../MarketZap/ZapModal';
+import Modal from '../Modal';
 import Loader from '../Loader';
 import './index.scss';
 
@@ -339,6 +340,7 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
 }) => {
   const [imageError, setImageError] = useState(false);
   const [zapModalOpen, setZapModalOpen] = useState(false);
+  const [zapModalMarket, setZapModalMarket] = useState<Market | null>(null);
 
   const { market, pools, totalTVL, totalVolume, totalFees, isParent, childMarkets } = groupedMarket;
   
@@ -419,7 +421,10 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
         <div className="market-actions">
           <ZapButton 
             market={market} 
-            onClick={() => setZapModalOpen(true)} 
+            onClick={() => {
+              setZapModalMarket(market);
+              setZapModalOpen(true);
+            }} 
           />
           <div className="expand-toggle" onClick={handleToggle}>
             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -458,13 +463,22 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
         </div>
       )}
       
-      {/* Zap Modal */}
-      <ZapModal
-        isOpen={zapModalOpen}
-        onDismiss={() => setZapModalOpen(false)}
-        market={market}
-        pools={pools}
-      />
+      {/* Zap Modal - render content immediately for proper opacity */}
+      {zapModalMarket && (
+        <Modal isOpen={zapModalOpen} onDismiss={() => {
+          setZapModalOpen(false);
+          setTimeout(() => setZapModalMarket(null), 300); // Clear after animation
+        }} maxHeight={80}>
+          <ZapModalContent
+            market={zapModalMarket}
+            pools={pools}
+            onDismiss={() => {
+              setZapModalOpen(false);
+              setTimeout(() => setZapModalMarket(null), 300); // Clear after animation
+            }}
+          />
+        </Modal>
+      )}
     </div>
   );
 });

@@ -17,11 +17,21 @@ interface ModalProps {
 }
 
 export default function Modal({ isOpen, onDismiss, minHeight = false, maxHeight = 90, initialFocusRef, dangerouslyBypassFocusLock, children, fitContent, onHide }: ModalProps) {
+    const [hasAnimated, setHasAnimated] = React.useState(false);
+    
+    React.useEffect(() => {
+        if (isOpen && !hasAnimated) {
+            setHasAnimated(true);
+        }
+    }, [isOpen, hasAnimated]);
+    
     const fadeTransition = useTransition(isOpen, null, {
-        config: { duration: 200 },
-        from: { opacity: 0 },
+        config: { duration: 100, tension: 350, friction: 25 },
+        from: { opacity: hasAnimated ? 0 : 1 },
         enter: { opacity: 1 },
         leave: { opacity: 0 },
+        immediate: !hasAnimated,
+        unique: true,
     });
 
     const [{ y }, set] = useSpring(() => ({

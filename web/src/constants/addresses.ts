@@ -50,6 +50,13 @@ export const V2_ROUTER_ADDRESS: AddressMap = {
     [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506'
 }
 
+// ConditionalTokens contract for prediction markets
+export const CONDITIONAL_TOKENS_ADDRESS: AddressMap = {
+    100: '0xCeAfDD6bc0bEF976fdCd1112955828E00543c0Ce', // Gnosis Chain
+    1: '0xC59b0e4De5F1248C1140964E0fF287B192407E0C', // Mainnet (if different)
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: '0xCeAfDD6bc0bEF976fdCd1112955828E00543c0Ce' // Default to Gnosis
+}
+
 export const ENS_REGISTRAR_ADDRESSES: AddressMap = {
     [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Trans, t } from '@lingui/macro';
 import { X, ExternalLink } from 'react-feather';
 import { Currency, CurrencyAmount, Token, Percent } from '@uniswap/sdk-core';
@@ -20,10 +20,17 @@ interface ZapModalProps {
   pools: Pool[];
 }
 
+interface ZapModalContentProps {
+  market: Market;
+  pools: Pool[];
+  onDismiss: () => void;
+}
+
 const DEFAULT_SLIPPAGE = new Percent(50, 10_000); // 0.5%
 const MIN_ZAP_AMOUNT = 1; // Minimum 1 token
 
-export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, pools }) => {
+// Lightweight content component - renders after modal opens
+export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools, onDismiss }) => {
   const { chain } = useAccount();
   const chainId = chain?.id || 100; // Default to Gnosis if not connected
   
@@ -38,7 +45,7 @@ export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, p
   const allowedSlippage = useUserSlippageToleranceWithDefault(DEFAULT_SLIPPAGE);
   const deadline = useTransactionDeadline();
 
-  // Get collateral token (usually sDAI)
+  // Create collateral token immediately - the Modal wrapper handles performance
   const collateralToken = useMemo(() => {
     if (!market.collateralToken) return undefined;
     return new Token(
@@ -48,51 +55,49 @@ export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, p
       market.collateralToken.symbol,
       market.collateralToken.name
     );
-  }, [market, chainId]);
+  }, [market.collateralToken, chainId]);
+  
+  // Compute valid pools immediately using memoization
+  const validPools = useMemo(() => {
+    if (!market.collateralToken || !pools.length) return [];
+    
+    const collateralTokenId = market.collateralToken.id.toLowerCase();
+    const marketId = market.id;
+    const outcomePoolsMap = new Map<string, Pool>();
+    
+    for (const pool of pools) {
+      if (!pool.market0 && !pool.market1) continue;
+      
+      const isMarketPool = pool.market0?.id === marketId || pool.market1?.id === marketId;
+      if (!isMarketPool) continue;
+
+      const token0Id = pool.token0.id.toLowerCase();
+      const token1Id = pool.token1.id.toLowerCase();
+      
+      const isToken0Collateral = token0Id === collateralTokenId;
+      const isToken1Collateral = token1Id === collateralTokenId;
+      
+      if (!isToken0Collateral && !isToken1Collateral) continue;
+      
+      const outcomeTokenId = isToken0Collateral ? pool.token1.id : pool.token0.id;
+      
+      const tvl = parseFloat(pool.totalValueLockedUSD || '0');
+      if (tvl < 100) continue;
+      
+      const existingPool = outcomePoolsMap.get(outcomeTokenId);
+      if (!existingPool || parseFloat(existingPool.totalValueLockedUSD || '0') < tvl) {
+        outcomePoolsMap.set(outcomeTokenId, pool);
+      }
+    }
+    
+    return Array.from(outcomePoolsMap.values());
+  }, [market, pools]);
 
   // Parse the input amount
   const parsedAmount = useMemo(() => {
     if (!collateralToken || !amount) return undefined;
     return tryParseAmount(amount, collateralToken);
   }, [amount, collateralToken]);
-
-  // Filter pools to only include collateral/outcome pairs (one pool per outcome)
-  const validPools = useMemo(() => {
-    if (!market.collateralToken) return [];
-    
-    const collateralTokenId = market.collateralToken.id.toLowerCase();
-    const outcomePoolsMap = new Map<string, Pool>(); // Track best pool per outcome
-    
-    pools.forEach(pool => {
-      // Check if this pool is for this market
-      const isMarketPool = pool.market0?.id === market.id || pool.market1?.id === market.id;
-      if (!isMarketPool) return;
-
-      // Check if one token is the collateral token
-      const hasCollateral = 
-        pool.token0.id.toLowerCase() === collateralTokenId || 
-        pool.token1.id.toLowerCase() === collateralTokenId;
-      
-      if (!hasCollateral) return; // Skip pools that don't include collateral token
-      
-      // Identify the outcome token (the non-collateral token)
-      const outcomeTokenId = pool.token0.id.toLowerCase() === collateralTokenId 
-        ? pool.token1.id 
-        : pool.token0.id;
-      
-      // Check if pool has sufficient liquidity
-      const tvl = parseFloat(pool.totalValueLockedUSD || '0');
-      if (tvl < 100) return; // Min TVL threshold
-      
-      // Keep only the highest TVL pool for each outcome token
-      const existingPool = outcomePoolsMap.get(outcomeTokenId);
-      if (!existingPool || parseFloat(existingPool.totalValueLockedUSD || '0') < tvl) {
-        outcomePoolsMap.set(outcomeTokenId, pool);
-      }
-    });
-    
-    return Array.from(outcomePoolsMap.values());
-  }, [pools, market]);
 
   // Calculate how many outcome tokens each pool needs (proportional to TVL)
   const poolAllocations = useMemo(() => {
@@ -266,19 +271,18 @@ export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, p
 
   return (
     <>
-      <Modal isOpen={isOpen && !showConfirm} onDismiss={handleDismiss} maxHeight={80}>
-        <div className="zap-modal">
-          {modalHeader()}
-          {modalContent()}
-        </div>
-      </Modal>
+      <div className="zap-modal">
+        {modalHeader()}
+        {modalContent()}
+      </div>
 
-      <TransactionConfirmationModal
-        isOpen={showConfirm}
-        onDismiss={handleDismiss}
-        attemptingTxn={attemptingTxn}
-        hash={txHash}
-        content={() => (
+      {showConfirm && (
+        <TransactionConfirmationModal
+          isOpen={showConfirm}
+          onDismiss={handleDismiss}
+          attemptingTxn={attemptingTxn}
+          hash={txHash}
+          content={() => (
           <div className="confirmation-content">
             {txSuccess ? (
               <>
@@ -317,7 +321,31 @@ export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, p
           </div>
         )}
         pendingText={t`Zapping into market...`}
-      />
+        />
+      )}
     </>
+  );
+};
+
+// Legacy wrapper for backward compatibility
+export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, pools }) => {
+  const [hasOpened, setHasOpened] = useState(false);
+  
+  useEffect(() => {
+    if (isOpen && !hasOpened) {
+      setHasOpened(true);
+    }
+  }, [isOpen, hasOpened]);
+  
+  return (
+    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80}>
+      {isOpen && (
+        <ZapModalContent
+          market={market}
+          pools={pools}
+          onDismiss={onDismiss}
+        />
+      )}
+    </Modal>
   );
 };

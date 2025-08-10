@@ -8,7 +8,7 @@ import { formatDollarAmount, formatAmount } from '../../utils/numbers';
 import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
 import { calculateOutcomeProbabilities, formatProbability } from '../../utils/marketPrices';
 import { MarketOutcomeVisual } from '../MarketOutcomeVisual';
-import { OUTCOME_COLORS } from '../../constants/outcomeColors';
+import { OUTCOME_COLORS, OUTCOME_GRADIENTS } from '../../constants/outcomeColors';
 import { ZapButton } from '../MarketZap/ZapButton';
 import { ZapModal, ZapModalContent } from '../MarketZap/ZapModal';
 import Modal from '../Modal';
@@ -455,47 +455,94 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
               </a>
             </h3>
             <div className="market-stats">
-              <span className="stat-item">
-                {isParent && childPools > 0 ? 
-                  `${totalPools} pools (${directPools} direct, ${childPools} in child markets)` :
-                  `${directPools} pools`}
-              </span>
-              <span className="stat-item">
-                <label>TVL:</label>
-                <span>{formatDollarAmount(totalTVL)}</span>
-              </span>
-              <span className="stat-item">
-                <label>Volume:</label>
-                <span>{formatDollarAmount(totalVolume)}</span>
-              </span>
-              <span className="stat-item">
-                <label>Fees:</label>
-                <span>{formatDollarAmount(totalFees)}</span>
-              </span>
-              {market.collateralToken && (
+              <div className="stats-row">
                 <span className="stat-item">
-                  • Collateral: {market.collateralToken.symbol || market.collateralToken.name}
+                  {isParent && childPools > 0 ? 
+                    `${totalPools} pools (${directPools} direct, ${childPools} in child markets)` :
+                    `${directPools} pools`}
                 </span>
-              )}
-              {probabilities && market?.outcomes && (
-                <div className="inline-outcome-bar">
-                  {market.outcomes.map((_, index) => {
-                    const probability = probabilities[index] || 0;
+                <span className="stat-item">
+                  <label>TVL:</label>
+                  <span>{formatDollarAmount(totalTVL)}</span>
+                </span>
+                <span className="stat-item">
+                  <label>Volume:</label>
+                  <span>{formatDollarAmount(totalVolume)}</span>
+                </span>
+                <span className="stat-item">
+                  <label>Fees:</label>
+                  <span>{formatDollarAmount(totalFees)}</span>
+                </span>
+                {market.collateralToken && (
+                  <span className="stat-item">
+                    • Collateral: {market.collateralToken.symbol || market.collateralToken.name}
+                  </span>
+                )}
+              </div>
+              {probabilities && market?.outcomes && market.outcomes.length > 0 && (() => {
+                const validOutcomes = market.outcomes
+                  .map((outcome, index) => {
+                    const gradient = OUTCOME_GRADIENTS[index % OUTCOME_GRADIENTS.length];
                     const color = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
-                    return (
-                      <div
-                        key={index}
-                        className="inline-outcome-segment"
-                        style={{
-                          width: `${probability}%`,
-                          backgroundColor: color
-                        }}
-                        title={`${market.outcomes[index]}: ${formatProbability(probability)}`}
-                      />
-                    );
-                  })}
-                </div>
-              )}
+                    const probability = probabilities[index] || 0;
+                    return {
+                      outcome,
+                      index,
+                      probability,
+                      color,
+                      gradient
+                    };
+                  })
+                  .filter(({ outcome, probability }) => {
+                    // Filter out "Invalid result" if it has very low or no probability
+                    const isInvalidResult = outcome.toLowerCase().includes('invalid');
+                    if (isInvalidResult && probability < 1) {
+                      return false;
+                    }
+                    return true;
+                  })
+                  .sort((a, b) => b.probability - a.probability)
+                  .slice(0, 3); // Show top 3 outcomes
+                
+                return validOutcomes.length > 0 ? (
+                  <div className="inline-outcome-display">
+                    <div className="outcome-probabilities">
+                      {validOutcomes.map(({ outcome, index, probability, color, gradient }) => (
+                        <div 
+                          key={index} 
+                          className="outcome-pill"
+                          data-probability={probability}
+                        >
+                          <div 
+                            className="outcome-gradient-bg"
+                            style={{ 
+                              background: `linear-gradient(135deg, ${gradient[0]}15 0%, ${gradient[1]}08 100%)`
+                            }}
+                          />
+                          <span 
+                            className="outcome-dot" 
+                            style={{ 
+                              background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
+                            }}
+                          />
+                          <span className="outcome-name">{outcome}</span>
+                          <span 
+                            className="outcome-value" 
+                            style={{ 
+                              background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              backgroundClip: 'text'
+                            }}
+                          >
+                            {formatProbability(probability)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
             </div>
           </div>
         </div>

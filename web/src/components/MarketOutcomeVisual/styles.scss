@@ -1,0 +1,147 @@
+.market-outcome-visual {
+  width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  margin-bottom: 16px;
+
+  .outcome-bar {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .outcome-segment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 3px; // Ensure small probability segments are still visible
+      transition: all 0.3s ease;
+      position: relative;
+      
+      &:hover {
+        opacity: 0.9;
+        transform: scaleY(1.05);
+      }
+
+      &:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
+
+      &:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+
+      .outcome-label {
+        color: white;
+        font-weight: 600;
+        font-size: 12px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+
+  &.pie-chart {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    .pie-svg {
+      width: 150px;
+      height: 150px;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+    }
+  }
+
+  .outcome-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    flex: 1;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .legend-label {
+        flex: 1;
+        font-size: 14px;
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+
+      .legend-value {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 600;
+        min-width: 50px;
+        text-align: right;
+      }
+    }
+  }
+}
+
+// Dark mode adjustments
+.dark-mode {
+  .market-outcome-visual {
+    background: rgba(0, 0, 0, 0.2);
+
+    .outcome-bar {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .legend-item {
+      .legend-label {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .legend-value {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .market-outcome-visual {
+    padding: 12px;
+
+    &.pie-chart {
+      flex-direction: column;
+      gap: 16px;
+
+      .pie-svg {
+        width: 120px;
+        height: 120px;
+      }
+    }
+
+    .outcome-legend {
+      .legend-item {
+        font-size: 12px;
+
+        .legend-color {
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+  }
+}

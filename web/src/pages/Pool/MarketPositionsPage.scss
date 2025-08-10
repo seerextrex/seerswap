@@ -43,6 +43,7 @@
     .market-stats {
         display: flex;
         gap: 1.5rem;
+        align-items: center;
         font-size: 0.9rem;
         color: rgba(255, 255, 255, 0.7);
 
@@ -55,6 +56,25 @@
         .market-tvl {
             font-weight: 500;
             color: #4fe3c1;
+        }
+
+        .inline-outcome-bar {
+            display: flex;
+            height: 20px;
+            width: 150px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+
+            .inline-outcome-segment {
+                min-width: 2px; // Ensure visibility even for small probabilities
+                transition: opacity 0.2s ease;
+                
+                &:hover {
+                    opacity: 0.8;
+                }
+            }
         }
     }
 }
@@ -203,6 +223,53 @@
         &:hover {
             background: rgba(255, 255, 255, 0.15);
             border-color: rgba(255, 255, 255, 0.3);
+        }
+    }
+}
+
+.outcome-prices {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+
+    h4 {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.95rem;
+        margin: 0 0 12px 0;
+        font-weight: 500;
+    }
+
+    .price-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+
+        .price-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            .outcome-name {
+                font-weight: 500;
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            .outcome-price {
+                color: #4fe3c1;
+                font-family: monospace;
+                font-weight: 600;
+            }
+
+            .outcome-percentage {
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 0.9rem;
+                margin-left: auto;
+            }
         }
     }
 }

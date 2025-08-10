@@ -6,6 +6,9 @@ import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
 import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
+import { calculateOutcomeProbabilities, formatProbability } from '../../utils/marketPrices';
+import { MarketOutcomeVisual } from '../MarketOutcomeVisual';
+import { OUTCOME_COLORS } from '../../constants/outcomeColors';
 import { ZapButton } from '../MarketZap/ZapButton';
 import { ZapModal, ZapModalContent } from '../MarketZap/ZapModal';
 import Modal from '../Modal';
@@ -104,7 +107,17 @@ const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, 
 
   return (
     <div className="outcome-group">
-      <div className="outcome-header" onClick={toggleExpanded}>
+      <div 
+        className="outcome-header" 
+        onClick={toggleExpanded}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleExpanded();
+          }
+        }}>
         <div className="outcome-info">
           <div className="outcome-image-wrapper">
             {outcomeImage && !imageError ? (
@@ -240,6 +253,13 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
   const marketImageUrl = childMarket.market?.image?.[0]?.cidMarket ? 
     formatIpfsUrl(childMarket.market.image[0].cidMarket) : null;
 
+  // Calculate outcome probabilities for child market
+  const probabilities = useMemo(() => {
+    return childMarket.pools && childMarket.market ? 
+      calculateOutcomeProbabilities(childMarket.pools, childMarket.market) : null;
+  }, [childMarket.pools, childMarket.market]);
+
+
   // Get collateral token info (which should be from parent market)
   const getCollateralTokenName = useCallback(() => {
     const collateralToken = childMarket.market?.collateralToken;
@@ -261,7 +281,17 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
 
   return (
     <div className="child-market-group">
-      <div className="child-market-header" onClick={handleToggle}>
+      <div 
+        className="child-market-header" 
+        onClick={handleToggle}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToggle();
+          }
+        }}>
         <div className="child-market-info">
           <div className="child-market-images">
             {marketImageUrl && !imageError ? (
@@ -358,6 +388,12 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
 
   const marketImageUrl = market?.image?.[0]?.cidMarket ? formatIpfsUrl(market.image[0].cidMarket) : null;
 
+  // Calculate outcome probabilities for inline display
+  const probabilities = useMemo(() => {
+    return pools && market ? calculateOutcomeProbabilities(pools, market) : null;
+  }, [pools, market]);
+
+
   // Calculate total pools including child markets
   const directPools = pools.length;
   const childPools = childMarkets ? 
@@ -368,7 +404,17 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   return (
     <div className="market-group">
       <div className="market-header">
-        <div className="market-info" onClick={handleToggle}>
+        <div 
+          className="market-info" 
+          onClick={handleToggle}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleToggle();
+            }
+          }}>
           <div className="market-image-wrapper">
             {marketImageUrl && !imageError ? (
               <img 
@@ -431,6 +477,25 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
                   • Collateral: {market.collateralToken.symbol || market.collateralToken.name}
                 </span>
               )}
+              {probabilities && market?.outcomes && (
+                <div className="inline-outcome-bar">
+                  {market.outcomes.map((_, index) => {
+                    const probability = probabilities[index] || 0;
+                    const color = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
+                    return (
+                      <div
+                        key={index}
+                        className="inline-outcome-segment"
+                        style={{
+                          width: `${probability}%`,
+                          backgroundColor: color
+                        }}
+                        title={`${market.outcomes[index]}: ${formatProbability(probability)}`}
+                      />
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -450,6 +515,15 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
 
       {isExpanded && (
         <div className="market-content">
+          {/* Display outcome probabilities visualization */}
+          {pools && pools.length > 0 && market?.outcomes && (
+            <MarketOutcomeVisual 
+              market={market} 
+              pools={pools}
+              displayType="bar"
+            />
+          )}
+          
           {/* Render outcomes for this market */}
           {directPools > 0 && (
             <div className="market-outcomes">

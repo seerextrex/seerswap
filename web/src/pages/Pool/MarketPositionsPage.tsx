@@ -17,17 +17,23 @@ import { SwitchLocaleLink } from '../../components/SwitchLocaleLink';
 import { ZapButton } from '../../components/MarketZap/ZapButton';
 import { ZapModal } from '../../components/MarketZap/ZapModal';
 import { useMarketPools } from '../../hooks/useMarketPools';
+import { MarketOutcomeVisual } from '../../components/MarketOutcomeVisual';
+import { MarketGroupWithPools } from '../../components/MarketGroupWithPools';
+import { calculateOutcomeProbabilities, formatProbability } from '../../utils/marketPrices';
+import { logMarketPrices } from '../../utils/debugMarketPrices';
+import { OUTCOME_COLORS } from '../../constants/outcomeColors';
 import './MarketPositionsPage.scss';
 
 interface MarketGroupProps {
     market: Market;
     positions: PositionPoolExtended[];
+    pools: Pool[];
     isExpanded: boolean;
     onToggle: () => void;
     onZapClick: () => void;
 }
 
-const MarketGroup = memo(({ market, positions, isExpanded, onToggle, onZapClick }: MarketGroupProps) => {
+const MarketGroup = memo(({ market, positions, pools, isExpanded, onToggle, onZapClick }: MarketGroupProps) => {
     const [userHideClosedPositions] = useUserHideClosedPositions();
 
     const filteredPositions = useMemo(() => {
@@ -48,6 +54,18 @@ const MarketGroup = memo(({ market, positions, isExpanded, onToggle, onZapClick 
         }, 0);
     }, [filteredPositions]);
 
+    // Calculate outcome probabilities for inline display
+    const probabilities = useMemo(() => {
+        const probs = pools && market ? calculateOutcomeProbabilities(pools, market) : null;
+        
+        // Debug: Log market prices to console
+        if (pools && market && pools.length > 0) {
+            logMarketPrices(market, pools);
+        }
+        
+        return probs;
+    }, [pools, market]);
+
     return (
         <div className="market-group">
             <div className="market-header">
@@ -56,6 +74,25 @@ const MarketGroup = memo(({ market, positions, isExpanded, onToggle, onZapClick 
                     <div className="market-stats">
                         <span className="position-count">{filteredPositions.length} positions</span>
                         <span className="market-tvl">{formatDollarAmount(totalLiquidity)}</span>
+                        {probabilities && market?.outcomes && (
+                            <div className="inline-outcome-bar">
+                                {market.outcomes.map((_, index) => {
+                                    const probability = probabilities[index] || 0;
+                                    const color = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="inline-outcome-segment"
+                                            style={{
+                                                width: `${probability}%`,
+                                                backgroundColor: color
+                                            }}
+                                            title={`${market.outcomes[index]}: ${formatProbability(probability)}`}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="market-actions">
@@ -67,6 +104,36 @@ const MarketGroup = memo(({ market, positions, isExpanded, onToggle, onZapClick 
             </div>
             {isExpanded && (
                 <div className="market-positions">
+                    {pools && pools.length > 0 && (
+                        <>
+                            <MarketOutcomeVisual 
+                                market={market} 
+                                pools={pools}
+                                displayType="bar"
+                            />
+                            <div className="outcome-prices">
+                                <h4>Outcome Token Prices (in collateral):</h4>
+                                <div className="price-list">
+                                    {market.outcomes.map((outcome, index) => {
+                                        const probability = probabilities?.[index] || 0;
+                                        // Convert percentage back to price (0-1 range)
+                                        const price = probability / 100;
+                                        return (
+                                            <div key={index} className="price-item">
+                                                <span className="outcome-name">{outcome}:</span>
+                                                <span className="outcome-price">
+                                                    {price.toFixed(4)} {market.collateralToken?.symbol || 'collateral'}
+                                                </span>
+                                                <span className="outcome-percentage">
+                                                    ({formatProbability(probability)})
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </>
+                    )}
                     {filteredPositions.length === 0 ? (
                         <div className="no-positions">
                             <Trans>No positions in this market</Trans>
@@ -245,13 +312,14 @@ export default function MarketPositionsPage() {
                                 {markets.map(([marketId, market]) => {
                                     const marketPositions = positionsByMarket?.get(marketId) || [];
                                     return (
-                                        <MarketGroup
+                                        <MarketGroupWithPools
                                             key={marketId}
                                             market={market}
                                             positions={marketPositions}
                                             isExpanded={expandedMarkets.has(marketId)}
                                             onToggle={() => toggleMarket(marketId)}
                                             onZapClick={() => handleZapClick(market)}
+                                            MarketGroupComponent={MarketGroup}
                                         />
                                     );
                                 })}

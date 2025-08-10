@@ -115,8 +115,11 @@ const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, 
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className="outcome-image-placeholder">
-                {outcomeName.slice(0, 1).toUpperCase()}
+              <div className="outcome-image-placeholder" role="img" aria-label={outcomeName}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" opacity="0.3"/>
+                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                </svg>
               </div>
             )}
           </div>
@@ -266,9 +269,11 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className="child-market-image-placeholder">
-                {childMarket.market.marketName ? 
-                  childMarket.market.marketName.slice(0, 1).toUpperCase() : '?'}
+              <div className="child-market-image-placeholder" role="img" aria-label={childMarket.market.marketName || 'Child Market'}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" opacity="0.4"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" opacity="0.6"/>
+                </svg>
               </div>
             )}
           </div>
@@ -370,8 +375,10 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className="market-image-placeholder">
-                {market.marketName ? market.marketName.slice(0, 1).toUpperCase() : '?'}
+              <div className="market-image-placeholder" role="img" aria-label={market.marketName || 'Market'}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M3 13h2a2 2 0 012 2v6a2 2 0 01-2 2H3a2 2 0 01-2-2v-6a2 2 0 012-2zm7-6h2a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V9a2 2 0 012-2zm7-4h2a2 2 0 012 2v16a2 2 0 01-2 2h-2a2 2 0 01-2-2V5a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.4"/>
+                </svg>
               </div>
             )}
           </div>

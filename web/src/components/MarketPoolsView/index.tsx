@@ -117,8 +117,11 @@ const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, 
             ) : (
               <div className="outcome-image-placeholder" role="img" aria-label={outcomeName}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" opacity="0.3"/>
-                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                  {/* Balance scale representing weighing probabilities */}
+                  <path d="M12 3v18M12 3l-4 0M12 3l4 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
+                  <path d="M6 8l-3 5h6l-3-5zM18 8l-3 5h6l-3-5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" opacity="0.5"/>
+                  <circle cx="5" cy="14" r="0.5" fill="currentColor" opacity="0.6"/>
+                  <circle cx="19" cy="14" r="0.5" fill="currentColor" opacity="0.6"/>
                 </svg>
               </div>
             )}
@@ -377,7 +380,13 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
             ) : (
               <div className="market-image-placeholder" role="img" aria-label={market.marketName || 'Market'}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M3 13h2a2 2 0 012 2v6a2 2 0 01-2 2H3a2 2 0 01-2-2v-6a2 2 0 012-2zm7-6h2a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V9a2 2 0 012-2zm7-4h2a2 2 0 012 2v16a2 2 0 01-2 2h-2a2 2 0 01-2-2V5a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.4"/>
+                  {/* Branching paths icon representing future possibilities */}
+                  <path d="M12 2v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                  <circle cx="12" cy="11" r="1.5" fill="currentColor" opacity="0.6"/>
+                  <path d="M12 12.5l-5 5M12 12.5l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
+                  <circle cx="7" cy="19" r="1.5" fill="currentColor" opacity="0.3"/>
+                  <circle cx="17" cy="19" r="1.5" fill="currentColor" opacity="0.3"/>
+                  <text x="12" y="20" fontSize="6" fill="currentColor" opacity="0.4" textAnchor="middle">?</text>
                 </svg>
               </div>
             )}

@@ -11,6 +11,7 @@ import useTransactionDeadline from '../../hooks/useTransactionDeadline';
 import { getExplorerLink, ExplorerDataType } from '../../utils/getExplorerLink';
 import TransactionConfirmationModal from '../TransactionConfirmationModal';
 import Modal from '../Modal';
+import SettingsTab from '../Settings';
 import './ZapModal.scss';
 
 interface ZapModalProps {
@@ -26,8 +27,8 @@ interface ZapModalContentProps {
   onDismiss: () => void;
 }
 
-const DEFAULT_SLIPPAGE = new Percent(50, 10_000); // 0.5%
-const MIN_ZAP_AMOUNT = 1; // Minimum 1 token
+const DEFAULT_ZAP_SLIPPAGE = new Percent(50, 10_000); // 0.5% default for zap
+const MIN_ZAP_AMOUNT = 0.0001; // Minimum 0.0001 token (allows small amounts)
 
 // Lightweight content component - renders after modal opens
 export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools, onDismiss }) => {
@@ -42,7 +43,7 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
   const [txSuccess, setTxSuccess] = useState(false);
   
   // Get user's slippage tolerance and deadline
-  const allowedSlippage = useUserSlippageToleranceWithDefault(DEFAULT_SLIPPAGE);
+  const allowedSlippage = useUserSlippageToleranceWithDefault(DEFAULT_ZAP_SLIPPAGE);
   const deadline = useTransactionDeadline();
 
   // Create collateral token immediately - the Modal wrapper handles performance
@@ -133,14 +134,19 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
   const { zapIntoMarket, loading } = useZapIntoMarket();
 
   const handleZap = useCallback(async () => {
-    if (!parsedAmount || !poolAllocations.length || !collateralToken) {
+    // Validate minimum amount first
+    const amountNum = parseFloat(amount);
+    if (!amount || amountNum <= 0 || isNaN(amountNum)) {
+      setErrorMessage(`Please enter a valid amount`);
       return;
     }
-
-    // Validate minimum amount
-    const amountNum = parseFloat(amount);
     if (amountNum < MIN_ZAP_AMOUNT) {
-      setErrorMessage(`Minimum amount is ${MIN_ZAP_AMOUNT} ${collateralToken.symbol || 'tokens'}`);
+      setErrorMessage(`Minimum amount is ${MIN_ZAP_AMOUNT} ${collateralToken?.symbol || 'tokens'}`);
+      return;
+    }
+    
+    if (!parsedAmount || !poolAllocations.length || !collateralToken) {
+      setErrorMessage(`Unable to process amount. Please try again.`);
       return;
     }
 
@@ -194,9 +200,12 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
   const modalHeader = () => (
     <div className="zap-modal-header">
       <h2><Trans>Zap Into Market</Trans></h2>
-      <button className="close-button" onClick={handleDismiss}>
-        <X size={24} />
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <SettingsTab placeholderSlippage={DEFAULT_ZAP_SLIPPAGE} />
+        <button className="close-button" onClick={handleDismiss}>
+          <X size={24} />
+        </button>
+      </div>
     </div>
   );
 
@@ -220,9 +229,14 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.0"
             className="amount-input"
+            step="0.0001"
+            min={MIN_ZAP_AMOUNT}
           />
           <span className="currency-display">{collateralToken?.symbol || 'sDAI'}</span>
         </div>
+        <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+          <Trans>Minimum: {MIN_ZAP_AMOUNT} {collateralToken?.symbol || 'sDAI'}</Trans>
+        </small>
       </div>
 
       <div className="pool-info">
@@ -258,7 +272,7 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
       <button
         className="zap-confirm-button"
         onClick={handleZap}
-        disabled={!parsedAmount || validPools.length === 0 || loading}
+        disabled={!amount || parseFloat(amount) < MIN_ZAP_AMOUNT || isNaN(parseFloat(amount)) || validPools.length === 0 || loading}
       >
         {loading ? (
           <Trans>Processing...</Trans>

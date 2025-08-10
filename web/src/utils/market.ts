@@ -52,6 +52,7 @@ export interface Pool {
   liquidity: string;
   sqrtPrice: string;
   tick: string;
+  tickSpacing?: string; // Added for Algebra pools
   totalValueLockedUSD: string;
   volumeUSD: string;
   feesUSD: string;

@@ -145,18 +145,16 @@ const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, 
             <span className="outcome-tvl">TVL: {formatDollarAmount(outcomeStats.totalTVL)}</span>
           </div>
         </div>
-        <div className="expand-toggle">
-          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        <div className={`expand-toggle ${isExpanded ? 'expanded' : ''}`}>
+          <ChevronDown size={16} className="expand-icon" />
         </div>
       </div>
 
-      {isExpanded && (
-        <div className="outcome-pools">
-          {sortedPools.map((pool) => (
-            <PoolCard key={pool.id} pool={pool} market={market} />
-          ))}
-        </div>
-      )}
+      <div className={`outcome-pools ${isExpanded ? 'expanded' : ''}`}>
+        {sortedPools.map((pool) => (
+          <PoolCard key={pool.id} pool={pool} market={market} />
+        ))}
+      </div>
     </div>
   );
 };
@@ -345,16 +343,14 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
             </div>
           </div>
         </div>
-        <div className="expand-toggle">
-          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        <div className={`expand-toggle ${isExpanded ? 'expanded' : ''}`}>
+          <ChevronDown size={16} className="expand-icon" />
         </div>
       </div>
 
-      {isExpanded && (
-        <div className="child-market-content">
-          <MarketOutcomesList groupedMarket={childMarket} />
-        </div>
-      )}
+      <div className={`child-market-content ${isExpanded ? 'expanded' : ''}`}>
+        <MarketOutcomesList groupedMarket={childMarket} />
+      </div>
     </div>
   );
 });
@@ -501,44 +497,59 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
                     }
                     return true;
                   })
-                  .sort((a, b) => b.probability - a.probability)
-                  .slice(0, 3); // Show top 3 outcomes
+                  .sort((a, b) => b.probability - a.probability);
+                
+                // Calculate total probability for normalization
+                const totalProbability = validOutcomes.reduce((sum, o) => sum + o.probability, 0);
+                const displayOutcomes = validOutcomes.slice(0, 4); // Show up to 4 outcomes
                 
                 return validOutcomes.length > 0 ? (
                   <div className="inline-outcome-display">
-                    <div className="outcome-probabilities">
-                      {validOutcomes.map(({ outcome, index, probability, color, gradient }) => (
-                        <div 
-                          key={index} 
-                          className="outcome-pill"
-                          data-probability={probability}
-                        >
-                          <div 
-                            className="outcome-gradient-bg"
-                            style={{ 
-                              background: `linear-gradient(135deg, ${gradient[0]}15 0%, ${gradient[1]}08 100%)`
-                            }}
-                          />
-                          <span 
-                            className="outcome-dot" 
-                            style={{ 
-                              background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
-                            }}
-                          />
-                          <span className="outcome-name">{outcome}</span>
-                          <span 
-                            className="outcome-value" 
-                            style={{ 
-                              background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
-                              backgroundClip: 'text'
-                            }}
-                          >
-                            {formatProbability(probability)}
-                          </span>
-                        </div>
-                      ))}
+                    <div className="outcome-stacked-bar">
+                      <div className="stacked-segments">
+                        {displayOutcomes.map(({ outcome, index, probability, gradient }, idx) => {
+                          // Calculate percentage of the total (normalized to 100%)
+                          const normalizedWidth = totalProbability > 0 ? (probability / totalProbability) * 100 : 0;
+                          
+                          return (
+                            <div
+                              key={index}
+                              className="outcome-segment"
+                              style={{
+                                width: `${normalizedWidth}%`,
+                                background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
+                              }}
+                              title={`${outcome}: ${formatProbability(probability)}`}
+                            >
+                              <span className="segment-label">
+                                {normalizedWidth > 15 && (
+                                  <>
+                                    <span className="outcome-name">{outcome}</span>
+                                    <span className="outcome-value">{formatProbability(probability)}</span>
+                                  </>
+                                )}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="outcome-legend">
+                        {displayOutcomes.map(({ outcome, index, probability, gradient }) => (
+                          <div key={index} className="legend-item">
+                            <span 
+                              className="legend-dot" 
+                              style={{ background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)` }}
+                            />
+                            <span className="legend-label">{outcome}</span>
+                            <span className="legend-value">{formatProbability(probability)}</span>
+                          </div>
+                        ))}
+                        {validOutcomes.length > 4 && (
+                          <div className="legend-item more">
+                            <span className="legend-label">+{validOutcomes.length - 4} more</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ) : null;
@@ -554,51 +565,54 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
               setZapModalOpen(true);
             }} 
           />
-          <div className="expand-toggle" onClick={handleToggle}>
-            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          <div 
+            className={`expand-toggle ${isExpanded ? 'expanded' : ''}`} 
+            onClick={handleToggle}
+            title={isExpanded ? 'Collapse' : 'Expand details'}
+          >
+            <ChevronDown size={20} className="expand-icon" />
+            <div className="expand-ripple" />
           </div>
         </div>
       </div>
 
-      {isExpanded && (
-        <div className="market-content">
-          {/* Display outcome probabilities visualization */}
-          {pools && pools.length > 0 && market?.outcomes && (
-            <MarketOutcomeVisual 
-              market={market} 
-              pools={pools}
-              displayType="bar"
-            />
-          )}
-          
-          {/* Render outcomes for this market */}
-          {directPools > 0 && (
-            <div className="market-outcomes">
-              <MarketOutcomesList groupedMarket={groupedMarket} />
-            </div>
-          )}
+      <div className={`market-content ${isExpanded ? 'expanded' : ''}`}>
+        {/* Display outcome probabilities visualization */}
+        {pools && pools.length > 0 && market?.outcomes && (
+          <MarketOutcomeVisual 
+            market={market} 
+            pools={pools}
+            displayType="bar"
+          />
+        )}
+        
+        {/* Render outcomes for this market */}
+        {directPools > 0 && (
+          <div className="market-outcomes">
+            <MarketOutcomesList groupedMarket={groupedMarket} />
+          </div>
+        )}
 
-          {/* Render child markets if this is a parent market */}
-          {isParent && childMarkets && childMarkets.size > 0 && (
-            <div className="child-markets">
-              {Array.from(childMarkets.entries()).map(([childKey, childGroup]) => {
-                const isChildExpanded = expandedChildMarkets.has(childKey);
+        {/* Render child markets if this is a parent market */}
+        {isParent && childMarkets && childMarkets.size > 0 && (
+          <div className="child-markets">
+            {Array.from(childMarkets.entries()).map(([childKey, childGroup]) => {
+              const isChildExpanded = expandedChildMarkets.has(childKey);
 
-                return (
-                  <ChildMarketGroup
-                    key={childKey}
-                    childMarket={childGroup}
-                    parentMarket={market}
-                    isExpanded={isChildExpanded}
-                    onToggle={toggleChildMarket}
-                    childKey={childKey}
-                  />
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
+              return (
+                <ChildMarketGroup
+                  key={childKey}
+                  childMarket={childGroup}
+                  parentMarket={market}
+                  isExpanded={isChildExpanded}
+                  onToggle={toggleChildMarket}
+                  childKey={childKey}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
       
       {/* Zap Modal - render content immediately for proper opacity */}
       {zapModalMarket && (

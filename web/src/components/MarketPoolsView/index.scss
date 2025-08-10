@@ -220,147 +220,112 @@
           .inline-outcome-display {
             display: flex;
             align-items: center;
-            margin-top: 8px;
+            margin-top: 12px;
             width: 100%;
             
-            .outcome-probabilities {
+            .outcome-stacked-bar {
+              flex: 1;
               display: flex;
-              gap: 10px;
-              align-items: center;
+              flex-direction: column;
+              gap: 8px;
               
-              .outcome-pill {
+              .stacked-segments {
                 display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 6px 12px;
-                border-radius: 24px;
-                position: relative;
+                height: 24px;
+                border-radius: 6px;
                 overflow: hidden;
-                backdrop-filter: blur(12px);
                 background: rgba(255, 255, 255, 0.03);
                 border: 1px solid rgba(255, 255, 255, 0.08);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                cursor: default;
+                position: relative;
                 
-                &::before {
-                  content: '';
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  height: 1px;
-                  background: linear-gradient(90deg, 
-                    transparent,
-                    rgba(255, 255, 255, 0.2) 50%,
-                    transparent
-                  );
-                  opacity: 0;
-                  transition: opacity 0.3s ease;
-                }
-                
-                .outcome-gradient-bg {
-                  position: absolute;
-                  inset: 0;
-                  border-radius: inherit;
-                  opacity: 0.6;
-                  transition: opacity 0.3s ease;
-                }
-                
-                &:hover {
-                  transform: translateY(-2px) scale(1.02);
-                  box-shadow: 
-                    0 10px 25px -5px rgba(0, 0, 0, 0.2),
-                    0 4px 6px -2px rgba(0, 0, 0, 0.1);
-                  border-color: rgba(255, 255, 255, 0.15);
+                .outcome-segment {
+                  position: relative;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: opacity 0.2s ease;
+                  cursor: default;
                   
-                  &::before {
-                    opacity: 1;
+                  &:not(:last-child) {
+                    border-right: 1px solid rgba(0, 0, 0, 0.2);
                   }
                   
-                  .outcome-gradient-bg {
-                    opacity: 0.8;
+                  &:hover {
+                    opacity: 0.9;
+                    
+                    .segment-label {
+                      transform: scale(1.05);
+                    }
                   }
                   
-                  .outcome-dot {
-                    transform: scale(1.2);
-                  }
-                }
-                
-                // Higher probability outcomes get subtle emphasis
-                &[data-probability] {
-                  &:first-child {
-                    padding: 7px 14px;
+                  .segment-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 0 6px;
+                    transition: transform 0.15s ease;
+                    
+                    .outcome-name {
+                      font-size: 10px;
+                      font-weight: 600;
+                      color: rgba(255, 255, 255, 0.95);
+                      text-transform: uppercase;
+                      letter-spacing: 0.02em;
+                      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+                      white-space: nowrap;
+                    }
                     
                     .outcome-value {
-                      font-size: 13px;
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: rgba(255, 255, 255, 1);
+                      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
                     }
                   }
                 }
+              }
+              
+              .outcome-legend {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                align-items: center;
                 
-                .outcome-dot {
-                  width: 8px;
-                  height: 8px;
-                  border-radius: 50%;
-                  flex-shrink: 0;
-                  position: relative;
-                  z-index: 1;
-                  box-shadow: 
-                    0 0 12px rgba(255, 255, 255, 0.3),
-                    inset 0 0 3px rgba(255, 255, 255, 0.4);
-                  animation: glow 3s ease-in-out infinite;
-                  transition: transform 0.3s ease;
-                }
-                
-                .outcome-name {
+                .legend-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 4px;
                   font-size: 11px;
-                  font-weight: 600;
-                  color: rgba(255, 255, 255, 0.85);
-                  max-width: 70px;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                  position: relative;
-                  z-index: 1;
-                  letter-spacing: 0.01em;
-                }
-                
-                .outcome-value {
-                  font-size: 12px;
-                  font-weight: 800;
-                  margin-left: 2px;
-                  position: relative;
-                  z-index: 1;
-                  letter-spacing: -0.02em;
-                  display: inline-block;
-                  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+                  
+                  .legend-dot {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+                  }
+                  
+                  .legend-label {
+                    color: rgba(255, 255, 255, 0.7);
+                    font-weight: 500;
+                  }
+                  
+                  .legend-value {
+                    color: rgba(255, 255, 255, 0.9);
+                    font-weight: 600;
+                    margin-left: 2px;
+                  }
+                  
+                  &.more {
+                    color: rgba(255, 255, 255, 0.5);
+                    font-style: italic;
+                    font-size: 10px;
+                  }
                 }
               }
             }
           }
           
-          @keyframes glow {
-            0%, 100% {
-              opacity: 1;
-              box-shadow: 
-                0 0 12px rgba(255, 255, 255, 0.3),
-                inset 0 0 3px rgba(255, 255, 255, 0.4);
-            }
-            50% {
-              opacity: 0.8;
-              box-shadow: 
-                0 0 20px rgba(255, 255, 255, 0.4),
-                inset 0 0 3px rgba(255, 255, 255, 0.5);
-            }
-          }
-          
-          @keyframes pulse {
-            0%, 100% {
-              opacity: 1;
-            }
-            50% {
-              opacity: 0.6;
-            }
-          }
         }
       }
     }
@@ -383,25 +348,66 @@
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: rgba(255, 255, 255, 0.8);
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      
+      .expand-icon {
+        transition: transform 0.2s ease;
+        position: relative;
+        z-index: 2;
+      }
+      
+      .expand-ripple {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 70%);
+        opacity: 0;
+        transform: scale(0);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
       
       &:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.15);
-        transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
         color: rgba(255, 255, 255, 1);
+        
+        .expand-ripple {
+          opacity: 0.5;
+          transform: scale(1);
+        }
       }
       
       &:active {
         transform: scale(0.98);
+        
+        .expand-ripple {
+          opacity: 0.3;
+        }
+      }
+      
+      &.expanded {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
+        
+        .expand-icon {
+          transform: rotate(180deg);
+        }
       }
     }
   }
 
   .market-content {
+    max-height: 0;
     overflow: hidden;
-    transition: all 0.3s ease;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    
+    &.expanded {
+      max-height: 3000px;
+      opacity: 1;
+    }
 
     // Market outcomes list styling
     .market-outcomes {
@@ -540,17 +546,40 @@
 
           .expand-toggle {
             color: rgba(255, 255, 255, 0.6);
-            transition: transform 0.2s;
+            transition: color 0.15s ease, background 0.15s ease;
+            
+            .expand-icon {
+              transition: transform 0.2s ease;
+            }
+            
+            &.expanded .expand-icon {
+              transform: rotate(180deg);
+            }
+            
+            &:hover {
+              color: rgba(255, 255, 255, 0.9);
+              background: rgba(255, 255, 255, 0.05);
+              border-radius: 4px;
+            }
           }
         }
 
         .outcome-pools {
-          padding: 1rem;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
           gap: 1rem;
           background: rgba(0, 0, 0, 0.15);
           border-top: 1px solid rgba(255, 255, 255, 0.05);
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          transition: max-height 0.25s ease, opacity 0.2s ease;
+          
+          &.expanded {
+            padding: 1rem;
+            max-height: 2000px;
+            opacity: 1;
+          }
         }
       }
     }
@@ -806,13 +835,21 @@
             display: flex;
             align-items: center;
             color: rgba(255, 255, 255, 0.8);
-            transition: all 0.2s ease;
+            transition: background 0.15s ease, transform 0.15s ease;
             padding: 0.25rem;
             border-radius: 4px;
+            
+            .expand-icon {
+              transition: transform 0.2s ease;
+            }
+            
+            &.expanded .expand-icon {
+              transform: rotate(180deg);
+            }
 
             &:hover {
-              background: rgba(255, 255, 255, 0.1);
-              transform: scale(1.1);
+              background: rgba(255, 255, 255, 0.08);
+              transform: scale(1.05);
             }
           }
         }
@@ -882,9 +919,18 @@
         }
 
         .child-market-content {
-          padding: 1rem;
           border-left: 3px solid rgba(99, 102, 241, 0.3);
           background: rgba(99, 102, 241, 0.02);
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          transition: max-height 0.25s ease, opacity 0.2s ease;
+          
+          &.expanded {
+            padding: 1rem;
+            max-height: 2000px;
+            opacity: 1;
+          }
           
           .market-outcomes-list {
             display: flex;

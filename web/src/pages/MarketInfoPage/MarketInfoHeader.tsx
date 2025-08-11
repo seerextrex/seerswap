@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState, useCallback } from "react";
 import { t, Trans } from "@lingui/macro";
 import { formatDollarAmount } from "../../utils/numbers";
 import { AlertCircle, TrendingUp } from "react-feather";
@@ -10,6 +10,16 @@ interface MarketInfoHeaderProps {
 }
 
 export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutcomes }) => {
+    const [marketImageError, setMarketImageError] = useState(false);
+    const [outcomeImageErrors, setOutcomeImageErrors] = useState<{ [key: number]: boolean }>({});
+
+    const handleMarketImageError = useCallback(() => {
+        setMarketImageError(true);
+    }, []);
+
+    const handleOutcomeImageError = useCallback((index: number) => {
+        setOutcomeImageErrors(prev => ({ ...prev, [index]: true }));
+    }, []);
     const currentDate = new Date();
     const openingDate = new Date(Number(market.openingTs) * 1000);
     const finalizeDate = new Date(Number(market.finalizeTs) * 1000);
@@ -27,15 +37,33 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
 
     const status = getMarketStatus();
 
+    const marketImageUrl = market?.image?.[0]?.cidMarket 
+        ? `https://ipfs.io${market.image[0].cidMarket}` 
+        : null;
+
     return (
         <div className="market-info-header">
             <div className="market-info-header__top">
                 <div className="market-title-section">
-                    <h1 className="market-name">{market.marketName}</h1>
-                    <span className={`market-status ${status.class}`}>
-                        {status.class === "open" && <span className="status-dot pulse" />}
-                        {status.text}
-                    </span>
+                    {marketImageUrl && !marketImageError ? (
+                        <img 
+                            src={marketImageUrl}
+                            alt={market.marketName}
+                            className="market-image"
+                            onError={handleMarketImageError}
+                        />
+                    ) : (
+                        <div className="market-image-placeholder">
+                            {market.marketName?.slice(0, 1).toUpperCase() || '?'}
+                        </div>
+                    )}
+                    <div className="market-title-content">
+                        <h1 className="market-name">{market.marketName}</h1>
+                        <span className={`market-status ${status.class}`}>
+                            {status.class === "open" && <span className="status-dot pulse" />}
+                            {status.text}
+                        </span>
+                    </div>
                 </div>
                 
                 <div className="market-dates">
@@ -64,12 +92,27 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                         <Trans>Outcomes</Trans>
                     </h3>
                     <div className="outcomes-list">
-                        {validOutcomes.map((outcome, index) => (
-                            <div key={index} className="outcome-item">
-                                <span className="outcome-index">{index + 1}</span>
-                                <span className="outcome-name">{outcome}</span>
-                            </div>
-                        ))}
+                        {validOutcomes.map((outcome, index) => {
+                            const outcomeImageUrl = market?.image?.[0]?.cidOutcomes?.[index]
+                                ? `https://ipfs.io${market.image[0].cidOutcomes[index]}`
+                                : null;
+                            
+                            return (
+                                <div key={index} className="outcome-item">
+                                    {outcomeImageUrl && !outcomeImageErrors[index] ? (
+                                        <img 
+                                            src={outcomeImageUrl}
+                                            alt={outcome}
+                                            className="outcome-image"
+                                            onError={() => handleOutcomeImageError(index)}
+                                        />
+                                    ) : (
+                                        <span className="outcome-index">{index + 1}</span>
+                                    )}
+                                    <span className="outcome-name">{outcome}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 

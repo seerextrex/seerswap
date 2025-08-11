@@ -186,13 +186,16 @@ export const useMarketData = (marketId?: string) => {
                     const outcomeIndex = determineOutcomeIndex(pool, currentMarket);
                     
                     hourlyData.poolHourDatas.forEach((hourData: any) => {
-                        allPriceData.push({
-                            ...hourData,
-                            poolId: pool.id,
-                            outcomeIndex,
-                            // Calculate price based on token order
-                            price: calculateOutcomePrice(pool, hourData, currentMarket),
-                        });
+                        const price = calculateOutcomePrice(pool, hourData, currentMarket);
+                        // Only add data points with valid prices
+                        if (price !== null && price !== undefined) {
+                            allPriceData.push({
+                                ...hourData,
+                                poolId: pool.id,
+                                outcomeIndex,
+                                price,
+                            });
+                        }
                     });
                 }
             }
@@ -327,20 +330,34 @@ function calculateOutcomePrice(pool: any, hourData: any, market: any): number {
     if (isToken0Outcome) {
         // token0 is outcome, token1 is collateral
         // token0Price = collateral/outcome (what we want)
-        price = parseFloat(hourData.token0Price) || 0;
+        const token0Price = parseFloat(hourData.token0Price);
+        // Return null if no valid price data
+        if (!token0Price || isNaN(token0Price) || token0Price === 0) {
+            return null as any; // Will be filtered out
+        }
+        price = token0Price;
     } else {
         // token0 is collateral, token1 is outcome
         // token1Price = collateral/outcome (what we want)
-        price = parseFloat(hourData.token1Price) || 0;
+        const token1Price = parseFloat(hourData.token1Price);
+        // Return null if no valid price data
+        if (!token1Price || isNaN(token1Price) || token1Price === 0) {
+            return null as any; // Will be filtered out
+        }
+        price = token1Price;
     }
     
     // Ensure price is between 0 and 1 for outcome tokens
     // If price > 1, it means the units are inverted (outcome/collateral instead of collateral/outcome)
     // We need to invert to get the correct price in terms of collateral
-    if (price > 1) {
+    if (price > 1 && price !== Infinity) {
         price = 1 / price;
     }
     
-    // Clamp to valid range [0, 1]
-    return Math.max(0, Math.min(1, price));
+    // Only return valid prices in range [0.0001, 1] (avoid exact 0 which indicates missing data)
+    if (price < 0.0001 || price > 1 || !isFinite(price)) {
+        return null as any;
+    }
+    
+    return price;
 }

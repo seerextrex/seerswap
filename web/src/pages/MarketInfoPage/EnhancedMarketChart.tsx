@@ -103,9 +103,17 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
 
         const datasets = outcomes.map((outcome, index) => {
             // For market view, we only show price (probability) data
-            const dataPoints = sortedEntries.map(([_, groupData]) =>
-                groupData.outcomes[index]?.price || 0
-            );
+            // Use last known value when data is missing instead of defaulting to 0
+            let lastKnownPrice: number | null = null;
+            const dataPoints = sortedEntries.map(([_, groupData]) => {
+                const currentPrice = groupData.outcomes[index]?.price;
+                if (currentPrice !== undefined && currentPrice !== null) {
+                    lastKnownPrice = currentPrice;
+                    return currentPrice;
+                }
+                // Use last known price if available, otherwise null (will be handled by Chart.js)
+                return lastKnownPrice;
+            });
 
             const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
             const isHovered = hoveredOutcome === index;
@@ -124,6 +132,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                 pointHoverBorderColor: colorSet.main,
                 fill: 'origin', // Always fill for probability charts
                 order: isHovered ? 0 : index + 1,
+                spanGaps: true, // Connect line across null/undefined values
             };
         });
 

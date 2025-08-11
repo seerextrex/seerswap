@@ -10,7 +10,7 @@ import Loader from "../../components/Loader";
 import { ChartSpan, ChartType } from "../../models/enums";
 import { useMarketData } from "../../hooks/useMarketData";
 import { MarketInfoHeader } from "./MarketInfoHeader";
-import { MarketOutcomesChart } from "./MarketOutcomesChart";
+import { EnhancedMarketChart } from "./EnhancedMarketChart";
 import { MarketInfoStats } from "./MarketInfoStats";
 import "./index.scss";
 
@@ -32,11 +32,13 @@ export default function MarketInfoPage({
     
     const { 
         market, 
-        marketLoading, 
+        marketLoading,
+        marketError, 
         fetchMarket,
         outcomesPriceData,
         fetchOutcomesPriceData,
-        priceDataLoading
+        priceDataLoading,
+        priceDataError
     } = useMarketData(id);
 
     const startTimestamp = useMemo(() => {
@@ -55,18 +57,11 @@ export default function MarketInfoPage({
         }
     }, [span]);
 
+    // Only show price chart for market view - most relevant for prediction markets
     const chartTypes = [
         {
             type: ChartType.PRICE,
-            title: t`Price`,
-        },
-        {
-            type: ChartType.VOLUME,
-            title: t`Volume`,
-        },
-        {
-            type: ChartType.TVL,
-            title: t`TVL`,
+            title: t`Probability`,
         },
     ];
 
@@ -96,9 +91,10 @@ export default function MarketInfoPage({
             id, 
             startTimestamp, 
             Math.floor(new Date().getTime() / 1000),
-            type
+            type,
+            market
         );
-    }, [id, market, span, type]);
+    }, [id, market, span, type, startTimestamp, fetchOutcomesPriceData]);
 
     const validOutcomes = useMemo(() => {
         if (!market?.outcomes) return [];
@@ -115,7 +111,21 @@ export default function MarketInfoPage({
                 </span>
             </NavLink>
             
-            {market ? (
+            {marketError ? (
+                <Card classes="p-2 br-24 mxs_p-1">
+                    <div className="error-message">
+                        <div className="error-icon">⚠️</div>
+                        <h3><Trans>Failed to load market</Trans></h3>
+                        <p>{marketError}</p>
+                        <button 
+                            className="retry-button"
+                            onClick={() => fetchMarket(id!)}
+                        >
+                            <Trans>Try Again</Trans>
+                        </button>
+                    </div>
+                </Card>
+            ) : market ? (
                 <Card classes="p-2 br-24 mxs_p-1">
                     <MarketInfoHeader 
                         market={market}
@@ -127,21 +137,13 @@ export default function MarketInfoPage({
                         refreshHandler={() => {
                             fetchMarket(id!);
                         }}
-                        isLoading={marketLoading}
+                        isLoading={false}
                     />
                     
                     <div className="market-chart-wrapper br-12 ph-1 pb-1 mt-1">
                         <div className="market-chart__toolbar">
-                            <div className="chart-type-selector">
-                                {chartTypes.map((chartType) => (
-                                    <button
-                                        key={chartType.type}
-                                        className={`chart-type-btn ${type === chartType.type ? 'active' : ''}`}
-                                        onClick={() => setType(chartType.type)}
-                                    >
-                                        {chartType.title}
-                                    </button>
-                                ))}
+                            <div className="chart-header">
+                                <h3 className="chart-title">{t`Outcome Probabilities`}</h3>
                             </div>
                             <div className="chart-span-selector">
                                 {chartSpans.map((chartSpan) => (
@@ -156,21 +158,46 @@ export default function MarketInfoPage({
                             </div>
                         </div>
                         
-                        <MarketOutcomesChart
-                            market={market}
-                            outcomes={validOutcomes}
-                            data={outcomesPriceData}
-                            loading={priceDataLoading}
-                            span={span}
-                            type={type}
-                        />
+                        {priceDataError ? (
+                            <div className="chart-error">
+                                <div className="error-icon">📊</div>
+                                <p><Trans>Failed to load chart data</Trans></p>
+                                <p className="error-detail">{priceDataError}</p>
+                                <button 
+                                    className="retry-button"
+                                    onClick={() => fetchOutcomesPriceData(
+                                        id!, 
+                                        startTimestamp, 
+                                        Math.floor(new Date().getTime() / 1000),
+                                        type,
+                                        market
+                                    )}
+                                >
+                                    <Trans>Retry</Trans>
+                                </button>
+                            </div>
+                        ) : (
+                            <EnhancedMarketChart
+                                market={market}
+                                outcomes={validOutcomes}
+                                data={outcomesPriceData}
+                                loading={priceDataLoading}
+                                span={span}
+                                type={type}
+                            />
+                        )}
                     </div>
                 </Card>
-            ) : (
-                <div className="mock-loader">
-                    <Loader stroke="white" size="30px" />
-                </div>
-            )}
+            ) : marketLoading ? (
+                <Card classes="p-2 br-24 mxs_p-1">
+                    <div className="mock-loader">
+                        <Loader stroke="white" size="30px" />
+                        <p className="loading-text">
+                            <Trans>Loading market data...</Trans>
+                        </p>
+                    </div>
+                </Card>
+            ) : null}
         </div>
     );
 }

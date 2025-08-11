@@ -142,7 +142,8 @@ export const MarketOutcomesChart: FC<MarketOutcomesChartProps> = ({
                             label += ": ";
                         }
                         if (type === ChartType.PRICE) {
-                            label += `$${context.parsed.y.toFixed(4)}`;
+                            // Show as percentage probability
+                            label += `${(context.parsed.y * 100).toFixed(2)}%`;
                         } else {
                             label += `$${context.parsed.y.toLocaleString()}`;
                         }
@@ -169,7 +170,8 @@ export const MarketOutcomesChart: FC<MarketOutcomesChartProps> = ({
                 ticks: {
                     callback: function (value) {
                         if (type === ChartType.PRICE) {
-                            return `$${Number(value).toFixed(2)}`;
+                            // Show as percentage on y-axis
+                            return `${(Number(value) * 100).toFixed(0)}%`;
                         }
                         return `$${Number(value).toLocaleString()}`;
                     },
@@ -216,7 +218,7 @@ export const MarketOutcomesChart: FC<MarketOutcomesChartProps> = ({
                     <p className="info-text">
                         <Trans>
                             Prices represent the probability of each outcome. 
-                            Values range from $0 (0% chance) to $1 (100% chance).
+                            Values range from 0% to 100% chance.
                         </Trans>
                     </p>
                 </div>

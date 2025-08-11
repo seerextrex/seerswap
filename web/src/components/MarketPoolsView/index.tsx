@@ -441,8 +441,8 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
     const rawUpper = market.upperBound;
     
     // Parse bounds - they might be BigInt strings or decimal strings
-    let lower = rawLower ? parseFloat(rawLower) : null;
-    let upper = rawUpper ? parseFloat(rawUpper) : null;
+    const lower = rawLower ? parseFloat(rawLower) : null;
+    const upper = rawUpper ? parseFloat(rawUpper) : null;
     
     // Only scale if the values are actually in wei format (very large integers)
     // Normal bounds like "2", "14" should NOT be scaled

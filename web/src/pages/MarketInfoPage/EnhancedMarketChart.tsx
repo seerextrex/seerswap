@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { t, Trans } from "@lingui/macro";
 import {
     Chart as ChartJS,
@@ -98,8 +98,6 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
     span,
     type,
 }) => {
-    const [hoveredOutcome, setHoveredOutcome] = useState<number | null>(null);
-    
     const chartData = useMemo(() => {
         // Even if no data, we should still show all outcomes in the legend
         if (!outcomes || outcomes.length === 0) {
@@ -117,14 +115,14 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                     backgroundColor: colorSet.gradient,
                     tension: 0.1,
                     borderWidth: 3,
-                    pointRadius: 4,
-                    pointHoverRadius: 8,
-                    pointHoverBorderWidth: 3,
+                    pointRadius: 3,
+                    pointHoverRadius: 3,
+                    pointHoverBorderWidth: 2,
                     pointBackgroundColor: '#fff',
                     pointBorderColor: colorSet.main,
                     pointBorderWidth: 2,
-                    pointHoverBackgroundColor: colorSet.hover,
-                    pointHoverBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: colorSet.main,
                     fill: false,
                     cubicInterpolationMode: 'monotone' as const,
                     order: index + 1,
@@ -213,7 +211,6 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             }) : [];
 
             const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
-            const isHovered = hoveredOutcome === index;
 
             return {
                 label: outcome,
@@ -221,18 +218,18 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                 borderColor: colorSet.main,
                 backgroundColor: colorSet.gradient,
                 tension: 0.1,
-                borderWidth: isHovered ? 4 : 3,
-                pointRadius: isHovered ? 5 : 4,
-                pointHoverRadius: 10,
-                pointHoverBorderWidth: 3,
+                borderWidth: 3,
+                pointRadius: 3,
+                pointHoverRadius: 3,
+                pointHoverBorderWidth: 2,
                 pointBackgroundColor: '#fff',
                 pointBorderColor: colorSet.main,
                 pointBorderWidth: 2,
-                pointHoverBackgroundColor: colorSet.hover,
-                pointHoverBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: colorSet.main,
                 fill: false, // Disable fill to focus on line clarity
                 cubicInterpolationMode: 'monotone' as const,
-                order: isHovered ? 0 : index + 1,
+                order: index + 1,
                 spanGaps: true, // Connect line across null/undefined values
                 hidden: false, // Always show in legend even if no data
             };
@@ -242,7 +239,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             labels,
             datasets,
         };
-    }, [data, outcomes, type, span, hoveredOutcome]);
+    }, [data, outcomes, type, span]);
 
     const options: ChartOptions<"line"> = {
         responsive: true,
@@ -252,13 +249,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             intersect: false,
             axis: 'x',
         },
-        animation: {
-            duration: 750,
-            easing: 'easeInOutQuart' as const,
-        },
-        hover: {
-            animationDuration: 200,
-        },
+        animation: false,
         plugins: {
             legend: {
                 display: true,
@@ -274,14 +265,6 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                         family: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif'
                     },
                     color: 'rgba(255, 255, 255, 0.9)',
-                },
-                onHover: (event, legendItem, legend) => {
-                    if (legendItem && typeof legendItem.datasetIndex === 'number') {
-                        setHoveredOutcome(legendItem.datasetIndex);
-                    }
-                },
-                onLeave: () => {
-                    setHoveredOutcome(null);
                 },
             },
             title: {
@@ -352,14 +335,12 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                             `${percentage}%${changeInfo}`
                         ];
                     },
-                    afterLabel: (context) => {
+                    afterLabel: () => {
                         // Add visual separator between outcomes
                         return '';
                     },
                 },
-                animation: {
-                    duration: 200,
-                },
+                animation: false,
             },
         },
         scales: {
@@ -417,8 +398,9 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                 borderCapStyle: 'round' as const,
             },
             point: {
-                hitRadius: 12,
-                hoverRadius: 10,
+                hitRadius: 8,
+                hoverRadius: 3,
+                radius: 3,
                 rotation: 0,
             },
         },

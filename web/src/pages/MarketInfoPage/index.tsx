@@ -42,18 +42,18 @@ export default function MarketInfoPage({
     } = useMarketData(id);
 
     const startTimestamp = useMemo(() => {
-        const day = dayjs();
+        const now = dayjs();
 
         switch (span) {
             case ChartSpan.DAY:
-                return day.subtract(1, "day").unix();
+                // Past 24 hours
+                return now.subtract(24, "hour").unix();
             case ChartSpan.WEEK:
-                return day.subtract(168 + day.hour(), "hour").unix();
+                // Past 7 days
+                return now.subtract(7, "day").unix();
             case ChartSpan.MONTH:
-                if (day.month() === 2) {
-                    return day.subtract(31, "day").unix();
-                }
-                return day.subtract(30 * 24 + day.hour(), "hour").unix();
+                // Past 30 days
+                return now.subtract(30, "day").unix();
         }
     }, [span]);
 
@@ -87,11 +87,13 @@ export default function MarketInfoPage({
 
     useEffect(() => {
         if (!id || !market) return;
+        const endTimestamp = Math.floor(Date.now() / 1000); // Current time in unix
         fetchOutcomesPriceData(
             id, 
             startTimestamp, 
-            Math.floor(new Date().getTime() / 1000),
+            endTimestamp,
             type,
+            span,
             market
         );
     }, [id, market, span, type, startTimestamp, fetchOutcomesPriceData]);
@@ -165,13 +167,17 @@ export default function MarketInfoPage({
                                 <p className="error-detail">{priceDataError}</p>
                                 <button 
                                     className="retry-button"
-                                    onClick={() => fetchOutcomesPriceData(
-                                        id!, 
-                                        startTimestamp, 
-                                        Math.floor(new Date().getTime() / 1000),
-                                        type,
-                                        market
-                                    )}
+                                    onClick={() => {
+                                        const endTimestamp = Math.floor(Date.now() / 1000);
+                                        fetchOutcomesPriceData(
+                                            id!, 
+                                            startTimestamp, 
+                                            endTimestamp,
+                                            type,
+                                            span,
+                                            market
+                                        );
+                                    }}
                                 >
                                     <Trans>Retry</Trans>
                                 </button>

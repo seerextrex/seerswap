@@ -61,14 +61,50 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
     const [hoveredOutcome, setHoveredOutcome] = useState<number | null>(null);
     
     const chartData = useMemo(() => {
-        if (!data || data.length === 0) {
+        // Even if no data, we should still show all outcomes in the legend
+        if (!outcomes || outcomes.length === 0) {
             return null;
         }
+        
+        // If no data yet, create empty datasets for all outcomes
+        if (!data || data.length === 0) {
+            const emptyDatasets = outcomes.map((outcome, index) => {
+                const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
+                return {
+                    label: outcome,
+                    data: [],
+                    borderColor: colorSet.main,
+                    backgroundColor: colorSet.gradient,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBorderWidth: 3,
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: colorSet.main,
+                    fill: 'origin',
+                    order: index + 1,
+                    spanGaps: true,
+                };
+            });
+            return {
+                labels: [],
+                datasets: emptyDatasets,
+            };
+        }
 
-        // Group data by timestamp
+        // Group data by timestamp and round to nearest hour for day view
         const groupedData: { [key: string]: any } = {};
+        const roundToHour = span === 0; // Round to hour for day view
+        
         data.forEach((item) => {
-            const timestamp = item.periodStartUnix * 1000;
+            let timestamp = item.periodStartUnix * 1000;
+            
+            // Round to nearest hour for day view to group nearby data points
+            if (roundToHour) {
+                timestamp = Math.floor(timestamp / 3600000) * 3600000;
+            }
+            
             const dateKey = new Date(timestamp).toISOString();
             
             if (!groupedData[dateKey]) {
@@ -79,9 +115,20 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             }
             
             if (item.outcomeIndex !== undefined) {
-                groupedData[dateKey].outcomes[item.outcomeIndex] = {
-                    price: item.price || 0,
-                };
+                // Keep the most recent price for each outcome at this timestamp
+                // Prefer non-synthetic data over synthetic
+                const existing = groupedData[dateKey].outcomes[item.outcomeIndex];
+                const shouldUpdate = !existing || 
+                    (!item.synthetic && existing.synthetic) || 
+                    (item.synthetic === existing.synthetic && item.periodStartUnix > existing.originalTimestamp);
+                    
+                if (shouldUpdate) {
+                    groupedData[dateKey].outcomes[item.outcomeIndex] = {
+                        price: item.price || 0,
+                        originalTimestamp: item.periodStartUnix,
+                        synthetic: item.synthetic
+                    };
+                }
             }
         });
 
@@ -101,19 +148,25 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             }
         });
 
+        // Check which outcomes have data
+        const outcomesWithData = new Set<number>();
+        data.forEach(item => {
+            if (item.outcomeIndex !== undefined) {
+                outcomesWithData.add(item.outcomeIndex);
+            }
+        });
+        
+        console.log('Creating datasets for outcomes:', outcomes);
+        console.log('Outcomes with data:', Array.from(outcomesWithData));
+        
         const datasets = outcomes.map((outcome, index) => {
-            // For market view, we only show price (probability) data
-            // Use last known value when data is missing instead of defaulting to 0
-            let lastKnownPrice: number | null = null;
-            const dataPoints = sortedEntries.map(([_, groupData]) => {
-                const currentPrice = groupData.outcomes[index]?.price;
-                if (currentPrice !== undefined && currentPrice !== null) {
-                    lastKnownPrice = currentPrice;
-                    return currentPrice;
-                }
-                // Use last known price if available, otherwise null (will be handled by Chart.js)
-                return lastKnownPrice;
-            });
+            // Data should already be complete from the hook
+            const hasData = outcomesWithData.has(index);
+            
+            const dataPoints = hasData ? sortedEntries.map(([_, groupData]) => {
+                // Simply return the price, gaps should already be filled by the hook
+                return groupData.outcomes[index]?.price || null;
+            }) : [];
 
             const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
             const isHovered = hoveredOutcome === index;
@@ -133,6 +186,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                 fill: 'origin', // Always fill for probability charts
                 order: isHovered ? 0 : index + 1,
                 spanGaps: true, // Connect line across null/undefined values
+                hidden: false, // Always show in legend even if no data
             };
         });
 

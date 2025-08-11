@@ -7,23 +7,46 @@
 
     .chart-container {
         width: 100%;
-        height: 400px;
+        height: 420px;
         position: relative;
-        padding: 1rem;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 1.25rem;
+        background: linear-gradient(135deg, rgba(10, 10, 15, 0.4) 0%, rgba(20, 20, 30, 0.3) 100%);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 
+            0 4px 24px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.2);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                transparent 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
         &:hover {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.015) 100%);
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, rgba(10, 10, 15, 0.5) 0%, rgba(20, 20, 30, 0.35) 100%);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
         }
 
         canvas {
-            max-height: 350px !important;
+            max-height: 370px !important;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
     }
 

@@ -75,14 +75,17 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                     data: [],
                     borderColor: colorSet.main,
                     backgroundColor: colorSet.gradient,
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    pointHoverRadius: 6,
+                    tension: 0,
+                    borderWidth: 2.5,
+                    pointRadius: 3,
+                    pointHoverRadius: 7,
                     pointHoverBorderWidth: 3,
+                    pointBackgroundColor: colorSet.main,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1.5,
                     pointHoverBackgroundColor: '#fff',
                     pointHoverBorderColor: colorSet.main,
-                    fill: 'origin',
+                    fill: false,
                     order: index + 1,
                     spanGaps: true,
                 };
@@ -176,14 +179,17 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                 data: dataPoints,
                 borderColor: colorSet.main,
                 backgroundColor: colorSet.gradient,
-                tension: 0.4,
-                borderWidth: isHovered ? 3 : 2,
-                pointRadius: 0,
-                pointHoverRadius: 6,
+                tension: 0,
+                borderWidth: isHovered ? 3.5 : 2.5,
+                pointRadius: 3,
+                pointHoverRadius: 7,
                 pointHoverBorderWidth: 3,
+                pointBackgroundColor: colorSet.main,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 1.5,
                 pointHoverBackgroundColor: '#fff',
                 pointHoverBorderColor: colorSet.main,
-                fill: 'origin', // Always fill for probability charts
+                fill: false, // Disable fill to focus on line clarity
                 order: isHovered ? 0 : index + 1,
                 spanGaps: true, // Connect line across null/undefined values
                 hidden: false, // Always show in legend even if no data
@@ -266,10 +272,27 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                         if (label) {
                             label += ": ";
                         }
-                        // Show as percentage probability
-                        const percentage = (context.parsed.y * 100).toFixed(2);
-                        const collateralValue = context.parsed.y.toFixed(4);
-                        label += `${percentage}% (${collateralValue} ${market?.collateralToken?.symbol || 'collateral'})`;
+                        // Show as percentage probability with change indicator
+                        const currentValue = context.parsed.y;
+                        const percentage = (currentValue * 100).toFixed(3);
+                        
+                        // Calculate change from previous point
+                        const dataIndex = context.dataIndex;
+                        const dataset = context.dataset;
+                        if (dataIndex > 0 && dataset.data) {
+                            const prevValue = dataset.data[dataIndex - 1] as number;
+                            if (prevValue !== null && prevValue !== undefined) {
+                                const change = ((currentValue - prevValue) * 100).toFixed(3);
+                                const arrow = currentValue > prevValue ? '↑' : currentValue < prevValue ? '↓' : '→';
+                                const changeColor = currentValue > prevValue ? '+' : '';
+                                label += `${percentage}% (${changeColor}${change}% ${arrow})`;
+                            } else {
+                                label += `${percentage}%`;
+                            }
+                        } else {
+                            label += `${percentage}%`;
+                        }
+                        
                         return label;
                     },
                 },
@@ -278,7 +301,9 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
         scales: {
             x: {
                 grid: {
-                    display: false,
+                    display: true,
+                    color: 'rgba(255, 255, 255, 0.02)',
+                    lineWidth: 0.5,
                 },
                 border: {
                     display: false,
@@ -297,7 +322,8 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             y: {
                 position: 'right',
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.05)',
+                    color: 'rgba(255, 255, 255, 0.08)',
+                    lineWidth: 1,
                 },
                 border: {
                     display: false,
@@ -310,13 +336,25 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                         weight: 400 as const,
                     },
                     callback: function (value) {
-                        // Always show as percentage for probability
-                        return `${(Number(value) * 100).toFixed(0)}%`;
+                        // Show with more precision for small changes
+                        return `${(Number(value) * 100).toFixed(1)}%`;
                     },
                 },
                 beginAtZero: true,
                 max: 1,
                 min: 0,
+                suggestedMin: 0,
+                suggestedMax: 1,
+            },
+        },
+        elements: {
+            line: {
+                borderJoinStyle: 'miter' as const,
+                borderCapStyle: 'butt' as const,
+            },
+            point: {
+                hitRadius: 10,
+                hoverRadius: 8,
             },
         },
     };

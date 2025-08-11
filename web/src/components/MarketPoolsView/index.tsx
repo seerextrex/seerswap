@@ -434,13 +434,32 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
     // Check if we have exactly UP and DOWN (after filtering Invalid)
     const hasUpDown = outcomesLower.includes('up') && outcomesLower.includes('down') && validOutcomes.length === 2;
     
+    if (!hasUpDown || !market.lowerBound || !market.upperBound) return false;
+    
     // Check if bounds exist and are valid
-    // Bounds might be BigInt strings, so convert and check
-    const lower = market.lowerBound ? parseFloat(market.lowerBound) : null;
-    const upper = market.upperBound ? parseFloat(market.upperBound) : null;
-    const hasBounds = lower !== null && upper !== null && 
-                      (lower !== 0 || upper !== 0) && 
-                      upper > lower; // Ensure upper bound is greater than lower bound
+    const rawLower = market.lowerBound;
+    const rawUpper = market.upperBound;
+    
+    // Parse bounds - they might be BigInt strings or decimal strings
+    let lower = rawLower ? parseFloat(rawLower) : null;
+    let upper = rawUpper ? parseFloat(rawUpper) : null;
+    
+    // Only scale if the values are actually in wei format (very large integers)
+    // Normal bounds like "2", "14" should NOT be scaled
+    // Wei values would be like "2000000000000000000", "14000000000000000000"
+    const looksLikeWei = (value: string | null | undefined): boolean => {
+      if (!value) return false;
+      // Check if it's a very large integer (no decimal point and > 1e15)
+      return !value.includes('.') && value.length > 15;
+    };
+    
+    const needsScaling = looksLikeWei(rawLower) || looksLikeWei(rawUpper);
+    const scaledLower = needsScaling && lower !== null ? lower / 1e18 : lower;
+    const scaledUpper = needsScaling && upper !== null ? upper / 1e18 : upper;
+    
+    const hasBounds = scaledLower !== null && scaledUpper !== null && 
+                      (scaledLower !== 0 || scaledUpper !== 0) && 
+                      scaledUpper > scaledLower;
     
     return hasUpDown && hasBounds;
   }, [market?.outcomes, market?.lowerBound, market?.upperBound]);
@@ -449,8 +468,22 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   const scalarValue = useMemo(() => {
     if (!isScalarMarket || !market.lowerBound || !market.upperBound) return null;
     
-    const lower = parseFloat(market.lowerBound);
-    const upper = parseFloat(market.upperBound);
+    const rawLower = market.lowerBound;
+    const rawUpper = market.upperBound;
+    
+    let lower = parseFloat(rawLower);
+    let upper = parseFloat(rawUpper);
+    
+    // Use the same detection logic as isScalarMarket
+    const looksLikeWei = (value: string): boolean => {
+      return !value.includes('.') && value.length > 15;
+    };
+    
+    const needsScaling = looksLikeWei(rawLower) || looksLikeWei(rawUpper);
+    if (needsScaling) {
+      lower = lower / 1e18;
+      upper = upper / 1e18;
+    }
     
     // Find UP and DOWN probabilities (these are actually prices in 0-100 range)
     const upOutcome = sortedOutcomes.find(o => o.outcome.toLowerCase() === 'up');
@@ -576,7 +609,7 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
                 />
               </svg>
               <div className="probability-value">
-                <span className="probability-number scalar-value">{scalarValue.value.toFixed(1)}</span>
+                <span className="probability-number scalar-value">{scalarValue.value.toFixed(2)}</span>
                 <span className="probability-unit">
                   <span className="range-indicator">{scalarValue.lower}-{scalarValue.upper}</span>
                 </span>

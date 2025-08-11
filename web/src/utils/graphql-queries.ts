@@ -1643,6 +1643,8 @@ export const FETCH_POOLS_FOR_MARKETS = gql`
         payoutReported
         conditionId
         parentCollectionId
+        lowerBound
+        upperBound
         collateralToken {
           id
           symbol
@@ -1687,6 +1689,8 @@ export const FETCH_POOLS_FOR_MARKETS = gql`
         payoutReported
         conditionId
         parentCollectionId
+        lowerBound
+        upperBound
         collateralToken {
           id
           symbol
@@ -1760,6 +1764,8 @@ export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
         payoutReported
         conditionId
         parentCollectionId
+        lowerBound
+        upperBound
         collateralToken {
           id
           symbol
@@ -1797,6 +1803,8 @@ export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
         payoutReported
         conditionId
         parentCollectionId
+        lowerBound
+        upperBound
         collateralToken {
           id
           symbol

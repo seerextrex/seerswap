@@ -12,6 +12,8 @@ export interface Market {
   id: string;
   outcomes: string[];
   marketName: string;
+  lowerBound?: string;
+  upperBound?: string;
   collateralToken?: {
     id: string;
     symbol: string;

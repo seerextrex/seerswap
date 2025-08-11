@@ -7,13 +7,13 @@ import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
 import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
 import { calculateOutcomeProbabilities, formatProbability } from '../../utils/marketPrices';
-import { MarketOutcomeVisual } from '../MarketOutcomeVisual';
 import { OUTCOME_COLORS, OUTCOME_GRADIENTS } from '../../constants/outcomeColors';
 import { ZapButton } from '../MarketZap/ZapButton';
 import { ZapModal, ZapModalContent } from '../MarketZap/ZapModal';
 import Modal from '../Modal';
 import Loader from '../Loader';
 import './index.scss';
+import './index-modern.scss';
 
 interface PoolCardProps {
   pool: Pool;
@@ -357,30 +357,14 @@ const ChildMarketGroup: React.FC<ChildMarketGroupProps> = React.memo(({
 
 interface MarketGroupProps {
   groupedMarket: GroupedMarketPools;
-  isExpanded: boolean;
-  onToggle: (marketId: string) => void;
-  marketId: string;
-  expandedChildMarkets: Set<string>;
-  toggleChildMarket: (childKey: string) => void;
 }
 
 const MarketGroup: React.FC<MarketGroupProps> = React.memo(({ 
-  groupedMarket, 
-  isExpanded, 
-  onToggle, 
-  marketId,
-  expandedChildMarkets,
-  toggleChildMarket
+  groupedMarket
 }) => {
   const [imageError, setImageError] = useState(false);
-  const [zapModalOpen, setZapModalOpen] = useState(false);
-  const [zapModalMarket, setZapModalMarket] = useState<Market | null>(null);
 
   const { market, pools, totalTVL, totalVolume, totalFees, isParent, childMarkets } = groupedMarket;
-  
-  const handleToggle = useCallback(() => {
-    onToggle(marketId);
-  }, [onToggle, marketId]);
 
   const marketImageUrl = market?.image?.[0]?.cidMarket ? formatIpfsUrl(market.image[0].cidMarket) : null;
 
@@ -388,6 +372,27 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   const probabilities = useMemo(() => {
     return pools && market ? calculateOutcomeProbabilities(pools, market) : null;
   }, [pools, market]);
+  
+  // Sort outcomes by probability for card display
+  const sortedOutcomes = useMemo(() => {
+    if (!probabilities || !market?.outcomes) {
+      return [];
+    }
+    return market.outcomes.map((outcome, index) => ({
+      outcome,
+      index,
+      probability: probabilities[index] || 0,
+      gradient: OUTCOME_GRADIENTS[index % OUTCOME_GRADIENTS.length]
+    }))
+    .filter(({ outcome, probability }) => {
+      const isInvalidResult = outcome.toLowerCase().includes('invalid');
+      if (isInvalidResult && probability < 1) {
+        return false;
+      }
+      return true;
+    })
+    .sort((a, b) => b.probability - a.probability);
+  }, [market?.outcomes, probabilities]);
 
 
   // Calculate total pools including child markets
@@ -397,21 +402,118 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
       sum + child.pools.length, 0) : 0;
   const totalPools = directPools + childPools;
 
+  // Get leading outcome for display
+  const leadingOutcome = useMemo(() => {
+    if (!sortedOutcomes || sortedOutcomes.length === 0) return null;
+    return sortedOutcomes[0];
+  }, [sortedOutcomes]);
+  
+  // Check if this is a binary Yes/No market (excluding Invalid result)
+  const isBinaryMarket = useMemo(() => {
+    if (!market?.outcomes) return false;
+    const outcomesLower = market.outcomes
+      .filter(o => !o.toLowerCase().includes('invalid'))
+      .map(o => o.toLowerCase());
+    
+    if (outcomesLower.length !== 2) return false;
+    
+    return (
+      (outcomesLower.includes('yes') && outcomesLower.includes('no')) ||
+      (outcomesLower.includes('up') && outcomesLower.includes('down'))
+    );
+  }, [market?.outcomes]);
+  
+  // Check if this is a scalar UP/DOWN market with bounds
+  const isScalarMarket = useMemo(() => {
+    if (!market?.outcomes) return false;
+    
+    // Filter out Invalid result outcome
+    const validOutcomes = market.outcomes.filter(o => !o.toLowerCase().includes('invalid'));
+    const outcomesLower = validOutcomes.map(o => o.toLowerCase());
+    
+    // Check if we have exactly UP and DOWN (after filtering Invalid)
+    const hasUpDown = outcomesLower.includes('up') && outcomesLower.includes('down') && validOutcomes.length === 2;
+    
+    // Check if bounds exist and are valid
+    // Bounds might be BigInt strings, so convert and check
+    const lower = market.lowerBound ? parseFloat(market.lowerBound) : null;
+    const upper = market.upperBound ? parseFloat(market.upperBound) : null;
+    const hasBounds = lower !== null && upper !== null && 
+                      (lower !== 0 || upper !== 0) && 
+                      upper > lower; // Ensure upper bound is greater than lower bound
+    
+    return hasUpDown && hasBounds;
+  }, [market?.outcomes, market?.lowerBound, market?.upperBound]);
+  
+  // Calculate scalar value for UP/DOWN markets
+  const scalarValue = useMemo(() => {
+    if (!isScalarMarket || !market.lowerBound || !market.upperBound) return null;
+    
+    const lower = parseFloat(market.lowerBound);
+    const upper = parseFloat(market.upperBound);
+    
+    // Find UP and DOWN probabilities (these are actually prices in 0-100 range)
+    const upOutcome = sortedOutcomes.find(o => o.outcome.toLowerCase() === 'up');
+    const downOutcome = sortedOutcomes.find(o => o.outcome.toLowerCase() === 'down');
+    
+    if (!upOutcome && !downOutcome) return null;
+    
+    // Convert probabilities to prices (0-1 range)
+    const upPrice = upOutcome ? upOutcome.probability / 100 : 0;
+    const downPrice = downOutcome ? downOutcome.probability / 100 : 0;
+    
+    // Calculate estimates using both formulas
+    // estimate_1 = lowerBound + (upperBound - lowerBound) * DOWN_PRICE
+    // estimate_2 = upperBound - (upperBound - lowerBound) * UP_PRICE
+    // Note: DOWN price indicates how far up from lower bound
+    // UP price indicates how far down from upper bound
+    const estimate1 = lower + (upper - lower) * downPrice;
+    const estimate2 = upper - (upper - lower) * upPrice;
+    
+    // Take the average of both estimates
+    const estimatedValue = (estimate1 + estimate2) / 2;
+    
+    return {
+      value: estimatedValue,
+      lower,
+      upper,
+      upPrice: upOutcome?.probability || 0,
+      downPrice: downOutcome?.probability || 0,
+      estimate1,
+      estimate2
+    };
+  }, [isScalarMarket, market.lowerBound, market.upperBound, sortedOutcomes]);
+
+  const handleCardClick = useCallback(() => {
+    // Navigate to market details or first pool
+    if (pools.length > 0) {
+      const firstPool = pools[0];
+      const tokenInfo = getPoolTokensForMarket(firstPool, market);
+      if (tokenInfo) {
+        window.location.href = `#/swap?inputCurrency=${tokenInfo.collateralToken.id}&outputCurrency=${tokenInfo.outcomeToken.id}`;
+      }
+    }
+  }, [pools, market]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleCardClick();
+    }
+  }, [handleCardClick]);
+
   return (
-    <div className="market-group">
-      <div className="market-header">
-        <div 
-          className="market-info" 
-          onClick={handleToggle}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleToggle();
-            }
-          }}>
-          <div className="market-image-wrapper">
+    <div className="market-card-modern">
+      <div 
+        className="market-card-inner" 
+        onClick={handleCardClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        aria-label={`Market: ${market.marketName}. Leading outcome: ${leadingOutcome?.outcome || 'Unknown'} at ${leadingOutcome ? Math.round(leadingOutcome.probability) : 0}% probability`}>
+        {/* Market Header with Image and Title */}
+        <div className="market-card-header">
+          <div className="market-image-container">
             {marketImageUrl && !imageError ? (
               <img 
                 src={marketImageUrl} 
@@ -420,216 +522,168 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className="market-image-placeholder" role="img" aria-label={market.marketName || 'Market'}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  {/* Branching paths icon representing future possibilities */}
+              <div className="market-image-fallback">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
                   <circle cx="12" cy="11" r="1.5" fill="currentColor" opacity="0.6"/>
                   <path d="M12 12.5l-5 5M12 12.5l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
                   <circle cx="7" cy="19" r="1.5" fill="currentColor" opacity="0.3"/>
                   <circle cx="17" cy="19" r="1.5" fill="currentColor" opacity="0.3"/>
-                  <text x="12" y="20" fontSize="6" fill="currentColor" opacity="0.4" textAnchor="middle">?</text>
                 </svg>
               </div>
             )}
           </div>
-          <div className="market-details">
-            <h3 className="market-name">
-              {market.marketName || 'Unknown Market'}
-              {isParent && childMarkets && childMarkets.size > 0 && (
-                <span className="parent-market-badge">Parent Market</span>
-              )}
-              <a
-                href={`https://app.seer.pm/markets/100/${market.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="market-external-link"
-                onClick={(e) => e.stopPropagation()}
-                title="View on Seer"
-              >
-                <ExternalLink size={16} />
-              </a>
-            </h3>
-            <div className="market-stats">
-              <div className="stats-row">
-                <span className="stat-item">
-                  {isParent && childPools > 0 ? 
-                    `${totalPools} pools (${directPools} direct, ${childPools} in child markets)` :
-                    `${directPools} pools`}
-                </span>
-                <span className="stat-item">
-                  <label>TVL:</label>
-                  <span>{formatDollarAmount(totalTVL)}</span>
-                </span>
-                <span className="stat-item">
-                  <label>Volume:</label>
-                  <span>{formatDollarAmount(totalVolume)}</span>
-                </span>
-                <span className="stat-item">
-                  <label>Fees:</label>
-                  <span>{formatDollarAmount(totalFees)}</span>
-                </span>
-                {market.collateralToken && (
-                  <span className="stat-item">
-                    • Collateral: {market.collateralToken.symbol || market.collateralToken.name}
-                  </span>
-                )}
-              </div>
-              {probabilities && market?.outcomes && market.outcomes.length > 0 && (() => {
-                const validOutcomes = market.outcomes
-                  .map((outcome, index) => {
-                    const gradient = OUTCOME_GRADIENTS[index % OUTCOME_GRADIENTS.length];
-                    const color = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
-                    const probability = probabilities[index] || 0;
-                    return {
-                      outcome,
-                      index,
-                      probability,
-                      color,
-                      gradient
-                    };
-                  })
-                  .filter(({ outcome, probability }) => {
-                    // Filter out "Invalid result" if it has very low or no probability
-                    const isInvalidResult = outcome.toLowerCase().includes('invalid');
-                    if (isInvalidResult && probability < 1) {
-                      return false;
-                    }
-                    return true;
-                  })
-                  .sort((a, b) => b.probability - a.probability);
-                
-                // Calculate total probability for normalization
-                const totalProbability = validOutcomes.reduce((sum, o) => sum + o.probability, 0);
-                const displayOutcomes = validOutcomes.slice(0, 4); // Show up to 4 outcomes
-                
-                return validOutcomes.length > 0 ? (
-                  <div className="inline-outcome-display">
-                    <div className="outcome-stacked-bar">
-                      <div className="stacked-segments">
-                        {displayOutcomes.map(({ outcome, index, probability, gradient }, idx) => {
-                          // Calculate percentage of the total (normalized to 100%)
-                          const normalizedWidth = totalProbability > 0 ? (probability / totalProbability) * 100 : 0;
-                          
-                          return (
-                            <div
-                              key={index}
-                              className="outcome-segment"
-                              style={{
-                                width: `${normalizedWidth}%`,
-                                background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
-                              }}
-                              title={`${outcome}: ${formatProbability(probability)}`}
-                            >
-                              <span className="segment-label">
-                                {normalizedWidth > 15 && (
-                                  <>
-                                    <span className="outcome-name">{outcome}</span>
-                                    <span className="outcome-value">{formatProbability(probability)}</span>
-                                  </>
-                                )}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className="outcome-legend">
-                        {displayOutcomes.map(({ outcome, index, probability, gradient }) => (
-                          <div key={index} className="legend-item">
-                            <span 
-                              className="legend-dot" 
-                              style={{ background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)` }}
-                            />
-                            <span className="legend-label">{outcome}</span>
-                            <span className="legend-value">{formatProbability(probability)}</span>
-                          </div>
-                        ))}
-                        {validOutcomes.length > 4 && (
-                          <div className="legend-item more">
-                            <span className="legend-label">+{validOutcomes.length - 4} more</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ) : null;
-              })()}
-            </div>
-          </div>
+          <h3 className="market-title">
+            {market.marketName || 'Unknown Market'}
+          </h3>
         </div>
-        <div className="market-actions">
-          <ZapButton 
-            market={market} 
-            onClick={() => {
-              setZapModalMarket(market);
-              setZapModalOpen(true);
-            }} 
-          />
-          <div 
-            className={`expand-toggle ${isExpanded ? 'expanded' : ''}`} 
-            onClick={handleToggle}
-            title={isExpanded ? 'Collapse' : 'Expand details'}
-          >
-            <ChevronDown size={20} className="expand-icon" />
-            <div className="expand-ripple" />
-          </div>
-        </div>
-      </div>
 
-      <div className={`market-content ${isExpanded ? 'expanded' : ''}`}>
-        {/* Display outcome probabilities visualization */}
-        {pools && pools.length > 0 && market?.outcomes && (
-          <MarketOutcomeVisual 
-            market={market} 
-            pools={pools}
-            displayType="bar"
-          />
-        )}
-        
-        {/* Render outcomes for this market */}
-        {directPools > 0 && (
-          <div className="market-outcomes">
-            <MarketOutcomesList groupedMarket={groupedMarket} />
-          </div>
-        )}
-
-        {/* Render child markets if this is a parent market */}
-        {isParent && childMarkets && childMarkets.size > 0 && (
-          <div className="child-markets">
-            {Array.from(childMarkets.entries()).map(([childKey, childGroup]) => {
-              const isChildExpanded = expandedChildMarkets.has(childKey);
-
-              return (
-                <ChildMarketGroup
-                  key={childKey}
-                  childMarket={childGroup}
-                  parentMarket={market}
-                  isExpanded={isChildExpanded}
-                  onToggle={toggleChildMarket}
-                  childKey={childKey}
+        {/* Probability Indicator and Outcomes */}
+        <div className="market-probability-section">
+          {(isScalarMarket && scalarValue) ? (
+            <div 
+              className="probability-indicator scalar-market"
+              aria-label={`Market estimate: ${scalarValue.value.toFixed(2)} (range: ${scalarValue.lower} to ${scalarValue.upper})`}>
+              <svg className="probability-ring" viewBox="0 0 36 36">
+                <defs>
+                  <linearGradient id={`gradient-ring-${market.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3b82f6" />
+                    <stop offset="100%" stopColor="#8b5cf6" />
+                  </linearGradient>
+                </defs>
+                {/* Background circle */}
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.08)"
+                  strokeWidth="2"
                 />
-              );
-            })}
+                {/* Progress circle showing position within range */}
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  stroke={`url(#gradient-ring-${market.id})`}
+                  strokeWidth="2"
+                  strokeDasharray={`${Math.max(0, Math.min(100, ((scalarValue.value - scalarValue.lower) / (scalarValue.upper - scalarValue.lower)) * 100))} 100`}
+                  strokeDashoffset="25"
+                  strokeLinecap="round"
+                  transform="rotate(-90 18 18)"
+                  className="probability-progress"
+                />
+              </svg>
+              <div className="probability-value">
+                <span className="probability-number scalar-value">{scalarValue.value.toFixed(1)}</span>
+                <span className="probability-unit">
+                  <span className="range-indicator">{scalarValue.lower}-{scalarValue.upper}</span>
+                </span>
+              </div>
+            </div>
+          ) : leadingOutcome && (
+            <div 
+              className="probability-indicator"
+              aria-label={`${leadingOutcome.outcome}: ${Math.round(leadingOutcome.probability)}% probability`}>
+              <svg className="probability-ring" viewBox="0 0 36 36">
+                <defs>
+                  <linearGradient id={`gradient-ring-${market.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor={leadingOutcome.gradient[0]} />
+                    <stop offset="100%" stopColor={leadingOutcome.gradient[1]} />
+                  </linearGradient>
+                </defs>
+                {/* Background circle */}
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.08)"
+                  strokeWidth="2"
+                />
+                {/* Progress circle */}
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  stroke={`url(#gradient-ring-${market.id})`}
+                  strokeWidth="2"
+                  strokeDasharray={`${leadingOutcome.probability} 100`}
+                  strokeDashoffset="25"
+                  strokeLinecap="round"
+                  transform="rotate(-90 18 18)"
+                  className="probability-progress"
+                />
+              </svg>
+              <div className="probability-value">
+                <span className="probability-number">{Math.round(leadingOutcome.probability)}</span>
+                <span className="probability-percent">%</span>
+              </div>
+            </div>
+          )}
+          
+          {/* Outcome labels */}
+          <div className="outcome-labels">
+            {isScalarMarket && scalarValue ? (
+              <>
+                <div className="scalar-info primary">
+                  <span className="scalar-label">Market Estimate</span>
+                  <span className="scalar-estimate">{scalarValue.value.toFixed(2)}</span>
+                </div>
+                <div className="scalar-details">
+                  <div className="outcome-label-item small">
+                    <span className="outcome-dot" style={{ background: '#6366f1' }} />
+                    <span className="outcome-name">UP token</span>
+                    <span className="outcome-prob">${(scalarValue.upPrice / 100).toFixed(3)}</span>
+                  </div>
+                  <div className="outcome-label-item small">
+                    <span className="outcome-dot" style={{ background: '#8b5cf6' }} />
+                    <span className="outcome-name">DOWN token</span>
+                    <span className="outcome-prob">${(scalarValue.downPrice / 100).toFixed(3)}</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              sortedOutcomes
+                .filter(({ outcome }) => !outcome.toLowerCase().includes('invalid') || sortedOutcomes.length <= 2)
+                .slice(0, isBinaryMarket ? 2 : 3)
+                .map(({ outcome, probability, gradient }, idx) => (
+                  <div key={idx} className="outcome-label-item">
+                    <span 
+                      className="outcome-dot" 
+                      style={{ 
+                        background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
+                      }}
+                    />
+                    <span className="outcome-name">{outcome}</span>
+                    <span className="outcome-prob">{Math.round(probability)}%</span>
+                  </div>
+                ))
+            )}
+            {sortedOutcomes.filter(o => !o.outcome.toLowerCase().includes('invalid')).length > (isBinaryMarket ? 2 : 3) && (
+              <div className="outcome-label-item more">
+                <span className="outcome-name">+{sortedOutcomes.filter(o => !o.outcome.toLowerCase().includes('invalid')).length - (isBinaryMarket ? 2 : 3)} more</span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        {/* Market Stats Footer */}
+        <div className="market-stats-footer">
+          <div className="stat-item">
+            <span className="stat-value">{formatDollarAmount(totalVolume)}</span>
+            <span className="stat-label">Vol.</span>
+          </div>
+          {market.finalizeTs && (
+            <div className="stat-item" title="Market resolves weekly">
+              <span className="stat-icon">📅</span>
+              <span className="stat-label">Weekly</span>
+            </div>
+          )}
+        </div>
       </div>
-      
-      {/* Zap Modal - render content immediately for proper opacity */}
-      {zapModalMarket && (
-        <Modal isOpen={zapModalOpen} onDismiss={() => {
-          setZapModalOpen(false);
-          setTimeout(() => setZapModalMarket(null), 300); // Clear after animation
-        }} maxHeight={80}>
-          <ZapModalContent
-            market={zapModalMarket}
-            pools={pools}
-            onDismiss={() => {
-              setZapModalOpen(false);
-              setTimeout(() => setZapModalMarket(null), 300); // Clear after animation
-            }}
-          />
-        </Modal>
-      )}
     </div>
   );
 });
@@ -645,8 +699,6 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
   hideLowValue = false,
   hideResolved = false
 }) => {
-  const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
-  const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMoreItems, setHasMoreItems] = useState(true);
   const ITEMS_PER_PAGE = 500; // Increased to fetch more pools initially
@@ -683,30 +735,6 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
     return grouped;
   }, [data, hideLowValue, minTVL, hideResolved]);
 
-  const toggleMarket = useCallback((marketId: string) => {
-    setExpandedMarkets(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(marketId)) {
-        newSet.delete(marketId);
-      } else {
-        newSet.add(marketId);
-      }
-      return newSet;
-    });
-  }, []);
-
-  const toggleChildMarket = useCallback((childKey: string) => {
-    setExpandedChildMarkets(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(childKey)) {
-        newSet.delete(childKey);
-      } else {
-        newSet.add(childKey);
-      }
-      return newSet;
-    });
-  }, []);
-
   const handleLoadMore = useCallback(() => {
     fetchMore({
       variables: {
@@ -734,7 +762,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
 
   if (loading && !data) {
     return (
-      <div className="market-pools-view">
+      <div className="market-pools-view-modern">
         <div className="loading-state">
           <Loader stroke="white" size="2rem" />
         </div>
@@ -744,7 +772,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
 
   if (error) {
     return (
-      <div className="market-pools-view">
+      <div className="market-pools-view-modern">
         <div className="error-state">
           <Trans>Error loading pools: {error.message}</Trans>
         </div>
@@ -754,7 +782,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
 
   if (groupedMarkets.length === 0) {
     return (
-      <div className="market-pools-view">
+      <div className="market-pools-view-modern">
         <div className="empty-state">
           <Trans>No pools found</Trans>
         </div>
@@ -763,18 +791,15 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
   }
 
   return (
-    <div className="market-pools-view">
-      {groupedMarkets.map((groupedMarket) => (
-        <MarketGroup
-          key={groupedMarket.market.id}
-          groupedMarket={groupedMarket}
-          isExpanded={expandedMarkets.has(groupedMarket.market.id)}
-          onToggle={toggleMarket}
-          marketId={groupedMarket.market.id}
-          expandedChildMarkets={expandedChildMarkets}
-          toggleChildMarket={toggleChildMarket}
-        />
-      ))}
+    <div className="market-pools-view-modern">
+      <div className="markets-grid">
+        {groupedMarkets.map((groupedMarket) => (
+          <MarketGroup
+            key={groupedMarket.market.id}
+            groupedMarket={groupedMarket}
+          />
+        ))}
+      </div>
       
       {hasMoreItems && data?.pools && data.pools.length > 0 && (
         <button

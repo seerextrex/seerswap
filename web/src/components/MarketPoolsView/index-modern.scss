@@ -1,0 +1,473 @@
+// Modern Polymarket-inspired market grid styles
+.market-pools-view-modern {
+  width: 100%;
+  padding: 1rem 0;
+  
+  .markets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    
+    @media (min-width: 1400px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+  
+  .market-card-modern {
+    position: relative;
+    
+    .market-card-inner {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.12);
+        transform: translateY(-2px);
+        box-shadow: 
+          0 8px 24px rgba(0, 0, 0, 0.12),
+          0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      
+      .market-card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        
+        .market-image-container {
+          width: 48px;
+          height: 48px;
+          flex-shrink: 0;
+          border-radius: 10px;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          
+          .market-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          
+          .market-image-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, 
+              rgba(79, 195, 247, 0.1) 0%, 
+              rgba(156, 39, 176, 0.1) 100%);
+            color: rgba(255, 255, 255, 0.6);
+          }
+        }
+        
+        .market-title {
+          flex: 1;
+          font-size: 1rem;
+          font-weight: 600;
+          line-height: 1.3;
+          color: rgba(255, 255, 255, 0.95);
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          letter-spacing: -0.01em;
+        }
+      }
+      
+      .market-probability-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 0;
+        flex: 1;
+        
+        .probability-indicator {
+          position: relative;
+          width: 56px;
+          height: 56px;
+          flex-shrink: 0;
+          
+          &.scalar-market {
+            .probability-ring {
+              filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3));
+            }
+          }
+          
+          .probability-ring {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            
+            .probability-progress {
+              transition: stroke-dasharray 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+              filter: drop-shadow(0 0 6px currentColor);
+              
+              @keyframes draw-in {
+                from {
+                  stroke-dasharray: 0 100;
+                }
+              }
+              
+              animation: draw-in 1s ease-out;
+            }
+          }
+          
+          .probability-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            
+            .probability-number {
+              font-size: 1.25rem;
+              font-weight: 700;
+              color: white;
+              line-height: 1;
+              
+              &.scalar-value {
+                font-size: 1.1rem;
+              }
+            }
+            
+            .probability-percent {
+              font-size: 0.65rem;
+              color: rgba(255, 255, 255, 0.6);
+              font-weight: 600;
+            }
+            
+            .probability-unit {
+              font-size: 0.55rem;
+              color: rgba(255, 255, 255, 0.5);
+              font-weight: 500;
+              
+              .range-indicator {
+                opacity: 0.7;
+              }
+            }
+          }
+        }
+        
+        .outcome-labels {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          min-width: 0;
+          
+          .scalar-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+            
+            &.primary {
+              border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+              margin-bottom: 0.5rem;
+              padding-bottom: 0.6rem;
+            }
+            
+            .scalar-label {
+              color: rgba(255, 255, 255, 0.5);
+              font-weight: 500;
+              font-size: 0.7rem;
+              text-transform: uppercase;
+              letter-spacing: 0.03em;
+            }
+            
+            .scalar-estimate {
+              color: white;
+              font-weight: 700;
+              font-size: 1.25rem;
+              margin-left: auto;
+              background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+              background-clip: text;
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+            }
+          }
+          
+          .scalar-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            
+            .outcome-label-item.small {
+              font-size: 0.75rem;
+              opacity: 0.8;
+              
+              .outcome-dot {
+                width: 6px;
+                height: 6px;
+              }
+              
+              .outcome-name {
+                font-size: 0.7rem;
+                color: rgba(255, 255, 255, 0.6);
+              }
+              
+              .outcome-prob {
+                font-family: 'SF Mono', 'Monaco', monospace;
+                font-size: 0.75rem;
+                color: rgba(255, 255, 255, 0.7);
+              }
+            }
+          }
+          
+          .outcome-label-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            
+            .outcome-dot {
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              flex-shrink: 0;
+              box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+            }
+            
+            .outcome-name {
+              flex: 1;
+              color: rgba(255, 255, 255, 0.85);
+              font-weight: 500;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              min-width: 0;
+            }
+            
+            .outcome-prob {
+              color: rgba(255, 255, 255, 0.6);
+              font-weight: 600;
+              flex-shrink: 0;
+              margin-left: auto;
+            }
+            
+            &.more {
+              .outcome-name {
+                color: rgba(255, 255, 255, 0.4);
+                font-size: 0.8rem;
+                font-style: italic;
+              }
+            }
+          }
+        }
+      }
+      
+      .market-stats-footer {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          
+          .stat-value {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+          }
+          
+          .stat-label {
+            color: rgba(255, 255, 255, 0.4);
+          }
+          
+          .stat-icon {
+            font-size: 0.9rem;
+            opacity: 0.7;
+          }
+        }
+      }
+    }
+  }
+  
+  // Market expanded content (when clicked)
+  .market-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    
+    &.expanded {
+      max-height: 2000px;
+      opacity: 1;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 0 0 16px 16px;
+      margin-top: -1rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: none;
+    }
+  }
+  
+  .load-more-btn {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  
+  // Loading and empty states
+  .loading-state,
+  .error-state,
+  .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
+  }
+}
+
+// Dark theme enhancements
+@media (prefers-color-scheme: dark) {
+  .market-pools-view-modern {
+    .market-card-inner {
+      background: rgba(20, 20, 30, 0.6);
+      border-color: rgba(255, 255, 255, 0.06);
+      
+      &:hover {
+        background: rgba(25, 25, 35, 0.8);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes draw-in {
+  from {
+    stroke-dasharray: 0 100;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Mobile optimizations
+@media (max-width: 640px) {
+  .market-pools-view-modern {
+    padding: 0.5rem 0;
+    
+    .markets-grid {
+      gap: 0.75rem;
+    }
+    
+    .market-card-modern {
+      .market-card-inner {
+        padding: 1rem;
+        
+        .market-card-header {
+          .market-image-container {
+            width: 40px;
+            height: 40px;
+          }
+          
+          .market-title {
+            font-size: 0.95rem;
+          }
+        }
+        
+        .market-probability-section {
+          .probability-indicator {
+            width: 48px;
+            height: 48px;
+            
+            .probability-value {
+              .probability-number {
+                font-size: 1.1rem;
+              }
+              
+              .probability-percent {
+                font-size: 0.6rem;
+              }
+            }
+          }
+          
+          .outcome-labels {
+            .outcome-label-item {
+              font-size: 0.8rem;
+              
+              .outcome-dot {
+                width: 6px;
+                height: 6px;
+              }
+            }
+          }
+        }
+        
+        .market-stats-footer {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+}
+
+// Add smooth entrance animation
+.market-card-modern {
+  animation: fade-in 0.5s ease-out;
+  animation-fill-mode: both;
+  
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}

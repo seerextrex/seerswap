@@ -405,8 +405,224 @@
     transition: max-height 0.3s ease, opacity 0.2s ease;
     
     &.expanded {
-      max-height: 3000px;
+      max-height: 5000px;
       opacity: 1;
+    }
+    
+    // Beautiful outcome cards design
+    .outcome-cards-container {
+      padding: 2rem 1.5rem;
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.02) 0%, 
+        rgba(255, 255, 255, 0) 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      
+      .outcome-cards-header {
+        margin-bottom: 2rem;
+        text-align: center;
+        
+        .outcome-cards-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin: 0 0 0.5rem 0;
+          letter-spacing: -0.02em;
+        }
+        
+        .outcome-cards-subtitle {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.5);
+          font-weight: 500;
+          letter-spacing: 0.01em;
+        }
+      }
+      
+      .outcome-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        
+        .outcome-card {
+          position: relative;
+          transform-style: preserve-3d;
+          transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          
+          &:hover {
+            transform: translateY(-8px) scale(1.02);
+            
+            .outcome-card-inner {
+              box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                0 0 40px rgba(255, 255, 255, 0.05),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+            }
+            
+            .outcome-ring-progress {
+              animation: pulse 2s ease-in-out infinite;
+            }
+          }
+          
+          .outcome-card-inner {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid;
+            border-image-slice: 1;
+            box-shadow: 
+              0 8px 32px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            
+            &::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 1px;
+              background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2) 30%,
+                rgba(255, 255, 255, 0.2) 70%,
+                transparent
+              );
+            }
+            
+            &::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: radial-gradient(
+                circle at 50% -50%,
+                rgba(255, 255, 255, 0.03),
+                transparent 70%
+              );
+              pointer-events: none;
+            }
+            
+            .outcome-card-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 1.5rem;
+              
+              .outcome-card-name {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.95);
+                letter-spacing: -0.01em;
+                line-height: 1.2;
+                flex: 1;
+                margin-right: 0.75rem;
+              }
+              
+              .outcome-card-badge {
+                padding: 0.35rem 0.75rem;
+                border-radius: 12px;
+                color: white;
+                font-weight: 700;
+                font-size: 0.9rem;
+                box-shadow: 
+                  0 4px 12px rgba(0, 0, 0, 0.2),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                flex-shrink: 0;
+                
+                .outcome-card-percentage {
+                  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                }
+              }
+            }
+            
+            .outcome-card-visual {
+              display: flex;
+              justify-content: center;
+              margin: 2rem 0;
+              
+              .outcome-progress-ring {
+                position: relative;
+                width: 120px;
+                height: 120px;
+                
+                .outcome-ring-svg {
+                  width: 100%;
+                  height: 100%;
+                  transform: rotate(-90deg);
+                  
+                  .outcome-ring-progress {
+                    transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                  }
+                }
+                
+                .outcome-ring-center {
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  text-align: center;
+                  
+                  .outcome-ring-value {
+                    display: block;
+                    font-size: 2rem;
+                    font-weight: 700;
+                    color: white;
+                    line-height: 1;
+                    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                  }
+                  
+                  .outcome-ring-unit {
+                    display: block;
+                    font-size: 0.8rem;
+                    color: rgba(255, 255, 255, 0.5);
+                    margin-top: 0.25rem;
+                    font-weight: 500;
+                  }
+                }
+              }
+            }
+            
+            .outcome-card-stats {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 1rem;
+              padding-top: 1rem;
+              border-top: 1px solid rgba(255, 255, 255, 0.08);
+              
+              .outcome-stat {
+                text-align: center;
+                
+                .outcome-stat-label {
+                  display: block;
+                  font-size: 0.75rem;
+                  color: rgba(255, 255, 255, 0.5);
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                  margin-bottom: 0.25rem;
+                  font-weight: 600;
+                }
+                
+                .outcome-stat-value {
+                  display: block;
+                  font-size: 1rem;
+                  color: rgba(255, 255, 255, 0.9);
+                  font-weight: 600;
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     // Market outcomes list styling
@@ -1075,6 +1291,79 @@
   }
 
   @media (max-width: 768px) {
+    .market-content {
+      .outcome-cards-container {
+        padding: 1.5rem 1rem;
+        
+        .outcome-cards-header {
+          margin-bottom: 1.5rem;
+          
+          .outcome-cards-title {
+            font-size: 1.25rem;
+          }
+          
+          .outcome-cards-subtitle {
+            font-size: 0.85rem;
+          }
+        }
+        
+        .outcome-cards-grid {
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 1rem;
+          
+          .outcome-card {
+            .outcome-card-inner {
+              padding: 1.25rem;
+              
+              .outcome-card-header {
+                margin-bottom: 1rem;
+                
+                .outcome-card-name {
+                  font-size: 1rem;
+                }
+                
+                .outcome-card-badge {
+                  padding: 0.25rem 0.5rem;
+                  font-size: 0.85rem;
+                }
+              }
+              
+              .outcome-card-visual {
+                margin: 1.5rem 0;
+                
+                .outcome-progress-ring {
+                  width: 100px;
+                  height: 100px;
+                  
+                  .outcome-ring-center {
+                    .outcome-ring-value {
+                      font-size: 1.5rem;
+                    }
+                    
+                    .outcome-ring-unit {
+                      font-size: 0.7rem;
+                    }
+                  }
+                }
+              }
+              
+              .outcome-card-stats {
+                .outcome-stat {
+                  .outcome-stat-label {
+                    font-size: 0.7rem;
+                  }
+                  
+                  .outcome-stat-value {
+                    font-size: 0.9rem;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
     .market-group {
       .market-header {
         padding: 1rem;
@@ -1215,6 +1504,17 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    stroke-width: 8;
+    opacity: 1;
+  }
+  50% {
+    stroke-width: 10;
+    opacity: 0.8;
   }
 }
 

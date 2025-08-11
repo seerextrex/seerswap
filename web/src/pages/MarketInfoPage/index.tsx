@@ -108,7 +108,7 @@ export default function MarketInfoPage({
 
     return (
         <div className="market-info-page mb-3">
-            <NavLink className="f mb-1 c-p hover-op trans-op w-fc" to="/markets">
+            <NavLink className="f mb-1 c-p hover-op trans-op w-fc" to="/info/markets">
                 <ArrowLeft className="mr-05" size="1rem" />
                 <span>
                     <Trans>Back to markets</Trans>

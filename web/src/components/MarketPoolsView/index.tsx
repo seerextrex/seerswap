@@ -518,15 +518,9 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   }, [isScalarMarket, market.lowerBound, market.upperBound, sortedOutcomes]);
 
   const handleCardClick = useCallback(() => {
-    // Navigate to market details or first pool
-    if (pools.length > 0) {
-      const firstPool = pools[0];
-      const tokenInfo = getPoolTokensForMarket(firstPool, market);
-      if (tokenInfo) {
-        window.location.href = `#/swap?inputCurrency=${tokenInfo.collateralToken.id}&outputCurrency=${tokenInfo.outcomeToken.id}`;
-      }
-    }
-  }, [pools, market]);
+    // Navigate to market info page
+    window.location.href = `#/info/markets/${market.id}`;
+  }, [market]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -567,9 +561,7 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
             )}
           </div>
           <h3 className="market-title">
-            <NavLink to={`/info/markets/${market.id}`} className="market-link">
-              {market.marketName || 'Unknown Market'}
-            </NavLink>
+            {market.marketName || 'Unknown Market'}
           </h3>
         </div>
 

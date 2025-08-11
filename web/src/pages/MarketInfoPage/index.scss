@@ -1,0 +1,50 @@
+.market-info-page {
+    .mock-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+    }
+
+    .market-chart-wrapper {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        
+        .market-chart__toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            
+            .chart-type-selector,
+            .chart-span-selector {
+                display: flex;
+                gap: 0.5rem;
+                
+                .chart-type-btn,
+                .chart-span-btn {
+                    padding: 0.5rem 1rem;
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    color: rgba(255, 255, 255, 0.7);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    font-size: 0.875rem;
+                    
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.05);
+                        color: white;
+                    }
+                    
+                    &.active {
+                        background: rgba(76, 175, 80, 0.2);
+                        border-color: #4CAF50;
+                        color: #4CAF50;
+                    }
+                }
+            }
+        }
+    }
+}

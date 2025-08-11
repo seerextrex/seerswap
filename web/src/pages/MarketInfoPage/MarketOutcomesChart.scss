@@ -1,0 +1,46 @@
+.market-outcomes-chart {
+    padding: 1.5rem;
+    
+    .chart-container {
+        height: 400px;
+        position: relative;
+    }
+    
+    .chart-info {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        
+        .info-text {
+            margin: 0;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.5;
+        }
+    }
+}
+
+.market-chart-loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    gap: 1rem;
+    
+    span {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+.market-chart-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.4);
+}

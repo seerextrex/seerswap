@@ -19,7 +19,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adraffy/ens-normalize@npm:^1.10.1":
+"@adraffy/ens-normalize@npm:^1.10.1, @adraffy/ens-normalize@npm:^1.11.0":
   version: 1.11.0
   resolution: "@adraffy/ens-normalize@npm:1.11.0"
   checksum: 10c0/5111d0f1a273468cb5661ed3cf46ee58de8f32f84e2ebc2365652e66c1ead82649df94c736804e2b9cfa831d30ef24e1cc3575d970dbda583416d3a98d8870a6
@@ -5294,6 +5294,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kurkle/color@npm:^0.3.0":
+  version: 0.3.4
+  resolution: "@kurkle/color@npm:0.3.4"
+  checksum: 10c0/0e9fd55c614b005c5f0c4c755bca19ec0293bc7513b4ea3ec1725234f9c2fa81afbc78156baf555c8b9cb0d305619253c3f5bca016067daeebb3d00ebb4ea683
+  languageName: node
+  linkType: hard
+
 "@leichtgewicht/ip-codec@npm:^2.0.1":
   version: 2.0.4
   resolution: "@leichtgewicht/ip-codec@npm:2.0.4"
@@ -5477,7 +5484,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/reactive-element@npm:^2.0.0, @lit/reactive-element@npm:^2.1.0":
+"@lit-labs/ssr-dom-shim@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@lit-labs/ssr-dom-shim@npm:1.4.0"
+  checksum: 10c0/eb8b4c6ed83db48e2f2c8c038f88e0ac302214918e5c1209458cb82a35ce27ce586100c5692885b2c5520f6941b2c3512f26c4d7b7dd48f13f17f1668553395a
+  languageName: node
+  linkType: hard
+
+"@lit/reactive-element@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "@lit/reactive-element@npm:2.1.1"
+  dependencies:
+    "@lit-labs/ssr-dom-shim": "npm:^1.4.0"
+  checksum: 10c0/200d72c3d1bb8babc88123f3684e52cf490ec20cc7974002d666b092afa18e4a7c1ca15883c84c0b8671361a9875905eb18c1f03d20ecbbbaefdaec6e0c7c4eb
+  languageName: node
+  linkType: hard
+
+"@lit/reactive-element@npm:^2.1.0":
   version: 2.1.0
   resolution: "@lit/reactive-element@npm:2.1.0"
   dependencies:
@@ -5880,6 +5903,15 @@ __metadata:
   dependencies:
     "@noble/hashes": "npm:1.8.0"
   checksum: 10c0/39c84dbfecdca80cfde2ecea4b06ef2ec1255a4df40158d22491d1400057a283f57b2b26c8b1331006e6e061db791f31d47764961c239437032e2f45e8888c1e
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@noble/curves@npm:1.9.2"
+  dependencies:
+    "@noble/hashes": "npm:1.8.0"
+  checksum: 10c0/21d049ae4558beedbf5da0004407b72db84360fa29d64822d82dc9e80251e1ecb46023590cc4b20e70eed697d1b87279b4911dc39f8694c51c874289cfc8e9a7
   languageName: node
   linkType: hard
 
@@ -6414,7 +6446,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/bip32@npm:1.7.0, @scure/bip32@npm:^1.5.0":
+"@scure/bip32@npm:1.7.0, @scure/bip32@npm:^1.5.0, @scure/bip32@npm:^1.7.0":
   version: 1.7.0
   resolution: "@scure/bip32@npm:1.7.0"
   dependencies:
@@ -6445,7 +6477,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/bip39@npm:1.6.0, @scure/bip39@npm:^1.4.0":
+"@scure/bip39@npm:1.6.0, @scure/bip39@npm:^1.4.0, @scure/bip39@npm:^1.6.0":
   version: 1.6.0
   resolution: "@scure/bip39@npm:1.6.0"
   dependencies:
@@ -9117,7 +9149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abitype@npm:1.0.8, abitype@npm:^1.0.6":
+"abitype@npm:1.0.8, abitype@npm:^1.0.6, abitype@npm:^1.0.8":
   version: 1.0.8
   resolution: "abitype@npm:1.0.8"
   peerDependencies:
@@ -9409,8 +9441,10 @@ __metadata:
     "@uniswap/v3-core": "npm:1.0.0"
     "@uniswap/v3-periphery": "npm:^1.1.1"
     "@uniswap/v3-sdk": "npm:^3.2.1"
+    "@wagmi/core": "npm:2.17.2"
     ajv: "npm:^6.12.3"
     algebra-packeges: "npm:^2.1.4"
+    chart.js: "npm:^4.5.0"
     cids: "npm:^1.0.0"
     connectkit: "npm:^1.9.0"
     copy-to-clipboard: "npm:^3.2.0"
@@ -9440,6 +9474,7 @@ __metadata:
     qs: "npm:^6.9.4"
     random-gradient: "npm:^0.0.2"
     react: "npm:^18.2.0"
+    react-chartjs-2: "npm:^5.3.0"
     react-device-detect: "npm:^1.6.2"
     react-dom: "npm:^18.2.0"
     react-feather: "npm:^2.0.8"
@@ -9466,7 +9501,7 @@ __metadata:
     typescript: "npm:^5.8.3"
     ua-parser-js: "npm:^0.7.28"
     viem: "npm:^2.30.0"
-    wagmi: "npm:^2.15.4"
+    wagmi: "npm:2.15.4"
     wcag-contrast: "npm:^3.0.0"
     web-vitals: "npm:^2.1.2"
     workbox-core: "npm:^6.1.0"
@@ -11100,6 +11135,15 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 10c0/96e4731b9ec8050cbb56ab684e8c48d6c33f7826b755802d14e3ebfdc51c57afeece3ea39bc6b09acc359e4363525388b915e16640c1378053820f5e70d0f27d
+  languageName: node
+  linkType: hard
+
+"chart.js@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "chart.js@npm:4.5.0"
+  dependencies:
+    "@kurkle/color": "npm:^0.3.0"
+  checksum: 10c0/f12c7f9a238ee7ce6d3f7111628e9daba86bb8ff8e54cfe63525fde6ded9003c72c4c8d2c7d5702539dc0aff7e682dfec058660ade8d03a970da002656d4ac91
   languageName: node
   linkType: hard
 
@@ -18583,17 +18627,26 @@ __metadata:
   linkType: hard
 
 "lit-element@npm:^4.0.0":
-  version: 4.2.0
-  resolution: "lit-element@npm:4.2.0"
+  version: 4.2.1
+  resolution: "lit-element@npm:4.2.1"
   dependencies:
-    "@lit-labs/ssr-dom-shim": "npm:^1.2.0"
+    "@lit-labs/ssr-dom-shim": "npm:^1.4.0"
     "@lit/reactive-element": "npm:^2.1.0"
     lit-html: "npm:^3.3.0"
-  checksum: 10c0/20577f2092ac1e1bd82fba2bbc9ce0122b35dc2495906d3fbcb437c3727b9c8ed1c0691b8b859f65a51e910db1341d95233c117e1e1c88c450b30e2d3b62fdb8
+  checksum: 10c0/2cb30cc7c5a006cd7995f882c5e9ed201638dc3513fdee989dd7b78d8ceb201cf6930abe5ebc5185d7fc3648933a6b6187742d5534269961cd20b9a78617068d
   languageName: node
   linkType: hard
 
-"lit-html@npm:^3.1.0, lit-html@npm:^3.3.0":
+"lit-html@npm:^3.1.0":
+  version: 3.3.1
+  resolution: "lit-html@npm:3.3.1"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.2"
+  checksum: 10c0/0dfb645f35c2ae129a40c09550b4d0e60617b715af7f2e0b825cdfd0624118fc4bf16e9cfaabdfbe43469522e145057d3cc46c64ca1019681480e4b9ae8f52cd
+  languageName: node
+  linkType: hard
+
+"lit-html@npm:^3.3.0":
   version: 3.3.0
   resolution: "lit-html@npm:3.3.0"
   dependencies:
@@ -20265,6 +20318,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ox@npm:0.8.6":
+  version: 0.8.6
+  resolution: "ox@npm:0.8.6"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:^1.11.0"
+    "@noble/ciphers": "npm:^1.3.0"
+    "@noble/curves": "npm:^1.9.1"
+    "@noble/hashes": "npm:^1.8.0"
+    "@scure/bip32": "npm:^1.7.0"
+    "@scure/bip39": "npm:^1.6.0"
+    abitype: "npm:^1.0.8"
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/025c638966c6e569bb38a78a6f9f84bbeb9f5b0a594ef011ab3f81414edcaf5b20d9ea7d8f90471ddafdcb3f21c61f7a2255d35d2032e8daafbc8b20d98d27cf
+  languageName: node
+  linkType: hard
+
 "p-cancelable@npm:^1.0.0":
   version: 1.1.0
   resolution: "p-cancelable@npm:1.1.0"
@@ -21677,10 +21751,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact@npm:^10.16.0, preact@npm:^10.24.2":
+"preact@npm:^10.16.0":
   version: 10.26.8
   resolution: "preact@npm:10.26.8"
   checksum: 10c0/83b6a38af15386c0d93bbaf12996d624354f9c511f79d188f0d673b8f91740849b0603c207da1f10450b07a8659333864a3735d3b5fe23a790ef6cb85d1107c8
+  languageName: node
+  linkType: hard
+
+"preact@npm:^10.24.2":
+  version: 10.27.0
+  resolution: "preact@npm:10.27.0"
+  checksum: 10c0/f00d84fdceca2d6236c093afb005ab34bfc9bac7fdeac2bb83c09791034692e0c1eb431659ba1fba1b9914ca0f9918da13b0a212ffb51c3ca2c2f5e5f5f01219
   languageName: node
   linkType: hard
 
@@ -22165,6 +22246,16 @@ __metadata:
     regenerator-runtime: "npm:^0.13.9"
     whatwg-fetch: "npm:^3.6.2"
   checksum: 10c0/7079c81717f4707d078943ab507771c3e80333e6c2c80c8d9a02e4a5661974e9bb196aea9f56336f559214a23f495c5f3907937d13a070e701019ae7a9d53c26
+  languageName: node
+  linkType: hard
+
+"react-chartjs-2@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "react-chartjs-2@npm:5.3.0"
+  peerDependencies:
+    chart.js: ^4.1.1
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/4415d40217c084a49f9a936fbd30f67e0e705148e6f8359bec65601033d1076f31085c45793839fc29ec833e6c427b0bf9861a0c54c432c08d35bc9590ffa41a
   languageName: node
   linkType: hard
 
@@ -26265,7 +26356,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:>=2.23.11, viem@npm:^2.1.1, viem@npm:^2.30.0":
+"viem@npm:>=2.23.11":
+  version: 2.33.3
+  resolution: "viem@npm:2.33.3"
+  dependencies:
+    "@noble/curves": "npm:1.9.2"
+    "@noble/hashes": "npm:1.8.0"
+    "@scure/bip32": "npm:1.7.0"
+    "@scure/bip39": "npm:1.6.0"
+    abitype: "npm:1.0.8"
+    isows: "npm:1.0.7"
+    ox: "npm:0.8.6"
+    ws: "npm:8.18.2"
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/3e1e1849f88529d37e5a52336003209d2b054364738bdd2b89ef3e684cdefe7894a541886bfbfe35ef6c5441849cd7fa6f393ecfa1008c09a5cacc2c978fd42d
+  languageName: node
+  linkType: hard
+
+"viem@npm:^2.1.1, viem@npm:^2.30.0":
   version: 2.30.5
   resolution: "viem@npm:2.30.5"
   dependencies:
@@ -26304,7 +26416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^2.15.4":
+"wagmi@npm:2.15.4":
   version: 2.15.4
   resolution: "wagmi@npm:2.15.4"
   dependencies:

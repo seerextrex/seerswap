@@ -5,6 +5,7 @@ import { useInfoSubgraph } from "../../hooks/subgraph/useInfoSubgraph";
 import { InfoPools } from "../../components/InfoPools";
 import { InfoTokens } from "../../components/InfoTokens";
 import PoolInfoPage from "../PoolInfoPage";
+import MarketInfoPage from "../MarketInfoPage";
 import { InfoTotalStats } from "../../components/InfoTotalStats";
 import MarketPoolsView from "../../components/MarketPoolsView";
 import Card from "../../shared/components/Card/Card";
@@ -142,6 +143,13 @@ function InfoPage() {
                                 poolsResult={poolsResult}
                                 totalStats={totalStats}
                             />
+                        )}
+                    />
+                    <Route
+                        exact
+                        path={`${path}/markets/:id`}
+                        render={(e) => (
+                            <MarketInfoPage {...e} />
                         )}
                     />
                     <Route exact path={`${path}/tokens`}>

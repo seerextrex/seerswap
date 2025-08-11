@@ -567,7 +567,9 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
             )}
           </div>
           <h3 className="market-title">
-            {market.marketName || 'Unknown Market'}
+            <NavLink to={`/info/markets/${market.id}`} className="market-link">
+              {market.marketName || 'Unknown Market'}
+            </NavLink>
           </h3>
         </div>
 

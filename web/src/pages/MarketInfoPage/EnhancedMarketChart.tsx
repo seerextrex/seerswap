@@ -40,14 +40,54 @@ interface EnhancedMarketChartProps {
 
 // Premium color palette inspired by Apple and modern fintech
 const OUTCOME_COLORS = [
-    { main: "#00C896", gradient: "rgba(0, 200, 150, 0.1)" }, // Teal
-    { main: "#FF6B6B", gradient: "rgba(255, 107, 107, 0.1)" }, // Coral
-    { main: "#4ECDC4", gradient: "rgba(78, 205, 196, 0.1)" }, // Mint
-    { main: "#FFD93D", gradient: "rgba(255, 217, 61, 0.1)" }, // Gold
-    { main: "#6C5CE7", gradient: "rgba(108, 92, 231, 0.1)" }, // Purple
-    { main: "#00B4D8", gradient: "rgba(0, 180, 216, 0.1)" }, // Sky Blue
-    { main: "#F72585", gradient: "rgba(247, 37, 133, 0.1)" }, // Pink
-    { main: "#20BF55", gradient: "rgba(32, 191, 85, 0.1)" }, // Green
+    { 
+        main: "#00C896", 
+        gradient: "rgba(0, 200, 150, 0.1)",
+        glow: "rgba(0, 200, 150, 0.4)",
+        hover: "#00E5A8"
+    }, // Teal
+    { 
+        main: "#FF6B6B", 
+        gradient: "rgba(255, 107, 107, 0.1)",
+        glow: "rgba(255, 107, 107, 0.4)",
+        hover: "#FF8585"
+    }, // Coral
+    { 
+        main: "#4ECDC4", 
+        gradient: "rgba(78, 205, 196, 0.1)",
+        glow: "rgba(78, 205, 196, 0.4)",
+        hover: "#6EDDD5"
+    }, // Mint
+    { 
+        main: "#FFD93D", 
+        gradient: "rgba(255, 217, 61, 0.1)",
+        glow: "rgba(255, 217, 61, 0.4)",
+        hover: "#FFE366"
+    }, // Gold
+    { 
+        main: "#6C5CE7", 
+        gradient: "rgba(108, 92, 231, 0.1)",
+        glow: "rgba(108, 92, 231, 0.4)",
+        hover: "#8577FF"
+    }, // Purple
+    { 
+        main: "#00B4D8", 
+        gradient: "rgba(0, 180, 216, 0.1)",
+        glow: "rgba(0, 180, 216, 0.4)",
+        hover: "#00D4FF"
+    }, // Sky Blue
+    { 
+        main: "#F72585", 
+        gradient: "rgba(247, 37, 133, 0.1)",
+        glow: "rgba(247, 37, 133, 0.4)",
+        hover: "#FF4D9A"
+    }, // Pink
+    { 
+        main: "#20BF55", 
+        gradient: "rgba(32, 191, 85, 0.1)",
+        glow: "rgba(32, 191, 85, 0.4)",
+        hover: "#3DDB72"
+    }, // Green
 ];
 
 export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
@@ -75,17 +115,18 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                     data: [],
                     borderColor: colorSet.main,
                     backgroundColor: colorSet.gradient,
-                    tension: 0,
-                    borderWidth: 2.5,
-                    pointRadius: 3,
-                    pointHoverRadius: 7,
+                    tension: 0.1,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
                     pointHoverBorderWidth: 3,
-                    pointBackgroundColor: colorSet.main,
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 1.5,
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: colorSet.main,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: colorSet.main,
+                    pointBorderWidth: 2,
+                    pointHoverBackgroundColor: colorSet.hover,
+                    pointHoverBorderColor: '#fff',
                     fill: false,
+                    cubicInterpolationMode: 'monotone' as const,
                     order: index + 1,
                     spanGaps: true,
                 };
@@ -179,17 +220,18 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                 data: dataPoints,
                 borderColor: colorSet.main,
                 backgroundColor: colorSet.gradient,
-                tension: 0,
-                borderWidth: isHovered ? 3.5 : 2.5,
-                pointRadius: 3,
-                pointHoverRadius: 7,
+                tension: 0.1,
+                borderWidth: isHovered ? 4 : 3,
+                pointRadius: isHovered ? 5 : 4,
+                pointHoverRadius: 10,
                 pointHoverBorderWidth: 3,
-                pointBackgroundColor: colorSet.main,
-                pointBorderColor: '#fff',
-                pointBorderWidth: 1.5,
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: colorSet.main,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: colorSet.main,
+                pointBorderWidth: 2,
+                pointHoverBackgroundColor: colorSet.hover,
+                pointHoverBorderColor: '#fff',
                 fill: false, // Disable fill to focus on line clarity
+                cubicInterpolationMode: 'monotone' as const,
                 order: isHovered ? 0 : index + 1,
                 spanGaps: true, // Connect line across null/undefined values
                 hidden: false, // Always show in legend even if no data
@@ -208,6 +250,14 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
         interaction: {
             mode: 'index',
             intersect: false,
+            axis: 'x',
+        },
+        animation: {
+            duration: 750,
+            easing: 'easeInOutQuart' as const,
+        },
+        hover: {
+            animationDuration: 200,
         },
         plugins: {
             legend: {
@@ -239,23 +289,28 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             },
             tooltip: {
                 enabled: true,
-                backgroundColor: 'rgba(13, 17, 28, 0.95)',
-                titleColor: 'rgba(255, 255, 255, 0.9)',
-                bodyColor: 'rgba(255, 255, 255, 0.8)',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                titleColor: '#fff',
+                bodyColor: 'rgba(255, 255, 255, 0.95)',
+                borderColor: 'rgba(255, 255, 255, 0.2)',
                 borderWidth: 1,
-                padding: 12,
-                bodySpacing: 8,
+                padding: 16,
+                bodySpacing: 12,
                 titleFont: {
-                    size: 13,
+                    size: 14,
                     weight: 600 as const,
+                    family: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
                 },
                 bodyFont: {
-                    size: 12,
-                    weight: 400 as const,
+                    size: 13,
+                    weight: 500 as const,
+                    family: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
                 },
-                cornerRadius: 12,
+                cornerRadius: 16,
                 displayColors: true,
+                boxPadding: 6,
+                caretSize: 8,
+                caretPadding: 10,
                 callbacks: {
                     title: (items) => {
                         if (!items.length) return '';
@@ -268,33 +323,42 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                         });
                     },
                     label: (context) => {
-                        let label = context.dataset.label || "";
-                        if (label) {
-                            label += ": ";
-                        }
-                        // Show as percentage probability with change indicator
+                        const label = context.dataset.label || "";
                         const currentValue = context.parsed.y;
-                        const percentage = (currentValue * 100).toFixed(3);
+                        const percentage = (currentValue * 100).toFixed(2);
                         
                         // Calculate change from previous point
                         const dataIndex = context.dataIndex;
                         const dataset = context.dataset;
+                        let changeInfo = '';
+                        
                         if (dataIndex > 0 && dataset.data) {
                             const prevValue = dataset.data[dataIndex - 1] as number;
                             if (prevValue !== null && prevValue !== undefined) {
-                                const change = ((currentValue - prevValue) * 100).toFixed(3);
-                                const arrow = currentValue > prevValue ? '↑' : currentValue < prevValue ? '↓' : '→';
-                                const changeColor = currentValue > prevValue ? '+' : '';
-                                label += `${percentage}% (${changeColor}${change}% ${arrow})`;
-                            } else {
-                                label += `${percentage}%`;
+                                const change = (currentValue - prevValue) * 100;
+                                const changeAbs = Math.abs(change);
+                                
+                                if (changeAbs >= 0.01) { // Only show if change is meaningful
+                                    const arrow = change > 0 ? '↑' : '↓';
+                                    const changeStr = changeAbs.toFixed(2);
+                                    const changeColor = change > 0 ? '🟢' : '🔴';
+                                    changeInfo = `  ${changeColor} ${arrow} ${changeStr}%`;
+                                }
                             }
-                        } else {
-                            label += `${percentage}%`;
                         }
                         
-                        return label;
+                        return [
+                            `${label}`,
+                            `${percentage}%${changeInfo}`
+                        ];
                     },
+                    afterLabel: (context) => {
+                        // Add visual separator between outcomes
+                        return '';
+                    },
+                },
+                animation: {
+                    duration: 200,
                 },
             },
         },
@@ -349,12 +413,13 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
         },
         elements: {
             line: {
-                borderJoinStyle: 'miter' as const,
-                borderCapStyle: 'butt' as const,
+                borderJoinStyle: 'round' as const,
+                borderCapStyle: 'round' as const,
             },
             point: {
-                hitRadius: 10,
-                hoverRadius: 8,
+                hitRadius: 12,
+                hoverRadius: 10,
+                rotation: 0,
             },
         },
     };
@@ -386,10 +451,10 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             </div>
             <div className="chart-legend">
                 <div className="legend-item">
-                    <span className="legend-icon">💡</span>
+                    <span className="legend-icon">✨</span>
                     <span className="legend-text">
                         <Trans>
-                            Probability represents the market's expectation of each outcome
+                            Hover over data points to see price changes • Each point shows market sentiment at that moment
                         </Trans>
                     </span>
                 </div>

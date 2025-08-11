@@ -7,17 +7,122 @@
 
     .chart-container {
         width: 100%;
-        height: 420px;
+        height: 440px;
         position: relative;
-        padding: 1.25rem;
-        background: linear-gradient(135deg, rgba(10, 10, 15, 0.4) 0%, rgba(20, 20, 30, 0.3) 100%);
-        border-radius: 20px;
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 1.5rem;
+        background: 
+            linear-gradient(135deg, rgba(15, 15, 20, 0.6) 0%, rgba(25, 25, 35, 0.4) 100%),
+            radial-gradient(circle at 20% 50%, rgba(0, 200, 150, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 80% 50%, rgba(108, 92, 231, 0.03) 0%, transparent 50%);
+        border-radius: 24px;
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 
-            0 4px 24px rgba(0, 0, 0, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            0 8px 32px rgba(0, 0, 0, 0.12),
+            0 2px 8px rgba(0, 0, 0, 0.08),
+            inset 0 2px 0 rgba(255, 255, 255, 0.04),
             inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.15) 20%,
+                rgba(255, 255, 255, 0.25) 50%, 
+                rgba(255, 255, 255, 0.15) 80%,
+                transparent 100%);
+            opacity: 0.8;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.01) 0%,
+                transparent 70%
+            );
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+
+        &:hover {
+            background: 
+                linear-gradient(135deg, rgba(15, 15, 20, 0.7) 0%, rgba(25, 25, 35, 0.5) 100%),
+                radial-gradient(circle at 20% 50%, rgba(0, 200, 150, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(108, 92, 231, 0.05) 0%, transparent 50%);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 
+                0 12px 48px rgba(0, 0, 0, 0.15),
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                inset 0 2px 0 rgba(255, 255, 255, 0.06),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px) scale(1.002);
+
+            &::before {
+                animation-duration: 1.5s;
+            }
+        }
+
+        canvas {
+            max-height: 380px !important;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            transition: filter 0.3s ease;
+            position: relative;
+            z-index: 1;
+            
+            &:hover {
+                filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+            }
+        }
+    }
+
+    @keyframes shimmer {
+        0%, 100% {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        50% {
+            transform: translateX(100%);
+            opacity: 1;
+        }
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .chart-legend {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 1.25rem;
+        background: 
+            linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%),
+            radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
         &::before {
@@ -31,48 +136,44 @@
                 transparent 0%, 
                 rgba(255, 255, 255, 0.1) 50%, 
                 transparent 100%);
-            border-radius: 20px 20px 0 0;
         }
 
         &:hover {
-            background: linear-gradient(135deg, rgba(10, 10, 15, 0.5) 0%, rgba(20, 20, 30, 0.35) 100%);
+            background: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%),
+                radial-gradient(circle at center, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
             border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
-
-        canvas {
-            max-height: 370px !important;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-    }
-
-    .chart-legend {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.75rem 1rem;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
 
             .legend-icon {
-                font-size: 1.2rem;
+                font-size: 1.25rem;
+                animation: pulse 2s ease-in-out infinite;
             }
 
             .legend-text {
                 font-size: 0.875rem;
-                color: rgba(255, 255, 255, 0.7);
-                font-weight: 400;
+                color: rgba(255, 255, 255, 0.8);
+                font-weight: 500;
+                letter-spacing: 0.02em;
+                font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
             }
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.9;
         }
     }
 }

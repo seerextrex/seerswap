@@ -1,40 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .market-info-page {
-    --chart-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-    --chart-border: rgba(255, 255, 255, 0.08);
-    --chart-hover-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
-    --chart-hover-border: rgba(255, 255, 255, 0.15);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+    animation: pageSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     
-    .mock-loader {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 400px;
-        gap: 1rem;
-        
-        .loading-text {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.875rem;
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    @keyframes pageSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
         }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
-
-    .market-chart-wrapper {
+    
+    // Back button - optimized without backdrop-filter
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(30, 30, 40, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 100px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                    border-color 0.2s ease;
+        margin-bottom: 1.5rem !important;
         position: relative;
-        background: var(--chart-bg);
-        border: 1px solid var(--chart-border);
-        backdrop-filter: blur(20px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         overflow: hidden;
+        
+        // Pseudo-element for hover effect instead of box-shadow animation
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        svg {
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        &:hover {
+            transform: translateX(-3px);
+            border-color: rgba(255, 255, 255, 0.15);
+            
+            &::before {
+                opacity: 1;
+            }
+            
+            svg {
+                transform: translateX(-2px);
+            }
+        }
+        
+        &:focus-visible {
+            outline: 2px solid #00C896;
+            outline-offset: 2px;
+        }
+    }
+    
+    // Premium Card - optimized without heavy filters
+    .Card {
+        background: linear-gradient(135deg, 
+            rgba(20, 20, 30, 0.98) 0%, 
+            rgba(15, 15, 25, 0.98) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s ease;
         
         &::before {
             content: '';
@@ -45,168 +87,256 @@
             height: 1px;
             background: linear-gradient(90deg, 
                 transparent, 
-                rgba(255, 255, 255, 0.3), 
+                rgba(255, 255, 255, 0.08) 20%, 
+                rgba(255, 255, 255, 0.08) 80%, 
                 transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
         
         &:hover {
-            background: var(--chart-hover-bg);
-            border-color: var(--chart-hover-border);
-            box-shadow: 
-                0 10px 40px rgba(0, 0, 0, 0.15),
-                0 2px 10px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
             transform: translateY(-2px);
+        }
+    }
+    
+    .error-message {
+        text-align: center;
+        padding: 4rem 2rem;
+        animation: fadeIn 0.4s ease;
+        
+        .error-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            // Removed filter effect for performance
+        }
+        
+        h3 {
+            margin-bottom: 0.75rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        
+        p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .retry-button {
+            background: linear-gradient(135deg, #00C896 0%, #00A67E 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 100px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;
+            transition: transform 0.2s ease,
+                        opacity 0.2s ease;
+            position: relative;
             
-            &::before {
-                opacity: 1;
+            &:hover {
+                transform: translateY(-2px);
+                opacity: 0.95;
             }
+            
+            &:active {
+                transform: translateY(0);
+            }
+            
+            &:focus-visible {
+                outline: 2px solid #00C896;
+                outline-offset: 2px;
+            }
+        }
+    }
+    
+    // Removed pulse animation for performance
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    .mock-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem 2rem;
+        min-height: 500px;
+        
+        .loading-text {
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            // Removed continuous animation
+        }
+    }
+    
+    .market-chart-wrapper {
+        background: rgba(25, 25, 35, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        margin-top: 2rem;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s ease;
+        
+        // Removed rotating animation for performance
+        
+        &:hover {
+            transform: translateY(-2px);
         }
         
         .market-chart__toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+            gap: 1rem;
             
             .chart-header {
-                display: flex;
-                align-items: center;
-                
                 .chart-title {
-                    margin: 0;
-                    font-size: 1.125rem;
-                    font-weight: 600;
+                    font-size: 1.5rem;
+                    font-weight: 700;
                     color: rgba(255, 255, 255, 0.95);
-                    letter-spacing: -0.02em;
+                    margin: 0;
+                    letter-spacing: -0.03em;
                 }
             }
             
-            .chart-type-selector,
             .chart-span-selector {
                 display: flex;
-                gap: 0.5rem;
+                gap: 0.25rem;
+                padding: 0.25rem;
+                background: rgba(255, 255, 255, 0.04);
+                border-radius: 100px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 
-                .chart-type-btn,
                 .chart-span-btn {
-                    padding: 0.5rem 1rem;
-                    background: rgba(255, 255, 255, 0.02);
-                    border: 1px solid rgba(255, 255, 255, 0.15);
+                    padding: 0.625rem 1.25rem;
+                    background: transparent;
+                    border: none;
                     color: rgba(255, 255, 255, 0.7);
-                    border-radius: 10px;
+                    border-radius: 100px;
                     cursor: pointer;
-                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                    font-size: 0.875rem;
+                    transition: background-color 0.2s ease,
+                                color 0.2s ease;
+                    font-size: 0.9rem;
                     font-weight: 500;
-                    letter-spacing: 0.01em;
+                    letter-spacing: -0.01em;
                     position: relative;
-                    overflow: hidden;
                     
-                    &::before {
-                        content: '';
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 0;
-                        height: 0;
-                        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-                        transform: translate(-50%, -50%);
-                        transition: width 0.3s, height 0.3s;
-                    }
-                    
-                    &:hover {
-                        background: rgba(255, 255, 255, 0.08);
-                        border-color: rgba(255, 255, 255, 0.25);
-                        color: white;
-                        transform: translateY(-1px);
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                        
-                        &::before {
-                            width: 100px;
-                            height: 100px;
-                        }
+                    &:hover:not(.active) {
+                        color: rgba(255, 255, 255, 0.9);
+                        background: rgba(255, 255, 255, 0.06);
                     }
                     
                     &.active {
-                        background: linear-gradient(135deg, rgba(0, 200, 150, 0.25) 0%, rgba(0, 200, 150, 0.15) 100%);
-                        border-color: rgba(0, 200, 150, 0.5);
-                        color: #00C896;
-                        box-shadow: 
-                            0 4px 12px rgba(0, 200, 150, 0.2),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-                        
-                        &:hover {
-                            background: linear-gradient(135deg, rgba(0, 200, 150, 0.3) 0%, rgba(0, 200, 150, 0.2) 100%);
-                            border-color: rgba(0, 200, 150, 0.6);
-                            transform: translateY(-1px) scale(1.02);
-                        }
+                        background: #00C896;
+                        color: white;
+                        font-weight: 600;
+                    }
+                    
+                    &:focus-visible {
+                        outline: 2px solid #00C896;
+                        outline-offset: 2px;
+                    }
+                }
+            }
+        }
+        
+        .chart-error {
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 1;
+            
+            .error-icon {
+                font-size: 3.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            p {
+                color: rgba(255, 255, 255, 0.8);
+                margin-bottom: 0.75rem;
+                font-size: 1rem;
+                
+                &.error-detail {
+                    font-size: 0.9rem;
+                    color: rgba(255, 255, 255, 0.6);
+                    margin-bottom: 2rem;
+                    font-family: 'SF Mono', monospace;
+                }
+            }
+            
+            .retry-button {
+                background: #FFD93D;
+                color: #1A1A2E;
+                border: none;
+                padding: 0.75rem 1.75rem;
+                border-radius: 100px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: transform 0.2s ease,
+                            opacity 0.2s ease;
+                
+                &:hover {
+                    transform: translateY(-2px);
+                    opacity: 0.9;
+                }
+                
+                &:focus-visible {
+                    outline: 2px solid #FFD93D;
+                    outline-offset: 2px;
+                }
+            }
+        }
+    }
+    
+    // Responsive design
+    @media (max-width: 768px) {
+        .market-chart-wrapper {
+            padding: 1.5rem;
+            
+            .market-chart__toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+                
+                .chart-span-selector {
+                    width: 100%;
+                    justify-content: stretch;
+                    
+                    .chart-span-btn {
+                        flex: 1;
                     }
                 }
             }
         }
     }
     
-    .error-message, .chart-error {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 2rem;
-        text-align: center;
-        gap: 1rem;
-        
-        .error-icon {
-            font-size: 3rem;
-            opacity: 0.7;
+    // Reduced motion support
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
         }
-        
-        h3 {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0;
-        }
-        
-        p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.875rem;
-            margin: 0;
-            max-width: 400px;
-        }
-        
-        .error-detail {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
-            font-family: monospace;
-        }
-        
-        .retry-button {
-            margin-top: 1rem;
-            padding: 0.75rem 2rem;
-            background: linear-gradient(135deg, rgba(0, 200, 150, 0.2) 0%, rgba(0, 200, 150, 0.1) 100%);
-            border: 1px solid rgba(0, 200, 150, 0.3);
-            color: #00C896;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            &:hover {
-                background: linear-gradient(135deg, rgba(0, 200, 150, 0.3) 0%, rgba(0, 200, 150, 0.15) 100%);
-                border-color: rgba(0, 200, 150, 0.5);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 200, 150, 0.2);
-            }
-        }
-    }
-    
-    .chart-error {
-        min-height: 400px;
-        background: var(--chart-bg);
-        border: 1px solid var(--chart-border);
-        border-radius: 16px;
     }
 }

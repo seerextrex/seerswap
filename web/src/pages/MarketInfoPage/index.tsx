@@ -11,7 +11,6 @@ import { ChartSpan, ChartType } from "../../models/enums";
 import { useMarketData } from "../../hooks/useMarketData";
 import { MarketInfoHeader } from "./MarketInfoHeader";
 import { EnhancedMarketChart } from "./EnhancedMarketChart";
-import { MarketInfoStats } from "./MarketInfoStats";
 import "./index.scss";
 
 interface MarketInfoPageProps {
@@ -106,7 +105,11 @@ export default function MarketInfoPage({
 
     return (
         <div className="market-info-page mb-3">
-            <NavLink className="f mb-1 c-p hover-op trans-op w-fc" to="/info/markets">
+            <NavLink 
+                className="back-link f mb-1 c-p hover-op trans-op w-fc" 
+                to="/info/markets"
+                aria-label="Navigate back to markets list"
+            >
                 <ArrowLeft className="mr-05" size="1rem" />
                 <span>
                     <Trans>Back to markets</Trans>
@@ -122,6 +125,7 @@ export default function MarketInfoPage({
                         <button 
                             className="retry-button"
                             onClick={() => fetchMarket(id!)}
+                            aria-label="Retry loading market data"
                         >
                             <Trans>Try Again</Trans>
                         </button>
@@ -134,13 +138,7 @@ export default function MarketInfoPage({
                         validOutcomes={validOutcomes}
                     />
                     
-                    <MarketInfoStats
-                        market={market}
-                        refreshHandler={() => {
-                            fetchMarket(id!);
-                        }}
-                        isLoading={false}
-                    />
+                    {/* Removed redundant MarketInfoStats component - stats already shown in header */}
                     
                     <div className="market-chart-wrapper br-12 ph-1 pb-1 mt-1">
                         <div className="market-chart__toolbar">
@@ -153,6 +151,8 @@ export default function MarketInfoPage({
                                         key={chartSpan.type}
                                         className={`chart-span-btn ${span === chartSpan.type ? 'active' : ''}`}
                                         onClick={() => setSpan(chartSpan.type)}
+                                        aria-pressed={span === chartSpan.type}
+                                        aria-label={`Show ${chartSpan.title.toLowerCase()} chart data`}
                                     >
                                         {chartSpan.title}
                                     </button>
@@ -178,6 +178,7 @@ export default function MarketInfoPage({
                                             market
                                         );
                                     }}
+                                    aria-label="Retry loading chart data"
                                 >
                                     <Trans>Retry</Trans>
                                 </button>

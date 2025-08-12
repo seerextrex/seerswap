@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState, useCallback } from "react";
 import { t, Trans } from "@lingui/macro";
 import {
     Chart as ChartJS,
@@ -12,6 +12,7 @@ import {
     ChartOptions,
     Filler,
     TooltipItem,
+    LegendItem,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { ChartType } from "../../models/enums";
@@ -37,6 +38,7 @@ interface EnhancedMarketChartProps {
     span: number;
     type: ChartType;
     selectedOutcome?: number;
+    onOutcomeSelect?: (index: number) => void;
 }
 
 // Premium color palette inspired by Apple and modern fintech
@@ -99,7 +101,22 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
     span,
     type,
     selectedOutcome,
+    onOutcomeSelect,
 }) => {
+    const [hoveredOutcome, setHoveredOutcome] = useState<number | null>(null);
+    const [outcomeImageErrors, setOutcomeImageErrors] = useState<{ [key: number]: boolean }>({});
+
+    const handleOutcomeImageError = useCallback((index: number) => {
+        setOutcomeImageErrors(prev => ({ ...prev, [index]: true }));
+    }, []);
+
+    const outcomeImages = useMemo(() => {
+        if (!market?.image?.[0]?.cidOutcomes) return [];
+        return outcomes.map((_, index) => {
+            const imageUrl = market.image[0].cidOutcomes[index];
+            return imageUrl ? `https://ipfs.io${imageUrl}` : null;
+        });
+    }, [market, outcomes]);
     const chartData = useMemo(() => {
         // Even if no data, we should still show all outcomes in the legend
         if (!outcomes || outcomes.length === 0) {
@@ -255,20 +272,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
         animation: false,
         plugins: {
             legend: {
-                display: true,
-                position: 'top' as const,
-                align: 'start',
-                labels: {
-                    usePointStyle: true,
-                    pointStyle: 'circle',
-                    padding: 20,
-                    font: {
-                        size: 13,
-                        weight: 500 as const,
-                        family: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif'
-                    },
-                    color: 'rgba(255, 255, 255, 0.9)',
-                },
+                display: false, // We'll create a custom legend
             },
             title: {
                 display: false,
@@ -431,17 +435,77 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
 
     return (
         <div className="enhanced-market-chart">
+            {/* Custom Legend with Outcome Images */}
+            <div className="custom-legend">
+                {outcomes.map((outcome, index) => {
+                    const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
+                    const isHovered = hoveredOutcome === index;
+                    const isSelected = selectedOutcome === index;
+                    const hasData = chartData?.datasets[index]?.data.some(d => d !== null);
+                    const imageUrl = outcomeImages[index];
+                    
+                    return (
+                        <div
+                            key={index}
+                            className={`legend-outcome ${
+                                isSelected ? 'selected' : ''
+                            } ${isHovered ? 'hovered' : ''} ${
+                                !hasData ? 'no-data' : ''
+                            }`}
+                            onMouseEnter={() => setHoveredOutcome(index)}
+                            onMouseLeave={() => setHoveredOutcome(null)}
+                            onClick={() => onOutcomeSelect?.(index)}
+                            style={{
+                                '--outcome-color': colorSet.main,
+                                '--outcome-hover': colorSet.hover,
+                                '--outcome-glow': colorSet.glow,
+                            } as any}
+                        >
+                            <div className="outcome-image-wrapper">
+                                {imageUrl && !outcomeImageErrors[index] ? (
+                                    <img
+                                        src={imageUrl}
+                                        alt={outcome}
+                                        className="outcome-image"
+                                        onError={() => handleOutcomeImageError(index)}
+                                    />
+                                ) : (
+                                    <div className="outcome-image-placeholder">
+                                        <span>{outcome.charAt(0).toUpperCase()}</span>
+                                    </div>
+                                )}
+                                <div className="outcome-indicator" />
+                            </div>
+                            <div className="outcome-info">
+                                <span className="outcome-name">{outcome}</span>
+                                {chartData && chartData.datasets[index] && (
+                                    <span className="outcome-price">
+                                        {(() => {
+                                            const dataset = chartData.datasets[index];
+                                            const lastPrice = dataset.data
+                                                .filter(d => d !== null)
+                                                .slice(-1)[0];
+                                            return lastPrice !== undefined
+                                                ? `${(lastPrice * 100).toFixed(1)}%`
+                                                : '--';
+                                        })()}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            
             <div className="chart-container">
                 <Line data={chartData} options={options} />
             </div>
-            <div className="chart-legend">
-                <div className="legend-item">
-                    <span className="legend-icon">✨</span>
-                    <span className="legend-text">
-                        <Trans>
-                            Hover over data points to see price changes • Each point shows market sentiment at that moment
-                        </Trans>
-                    </span>
+            
+            <div className="chart-insight">
+                <div className="insight-text">
+                    <Trans>
+                        Market sentiment visualization • Hover over data points for detailed price movements
+                    </Trans>
                 </div>
             </div>
         </div>

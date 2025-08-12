@@ -27,7 +27,7 @@ export default function MarketInfoPage({
 }: MarketInfoPageProps & RouteComponentProps<{ id?: string }>) {
     const { address: account } = useAccount();
     
-    const [span, setSpan] = useState(ChartSpan.DAY);
+    const [span, setSpan] = useState(ChartSpan.MONTH);
     const [type, setType] = useState(ChartType.PRICE);
     const [selectedOutcome, setSelectedOutcome] = useState<number>(0);
     
@@ -148,7 +148,9 @@ export default function MarketInfoPage({
                                 <div className="market-title-block">
                                     <h1 className="market-title">{market.marketName || market.title}</h1>
                                     <div className="market-meta">
-                                        <span className="market-category">{market.category}</span>
+                                        {market.category && (
+                                            <span className="market-category">{market.category}</span>
+                                        )}
                                         <span className={`market-status ${market.closed ? 'closed' : 'active'}`}>
                                             {market.closed ? t`Closed` : t`Active`}
                                         </span>
@@ -205,6 +207,7 @@ export default function MarketInfoPage({
                                         span={span}
                                         type={type}
                                         selectedOutcome={selectedOutcome}
+                                        onOutcomeSelect={setSelectedOutcome}
                                     />
                                 )}
                             </div>

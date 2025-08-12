@@ -15,6 +15,213 @@
         }
     }
 
+    // Custom Legend with Outcome Images
+    .custom-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.03) 0%,
+            rgba(255, 255, 255, 0.01) 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.05) 0%,
+                rgba(255, 255, 255, 0.02) 100%);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .legend-outcome {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle at center,
+                    var(--outcome-glow) 0%,
+                    transparent 70%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+            }
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: var(--outcome-color);
+                transform: translateY(-2px) scale(1.02);
+                box-shadow: 
+                    0 8px 20px rgba(0, 0, 0, 0.15),
+                    0 0 20px var(--outcome-glow);
+
+                &::before {
+                    opacity: 0.15;
+                }
+
+                .outcome-indicator {
+                    background: var(--outcome-hover);
+                    box-shadow: 0 0 12px var(--outcome-glow);
+                }
+
+                .outcome-image {
+                    transform: scale(1.1);
+                }
+
+                .outcome-price {
+                    color: var(--outcome-color);
+                    font-weight: 600;
+                }
+            }
+
+            &.selected {
+                background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0.05) 100%);
+                border-color: var(--outcome-color);
+                box-shadow: 
+                    0 4px 16px rgba(0, 0, 0, 0.1),
+                    inset 0 0 20px var(--outcome-glow);
+
+                &::before {
+                    opacity: 0.2;
+                }
+
+                .outcome-indicator {
+                    background: var(--outcome-color);
+                    animation: pulse 2s infinite;
+                }
+
+                .outcome-name {
+                    color: rgba(255, 255, 255, 0.95);
+                    font-weight: 600;
+                }
+
+                .outcome-price {
+                    color: var(--outcome-color);
+                    font-weight: 600;
+                }
+            }
+
+            &.no-data {
+                opacity: 0.5;
+
+                .outcome-price {
+                    color: rgba(255, 255, 255, 0.3);
+                }
+            }
+
+            .outcome-image-wrapper {
+                position: relative;
+                width: 36px;
+                height: 36px;
+                flex-shrink: 0;
+
+                .outcome-image {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 10px;
+                    object-fit: cover;
+                    border: 1.5px solid rgba(255, 255, 255, 0.1);
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.05) 0%,
+                        rgba(255, 255, 255, 0.02) 100%);
+                }
+
+                .outcome-image-placeholder {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 10px;
+                    background: linear-gradient(135deg,
+                        var(--outcome-color) 0%,
+                        var(--outcome-hover) 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1.5px solid rgba(255, 255, 255, 0.1);
+
+                    span {
+                        color: white;
+                        font-weight: 700;
+                        font-size: 16px;
+                        text-transform: uppercase;
+                        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                    }
+                }
+
+                .outcome-indicator {
+                    position: absolute;
+                    bottom: -2px;
+                    right: -2px;
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: var(--outcome-color);
+                    border: 2px solid rgba(0, 0, 0, 0.5);
+                    transition: all 0.3s ease;
+                    z-index: 2;
+                }
+            }
+
+            .outcome-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.125rem;
+                min-width: 0;
+
+                .outcome-name {
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.85);
+                    letter-spacing: -0.01em;
+                    transition: all 0.2s ease;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 150px;
+                    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+                }
+
+                .outcome-price {
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.5);
+                    transition: all 0.2s ease;
+                    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+                    font-variant-numeric: tabular-nums;
+                }
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 8px var(--outcome-glow);
+            }
+            50% {
+                box-shadow: 0 0 16px var(--outcome-glow);
+            }
+        }
+    }
+
     .chart-container {
         width: 100%;
         height: 480px;
@@ -65,17 +272,19 @@
         }
     }
 
-    .chart-legend {
+    .chart-insight {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1.25rem 1.5rem;
-        background: rgba(30, 30, 40, 0.95);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 1rem;
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.02) 0%,
+            rgba(255, 255, 255, 0.01) 100%);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
         position: relative;
         overflow: hidden;
-        transition: transform 0.2s ease;
+        transition: all 0.2s ease;
 
         &::before {
             content: '';
@@ -86,31 +295,17 @@
             height: 1px;
             background: linear-gradient(90deg, 
                 transparent 0%, 
-                rgba(255, 255, 255, 0.15) 50%, 
+                rgba(255, 255, 255, 0.1) 50%, 
                 transparent 100%);
         }
 
-        &:hover {
-            transform: translateY(-1px);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
-
-            .legend-icon {
-                font-size: 1.25rem;
-                // Removed continuous animation
-            }
-
-            .legend-text {
-                font-size: 0.9rem;
-                color: rgba(255, 255, 255, 0.85);
-                font-weight: 500;
-                letter-spacing: -0.01em;
-                font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
-            }
+        .insight-text {
+            font-size: 0.8125rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+            text-align: center;
         }
     }
 }
@@ -159,6 +354,37 @@
     .enhanced-market-chart {
         gap: 1rem;
 
+        .custom-legend {
+            padding: 1rem;
+            gap: 0.5rem;
+
+            .legend-outcome {
+                padding: 0.5rem 0.75rem;
+                gap: 0.5rem;
+
+                .outcome-image-wrapper {
+                    width: 28px;
+                    height: 28px;
+
+                    .outcome-indicator {
+                        width: 10px;
+                        height: 10px;
+                    }
+                }
+
+                .outcome-info {
+                    .outcome-name {
+                        font-size: 0.8125rem;
+                        max-width: 100px;
+                    }
+
+                    .outcome-price {
+                        font-size: 0.6875rem;
+                    }
+                }
+            }
+        }
+
         .chart-container {
             height: 350px;
             padding: 1rem;
@@ -169,18 +395,12 @@
             }
         }
 
-        .chart-legend {
-            padding: 0.875rem 1rem;
-            border-radius: 12px;
+        .chart-insight {
+            padding: 0.75rem;
+            border-radius: 10px;
 
-            .legend-item {
-                .legend-icon {
-                    font-size: 1rem;
-                }
-
-                .legend-text {
-                    font-size: 0.8rem;
-                }
+            .insight-text {
+                font-size: 0.75rem;
             }
         }
     }

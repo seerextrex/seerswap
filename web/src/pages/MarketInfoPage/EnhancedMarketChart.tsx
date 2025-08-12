@@ -17,6 +17,8 @@ import {
 import { Line } from "react-chartjs-2";
 import { ChartType } from "../../models/enums";
 import Loader from "../../components/Loader";
+import { Market, MarketDataPoint, ChartData } from "./types";
+import { processChartData, OUTCOME_COLORS } from "./chartHelpers";
 import "./EnhancedMarketChart.scss";
 
 ChartJS.register(
@@ -31,67 +33,15 @@ ChartJS.register(
 );
 
 interface EnhancedMarketChartProps {
-    market: any;
+    market: Market;
     outcomes: string[];
-    data: any[];
+    data: MarketDataPoint[];
     loading: boolean;
     span: number;
     type: ChartType;
     selectedOutcome?: number;
     onOutcomeSelect?: (index: number) => void;
 }
-
-// Premium color palette inspired by Apple and modern fintech
-const OUTCOME_COLORS = [
-    { 
-        main: "#00C896", 
-        gradient: "rgba(0, 200, 150, 0.1)",
-        glow: "rgba(0, 200, 150, 0.4)",
-        hover: "#00E5A8"
-    }, // Teal
-    { 
-        main: "#FF6B6B", 
-        gradient: "rgba(255, 107, 107, 0.1)",
-        glow: "rgba(255, 107, 107, 0.4)",
-        hover: "#FF8585"
-    }, // Coral
-    { 
-        main: "#4ECDC4", 
-        gradient: "rgba(78, 205, 196, 0.1)",
-        glow: "rgba(78, 205, 196, 0.4)",
-        hover: "#6EDDD5"
-    }, // Mint
-    { 
-        main: "#FFD93D", 
-        gradient: "rgba(255, 217, 61, 0.1)",
-        glow: "rgba(255, 217, 61, 0.4)",
-        hover: "#FFE366"
-    }, // Gold
-    { 
-        main: "#6C5CE7", 
-        gradient: "rgba(108, 92, 231, 0.1)",
-        glow: "rgba(108, 92, 231, 0.4)",
-        hover: "#8577FF"
-    }, // Purple
-    { 
-        main: "#00B4D8", 
-        gradient: "rgba(0, 180, 216, 0.1)",
-        glow: "rgba(0, 180, 216, 0.4)",
-        hover: "#00D4FF"
-    }, // Sky Blue
-    { 
-        main: "#F72585", 
-        gradient: "rgba(247, 37, 133, 0.1)",
-        glow: "rgba(247, 37, 133, 0.4)",
-        hover: "#FF4D9A"
-    }, // Pink
-    { 
-        main: "#20BF55", 
-        gradient: "rgba(32, 191, 85, 0.1)",
-        glow: "rgba(32, 191, 85, 0.4)",
-        hover: "#3DDB72"
-    }, // Green
-];
 
 export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
     market,
@@ -110,156 +60,24 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
         setOutcomeImageErrors(prev => ({ ...prev, [index]: true }));
     }, []);
 
+    const handleOutcomeClick = useCallback((index: number, hasData: boolean) => {
+        if (hasData && onOutcomeSelect) {
+            onOutcomeSelect(index);
+        }
+    }, [onOutcomeSelect]);
+
     const outcomeImages = useMemo(() => {
         if (!market?.image?.[0]?.cidOutcomes) return [];
         return outcomes.map((_, index) => {
-            const imageUrl = market.image[0].cidOutcomes[index];
+            const imageUrl = market.image![0].cidOutcomes![index];
             return imageUrl ? `https://ipfs.io${imageUrl}` : null;
         });
     }, [market, outcomes]);
-    const chartData = useMemo(() => {
-        // Even if no data, we should still show all outcomes in the legend
-        if (!outcomes || outcomes.length === 0) {
-            return null;
-        }
-        
-        // If no data yet, create empty datasets for all outcomes
-        if (!data || data.length === 0) {
-            const emptyDatasets = outcomes.map((outcome, index) => {
-                const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
-                return {
-                    label: outcome,
-                    data: [],
-                    borderColor: colorSet.main,
-                    backgroundColor: colorSet.gradient,
-                    tension: 0.1,
-                    borderWidth: 3,
-                    pointRadius: 3,
-                    pointHoverRadius: 3,
-                    pointHoverBorderWidth: 2,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: colorSet.main,
-                    pointBorderWidth: 2,
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: colorSet.main,
-                    fill: false,
-                    cubicInterpolationMode: 'monotone' as const,
-                    order: index + 1,
-                    spanGaps: true,
-                };
-            });
-            return {
-                labels: [],
-                datasets: emptyDatasets,
-            };
-        }
 
-        // Group data by timestamp and round to nearest hour for day view
-        const groupedData: { [key: string]: any } = {};
-        const roundToHour = span === 0; // Round to hour for day view
-        
-        data.forEach((item) => {
-            let timestamp = item.periodStartUnix * 1000;
-            
-            // Round to nearest hour for day view to group nearby data points
-            if (roundToHour) {
-                timestamp = Math.floor(timestamp / 3600000) * 3600000;
-            }
-            
-            const dateKey = new Date(timestamp).toISOString();
-            
-            if (!groupedData[dateKey]) {
-                groupedData[dateKey] = {
-                    timestamp,
-                    outcomes: {},
-                };
-            }
-            
-            if (item.outcomeIndex !== undefined) {
-                // Keep the most recent price for each outcome at this timestamp
-                // Prefer non-synthetic data over synthetic
-                const existing = groupedData[dateKey].outcomes[item.outcomeIndex];
-                const shouldUpdate = !existing || 
-                    (!item.synthetic && existing.synthetic) || 
-                    (item.synthetic === existing.synthetic && item.periodStartUnix > existing.originalTimestamp);
-                    
-                if (shouldUpdate) {
-                    groupedData[dateKey].outcomes[item.outcomeIndex] = {
-                        price: item.price || 0,
-                        originalTimestamp: item.periodStartUnix,
-                        synthetic: item.synthetic
-                    };
-                }
-            }
-        });
-
-        // Sort timestamps
-        const sortedEntries = Object.entries(groupedData).sort(
-            ([a], [b]) => new Date(a).getTime() - new Date(b).getTime()
-        );
-
-        const labels = sortedEntries.map(([_, data]) => {
-            const date = new Date(data.timestamp);
-            if (span === 0) { // Day
-                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            } else if (span === 1) { // Week
-                return date.toLocaleDateString([], { weekday: 'short', day: 'numeric' });
-            } else { // Month
-                return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-            }
-        });
-
-        // Check which outcomes have data
-        const outcomesWithData = new Set<number>();
-        data.forEach(item => {
-            if (item.outcomeIndex !== undefined) {
-                outcomesWithData.add(item.outcomeIndex);
-            }
-        });
-        
-        console.log('Creating datasets for outcomes:', outcomes);
-        console.log('Outcomes with data:', Array.from(outcomesWithData));
-        
-        const datasets = outcomes.map((outcome, index) => {
-            // Data should already be complete from the hook
-            const hasData = outcomesWithData.has(index);
-            const isSelected = selectedOutcome === index;
-            
-            const dataPoints = hasData ? sortedEntries.map(([_, groupData]) => {
-                // Simply return the price, gaps should already be filled by the hook
-                return groupData.outcomes[index]?.price || null;
-            }) : [];
-
-            const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
-
-            return {
-                label: outcome,
-                data: dataPoints,
-                borderColor: isSelected ? colorSet.hover : colorSet.main,
-                backgroundColor: isSelected ? colorSet.glow : colorSet.gradient,
-                tension: 0.1,
-                borderWidth: isSelected ? 4 : 2,
-                pointRadius: isSelected ? 4 : 2,
-                pointHoverRadius: isSelected ? 6 : 4,
-                pointHoverBorderWidth: 2,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: isSelected ? colorSet.hover : colorSet.main,
-                pointBorderWidth: 2,
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: isSelected ? colorSet.hover : colorSet.main,
-                fill: isSelected, // Fill only the selected outcome
-                cubicInterpolationMode: 'monotone' as const,
-                order: isSelected ? 0 : index + 1, // Bring selected to front
-                spanGaps: true, // Connect line across null/undefined values
-                hidden: false, // Always show in legend even if no data
-            };
-        });
-
-        return {
-            labels,
-            datasets,
-        };
-    }, [data, outcomes, type, span, selectedOutcome]);
+    const chartData = useMemo(() => 
+        processChartData(data, outcomes, span, selectedOutcome),
+        [data, outcomes, span, selectedOutcome]
+    );
 
     const options: ChartOptions<"line"> = {
         responsive: true,
@@ -331,8 +149,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                                 if (changeAbs >= 0.01) { // Only show if change is meaningful
                                     const arrow = change > 0 ? '↑' : '↓';
                                     const changeStr = changeAbs.toFixed(2);
-                                    const changeColor = change > 0 ? '🟢' : '🔴';
-                                    changeInfo = `  ${changeColor} ${arrow} ${changeStr}%`;
+                                    changeInfo = `  ${arrow} ${changeStr}%`;
                                 }
                             }
                         }
@@ -436,7 +253,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
     return (
         <div className="enhanced-market-chart">
             {/* Custom Legend with Outcome Images */}
-            <div className="custom-legend">
+            <div className="custom-legend" role="group" aria-label={t`Market outcome selection`}>
                 {outcomes.map((outcome, index) => {
                     const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
                     const isHovered = hoveredOutcome === index;
@@ -445,7 +262,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                     const imageUrl = outcomeImages[index];
                     
                     return (
-                        <div
+                        <button
                             key={index}
                             className={`legend-outcome ${
                                 isSelected ? 'selected' : ''
@@ -454,7 +271,22 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                             }`}
                             onMouseEnter={() => setHoveredOutcome(index)}
                             onMouseLeave={() => setHoveredOutcome(null)}
-                            onClick={() => onOutcomeSelect?.(index)}
+                            onClick={() => handleOutcomeClick(index, hasData || false)}
+                            disabled={!hasData}
+                            aria-pressed={isSelected}
+                            aria-label={`${outcome} - ${
+                                chartData && chartData.datasets[index] 
+                                    ? (() => {
+                                        const dataset = chartData.datasets[index];
+                                        const lastPrice = dataset.data
+                                            .filter(d => d !== null)
+                                            .slice(-1)[0];
+                                        return lastPrice !== undefined
+                                            ? `${(lastPrice * 100).toFixed(1)}%`
+                                            : 'No data';
+                                    })()
+                                    : 'No data'
+                            }`}
                             style={{
                                 '--outcome-color': colorSet.main,
                                 '--outcome-hover': colorSet.hover,
@@ -474,7 +306,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                                         <span>{outcome.charAt(0).toUpperCase()}</span>
                                     </div>
                                 )}
-                                <div className="outcome-indicator" />
+                                <div className="outcome-indicator" aria-hidden="true" />
                             </div>
                             <div className="outcome-info">
                                 <span className="outcome-name">{outcome}</span>
@@ -485,19 +317,38 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
                                             const lastPrice = dataset.data
                                                 .filter(d => d !== null)
                                                 .slice(-1)[0];
-                                            return lastPrice !== undefined
-                                                ? `${(lastPrice * 100).toFixed(1)}%`
-                                                : '--';
+                                            if (lastPrice === undefined) return '--';
+                                            
+                                            // Calculate change indicator
+                                            const prices = dataset.data.filter(d => d !== null) as number[];
+                                            if (prices.length > 1) {
+                                                const prevPrice = prices[prices.length - 2];
+                                                const change = lastPrice - prevPrice;
+                                                const changeSymbol = change > 0 ? (
+                                                    <span className="price-change up" aria-label="increasing">↑</span>
+                                                ) : change < 0 ? (
+                                                    <span className="price-change down" aria-label="decreasing">↓</span>
+                                                ) : null;
+                                                
+                                                return (
+                                                    <>
+                                                        {`${(lastPrice * 100).toFixed(1)}%`}
+                                                        {changeSymbol}
+                                                    </>
+                                                );
+                                            }
+                                            
+                                            return `${(lastPrice * 100).toFixed(1)}%`;
                                         })()}
                                     </span>
                                 )}
                             </div>
-                        </div>
+                        </button>
                     );
                 })}
             </div>
             
-            <div className="chart-container">
+            <div className="chart-container" role="img" aria-label={t`Line chart showing the price history of market outcomes`}>
                 <Line data={chartData} options={options} />
             </div>
             

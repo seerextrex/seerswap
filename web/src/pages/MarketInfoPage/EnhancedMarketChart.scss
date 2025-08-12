@@ -49,6 +49,14 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            font-family: inherit;
+            color: inherit;
+            text-align: left;
+            
+            &:focus-visible {
+                outline: 2px solid var(--outcome-color);
+                outline-offset: 2px;
+            }
 
             &::before {
                 content: '';
@@ -123,10 +131,23 @@
 
             &.no-data {
                 opacity: 0.5;
+                cursor: not-allowed;
 
                 .outcome-price {
                     color: rgba(255, 255, 255, 0.3);
                 }
+                
+                &:hover {
+                    transform: none;
+                    box-shadow: none;
+                    background: rgba(255, 255, 255, 0.04);
+                    border-color: rgba(255, 255, 255, 0.06);
+                }
+            }
+            
+            &:disabled {
+                cursor: not-allowed;
+                pointer-events: none;
             }
 
             .outcome-image-wrapper {
@@ -208,6 +229,22 @@
                     transition: all 0.2s ease;
                     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
                     font-variant-numeric: tabular-nums;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.25rem;
+                    
+                    .price-change {
+                        font-size: 0.625rem;
+                        font-weight: 600;
+                        
+                        &.up {
+                            color: #00C896;
+                        }
+                        
+                        &.down {
+                            color: #FF6B6B;
+                        }
+                    }
                 }
             }
         }

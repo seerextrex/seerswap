@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { t, Trans } from "@lingui/macro";
 import { Currency, CurrencyAmount, Token, Percent, TradeType } from "@uniswap/sdk-core";
-import { ArrowDown, ChevronDown } from "react-feather";
+import { ArrowDown, ChevronDown, Info } from "react-feather";
 import { useAccount, useChainId } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import NewCurrencyInputPanel from "../../components/CurrencyInputPanel/NewCurrencyInputPanel";
@@ -20,6 +20,7 @@ import { usePredictionMarketUSDCValue } from "../../hooks/usePredictionMarketUSD
 import { useMarketCurrency } from "../../hooks/useMarketCurrency";
 import { Market, Pool, TokenMetadata } from "../../types/market";
 import { extractTokenAddresses } from "../../utils/tokenHelpers";
+import { feeTierPercent } from "../../utils";
 import "./SwapModule.scss";
 
 interface SwapModuleProps {
@@ -251,10 +252,10 @@ export function SwapModule({
         [independentField, parsedAmount, trade]
     );
 
-    // Calculate outcome price from pool data (moved before fiatValue calculation)
-    const outcomePrice = useMemo(() => {
+    // Calculate outcome price and pool info from pool data
+    const { outcomePrice, poolFee, poolTVL } = useMemo(() => {
         if (!pools || pools.length === 0 || !outcomeTokenAddress || !collateralTokenAddress) {
-            return 0; // No price available
+            return { outcomePrice: 0, poolFee: null, poolTVL: null };
         }
         
         // Find the pool for this outcome token and collateral
@@ -269,7 +270,7 @@ export function SwapModule({
         });
         
         if (!relevantPool) {
-            return 0; // No pool found for this pair
+            return { outcomePrice: 0, poolFee: null, poolTVL: null };
         }
         
         // Calculate price based on which token is which
@@ -278,16 +279,30 @@ export function SwapModule({
         let price = 0;
         if (isToken0Outcome) {
             // Token0 is outcome, Token1 is collateral
-            // token0Price = price of token0 in terms of token1 = outcome price in collateral
+            // token0Price = collateral/outcome (what we want for probability)
             price = parseFloat(relevantPool.token0Price) || 0;
         } else {
-            // Token0 is collateral, Token1 is outcome  
-            // token1Price = price of token1 in terms of token0 = outcome price in collateral
+            // Token0 is collateral, Token1 is outcome
+            // token1Price = collateral/outcome (what we want for probability)
             price = parseFloat(relevantPool.token1Price) || 0;
         }
         
+        // If price > 1, it means we have outcome/collateral instead of collateral/outcome
+        // We need to invert to get the correct probability
+        if (price > 1 && price !== Infinity) {
+            price = 1 / price;
+        }
+        
         // Ensure price is within valid range [0, 1] for prediction markets
-        return Math.max(0, Math.min(1, price));
+        const finalPrice = Math.max(0, Math.min(1, price));
+        
+        // Get pool fee if available
+        const fee = (relevantPool as any).fee ? Number((relevantPool as any).fee) : null;
+        
+        // Get pool TVL
+        const tvl = relevantPool.totalValueLockedUSD ? parseFloat(relevantPool.totalValueLockedUSD) : null;
+        
+        return { outcomePrice: finalPrice, poolFee: fee, poolTVL: tvl };
     }, [pools, outcomeTokenAddress, collateralTokenAddress]);
     
     // Calculate fiat values for prediction market tokens
@@ -385,6 +400,22 @@ export function SwapModule({
 
     return (
         <div className="swap-module">
+            {/* Market Quick Stats */}
+            {outcomePrice > 0 && (
+                <div className="market-quick-stats">
+                    <div className="stat">
+                        <span className="stat-label"><Trans>Current Probability</Trans></span>
+                        <span className="stat-value">{(outcomePrice * 100).toFixed(1)}%</span>
+                    </div>
+                    {poolTVL !== null && poolTVL > 0 && (
+                        <div className="stat">
+                            <span className="stat-label"><Trans>Liquidity</Trans></span>
+                            <span className="stat-value">${poolTVL > 1000 ? `${(poolTVL / 1000).toFixed(1)}k` : poolTVL.toFixed(0)}</span>
+                        </div>
+                    )}
+                </div>
+            )}
+            
             <div className="swap-module__header">
                 <h3><Trans>Swap</Trans></h3>
                 <div className="outcome-selector" ref={dropdownRef}>
@@ -395,12 +426,16 @@ export function SwapModule({
                         aria-expanded={isOutcomeDropdownOpen}
                         aria-label={`Select outcome. Current: ${outcomes[localSelectedOutcome]}`}
                     >
-                        <span className="outcome-name">
-                            {outcomes[localSelectedOutcome] || `Outcome ${localSelectedOutcome + 1}`}
-                        </span>
-                        <span className="outcome-price" aria-label={`Price: ${(outcomePrice * 100).toFixed(1)} percent`}>
-                            {(outcomePrice * 100).toFixed(1)}%
-                        </span>
+                        <div className="outcome-info">
+                            <span className="outcome-name">
+                                {outcomes[localSelectedOutcome] || `Outcome ${localSelectedOutcome + 1}`}
+                            </span>
+                            {poolFee !== null && (
+                                <span className="pool-fee" aria-label={`Pool fee: ${feeTierPercent(poolFee)}`}>
+                                    {feeTierPercent(poolFee)}
+                                </span>
+                            )}
+                        </div>
                         <ChevronDown 
                             size={16} 
                             className={`chevron ${isOutcomeDropdownOpen ? 'open' : ''}`}
@@ -414,21 +449,82 @@ export function SwapModule({
                             role="menu"
                             aria-label="Select an outcome"
                         >
-                            {outcomes.map((outcome, index) => (
-                                <button
-                                    key={index}
-                                    className={`outcome-option ${index === localSelectedOutcome ? 'selected' : ''}`}
-                                    onClick={() => handleOutcomeSelect(index)}
-                                    role="menuitem"
-                                    aria-selected={index === localSelectedOutcome}
-                                    tabIndex={isOutcomeDropdownOpen ? 0 : -1}
-                                >
-                                    <span className="outcome-name">{outcome}</span>
-                                    <span className="outcome-badge" aria-hidden="true">
-                                        {index === localSelectedOutcome && '✓'}
-                                    </span>
-                                </button>
-                            ))}
+                            {outcomes.map((outcome, index) => {
+                                // Get pool info for this outcome
+                                const outcomeAddr = wrappedTokens[market?.outcomes?.findIndex(o => o === outcome) || 0];
+                                const outcomePool = pools?.find(pool => {
+                                    if (!pool.token0?.id || !pool.token1?.id) return false;
+                                    const hasOutcome = pool.token0.id.toLowerCase() === outcomeAddr?.toLowerCase() || 
+                                                      pool.token1.id.toLowerCase() === outcomeAddr?.toLowerCase();
+                                    const hasCollateral = pool.token0.id.toLowerCase() === collateralTokenAddress?.toLowerCase() || 
+                                                         pool.token1.id.toLowerCase() === collateralTokenAddress?.toLowerCase();
+                                    return hasOutcome && hasCollateral;
+                                });
+                                const outcomeFee = outcomePool && (outcomePool as any).fee ? Number((outcomePool as any).fee) : null;
+                                const outcomeTVL = outcomePool?.totalValueLockedUSD ? parseFloat(outcomePool.totalValueLockedUSD) : null;
+                                
+                                // Calculate outcome price
+                                let outcomeCurrentPrice = 0;
+                                if (outcomePool) {
+                                    const isToken0Outcome = outcomePool.token0.id.toLowerCase() === outcomeAddr?.toLowerCase();
+                                    
+                                    if (isToken0Outcome) {
+                                        // Token0 is outcome, Token1 is collateral
+                                        // token0Price = collateral/outcome (probability)
+                                        outcomeCurrentPrice = parseFloat(outcomePool.token0Price) || 0;
+                                    } else {
+                                        // Token0 is collateral, Token1 is outcome
+                                        // token1Price = collateral/outcome (probability)
+                                        outcomeCurrentPrice = parseFloat(outcomePool.token1Price) || 0;
+                                    }
+                                    
+                                    // Invert if price > 1 (means we have outcome/collateral instead)
+                                    if (outcomeCurrentPrice > 1 && outcomeCurrentPrice !== Infinity) {
+                                        outcomeCurrentPrice = 1 / outcomeCurrentPrice;
+                                    }
+                                    
+                                    outcomeCurrentPrice = Math.max(0, Math.min(1, outcomeCurrentPrice));
+                                }
+                                
+                                return (
+                                    <button
+                                        key={index}
+                                        className={`outcome-option ${index === localSelectedOutcome ? 'selected' : ''}`}
+                                        onClick={() => handleOutcomeSelect(index)}
+                                        role="menuitem"
+                                        aria-selected={index === localSelectedOutcome}
+                                        tabIndex={isOutcomeDropdownOpen ? 0 : -1}
+                                    >
+                                        <div className="outcome-details">
+                                            <span className="outcome-name">{outcome}</span>
+                                            <div className="outcome-meta">
+                                                {outcomeCurrentPrice > 0 && (
+                                                    <span className="outcome-probability">
+                                                        {(outcomeCurrentPrice * 100).toFixed(1)}%
+                                                    </span>
+                                                )}
+                                                {outcomeFee !== null && (
+                                                    <span className="outcome-fee">
+                                                        {feeTierPercent(outcomeFee)} fee
+                                                    </span>
+                                                )}
+                                                {outcomeTVL !== null && outcomeTVL > 0 && (
+                                                    <span className="outcome-tvl">
+                                                        ${(outcomeTVL / 1000).toFixed(1)}k TVL
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {index === localSelectedOutcome && (
+                                            <span className="outcome-checkmark" aria-hidden="true">
+                                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                    <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                                </svg>
+                                            </span>
+                                        )}
+                                    </button>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
@@ -522,9 +618,23 @@ export function SwapModule({
                             </span>
                         </div>
                         <div className="detail-row">
-                            <span className="label"><Trans>Slippage Tolerance</Trans></span>
+                            <span className="label"><Trans>Pool Fee</Trans></span>
+                            <span className="value">
+                                {poolFee !== null ? feeTierPercent(poolFee) : '-'}
+                            </span>
+                        </div>
+                        <div className="detail-row">
+                            <span className="label"><Trans>Slippage</Trans></span>
                             <span className="value">{allowedSlippage.toFixed()}%</span>
                         </div>
+                        {priceImpact && (
+                            <div className="detail-row">
+                                <span className="label"><Trans>Price Impact</Trans></span>
+                                <span className={`value ${priceImpact.lessThan(0) ? 'negative' : ''}`}>
+                                    {priceImpact.multiply(-1).toSignificant(3)}%
+                                </span>
+                            </div>
+                        )}
                     </div>
                 )}
 

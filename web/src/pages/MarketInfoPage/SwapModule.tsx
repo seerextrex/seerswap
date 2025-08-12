@@ -8,7 +8,6 @@ import NewCurrencyInputPanel from "../../components/CurrencyInputPanel/NewCurren
 import { ButtonError, ButtonPrimary } from "../../components/Button";
 import { AutoColumn } from "../../components/Column";
 import { ArrowWrapper } from "../../components/swap/styled";
-import { useCurrency } from "../../hooks/Tokens";
 import { Field } from "../../state/swap/actions";
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from "../../state/swap/hooks";
 import { useSwapCallback } from "../../hooks/useSwapCallback";
@@ -18,8 +17,9 @@ import { WrappedCurrency } from "../../models/types";
 import { useUSDCValue } from "../../hooks/useUSDCPrice";
 import { computeFiatValuePriceImpact } from "../../utils/computeFiatValuePriceImpact";
 import { usePredictionMarketUSDCValue } from "../../hooks/usePredictionMarketUSDCValue";
+import { useMarketCurrency } from "../../hooks/useMarketCurrency";
 import { Market, Pool, TokenMetadata } from "../../types/market";
-import { createTokenFromMarketData, extractTokenAddresses, isTokenMetadata } from "../../utils/tokenHelpers";
+import { extractTokenAddresses } from "../../utils/tokenHelpers";
 import "./SwapModule.scss";
 
 interface SwapModuleProps {
@@ -116,65 +116,28 @@ export function SwapModule({
 
     // Get collateral token address
     const collateralTokenAddress = market?.collateralToken?.id;
+    
+    // Memoize the wrapped tokens array to prevent unnecessary recalculations in useMarketCurrency
+    const memoizedWrappedTokens = useMemo(() => market?.wrappedTokens, [market?.wrappedTokens]);
+    const memoizedCollateralTokenArray = useMemo(() => 
+        market?.collateralToken ? [market.collateralToken] : undefined, 
+        [market?.collateralToken]
+    );
 
-    // Use currency hooks to get the actual currency objects
-    const outcomeCurrencyFromHook = useCurrency(outcomeTokenAddress || undefined);
-    const collateralCurrencyFromHook = useCurrency(collateralTokenAddress || undefined);
+    // Use the custom hook to resolve currencies with automatic fallback
+    const outcomeCurrency = useMarketCurrency(
+        outcomeTokenAddress,
+        chainId,
+        outcomes[localSelectedOutcome] || `Outcome ${localSelectedOutcome}`,
+        memoizedWrappedTokens
+    );
     
-    
-    // Force create tokens if the hook doesn't resolve them
-    const outcomeCurrency = useMemo(() => {
-        if (!outcomeTokenAddress || !chainId) return null;
-        
-        const selectedOutcomeName = outcomes[localSelectedOutcome];
-        
-        // Get token metadata if available
-        // Since wrappedTokens array has wrong order, we need to find the token by address
-        let tokenMetadata: TokenMetadata | null = null;
-        if (market?.wrappedTokens && outcomeTokenAddress) {
-            // Find the token metadata by matching the address
-            const matchingToken = market.wrappedTokens.find((token: any) => 
-                token?.id?.toLowerCase() === outcomeTokenAddress.toLowerCase()
-            );
-            if (matchingToken && isTokenMetadata(matchingToken)) {
-                tokenMetadata = matchingToken as TokenMetadata;
-            }
-        }
-        
-        // If we have a currency from the hook, use it but with corrected name
-        if (outcomeCurrencyFromHook && outcomeCurrencyFromHook instanceof Token) {
-            // Return the token from the hook since it will have proper balance tracking
-            // But only if the address matches
-            if (outcomeCurrencyFromHook.address.toLowerCase() === outcomeTokenAddress.toLowerCase()) {
-                return outcomeCurrencyFromHook;
-            }
-        }
-        
-        // Otherwise create a new token from scratch
-        return createTokenFromMarketData(
-            outcomeTokenAddress,
-            tokenMetadata,
-            chainId,
-            selectedOutcomeName || `Outcome ${localSelectedOutcome}`,
-            `${selectedOutcomeName || `Outcome ${localSelectedOutcome}`} Token`
-        );
-    }, [outcomeCurrencyFromHook, outcomeTokenAddress, market?.wrappedTokens, outcomes, localSelectedOutcome, chainId]);
-    
-    const collateralCurrency = useMemo(() => {
-        // Prefer the currency from the hook as it will have proper balance tracking
-        if (collateralCurrencyFromHook) return collateralCurrencyFromHook;
-        
-        if (!collateralTokenAddress || !chainId) return null;
-        
-        return createTokenFromMarketData(
-            collateralTokenAddress,
-            market?.collateralToken,
-            chainId,
-            market?.collateralToken?.symbol || 'COLLATERAL',
-            market?.collateralToken?.name || 'Collateral Token',
-            18 // Use default decimals, the function will handle getting proper decimals from metadata
-        );
-    }, [collateralCurrencyFromHook, collateralTokenAddress, market?.collateralToken, chainId]);
+    const collateralCurrency = useMarketCurrency(
+        collateralTokenAddress,
+        chainId,
+        market?.collateralToken?.symbol || 'COLLATERAL',
+        memoizedCollateralTokenArray
+    );
     
 
     // Swap state management
@@ -191,6 +154,7 @@ export function SwapModule({
         inputError: swapInputError,
     } = useDerivedSwapInfo();
     
+    
     // Get swap callback (only for V3 trades)
     const v3Trade = trade && 'swaps' in trade ? trade as V3Trade<Currency, Currency, TradeType> : undefined;
     const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -203,26 +167,32 @@ export function SwapModule({
     // Track swap direction (false = buying outcome, true = selling outcome)
     const [isReversed, setIsReversed] = useState(false);
     
+    // Track previous currencies to detect changes
+    const prevCurrenciesRef = useRef<{ input?: Currency; output?: Currency }>({});
+    
     // Auto-select currencies when outcome changes or direction changes
     useEffect(() => {
-        if (outcomeCurrency && collateralCurrency) {
-            
-            if (!isReversed) {
-                // Normal direction: buying outcome with collateral
-                onCurrencySelection(Field.INPUT, collateralCurrency);
-                onCurrencySelection(Field.OUTPUT, outcomeCurrency);
-            } else {
-                // Reversed: selling outcome for collateral
-                onCurrencySelection(Field.INPUT, outcomeCurrency);
-                onCurrencySelection(Field.OUTPUT, collateralCurrency);
-            }
-            
-            // Force a re-render by updating typedValue if it's empty
-            if (!typedValue) {
-                onUserInput(Field.INPUT, '');
-            }
+        // Only proceed if we have both currencies
+        if (!outcomeCurrency || !collateralCurrency) {
+            return;
         }
-    }, [outcomeCurrency, collateralCurrency, localSelectedOutcome, isReversed, onCurrencySelection, typedValue, onUserInput]);
+        
+        // Determine what should be selected based on direction
+        const expectedInput = !isReversed ? collateralCurrency : outcomeCurrency;
+        const expectedOutput = !isReversed ? outcomeCurrency : collateralCurrency;
+        
+        // Set currencies based on direction
+        onCurrencySelection(Field.INPUT, expectedInput);
+        onCurrencySelection(Field.OUTPUT, expectedOutput);
+        
+        // Clear input only if this is a real change (not initial load)
+        if (prevCurrenciesRef.current.input || prevCurrenciesRef.current.output) {
+            onUserInput(Field.INPUT, '');
+        }
+        
+        // Update ref for next render
+        prevCurrenciesRef.current = { input: expectedInput, output: expectedOutput };
+    }, [outcomeCurrency, collateralCurrency, localSelectedOutcome, isReversed, onCurrencySelection, onUserInput]);
     
     // Handle click outside and escape key for dropdown
     useEffect(() => {

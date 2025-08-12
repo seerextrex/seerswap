@@ -1,7 +1,7 @@
 import { FC, useState, useCallback } from "react";
 import { t, Trans } from "@lingui/macro";
 import { formatDollarAmount } from "../../utils/numbers";
-import { AlertCircle, TrendingUp } from "react-feather";
+import { AlertCircle, TrendingUp, ExternalLink } from "react-feather";
 import "./MarketInfoHeader.scss";
 
 interface MarketInfoHeaderProps {
@@ -65,25 +65,6 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                         </span>
                     </div>
                 </div>
-                
-                <div className="market-dates">
-                    <div className="date-item">
-                        <span className="date-label">
-                            <Trans>Opens</Trans>
-                        </span>
-                        <span className="date-value">
-                            {openingDate.toLocaleDateString()} {openingDate.toLocaleTimeString()}
-                        </span>
-                    </div>
-                    <div className="date-item">
-                        <span className="date-label">
-                            <Trans>Finalizes</Trans>
-                        </span>
-                        <span className="date-value">
-                            {finalizeDate.toLocaleDateString()} {finalizeDate.toLocaleTimeString()}
-                        </span>
-                    </div>
-                </div>
             </div>
 
             <div className="market-info-header__middle">
@@ -144,16 +125,37 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                         <h4 className="questions-title">
                             <Trans>Oracle Questions</Trans>
                         </h4>
-                        {market.questions.map((mq: any, index: number) => (
-                            <div key={index} className="question-item">
-                                {mq.question?.is_pending_arbitration && (
-                                    <span className="arbitration-badge">
-                                        <AlertCircle size={14} />
-                                        <Trans>Pending Arbitration</Trans>
-                                    </span>
-                                )}
-                            </div>
-                        ))}
+                        {market.questions.map((mq: any, index: number) => {
+                            const questionId = mq.question?.id;
+                            const realityUrl = questionId 
+                                ? `https://reality.eth.limo/app/#!/network/100/question/0xe78996a233895be74a66f451f1019ca9734205cc-${questionId}`
+                                : null;
+                            
+                            return (
+                                <div key={index} className="question-item">
+                                    {realityUrl && (
+                                        <a 
+                                            href={realityUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="question-link"
+                                            aria-label="View question on Reality.eth"
+                                        >
+                                            <span className="question-text">
+                                                <Trans>Question {index + 1}</Trans>
+                                            </span>
+                                            <ExternalLink size={16} className="external-icon" />
+                                        </a>
+                                    )}
+                                    {mq.question?.is_pending_arbitration && (
+                                        <span className="arbitration-badge">
+                                            <AlertCircle size={14} />
+                                            <Trans>Pending Arbitration</Trans>
+                                        </span>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             )}

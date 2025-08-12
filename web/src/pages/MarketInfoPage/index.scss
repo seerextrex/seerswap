@@ -309,6 +309,43 @@
         }
     }
     
+    // New layout for chart and swap module
+    .market-content-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 1.5rem;
+        align-items: start;
+        
+        @media (max-width: 1200px) {
+            grid-template-columns: 1fr;
+            
+            .market-swap-section {
+                max-width: 500px;
+                margin: 0 auto;
+                width: 100%;
+            }
+        }
+        
+        .market-chart-section {
+            .Card {
+                height: 100%;
+            }
+            
+            .market-chart-wrapper {
+                margin-top: 0;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+        
+        .market-swap-section {
+            position: sticky;
+            top: 1rem;
+        }
+    }
+    
     // Responsive design
     @media (max-width: 768px) {
         .market-chart-wrapper {

@@ -11,6 +11,7 @@ import { ChartSpan, ChartType } from "../../models/enums";
 import { useMarketData } from "../../hooks/useMarketData";
 import { MarketInfoHeader } from "./MarketInfoHeader";
 import { EnhancedMarketChart } from "./EnhancedMarketChart";
+import { SwapModule } from "./SwapModule";
 import "./index.scss";
 
 interface MarketInfoPageProps {
@@ -28,9 +29,11 @@ export default function MarketInfoPage({
     
     const [span, setSpan] = useState(ChartSpan.DAY);
     const [type, setType] = useState(ChartType.PRICE);
+    const [selectedOutcome, setSelectedOutcome] = useState<number>(0);
     
     const { 
-        market, 
+        market,
+        pools,
         marketLoading,
         marketError, 
         fetchMarket,
@@ -132,69 +135,86 @@ export default function MarketInfoPage({
                     </div>
                 </Card>
             ) : market ? (
-                <Card classes="p-2 br-24 mxs_p-1">
-                    <MarketInfoHeader 
-                        market={market}
-                        validOutcomes={validOutcomes}
-                    />
+                <>
+                    <Card classes="p-2 br-24 mxs_p-1 mb-2">
+                        <MarketInfoHeader 
+                            market={market}
+                            validOutcomes={validOutcomes}
+                        />
+                    </Card>
                     
-                    {/* Removed redundant MarketInfoStats component - stats already shown in header */}
-                    
-                    <div className="market-chart-wrapper br-12 ph-1 pb-1 mt-1">
-                        <div className="market-chart__toolbar">
-                            <div className="chart-header">
-                                <h3 className="chart-title">{t`Outcome Probabilities`}</h3>
-                            </div>
-                            <div className="chart-span-selector">
-                                {chartSpans.map((chartSpan) => (
-                                    <button
-                                        key={chartSpan.type}
-                                        className={`chart-span-btn ${span === chartSpan.type ? 'active' : ''}`}
-                                        onClick={() => setSpan(chartSpan.type)}
-                                        aria-pressed={span === chartSpan.type}
-                                        aria-label={`Show ${chartSpan.title.toLowerCase()} chart data`}
-                                    >
-                                        {chartSpan.title}
-                                    </button>
-                                ))}
-                            </div>
+                    <div className="market-content-layout">
+                        <div className="market-chart-section">
+                            <Card classes="p-2 br-24">
+                                <div className="market-chart-wrapper">
+                                    <div className="market-chart__toolbar">
+                                        <div className="chart-header">
+                                            <h3 className="chart-title">{t`Outcome Probabilities`}</h3>
+                                        </div>
+                                        <div className="chart-span-selector">
+                                            {chartSpans.map((chartSpan) => (
+                                                <button
+                                                    key={chartSpan.type}
+                                                    className={`chart-span-btn ${span === chartSpan.type ? 'active' : ''}`}
+                                                    onClick={() => setSpan(chartSpan.type)}
+                                                    aria-pressed={span === chartSpan.type}
+                                                    aria-label={`Show ${chartSpan.title.toLowerCase()} chart data`}
+                                                >
+                                                    {chartSpan.title}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    {priceDataError ? (
+                                        <div className="chart-error">
+                                            <div className="error-icon">📊</div>
+                                            <p><Trans>Failed to load chart data</Trans></p>
+                                            <p className="error-detail">{priceDataError}</p>
+                                            <button 
+                                                className="retry-button"
+                                                onClick={() => {
+                                                    const endTimestamp = Math.floor(Date.now() / 1000);
+                                                    fetchOutcomesPriceData(
+                                                        id!, 
+                                                        startTimestamp, 
+                                                        endTimestamp,
+                                                        type,
+                                                        span,
+                                                        market
+                                                    );
+                                                }}
+                                                aria-label="Retry loading chart data"
+                                            >
+                                                <Trans>Retry</Trans>
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <EnhancedMarketChart
+                                            market={market}
+                                            outcomes={validOutcomes}
+                                            data={outcomesPriceData}
+                                            loading={priceDataLoading}
+                                            span={span}
+                                            type={type}
+                                            selectedOutcome={selectedOutcome}
+                                        />
+                                    )}
+                                </div>
+                            </Card>
                         </div>
                         
-                        {priceDataError ? (
-                            <div className="chart-error">
-                                <div className="error-icon">📊</div>
-                                <p><Trans>Failed to load chart data</Trans></p>
-                                <p className="error-detail">{priceDataError}</p>
-                                <button 
-                                    className="retry-button"
-                                    onClick={() => {
-                                        const endTimestamp = Math.floor(Date.now() / 1000);
-                                        fetchOutcomesPriceData(
-                                            id!, 
-                                            startTimestamp, 
-                                            endTimestamp,
-                                            type,
-                                            span,
-                                            market
-                                        );
-                                    }}
-                                    aria-label="Retry loading chart data"
-                                >
-                                    <Trans>Retry</Trans>
-                                </button>
-                            </div>
-                        ) : (
-                            <EnhancedMarketChart
+                        <div className="market-swap-section">
+                            <SwapModule
                                 market={market}
                                 outcomes={validOutcomes}
-                                data={outcomesPriceData}
-                                loading={priceDataLoading}
-                                span={span}
-                                type={type}
+                                selectedOutcome={selectedOutcome}
+                                onOutcomeSelect={setSelectedOutcome}
+                                pools={pools}
                             />
-                        )}
+                        </div>
                     </div>
-                </Card>
+                </>
             ) : marketLoading ? (
                 <Card classes="p-2 br-24 mxs_p-1">
                     <div className="mock-loader">

@@ -31,6 +31,13 @@ const MARKET_QUERY = gql`
                 cidMarket
                 cidOutcomes
             }
+            wrappedTokensString
+            wrappedTokens {
+                id
+                symbol
+                name
+                decimals
+            }
         }
     }
 `;
@@ -172,6 +179,7 @@ const LAST_POOL_DAY_DATA_QUERY = gql`
 
 export const useMarketData = (marketId?: string) => {
     const [market, setMarket] = useState<any>(null);
+    const [pools, setPools] = useState<any[]>([]);
     const [marketLoading, setMarketLoading] = useState(false);
     const [marketError, setMarketError] = useState<string | null>(null);
     const [outcomesPriceData, setOutcomesPriceData] = useState<any[]>([]);
@@ -182,6 +190,7 @@ export const useMarketData = (marketId?: string) => {
         setMarketLoading(true);
         setMarketError(null);
         try {
+            // Fetch market data
             const { data } = await client.query({
                 query: MARKET_QUERY,
                 variables: { id },
@@ -191,10 +200,19 @@ export const useMarketData = (marketId?: string) => {
                 throw new Error("Market not found");
             }
             setMarket(data.market);
+            
+            // Also fetch pools for this market
+            const { data: poolsData } = await client.query({
+                query: MARKET_POOLS_QUERY,
+                variables: { marketId: id },
+                fetchPolicy: "network-only",
+            });
+            setPools(poolsData?.pools || []);
         } catch (error) {
             console.error("Error fetching market:", error);
             setMarketError(error instanceof Error ? error.message : "Failed to load market data");
             setMarket(null);
+            setPools([]);
         } finally {
             setMarketLoading(false);
         }
@@ -488,6 +506,7 @@ export const useMarketData = (marketId?: string) => {
 
     return {
         market,
+        pools,
         marketLoading,
         marketError,
         fetchMarket,

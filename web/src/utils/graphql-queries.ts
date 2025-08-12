@@ -386,7 +386,7 @@ export const CHART_POOL_LAST_NOT_EMPTY = gql`
 `;
 
 export const CHART_POOL_LAST_ENTRY = gql`
-    query lastPoolHourData($pool: ID!) {
+    query chartPoolLastEntry($pool: ID!) {
         poolHourDatas(first: 1, where: { pool_: { id: $pool } }, orderBy: periodStartUnix, orderDirection: desc) {
             periodStartUnix
             volumeUSD

@@ -36,6 +36,7 @@ interface EnhancedMarketChartProps {
     loading: boolean;
     span: number;
     type: ChartType;
+    selectedOutcome?: number;
 }
 
 // Premium color palette inspired by Apple and modern fintech
@@ -97,6 +98,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
     loading,
     span,
     type,
+    selectedOutcome,
 }) => {
     const chartData = useMemo(() => {
         // Even if no data, we should still show all outcomes in the legend
@@ -204,6 +206,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
         const datasets = outcomes.map((outcome, index) => {
             // Data should already be complete from the hook
             const hasData = outcomesWithData.has(index);
+            const isSelected = selectedOutcome === index;
             
             const dataPoints = hasData ? sortedEntries.map(([_, groupData]) => {
                 // Simply return the price, gaps should already be filled by the hook
@@ -215,21 +218,21 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             return {
                 label: outcome,
                 data: dataPoints,
-                borderColor: colorSet.main,
-                backgroundColor: colorSet.gradient,
+                borderColor: isSelected ? colorSet.hover : colorSet.main,
+                backgroundColor: isSelected ? colorSet.glow : colorSet.gradient,
                 tension: 0.1,
-                borderWidth: 3,
-                pointRadius: 3,
-                pointHoverRadius: 3,
+                borderWidth: isSelected ? 4 : 2,
+                pointRadius: isSelected ? 4 : 2,
+                pointHoverRadius: isSelected ? 6 : 4,
                 pointHoverBorderWidth: 2,
                 pointBackgroundColor: '#fff',
-                pointBorderColor: colorSet.main,
+                pointBorderColor: isSelected ? colorSet.hover : colorSet.main,
                 pointBorderWidth: 2,
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: colorSet.main,
-                fill: false, // Disable fill to focus on line clarity
+                pointHoverBorderColor: isSelected ? colorSet.hover : colorSet.main,
+                fill: isSelected, // Fill only the selected outcome
                 cubicInterpolationMode: 'monotone' as const,
-                order: index + 1,
+                order: isSelected ? 0 : index + 1, // Bring selected to front
                 spanGaps: true, // Connect line across null/undefined values
                 hidden: false, // Always show in legend even if no data
             };
@@ -239,7 +242,7 @@ export const EnhancedMarketChart: FC<EnhancedMarketChartProps> = ({
             labels,
             datasets,
         };
-    }, [data, outcomes, type, span]);
+    }, [data, outcomes, type, span, selectedOutcome]);
 
     const options: ChartOptions<"line"> = {
         responsive: true,

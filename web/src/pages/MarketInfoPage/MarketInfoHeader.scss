@@ -188,10 +188,11 @@
                     border: 1px solid rgba(255, 255, 255, 0.1);
                     border-radius: 12px;
                     transition: transform 0.2s ease,
-                                background-color 0.2s ease;
+                                background-color 0.2s ease,
+                                border-color 0.2s ease;
                     cursor: pointer;
                     position: relative;
-                    overflow: hidden;
+                    overflow: visible;
                     
                     // Accessibility
                     &:focus-visible {
@@ -202,6 +203,60 @@
                     &:hover {
                         background: rgba(40, 40, 50, 0.95);
                         transform: translateY(-2px);
+                    }
+
+                    // Significant price change indicators
+                    &.significant-change {
+                        &.price-up {
+                            border-color: rgba(76, 175, 80, 0.4);
+                            background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(30, 30, 40, 0.95) 100%);
+                        }
+
+                        &.price-down {
+                            border-color: rgba(244, 67, 54, 0.4);
+                            background: linear-gradient(135deg, rgba(244, 67, 54, 0.08) 0%, rgba(30, 30, 40, 0.95) 100%);
+                        }
+                    }
+
+                    .change-indicator {
+                        position: absolute;
+                        top: -8px;
+                        right: -8px;
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 700;
+                        font-size: 0.75rem;
+                        animation: pulseIndicator 2s ease-in-out infinite;
+                        z-index: 1;
+
+                        .change-arrow {
+                            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+                        }
+                    }
+
+                    &.price-up .change-indicator {
+                        background: #4CAF50;
+                        color: white;
+                        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+                    }
+
+                    &.price-down .change-indicator {
+                        background: #F44336;
+                        color: white;
+                        box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);
+                    }
+
+                    @keyframes pulseIndicator {
+                        0%, 100% {
+                            transform: scale(1);
+                        }
+                        50% {
+                            transform: scale(1.1);
+                        }
                     }
 
                     .outcome-image {
@@ -231,6 +286,19 @@
                         color: rgba(255, 255, 255, 0.95);
                         font-weight: 600;
                         letter-spacing: -0.01em;
+                    }
+
+                    .outcome-price-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        margin-left: auto;
+
+                        .outcome-price {
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            color: rgba(255, 255, 255, 0.9);
+                        }
                     }
                 }
             }

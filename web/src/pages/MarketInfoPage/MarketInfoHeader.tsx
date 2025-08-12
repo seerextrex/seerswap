@@ -119,43 +119,29 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                 </div>
             </div>
 
-            {market.questions && market.questions.length > 0 && (
+            {market.questions && market.questions.length > 0 && market.questions[0]?.question?.id && (
                 <div className="market-info-header__bottom">
                     <div className="questions-section">
-                        <h4 className="questions-title">
-                            <Trans>Oracle Questions</Trans>
-                        </h4>
-                        {market.questions.map((mq: any, index: number) => {
-                            const questionId = mq.question?.id;
-                            const realityUrl = questionId 
-                                ? `https://reality.eth.limo/app/#!/network/100/question/0xe78996a233895be74a66f451f1019ca9734205cc-${questionId}`
-                                : null;
-                            
-                            return (
-                                <div key={index} className="question-item">
-                                    {realityUrl && (
-                                        <a 
-                                            href={realityUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="question-link"
-                                            aria-label="View question on Reality.eth"
-                                        >
-                                            <span className="question-text">
-                                                <Trans>Question {index + 1}</Trans>
-                                            </span>
-                                            <ExternalLink size={16} className="external-icon" />
-                                        </a>
-                                    )}
-                                    {mq.question?.is_pending_arbitration && (
-                                        <span className="arbitration-badge">
-                                            <AlertCircle size={14} />
-                                            <Trans>Pending Arbitration</Trans>
-                                        </span>
-                                    )}
-                                </div>
-                            );
-                        })}
+                        <div className="question-item">
+                            <a 
+                                href={`https://reality.eth.limo/app/#!/network/100/question/0xe78996a233895be74a66f451f1019ca9734205cc-${market.questions[0].question.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="question-link"
+                                aria-label="View oracle question on Reality.eth"
+                            >
+                                <span className="question-text">
+                                    <Trans>Oracle Question</Trans>
+                                </span>
+                                <ExternalLink size={16} className="external-icon" />
+                            </a>
+                            {market.questions[0].question?.is_pending_arbitration && (
+                                <span className="arbitration-badge">
+                                    <AlertCircle size={14} />
+                                    <Trans>Pending Arbitration</Trans>
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

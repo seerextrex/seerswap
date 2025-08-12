@@ -2,12 +2,342 @@
 
 .market-info-page {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
-    animation: pageSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 24px;
     
-    @keyframes pageSlideIn {
+    // Hero Section with minimalist header
+    .market-hero-section {
+        margin-bottom: 32px;
+        animation: heroFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        
+        .market-hero-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 40px 0 24px;
+            
+            .back-button {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                color: rgba(255, 255, 255, 0.6);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                flex-shrink: 0;
+                margin-top: 8px;
+                
+                &:hover {
+                    background: rgba(255, 255, 255, 0.08);
+                    color: rgba(255, 255, 255, 0.9);
+                    transform: scale(1.05);
+                    border-color: rgba(255, 255, 255, 0.2);
+                }
+                
+                &:active {
+                    transform: scale(0.98);
+                }
+            }
+            
+            .market-identity {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex: 1;
+                
+                .market-hero-image {
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 16px;
+                    object-fit: cover;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    background: rgba(255, 255, 255, 0.03);
+                }
+            }
+            
+            .market-title-block {
+                flex: 1;
+                
+                .market-title {
+                    font-size: 32px;
+                    font-weight: 700;
+                    color: #ffffff;
+                    line-height: 1.2;
+                    margin: 0 0 12px 0;
+                    letter-spacing: -0.02em;
+                    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.85) 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                
+                .market-meta {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                    
+                    .market-category {
+                        padding: 6px 14px;
+                        background: rgba(0, 200, 150, 0.1);
+                        border: 1px solid rgba(0, 200, 150, 0.2);
+                        border-radius: 20px;
+                        color: #00C896;
+                        font-size: 13px;
+                        font-weight: 600;
+                        letter-spacing: 0.02em;
+                        text-transform: uppercase;
+                    }
+                    
+                    .market-status.active {
+                        color: #00C896;
+                    }
+                    
+                    .market-status.closed {
+                        color: rgba(255, 255, 255, 0.5);
+                    }
+                    
+                    .market-status {
+                        padding: 6px 14px;
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 20px;
+                        color: rgba(255, 255, 255, 0.7);
+                        font-size: 13px;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Main content with chart and swap side by side
+    .market-main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        
+        .market-trading-section {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 24px;
+            align-items: flex-start;
+            animation: contentSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+            
+            @media (max-width: 1100px) {
+                grid-template-columns: 1fr;
+                
+                .swap-container {
+                    max-width: 480px;
+                    margin: 0 auto;
+                    width: 100%;
+                }
+            }
+            
+            .chart-container {
+                background: linear-gradient(135deg, 
+                    rgba(18, 18, 24, 0.6) 0%, 
+                    rgba(12, 12, 18, 0.8) 100%);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 20px;
+                padding: 24px;
+                position: relative;
+                overflow: hidden;
+                min-height: 500px;
+                
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 1px;
+                    background: linear-gradient(90deg, 
+                        transparent,
+                        rgba(255, 255, 255, 0.1) 20%,
+                        rgba(255, 255, 255, 0.1) 80%,
+                        transparent);
+                }
+                
+                .chart-controls {
+                    margin-bottom: 28px;
+                    
+                    .chart-tabs {
+                        display: inline-flex;
+                        padding: 4px;
+                        background: rgba(255, 255, 255, 0.03);
+                        border: 1px solid rgba(255, 255, 255, 0.06);
+                        border-radius: 12px;
+                        gap: 4px;
+                        
+                        .chart-tab {
+                            padding: 10px 20px;
+                            background: transparent;
+                            border: none;
+                            color: rgba(255, 255, 255, 0.7);
+                            border-radius: 12px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: 500;
+                            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                            position: relative;
+                            
+                            &:hover:not(.active) {
+                                color: rgba(255, 255, 255, 0.7);
+                                background: rgba(255, 255, 255, 0.03);
+                            }
+                            
+                            &.active {
+                                background: rgba(255, 255, 255, 0.1);
+                                color: #ffffff;
+                                font-weight: 600;
+                                
+                                &::after {
+                                    content: '';
+                                    position: absolute;
+                                    bottom: -2px;
+                                    left: 50%;
+                                    transform: translateX(-50%);
+                                    width: 24px;
+                                    height: 2px;
+                                    background: #00C896;
+                                    border-radius: 2px;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                .chart-error-state {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 400px;
+                    gap: 16px;
+                    
+                    p {
+                        color: rgba(255, 255, 255, 0.65);
+                        font-size: 14px;
+                    }
+                    
+                    .retry-btn {
+                        padding: 10px 24px;
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 12px;
+                        color: rgba(255, 255, 255, 0.7);
+                        font-size: 14px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        
+                        &:hover {
+                            background: rgba(255, 255, 255, 0.08);
+                            color: #ffffff;
+                        }
+                    }
+                }
+            }
+            
+            .swap-container {
+                position: sticky;
+                top: 24px;
+                
+                @media (max-width: 768px) {
+                    position: static;
+                }
+                
+                // The SwapModule component will have its own card styling
+            }
+        }
+        
+        .market-info-section {
+            background: linear-gradient(135deg, 
+                rgba(18, 18, 24, 0.4) 0%, 
+                rgba(12, 12, 18, 0.6) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 28px;
+            animation: infoFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+        }
+    }
+    
+    // Error state
+    .error-message {
+        text-align: center;
+        padding: 60px 24px;
+        
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+        }
+        
+        p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        
+        .retry-button {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #00C896 0%, #00A67E 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 200, 150, 0.3);
+            }
+            
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+    
+    // Loading state
+    .mock-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        gap: 16px;
+        
+        .loading-text {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+    
+    // Animations
+    @keyframes heroFadeIn {
         from {
             opacity: 0;
-            transform: translateY(12px);
+            transform: translateY(-20px);
         }
         to {
             opacity: 1;
@@ -15,365 +345,89 @@
         }
     }
     
-    // Back button - optimized without backdrop-filter
-    .back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.25rem;
-        background: rgba(30, 30, 40, 0.9);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 100px;
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                    border-color 0.2s ease;
-        margin-bottom: 1.5rem !important;
-        position: relative;
-        overflow: hidden;
-        
-        // Pseudo-element for hover effect instead of box-shadow animation
-        &::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.05);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        
-        svg {
-            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        &:hover {
-            transform: translateX(-3px);
-            border-color: rgba(255, 255, 255, 0.15);
-            
-            &::before {
-                opacity: 1;
-            }
-            
-            svg {
-                transform: translateX(-2px);
-            }
-        }
-        
-        &:focus-visible {
-            outline: 2px solid #00C896;
-            outline-offset: 2px;
-        }
-    }
-    
-    // Premium Card - optimized without heavy filters
-    .Card {
-        background: linear-gradient(135deg, 
-            rgba(20, 20, 30, 0.98) 0%, 
-            rgba(15, 15, 25, 0.98) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.2s ease;
-        
-        &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.08) 20%, 
-                rgba(255, 255, 255, 0.08) 80%, 
-                transparent);
-        }
-        
-        &:hover {
-            transform: translateY(-2px);
-        }
-    }
-    
-    .error-message {
-        text-align: center;
-        padding: 4rem 2rem;
-        animation: fadeIn 0.4s ease;
-        
-        .error-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            // Removed filter effect for performance
-        }
-        
-        h3 {
-            margin-bottom: 0.75rem;
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-        
-        p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 2rem;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        
-        .retry-button {
-            background: linear-gradient(135deg, #00C896 0%, #00A67E 100%);
-            color: white;
-            border: none;
-            padding: 0.875rem 2rem;
-            border-radius: 100px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            letter-spacing: -0.01em;
-            transition: transform 0.2s ease,
-                        opacity 0.2s ease;
-            position: relative;
-            
-            &:hover {
-                transform: translateY(-2px);
-                opacity: 0.95;
-            }
-            
-            &:active {
-                transform: translateY(0);
-            }
-            
-            &:focus-visible {
-                outline: 2px solid #00C896;
-                outline-offset: 2px;
-            }
-        }
-    }
-    
-    // Removed pulse animation for performance
-    
-    @keyframes fadeIn {
+    @keyframes contentSlideUp {
         from {
             opacity: 0;
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
+            transform: translateY(0);
         }
     }
     
-    .mock-loader {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 5rem 2rem;
-        min-height: 500px;
-        
-        .loading-text {
-            margin-top: 1.5rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
-            font-weight: 500;
-            letter-spacing: -0.01em;
-            // Removed continuous animation
+    @keyframes infoFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
         }
     }
     
-    .market-chart-wrapper {
-        background: rgba(25, 25, 35, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        margin-top: 2rem;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.2s ease;
-        
-        // Removed rotating animation for performance
-        
-        &:hover {
-            transform: translateY(-2px);
-        }
-        
-        .market-chart__toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-            position: relative;
-            z-index: 1;
-            flex-wrap: wrap;
-            gap: 1rem;
-            
-            .chart-header {
-                .chart-title {
-                    font-size: 1.5rem;
-                    font-weight: 700;
-                    color: rgba(255, 255, 255, 0.95);
-                    margin: 0;
-                    letter-spacing: -0.03em;
-                }
-            }
-            
-            .chart-span-selector {
-                display: flex;
-                gap: 0.25rem;
-                padding: 0.25rem;
-                background: rgba(255, 255, 255, 0.04);
-                border-radius: 100px;
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                
-                .chart-span-btn {
-                    padding: 0.625rem 1.25rem;
-                    background: transparent;
-                    border: none;
-                    color: rgba(255, 255, 255, 0.7);
-                    border-radius: 100px;
-                    cursor: pointer;
-                    transition: background-color 0.2s ease,
-                                color 0.2s ease;
-                    font-size: 0.9rem;
-                    font-weight: 500;
-                    letter-spacing: -0.01em;
-                    position: relative;
-                    
-                    &:hover:not(.active) {
-                        color: rgba(255, 255, 255, 0.9);
-                        background: rgba(255, 255, 255, 0.06);
-                    }
-                    
-                    &.active {
-                        background: #00C896;
-                        color: white;
-                        font-weight: 600;
-                    }
-                    
-                    &:focus-visible {
-                        outline: 2px solid #00C896;
-                        outline-offset: 2px;
-                    }
-                }
-            }
-        }
-        
-        .chart-error {
-            text-align: center;
-            padding: 4rem 2rem;
-            position: relative;
-            z-index: 1;
-            
-            .error-icon {
-                font-size: 3.5rem;
-                margin-bottom: 1.5rem;
-            }
-            
-            p {
-                color: rgba(255, 255, 255, 0.8);
-                margin-bottom: 0.75rem;
-                font-size: 1rem;
-                
-                &.error-detail {
-                    font-size: 0.9rem;
-                    color: rgba(255, 255, 255, 0.6);
-                    margin-bottom: 2rem;
-                    font-family: 'SF Mono', monospace;
-                }
-            }
-            
-            .retry-button {
-                background: #FFD93D;
-                color: #1A1A2E;
-                border: none;
-                padding: 0.75rem 1.75rem;
-                border-radius: 100px;
-                cursor: pointer;
-                font-weight: 600;
-                font-size: 0.9rem;
-                transition: transform 0.2s ease,
-                            opacity 0.2s ease;
-                
-                &:hover {
-                    transform: translateY(-2px);
-                    opacity: 0.9;
-                }
-                
-                &:focus-visible {
-                    outline: 2px solid #FFD93D;
-                    outline-offset: 2px;
-                }
-            }
-        }
-    }
-    
-    // New layout for chart and swap module
-    .market-content-layout {
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        gap: 1.5rem;
-        align-items: start;
-        
-        @media (max-width: 1200px) {
-            grid-template-columns: 1fr;
-            
-            .market-swap-section {
-                max-width: 500px;
-                margin: 0 auto;
-                width: 100%;
-            }
-        }
-        
-        .market-chart-section {
-            .Card {
-                height: 100%;
-            }
-            
-            .market-chart-wrapper {
-                margin-top: 0;
-                background: transparent;
-                border: none;
-                box-shadow: none;
-                padding: 0;
-            }
-        }
-        
-        .market-swap-section {
-            position: sticky;
-            top: 1rem;
-        }
-    }
-    
-    // Responsive design
+    // Mobile responsiveness
     @media (max-width: 768px) {
-        .market-chart-wrapper {
-            padding: 1.5rem;
-            
-            .market-chart__toolbar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1.5rem;
+        padding: 0 16px;
+        
+        .market-hero-section {
+            .market-hero-header {
+                padding: 24px 0 16px;
                 
-                .chart-span-selector {
-                    width: 100%;
-                    justify-content: stretch;
-                    
-                    .chart-span-btn {
-                        flex: 1;
+                .market-title-block {
+                    .market-title {
+                        font-size: 24px;
                     }
                 }
             }
         }
+        
+        .market-main-content {
+            gap: 20px;
+            
+            .market-trading-section {
+                gap: 20px;
+                
+                .chart-container {
+                    padding: 20px;
+                    min-height: 400px;
+                    
+                    .chart-controls {
+                        .chart-tabs {
+                            width: 100%;
+                            
+                            .chart-tab {
+                                flex: 1;
+                                padding: 10px 12px;
+                                font-size: 13px;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            .market-info-section {
+                padding: 20px;
+            }
+        }
     }
     
-    // Reduced motion support
+    // Dark mode optimizations
+    @media (prefers-color-scheme: dark) {
+        .chart-container,
+        .market-info-section {
+            background: linear-gradient(135deg, 
+                rgba(10, 10, 14, 0.9) 0%, 
+                rgba(8, 8, 12, 0.95) 100%);
+        }
+    }
+    
+    // Reduced motion
     @media (prefers-reduced-motion: reduce) {
         * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
+            animation: none !important;
+            transition: none !important;
         }
     }
 }

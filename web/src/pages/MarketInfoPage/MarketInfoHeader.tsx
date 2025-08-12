@@ -10,6 +10,7 @@ import "./MarketInfoHeader.scss";
 interface MarketInfoHeaderProps {
     market: any;
     validOutcomes: string[];
+    compact?: boolean;
 }
 
 const MARKET_POOLS_WITH_PRICES_QUERY = gql`
@@ -71,7 +72,7 @@ const HISTORICAL_POOL_DATA_QUERY = gql`
     }
 `;
 
-export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutcomes }) => {
+export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutcomes, compact = false }) => {
     const [marketImageError, setMarketImageError] = useState(false);
     const [outcomeImageErrors, setOutcomeImageErrors] = useState<{ [key: number]: boolean }>({});
     const [outcomePriceChanges, setOutcomePriceChanges] = useState<{ [key: number]: number | null }>({});
@@ -234,6 +235,67 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
 
         return price;
     };
+
+    if (compact) {
+        return (
+            <div className="market-info-header compact">
+                <div className="compact-stats-grid">
+                    <div className="stat-card">
+                        <div className="stat-label">
+                            <Trans>Volume (24h)</Trans>
+                        </div>
+                        <div className="stat-value primary">
+                            {formatDollarAmount(market.volumeUSD)}
+                        </div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-label">
+                            <Trans>TVL</Trans>
+                        </div>
+                        <div className="stat-value">
+                            {formatDollarAmount(market.totalValueLockedUSD)}
+                        </div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-label">
+                            <Trans>Status</Trans>
+                        </div>
+                        <div className={`stat-value status ${status.class}`}>
+                            {status.text}
+                        </div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-label">
+                            <Trans>Closes</Trans>
+                        </div>
+                        <div className="stat-value">
+                            {finalizeDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </div>
+                    </div>
+                </div>
+                
+                {market.questions && market.questions.length > 0 && market.questions[0]?.question?.id && (
+                    <div className="compact-oracle-link">
+                        <a 
+                            href={`https://reality.eth.limo/app/#!/network/100/question/0xe78996a233895be74a66f451f1019ca9734205cc-${market.questions[0].question.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="oracle-button"
+                        >
+                            <span><Trans>View Oracle</Trans></span>
+                            <ExternalLink size={14} />
+                        </a>
+                        {market.questions[0].question?.is_pending_arbitration && (
+                            <span className="arbitration-badge">
+                                <AlertCircle size={12} />
+                                <Trans>Arbitration</Trans>
+                            </span>
+                        )}
+                    </div>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="market-info-header">

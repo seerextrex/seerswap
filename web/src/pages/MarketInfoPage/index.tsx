@@ -108,17 +108,6 @@ export default function MarketInfoPage({
 
     return (
         <div className="market-info-page mb-3">
-            <NavLink 
-                className="back-link f mb-1 c-p hover-op trans-op w-fc" 
-                to="/info/markets"
-                aria-label="Navigate back to markets list"
-            >
-                <ArrowLeft className="mr-05" size="1rem" />
-                <span>
-                    <Trans>Back to markets</Trans>
-                </span>
-            </NavLink>
-            
             {marketError ? (
                 <Card classes="p-2 br-24 mxs_p-1">
                     <div className="error-message">
@@ -136,81 +125,106 @@ export default function MarketInfoPage({
                 </Card>
             ) : market ? (
                 <>
-                    <Card classes="p-2 br-24 mxs_p-1 mb-2">
-                        <MarketInfoHeader 
-                            market={market}
-                            validOutcomes={validOutcomes}
-                        />
-                    </Card>
-                    
-                    <div className="market-content-layout">
-                        <div className="market-chart-section">
-                            <Card classes="p-2 br-24">
-                                <div className="market-chart-wrapper">
-                                    <div className="market-chart__toolbar">
-                                        <div className="chart-header">
-                                            <h3 className="chart-title">{t`Outcome Probabilities`}</h3>
-                                        </div>
-                                        <div className="chart-span-selector">
-                                            {chartSpans.map((chartSpan) => (
-                                                <button
-                                                    key={chartSpan.type}
-                                                    className={`chart-span-btn ${span === chartSpan.type ? 'active' : ''}`}
-                                                    onClick={() => setSpan(chartSpan.type)}
-                                                    aria-pressed={span === chartSpan.type}
-                                                    aria-label={`Show ${chartSpan.title.toLowerCase()} chart data`}
-                                                >
-                                                    {chartSpan.title}
-                                                </button>
-                                            ))}
-                                        </div>
+                    <div className="market-hero-section">
+                        <div className="market-hero-header">
+                            <NavLink 
+                                className="back-button" 
+                                to="/info/markets"
+                                aria-label="Navigate back to markets list"
+                            >
+                                <ArrowLeft size="20" />
+                            </NavLink>
+                            <div className="market-identity">
+                                {market.image?.[0]?.cidMarket && (
+                                    <img 
+                                        src={`https://ipfs.io${market.image[0].cidMarket}`}
+                                        alt={market.marketName}
+                                        className="market-hero-image"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                        }}
+                                    />
+                                )}
+                                <div className="market-title-block">
+                                    <h1 className="market-title">{market.marketName || market.title}</h1>
+                                    <div className="market-meta">
+                                        <span className="market-category">{market.category}</span>
+                                        <span className={`market-status ${market.closed ? 'closed' : 'active'}`}>
+                                            {market.closed ? t`Closed` : t`Active`}
+                                        </span>
                                     </div>
-                                    
-                                    {priceDataError ? (
-                                        <div className="chart-error">
-                                            <div className="error-icon">📊</div>
-                                            <p><Trans>Failed to load chart data</Trans></p>
-                                            <p className="error-detail">{priceDataError}</p>
-                                            <button 
-                                                className="retry-button"
-                                                onClick={() => {
-                                                    const endTimestamp = Math.floor(Date.now() / 1000);
-                                                    fetchOutcomesPriceData(
-                                                        id!, 
-                                                        startTimestamp, 
-                                                        endTimestamp,
-                                                        type,
-                                                        span,
-                                                        market
-                                                    );
-                                                }}
-                                                aria-label="Retry loading chart data"
-                                            >
-                                                <Trans>Retry</Trans>
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <EnhancedMarketChart
-                                            market={market}
-                                            outcomes={validOutcomes}
-                                            data={outcomesPriceData}
-                                            loading={priceDataLoading}
-                                            span={span}
-                                            type={type}
-                                            selectedOutcome={selectedOutcome}
-                                        />
-                                    )}
                                 </div>
-                            </Card>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="market-main-content">
+                        <div className="market-trading-section">
+                            <div className="chart-container">
+                                <div className="chart-controls">
+                                    <div className="chart-tabs">
+                                        {chartSpans.map((chartSpan) => (
+                                            <button
+                                                key={chartSpan.type}
+                                                className={`chart-tab ${span === chartSpan.type ? 'active' : ''}`}
+                                                onClick={() => setSpan(chartSpan.type)}
+                                                aria-pressed={span === chartSpan.type}
+                                            >
+                                                {chartSpan.title}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                {priceDataError ? (
+                                    <div className="chart-error-state">
+                                        <p><Trans>Unable to load chart</Trans></p>
+                                        <button 
+                                            className="retry-btn"
+                                            onClick={() => {
+                                                const endTimestamp = Math.floor(Date.now() / 1000);
+                                                fetchOutcomesPriceData(
+                                                    id!, 
+                                                    startTimestamp, 
+                                                    endTimestamp,
+                                                    type,
+                                                    span,
+                                                    market
+                                                );
+                                            }}
+                                        >
+                                            <Trans>Retry</Trans>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <EnhancedMarketChart
+                                        market={market}
+                                        outcomes={validOutcomes}
+                                        data={outcomesPriceData}
+                                        loading={priceDataLoading}
+                                        span={span}
+                                        type={type}
+                                        selectedOutcome={selectedOutcome}
+                                    />
+                                )}
+                            </div>
+                            
+                            <div className="swap-container">
+                                <SwapModule
+                                    market={market}
+                                    outcomes={validOutcomes}
+                                    selectedOutcome={selectedOutcome}
+                                    onOutcomeSelect={setSelectedOutcome}
+                                    pools={pools}
+                                />
+                            </div>
                         </div>
                         
-                        <div className="market-swap-section">
-                            <SwapModule
+                        <div className="market-info-section">
+                            <MarketInfoHeader 
                                 market={market}
-                                outcomes={validOutcomes}
-                                selectedOutcome={selectedOutcome}
-                                onOutcomeSelect={setSelectedOutcome}
-                                pools={pools}
+                                validOutcomes={validOutcomes}
+                                compact={true}
                             />
                         </div>
                     </div>

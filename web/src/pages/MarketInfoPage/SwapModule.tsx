@@ -15,6 +15,9 @@ import { useSwapCallback } from "../../hooks/useSwapCallback";
 import { useExpertModeManager } from "../../state/user/hooks";
 import { Trade as V3Trade } from "lib/src";
 import { WrappedCurrency } from "../../models/types";
+import { useUSDCValue } from "../../hooks/useUSDCPrice";
+import { computeFiatValuePriceImpact } from "../../utils/computeFiatValuePriceImpact";
+import { usePredictionMarketUSDCValue } from "../../hooks/usePredictionMarketUSDCValue";
 import { Market, Pool, TokenMetadata } from "../../types/market";
 import { createTokenFromMarketData, extractTokenAddresses, isTokenMetadata } from "../../utils/tokenHelpers";
 import "./SwapModule.scss";
@@ -49,34 +52,12 @@ export function SwapModule({
         }
     }, [selectedOutcome]);
     
-    // DEBUG: Log everything to understand the issue
-    useEffect(() => {
-        if (market && outcomes) {
-            console.log('=== SwapModule Debug Start ===');
-            console.log('1. Market outcomes (FULL with Invalid):', market.outcomes);
-            console.log('2. Filtered outcomes (passed as prop):', outcomes);
-            console.log('3. Currently selected index:', localSelectedOutcome);
-            console.log('4. Currently selected outcome name:', outcomes[localSelectedOutcome]);
-            
-            // Log wrapped tokens parsing
-            if (market.wrappedTokens) {
-                console.log('5. market.wrappedTokens (raw):', market.wrappedTokens);
-            }
-            if (market.wrappedTokensString) {
-                console.log('6. market.wrappedTokensString (raw):', market.wrappedTokensString);
-            }
-        }
-    }, [market, outcomes, localSelectedOutcome]);
     
 
     // Get ALL wrapped tokens for the market (including Invalid)
     // We keep them all because they map 1:1 with market.outcomes
     const wrappedTokens = useMemo(() => {
         let allTokens: string[] = [];
-        
-        console.log('=== Parsing Wrapped Tokens ===');
-        console.log('Raw market.wrappedTokens:', market?.wrappedTokens);
-        console.log('Raw market.wrappedTokensString:', market?.wrappedTokensString);
         
         // IMPORTANT: Use wrappedTokensString for correct ordering!
         // The wrappedTokens array (token objects) has a different order than market.outcomes
@@ -91,18 +72,15 @@ export function SwapModule({
         
         // If it's already an array, use it
         if (Array.isArray(tokensString)) {
-            console.log('wrappedTokensString is already an array');
             allTokens = tokensString.map(s => s.trim().toLowerCase());
         }
         // Check if it's a comma-separated string
         else if (typeof tokensString === 'string' && tokensString.includes(',')) {
-            console.log('wrappedTokensString is comma-separated');
             allTokens = tokensString.split(',').map(s => s.trim().toLowerCase()).filter(s => s.length > 0);
         }
         // Otherwise try to parse it as JSON
         else {
             try {
-                console.log('Trying to parse wrappedTokensString as JSON');
                 const parsed = JSON.parse(tokensString);
                 if (Array.isArray(parsed)) {
                     allTokens = parsed.map(s => s.trim().toLowerCase());
@@ -110,15 +88,10 @@ export function SwapModule({
             } catch (error) {
                 // If JSON parsing fails and it's a string, it might be a single address
                 if (typeof tokensString === 'string') {
-                    console.log('wrappedTokensString is a single address');
                     allTokens = [tokensString.trim().toLowerCase()];
                 }
             }
-        }
-        
-        console.log('FINAL parsed tokens array:', allTokens);
-        console.log('Tokens count:', allTokens.length, 'Outcomes count:', market?.outcomes?.length);
-        console.log('=== End Parsing Wrapped Tokens ===');
+        };
         
         return allTokens;
     }, [market?.wrappedTokensString, market?.outcomes]);
@@ -129,37 +102,14 @@ export function SwapModule({
             return null;
         }
         
-        // Debug: Let's see what we have
-        console.log('=== Token Address Selection Debug ===');
-        console.log('A. Full market.outcomes (including Invalid):', market.outcomes);
-        console.log('B. Filtered outcomes (without Invalid):', outcomes);
-        console.log('C. All wrapped tokens:', wrappedTokens);
-        console.log('D. Current selected index in filtered:', localSelectedOutcome);
-        console.log('E. Current selected outcome name:', outcomes[localSelectedOutcome]);
-        
-        // The outcomes prop has Invalid filtered out, but wrappedTokens maps 1:1 with market.outcomes
-        // However, Invalid is typically the LAST outcome, not the first
-        // So if we have ["Yes", "No", "Invalid"] and filter to ["Yes", "No"]
-        // The indices should actually match for non-Invalid outcomes
-        
         const selectedOutcomeName = outcomes[localSelectedOutcome];
         const fullOutcomeIndex = market.outcomes.findIndex(o => o === selectedOutcomeName);
         
-        console.log('F. Index of', selectedOutcomeName, 'in full market.outcomes:', fullOutcomeIndex);
-        
         if (fullOutcomeIndex === -1 || fullOutcomeIndex >= wrappedTokens.length) {
-            console.log('ERROR: Outcome not found or index out of bounds');
-            console.log('   - Selected outcome name:', selectedOutcomeName);
-            console.log('   - Full outcome index:', fullOutcomeIndex);
-            console.log('   - Wrapped tokens length:', wrappedTokens.length);
             return null;
         }
         
         const address = wrappedTokens[fullOutcomeIndex];
-        
-        console.log('G. FINAL: Selected token address:', address);
-        console.log('   - This is wrappedTokens[' + fullOutcomeIndex + ']');
-        console.log('=== Token Address Selection Debug End ===');
         
         return address;
     }, [wrappedTokens, localSelectedOutcome, outcomes, market?.outcomes]);
@@ -171,8 +121,11 @@ export function SwapModule({
     const outcomeCurrencyFromHook = useCurrency(outcomeTokenAddress || undefined);
     const collateralCurrencyFromHook = useCurrency(collateralTokenAddress || undefined);
     
+    
     // Force create tokens if the hook doesn't resolve them
     const outcomeCurrency = useMemo(() => {
+        if (!outcomeTokenAddress || !chainId) return null;
+        
         const selectedOutcomeName = outcomes[localSelectedOutcome];
         
         // Get token metadata if available
@@ -188,16 +141,13 @@ export function SwapModule({
             }
         }
         
-        // If we have a currency from the hook, we need to override its symbol/name with the correct outcome name
+        // If we have a currency from the hook, use it but with corrected name
         if (outcomeCurrencyFromHook && outcomeCurrencyFromHook instanceof Token) {
-            // Create a new token with the correct symbol and name
-            return new Token(
-                outcomeCurrencyFromHook.chainId,
-                outcomeCurrencyFromHook.address,
-                outcomeCurrencyFromHook.decimals,
-                selectedOutcomeName || outcomeCurrencyFromHook.symbol,
-                `${selectedOutcomeName} Token`
-            );
+            // Return the token from the hook since it will have proper balance tracking
+            // But only if the address matches
+            if (outcomeCurrencyFromHook.address.toLowerCase() === outcomeTokenAddress.toLowerCase()) {
+                return outcomeCurrencyFromHook;
+            }
         }
         
         // Otherwise create a new token from scratch
@@ -211,7 +161,10 @@ export function SwapModule({
     }, [outcomeCurrencyFromHook, outcomeTokenAddress, market?.wrappedTokens, outcomes, localSelectedOutcome, chainId]);
     
     const collateralCurrency = useMemo(() => {
+        // Prefer the currency from the hook as it will have proper balance tracking
         if (collateralCurrencyFromHook) return collateralCurrencyFromHook;
+        
+        if (!collateralTokenAddress || !chainId) return null;
         
         return createTokenFromMarketData(
             collateralTokenAddress,
@@ -247,24 +200,29 @@ export function SwapModule({
         undefined // No signature data for now
     );
 
-    // Auto-select currencies when outcome changes
+    // Track swap direction (false = buying outcome, true = selling outcome)
+    const [isReversed, setIsReversed] = useState(false);
+    
+    // Auto-select currencies when outcome changes or direction changes
     useEffect(() => {
         if (outcomeCurrency && collateralCurrency) {
-            console.log('11. Setting currencies:');
-            console.log('   - Collateral (INPUT):', collateralCurrency);
-            console.log('   - Outcome (OUTPUT):', outcomeCurrency);
             
-            // Set collateral as input (selling collateral)
-            onCurrencySelection(Field.INPUT, collateralCurrency);
-            // Set outcome as output (buying outcome)  
-            onCurrencySelection(Field.OUTPUT, outcomeCurrency);
+            if (!isReversed) {
+                // Normal direction: buying outcome with collateral
+                onCurrencySelection(Field.INPUT, collateralCurrency);
+                onCurrencySelection(Field.OUTPUT, outcomeCurrency);
+            } else {
+                // Reversed: selling outcome for collateral
+                onCurrencySelection(Field.INPUT, outcomeCurrency);
+                onCurrencySelection(Field.OUTPUT, collateralCurrency);
+            }
             
             // Force a re-render by updating typedValue if it's empty
             if (!typedValue) {
                 onUserInput(Field.INPUT, '');
             }
         }
-    }, [outcomeCurrency, collateralCurrency, localSelectedOutcome, onCurrencySelection, typedValue, onUserInput]);
+    }, [outcomeCurrency, collateralCurrency, localSelectedOutcome, isReversed, onCurrencySelection, typedValue, onUserInput]);
     
     // Handle click outside and escape key for dropdown
     useEffect(() => {
@@ -296,6 +254,7 @@ export function SwapModule({
         if (index >= 0 && index < outcomes.length) {
             setLocalSelectedOutcome(index);
             setIsOutcomeDropdownOpen(false);
+            setIsReversed(false); // Reset to buying direction when changing outcome
             onOutcomeSelect?.(index);
         }
     }, [onOutcomeSelect, outcomes.length]);
@@ -312,39 +271,17 @@ export function SwapModule({
             ? typedValue 
             : trade?.outputAmount?.toSignificant(6) ?? '',
     }), [independentField, typedValue, trade]);
-
-    const maxInputAmount = useMemo(() => {
-        if (!currencyBalances[Field.INPUT]) return undefined;
-        return currencyBalances[Field.INPUT];
-    }, [currencyBalances]);
-
-    const handleMaxInput = useCallback(() => {
-        if (maxInputAmount) {
-            onUserInput(Field.INPUT, maxInputAmount.toExact());
-        }
-    }, [maxInputAmount, onUserInput]);
     
-    // Handle swap execution
-    const handleSwap = useCallback(async () => {
-        if (!swapCallback) {
-            return;
-        }
-        
-        setIsSwapping(true);
-        
-        try {
-            const txHash = await swapCallback();
-            
-            // Clear input after successful swap
-            onUserInput(Field.INPUT, '');
-        } catch (error) {
-            // Error is already handled by swapCallbackError
-        } finally {
-            setIsSwapping(false);
-        }
-    }, [swapCallback, onUserInput]);
+    // Calculate parsed amounts for fiat value calculation
+    const parsedAmounts = useMemo(
+        () => ({
+            [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+        }),
+        [independentField, parsedAmount, trade]
+    );
 
-    // Calculate outcome price from pool data
+    // Calculate outcome price from pool data (moved before fiatValue calculation)
     const outcomePrice = useMemo(() => {
         if (!pools || pools.length === 0 || !outcomeTokenAddress || !collateralTokenAddress) {
             return 0; // No price available
@@ -370,18 +307,72 @@ export function SwapModule({
         
         let price = 0;
         if (isToken0Outcome) {
-            // Price is collateral/outcome (how much collateral per outcome)
-            // token0Price is token1/token0, so we need the inverse
-            price = parseFloat(relevantPool.token1Price) || 0;
-        } else {
-            // Price is collateral/outcome
-            // token1Price is token0/token1
+            // Token0 is outcome, Token1 is collateral
+            // token0Price = price of token0 in terms of token1 = outcome price in collateral
             price = parseFloat(relevantPool.token0Price) || 0;
+        } else {
+            // Token0 is collateral, Token1 is outcome  
+            // token1Price = price of token1 in terms of token0 = outcome price in collateral
+            price = parseFloat(relevantPool.token1Price) || 0;
         }
         
-        // Ensure price is within valid range [0, 1]
+        // Ensure price is within valid range [0, 1] for prediction markets
         return Math.max(0, Math.min(1, price));
     }, [pools, outcomeTokenAddress, collateralTokenAddress]);
+    
+    // Calculate fiat values for prediction market tokens
+    // For collateral input, use standard USDC value
+    // For outcome output, calculate through collateral price
+    const fiatValueInput = usePredictionMarketUSDCValue(
+        parsedAmounts[Field.INPUT],
+        collateralCurrency,
+        1 // Collateral is worth 1 collateral
+    );
+    
+    const fiatValueOutput = usePredictionMarketUSDCValue(
+        parsedAmounts[Field.OUTPUT],
+        collateralCurrency,
+        outcomePrice // Use the calculated outcome price
+    );
+    
+    const priceImpact = computeFiatValuePriceImpact(fiatValueInput, fiatValueOutput);
+    
+    const maxInputAmount = useMemo(() => {
+        if (!currencyBalances[Field.INPUT]) return undefined;
+        return currencyBalances[Field.INPUT];
+    }, [currencyBalances]);
+
+    const handleMaxInput = useCallback(() => {
+        if (maxInputAmount) {
+            onUserInput(Field.INPUT, maxInputAmount.toExact());
+        }
+    }, [maxInputAmount, onUserInput]);
+    
+    // Handle swap direction toggle
+    const handleSwitchTokens = useCallback(() => {
+        setIsReversed(prev => !prev);
+        onSwitchTokens();
+    }, [onSwitchTokens]);
+    
+    // Handle swap execution
+    const handleSwap = useCallback(async () => {
+        if (!swapCallback) {
+            return;
+        }
+        
+        setIsSwapping(true);
+        
+        try {
+            const txHash = await swapCallback();
+            
+            // Clear input after successful swap
+            onUserInput(Field.INPUT, '');
+        } catch (error) {
+            // Error is already handled by swapCallbackError
+        } finally {
+            setIsSwapping(false);
+        }
+    }, [swapCallback, onUserInput]);
 
     // Validate props after all hooks are called
     if (!market || !outcomes || outcomes.length === 0) {
@@ -477,7 +468,13 @@ export function SwapModule({
                 <AutoColumn gap="md">
                     <div className="currency-input-wrapper">
                         <div className="input-label">
-                            <span><Trans>You pay</Trans></span>
+                            <span>
+                                {!isReversed ? (
+                                    <Trans>You pay</Trans>
+                                ) : (
+                                    <Trans>You sell</Trans>
+                                )}
+                            </span>
                             {maxInputAmount && (
                                 <button className="max-button" onClick={handleMaxInput}>
                                     <Trans>Max</Trans>
@@ -492,6 +489,7 @@ export function SwapModule({
                             onUserInput={(value) => handleTypeInput(Field.INPUT, value)}
                             onCurrencySelect={undefined} // Disable currency selection
                             otherCurrency={currencies[Field.OUTPUT]}
+                            fiatValue={fiatValueInput ?? undefined}
                             id="swap-currency-input"
                             hideInput={false}
                             hideBalance={false}
@@ -502,13 +500,19 @@ export function SwapModule({
                         />
                     </div>
 
-                    <ArrowWrapper clickable={false} style={{ cursor: 'default', opacity: 0.5 }}>
+                    <ArrowWrapper clickable onClick={handleSwitchTokens}>
                         <ArrowDown size="16" color="#6c7284" />
                     </ArrowWrapper>
 
                     <div className="currency-input-wrapper">
                         <div className="input-label">
-                            <span><Trans>You receive</Trans></span>
+                            <span>
+                                {!isReversed ? (
+                                    <Trans>You receive</Trans>
+                                ) : (
+                                    <Trans>You get</Trans>
+                                )}
+                            </span>
                         </div>
                         <NewCurrencyInputPanel
                             title=""
@@ -518,6 +522,8 @@ export function SwapModule({
                             onUserInput={(value) => handleTypeInput(Field.OUTPUT, value)}
                             onCurrencySelect={undefined} // Disable currency selection
                             otherCurrency={currencies[Field.INPUT]}
+                            fiatValue={fiatValueOutput ?? undefined}
+                            priceImpact={priceImpact}
                             id="swap-currency-output"
                             hideInput={false}
                             hideBalance={false}
@@ -535,7 +541,14 @@ export function SwapModule({
                         <div className="detail-row">
                             <span className="label"><Trans>Price</Trans></span>
                             <span className="value">
-                                1 {currencies[Field.INPUT]?.symbol} = {trade.executionPrice.toSignificant(6)} {currencies[Field.OUTPUT]?.symbol}
+                                {/* Always show outcome token price in collateral terms, regardless of swap direction */}
+                                {!isReversed ? (
+                                    // Normal: buying outcome, show outcome price in collateral
+                                    <>1 {outcomeCurrency?.symbol} = {trade.executionPrice.invert().toSignificant(6)} {collateralCurrency?.symbol}</>
+                                ) : (
+                                    // Reversed: selling outcome, show outcome price in collateral
+                                    <>1 {outcomeCurrency?.symbol} = {trade.executionPrice.toSignificant(6)} {collateralCurrency?.symbol}</>
+                                )}
                             </span>
                         </div>
                         <div className="detail-row">

@@ -1,55 +1,55 @@
 import { MarketDataPoint, ChartData } from './types';
 
-// Premium color palette inspired by Apple and modern fintech
+// Premium color palette inspired by Apple's vibrant gradients and modern fintech interfaces
 export const OUTCOME_COLORS = [
     { 
-        main: "#00C896", 
-        gradient: "rgba(0, 200, 150, 0.1)",
-        glow: "rgba(0, 200, 150, 0.4)",
-        hover: "#00E5A8"
-    }, // Teal
+        main: "#00D4AA", 
+        gradient: "linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.05))",
+        glow: "rgba(0, 212, 170, 0.3)",
+        hover: "#00FFD1"
+    }, // Mint Green - Primary winner
     { 
-        main: "#FF6B6B", 
-        gradient: "rgba(255, 107, 107, 0.1)",
-        glow: "rgba(255, 107, 107, 0.4)",
-        hover: "#FF8585"
-    }, // Coral
+        main: "#FF6B9D", 
+        gradient: "linear-gradient(135deg, rgba(255, 107, 157, 0.15), rgba(255, 107, 157, 0.05))",
+        glow: "rgba(255, 107, 157, 0.3)",
+        hover: "#FF85B3"
+    }, // Rose Pink - Contrasting option
     { 
-        main: "#4ECDC4", 
-        gradient: "rgba(78, 205, 196, 0.1)",
-        glow: "rgba(78, 205, 196, 0.4)",
-        hover: "#6EDDD5"
-    }, // Mint
+        main: "#7B68EE", 
+        gradient: "linear-gradient(135deg, rgba(123, 104, 238, 0.15), rgba(123, 104, 238, 0.05))",
+        glow: "rgba(123, 104, 238, 0.3)",
+        hover: "#9B88FF"
+    }, // Medium Slate Blue - Trustworthy
     { 
-        main: "#FFD93D", 
-        gradient: "rgba(255, 217, 61, 0.1)",
-        glow: "rgba(255, 217, 61, 0.4)",
-        hover: "#FFE366"
-    }, // Gold
+        main: "#FFB347", 
+        gradient: "linear-gradient(135deg, rgba(255, 179, 71, 0.15), rgba(255, 179, 71, 0.05))",
+        glow: "rgba(255, 179, 71, 0.3)",
+        hover: "#FFC466"
+    }, // Peach Orange - Warm alternative
     { 
-        main: "#6C5CE7", 
-        gradient: "rgba(108, 92, 231, 0.1)",
-        glow: "rgba(108, 92, 231, 0.4)",
-        hover: "#8577FF"
-    }, // Purple
+        main: "#00CED1", 
+        gradient: "linear-gradient(135deg, rgba(0, 206, 209, 0.15), rgba(0, 206, 209, 0.05))",
+        glow: "rgba(0, 206, 209, 0.3)",
+        hover: "#00E7EA"
+    }, // Dark Turquoise - Cool confidence
     { 
-        main: "#00B4D8", 
-        gradient: "rgba(0, 180, 216, 0.1)",
-        glow: "rgba(0, 180, 216, 0.4)",
-        hover: "#00D4FF"
-    }, // Sky Blue
+        main: "#FF69B4", 
+        gradient: "linear-gradient(135deg, rgba(255, 105, 180, 0.15), rgba(255, 105, 180, 0.05))",
+        glow: "rgba(255, 105, 180, 0.3)",
+        hover: "#FF85C7"
+    }, // Hot Pink - Bold choice
     { 
-        main: "#F72585", 
-        gradient: "rgba(247, 37, 133, 0.1)",
-        glow: "rgba(247, 37, 133, 0.4)",
-        hover: "#FF4D9A"
-    }, // Pink
+        main: "#48D1CC", 
+        gradient: "linear-gradient(135deg, rgba(72, 209, 204, 0.15), rgba(72, 209, 204, 0.05))",
+        glow: "rgba(72, 209, 204, 0.3)",
+        hover: "#5FE8E3"
+    }, // Medium Turquoise - Balanced
     { 
-        main: "#20BF55", 
-        gradient: "rgba(32, 191, 85, 0.1)",
-        glow: "rgba(32, 191, 85, 0.4)",
-        hover: "#3DDB72"
-    }, // Green
+        main: "#DDA0DD", 
+        gradient: "linear-gradient(135deg, rgba(221, 160, 221, 0.15), rgba(221, 160, 221, 0.05))",
+        glow: "rgba(221, 160, 221, 0.3)",
+        hover: "#E6B8E6"
+    }, // Plum - Sophisticated
 ];
 
 export function processChartData(
@@ -115,17 +115,14 @@ export function processChartData(
             };
         }
         
-        if (item.outcomeIndex !== undefined) {
-            // Keep the most recent price for each outcome at this timestamp
-            // Prefer non-synthetic data over synthetic
+        if (item.outcomeIndex !== undefined && item.price !== null && item.price !== undefined) {
+            // Simply keep the most recent price for each outcome at this timestamp
             const existing = groupedData[dateKey].outcomes[item.outcomeIndex];
-            const shouldUpdate = !existing || 
-                (!item.synthetic && existing.synthetic) || 
-                (item.synthetic === existing.synthetic && item.periodStartUnix > existing.originalTimestamp);
-                
-            if (shouldUpdate) {
+            
+            // Always take the latest data point for this time bucket
+            if (!existing || item.periodStartUnix >= existing.originalTimestamp) {
                 groupedData[dateKey].outcomes[item.outcomeIndex] = {
-                    price: item.price || 0,
+                    price: item.price,
                     originalTimestamp: item.periodStartUnix,
                     synthetic: item.synthetic
                 };
@@ -158,37 +155,71 @@ export function processChartData(
     });
     
     const datasets = outcomes.map((outcome, index) => {
-        // Data should already be complete from the hook
         const hasData = outcomesWithData.has(index);
         const isSelected = selectedOutcome === index;
         
-        const dataPoints = hasData ? sortedEntries.map(([_, groupData]) => {
-            // Simply return the price, gaps should already be filled by the hook
-            return groupData.outcomes[index]?.price || null;
+        // Build data points with proper gap filling
+        const dataPoints = hasData ? sortedEntries.map(([_, groupData], timeIndex) => {
+            // Check if we have a price for this outcome at this timestamp
+            const currentPrice = groupData.outcomes[index]?.price;
+            
+            if (currentPrice !== undefined && currentPrice !== null) {
+                return currentPrice;
+            }
+            
+            // If no price at this timestamp, carry forward the last known price
+            // Look backwards through previous timestamps
+            for (let i = timeIndex - 1; i >= 0; i--) {
+                const prevPrice = sortedEntries[i][1].outcomes[index]?.price;
+                if (prevPrice !== undefined && prevPrice !== null) {
+                    return prevPrice;
+                }
+            }
+            
+            // No previous price found, return null
+            return null;
         }) : [];
 
         const colorSet = OUTCOME_COLORS[index % OUTCOME_COLORS.length];
 
+        // Implement ghost lines: show unselected outcomes at low opacity
+        const isGhost = selectedOutcome !== undefined && selectedOutcome !== index && hasData;
+        const opacity = isGhost ? 0.15 : 1;
+        
         return {
             label: outcome,
             data: dataPoints,
-            borderColor: isSelected ? colorSet.hover : colorSet.main,
-            backgroundColor: isSelected ? colorSet.glow : colorSet.gradient,
-            tension: 0.1,
-            borderWidth: isSelected ? 4 : 2,
-            pointRadius: isSelected ? 4 : 2,
-            pointHoverRadius: isSelected ? 6 : 4,
+            borderColor: isSelected ? colorSet.hover : `${colorSet.main}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`,
+            tension: 0.35,
+            borderWidth: isSelected ? 3 : isGhost ? 1.5 : 2,
+            pointRadius: 0,
+            pointHoverRadius: isSelected ? 6 : isGhost ? 3 : 5,
             pointHoverBorderWidth: 2,
-            pointBackgroundColor: '#fff',
+            pointBackgroundColor: 'rgba(255, 255, 255, 1)',
             pointBorderColor: isSelected ? colorSet.hover : colorSet.main,
             pointBorderWidth: 2,
-            pointHoverBackgroundColor: '#fff',
+            pointHoverBackgroundColor: 'rgba(255, 255, 255, 1)',
             pointHoverBorderColor: isSelected ? colorSet.hover : colorSet.main,
-            fill: isSelected, // Fill only the selected outcome
+            fill: isSelected, // Add gradient fill for selected outcome
+            backgroundColor: isSelected 
+                ? `${colorSet.main}20` // 20 = 12.5% opacity in hex for gradient fill
+                : isGhost ? `${colorSet.main}26` : colorSet.gradient, // Ghost lines are more transparent
             cubicInterpolationMode: 'monotone' as const,
-            order: isSelected ? 0 : index + 1, // Bring selected to front
-            spanGaps: true, // Connect line across null/undefined values
-            hidden: false, // Always show in legend even if no data
+            order: isSelected ? 0 : isGhost ? index + 10 : index + 1, // Ghost lines go to back
+            spanGaps: true,
+            hidden: false,
+            segment: {
+                borderColor: (ctx: any) => {
+                    // Create gradient effect along the line - ctx type from Chart.js internals
+                    const prev = ctx.p0?.parsed?.y;
+                    const cur = ctx.p1?.parsed?.y;
+                    const baseColor = isSelected ? colorSet.hover : colorSet.main;
+                    if (cur > prev) {
+                        return isGhost ? `${baseColor}26` : baseColor; // 26 = 15% opacity in hex
+                    }
+                    return isGhost ? `${baseColor}26` : baseColor;
+                },
+            }
         };
     });
 

@@ -163,21 +163,6 @@ export default function MarketInfoPage({
                     <div className="market-main-content">
                         <div className="market-trading-section">
                             <div className="chart-container">
-                                <div className="chart-controls">
-                                    <div className="chart-tabs">
-                                        {chartSpans.map((chartSpan) => (
-                                            <button
-                                                key={chartSpan.type}
-                                                className={`chart-tab ${span === chartSpan.type ? 'active' : ''}`}
-                                                onClick={() => setSpan(chartSpan.type)}
-                                                aria-pressed={span === chartSpan.type}
-                                            >
-                                                {chartSpan.title}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                                
                                 {priceDataError ? (
                                     <div className="chart-error-state">
                                         <p><Trans>Unable to load chart</Trans></p>
@@ -208,6 +193,7 @@ export default function MarketInfoPage({
                                         type={type}
                                         selectedOutcome={selectedOutcome}
                                         onOutcomeSelect={setSelectedOutcome}
+                                        onTimeSpanChange={setSpan}
                                     />
                                 )}
                             </div>

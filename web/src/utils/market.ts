@@ -60,6 +60,8 @@ export interface Pool {
   feesUSD: string;
   token0: Token;
   token1: Token;
+  token0Price?: string;
+  token1Price?: string;
   market0?: Market;
   market1?: Market;
 }
@@ -447,6 +449,7 @@ export function groupPoolsByMarketAndOutcome(
 
 /**
  * Groups pools by market with parent-child relationships
+ * Each pool contributes its TVL to all markets it belongs to
  * @param pools The list of pools to group
  * @param hideLowValue Whether to filter out low value pools
  * @param minTVL Minimum TVL threshold for filtering
@@ -458,7 +461,8 @@ export function groupPoolsByMarketWithHierarchy(
   minTVL = 0
 ): GroupedMarketPools[] {
   const groups = new Map<string, GroupedMarketPools>();
-  const poolTVLMap = new Map<string, number>();
+  // Track pools per market to avoid double counting within the same market
+  const marketPoolsMap = new Map<string, Set<string>>();
 
   pools.forEach((pool) => {
     const tvl = parseFloat(pool.totalValueLockedUSD || "0");
@@ -486,6 +490,7 @@ export function groupPoolsByMarketWithHierarchy(
           isParent: true,
           childMarkets: new Map()
         });
+        marketPoolsMap.set(parentKey, new Set());
       }
 
       const parentGroup = groups.get(parentKey)!;
@@ -524,84 +529,67 @@ export function groupPoolsByMarketWithHierarchy(
       childGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
       childGroup.totalFees += parseFloat(pool.feesUSD || "0");
 
-      // Track unique pool TVL
+      // Track unique pool for parent market to avoid double counting
       const poolId = pool.id;
-      if (!poolTVLMap.has(poolId)) {
-        poolTVLMap.set(poolId, tvl);
-        // Add to parent's total TVL (don't double count)
+      const parentPools = marketPoolsMap.get(parentKey)!;
+      if (!parentPools.has(poolId)) {
+        parentPools.add(poolId);
+        // Add to parent's total TVL (don't double count within parent)
         parentGroup.totalTVL += tvl;
         parentGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
         parentGroup.totalFees += parseFloat(pool.feesUSD || "0");
       }
     } else {
-      // Handle regular markets
-      let selectedMarket: Market | null = null;
-      const market0 = pool.market0;
-      const market1 = pool.market1;
+      // Handle regular markets - count pool for EACH market it belongs to
+      const markets = [pool.market0, pool.market1].filter(Boolean) as Market[];
+      
+      markets.forEach((market) => {
+        if (!market) return;
 
-      if (market0 && market1) {
-        // Priority: Choose parent market if one exists
-        const market0IsParent = market0.childMarkets && market0.childMarkets.length > 0;
-        const market1IsParent = market1.childMarkets && market1.childMarkets.length > 0;
-
-        if (market0IsParent && !market1IsParent) {
-          selectedMarket = market0;
-        } else if (market1IsParent && !market0IsParent) {
-          selectedMarket = market1;
-        } else {
-          // Choose market with more complete data
-          const market0Score = (market0.tokens?.length || 0) + 
-                              (market0.collateralToken ? 1 : 0) + 
-                              (market0.image?.length || 0);
-          const market1Score = (market1.tokens?.length || 0) + 
-                              (market1.collateralToken ? 1 : 0) + 
-                              (market1.image?.length || 0);
-          selectedMarket = market0Score >= market1Score ? market0 : market1;
+        const marketKey = `${market.id}-${market.marketName}`;
+        
+        if (!groups.has(marketKey)) {
+          groups.set(marketKey, {
+            market: market,
+            pools: [],
+            poolsByOutcome: new Map(),
+            totalTVL: 0,
+            totalVolume: 0,
+            totalFees: 0,
+            isParent: false,
+            childMarkets: new Map()
+          });
+          marketPoolsMap.set(marketKey, new Set());
         }
-      } else {
-        selectedMarket = market0 || market1 || null;
-      }
 
-      if (!selectedMarket) return;
+        const marketGroup = groups.get(marketKey)!;
+        
+        // Track unique pools per market to avoid double counting within the same market
+        const poolId = pool.id;
+        const marketPools = marketPoolsMap.get(marketKey)!;
+        
+        if (!marketPools.has(poolId)) {
+          marketPools.add(poolId);
+          
+          // Add pool directly to pools array
+          marketGroup.pools.push(pool);
+          
+          // Also track by outcome for backwards compatibility
+          const outcomeInfo = getPoolOutcomeToken(pool, market);
+          if (outcomeInfo) {
+            const outcomeKey = outcomeInfo.outcomeName;
+            if (!marketGroup.poolsByOutcome.has(outcomeKey)) {
+              marketGroup.poolsByOutcome.set(outcomeKey, []);
+            }
+            marketGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
+          }
 
-      const marketKey = `${selectedMarket.id}-${selectedMarket.marketName}`;
-      
-      if (!groups.has(marketKey)) {
-        groups.set(marketKey, {
-          market: selectedMarket,
-          pools: [],
-          poolsByOutcome: new Map(),
-          totalTVL: 0,
-          totalVolume: 0,
-          totalFees: 0,
-          isParent: false,
-          childMarkets: new Map()
-        });
-      }
-
-      const marketGroup = groups.get(marketKey)!;
-      
-      // Add pool directly to pools array
-      marketGroup.pools.push(pool);
-      
-      // Also track by outcome for backwards compatibility
-      const outcomeInfo = getPoolOutcomeToken(pool, selectedMarket);
-      if (outcomeInfo) {
-        const outcomeKey = outcomeInfo.outcomeName;
-        if (!marketGroup.poolsByOutcome.has(outcomeKey)) {
-          marketGroup.poolsByOutcome.set(outcomeKey, []);
+          // Update market stats - each market gets the full TVL of its pools
+          marketGroup.totalTVL += tvl;
+          marketGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
+          marketGroup.totalFees += parseFloat(pool.feesUSD || "0");
         }
-        marketGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
-      }
-
-      // Update market stats
-      const poolId = pool.id;
-      if (!poolTVLMap.has(poolId)) {
-        poolTVLMap.set(poolId, tvl);
-        marketGroup.totalTVL += tvl;
-        marketGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
-        marketGroup.totalFees += parseFloat(pool.feesUSD || "0");
-      }
+      });
     }
   });
 

@@ -5,7 +5,6 @@ import { useSingleContractMultipleData } from "../state/multicall/hooks";
 import { useAllV3Routes } from "./useAllV3Routes";
 import { useV3Quoter } from "./useContract";
 import { useAccount } from "wagmi";
-import usePrevious from "./usePrevious";
 import { ListenerOptions } from "../state/multicall/hooks";
 
 export enum V3TradeState {
@@ -98,15 +97,7 @@ export function useBestV3TradeExactIn(amountIn?: CurrencyAmount<Currency>, curre
         };
     }, [amountIn, currencyOut, quotesResults, routes, routesLoading]);
 
-    const prevTrade = usePrevious(trade.trade ? trade : undefined);
-
-    return useMemo(() => {
-        if (!prevTrade) return trade;
-
-        if (!trade.trade && prevTrade.trade) return prevTrade;
-
-        return trade;
-    }, [trade, prevTrade]);
+    return trade;
 }
 
 /**
@@ -189,13 +180,5 @@ export function useBestV3TradeExactOut(currencyIn?: Currency, amountOut?: Curren
         };
     }, [amountOut, currencyIn, quotesResults, routes, routesLoading]);
 
-    const prevTrade = usePrevious(trade.trade ? trade : undefined);
-
-    return useMemo(() => {
-        if (!prevTrade) return trade;
-
-        if (!trade.trade && prevTrade.trade) return prevTrade;
-
-        return trade;
-    }, [trade]);
+    return trade;
 }

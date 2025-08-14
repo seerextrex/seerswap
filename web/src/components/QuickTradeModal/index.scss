@@ -182,6 +182,40 @@
       }
     }
     
+    .liquidity-warning {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      background: rgba(255, 152, 0, 0.1);
+      border: 1px solid rgba(255, 152, 0, 0.2);
+      border-radius: 12px;
+      color: #ff9800;
+      font-size: 0.875rem;
+      font-weight: 500;
+      
+      svg {
+        flex-shrink: 0;
+      }
+    }
+
+    .liquidity-loading {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      background: rgba(74, 144, 226, 0.1);
+      border: 1px solid rgba(74, 144, 226, 0.2);
+      border-radius: 12px;
+      color: #4a90e2;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
     .trade-summary {
       padding: 1rem;
       background: rgba(255, 255, 255, 0.03);

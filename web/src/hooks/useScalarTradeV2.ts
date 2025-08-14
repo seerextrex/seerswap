@@ -271,16 +271,22 @@ export function useScalarTradeV2({
         
         onCurrencySelection(Field.INPUT, collateralCurrency);
         onCurrencySelection(Field.OUTPUT, tradeDirection.outcomeToken);
-    }, [tradeDirection?.type, tradeDirection?.outcomeToken, collateralCurrency, onCurrencySelection]);
+    }, [tradeDirection?.type, tradeDirection?.tokenAddress, collateralTokenAddress, onCurrencySelection]);
     
-    // Bidirectional sync between trade amount and typed value
+    // Bidirectional sync between trade amount and typed value - only when value actually changes
     useEffect(() => {
-        if (tradeAmount && parseFloat(tradeAmount) > 0) {
-            onUserInput(Field.INPUT, tradeAmount);
-        } else {
-            onUserInput(Field.INPUT, '');
+        const currentValue = typedValue || '';
+        const newValue = tradeAmount || '';
+        
+        // Only update if the values are actually different
+        if (currentValue !== newValue) {
+            if (tradeAmount && parseFloat(tradeAmount) > 0) {
+                onUserInput(Field.INPUT, tradeAmount);
+            } else {
+                onUserInput(Field.INPUT, '');
+            }
         }
-    }, [tradeAmount, onUserInput]);
+    }, [tradeAmount, typedValue, onUserInput]);
     
     // Get V3 trade
     const v3Trade = trade && 'swaps' in trade ? trade as V3Trade<Currency, Currency, TradeType> : undefined;
@@ -289,48 +295,55 @@ export function useScalarTradeV2({
     const wouldOvershootTarget = useMemo(() => {
         if (!trade || !tradeDirection || !marketEstimate) return false;
         
-        const executionPrice = trade.executionPrice;
-        const priceImpact = trade.priceImpact;
-        if (!executionPrice) return false;
+        // Get the amounts from the trade
+        const inputAmount = parseFloat(trade.inputAmount.toSignificant(6));
+        const outputAmount = parseFloat(trade.outputAmount.toSignificant(6));
         
-        const isCorrectOrder = trade.inputAmount.currency === collateralCurrency && 
-                              trade.outputAmount.currency === tradeDirection.outcomeToken;
+        if (inputAmount === 0 || outputAmount === 0) return false;
         
-        const rawPrice = parseFloat(executionPrice.toSignificant(6));
-        const avgPrice = isCorrectOrder ? rawPrice : 1 / rawPrice;
+        // Calculate average price: how many outcome tokens we get per collateral
+        const avgOutcomePerCollateral = outputAmount / inputAmount;
         
-        let estimatedFinalPrice = avgPrice;
+        // Apply price impact to estimate the final marginal price
+        // Price impact makes the final price worse than average
+        const priceImpactFactor = trade.priceImpact ? 
+            Math.abs(parseFloat(trade.priceImpact.toSignificant(6))) / 100 : 0;
         
-        // @ts-ignore - Check if swaps array has pool state info
-        if (v3Trade && v3Trade.swaps && v3Trade.swaps.length > 0) {
-            const lastSwap = v3Trade.swaps[v3Trade.swaps.length - 1];
-            // @ts-ignore - Access pool's post-trade state if available
-            if (lastSwap.route && lastSwap.route.pools && lastSwap.route.pools.length > 0) {
-                const finalPool = lastSwap.route.pools[lastSwap.route.pools.length - 1];
-                if (finalPool.token0Price) {
-                    const postPrice = isCorrectOrder 
-                        ? parseFloat(finalPool.token0Price.toSignificant(6))
-                        : 1 / parseFloat(finalPool.token0Price.toSignificant(6));
-                    estimatedFinalPrice = postPrice;
-                }
-            }
-        }
+        // After price impact, we get fewer outcome tokens per collateral
+        const finalOutcomePerCollateral = avgOutcomePerCollateral * (1 - priceImpactFactor);
         
-        if (estimatedFinalPrice === avgPrice && priceImpact) {
-            const impactPercent = parseFloat(priceImpact.toSignificant(6)) / 100;
-            estimatedFinalPrice = avgPrice * (1 + impactPercent / 2);
-        }
+        // Calculate the outcome token price in collateral terms (collateral per outcome)
+        // This is the inverse: if we get 2 outcome per 1 collateral, then 1 outcome costs 0.5 collateral
+        const outcomePrice = finalOutcomePerCollateral > 0 ? 1 / finalOutcomePerCollateral : 1;
         
-        const postTradePrice = Math.min(1, Math.max(0, estimatedFinalPrice));
+        // Ensure outcome price is in valid range [0, 1]
+        const normalizedOutcomePrice = Math.min(1, Math.max(0, outcomePrice));
+        
+        // Calculate estimated post-trade market value using the formulas:
+        // For UP: marketEstimate = lowerBound + (upperBound - lowerBound) * UP_price
+        // For DOWN: marketEstimate = upperBound - (upperBound - lowerBound) * DOWN_price
+        let estimatedPostTradeValue: number;
         
         if (tradeDirection.type === 'up') {
-            const postTradeEstimate = marketEstimate.lower + (marketEstimate.range * postTradePrice);
-            return postTradeEstimate > sliderValue;
+            // UP token price represents how much the market thinks it will go up
+            estimatedPostTradeValue = marketEstimate.lower + (marketEstimate.range * normalizedOutcomePrice);
         } else {
-            const postTradeEstimate = marketEstimate.upper - (marketEstimate.range * postTradePrice);
-            return postTradeEstimate < sliderValue;
+            // DOWN token price represents how much the market thinks it will go down
+            estimatedPostTradeValue = marketEstimate.upper - (marketEstimate.range * normalizedOutcomePrice);
         }
-    }, [trade, tradeDirection, marketEstimate, sliderValue, collateralCurrency, v3Trade]);
+        
+        // Check if the post-trade market estimate would overshoot the user's target
+        // Use a reasonable tolerance to avoid false positives
+        const tolerance = 1.0; // Tolerance in market estimate units
+        
+        if (tradeDirection.type === 'up') {
+            // For UP trades, check if we'd push the market above the target
+            return estimatedPostTradeValue > sliderValue + tolerance;
+        } else {
+            // For DOWN trades, check if we'd push the market below the target
+            return estimatedPostTradeValue < sliderValue - tolerance;
+        }
+    }, [trade, tradeDirection, marketEstimate, sliderValue]);
     
     // Calculate fiat values and price impact
     const parsedAmounts = useMemo(

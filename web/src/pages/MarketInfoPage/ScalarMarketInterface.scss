@@ -331,16 +331,18 @@
         // Trade Preview Container
         .trade-preview-container {
             margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
         
-        // Trade Direction Indicator
+        // Trade Direction Indicator (Header only)
         .trade-indicator {
-            padding: 20px 24px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(30, 30, 60, 0.6) 0%, rgba(20, 20, 40, 0.8) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            animation: slideIn 0.3s ease;
+            padding: 16px 20px;
+            background: rgba(16, 18, 36, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px 16px 0 0;
+            border-bottom: none;
             
             &.up {
                 .trade-header {
@@ -361,8 +363,7 @@
             .trade-header {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                margin-bottom: 20px;
+                gap: 8px;
                 
                 svg {
                     flex-shrink: 0;
@@ -370,48 +371,50 @@
                 
                 .direction-text {
                     font-size: 13px;
-                    font-weight: 700;
-                    letter-spacing: 1px;
-                    opacity: 0.9;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
                 }
                 
                 .target-value {
                     margin-left: auto;
-                    font-size: 28px;
+                    font-size: 32px;
                     font-weight: 700;
                     color: white;
                     font-variant-numeric: tabular-nums;
                 }
             }
+        }
+        
+        // Profit Box (Separate from trade indicator)
+        .profit-box {
+            padding: 20px;
+            background: rgba(25, 27, 48, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0 0 16px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
             
-            .profit-preview {
+            .profit-item {
                 display: flex;
-                flex-direction: column;
-                gap: 12px;
-                padding-top: 16px;
-                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                justify-content: space-between;
+                align-items: center;
                 
-                .profit-item {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
+                .profit-label {
+                    font-size: 14px;
+                    color: rgba(255, 255, 255, 0.5);
+                    font-weight: 500;
+                }
+                
+                .profit-value {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: rgba(255, 255, 255, 0.95);
+                    font-variant-numeric: tabular-nums;
                     
-                    .profit-label {
-                        font-size: 14px;
-                        color: rgba(255, 255, 255, 0.6);
-                        font-weight: 500;
-                    }
-                    
-                    .profit-value {
-                        font-size: 16px;
-                        font-weight: 700;
-                        color: rgba(255, 255, 255, 0.9);
-                        font-variant-numeric: tabular-nums;
-                        
-                        &.positive {
-                            color: #10b981;
-                            font-size: 17px;
-                        }
+                    &.positive {
+                        color: #10b981;
                     }
                 }
             }

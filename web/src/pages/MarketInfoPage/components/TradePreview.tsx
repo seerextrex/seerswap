@@ -33,45 +33,41 @@ export const TradePreview: FC<TradePreviewProps> = ({
     priceImpact,
     wouldOvershootTarget
 }) => {
-    if (!tradeDirection) return null;
+    if (!tradeDirection || !trade || parseFloat(tradeAmount) <= 0) return null;
 
-    const roi = trade && parseFloat(tradeAmount) > 0
-        ? ((parseFloat(trade.outputAmount?.toSignificant(6) || '0') / parseFloat(tradeAmount) - 1) * 100)
-        : 0;
+    const roi = ((parseFloat(trade.outputAmount?.toSignificant(6) || '0') / parseFloat(tradeAmount) - 1) * 100);
 
     return (
         <div className="trade-preview-container">
-            {trade && parseFloat(tradeAmount) > 0 && (
-                <div className={`trade-indicator ${tradeDirection.type}`}>
-                    <div className="trade-header">
-                        {tradeDirection.type === 'up' ? (
-                            <>
-                                <TrendingUp size={18} />
-                                <span className="direction-text"><Trans>BETTING ON UP</Trans></span>
-                            </>
-                        ) : (
-                            <>
-                                <TrendingDown size={18} />
-                                <span className="direction-text"><Trans>BETTING ON DOWN</Trans></span>
-                            </>
-                        )}
-                        <span className="target-value">{sliderValue.toFixed(2)}</span>
-                    </div>
-                    
-                    <div className="profit-preview">
-                        <div className="profit-item">
-                            <span className="profit-label"><Trans>If correct:</Trans></span>
-                            <span className="profit-value positive">
-                                +{trade.outputAmount?.toSignificant(2)} {collateralSymbol}
-                            </span>
-                        </div>
-                        <div className="profit-item">
-                            <span className="profit-label"><Trans>ROI:</Trans></span>
-                            <span className="profit-value">{roi.toFixed(1)}%</span>
-                        </div>
-                    </div>
+            <div className={`trade-indicator ${tradeDirection.type}`}>
+                <div className="trade-header">
+                    {tradeDirection.type === 'up' ? (
+                        <>
+                            <TrendingUp size={16} />
+                            <span className="direction-text"><Trans>BETTING ON UP</Trans></span>
+                        </>
+                    ) : (
+                        <>
+                            <TrendingDown size={16} />
+                            <span className="direction-text"><Trans>BETTING ON DOWN</Trans></span>
+                        </>
+                    )}
+                    <span className="target-value">{sliderValue.toFixed(2)}</span>
                 </div>
-            )}
+            </div>
+            
+            <div className="profit-box">
+                <div className="profit-item">
+                    <span className="profit-label"><Trans>If correct:</Trans></span>
+                    <span className="profit-value positive">
+                        +{trade.outputAmount?.toSignificant(2)} {collateralSymbol}
+                    </span>
+                </div>
+                <div className="profit-item">
+                    <span className="profit-label"><Trans>ROI:</Trans></span>
+                    <span className="profit-value">{roi.toFixed(1)}%</span>
+                </div>
+            </div>
 
             {/* Warnings with color coding based on severity */}
             {wouldOvershootTarget && tradeAmount && parseFloat(tradeAmount) > 0 && (

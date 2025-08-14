@@ -422,6 +422,13 @@ export function calculateScalarMarketEstimate(
   upIndex: number;
   downIndex: number;
 } | null {
+  console.log('[calculateScalarMarketEstimate] Starting with:', {
+    pools: pools?.length,
+    market: market?.id,
+    bounds: [market?.lowerBound, market?.upperBound],
+    outcomes: market?.outcomes
+  });
+  
   // Check for required bounds
   if (!market.lowerBound || !market.upperBound) {
     console.log('[calculateScalarMarketEstimate] Missing bounds');
@@ -446,7 +453,17 @@ export function calculateScalarMarketEstimate(
   }
   
   // Calculate outcome probabilities (these are percentages 0-100)
+  console.log('[calculateScalarMarketEstimate] About to call calculateOutcomeProbabilities with:', {
+    poolsLength: pools?.length,
+    poolsType: typeof pools,
+    poolsIsArray: Array.isArray(pools),
+    firstPool: pools?.[0],
+    marketId: market?.id
+  });
   const probabilities = calculateOutcomeProbabilities(pools, market);
+  console.log('[calculateScalarMarketEstimate] Probabilities:', probabilities);
+  console.log('[calculateScalarMarketEstimate] Market outcomes:', market.outcomes);
+  
   if (!probabilities) {
     console.log('[calculateScalarMarketEstimate] No probabilities calculated');
     return null;
@@ -455,6 +472,8 @@ export function calculateScalarMarketEstimate(
   // Find UP and DOWN outcomes
   const upIndex = market.outcomes.findIndex(o => o.toLowerCase() === 'up');
   const downIndex = market.outcomes.findIndex(o => o.toLowerCase() === 'down');
+  
+  console.log('[calculateScalarMarketEstimate] Found indices:', { upIndex, downIndex });
   
   if (upIndex === -1 || downIndex === -1) {
     console.log('[calculateScalarMarketEstimate] UP or DOWN outcome not found');

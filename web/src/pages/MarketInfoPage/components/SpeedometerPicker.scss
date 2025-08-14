@@ -1,0 +1,293 @@
+.speedometer-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        0 20px 60px -10px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    // Ambient glow effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at center, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+    
+    &:hover::before {
+        opacity: 1;
+    }
+    
+    &.dragging {
+        transform: scale(1.02);
+        box-shadow: 
+            0 0 0 1px rgba(124, 58, 237, 0.3) inset,
+            0 25px 70px -10px rgba(0, 0, 0, 0.5),
+            0 0 60px rgba(124, 58, 237, 0.1);
+        
+        .speedometer-svg {
+            .needle-group {
+                .needle {
+                    stroke-width: 5;
+                    filter: url(#glow);
+                }
+            }
+        }
+        
+        .display-value {
+            color: rgba(124, 58, 237, 0.9);
+            text-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+        }
+    }
+    
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    
+    .speedometer-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.35);
+        margin-bottom: 16px;
+        font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
+    }
+    
+    .speedometer-svg {
+        cursor: grab;
+        user-select: none;
+        -webkit-user-select: none;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        &:active {
+            cursor: grabbing;
+        }
+        
+        &:hover {
+            transform: scale(1.05);
+        }
+        
+        .tick-label {
+            font-family: 'SF Mono', Monaco, monospace;
+            user-select: none;
+        }
+        
+        .active-arc {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3));
+        }
+        
+        .market-marker {
+            .market-line {
+                animation: pulse 2s infinite;
+            }
+            
+            .market-label {
+                font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
+                letter-spacing: 0.5px;
+            }
+        }
+        
+        .needle-group {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: 200px 200px;
+            
+            &.hovering {
+                filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.3));
+            }
+            
+            .needle {
+                transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+        
+        .interaction-area {
+            cursor: inherit;
+        }
+    }
+    
+    .speedometer-display {
+        margin-top: 24px;
+        padding: 20px 32px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        text-align: center;
+        min-width: 280px;
+        backdrop-filter: blur(10px);
+        
+        .display-value {
+            font-size: 48px;
+            font-weight: 200;
+            background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+            font-family: -apple-system, system-ui, 'SF Pro Display', sans-serif;
+            margin-bottom: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            
+            // Subtle glow on value change
+            &::after {
+                content: attr(data-value);
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: inherit;
+                font-weight: inherit;
+                background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                opacity: 0;
+                filter: blur(20px);
+                z-index: -1;
+                transition: opacity 0.3s ease;
+            }
+        }
+        
+        .display-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
+            
+            .info-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            
+            .info-label {
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-size: 10px;
+                color: rgba(255, 255, 255, 0.35);
+            }
+            
+            .info-value {
+                font-weight: 500;
+                font-variant-numeric: tabular-nums;
+                color: rgba(255, 255, 255, 0.7);
+                
+                &.positive {
+                    color: #10b981;
+                }
+                
+                &.negative {
+                    color: #ef4444;
+                }
+            }
+            
+            .info-divider {
+                color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.8;
+        stroke-width: 3;
+    }
+    50% {
+        opacity: 1;
+        stroke-width: 4;
+    }
+}
+
+// Color zones for the gauge
+.speedometer-picker {
+    .speedometer-svg {
+        // Red zone (low values)
+        .danger-zone {
+            fill: rgba(239, 68, 68, 0.15);
+        }
+        
+        // Yellow zone (medium values)
+        .warning-zone {
+            fill: rgba(251, 191, 36, 0.15);
+        }
+        
+        // Green zone (high values)
+        .success-zone {
+            fill: rgba(16, 185, 129, 0.15);
+        }
+    }
+}
+
+// Dark mode optimizations
+@media (prefers-color-scheme: dark) {
+    .speedometer-picker {
+        .speedometer-display {
+            .display-value {
+                &::after {
+                    opacity: 0.3;
+                }
+            }
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .speedometer-picker {
+        padding: 20px;
+        
+        .speedometer-svg {
+            width: 100%;
+            height: auto;
+            max-width: 350px;
+        }
+        
+        .speedometer-display {
+            min-width: 240px;
+            padding: 16px 24px;
+            
+            .display-value {
+                font-size: 36px;
+            }
+        }
+    }
+}
+
+// Animations for smooth interactions
+.speedometer-picker {
+    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

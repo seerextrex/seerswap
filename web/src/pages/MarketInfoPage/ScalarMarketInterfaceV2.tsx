@@ -1,10 +1,12 @@
 import React from "react";
 import { Trans } from "@lingui/macro";
 import { Info, AlertCircle } from "react-feather";
+import { useAccount, useChainId } from "wagmi";
 import { useScalarTradeV2 } from "../../hooks/useScalarTradeV2";
 import { Market, Pool } from "../../utils/market";
+import { getExplorerLink } from "../../utils/getExplorerLink";
 import { MarketEstimateDisplay } from "./components/MarketEstimateDisplay";
-import { PredictionSlider } from "./components/PredictionSlider";
+import { PredictionInput } from "./components/PredictionInput";
 import { TradePreview } from "./components/TradePreview";
 import { TradeExecution } from "./components/TradeExecution";
 import "./ScalarMarketInterface.scss";
@@ -24,6 +26,10 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
     pools,
     onTrade 
 }) => {
+    // Get chain and account info
+    const chainId = useChainId();
+    const { isConnected } = useAccount();
+    
     // Use the single source of truth hook
     const {
         marketEstimate,
@@ -71,6 +77,15 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
     // Get collateral symbol
     const collateralSymbol = market?.collateralToken?.symbol || 'sDAI';
     
+    // Debug logging
+    console.log('[ScalarMarketInterfaceV2] Component state:', {
+        hasMarket: !!market,
+        hasPools: !!pools,
+        poolsLength: pools?.length,
+        marketEstimate,
+        isLoading
+    });
+    
     // Early return if not a scalar market
     if (!marketEstimate) {
         return (
@@ -78,6 +93,10 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
                 <div className="not-scalar-message">
                     <Info size={20} />
                     <Trans>This market does not support scalar trading</Trans>
+                    <div style={{ marginTop: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                        Debug: outcomes={JSON.stringify(market?.outcomes)}, 
+                        bounds=[{market?.lowerBound}, {market?.upperBound}]
+                    </div>
                 </div>
             </div>
         );
@@ -100,13 +119,14 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
             {/* Market Estimate Display */}
             <MarketEstimateDisplay marketEstimate={marketEstimate} />
             
-            {/* Prediction Slider */}
-            <PredictionSlider
+            {/* Prediction Input with Speedometer Option */}
+            <PredictionInput
                 sliderValue={sliderValue}
                 marketEstimate={marketEstimate}
                 hasUserModifiedSlider={hasUserModifiedSlider}
                 onSliderChange={setSliderValue}
                 onReset={resetToCurrent}
+                preferSpeedometer={false} // Can be toggled based on user preference
             />
             
             {/* Trade Preview with Enhanced Warnings */}
@@ -161,7 +181,7 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
                     <span>✓ <Trans>Trade successful!</Trans></span>
                     {tradeTransaction.hash && (
                         <a 
-                            href={`https://etherscan.io/tx/${tradeTransaction.hash}`}
+                            href={getExplorerLink(chainId, tradeTransaction.hash, 'transaction')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="tx-link"
@@ -184,7 +204,7 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
                 tradeAmount={tradeAmount}
                 onTradeAmountChange={setTradeAmount}
                 collateralSymbol={collateralSymbol}
-                isConnected={true} // We'll need to get this from wagmi
+                isConnected={isConnected}
                 approvalState={approvalState}
                 trade={trade}
                 isValidTrade={isValidTrade}
@@ -194,7 +214,7 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
                 tradeDirection={tradeDirection}
                 wouldOvershootTarget={wouldOvershootTarget}
                 allowedSlippage={allowedSlippage}
-                chainId={100} // We'll need to get this from wagmi
+                chainId={chainId}
                 onApprove={handleApprove}
                 onTrade={handleTrade}
             />

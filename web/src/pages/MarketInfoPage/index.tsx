@@ -13,7 +13,7 @@ import { MarketInfoHeader } from "./MarketInfoHeader";
 import { EnhancedMarketChart } from "./EnhancedMarketChart";
 import { ScalarMarketChart } from "./ScalarMarketChart";
 import { SwapModule } from "./SwapModule";
-import { ScalarMarketInterface } from "./ScalarMarketInterface";
+import { ScalarMarketInterfaceV2 } from "./ScalarMarketInterfaceV2";
 import "./index.scss";
 
 interface MarketInfoPageProps {
@@ -287,7 +287,7 @@ export default function MarketInfoPage({
                             
                             <div className="swap-container">
                                 {isScalarMarket ? (
-                                    <ScalarMarketInterface
+                                    <ScalarMarketInterfaceV2
                                         market={marketWithWeeklyVolume}
                                         pools={pools || []}
                                     />

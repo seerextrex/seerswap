@@ -43,49 +43,96 @@ export interface TransactionStatus {
     error?: Error;
 }
 
-export interface ScalarTradeState {
-    // Market data
+// Grouped interfaces for better organization
+export interface MarketData {
     market: Market | null;
     pools: Pool[] | null;
     marketEstimate: ReturnType<typeof calculateScalarMarketEstimate> | null;
-    
-    // UI state
+}
+
+export interface UIState {
     sliderValue: number;
     tradeAmount: string;
     hasUserModifiedSlider: boolean;
-    
-    // Trade state
-    tradeDirection: TradeDirection | null;
+}
+
+export interface TradeState {
+    direction: TradeDirection | null;
     collateralCurrency: Currency | null;
-    trade: V3Trade<Currency, Currency, TradeType> | undefined;
-    
-    // Validation
+    v3Trade: V3Trade<Currency, Currency, TradeType> | undefined;
+}
+
+export interface ValidationState {
     swapInputError: string | undefined;
     swapCallbackError: string | null;
     priceImpact: ReturnType<typeof computeFiatValuePriceImpact>;
     wouldOvershootTarget: boolean;
     isValidTrade: boolean;
     allowedSlippage: any;
-    
-    // Approval state
+}
+
+export interface TransactionState {
     approvalState: ApprovalState;
     approvalTransaction: TransactionStatus;
-    
-    // Trade execution state
     tradeTransaction: TransactionStatus;
-    
-    // Balance state
+}
+
+export interface BalanceState {
     collateralBalance: bigint | undefined;
     hasInsufficientBalance: boolean;
-    
-    // Actions
+}
+
+export interface Actions {
     setSliderValue: (value: number) => void;
     setTradeAmount: (amount: string) => void;
     resetToCurrent: () => void;
     handleApprove: () => Promise<void>;
     executeTrade: () => Promise<string>;
+}
+
+export interface LoadingState {
+    isLoading: boolean;
+    isApproving: boolean;
+    isTrading: boolean;
+}
+
+export interface ScalarTradeState {
+    marketData: MarketData;
+    uiState: UIState;
+    trade: TradeState;
+    validation: ValidationState;
+    transactions: TransactionState;
+    balance: BalanceState;
+    actions: Actions;
+    loading: LoadingState;
     
-    // Loading states
+    // Legacy flat properties for backward compatibility
+    // TODO: Remove these after updating all consumers
+    market: Market | null;
+    pools: Pool[] | null;
+    marketEstimate: ReturnType<typeof calculateScalarMarketEstimate> | null;
+    sliderValue: number;
+    tradeAmount: string;
+    hasUserModifiedSlider: boolean;
+    tradeDirection: TradeDirection | null;
+    collateralCurrency: Currency | null;
+    trade: V3Trade<Currency, Currency, TradeType> | undefined;
+    swapInputError: string | undefined;
+    swapCallbackError: string | null;
+    priceImpact: ReturnType<typeof computeFiatValuePriceImpact>;
+    wouldOvershootTarget: boolean;
+    isValidTrade: boolean;
+    allowedSlippage: any;
+    approvalState: ApprovalState;
+    approvalTransaction: TransactionStatus;
+    tradeTransaction: TransactionStatus;
+    collateralBalance: bigint | undefined;
+    hasInsufficientBalance: boolean;
+    setSliderValue: (value: number) => void;
+    setTradeAmount: (amount: string) => void;
+    resetToCurrent: () => void;
+    handleApprove: () => Promise<void>;
+    executeTrade: () => Promise<string>;
     isLoading: boolean;
     isApproving: boolean;
     isTrading: boolean;
@@ -113,6 +160,19 @@ export function useScalarTradeV2({
     const [approvalTxHash, setApprovalTxHash] = useState<string | undefined>();
     const [tradeTxHash, setTradeTxHash] = useState<string | undefined>();
     
+    // Update state when props change
+    useEffect(() => {
+        if (propMarket) {
+            setMarket(propMarket);
+        }
+    }, [propMarket]);
+    
+    useEffect(() => {
+        if (propPools) {
+            setPools(propPools);
+        }
+    }, [propPools]);
+    
     // Fetch market data if needed
     useEffect(() => {
         if (marketId && (!propMarket || !propPools)) {
@@ -125,8 +185,23 @@ export function useScalarTradeV2({
     
     // Calculate market estimate
     const marketEstimate = useMemo(() => {
-        if (!market || !pools) return null;
-        return calculateScalarMarketEstimate(pools, market);
+        console.log('[useScalarTradeV2] Calculating market estimate with:', {
+            hasMarket: !!market,
+            hasPools: !!pools,
+            poolsLength: pools?.length,
+            marketId: market?.id,
+            marketOutcomes: market?.outcomes,
+            firstPool: pools?.[0]?.id
+        });
+        
+        if (!market || !pools || pools.length === 0) {
+            console.log('[useScalarTradeV2] Missing market or pools, returning null');
+            return null;
+        }
+        
+        const result = calculateScalarMarketEstimate(pools, market);
+        console.log('[useScalarTradeV2] Market estimate result:', result);
+        return result;
     }, [market, pools]);
     
     // Initialize slider value to current market estimate
@@ -394,13 +469,13 @@ export function useScalarTradeV2({
     // Build transaction status objects
     const approvalTransaction: TransactionStatus = useMemo(() => ({
         hash: approvalTxHash,
-        status: approvalStatus || 'idle',
+        status: approvalTxHash ? (approvalStatus || 'pending') : 'idle',
         confirmations: approvalReceipt ? 1 : 0,
     }), [approvalTxHash, approvalStatus, approvalReceipt]);
     
     const tradeTransaction: TransactionStatus = useMemo(() => ({
         hash: tradeTxHash,
-        status: tradeStatus || 'idle',
+        status: tradeTxHash ? (tradeStatus || 'pending') : 'idle',
         confirmations: tradeReceipt ? 1 : 0,
     }), [tradeTxHash, tradeStatus, tradeReceipt]);
     
@@ -516,51 +591,99 @@ export function useScalarTradeV2({
     const isApproving = approvalTransaction.status === 'pending';
     const isTrading = tradeTransaction.status === 'pending';
     
+    // Build grouped return objects
+    const marketData: MarketData = {
+        market,
+        pools,
+        marketEstimate
+    };
+    
+    const uiState: UIState = {
+        sliderValue,
+        tradeAmount,
+        hasUserModifiedSlider
+    };
+    
+    const tradeState: TradeState = {
+        direction: tradeDirection,
+        collateralCurrency,
+        v3Trade
+    };
+    
+    const validationState: ValidationState = {
+        swapInputError,
+        swapCallbackError,
+        priceImpact,
+        wouldOvershootTarget,
+        isValidTrade,
+        allowedSlippage
+    };
+    
+    const transactionState: TransactionState = {
+        approvalState,
+        approvalTransaction,
+        tradeTransaction
+    };
+    
+    const balanceState: BalanceState = {
+        collateralBalance,
+        hasInsufficientBalance
+    };
+    
+    const actions: Actions = {
+        setSliderValue: handleSliderChange,
+        setTradeAmount: handleTradeAmountChange,
+        resetToCurrent,
+        handleApprove,
+        executeTrade
+    };
+    
+    const loading: LoadingState = {
+        isLoading,
+        isApproving,
+        isTrading
+    };
+    
     return {
-        // Market data
+        // Grouped properties
+        marketData,
+        uiState,
+        trade: tradeState,
+        validation: validationState,
+        transactions: transactionState,
+        balance: balanceState,
+        actions,
+        loading,
+        
+        // Legacy flat properties for backward compatibility
+        // TODO: Remove these after updating all consumers
         market,
         pools,
         marketEstimate,
-        
-        // UI state
         sliderValue,
         tradeAmount,
         hasUserModifiedSlider,
-        
-        // Trade state
         tradeDirection,
         collateralCurrency,
         trade: v3Trade,
-        
-        // Validation
         swapInputError,
         swapCallbackError,
         priceImpact,
         wouldOvershootTarget,
         isValidTrade,
         allowedSlippage,
-        
-        // Approval state
         approvalState,
         approvalTransaction,
-        
-        // Trade execution state
         tradeTransaction,
-        
-        // Balance state
         collateralBalance,
         hasInsufficientBalance,
-        
-        // Actions
         setSliderValue: handleSliderChange,
         setTradeAmount: handleTradeAmountChange,
         resetToCurrent,
         handleApprove,
         executeTrade,
-        
-        // Loading states
         isLoading,
         isApproving,
-        isTrading,
+        isTrading
     };
 }

@@ -50,8 +50,8 @@ const MARKET_POOLS_QUERY = gql`
         pools(
             where: { 
                 or: [
-                    { market0: $marketId },
-                    { market1: $marketId }
+                    { market0_: { id: $marketId } },
+                    { market1_: { id: $marketId } }
                 ]
             }
             first: 100
@@ -68,6 +68,12 @@ const MARKET_POOLS_QUERY = gql`
                 id
                 symbol
                 name
+            }
+            market0 {
+                id
+            }
+            market1 {
+                id
             }
             token0Price
             token1Price
@@ -218,14 +224,16 @@ export const useMarketData = (marketId?: string) => {
             
             // Also fetch pools for this market with weekly data
             const timestampWeekAgo = Math.floor(Date.now() / 1000) - (7 * 86400);
+            console.log('[useMarketData] Fetching pools for market:', id);
             const { data: poolsData } = await client.query({
                 query: MARKET_POOLS_QUERY,
                 variables: { 
-                    marketId: id,
+                    marketId: id.toLowerCase(), // Ensure lowercase for consistency
                     timestampWeekAgo 
                 },
                 fetchPolicy: "network-only",
             });
+            console.log('[useMarketData] Pools data:', poolsData?.pools);
             // Apply weekly calculations to pools before storing
             const poolsWithStats = addCalculatedWeeklyStatsToArray(poolsData?.pools || []);
             setPools(poolsWithStats);

@@ -1,0 +1,229 @@
+.prediction-input {
+    position: relative;
+    
+    .input-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        gap: 16px;
+        flex-wrap: wrap;
+        
+        .input-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            
+            .view-toggle {
+                display: flex;
+                gap: 2px;
+                padding: 2px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 10px;
+                
+                .toggle-btn {
+                    padding: 8px 12px;
+                    background: transparent;
+                    border: none;
+                    border-radius: 8px;
+                    color: rgba(255, 255, 255, 0.4);
+                    cursor: pointer;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    
+                    &:hover {
+                        color: rgba(255, 255, 255, 0.6);
+                        background: rgba(255, 255, 255, 0.02);
+                    }
+                    
+                    &.active {
+                        background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+                        color: white;
+                        box-shadow: 
+                            0 0 8px rgba(124, 58, 237, 0.15),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+                        
+                        svg {
+                            filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.3));
+                        }
+                    }
+                    
+                    svg {
+                        transition: all 0.3s ease;
+                    }
+                }
+            }
+            
+            .value-display {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                
+                .value-input {
+                    background: rgba(255, 255, 255, 0.04);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 16px;
+                    padding: 10px 16px;
+                    font-size: 24px;
+                    font-weight: 300;
+                    color: white;
+                    width: 120px;
+                    text-align: center;
+                    font-variant-numeric: tabular-nums;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    font-family: -apple-system, system-ui, 'SF Pro Display', sans-serif;
+                    
+                    &:focus {
+                        outline: none;
+                        border-color: rgba(124, 58, 237, 0.3);
+                        background: rgba(124, 58, 237, 0.05);
+                        box-shadow: 
+                            0 0 0 1px rgba(124, 58, 237, 0.15),
+                            0 0 24px rgba(124, 58, 237, 0.1);
+                    }
+                    
+                    &::-webkit-inner-spin-button,
+                    &::-webkit-outer-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                    }
+                }
+                
+                .reset-btn {
+                    padding: 8px 16px;
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 100px;
+                    color: rgba(255, 255, 255, 0.5);
+                    font-size: 11px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
+                    
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.05);
+                        border-color: rgba(255, 255, 255, 0.2);
+                        color: rgba(255, 255, 255, 0.8);
+                        transform: translateY(-1px);
+                    }
+                    
+                    &:active {
+                        transform: translateY(0);
+                    }
+                }
+            }
+        }
+    }
+    
+    .input-content {
+        position: relative;
+        min-height: 200px;
+        
+        .slider-view,
+        .speedometer-view {
+            animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: center;
+        }
+        
+        .slider-view {
+            padding: 20px 0;
+            
+            &.exit-animation {
+                animation: slideOut 0.3s cubic-bezier(0.4, 0, 1, 1);
+            }
+        }
+        
+        .speedometer-view {
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            
+            &.exit-animation {
+                animation: slideOut 0.3s cubic-bezier(0.4, 0, 1, 1);
+            }
+            
+            .speedometer-picker {
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                
+                &::before {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .prediction-input {
+        .input-header {
+            flex-direction: column;
+            align-items: stretch;
+            
+            .header-controls {
+                justify-content: space-between;
+                width: 100%;
+                
+                .value-display {
+                    flex: 1;
+                    
+                    .value-input {
+                        flex: 1;
+                        width: auto;
+                    }
+                }
+            }
+        }
+    }
+}

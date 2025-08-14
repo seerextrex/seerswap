@@ -157,8 +157,10 @@
         }
     }
     
-    // Interactive Slider Section
-    .slider-section {
+    // Interactive Slider Section (legacy)
+    .slider-section,
+    // New Prediction Input Section
+    .prediction-input {
         margin-bottom: 40px;
         position: relative;
         z-index: 1;

@@ -64,6 +64,11 @@ export interface Pool {
   token1Price?: string;
   market0?: Market;
   market1?: Market;
+  poolHourData?: Array<{
+    periodStartUnix: number;
+    volumeUSD: string;
+    feesUSD: string;
+  }>;
 }
 
 /**
@@ -525,9 +530,17 @@ export function groupPoolsByMarketWithHierarchy(
       }
 
       // Update child market stats
+      // Calculate 24h volume and fees from poolHourData
+      const volume24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+        return sum + parseFloat(hourData.volumeUSD || '0');
+      }, 0) || 0;
+      const fees24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+        return sum + parseFloat(hourData.feesUSD || '0');
+      }, 0) || 0;
+      
       childGroup.totalTVL += tvl;
-      childGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
-      childGroup.totalFees += parseFloat(pool.feesUSD || "0");
+      childGroup.totalVolume += volume24h;
+      childGroup.totalFees += fees24h;
 
       // Track unique pool for parent market to avoid double counting
       const poolId = pool.id;
@@ -536,12 +549,25 @@ export function groupPoolsByMarketWithHierarchy(
         parentPools.add(poolId);
         // Add to parent's total TVL (don't double count within parent)
         parentGroup.totalTVL += tvl;
-        parentGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
-        parentGroup.totalFees += parseFloat(pool.feesUSD || "0");
+        parentGroup.totalVolume += volume24h;
+        parentGroup.totalFees += fees24h;
       }
     } else {
       // Handle regular markets - count pool for EACH market it belongs to
       const markets = [pool.market0, pool.market1].filter(Boolean) as Market[];
+      
+      // Calculate 24h volume and fees from poolHourData
+      const volume24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+        return sum + parseFloat(hourData.volumeUSD || '0');
+      }, 0) || 0;
+      const fees24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+        return sum + parseFloat(hourData.feesUSD || '0');
+      }, 0) || 0;
+      
+      // Calculate how to split volume and fees among markets
+      const marketCount = markets.length;
+      const volumePerMarket = volume24h / marketCount;
+      const feesPerMarket = fees24h / marketCount;
       
       markets.forEach((market) => {
         if (!market) return;
@@ -584,10 +610,12 @@ export function groupPoolsByMarketWithHierarchy(
             marketGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
           }
 
-          // Update market stats - each market gets the full TVL of its pools
+          // Update market stats
+          // TVL: Each market gets the full TVL (liquidity is available for all markets)
           marketGroup.totalTVL += tvl;
-          marketGroup.totalVolume += parseFloat(pool.volumeUSD || "0");
-          marketGroup.totalFees += parseFloat(pool.feesUSD || "0");
+          // Volume and Fees: Split proportionally among markets to avoid double counting
+          marketGroup.totalVolume += volumePerMarket;
+          marketGroup.totalFees += feesPerMarket;
         }
       });
     }

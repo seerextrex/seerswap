@@ -43,7 +43,7 @@ const MARKET_QUERY = gql`
 `;
 
 const MARKET_POOLS_QUERY = gql`
-    query MarketPools($marketId: String!) {
+    query MarketPools($marketId: String!, $timestamp24hAgo: Int!) {
         pools(
             where: { 
                 or: [
@@ -70,6 +70,15 @@ const MARKET_POOLS_QUERY = gql`
             token1Price
             volumeUSD
             totalValueLockedUSD
+            poolHourData(
+                where: { periodStartUnix_gt: $timestamp24hAgo }
+                orderBy: periodStartUnix
+                orderDirection: desc
+            ) {
+                periodStartUnix
+                volumeUSD
+                feesUSD
+            }
             market0 {
                 id
                 outcomes
@@ -94,7 +103,7 @@ const MARKET_POOLS_QUERY = gql`
 
 const MARKET_POOL_HOUR_DATA_QUERY = gql`
     query MarketPoolHourData($pool: ID!, $startTimestamp: Int!, $endTimestamp: Int!) {
-        poolHourDatas(
+        poolHourData(
             first: 1000
             where: { 
                 pool_: { id: $pool }, 
@@ -116,7 +125,7 @@ const MARKET_POOL_HOUR_DATA_QUERY = gql`
 // Query to get the last known price before a timestamp
 const LAST_POOL_HOUR_DATA_QUERY = gql`
     query LastPoolHourData($pool: ID!, $beforeTimestamp: Int!) {
-        poolHourDatas(
+        poolHourData(
             first: 1
             where: { 
                 pool_: { id: $pool }, 
@@ -201,10 +210,14 @@ export const useMarketData = (marketId?: string) => {
             }
             setMarket(data.market);
             
-            // Also fetch pools for this market
+            // Also fetch pools for this market with 24h data
+            const timestamp24hAgo = Math.floor(Date.now() / 1000) - 86400;
             const { data: poolsData } = await client.query({
                 query: MARKET_POOLS_QUERY,
-                variables: { marketId: id },
+                variables: { 
+                    marketId: id,
+                    timestamp24hAgo 
+                },
                 fetchPolicy: "network-only",
             });
             setPools(poolsData?.pools || []);
@@ -230,9 +243,13 @@ export const useMarketData = (marketId?: string) => {
         setPriceDataError(null);
         try {
             // Fetch pools related to this market (consolidated query)
+            const timestamp24hAgo = Math.floor(Date.now() / 1000) - 86400;
             const { data: poolsData } = await client.query({
                 query: MARKET_POOLS_QUERY,
-                variables: { marketId: id },
+                variables: { 
+                    marketId: id,
+                    timestamp24hAgo 
+                },
                 fetchPolicy: "network-only",
             });
 
@@ -302,8 +319,8 @@ export const useMarketData = (marketId?: string) => {
                     let lastKnownPrice: number | null = null;
                     let lastKnownData: any = null;
                     
-                    if (lastHourData?.poolHourDatas && lastHourData.poolHourDatas.length > 0) {
-                        lastKnownData = lastHourData.poolHourDatas[0];
+                    if (lastHourData?.poolHourData && lastHourData.poolHourData.length > 0) {
+                        lastKnownData = lastHourData.poolHourData[0];
                         lastKnownPrice = calculateOutcomePrice(pool, lastKnownData, currentMarket);
                     }
                     
@@ -321,8 +338,8 @@ export const useMarketData = (marketId?: string) => {
                     // Create a map of existing data points
                     const existingDataPoints = new Map<number, any>();
                     
-                    if (hourlyData?.poolHourDatas && hourlyData.poolHourDatas.length > 0) {
-                        hourlyData.poolHourDatas.forEach((dataPoint: any) => {
+                    if (hourlyData?.poolHourData && hourlyData.poolHourData.length > 0) {
+                        hourlyData.poolHourData.forEach((dataPoint: any) => {
                             const price = calculateOutcomePrice(pool, dataPoint, currentMarket);
                             if (price !== null && price !== undefined) {
                                 existingDataPoints.set(dataPoint.periodStartUnix, {

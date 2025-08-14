@@ -1,0 +1,49 @@
+.explore-page {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.explore-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.explore-tab {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+
+    &:hover {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    &.active {
+        color: white;
+        border-bottom-color: var(--primary-color, #7B68EE);
+    }
+}
+
+.explore-content {
+    min-height: 400px;
+}
+
+@media (max-width: 768px) {
+    .explore-tabs {
+        gap: 0.5rem;
+    }
+
+    .explore-tab {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}

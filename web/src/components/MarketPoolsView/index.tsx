@@ -22,6 +22,28 @@ interface PoolCardProps {
 }
 
 const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
+  // Calculate 24-hour volume from poolHourData
+  const volume24h = useMemo(() => {
+    if (!pool.poolHourData || pool.poolHourData.length === 0) {
+      return 0;
+    }
+    // Sum up all hourly volumes from the past 24 hours
+    return pool.poolHourData.reduce((sum: number, hourData: any) => {
+      return sum + parseFloat(hourData.volumeUSD || '0');
+    }, 0);
+  }, [pool.poolHourData]);
+  
+  // Calculate 24-hour fees from poolHourData
+  const fees24h = useMemo(() => {
+    if (!pool.poolHourData || pool.poolHourData.length === 0) {
+      return 0;
+    }
+    // Sum up all hourly fees from the past 24 hours
+    return pool.poolHourData.reduce((sum: number, hourData: any) => {
+      return sum + parseFloat(hourData.feesUSD || '0');
+    }, 0);
+  }, [pool.poolHourData]);
+
   // Use the improved function to determine tokens
   const tokenInfo = getPoolTokensForMarket(pool, market);
   
@@ -50,11 +72,11 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
         </div>
         <div className="stat">
           <label><Trans>Volume 24h</Trans></label>
-          <span>{formatDollarAmount(parseFloat(pool.volumeUSD))}</span>
+          <span>{formatDollarAmount(volume24h)}</span>
         </div>
         <div className="stat">
           <label><Trans>Fees 24h</Trans></label>
-          <span>{formatDollarAmount(parseFloat(pool.feesUSD))}</span>
+          <span>{formatDollarAmount(fees24h)}</span>
         </div>
       </div>
 
@@ -94,11 +116,23 @@ const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, 
   // Calculate total stats for this outcome
   const outcomeStats = useMemo(() => {
     return pools.reduce(
-      (acc, pool) => ({
-        totalTVL: acc.totalTVL + parseFloat(pool.totalValueLockedUSD || '0'),
-        totalVolume: acc.totalVolume + parseFloat(pool.volumeUSD || '0'),
-        totalFees: acc.totalFees + parseFloat(pool.feesUSD || '0'),
-      }),
+      (acc, pool) => {
+        // Calculate 24h volume for this pool
+        const volume24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+          return sum + parseFloat(hourData.volumeUSD || '0');
+        }, 0) || 0;
+        
+        // Calculate 24h fees for this pool
+        const fees24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+          return sum + parseFloat(hourData.feesUSD || '0');
+        }, 0) || 0;
+        
+        return {
+          totalTVL: acc.totalTVL + parseFloat(pool.totalValueLockedUSD || '0'),
+          totalVolume: acc.totalVolume + volume24h,
+          totalFees: acc.totalFees + fees24h,
+        };
+      },
       { totalTVL: 0, totalVolume: 0, totalFees: 0 }
     );
   }, [pools]);
@@ -820,10 +854,16 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const ITEMS_PER_PAGE = 500; // Increased to fetch more pools initially
 
+  // Calculate timestamp for 24 hours ago
+  const timestamp24hAgo = useMemo(() => {
+    return Math.floor(Date.now() / 1000) - 86400; // 24 hours in seconds
+  }, []);
+
   const { data, loading, error, fetchMore } = useQuery(FETCH_POOLS_GROUPED_BY_MARKET, {
     variables: {
       first: ITEMS_PER_PAGE,
       skip: currentPage * ITEMS_PER_PAGE,
+      timestamp24hAgo,
     },
     fetchPolicy: "cache-and-network",
   });
@@ -868,6 +908,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
     fetchMore({
       variables: {
         skip: (currentPage + 1) * ITEMS_PER_PAGE,
+        timestamp24hAgo,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult || fetchMoreResult.pools.length === 0) return prev;
@@ -887,7 +928,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
         setHasMoreItems(false);
       }
     });
-  }, [currentPage, fetchMore, ITEMS_PER_PAGE]);
+  }, [currentPage, fetchMore, ITEMS_PER_PAGE, timestamp24hAgo]);
 
   if (loading && !data) {
     return (

@@ -13040,6 +13040,7 @@ export type MarketQuery = (
 
 export type MarketPoolsQueryVariables = Exact<{
   marketId: Scalars['String'];
+  timestamp24hAgo: Scalars['Int'];
 }>;
 
 
@@ -13054,7 +13055,10 @@ export type MarketPoolsQuery = (
     ), token1: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'symbol' | 'name'>
-    ), market0?: Maybe<(
+    ), poolHourData: Array<(
+      { __typename?: 'PoolHourData' }
+      & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'feesUSD'>
+    )>, market0?: Maybe<(
       { __typename?: 'Market' }
       & Pick<Market, 'id' | 'outcomes' | 'wrappedTokensString'>
       & { collateralToken: (
@@ -14605,6 +14609,7 @@ export type FetchPoolsGroupedByMarketQueryVariables = Exact<{
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   hideResolved?: Maybe<Scalars['Boolean']>;
+  timestamp24hAgo: Scalars['Int'];
 }>;
 
 
@@ -14613,7 +14618,10 @@ export type FetchPoolsGroupedByMarketQuery = (
   & { pools: Array<(
     { __typename?: 'Pool' }
     & Pick<Pool, 'id' | 'fee' | 'liquidity' | 'sqrtPrice' | 'tick' | 'totalValueLockedUSD' | 'volumeUSD' | 'feesUSD'>
-    & { token0: (
+    & { poolHourData: Array<(
+      { __typename?: 'PoolHourData' }
+      & Pick<PoolHourData, 'periodStartUnix' | 'volumeUSD' | 'feesUSD'>
+    )>, token0: (
       { __typename?: 'Token' }
       & Pick<Token, 'id' | 'symbol' | 'name' | 'decimals' | 'derivedMatic'>
     ), token1: (
@@ -14797,7 +14805,7 @@ export const MarketDocument = `
 }
     `;
 export const MarketPoolsDocument = `
-    query MarketPools($marketId: String!) {
+    query MarketPools($marketId: String!, $timestamp24hAgo: Int!) {
   pools(
     where: {or: [{market0: $marketId}, {market1: $marketId}]}
     first: 100
@@ -14819,6 +14827,15 @@ export const MarketPoolsDocument = `
     token1Price
     volumeUSD
     totalValueLockedUSD
+    poolHourData(
+      where: {periodStartUnix_gt: $timestamp24hAgo}
+      orderBy: periodStartUnix
+      orderDirection: desc
+    ) {
+      periodStartUnix
+      volumeUSD
+      feesUSD
+    }
     market0 {
       id
       outcomes
@@ -16835,7 +16852,7 @@ export const FetchPoolsForMarketsDocument = `
 }
     `;
 export const FetchPoolsGroupedByMarketDocument = `
-    query fetchPoolsGroupedByMarket($first: Int = 500, $skip: Int = 0, $hideResolved: Boolean = false) {
+    query fetchPoolsGroupedByMarket($first: Int = 500, $skip: Int = 0, $hideResolved: Boolean = false, $timestamp24hAgo: Int!) {
   pools(
     first: $first
     skip: $skip
@@ -16850,6 +16867,15 @@ export const FetchPoolsGroupedByMarketDocument = `
     totalValueLockedUSD
     volumeUSD
     feesUSD
+    poolHourData(
+      where: {periodStartUnix_gt: $timestamp24hAgo}
+      orderBy: periodStartUnix
+      orderDirection: desc
+    ) {
+      periodStartUnix
+      volumeUSD
+      feesUSD
+    }
     token0 {
       id
       symbol
@@ -17228,7 +17254,7 @@ const injectedRtkApi = api.injectEndpoints({
     fetchPoolsForMarkets: build.query<FetchPoolsForMarketsQuery, FetchPoolsForMarketsQueryVariables>({
       query: (variables) => ({ document: FetchPoolsForMarketsDocument, variables })
     }),
-    fetchPoolsGroupedByMarket: build.query<FetchPoolsGroupedByMarketQuery, FetchPoolsGroupedByMarketQueryVariables | void>({
+    fetchPoolsGroupedByMarket: build.query<FetchPoolsGroupedByMarketQuery, FetchPoolsGroupedByMarketQueryVariables>({
       query: (variables) => ({ document: FetchPoolsGroupedByMarketDocument, variables })
     }),
     eternalFarmingsByIds: build.query<EternalFarmingsByIdsQuery, EternalFarmingsByIdsQueryVariables>({

@@ -28,6 +28,7 @@ const PoolPage = React.lazy(() => import("./Pool"));
 const PositionPage = React.lazy(() => import("./Pool/PositionPage"));
 const InfoPage = React.lazy(() => import("./InfoPage"));
 const FarmingPage = React.lazy(() => import("./Farming/FarmingPage"));
+const ExplorePage = React.lazy(() => import("./Explore"));
 
 export default function App() {
     Object.defineProperty(Pool.prototype, "tickSpacing", {
@@ -105,6 +106,7 @@ export default function App() {
                             <Route exact strict path="/increase/:currencyIdA?/:currencyIdB?/:tokenId?" component={AddLiquidity} />
                             <Route exact strict path="/remove/:tokenId" component={RemoveLiquidityV3} />
                             <Route strict path="/farming" component={FarmingPage} />
+                            <Route exact strict path="/explore" component={ExplorePage} />
                             <Route component={RedirectPathToSwapOnly} />
                         </Switch>
                     </React.Suspense>

@@ -57,7 +57,7 @@ const MARKET_POOLS_WITH_PRICES_QUERY = gql`
 
 const HISTORICAL_POOL_DATA_QUERY = gql`
     query HistoricalPoolData($poolId: ID!, $timestamp: Int!) {
-        poolHourDatas(
+        poolHourData(
             first: 1
             where: { 
                 pool_: { id: $poolId }, 
@@ -149,9 +149,9 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                         fetchPolicy: "network-only",
                     });
 
-                    if (historicalData?.poolHourDatas && historicalData.poolHourDatas.length > 0) {
+                    if (historicalData?.poolHourData && historicalData.poolHourData.length > 0) {
                         const historicalPrice = calculateOutcomePriceForPool(
-                            { ...pool, ...historicalData.poolHourDatas[0] },
+                            { ...pool, ...historicalData.poolHourData[0] },
                             market
                         );
 
@@ -245,7 +245,7 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                             <Trans>Volume (24h)</Trans>
                         </div>
                         <div className="stat-value primary">
-                            {formatDollarAmount(market.volumeUSD)}
+                            {formatDollarAmount(market.volume24h || 0)}
                         </div>
                     </div>
                     <div className="stat-card">
@@ -384,7 +384,7 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                             <Trans>Volume</Trans>
                         </div>
                         <div className="stat-value">
-                            {formatDollarAmount(market.volumeUSD)}
+                            {formatDollarAmount(market.volume24h || 0)}
                         </div>
                     </div>
                     <div className="stat-item">

@@ -118,6 +118,9 @@ export default function Header() {
                         </span>
                         <span className={"header__farming-circle"} />
                     </NavLink>
+                    <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`explore-nav-link`} to={"/explore"}>
+                        <Trans>Explore</Trans>
+                    </NavLink>
                     {/* <a className={"header__links__link hover-op"} id={`info-nav-link`} href="https://swapr.eth.limo" target="_blank" style={{ display: "flex", alignItems: "center" }}>
                     <Trans>Swap</Trans>
                     <ArrowUpRight width={18} style={{ marginLeft: "4px" }} />

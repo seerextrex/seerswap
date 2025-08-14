@@ -105,6 +105,28 @@ export default function MarketInfoPage({
         // Filter out invalid outcome (typically the last one)
         return market.outcomes.slice(0, -1);
     }, [market]);
+    
+    // Calculate 24h volume from pools data
+    const marketWith24hVolume = useMemo(() => {
+        if (!market || !pools) return market;
+        
+        // Calculate 24h volume from all pools
+        const volume24h = pools.reduce((total: number, pool: any) => {
+            if (!pool.poolHourData || pool.poolHourData.length === 0) {
+                return total;
+            }
+            // Sum up hourly volumes for this pool
+            const poolVolume24h = pool.poolHourData.reduce((sum: number, hourData: any) => {
+                return sum + parseFloat(hourData.volumeUSD || '0');
+            }, 0);
+            return total + poolVolume24h;
+        }, 0);
+        
+        return {
+            ...market,
+            volume24h
+        };
+    }, [market, pools]);
 
     return (
         <div className="market-info-page mb-3">
@@ -123,7 +145,7 @@ export default function MarketInfoPage({
                         </button>
                     </div>
                 </Card>
-            ) : market ? (
+            ) : marketWith24hVolume ? (
                 <>
                     <div className="market-hero-section">
                         <div className="market-hero-header">
@@ -135,10 +157,10 @@ export default function MarketInfoPage({
                                 <ArrowLeft size="20" />
                             </NavLink>
                             <div className="market-identity">
-                                {market.image?.[0]?.cidMarket && (
+                                {marketWith24hVolume.image?.[0]?.cidMarket && (
                                     <img 
-                                        src={`https://ipfs.io${market.image[0].cidMarket}`}
-                                        alt={market.marketName}
+                                        src={`https://ipfs.io${marketWith24hVolume.image[0].cidMarket}`}
+                                        alt={marketWith24hVolume.marketName}
                                         className="market-hero-image"
                                         onError={(e) => {
                                             e.currentTarget.style.display = 'none';
@@ -146,13 +168,13 @@ export default function MarketInfoPage({
                                     />
                                 )}
                                 <div className="market-title-block">
-                                    <h1 className="market-title">{market.marketName || market.title}</h1>
+                                    <h1 className="market-title">{marketWith24hVolume.marketName || marketWith24hVolume.title}</h1>
                                     <div className="market-meta">
-                                        {market.category && (
-                                            <span className="market-category">{market.category}</span>
+                                        {marketWith24hVolume.category && (
+                                            <span className="market-category">{marketWith24hVolume.category}</span>
                                         )}
-                                        <span className={`market-status ${market.closed ? 'closed' : 'active'}`}>
-                                            {market.closed ? t`Closed` : t`Active`}
+                                        <span className={`market-status ${marketWith24hVolume.closed ? 'closed' : 'active'}`}>
+                                            {marketWith24hVolume.closed ? t`Closed` : t`Active`}
                                         </span>
                                     </div>
                                 </div>
@@ -176,7 +198,7 @@ export default function MarketInfoPage({
                                                     endTimestamp,
                                                     type,
                                                     span,
-                                                    market
+                                                    marketWith24hVolume
                                                 );
                                             }}
                                         >
@@ -185,7 +207,7 @@ export default function MarketInfoPage({
                                     </div>
                                 ) : (
                                     <EnhancedMarketChart
-                                        market={market}
+                                        market={marketWith24hVolume}
                                         outcomes={validOutcomes}
                                         data={outcomesPriceData}
                                         loading={priceDataLoading}
@@ -200,7 +222,7 @@ export default function MarketInfoPage({
                             
                             <div className="swap-container">
                                 <SwapModule
-                                    market={market}
+                                    market={marketWith24hVolume}
                                     outcomes={validOutcomes}
                                     selectedOutcome={selectedOutcome}
                                     onOutcomeSelect={setSelectedOutcome}
@@ -211,7 +233,7 @@ export default function MarketInfoPage({
                         
                         <div className="market-info-section">
                             <MarketInfoHeader 
-                                market={market}
+                                market={marketWith24hVolume}
                                 validOutcomes={validOutcomes}
                                 compact={true}
                             />

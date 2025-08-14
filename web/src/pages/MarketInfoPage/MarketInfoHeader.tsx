@@ -121,8 +121,8 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
 
                 if (!poolsData?.pools || poolsData.pools.length === 0) return;
 
-                // Calculate timestamp for 24 hours ago
-                const twentyFourHoursAgo = Math.floor(Date.now() / 1000) - 86400;
+                // Calculate timestamp for 7 days ago
+                const sevenDaysAgo = Math.floor(Date.now() / 1000) - (7 * 86400);
 
                 const priceChanges: { [key: number]: number | null } = {};
                 const prices: { [key: number]: number | null } = {};
@@ -139,12 +139,12 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
 
                     prices[outcomeIndex] = currentPrice;
 
-                    // Fetch historical price from 24 hours ago
+                    // Fetch historical price from 7 days ago
                     const { data: historicalData } = await client.query({
                         query: HISTORICAL_POOL_DATA_QUERY,
                         variables: {
                             poolId: pool.id,
-                            timestamp: twentyFourHoursAgo,
+                            timestamp: sevenDaysAgo,
                         },
                         fetchPolicy: "network-only",
                     });
@@ -156,7 +156,7 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                         );
 
                         if (historicalPrice !== null && historicalPrice > 0) {
-                            // Calculate percentage change
+                            // Calculate weekly percentage change
                             const change = ((currentPrice - historicalPrice) / historicalPrice) * 100;
                             priceChanges[outcomeIndex] = change;
                         }
@@ -242,10 +242,10 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                 <div className="compact-stats-grid">
                     <div className="stat-card">
                         <div className="stat-label">
-                            <Trans>Volume (24h)</Trans>
+                            <Trans>Volume (7d)</Trans>
                         </div>
                         <div className="stat-value primary">
-                            {formatDollarAmount(market.volume24h || 0)}
+                            {formatDollarAmount(market.volumeWeekly || 0)}
                         </div>
                     </div>
                     <div className="stat-card">
@@ -346,7 +346,7 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                                     }`}
                                 >
                                     {hasSignificantChange && (
-                                        <div className="change-indicator" title={`${priceChange > 0 ? '+' : ''}${priceChange.toFixed(2)}% in 24h`}>
+                                        <div className="change-indicator" title={`${priceChange > 0 ? '+' : ''}${priceChange.toFixed(2)}% in 7d`}>
                                             <span className="change-arrow">{priceChange > 0 ? '↑' : '↓'}</span>
                                         </div>
                                     )}
@@ -381,10 +381,10 @@ export const MarketInfoHeader: FC<MarketInfoHeaderProps> = ({ market, validOutco
                     <div className="stat-item">
                         <div className="stat-label">
                             <TrendingUp size={16} />
-                            <Trans>Volume</Trans>
+                            <Trans>Volume (7d)</Trans>
                         </div>
                         <div className="stat-value">
-                            {formatDollarAmount(market.volume24h || 0)}
+                            {formatDollarAmount(market.volumeWeekly || 0)}
                         </div>
                     </div>
                     <div className="stat-item">

@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, ExternalLink, Clock, X } from 'react-feather';
 import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
-import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl, addCalculated24hStatsToArray } from '../../utils/market';
+import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl, addCalculatedWeeklyStatsToArray } from '../../utils/market';
 import { calculateOutcomeProbabilities, formatProbability } from '../../utils/marketPrices';
 import { OUTCOME_COLORS, OUTCOME_GRADIENTS } from '../../constants/outcomeColors';
 import { ZapButton } from '../MarketZap/ZapButton';
@@ -49,12 +49,12 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
           <span>{formatDollarAmount(parseFloat(pool.totalValueLockedUSD))}</span>
         </div>
         <div className="stat">
-          <label><Trans>Volume 24h</Trans></label>
-          <span>{formatDollarAmount(pool.volume24h || 0)}</span>
+          <label><Trans>Volume 7d</Trans></label>
+          <span>{formatDollarAmount(pool.volumeWeekly || 0)}</span>
         </div>
         <div className="stat">
-          <label><Trans>Fees 24h</Trans></label>
-          <span>{formatDollarAmount(pool.fees24h || 0)}</span>
+          <label><Trans>Fees 7d</Trans></label>
+          <span>{formatDollarAmount(pool.feesWeekly || 0)}</span>
         </div>
       </div>
 
@@ -96,8 +96,8 @@ const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, 
     return pools.reduce(
       (acc, pool) => ({
         totalTVL: acc.totalTVL + parseFloat(pool.totalValueLockedUSD || '0'),
-        totalVolume: acc.totalVolume + (pool.volume24h || 0),
-        totalFees: acc.totalFees + (pool.fees24h || 0),
+        totalVolume: acc.totalVolume + (pool.volumeWeekly || 0),
+        totalFees: acc.totalFees + (pool.feesWeekly || 0),
       }),
       { totalTVL: 0, totalVolume: 0, totalFees: 0 }
     );
@@ -743,7 +743,7 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
           </div>
           <div className="stat-item">
             <span className="stat-value">{formatDollarAmount(totalVolume)}</span>
-            <span className="stat-label">24h Vol</span>
+            <span className="stat-label">7d Vol</span>
           </div>
           <div className="stat-item">
             <span className="stat-value">{totalPools}</span>
@@ -820,16 +820,16 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const ITEMS_PER_PAGE = 500; // Increased to fetch more pools initially
 
-  // Calculate timestamp for 24 hours ago
-  const timestamp24hAgo = useMemo(() => {
-    return Math.floor(Date.now() / 1000) - 86400; // 24 hours in seconds
+  // Calculate timestamp for 1 week ago
+  const timestampWeekAgo = useMemo(() => {
+    return Math.floor(Date.now() / 1000) - (7 * 86400); // 7 days in seconds
   }, []);
 
   const { data, loading, error, fetchMore } = useQuery(FETCH_POOLS_GROUPED_BY_MARKET, {
     variables: {
       first: ITEMS_PER_PAGE,
       skip: currentPage * ITEMS_PER_PAGE,
-      timestamp24hAgo,
+      timestampWeekAgo,
     },
     fetchPolicy: "cache-and-network",
   });
@@ -837,9 +837,9 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
   const groupedMarkets = useMemo(() => {
     if (!data?.pools) return [];
     
-    // Type the pools array properly and add calculated 24h stats
+    // Type the pools array properly and add calculated weekly stats
     const pools = data.pools as Pool[];
-    const poolsWithStats = addCalculated24hStatsToArray(pools);
+    const poolsWithStats = addCalculatedWeeklyStatsToArray(pools);
     let grouped = groupPoolsByMarketWithHierarchy(poolsWithStats, hideLowValue, minTVL);
     
     // Filter out resolved markets if hideResolved is true
@@ -875,7 +875,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
     fetchMore({
       variables: {
         skip: (currentPage + 1) * ITEMS_PER_PAGE,
-        timestamp24hAgo,
+        timestampWeekAgo,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult || fetchMoreResult.pools.length === 0) return prev;
@@ -895,7 +895,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
         setHasMoreItems(false);
       }
     });
-  }, [currentPage, fetchMore, ITEMS_PER_PAGE, timestamp24hAgo]);
+  }, [currentPage, fetchMore, ITEMS_PER_PAGE, timestampWeekAgo]);
 
   if (loading && !data) {
     return (

@@ -106,18 +106,18 @@ export default function MarketInfoPage({
         return market.outcomes.slice(0, -1);
     }, [market]);
     
-    // Calculate 24h volume from pools data using pre-calculated values
-    const marketWith24hVolume = useMemo(() => {
+    // Calculate weekly volume from pools data using pre-calculated values
+    const marketWithWeeklyVolume = useMemo(() => {
         if (!market || !pools) return market;
         
-        // Sum up pre-calculated 24h volume from all pools
-        const volume24h = pools.reduce((total: number, pool: any) => {
-            return total + (pool.volume24h || 0);
+        // Sum up pre-calculated weekly volume from all pools
+        const volumeWeekly = pools.reduce((total: number, pool: any) => {
+            return total + (pool.volumeWeekly || 0);
         }, 0);
         
         return {
             ...market,
-            volume24h
+            volumeWeekly
         };
     }, [market, pools]);
 
@@ -138,7 +138,7 @@ export default function MarketInfoPage({
                         </button>
                     </div>
                 </Card>
-            ) : marketWith24hVolume ? (
+            ) : marketWithWeeklyVolume ? (
                 <>
                     <div className="market-hero-section">
                         <div className="market-hero-header">
@@ -150,10 +150,10 @@ export default function MarketInfoPage({
                                 <ArrowLeft size="20" />
                             </NavLink>
                             <div className="market-identity">
-                                {marketWith24hVolume.image?.[0]?.cidMarket && (
+                                {marketWithWeeklyVolume.image?.[0]?.cidMarket && (
                                     <img 
-                                        src={`https://ipfs.io${marketWith24hVolume.image[0].cidMarket}`}
-                                        alt={marketWith24hVolume.marketName}
+                                        src={`https://ipfs.io${marketWithWeeklyVolume.image[0].cidMarket}`}
+                                        alt={marketWithWeeklyVolume.marketName}
                                         className="market-hero-image"
                                         onError={(e) => {
                                             e.currentTarget.style.display = 'none';
@@ -161,13 +161,13 @@ export default function MarketInfoPage({
                                     />
                                 )}
                                 <div className="market-title-block">
-                                    <h1 className="market-title">{marketWith24hVolume.marketName || marketWith24hVolume.title}</h1>
+                                    <h1 className="market-title">{marketWithWeeklyVolume.marketName || marketWithWeeklyVolume.title}</h1>
                                     <div className="market-meta">
-                                        {marketWith24hVolume.category && (
-                                            <span className="market-category">{marketWith24hVolume.category}</span>
+                                        {marketWithWeeklyVolume.category && (
+                                            <span className="market-category">{marketWithWeeklyVolume.category}</span>
                                         )}
-                                        <span className={`market-status ${marketWith24hVolume.closed ? 'closed' : 'active'}`}>
-                                            {marketWith24hVolume.closed ? t`Closed` : t`Active`}
+                                        <span className={`market-status ${marketWithWeeklyVolume.closed ? 'closed' : 'active'}`}>
+                                            {marketWithWeeklyVolume.closed ? t`Closed` : t`Active`}
                                         </span>
                                     </div>
                                 </div>
@@ -191,7 +191,7 @@ export default function MarketInfoPage({
                                                     endTimestamp,
                                                     type,
                                                     span,
-                                                    marketWith24hVolume
+                                                    marketWithWeeklyVolume
                                                 );
                                             }}
                                         >
@@ -200,7 +200,7 @@ export default function MarketInfoPage({
                                     </div>
                                 ) : (
                                     <EnhancedMarketChart
-                                        market={marketWith24hVolume}
+                                        market={marketWithWeeklyVolume}
                                         outcomes={validOutcomes}
                                         data={outcomesPriceData}
                                         loading={priceDataLoading}
@@ -215,7 +215,7 @@ export default function MarketInfoPage({
                             
                             <div className="swap-container">
                                 <SwapModule
-                                    market={marketWith24hVolume}
+                                    market={marketWithWeeklyVolume}
                                     outcomes={validOutcomes}
                                     selectedOutcome={selectedOutcome}
                                     onOutcomeSelect={setSelectedOutcome}
@@ -226,7 +226,7 @@ export default function MarketInfoPage({
                         
                         <div className="market-info-section">
                             <MarketInfoHeader 
-                                market={marketWith24hVolume}
+                                market={marketWithWeeklyVolume}
                                 validOutcomes={validOutcomes}
                                 compact={true}
                             />

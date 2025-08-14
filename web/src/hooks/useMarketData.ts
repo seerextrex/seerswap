@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { gql } from "@apollo/client";
 import { client } from "../apollo/client";
 import { ChartType } from "../models/enums";
-import { addCalculated24hStatsToArray } from "../utils/market";
+import { addCalculatedWeeklyStatsToArray } from "../utils/market";
 
 const MARKET_QUERY = gql`
     query Market($id: ID!) {
@@ -44,7 +44,7 @@ const MARKET_QUERY = gql`
 `;
 
 const MARKET_POOLS_QUERY = gql`
-    query MarketPools($marketId: String!, $timestamp24hAgo: Int!) {
+    query MarketPools($marketId: String!, $timestampWeekAgo: Int!) {
         pools(
             where: { 
                 or: [
@@ -72,7 +72,7 @@ const MARKET_POOLS_QUERY = gql`
             volumeUSD
             totalValueLockedUSD
             poolHourData(
-                where: { periodStartUnix_gt: $timestamp24hAgo }
+                where: { periodStartUnix_gt: $timestampWeekAgo }
                 orderBy: periodStartUnix
                 orderDirection: desc
             ) {
@@ -211,18 +211,18 @@ export const useMarketData = (marketId?: string) => {
             }
             setMarket(data.market);
             
-            // Also fetch pools for this market with 24h data
-            const timestamp24hAgo = Math.floor(Date.now() / 1000) - 86400;
+            // Also fetch pools for this market with weekly data
+            const timestampWeekAgo = Math.floor(Date.now() / 1000) - (7 * 86400);
             const { data: poolsData } = await client.query({
                 query: MARKET_POOLS_QUERY,
                 variables: { 
                     marketId: id,
-                    timestamp24hAgo 
+                    timestampWeekAgo 
                 },
                 fetchPolicy: "network-only",
             });
-            // Apply 24h calculations to pools before storing
-            const poolsWithStats = addCalculated24hStatsToArray(poolsData?.pools || []);
+            // Apply weekly calculations to pools before storing
+            const poolsWithStats = addCalculatedWeeklyStatsToArray(poolsData?.pools || []);
             setPools(poolsWithStats);
         } catch (error) {
             console.error("Error fetching market:", error);
@@ -246,19 +246,19 @@ export const useMarketData = (marketId?: string) => {
         setPriceDataError(null);
         try {
             // Fetch pools related to this market (consolidated query)
-            const timestamp24hAgo = Math.floor(Date.now() / 1000) - 86400;
+            const timestampWeekAgo = Math.floor(Date.now() / 1000) - (7 * 86400);
             const { data: poolsData } = await client.query({
                 query: MARKET_POOLS_QUERY,
                 variables: { 
                     marketId: id,
-                    timestamp24hAgo 
+                    timestampWeekAgo 
                 },
                 fetchPolicy: "network-only",
             });
 
-            // Apply 24h calculations to pools before processing
+            // Apply weekly calculations to pools before processing
             const pools = poolsData?.pools || [];
-            const uniquePools = addCalculated24hStatsToArray(pools);
+            const uniquePools = addCalculatedWeeklyStatsToArray(pools);
             
             if (uniquePools.length === 0) {
                 setOutcomesPriceData([]);

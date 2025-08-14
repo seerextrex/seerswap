@@ -1732,7 +1732,7 @@ export const FETCH_POOLS_FOR_MARKETS = gql`
 `;
 
 export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
-  query fetchPoolsGroupedByMarket($first: Int = 500, $skip: Int = 0, $hideResolved: Boolean = false, $timestamp24hAgo: Int!) {
+  query fetchPoolsGroupedByMarket($first: Int = 500, $skip: Int = 0, $hideResolved: Boolean = false, $timestampWeekAgo: Int!) {
     pools(first: $first, skip: $skip, orderBy: totalValueLockedUSD, orderDirection: desc) {
       id
       fee
@@ -1743,7 +1743,7 @@ export const FETCH_POOLS_GROUPED_BY_MARKET = gql`
       volumeUSD
       feesUSD
       poolHourData(
-        where: { periodStartUnix_gt: $timestamp24hAgo }
+        where: { periodStartUnix_gt: $timestampWeekAgo }
         orderBy: periodStartUnix
         orderDirection: desc
       ) {

@@ -56,8 +56,8 @@ export interface Pool {
   tick: string;
   tickSpacing?: string; // Added for Algebra pools
   totalValueLockedUSD: string;
-  volumeUSD: string;
-  feesUSD: string;
+  volumeUSD: string; // All-time volume
+  feesUSD: string; // All-time fees
   token0: Token;
   token1: Token;
   token0Price?: string;
@@ -69,6 +69,39 @@ export interface Pool {
     volumeUSD: string;
     feesUSD: string;
   }>;
+  // Calculated 24h statistics
+  volume24h?: number;
+  fees24h?: number;
+}
+
+/**
+ * Calculates and adds 24-hour volume and fees statistics to a pool
+ * @param pool The pool to enhance with calculated stats
+ * @returns Pool with volume24h and fees24h properties populated
+ */
+export function addCalculated24hStats(pool: Pool): Pool {
+  const volume24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+    return sum + parseFloat(hourData.volumeUSD || '0');
+  }, 0) || 0;
+
+  const fees24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
+    return sum + parseFloat(hourData.feesUSD || '0');
+  }, 0) || 0;
+
+  return { 
+    ...pool, 
+    volume24h, 
+    fees24h 
+  };
+}
+
+/**
+ * Calculates and adds 24-hour statistics to an array of pools
+ * @param pools Array of pools to enhance
+ * @returns Array of pools with calculated 24h stats
+ */
+export function addCalculated24hStatsToArray(pools: Pool[]): Pool[] {
+  return pools.map(pool => addCalculated24hStats(pool));
 }
 
 /**
@@ -529,18 +562,10 @@ export function groupPoolsByMarketWithHierarchy(
         childGroup.poolsByOutcome.get(outcomeKey)!.push(pool);
       }
 
-      // Update child market stats
-      // Calculate 24h volume and fees from poolHourData
-      const volume24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
-        return sum + parseFloat(hourData.volumeUSD || '0');
-      }, 0) || 0;
-      const fees24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
-        return sum + parseFloat(hourData.feesUSD || '0');
-      }, 0) || 0;
-      
+      // Update child market stats (using pre-calculated 24h values)
       childGroup.totalTVL += tvl;
-      childGroup.totalVolume += volume24h;
-      childGroup.totalFees += fees24h;
+      childGroup.totalVolume += pool.volume24h || 0;
+      childGroup.totalFees += pool.fees24h || 0;
 
       // Track unique pool for parent market to avoid double counting
       const poolId = pool.id;
@@ -549,25 +574,17 @@ export function groupPoolsByMarketWithHierarchy(
         parentPools.add(poolId);
         // Add to parent's total TVL (don't double count within parent)
         parentGroup.totalTVL += tvl;
-        parentGroup.totalVolume += volume24h;
-        parentGroup.totalFees += fees24h;
+        parentGroup.totalVolume += pool.volume24h || 0;
+        parentGroup.totalFees += pool.fees24h || 0;
       }
     } else {
       // Handle regular markets - count pool for EACH market it belongs to
       const markets = [pool.market0, pool.market1].filter(Boolean) as Market[];
       
-      // Calculate 24h volume and fees from poolHourData
-      const volume24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
-        return sum + parseFloat(hourData.volumeUSD || '0');
-      }, 0) || 0;
-      const fees24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
-        return sum + parseFloat(hourData.feesUSD || '0');
-      }, 0) || 0;
-      
-      // Calculate how to split volume and fees among markets
+      // Calculate how to split volume and fees among markets (using pre-calculated 24h values)
       const marketCount = markets.length;
-      const volumePerMarket = volume24h / marketCount;
-      const feesPerMarket = fees24h / marketCount;
+      const volumePerMarket = (pool.volume24h || 0) / marketCount;
+      const feesPerMarket = (pool.fees24h || 0) / marketCount;
       
       markets.forEach((market) => {
         if (!market) return;

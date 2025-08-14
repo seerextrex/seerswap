@@ -106,20 +106,13 @@ export default function MarketInfoPage({
         return market.outcomes.slice(0, -1);
     }, [market]);
     
-    // Calculate 24h volume from pools data
+    // Calculate 24h volume from pools data using pre-calculated values
     const marketWith24hVolume = useMemo(() => {
         if (!market || !pools) return market;
         
-        // Calculate 24h volume from all pools
+        // Sum up pre-calculated 24h volume from all pools
         const volume24h = pools.reduce((total: number, pool: any) => {
-            if (!pool.poolHourData || pool.poolHourData.length === 0) {
-                return total;
-            }
-            // Sum up hourly volumes for this pool
-            const poolVolume24h = pool.poolHourData.reduce((sum: number, hourData: any) => {
-                return sum + parseFloat(hourData.volumeUSD || '0');
-            }, 0);
-            return total + poolVolume24h;
+            return total + (pool.volume24h || 0);
         }, 0);
         
         return {

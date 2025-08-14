@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, ExternalLink, Clock, X } from 'react-feather';
 import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
-import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl } from '../../utils/market';
+import { Token, Market, Pool, getOutcomeName, getOutcomeInfo, getPoolTokensForMarket, GroupedMarketPools, groupPoolsByMarketWithHierarchy, formatIpfsUrl, addCalculated24hStatsToArray } from '../../utils/market';
 import { calculateOutcomeProbabilities, formatProbability } from '../../utils/marketPrices';
 import { OUTCOME_COLORS, OUTCOME_GRADIENTS } from '../../constants/outcomeColors';
 import { ZapButton } from '../MarketZap/ZapButton';
@@ -22,28 +22,6 @@ interface PoolCardProps {
 }
 
 const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
-  // Calculate 24-hour volume from poolHourData
-  const volume24h = useMemo(() => {
-    if (!pool.poolHourData || pool.poolHourData.length === 0) {
-      return 0;
-    }
-    // Sum up all hourly volumes from the past 24 hours
-    return pool.poolHourData.reduce((sum: number, hourData: any) => {
-      return sum + parseFloat(hourData.volumeUSD || '0');
-    }, 0);
-  }, [pool.poolHourData]);
-  
-  // Calculate 24-hour fees from poolHourData
-  const fees24h = useMemo(() => {
-    if (!pool.poolHourData || pool.poolHourData.length === 0) {
-      return 0;
-    }
-    // Sum up all hourly fees from the past 24 hours
-    return pool.poolHourData.reduce((sum: number, hourData: any) => {
-      return sum + parseFloat(hourData.feesUSD || '0');
-    }, 0);
-  }, [pool.poolHourData]);
-
   // Use the improved function to determine tokens
   const tokenInfo = getPoolTokensForMarket(pool, market);
   
@@ -72,11 +50,11 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
         </div>
         <div className="stat">
           <label><Trans>Volume 24h</Trans></label>
-          <span>{formatDollarAmount(volume24h)}</span>
+          <span>{formatDollarAmount(pool.volume24h || 0)}</span>
         </div>
         <div className="stat">
           <label><Trans>Fees 24h</Trans></label>
-          <span>{formatDollarAmount(fees24h)}</span>
+          <span>{formatDollarAmount(pool.fees24h || 0)}</span>
         </div>
       </div>
 
@@ -113,26 +91,14 @@ const OutcomeGroup: React.FC<OutcomeGroupProps> = ({ outcomeName, outcomeImage, 
     });
   }, [pools]);
 
-  // Calculate total stats for this outcome
+  // Calculate total stats for this outcome using pre-calculated values
   const outcomeStats = useMemo(() => {
     return pools.reduce(
-      (acc, pool) => {
-        // Calculate 24h volume for this pool
-        const volume24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
-          return sum + parseFloat(hourData.volumeUSD || '0');
-        }, 0) || 0;
-        
-        // Calculate 24h fees for this pool
-        const fees24h = pool.poolHourData?.reduce((sum: number, hourData: any) => {
-          return sum + parseFloat(hourData.feesUSD || '0');
-        }, 0) || 0;
-        
-        return {
-          totalTVL: acc.totalTVL + parseFloat(pool.totalValueLockedUSD || '0'),
-          totalVolume: acc.totalVolume + volume24h,
-          totalFees: acc.totalFees + fees24h,
-        };
-      },
+      (acc, pool) => ({
+        totalTVL: acc.totalTVL + parseFloat(pool.totalValueLockedUSD || '0'),
+        totalVolume: acc.totalVolume + (pool.volume24h || 0),
+        totalFees: acc.totalFees + (pool.fees24h || 0),
+      }),
       { totalTVL: 0, totalVolume: 0, totalFees: 0 }
     );
   }, [pools]);
@@ -871,9 +837,10 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
   const groupedMarkets = useMemo(() => {
     if (!data?.pools) return [];
     
-    // Type the pools array properly
+    // Type the pools array properly and add calculated 24h stats
     const pools = data.pools as Pool[];
-    let grouped = groupPoolsByMarketWithHierarchy(pools, hideLowValue, minTVL);
+    const poolsWithStats = addCalculated24hStatsToArray(pools);
+    let grouped = groupPoolsByMarketWithHierarchy(poolsWithStats, hideLowValue, minTVL);
     
     // Filter out resolved markets if hideResolved is true
     if (hideResolved) {

@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { gql } from "@apollo/client";
 import { client } from "../apollo/client";
 import { ChartType } from "../models/enums";
+import { addCalculated24hStatsToArray } from "../utils/market";
 
 const MARKET_QUERY = gql`
     query Market($id: ID!) {
@@ -220,7 +221,9 @@ export const useMarketData = (marketId?: string) => {
                 },
                 fetchPolicy: "network-only",
             });
-            setPools(poolsData?.pools || []);
+            // Apply 24h calculations to pools before storing
+            const poolsWithStats = addCalculated24hStatsToArray(poolsData?.pools || []);
+            setPools(poolsWithStats);
         } catch (error) {
             console.error("Error fetching market:", error);
             setMarketError(error instanceof Error ? error.message : "Failed to load market data");
@@ -253,7 +256,9 @@ export const useMarketData = (marketId?: string) => {
                 fetchPolicy: "network-only",
             });
 
-            const uniquePools = poolsData?.pools || [];
+            // Apply 24h calculations to pools before processing
+            const pools = poolsData?.pools || [];
+            const uniquePools = addCalculated24hStatsToArray(pools);
             
             if (uniquePools.length === 0) {
                 setOutcomesPriceData([]);

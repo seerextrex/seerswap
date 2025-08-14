@@ -11,6 +11,7 @@ import { ChartSpan, ChartType } from "../../models/enums";
 import { useMarketData } from "../../hooks/useMarketData";
 import { MarketInfoHeader } from "./MarketInfoHeader";
 import { EnhancedMarketChart } from "./EnhancedMarketChart";
+import { ScalarMarketChart } from "./ScalarMarketChart";
 import { SwapModule } from "./SwapModule";
 import { ScalarMarketInterface } from "./ScalarMarketInterface";
 import "./index.scss";
@@ -44,8 +45,17 @@ export default function MarketInfoPage({
         priceDataError
     } = useMarketData(id);
 
+    const [fetchAllTime, setFetchAllTime] = useState(false);
+    
     const startTimestamp = useMemo(() => {
         const now = dayjs();
+
+        // If fetching all time data, go back as far as possible
+        if (fetchAllTime) {
+            // Go back 5 years to capture all possible market data
+            // Most prediction markets won't be older than this
+            return now.subtract(5, "year").unix();
+        }
 
         switch (span) {
             case ChartSpan.DAY:
@@ -58,7 +68,7 @@ export default function MarketInfoPage({
                 // Past 30 days
                 return now.subtract(30, "day").unix();
         }
-    }, [span]);
+    }, [span, fetchAllTime]);
 
     // Only show price chart for market view - most relevant for prediction markets
     const chartTypes = [
@@ -237,6 +247,29 @@ export default function MarketInfoPage({
                                             <Trans>Retry</Trans>
                                         </button>
                                     </div>
+                                ) : isScalarMarket ? (
+                                    <ScalarMarketChart
+                                        market={marketWithWeeklyVolume}
+                                        pools={pools || []}
+                                        priceData={outcomesPriceData}
+                                        loading={priceDataLoading}
+                                        onTimeSpanChange={(span) => {
+                                            if (span === 'all') {
+                                                // For 'all', keep month span but set flag to fetch all data
+                                                setFetchAllTime(true);
+                                                setSpan(ChartSpan.MONTH);
+                                            } else {
+                                                setFetchAllTime(false);
+                                                // Map to ChartSpan enum for data fetching
+                                                const spanMap = {
+                                                    'day': ChartSpan.DAY,
+                                                    'week': ChartSpan.WEEK,
+                                                    'month': ChartSpan.MONTH,
+                                                };
+                                                setSpan(spanMap[span as keyof typeof spanMap]);
+                                            }
+                                        }}
+                                    />
                                 ) : (
                                     <EnhancedMarketChart
                                         market={marketWithWeeklyVolume}

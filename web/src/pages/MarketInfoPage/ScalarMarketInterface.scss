@@ -328,80 +328,90 @@
             }
         }
         
+        // Trade Preview Container
+        .trade-preview-container {
+            margin-top: 24px;
+        }
+        
         // Trade Direction Indicator
         .trade-indicator {
-            margin-top: 24px;
-            padding: 16px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 24px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.6) 0%, rgba(20, 20, 40, 0.8) 100%);
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             animation: slideIn 0.3s ease;
             
             &.up {
-                background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
-                border-color: rgba(34, 197, 94, 0.3);
-                
-                .trade-direction {
-                    color: #22c55e;
+                .trade-header {
+                    svg, .direction-text {
+                        color: #10b981;
+                    }
                 }
             }
             
             &.down {
-                background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
-                border-color: rgba(239, 68, 68, 0.3);
-                
-                .trade-direction {
-                    color: #ef4444;
+                .trade-header {
+                    svg, .direction-text {
+                        color: #ef4444;
+                    }
                 }
             }
             
-            .trade-direction {
+            .trade-header {
                 display: flex;
                 align-items: center;
-                gap: 8px;
-                font-size: 14px;
-                font-weight: 600;
-                margin-bottom: 8px;
-            }
-            
-            .trade-impact {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 13px;
-                color: rgba(255, 255, 255, 0.7);
+                gap: 10px;
+                margin-bottom: 20px;
                 
-                .impact-value {
-                    font-weight: 600;
-                    color: rgba(255, 255, 255, 0.9);
+                svg {
+                    flex-shrink: 0;
+                }
+                
+                .direction-text {
+                    font-size: 13px;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                    opacity: 0.9;
+                }
+                
+                .target-value {
+                    margin-left: auto;
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: white;
+                    font-variant-numeric: tabular-nums;
                 }
             }
             
-            .trade-details {
-                margin-top: 12px;
-                padding-top: 12px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            .profit-preview {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                padding-top: 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
                 
-                .detail-row {
+                .profit-item {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    margin-bottom: 6px;
-                    font-size: 13px;
                     
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-                    
-                    .detail-label {
+                    .profit-label {
+                        font-size: 14px;
                         color: rgba(255, 255, 255, 0.6);
+                        font-weight: 500;
                     }
                     
-                    .detail-value {
+                    .profit-value {
+                        font-size: 16px;
+                        font-weight: 700;
                         color: rgba(255, 255, 255, 0.9);
-                        font-weight: 600;
                         font-variant-numeric: tabular-nums;
+                        
+                        &.positive {
+                            color: #10b981;
+                            font-size: 17px;
+                        }
                     }
                 }
             }
@@ -470,24 +480,82 @@
         }
         
         .trade-summary {
-            margin-top: 8px;
-            padding: 8px 12px;
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: 8px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(99, 102, 241, 0.15);
             
-            .summary-label {
-                color: rgba(255, 255, 255, 0.6);
+            .summary-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+                
+                &:last-child {
+                    margin-bottom: 0;
+                }
+                
+                &.highlight {
+                    padding-top: 8px;
+                    border-top: 1px solid rgba(99, 102, 241, 0.2);
+                    margin-top: 8px;
+                }
+                
+                .summary-label {
+                    font-size: 13px;
+                    color: rgba(255, 255, 255, 0.6);
+                }
+                
+                .summary-value {
+                    font-size: 14px;
+                    color: white;
+                    font-weight: 600;
+                    font-variant-numeric: tabular-nums;
+                    
+                    &.success {
+                        color: #22c55e;
+                        font-weight: 700;
+                    }
+                }
+            }
+        }
+        
+        .batch-info {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            
+            .batch-badge {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 10px;
+                background: rgba(168, 85, 247, 0.2);
+                border-radius: 20px;
+                
+                .badge-icon {
+                    font-size: 14px;
+                }
+                
+                .badge-text {
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: #a855f7;
+                }
             }
             
-            .summary-value {
-                color: white;
-                font-weight: 600;
-                font-variant-numeric: tabular-nums;
+            .batch-description {
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.8);
+                flex: 1;
             }
         }
         
@@ -537,18 +605,159 @@
         .warning-message {
             margin-top: 12px;
             padding: 12px;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
             border-radius: 8px;
-            color: #fbbf24;
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: all 0.2s ease;
+            font-weight: 500;
             
             svg {
                 flex-shrink: 0;
             }
+            
+            // Color coding for different severity levels
+            &.severity-low {
+                background: rgba(59, 130, 246, 0.08);
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                color: #60a5fa;
+                
+                svg {
+                    color: #3b82f6;
+                }
+            }
+            
+            &.severity-medium {
+                background: rgba(251, 191, 36, 0.08);
+                border: 1px solid rgba(251, 191, 36, 0.2);
+                color: #fbbf24;
+                
+                svg {
+                    color: #f59e0b;
+                }
+            }
+            
+            &.severity-high {
+                background: rgba(249, 115, 22, 0.08);
+                border: 1px solid rgba(249, 115, 22, 0.2);
+                color: #fb923c;
+                
+                svg {
+                    color: #f97316;
+                }
+            }
+            
+            &.severity-critical {
+                background: rgba(239, 68, 68, 0.08);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                color: #f87171;
+                animation: pulse 2s infinite;
+                
+                svg {
+                    color: #ef4444;
+                }
+            }
+            
+            // Default fallback (medium severity)
+            &:not(.severity-low):not(.severity-medium):not(.severity-high):not(.severity-critical) {
+                background: rgba(251, 191, 36, 0.08);
+                border: 1px solid rgba(251, 191, 36, 0.2);
+                color: #fbbf24;
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+    }
+    
+    // Transaction Status
+    .transaction-status {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+        
+        &.approval,
+        &.trade {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+        }
+        
+        &.success {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+        
+        &.error {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        
+        .spinner.small {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .confirmations {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-left: 4px;
+        }
+        
+        .tx-link {
+            margin-left: auto;
+            color: #a5b4fc;
+            text-decoration: none;
+            font-size: 13px;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+            
+            &:hover {
+                border-bottom-color: #a5b4fc;
+            }
+        }
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    // Loading State
+    .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 60px;
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
     }
     

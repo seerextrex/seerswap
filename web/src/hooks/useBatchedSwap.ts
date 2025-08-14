@@ -7,6 +7,9 @@ import { SwapRouter } from '../lib/src';
 import { SWAP_ROUTER_ADDRESSES } from '../constants/addresses';
 import useTransactionDeadline from './useTransactionDeadline';
 
+// Default slippage tolerance if none provided
+const DEFAULT_SLIPPAGE_TOLERANCE = new Percent(50, 10_000); // 0.5%
+
 // ERC20 ABI for approve function
 const ERC20_ABI = parseAbi([
   'function approve(address spender, uint256 amount) returns (bool)',
@@ -34,10 +37,22 @@ export function useBatchedSwap({
   const { sendCallsAsync, isPending } = useSendCalls();
 
   const swapRouterAddress = chainId ? SWAP_ROUTER_ADDRESSES[chainId] : undefined;
+  
+  // Use default slippage if none provided
+  const slippageTolerance = allowedSlippage || DEFAULT_SLIPPAGE_TOLERANCE;
 
   // Build the batch of calls (approve + swap)
   const calls = useMemo(() => {
     if (!trade || !account || !swapRouterAddress || !deadline) return null;
+    
+    // Additional safety check for trade properties
+    try {
+      // This will throw if trade has invalid internal state
+      trade.minimumAmountOut(slippageTolerance);
+    } catch (error) {
+      console.error('Trade has invalid state:', error);
+      return null;
+    }
 
     const batchedCalls = [];
 
@@ -65,7 +80,7 @@ export function useBatchedSwap({
     const swapParams = SwapRouter.swapCallParameters(trade, {
       feeOnTransfer: false,
       recipient: account,
-      slippageTolerance: allowedSlippage,
+      slippageTolerance: slippageTolerance,
       deadline: deadlineString,
     });
 
@@ -78,7 +93,7 @@ export function useBatchedSwap({
     }
 
     return batchedCalls;
-  }, [trade, account, swapRouterAddress, deadline, needsApproval, allowedSlippage]);
+  }, [trade, account, swapRouterAddress, deadline, needsApproval, slippageTolerance]);
 
   const executeBatchedSwap = useCallback(async () => {
     if (!calls || calls.length === 0) {

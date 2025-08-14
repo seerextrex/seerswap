@@ -60,21 +60,6 @@ function InfoPage() {
                         <Helmet>
                             <title>{t`SeerSwap — Info • Markets`}</title>
                         </Helmet>
-                        <Card classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
-                            <div className={"info-page-menu mb-1"}>
-                                <Menu items={infoMenuList} refreshHandler={() => undefined} isLoading={false} classes={"fs-125"} size={"17px"} />
-                            </div>
-                            <InfoTotalStats
-                                data={totalStats}
-                                refreshHandler={() => {
-                                    fetchTotalStatsFn();
-                                    fetchInfoPoolsFn();
-                                }}
-                                isLoading={totalStatsLoading}
-                                blocksFetched={blocksFetched}
-                                poolsStat={poolsResult}
-                            />
-                        </Card>
                         <Card classes={"card-gradient-shadow br-24 pa-2"}>
                             <div className="market-view-header">
                                 <div className="market-view-filters">
@@ -111,21 +96,6 @@ function InfoPage() {
                         <Helmet>
                             <title>{t`SeerSwap — Info • Pools`}</title>
                         </Helmet>
-                        <Card classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
-                            <div className={"info-page-menu mb-1"}>
-                                <Menu items={infoMenuList} refreshHandler={() => (blocksFetched ? fetchInfoPoolsFn() : undefined)} isLoading={poolsLoading} classes={"fs-125"} size={"17px"} />
-                            </div>
-                            <InfoTotalStats
-                                data={totalStats}
-                                refreshHandler={() => {
-                                    fetchTotalStatsFn();
-                                    fetchInfoPoolsFn();
-                                }}
-                                isLoading={totalStatsLoading}
-                                blocksFetched={blocksFetched}
-                                poolsStat={poolsResult}
-                            />
-                        </Card>
                         <Card classes={"card-gradient-shadow br-24 pa-2"}>
                             <InfoPools data={poolsResult} refreshing={Boolean(poolsLoading)} fetchHandler={() => fetchInfoPoolsFn()} blocksFetched={blocksFetched} />
                         </Card>

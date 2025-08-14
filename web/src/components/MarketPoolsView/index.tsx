@@ -61,9 +61,6 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, market }) => {
         <NavLink to={`/add/${outcomeToken.id}/${collateralToken.id}`} className="btn btn-sm primary">
           <Trans>Add Liquidity</Trans>
         </NavLink>
-        <NavLink to={`/swap?inputCurrency=${collateralToken.id}&outputCurrency=${outcomeToken.id}`} className="btn btn-sm">
-          <Trans>Swap</Trans>
-        </NavLink>
       </div>
     </div>
   );
@@ -697,18 +694,35 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
           </div>
         </div>
 
-        {/* Market Stats Footer */}
+        {/* Market Stats Footer with Social Proof */}
         <div className="market-stats-footer">
           <div className="stat-item">
-            <span className="stat-value">{formatDollarAmount(totalVolume)}</span>
-            <span className="stat-label">Vol.</span>
+            <span className="stat-value">{formatDollarAmount(totalTVL)}</span>
+            <span className="stat-label">TVL</span>
           </div>
-          {market.finalizeTs && (
-            <div className="stat-item" title="Market resolves weekly">
-              <span className="stat-icon">📅</span>
-              <span className="stat-label">Weekly</span>
-            </div>
-          )}
+          <div className="stat-item">
+            <span className="stat-value">{formatDollarAmount(totalVolume)}</span>
+            <span className="stat-label">24h Vol</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">{totalPools}</span>
+            <span className="stat-label">Pools</span>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="market-action-buttons">
+          <button 
+            className="action-btn primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Navigate to market detail page for trading
+              window.location.href = `#/info/markets/${market.id}`;
+            }}
+          >
+            <span className="btn-label">Trade Now</span>
+            <span className="btn-icon">→</span>
+          </button>
         </div>
       </div>
     </div>

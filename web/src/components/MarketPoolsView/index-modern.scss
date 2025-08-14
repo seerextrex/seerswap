@@ -5,17 +5,17 @@
   
   .markets-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 2rem;
     
     @media (min-width: 1400px) {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
     
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: 1.25rem;
     }
   }
   
@@ -23,17 +23,18 @@
     position: relative;
     
     .market-card-inner {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 1.25rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 1.5rem;
       cursor: pointer;
       transition: all 0.2s ease;
       height: 100%;
+      min-height: 280px;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       
       &:hover {
         background: rgba(255, 255, 255, 0.05);
@@ -51,13 +52,13 @@
         margin-bottom: 1rem;
         
         .market-image-container {
-          width: 48px;
-          height: 48px;
+          width: 56px;
+          height: 56px;
           flex-shrink: 0;
-          border-radius: 10px;
+          border-radius: 12px;
           overflow: hidden;
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           
           .market-image {
             width: 100%;
@@ -80,13 +81,13 @@
         
         .market-title {
           flex: 1;
-          font-size: 1rem;
+          font-size: 1.125rem;
           font-weight: 600;
-          line-height: 1.3;
+          line-height: 1.35;
           color: rgba(255, 255, 255, 0.95);
           margin: 0;
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -113,8 +114,8 @@
         
         .probability-indicator {
           position: relative;
-          width: 56px;
-          height: 56px;
+          width: 72px;
+          height: 72px;
           flex-shrink: 0;
           
           &.scalar-market {
@@ -153,19 +154,20 @@
             gap: 1px;
             
             .probability-number {
-              font-size: 1.25rem;
+              font-size: 1.5rem;
               font-weight: 700;
               color: white;
               line-height: 1;
+              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
               
               &.scalar-value {
-                font-size: 1.1rem;
+                font-size: 1.25rem;
               }
             }
             
             .probability-percent {
-              font-size: 0.65rem;
-              color: rgba(255, 255, 255, 0.6);
+              font-size: 0.75rem;
+              color: rgba(255, 255, 255, 0.7);
               font-weight: 600;
             }
             
@@ -293,29 +295,87 @@
       .market-stats-footer {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding-top: 0.75rem;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 1rem 0 0.75rem;
+        margin-top: auto;
         border-top: 1px solid rgba(255, 255, 255, 0.06);
         color: rgba(255, 255, 255, 0.5);
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         
         .stat-item {
           display: flex;
+          flex-direction: column;
           align-items: center;
           gap: 0.25rem;
+          flex: 1;
           
           .stat-value {
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
+            font-size: 1rem;
           }
           
           .stat-label {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
           }
           
           .stat-icon {
             font-size: 0.9rem;
             opacity: 0.7;
+          }
+        }
+      }
+      
+      .market-action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        
+        .action-btn {
+          flex: 1;
+          padding: 0.875rem 1rem;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.05);
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          text-decoration: none;
+          
+          .btn-icon {
+            font-size: 1.1rem;
+            transition: transform 0.2s ease;
+          }
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+            
+            .btn-icon {
+              transform: translateX(2px);
+            }
+          }
+          
+          &.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            
+            &:hover {
+              background: linear-gradient(135deg, #7c8ff0 0%, #8759b3 100%);
+              box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
           }
         }
       }

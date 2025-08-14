@@ -99,8 +99,6 @@ export default function App() {
                     >
                         <Switch>
                             <Route strict path="/info" component={InfoPage} />
-                            <Route exact strict path="/swap" component={Swap} />
-                            <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                             <Route exact strict path="/pool" component={PoolPage} />
                             <Route exact strict path="/pool/:tokenId" component={PositionPage} />
                             <Route exact strict path="/add/:currencyIdA?/:currencyIdB?/:step?" component={RedirectDuplicateTokenIdsNew} />

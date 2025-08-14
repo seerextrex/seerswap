@@ -17,6 +17,8 @@ import MarketPositionsView from "../../components/MarketPositionsView";
 import { Frown } from "react-feather";
 import { PositionPoolExtended } from "../../hooks/useSubgraphPositionsV2";
 import { calculatePositionValueUSD } from "../../utils/position";
+import { InfoTotalStats } from "../../components/InfoTotalStats";
+import { useInfoSubgraph } from "../../hooks/subgraph/useInfoSubgraph";
 
 export default function Pool() {
     const { address: account } = useAccount();
@@ -26,6 +28,12 @@ export default function Pool() {
 
     const { loading: positionsLoading, error, refetch } = useSubgraphPositions(account);
     const { positionsByMarket: rawPositionsByMarket } = useSubgraphPositionsByMarket(account);
+    
+    const {
+        fetchInfoPools: { fetchInfoPoolsFn, poolsResult },
+        fetchTotalStats: { totalStats, fetchTotalStatsFn, totalStatsLoading },
+        blocksFetched,
+    } = useInfoSubgraph() || {};
 
     const filters = [
         {
@@ -72,6 +80,18 @@ export default function Pool() {
             <Helmet>
                 <title>{t`Pool`}</title>
             </Helmet>
+            <Card classes={"br-24 pa-2 mb-1 w-100 mxs_p-1"}>
+                <InfoTotalStats
+                    data={totalStats}
+                    refreshHandler={() => {
+                        fetchTotalStatsFn();
+                        fetchInfoPoolsFn();
+                    }}
+                    isLoading={totalStatsLoading}
+                    blocksFetched={blocksFetched}
+                    poolsStat={poolsResult}
+                />
+            </Card>
             <Card classes={"card-gradient-shadow br-24 ph-2 pv-1 mxs_ph-1 mv-2"}>
                 <SwapPoolTabs active={"pool"} />
                 <AutoColumn gap="1">

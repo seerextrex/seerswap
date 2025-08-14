@@ -106,8 +106,8 @@ export default function Header() {
                     <img src={Logo} alt="logo" />
                 </a>
                 <div className={"header__links"}>
-                    <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`swap-nav-link`} to={"/swap"}>
-                        <Trans>Swap</Trans>
+                    <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
+                        <Trans>Markets</Trans>
                     </NavLink>
                     <NavLink
                         className={"header__links__link hover-op trans-op"}
@@ -125,9 +125,6 @@ export default function Header() {
                             <Trans>Farming</Trans>
                         </span>
                         <span className={"header__farming-circle"} />
-                    </NavLink>
-                    <NavLink className={"header__links__link hover-op"} activeClassName={"header__links__link--active"} id={`info-nav-link`} to={"/info"}>
-                        <Trans>Markets</Trans>
                     </NavLink>
                     {/* <a className={"header__links__link hover-op"} id={`info-nav-link`} href="https://swapr.eth.limo" target="_blank" style={{ display: "flex", alignItems: "center" }}>
                     <Trans>Swap</Trans>

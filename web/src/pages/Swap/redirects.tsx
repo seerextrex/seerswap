@@ -4,26 +4,18 @@ import { Redirect, RouteComponentProps } from "react-router-dom";
 import { useAppDispatch } from "state/hooks";
 import { ApplicationModal, setOpenModal } from "../../state/application/actions";
 
-// Redirects to swap but only replace the pathname
+// Redirects to markets page (new landing page)
 export function RedirectPathToSwapOnly({ location }: RouteComponentProps) {
-    return <Redirect to={{ ...location, pathname: "/swap" }} />;
+    return <Redirect to={{ ...location, pathname: "/info/markets" }} />;
 }
 
-// Redirects from the /swap/:outputCurrency path to the /swap?outputCurrency=:outputCurrency format
+// Redirects to markets page (new landing page)
 export function RedirectToSwap(props: RouteComponentProps<{ outputCurrency: string }>) {
-    const {
-        location: { search },
-        match: {
-            params: { outputCurrency },
-        },
-    } = props;
-
     return (
         <Redirect
             to={{
                 ...props.location,
-                pathname: "/swap",
-                search: search && search.length > 1 ? `${search}&outputCurrency=${outputCurrency}` : `?outputCurrency=${outputCurrency}`,
+                pathname: "/info/markets",
             }}
         />
     );

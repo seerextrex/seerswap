@@ -496,12 +496,10 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
     const downPrice = downOutcome ? downOutcome.probability / 100 : 0;
     
     // Calculate estimates using both formulas
-    // estimate_1 = lowerBound + (upperBound - lowerBound) * DOWN_PRICE
-    // estimate_2 = upperBound - (upperBound - lowerBound) * UP_PRICE
-    // Note: DOWN price indicates how far up from lower bound
-    // UP price indicates how far down from upper bound
-    const estimate1 = lower + (upper - lower) * downPrice;
-    const estimate2 = upper - (upper - lower) * upPrice;
+    // estimate1 = lowerBound + (upperBound - lowerBound) * up
+    // estimate2 = upperBound - (upperBound - lowerBound) * down
+    const estimate1 = lower + (upper - lower) * upPrice;
+    const estimate2 = upper - (upper - lower) * downPrice;
     
     // Take the average of both estimates
     const estimatedValue = (estimate1 + estimate2) / 2;

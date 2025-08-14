@@ -404,6 +404,102 @@ export function calculateOutcomeProbabilities(pools: Pool[], market: Market): { 
 }
 
 /**
+ * Calculate scalar market estimate from UP/DOWN token probabilities
+ * Uses an average of two estimates for better accuracy
+ */
+export function calculateScalarMarketEstimate(
+  pools: Pool[],
+  market: Market
+): {
+  current: number;
+  lower: number;
+  upper: number;
+  upPrice: number;  // percentage 0-100
+  downPrice: number;  // percentage 0-100
+  upPriceDecimal: number;  // decimal 0-1
+  downPriceDecimal: number;  // decimal 0-1
+  range: number;
+  upIndex: number;
+  downIndex: number;
+} | null {
+  // Check for required bounds
+  if (!market.lowerBound || !market.upperBound) {
+    console.log('[calculateScalarMarketEstimate] Missing bounds');
+    return null;
+  }
+  
+  const rawLower = market.lowerBound;
+  const rawUpper = market.upperBound;
+  
+  let lower = parseFloat(rawLower);
+  let upper = parseFloat(rawUpper);
+  
+  // Check if values need scaling from wei
+  const looksLikeWei = (value: string): boolean => {
+    return !value.includes('.') && value.length > 15;
+  };
+  
+  const needsScaling = looksLikeWei(rawLower) || looksLikeWei(rawUpper);
+  if (needsScaling) {
+    lower = lower / 1e18;
+    upper = upper / 1e18;
+  }
+  
+  // Calculate outcome probabilities (these are percentages 0-100)
+  const probabilities = calculateOutcomeProbabilities(pools, market);
+  if (!probabilities) {
+    console.log('[calculateScalarMarketEstimate] No probabilities calculated');
+    return null;
+  }
+  
+  // Find UP and DOWN outcomes
+  const upIndex = market.outcomes.findIndex(o => o.toLowerCase() === 'up');
+  const downIndex = market.outcomes.findIndex(o => o.toLowerCase() === 'down');
+  
+  if (upIndex === -1 || downIndex === -1) {
+    console.log('[calculateScalarMarketEstimate] UP or DOWN outcome not found');
+    return null;
+  }
+  
+  // probabilities are in percentage (0-100), convert to decimal (0-1)
+  const upPriceDecimal = probabilities[upIndex] ? probabilities[upIndex] / 100 : 0.5;
+  const downPriceDecimal = probabilities[downIndex] ? probabilities[downIndex] / 100 : 0.5;
+  
+  // Calculate market estimate using both UP and DOWN probabilities
+  // estimate1 = lower + (upper - lower) * upPrice
+  // estimate2 = upper - (upper - lower) * downPrice
+  // Take average for more accurate estimate
+  const estimate1 = lower + (upper - lower) * upPriceDecimal;
+  const estimate2 = upper - (upper - lower) * downPriceDecimal;
+  const currentEstimate = (estimate1 + estimate2) / 2;
+  
+  console.log('[calculateScalarMarketEstimate] Result:', {
+    lower,
+    upper,
+    upPriceDecimal,
+    downPriceDecimal,
+    estimate1,
+    estimate2,
+    currentEstimate,
+    upPricePercent: probabilities[upIndex],
+    downPricePercent: probabilities[downIndex]
+  });
+  
+  return {
+    current: currentEstimate,
+    lower,
+    upper,
+    upPrice: probabilities[upIndex] || 0,  // Keep as percentage for display
+    downPrice: probabilities[downIndex] || 0,  // Keep as percentage for display
+    upPriceDecimal,  // Decimal for calculations
+    downPriceDecimal,  // Decimal for calculations
+    range: upper - lower,
+    upIndex,
+    downIndex
+  };
+}
+
+/**
  * Format probabilities for display
  */
 export function formatProbability(probability: number): string {

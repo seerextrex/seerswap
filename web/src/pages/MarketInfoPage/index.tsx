@@ -12,6 +12,7 @@ import { useMarketData } from "../../hooks/useMarketData";
 import { MarketInfoHeader } from "./MarketInfoHeader";
 import { EnhancedMarketChart } from "./EnhancedMarketChart";
 import { SwapModule } from "./SwapModule";
+import { ScalarMarketInterface } from "./ScalarMarketInterface";
 import "./index.scss";
 
 interface MarketInfoPageProps {
@@ -120,6 +121,44 @@ export default function MarketInfoPage({
             volumeWeekly
         };
     }, [market, pools]);
+    
+    // Check if this is a scalar UP/DOWN market
+    const isScalarMarket = useMemo(() => {
+        if (!market?.outcomes) return false;
+        
+        // Filter out Invalid result outcome
+        const validOutcomes = market.outcomes.filter(o => !o.toLowerCase().includes('invalid'));
+        const outcomesLower = validOutcomes.map(o => o.toLowerCase());
+        
+        // Check if we have exactly UP and DOWN (after filtering Invalid)
+        const hasUpDown = outcomesLower.includes('up') && outcomesLower.includes('down') && validOutcomes.length === 2;
+        
+        if (!hasUpDown || !market.lowerBound || !market.upperBound) return false;
+        
+        // Check if bounds exist and are valid
+        const rawLower = market.lowerBound;
+        const rawUpper = market.upperBound;
+        
+        // Parse bounds - they might be BigInt strings or decimal strings
+        const lower = rawLower ? parseFloat(rawLower) : null;
+        const upper = rawUpper ? parseFloat(rawUpper) : null;
+        
+        // Only scale if the values are actually in wei format (very large integers)
+        const looksLikeWei = (value: string | null | undefined): boolean => {
+            if (!value) return false;
+            return !value.includes('.') && value.length > 15;
+        };
+        
+        const needsScaling = looksLikeWei(rawLower) || looksLikeWei(rawUpper);
+        const scaledLower = needsScaling && lower !== null ? lower / 1e18 : lower;
+        const scaledUpper = needsScaling && upper !== null ? upper / 1e18 : upper;
+        
+        const hasBounds = scaledLower !== null && scaledUpper !== null && 
+                          (scaledLower !== 0 || scaledUpper !== 0) && 
+                          scaledUpper > scaledLower;
+        
+        return hasUpDown && hasBounds;
+    }, [market?.outcomes, market?.lowerBound, market?.upperBound]);
 
     return (
         <div className="market-info-page mb-3">
@@ -214,13 +253,20 @@ export default function MarketInfoPage({
                             </div>
                             
                             <div className="swap-container">
-                                <SwapModule
-                                    market={marketWithWeeklyVolume}
-                                    outcomes={validOutcomes}
-                                    selectedOutcome={selectedOutcome}
-                                    onOutcomeSelect={setSelectedOutcome}
-                                    pools={pools}
-                                />
+                                {isScalarMarket ? (
+                                    <ScalarMarketInterface
+                                        market={marketWithWeeklyVolume}
+                                        pools={pools || []}
+                                    />
+                                ) : (
+                                    <SwapModule
+                                        market={marketWithWeeklyVolume}
+                                        outcomes={validOutcomes}
+                                        selectedOutcome={selectedOutcome}
+                                        onOutcomeSelect={setSelectedOutcome}
+                                        pools={pools}
+                                    />
+                                )}
                             </div>
                         </div>
                         

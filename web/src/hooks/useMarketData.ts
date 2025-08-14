@@ -12,6 +12,8 @@ const MARKET_QUERY = gql`
             outcomes
             openingTs
             finalizeTs
+            lowerBound
+            upperBound
             totalValueLockedUSD
             volumeUSD
             collateralToken {
@@ -69,6 +71,9 @@ const MARKET_POOLS_QUERY = gql`
             }
             token0Price
             token1Price
+            tick
+            sqrtPrice
+            liquidity
             volumeUSD
             totalValueLockedUSD
             poolHourData(

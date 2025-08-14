@@ -1,0 +1,260 @@
+.quick-trade-modal {
+  width: 100%;
+  
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    
+    .modal-title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .close-button {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      padding: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    
+    .market-info {
+      margin-bottom: 1.5rem;
+      
+      .market-name {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.4;
+      }
+    }
+    
+    .trade-type-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      
+      .toggle-btn {
+        flex: 1;
+        padding: 0.625rem 1rem;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        
+        &.active {
+          background: rgba(255, 255, 255, 0.08);
+          color: white;
+        }
+        
+        &:hover:not(.active) {
+          background: rgba(255, 255, 255, 0.04);
+        }
+      }
+    }
+    
+    .outcome-selection {
+      margin-bottom: 1.5rem;
+      
+      .input-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      .outcome-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        
+        .outcome-btn {
+          padding: 0.75rem 1.25rem;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 0.95rem;
+          font-weight: 500;
+          cursor: pointer;
+          border-radius: 12px;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+          }
+          
+          &.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+          }
+        }
+      }
+    }
+    
+    .amount-input {
+      margin-bottom: 1.5rem;
+      
+      .input-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      .input-wrapper {
+        .amount-field {
+          width: 100%;
+          padding: 0.875rem 1rem;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: white;
+          font-size: 1.125rem;
+          font-weight: 500;
+          border-radius: 12px;
+          transition: all 0.2s ease;
+          
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+          }
+          
+          &:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.2);
+          }
+        }
+        
+        .quick-amounts {
+          display: flex;
+          gap: 0.5rem;
+          margin-top: 0.75rem;
+          
+          .quick-amount {
+            flex: 1;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.06);
+              border-color: rgba(255, 255, 255, 0.12);
+              color: rgba(255, 255, 255, 0.8);
+            }
+          }
+        }
+      }
+    }
+    
+    .trade-summary {
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        &:not(:last-child) {
+          margin-bottom: 0.75rem;
+        }
+        
+        .summary-label {
+          font-size: 0.875rem;
+          color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .summary-value {
+          font-size: 0.95rem;
+          font-weight: 500;
+          color: white;
+        }
+      }
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      
+      .cancel-btn {
+        flex: 1;
+        padding: 0.875rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(255, 255, 255, 0.15);
+        }
+      }
+      
+      .trade-btn {
+        flex: 2;
+        padding: 0.875rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        
+        &:hover:not(:disabled) {
+          background: linear-gradient(135deg, #7c8ff0 0%, #8759b3 100%);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { useQuery } from '@apollo/client';
 import { Trans } from '@lingui/macro';
-import { ChevronDown, ChevronUp, ExternalLink } from 'react-feather';
+import { ChevronDown, ChevronUp, ExternalLink, Clock, X } from 'react-feather';
 import { NavLink } from 'react-router-dom';
 import { FETCH_POOLS_GROUPED_BY_MARKET } from '../../utils/graphql-queries';
 import { formatDollarAmount, formatAmount } from '../../utils/numbers';
@@ -12,6 +12,7 @@ import { ZapButton } from '../MarketZap/ZapButton';
 import { ZapModal, ZapModalContent } from '../MarketZap/ZapModal';
 import Modal from '../Modal';
 import Loader from '../Loader';
+import QuickTradeModal from '../QuickTradeModal';
 import './index.scss';
 import './index-modern.scss';
 
@@ -360,6 +361,8 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
   groupedMarket
 }) => {
   const [imageError, setImageError] = useState(false);
+  const [showTradeModal, setShowTradeModal] = useState(false);
+  const [selectedOutcome, setSelectedOutcome] = useState<string>();
 
   const { market, pools, totalTVL, totalVolume, totalFees, isParent, childMarkets } = groupedMarket;
 
@@ -526,6 +529,36 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
     }
   }, [handleCardClick]);
 
+  // Calculate time until resolution
+  const timeUntilResolution = useMemo(() => {
+    if (!market.finalizeTs) return null;
+    
+    const now = Math.floor(Date.now() / 1000);
+    const finalizeTime = Number(market.finalizeTs);
+    
+    // Check if market is already resolved or has invalid timestamp
+    if (finalizeTime <= now || finalizeTime === 33260976000) return null;
+    
+    const secondsRemaining = finalizeTime - now;
+    const days = Math.floor(secondsRemaining / 86400);
+    const hours = Math.floor((secondsRemaining % 86400) / 3600);
+    
+    if (days > 0) {
+      return `${days}d ${hours}h`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else {
+      const minutes = Math.floor(secondsRemaining / 60);
+      return `${minutes}m`;
+    }
+  }, [market.finalizeTs]);
+
+  const handleQuickBuy = useCallback((outcome: string) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedOutcome(outcome);
+    setShowTradeModal(true);
+  }, []);
+
   return (
     <div className="market-card-modern">
       <div 
@@ -557,9 +590,17 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
               </div>
             )}
           </div>
-          <h3 className="market-title">
-            {market.marketName || 'Unknown Market'}
-          </h3>
+          <div className="market-title-wrapper">
+            <h3 className="market-title">
+              {market.marketName || 'Unknown Market'}
+            </h3>
+            {timeUntilResolution && (
+              <div className="time-indicator">
+                <Clock size={14} />
+                <span>{timeUntilResolution}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Probability Indicator and Outcomes */}
@@ -712,19 +753,53 @@ const MarketGroup: React.FC<MarketGroupProps> = React.memo(({
         
         {/* Action Buttons */}
         <div className="market-action-buttons">
-          <button 
-            className="action-btn primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Navigate to market detail page for trading
-              window.location.href = `#/info/markets/${market.id}`;
-            }}
-          >
-            <span className="btn-label">Trade Now</span>
-            <span className="btn-icon">→</span>
-          </button>
+          {isBinaryMarket ? (
+            // Binary market: Show Yes/No buttons
+            sortedOutcomes
+              .filter(({ outcome }) => !outcome.toLowerCase().includes('invalid'))
+              .slice(0, 2)
+              .map(({ outcome, probability, gradient }) => (
+                <button
+                  key={outcome}
+                  className="action-btn quick-buy"
+                  onClick={handleQuickBuy(outcome)}
+                  style={{
+                    background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`
+                  }}
+                >
+                  <span className="btn-label">Buy {outcome}</span>
+                  <span className="btn-prob">{Math.round(probability)}%</span>
+                </button>
+              ))
+          ) : (
+            // Non-binary market: Show generic trade button
+            <button 
+              className="action-btn primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowTradeModal(true);
+              }}
+            >
+              <span className="btn-label">Trade Now</span>
+              <span className="btn-icon">→</span>
+            </button>
+          )}
         </div>
       </div>
+      
+      {/* Quick Trade Modal */}
+      {showTradeModal && (
+        <QuickTradeModal
+          isOpen={showTradeModal}
+          onClose={() => {
+            setShowTradeModal(false);
+            setSelectedOutcome(undefined);
+          }}
+          market={market}
+          pools={pools}
+          selectedOutcome={selectedOutcome}
+        />
+      )}
     </div>
   );
 });
@@ -742,6 +817,7 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMoreItems, setHasMoreItems] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const ITEMS_PER_PAGE = 500; // Increased to fetch more pools initially
 
   const { data, loading, error, fetchMore } = useQuery(FETCH_POOLS_GROUPED_BY_MARKET, {
@@ -773,8 +849,20 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
       });
     }
     
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      grouped = grouped.filter(group => {
+        const market = group.market;
+        // Search in market name and outcomes
+        const nameMatch = market.marketName?.toLowerCase().includes(query);
+        const outcomeMatch = market.outcomes?.some(o => o.toLowerCase().includes(query));
+        return nameMatch || outcomeMatch;
+      });
+    }
+    
     return grouped;
-  }, [data, hideLowValue, minTVL, hideResolved]);
+  }, [data, hideLowValue, minTVL, hideResolved, searchQuery]);
 
   const handleLoadMore = useCallback(() => {
     fetchMore({
@@ -833,6 +921,37 @@ export const MarketPoolsView: React.FC<MarketPoolsViewProps> = ({
 
   return (
     <div className="market-pools-view-modern">
+      {/* Search Bar */}
+      <div className="market-search-bar">
+        <div className="search-input-wrapper">
+          <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search markets by name or outcome..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              className="clear-search"
+              onClick={() => setSearchQuery('')}
+              aria-label="Clear search"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
+        <div className="search-results-count">
+          {searchQuery && (
+            <span>{groupedMarkets.length} {groupedMarkets.length === 1 ? 'market' : 'markets'} found</span>
+          )}
+        </div>
+      </div>
+      
       <div className="markets-grid">
         {groupedMarkets.map((groupedMarket) => (
           <MarketGroup

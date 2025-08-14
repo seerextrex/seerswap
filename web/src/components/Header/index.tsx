@@ -14,7 +14,6 @@ import { NavLink } from "react-router-dom";
 import { Trans } from "@lingui/macro";
 
 import AlgebraConfig from "algebra.config";
-import { ArrowUpRight, Link } from "react-feather";
 import { ThemeContext } from "styled-components/macro";
 import { ReactComponent as Close } from "../../assets/images/x.svg";
 
@@ -39,19 +38,12 @@ export default function Header() {
 
     const networkFailed = useIsNetworkFailed();
 
-    let chainValue;
+    let chainValue: string | undefined;
 
     if (currentChainId === AlgebraConfig.CHAIN_PARAMS.chainId) {
         chainValue = AlgebraConfig.CHAIN_PARAMS.nativeCurrency.symbol;
     }
 
-    const handleBlur = useCallback((e: React.ChangeEvent<HTMLLabelElement>) => {
-        const target = e.target.control as HTMLInputElement;
-
-        if (!target) return;
-
-        setTimeout(() => (target.checked = false), 100);
-    }, []);
 
     return (
         <>

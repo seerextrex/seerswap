@@ -1,21 +1,27 @@
 .scalar-market-interface {
-    background: linear-gradient(135deg, #1a1b3a 0%, #0f0f1f 100%);
-    border-radius: 24px;
-    padding: 32px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 32px;
+    padding: 40px;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        0 20px 60px -10px rgba(0, 0, 0, 0.5),
+        0 50px 120px -30px rgba(99, 102, 241, 0.15);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     
-    // Subtle gradient overlay for depth
+    // Glass morphism glow
     &::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 200px;
-        background: radial-gradient(ellipse at top center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        top: -100px;
+        left: -100px;
+        right: -100px;
+        height: 300px;
+        background: radial-gradient(ellipse at top center, rgba(124, 58, 237, 0.08) 0%, transparent 60%);
         pointer-events: none;
+        filter: blur(80px);
     }
     
     .not-scalar-message {
@@ -33,7 +39,7 @@
     // Market Estimate Display - Hero Section
     .market-estimate-display {
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 48px;
         position: relative;
         z-index: 1;
         
@@ -41,15 +47,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 20px;
             
             .estimate-label {
-                font-size: 13px;
+                font-size: 11px;
                 text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: rgba(255, 255, 255, 0.5);
-                font-weight: 600;
+                letter-spacing: 2px;
+                color: rgba(255, 255, 255, 0.35);
+                font-weight: 700;
+                font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
             }
             
             .estimate-info-icon {
@@ -91,54 +98,89 @@
         }
         
         .estimate-value-large {
-            font-size: 72px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            font-size: 96px;
+            font-weight: 200;
+            background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.7) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            line-height: 1;
-            margin-bottom: 16px;
+            line-height: 0.9;
+            margin-bottom: 24px;
             font-variant-numeric: tabular-nums;
-            letter-spacing: -2px;
+            letter-spacing: -4px;
+            font-family: -apple-system, system-ui, 'SF Pro Display', sans-serif;
+            position: relative;
+            
+            // Subtle glow effect
+            &::after {
+                content: attr(data-value);
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: inherit;
+                font-weight: inherit;
+                background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                opacity: 0.3;
+                filter: blur(20px);
+                z-index: -1;
+            }
         }
         
         .estimate-range {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 14px;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 100px;
+            font-size: 13px;
             
             .range-label {
-                color: rgba(255, 255, 255, 0.5);
-                font-weight: 500;
+                color: rgba(255, 255, 255, 0.35);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-size: 10px;
             }
             
             .range-values {
-                color: rgba(255, 255, 255, 0.8);
-                font-weight: 600;
+                color: rgba(255, 255, 255, 0.7);
+                font-weight: 500;
                 font-variant-numeric: tabular-nums;
+                font-family: 'SF Mono', Monaco, monospace;
             }
         }
     }
     
     // Interactive Slider Section
     .slider-section {
-        margin-bottom: 32px;
+        margin-bottom: 40px;
         position: relative;
         z-index: 1;
+        padding: 32px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        backdrop-filter: blur(20px);
         
         .slider-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             
             .slider-label {
-                font-size: 16px;
+                font-size: 14px;
                 font-weight: 600;
-                color: rgba(255, 255, 255, 0.9);
+                color: rgba(255, 255, 255, 0.6);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
             }
             
             .slider-value-display {
@@ -147,23 +189,26 @@
                 gap: 8px;
                 
                 .slider-value-input {
-                    background: rgba(255, 255, 255, 0.08);
-                    border: 2px solid rgba(255, 255, 255, 0.15);
-                    border-radius: 12px;
-                    padding: 8px 16px;
-                    font-size: 20px;
-                    font-weight: 600;
+                    background: rgba(255, 255, 255, 0.04);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 16px;
+                    padding: 12px 20px;
+                    font-size: 28px;
+                    font-weight: 300;
                     color: white;
-                    width: 120px;
+                    width: 140px;
                     text-align: center;
                     font-variant-numeric: tabular-nums;
-                    transition: all 0.2s ease;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    font-family: -apple-system, system-ui, 'SF Pro Display', sans-serif;
                     
                     &:focus {
                         outline: none;
-                        border-color: #6366f1;
-                        background: rgba(99, 102, 241, 0.1);
-                        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+                        border-color: rgba(124, 58, 237, 0.5);
+                        background: rgba(124, 58, 237, 0.08);
+                        box-shadow: 
+                            0 0 0 1px rgba(124, 58, 237, 0.2),
+                            0 0 40px rgba(124, 58, 237, 0.15);
                     }
                     
                     &::-webkit-inner-spin-button,
@@ -174,26 +219,28 @@
                 }
                 
                 .reset-button {
-                    padding: 6px 12px;
-                    background: rgba(255, 255, 255, 0.1);
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    border-radius: 8px;
-                    color: rgba(255, 255, 255, 0.8);
-                    font-size: 12px;
+                    padding: 8px 16px;
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 100px;
+                    color: rgba(255, 255, 255, 0.5);
+                    font-size: 11px;
                     font-weight: 600;
                     cursor: pointer;
-                    transition: all 0.2s ease;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     text-transform: uppercase;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 1px;
+                    font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
                     
                     &:hover {
-                        background: rgba(255, 255, 255, 0.15);
-                        border-color: rgba(255, 255, 255, 0.3);
-                        color: white;
+                        background: rgba(255, 255, 255, 0.05);
+                        border-color: rgba(255, 255, 255, 0.2);
+                        color: rgba(255, 255, 255, 0.8);
+                        transform: translateY(-1px);
                     }
                     
                     &:active {
-                        transform: scale(0.95);
+                        transform: translateY(0);
                     }
                 }
             }
@@ -209,17 +256,32 @@
                 transform: translateY(-50%);
                 left: 0;
                 right: 0;
-                height: 8px;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 4px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.06);
+                border-radius: 100px;
                 overflow: visible;
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
                 
                 .slider-fill {
                     height: 100%;
-                    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
-                    border-radius: 4px;
-                    transition: width 0.15s ease;
-                    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+                    background: linear-gradient(90deg, #7c3aed 0%, #ec4899 100%);
+                    border-radius: 100px;
+                    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.3);
+                    position: relative;
+                    
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: inherit;
+                        filter: blur(8px);
+                        opacity: 0.4;
+                        border-radius: inherit;
+                    }
                 }
                 
                 .current-estimate-marker {
@@ -268,28 +330,35 @@
                 &::-webkit-slider-thumb {
                     -webkit-appearance: none;
                     appearance: none;
-                    width: 28px;
-                    height: 28px;
-                    background: white;
+                    width: 24px;
+                    height: 24px;
+                    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
                     border-radius: 50%;
                     cursor: grab;
                     box-shadow: 
-                        0 2px 4px rgba(0, 0, 0, 0.1),
-                        0 4px 12px rgba(0, 0, 0, 0.15),
-                        0 0 0 2px rgba(99, 102, 241, 0.3);
-                    transition: all 0.2s ease;
+                        0 0 0 1px rgba(0, 0, 0, 0.04),
+                        0 2px 8px rgba(0, 0, 0, 0.08),
+                        0 8px 24px rgba(0, 0, 0, 0.12),
+                        0 0 0 4px rgba(124, 58, 237, 0);
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     
                     &:hover {
-                        transform: scale(1.1);
+                        transform: scale(1.15);
                         box-shadow: 
-                            0 2px 4px rgba(0, 0, 0, 0.1),
-                            0 6px 16px rgba(0, 0, 0, 0.2),
-                            0 0 0 3px rgba(99, 102, 241, 0.4);
+                            0 0 0 1px rgba(0, 0, 0, 0.04),
+                            0 4px 12px rgba(0, 0, 0, 0.1),
+                            0 12px 32px rgba(0, 0, 0, 0.15),
+                            0 0 0 6px rgba(124, 58, 237, 0.1);
                     }
                     
                     &:active {
                         cursor: grabbing;
-                        transform: scale(1.05);
+                        transform: scale(1.1);
+                        box-shadow: 
+                            0 0 0 1px rgba(0, 0, 0, 0.04),
+                            0 2px 8px rgba(0, 0, 0, 0.08),
+                            0 8px 24px rgba(0, 0, 0, 0.12),
+                            0 0 0 8px rgba(124, 58, 237, 0.15);
                     }
                 }
                 
@@ -338,11 +407,12 @@
         
         // Trade Direction Indicator (Header only)
         .trade-indicator {
-            padding: 16px 20px;
-            background: rgba(16, 18, 36, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 16px 16px 0 0;
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px 20px 0 0;
             border-bottom: none;
+            backdrop-filter: blur(10px);
             
             &.up {
                 .trade-header {
@@ -387,14 +457,15 @@
         
         // Profit Box (Separate from trade indicator)
         .profit-box {
-            padding: 20px;
-            background: rgba(25, 27, 48, 0.8);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 0 0 16px 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0 0 20px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
+            backdrop-filter: blur(10px);
             
             .profit-item {
                 display: flex;
@@ -452,21 +523,24 @@
                 
                 .amount-input {
                     width: 100%;
-                    padding: 14px 16px 14px 40px;
-                    background: rgba(255, 255, 255, 0.08);
-                    border: 2px solid rgba(255, 255, 255, 0.15);
-                    border-radius: 12px;
+                    padding: 16px 20px 16px 44px;
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 16px;
                     color: white;
-                    font-size: 18px;
-                    font-weight: 600;
+                    font-size: 20px;
+                    font-weight: 400;
                     font-variant-numeric: tabular-nums;
-                    transition: all 0.2s ease;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    font-family: -apple-system, system-ui, 'SF Pro Display', sans-serif;
                     
                     &:focus {
                         outline: none;
-                        border-color: #6366f1;
-                        background: rgba(99, 102, 241, 0.1);
-                        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+                        border-color: rgba(124, 58, 237, 0.3);
+                        background: rgba(124, 58, 237, 0.05);
+                        box-shadow: 
+                            0 0 0 1px rgba(124, 58, 237, 0.15),
+                            0 0 32px rgba(124, 58, 237, 0.1);
                     }
                     
                     &::placeholder {
@@ -564,23 +638,48 @@
         
         .trade-button {
             width: 100%;
-            padding: 16px;
-            font-size: 16px;
+            padding: 18px;
+            font-size: 15px;
             font-weight: 600;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 16px;
+            background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
             color: white;
             border: none;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: none;
-            letter-spacing: 0;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.04),
+                0 4px 8px rgba(0, 0, 0, 0.08),
+                0 12px 24px rgba(124, 58, 237, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            font-family: -apple-system, system-ui, 'SF Pro Text', sans-serif;
+            position: relative;
+            overflow: hidden;
+            
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s;
+            }
             
             &:hover:not(:disabled) {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-                background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+                transform: translateY(-2px) scale(1.01);
+                box-shadow: 
+                    0 1px 2px rgba(0, 0, 0, 0.04),
+                    0 8px 16px rgba(0, 0, 0, 0.1),
+                    0 24px 48px rgba(124, 58, 237, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+                
+                &::before {
+                    left: 100%;
+                }
             }
             
             &:active:not(:disabled) {
@@ -834,6 +933,85 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: scale(0.98);
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes breathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+}
+
+// Add entrance animations
+.scalar-market-interface {
+    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    .market-estimate-display {
+        animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+    }
+    
+    .slider-section {
+        animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+    }
+    
+    .trade-execution {
+        animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+    }
+    
+    // Add hover states with micro-interactions
+    .slider-section {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        &:hover {
+            transform: translateY(-2px);
+        }
+    }
+    
+    .trade-indicator,
+    .profit-box {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.1);
+        }
+    }
+    
+    // Shimmer effect for loading states
+    .loading-shimmer {
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.05) 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
     }
 }
 

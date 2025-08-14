@@ -25,7 +25,7 @@ export const MarketEstimateDisplay: FC<MarketEstimateDisplayProps> = ({ marketEs
                     </div>
                 </div>
             </div>
-            <div className="estimate-value-large">
+            <div className="estimate-value-large" data-value={marketEstimate.current.toFixed(2)}>
                 {marketEstimate.current.toFixed(2)}
             </div>
             <div className="estimate-range">

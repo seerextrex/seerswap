@@ -155,24 +155,6 @@ export const ScalarMarketInterface: React.FC<ScalarMarketInterfaceProps> = ({
                 onApprove={handleApprove}
                 onTrade={handleTrade}
             />
-            
-            {/* Token Prices Display */}
-            <div className="token-prices">
-                <div className="token-price up">
-                    <div className="token-header">
-                        <span className="token-name">UP Token</span>
-                    </div>
-                    <div className="token-value">${(marketEstimate.upPrice / 100).toFixed(3)}</div>
-                    <div className="token-subtext">{marketEstimate.upPrice.toFixed(1)}% probability</div>
-                </div>
-                <div className="token-price down">
-                    <div className="token-header">
-                        <span className="token-name">DOWN Token</span>
-                    </div>
-                    <div className="token-value">${(marketEstimate.downPrice / 100).toFixed(3)}</div>
-                    <div className="token-subtext">{marketEstimate.downPrice.toFixed(1)}% probability</div>
-                </div>
-            </div>
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Trans } from '@lingui/macro';
-import { Plus, TrendingUp, DollarSign, Zap } from 'react-feather';
+import { Plus, TrendingUp, DollarSign, Zap, Info } from 'react-feather';
 import { formatDollarAmount } from '../../utils/numbers';
 import { formatUnits } from 'viem';
 
@@ -184,7 +184,19 @@ export const FarmCard = memo(({ farm, onClick, TokenImage }: FarmCardProps) => {
 
             <div className="eternal-page__farm-stats">
                 <div className="eternal-page__farm-stat">
-                    <label><Trans>APR</Trans></label>
+                    <label>
+                        <Trans>APR</Trans>
+                        <div className="apr-info-icon">
+                            <Info size={12} />
+                            <div className="apr-tooltip">
+                                <div className="apr-tooltip-content">
+                                    <strong>APR Estimate</strong>
+                                    <p>Based on $1M SEER market cap & average LP range.</p>
+                                    <p>Tighter ranges earn higher rewards.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
                     <div className="value apr">
                         {farm.apr ? `${Math.round(farm.apr)}%` : '—'}
                     </div>

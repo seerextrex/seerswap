@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect, memo } from 'react';
 import { Trans } from '@lingui/macro';
-import { Search, TrendingUp, DollarSign, Award, Plus, Filter, X, ChevronDown, ChevronUp } from 'react-feather';
+import { Search, TrendingUp, DollarSign, Award, Plus, Filter, X, ChevronDown, ChevronUp, Info } from 'react-feather';
 import { formatDollarAmount } from '../../utils/numbers';
+import { getSeerTokenInfo } from '../../utils/seerTokenInfo';
 import { formatUnits } from 'viem';
 import { FarmCard } from './FarmCard';
 import { MarketGroupedDisplay } from './MarketGroupedDisplay';
@@ -188,13 +189,6 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
     const loading = propsRefreshing || false;
     const { address: account } = useAccount();
     
-    // Call fetchHandler once on mount to load initial data
-    useEffect(() => {
-        if (fetchHandler) {
-            fetchHandler();
-        }
-    }, []); // Empty dependency array to run only once on mount
-    
     // State
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<'all' | 'high-reward' | 'active' | 'my-farms'>('all');
@@ -202,6 +196,14 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
     const [selectedFarm, setSelectedFarm] = useState<any>(null);
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
     const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
+    const [totalAPR, setTotalAPR] = useState<number>(0);
+    
+    // Call fetchHandler once on mount to load initial data
+    useEffect(() => {
+        if (fetchHandler) {
+            fetchHandler();
+        }
+    }, []); // Empty dependency array to run only once on mount
 
     // Group farms by market with hierarchical structure for conditional markets
     const groupedFarms = useMemo(() => {
@@ -357,7 +359,8 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 totalTVL: 0,
                 totalDailyRewards: 0,
                 averageAPR: 0,
-                activeFarms: 0
+                activeFarms: 0,
+                seerPrice: 0
             };
         }
 
@@ -375,10 +378,14 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
             return sum + dailyReward;
         }, 0);
 
-        const farmsWithAPR = allFarms.filter(f => f.apr && f.apr > 0);
-        const averageAPR = farmsWithAPR.length > 0
-            ? farmsWithAPR.reduce((sum, f) => sum + f.apr, 0) / farmsWithAPR.length
-            : 0;
+        // Calculate average APR based on total rewards and total TVL
+        // This is more accurate than averaging individual APRs
+        let averageAPR = 0;
+        if (totalTVL > 0) {
+            // Total APR = (Total Daily Rewards in SEER * SEER Price * 365) / Total TVL * 100
+            // We'll calculate this asynchronously and store it in state
+            averageAPR = 0; // Will be calculated with SEER price
+        }
 
         const activeFarms = allFarms.filter(f => f.totalAmountUSDEstimated && parseFloat(f.totalAmountUSDEstimated) > 0).length;
 
@@ -386,9 +393,32 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
             totalTVL,
             totalDailyRewards,
             averageAPR,
-            activeFarms
+            activeFarms,
+            seerPrice: 0
         };
     }, [allFarms]);
+    
+    // Calculate total APR based on total rewards and TVL
+    useEffect(() => {
+        const calculateTotalAPR = async () => {
+            if (stats.totalTVL > 0 && stats.totalDailyRewards > 0) {
+                try {
+                    const { pricePerToken } = await getSeerTokenInfo();
+                    // Total APR = (Total Daily Rewards * SEER Price * 365) / Total TVL * 100
+                    const annualRewardsUSD = stats.totalDailyRewards * pricePerToken * 365;
+                    const apr = (annualRewardsUSD / stats.totalTVL) * 100;
+                    setTotalAPR(apr);
+                } catch (error) {
+                    console.error('Failed to calculate total APR:', error);
+                    setTotalAPR(0);
+                }
+            } else {
+                setTotalAPR(0);
+            }
+        };
+        
+        calculateTotalAPR();
+    }, [stats.totalTVL, stats.totalDailyRewards]);
 
     // Sort market keys by total TVL
     const sortedMarketKeys = useMemo(() => {
@@ -530,10 +560,20 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 </div>
                 <div className="eternal-page__stat-card">
                     <div className="eternal-page__stat-card-label">
-                        <Trans>Average APR</Trans>
+                        <Trans>Total APR</Trans>
+                        <div className="apr-info-icon">
+                            <Info size={14} />
+                            <div className="apr-tooltip">
+                                <div className="apr-tooltip-content">
+                                    <strong>APR Estimate</strong>
+                                    <p>Based on $1M SEER market cap & average LP range.</p>
+                                    <p>Tighter ranges earn higher rewards.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div className="eternal-page__stat-card-value eternal-page__stat-card-value--apr">
-                        {Math.round(stats.averageAPR)}%
+                        {Math.round(totalAPR)}%
                     </div>
                 </div>
                 <div className="eternal-page__stat-card">

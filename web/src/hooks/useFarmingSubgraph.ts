@@ -47,6 +47,7 @@ import { fetchEternalFarmTVL, fetchLimitFarmAPR, fetchLimitFarmTVL } from "utils
 import { useEthPrices } from "./useEthPrices";
 
 import AlgebraConfig from "algebra.config";
+import { calculateFarmAPR } from "../utils/seerTokenInfo";
 
 // Backup RPC endpoints for Gnosis chain
 const BACKUP_RPC_ENDPOINTS = [
@@ -1492,8 +1493,15 @@ export function useFarmingSubgraph() {
                 const dailyRewardRate = Math.round(+_rewardRate * 86_400);
                 const dailyBonusRewardRate = Math.round(+_bonusRewardRate * 86_400);
 
-                const farmTvlResult = await fetchEternalFarmTVL();
-                const tvl = typeof farmTvlResult === 'object' && farmTvlResult !== null && 'tvl' in farmTvlResult && typeof (farmTvlResult as any).tvl === 'number' ? (farmTvlResult as any).tvl : 0;
+                // Get TVL from pool data
+                const poolTVL = pool.totalValueLockedUSD ? parseFloat(pool.totalValueLockedUSD) : 0;
+                
+                // Calculate APR using the SEER-based method
+                const apr = await calculateFarmAPR(
+                    farmEvent.rewardRate || '0',
+                    poolTVL,
+                    Number(rewardToken.decimals)
+                );
 
                 _newEternalFarmings.push({
                     ...farmEvent,
@@ -1501,10 +1509,10 @@ export function useFarmingSubgraph() {
                     bonusRewardToken: bonusRewardToken, // Can be TokenSubgraph | undefined
                     pool,
                     multiplierToken: multiplierToken, // Can be TokenSubgraph | undefined
-                    apr: aprs[farmEvent.id] ? aprs[farmEvent.id] : 0,
+                    apr: apr,
                     dailyRewardRate,
                     dailyBonusRewardRate,
-                    tvl: tvl,
+                    tvl: poolTVL,
                     reward: formatUnits(BigInt(farmEvent.reward || '0'), Number(rewardToken.decimals)),
                     // Safely format bonus reward, defaulting to "0" if bonusRewardToken or its decimals are missing.
                     bonusReward: (bonusRewardToken && bonusRewardToken.decimals)

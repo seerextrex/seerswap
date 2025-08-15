@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trans } from '@lingui/macro';
-import { ChevronDown, ChevronUp, Filter } from 'react-feather';
+import { ChevronDown, ChevronUp, Filter, Info } from 'react-feather';
 import { formatDollarAmount } from '../../utils/numbers';
 import { FarmCard } from './FarmCard';
 
@@ -17,6 +17,7 @@ interface MarketGroupedDisplayProps {
     activeFilter: string;
     setSearchQuery: (query: string) => void;
     setActiveFilter: (filter: any) => void;
+    marketAPRs?: { [marketId: string]: number };
 }
 
 export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
@@ -31,7 +32,8 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
     searchQuery,
     activeFilter,
     setSearchQuery,
-    setActiveFilter
+    setActiveFilter,
+    marketAPRs = {}
 }) => {
     // Check if there are any markets to display
     const hasMarkets = sortedMarketKeys.length > 0;
@@ -87,17 +89,18 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                 const marketGroup = groupedFarms[marketKey];
                 const isExpanded = expandedMarkets.has(marketKey);
                 
-                // Skip child markets from top level (they'll be shown under parents)
-                const isChildOfAnotherMarket = Object.values(groupedFarms).some((group: any) => 
-                    group.childMarkets && group.childMarkets[marketKey]
-                );
-                if (isChildOfAnotherMarket) return null;
+                // All markets at this level are root markets now
+                const hasDirectFarms = marketGroup.farms.length > 0;
+                const hasChildMarkets = marketGroup.childMarkets && Object.keys(marketGroup.childMarkets).length > 0;
+                const shouldShowMarket = hasDirectFarms || hasChildMarkets;
+                
+                if (!shouldShowMarket) return null;
 
                 return (
-                    <div key={marketKey} className="eternal-page__market-group">
+                    <div key={marketKey} className={`eternal-page__market-group ${marketGroup.isParent ? 'eternal-page__market-group--parent' : ''}`}>
                         {/* Market Header */}
                         <div
-                            className="eternal-page__market-header"
+                            className={`eternal-page__market-header ${isExpanded ? 'eternal-page__market-header--expanded' : ''}`}
                             onClick={() => toggleMarket(marketKey)}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
@@ -114,13 +117,13 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                 <MarketImage
                                     market={marketGroup.market}
                                     marketName={marketGroup.marketName}
-                                    size={48}
+                                    size={marketGroup.isParent ? 56 : 48}
                                 />
                                 <div className="eternal-page__market-details">
                                     <h3 className="eternal-page__market-name">
                                         {marketGroup.marketName}
-                                        {marketGroup.isParent && (
-                                            <span className="eternal-page__parent-badge">
+                                        {marketGroup.isParent && !hasDirectFarms && (
+                                            <span className="eternal-page__parent-only-badge">
                                                 <Trans>Parent Market</Trans>
                                             </span>
                                         )}
@@ -129,6 +132,11 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                         <span className="eternal-page__market-stat">
                                             {marketGroup.farms.length} outcome{marketGroup.farms.length !== 1 ? 's' : ''}
                                         </span>
+                                        {marketGroup.isParent && Object.keys(marketGroup.childMarkets).length > 0 && (
+                                            <span className="eternal-page__market-stat eternal-page__market-stat--children">
+                                                {Object.keys(marketGroup.childMarkets).length} conditional market{Object.keys(marketGroup.childMarkets).length !== 1 ? 's' : ''}
+                                            </span>
+                                        )}
                                         {marketGroup.totalTVL > 0 && (
                                             <span className="eternal-page__market-stat eternal-page__market-stat--tvl">
                                                 {formatDollarAmount(marketGroup.totalTVL)} TVL
@@ -137,6 +145,21 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                         {marketGroup.totalDailyRewards > 0 && (
                                             <span className="eternal-page__market-stat eternal-page__market-stat--rewards">
                                                 {marketGroup.totalDailyRewards.toLocaleString(undefined, { maximumFractionDigits: 2 })} SEER/day
+                                            </span>
+                                        )}
+                                        {marketAPRs[marketKey] !== undefined && marketAPRs[marketKey] > 0 && (
+                                            <span className="eternal-page__market-stat eternal-page__market-stat--apr">
+                                                <span className="apr-value">{Math.round(marketAPRs[marketKey])}% APR</span>
+                                                <div className="apr-info-icon">
+                                                    <Info size={12} />
+                                                    <div className="apr-tooltip">
+                                                        <div className="apr-tooltip-content">
+                                                            <strong>Market APR</strong>
+                                                            <p>Average APR for LPing in this market.</p>
+                                                            <p>Based on total rewards & TVL.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </span>
                                         )}
                                     </div>
@@ -152,49 +175,70 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                             id={`market-content-${marketKey}`}
                             className={`eternal-page__market-content ${isExpanded ? 'expanded' : ''}`}
                         >
-                            <div className="eternal-page__market-farms">
-                                {marketGroup.farms.map((farm: any) => (
-                                    <FarmCard
-                                        key={`farm-${farm.id || farm.pool?.id}`}
-                                        farm={farm}
-                                        onClick={() => handleFarmClick(farm)}
-                                        TokenImage={TokenImage}
-                                    />
-                                ))}
+                            {hasDirectFarms && (
+                                <div className="eternal-page__market-farms">
+                                    {marketGroup.farms.map((farm: any) => (
+                                        <FarmCard
+                                            key={`farm-${farm.id || farm.pool?.id}`}
+                                            farm={farm}
+                                            onClick={() => handleFarmClick(farm)}
+                                            TokenImage={TokenImage}
+                                        />
+                                    ))}
+                                </div>
+                            )}
 
-                                {/* Child Markets */}
-                                {marketGroup.isParent && Object.keys(marketGroup.childMarkets).length > 0 && (
-                                    <div className="eternal-page__child-markets">
+                            {/* Child Markets */}
+                            {hasChildMarkets && (
+                                <div className="eternal-page__child-markets">
+                                    {hasDirectFarms && (
+                                        <div className="eternal-page__child-markets-divider">
+                                            <span className="eternal-page__child-markets-label">
+                                                <Trans>Conditional Markets</Trans>
+                                            </span>
+                                        </div>
+                                    )}
                                         {Object.entries(marketGroup.childMarkets).map(([childKey, childGroup]: [string, any]) => (
                                             <div key={childKey} className="eternal-page__child-market">
-                                                <div className="eternal-page__child-market-header">
-                                                    <MarketImage
-                                                        market={childGroup.market}
-                                                        marketName={childGroup.marketName}
-                                                        size={36}
-                                                    />
-                                                    <div className="eternal-page__child-market-info">
-                                                        <h4>{childGroup.marketName}</h4>
-                                                        <span className="eternal-page__child-badge">
-                                                            <Trans>Conditional Market</Trans>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="eternal-page__child-market-farms">
-                                                    {childGroup.farms.map((farm: any) => (
-                                                        <FarmCard
-                                                            key={`farm-child-${farm.id || farm.pool?.id}`}
-                                                            farm={farm}
-                                                            onClick={() => handleFarmClick(farm)}
-                                                            TokenImage={TokenImage}
+                                                <div className="eternal-page__child-market-container">
+                                                    <div className="eternal-page__child-market-header">
+                                                        <div className="eternal-page__child-market-connector"></div>
+                                                        <MarketImage
+                                                            market={childGroup.market}
+                                                            marketName={childGroup.marketName}
+                                                            size={40}
                                                         />
-                                                    ))}
-                                                </div>
+                                                        <div className="eternal-page__child-market-info">
+                                                            <h4>{childGroup.marketName}</h4>
+                                                            <div className="eternal-page__child-market-stats">
+                                                                {childGroup.totalTVL > 0 && (
+                                                                    <span className="eternal-page__child-stat">
+                                                                        {formatDollarAmount(childGroup.totalTVL)} TVL
+                                                                    </span>
+                                                                )}
+                                                                {marketAPRs[childKey] !== undefined && marketAPRs[childKey] > 0 && (
+                                                                    <span className="eternal-page__child-stat eternal-page__child-stat--apr">
+                                                                        {Math.round(marketAPRs[childKey])}% APR
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="eternal-page__child-market-farms">
+                                                        {childGroup.farms.map((farm: any) => (
+                                                            <FarmCard
+                                                                key={`farm-child-${farm.id || farm.pool?.id}`}
+                                                                farm={farm}
+                                                                onClick={() => handleFarmClick(farm)}
+                                                                TokenImage={TokenImage}
+                                                            />
+                                                        ))}
+                                                    </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 );

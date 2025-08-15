@@ -82,7 +82,7 @@ export const SpeedometerPicker: FC<SpeedometerPickerProps> = ({
     }, []);
     
     // Create tick marks
-    const ticks = [];
+    const ticks: JSX.Element[] = [];
     const majorTickCount = 5;
     const minorTickCount = 20;
     

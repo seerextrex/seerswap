@@ -103,10 +103,10 @@ export const FarmCard = memo(({ farm, onClick, TokenImage }: FarmCardProps) => {
         return null;
     };
     
-    let token0ImageUrl = null;
-    let token1ImageUrl = null;
-    let token0OutcomeName = null;
-    let token1OutcomeName = null;
+    let token0ImageUrl: string | null = null;
+    let token1ImageUrl: string | null = null;
+    let token0OutcomeName: string | null = null;
+    let token1OutcomeName: string | null = null;
     
     // Try to find token0 image and name in market0 first, then market1
     if (market0) {

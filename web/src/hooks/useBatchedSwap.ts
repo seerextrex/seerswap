@@ -54,7 +54,7 @@ export function useBatchedSwap({
       return null;
     }
 
-    const batchedCalls = [];
+    const batchedCalls: { to: Address; data: `0x${string}`; value: bigint }[] = [];
 
     // Add approve call if needed
     if (needsApproval) {
@@ -110,7 +110,7 @@ export function useBatchedSwap({
       });
 
       if (result) {
-        onSuccess?.(result);
+        onSuccess?.(result.id);
       }
     } catch (error) {
       console.error('Batched swap failed:', error);

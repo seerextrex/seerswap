@@ -4,7 +4,7 @@ import { Info, AlertCircle } from "react-feather";
 import { useAccount, useChainId } from "wagmi";
 import { useScalarTradeV2 } from "../../hooks/useScalarTradeV2";
 import { Market, Pool } from "../../utils/market";
-import { getExplorerLink } from "../../utils/getExplorerLink";
+import { getExplorerLink, ExplorerDataType } from "../../utils/getExplorerLink";
 import { MarketEstimateDisplay } from "./components/MarketEstimateDisplay";
 import { PredictionInput } from "./components/PredictionInput";
 import { TradePreview } from "./components/TradePreview";
@@ -38,7 +38,7 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
         hasUserModifiedSlider,
         tradeDirection,
         collateralCurrency,
-        trade,
+        v3Trade: trade,
         approvalState,
         approvalTransaction,
         tradeTransaction,
@@ -181,7 +181,7 @@ export const ScalarMarketInterfaceV2: React.FC<ScalarMarketInterfaceV2Props> = (
                     <span>✓ <Trans>Trade successful!</Trans></span>
                     {tradeTransaction.hash && (
                         <a 
-                            href={getExplorerLink(chainId, tradeTransaction.hash, 'transaction')}
+                            href={getExplorerLink(chainId, tradeTransaction.hash, ExplorerDataType.TRANSACTION)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="tx-link"

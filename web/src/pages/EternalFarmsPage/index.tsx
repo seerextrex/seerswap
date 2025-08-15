@@ -197,6 +197,7 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
     const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
     const [totalAPR, setTotalAPR] = useState<number>(0);
+    const [marketAPRs, setMarketAPRs] = useState<{ [marketId: string]: number }>({});
     
     // Call fetchHandler once on mount to load initial data
     useEffect(() => {
@@ -236,27 +237,14 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 const marketId = market.id;
                 const marketName = market.marketName || 'Unknown Market';
 
-                // Initialize group if it doesn't exist
-                if (!groups[marketId]) {
-                    groups[marketId] = {
-                        marketId,
-                        marketName,
-                        market,
-                        farms: [],
-                        childMarkets: {},
-                        poolIds: new Set<string>(),
-                        isParent: false,
-                        totalTVL: 0,
-                        totalDailyRewards: 0
-                    };
-                }
-
-                // Add farm to the group
-                groups[marketId].farms.push(farm);
-                groups[marketId].poolIds.add(poolId);
-
-                // If this is a child market, also add it to parent's children
-                if (isChildMarket && parentMarketId && groups[parentMarketId]) {
+                // If this is a child market, ONLY add it to parent's children, not as top-level
+                if (isChildMarket && parentMarketId) {
+                    // Ensure parent group exists
+                    if (!groups[parentMarketId]) {
+                        // This shouldn't happen, but create parent if needed
+                        return;
+                    }
+                    
                     if (!groups[parentMarketId].childMarkets[marketId]) {
                         groups[parentMarketId].childMarkets[marketId] = {
                             marketId,
@@ -271,6 +259,25 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                     groups[parentMarketId].childMarkets[marketId].farms.push(farm);
                     groups[parentMarketId].childMarkets[marketId].poolIds.add(poolId);
                     groups[parentMarketId].isParent = true;
+                } else {
+                    // Only add as top-level group if NOT a child market
+                    if (!groups[marketId]) {
+                        groups[marketId] = {
+                            marketId,
+                            marketName,
+                            market,
+                            farms: [],
+                            childMarkets: {},
+                            poolIds: new Set<string>(),
+                            isParent: false,
+                            totalTVL: 0,
+                            totalDailyRewards: 0
+                        };
+                    }
+
+                    // Add farm to the group
+                    groups[marketId].farms.push(farm);
+                    groups[marketId].poolIds.add(poolId);
                 }
             };
 
@@ -282,16 +289,21 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 const token1Id = pool.token1?.id;
 
                 // Determine parent-child relationship
+                // A child market uses a parent market's outcome token as its collateral
                 let isConditional = false;
+                
+                // Check if market0's collateral is one of the pool tokens (meaning it could be a child)
                 if (market0CollateralId && (market0CollateralId === token0Id || market0CollateralId === token1Id)) {
-                    // market1 is the child market (uses market0's outcome as collateral)
-                    addToMarketGroup(market0, false);
-                    addToMarketGroup(market1, true, market0.id);
+                    // market0 is the CHILD (it uses a token as collateral)
+                    // market1 must be the PARENT (whose outcome token is being used)
+                    addToMarketGroup(market1, false);  // Parent at top level
+                    addToMarketGroup(market0, true, market1.id);  // Child nested under parent
                     isConditional = true;
                 } else if (market1CollateralId && (market1CollateralId === token0Id || market1CollateralId === token1Id)) {
-                    // market0 is the child market (uses market1's outcome as collateral)
-                    addToMarketGroup(market1, false);
-                    addToMarketGroup(market0, true, market1.id);
+                    // market1 is the CHILD (it uses a token as collateral)
+                    // market0 must be the PARENT (whose outcome token is being used)
+                    addToMarketGroup(market0, false);  // Parent at top level
+                    addToMarketGroup(market1, true, market0.id);  // Child nested under parent
                     isConditional = true;
                 }
 
@@ -340,6 +352,7 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
 
                 // Add child totals to parent totals
                 group.totalDailyRewards += childGroup.totalDailyRewards;
+                group.totalTVL += childGroup.totalTVL;  // FIX: Also aggregate TVL from child markets
 
                 // Remove poolIds set from final object
                 delete childGroup.poolIds;
@@ -419,6 +432,47 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
         
         calculateTotalAPR();
     }, [stats.totalTVL, stats.totalDailyRewards]);
+    
+    // Calculate APR for each market
+    useEffect(() => {
+        const calculateMarketAPRs = async () => {
+            try {
+                const { pricePerToken } = await getSeerTokenInfo();
+                const aprs: { [marketId: string]: number } = {};
+                
+                Object.entries(groupedFarms).forEach(([marketId, marketGroup]: [string, any]) => {
+                    if (marketGroup.totalTVL > 0 && marketGroup.totalDailyRewards > 0) {
+                        // Market APR = (Market Daily Rewards * SEER Price * 365) / Market TVL * 100
+                        const annualRewardsUSD = marketGroup.totalDailyRewards * pricePerToken * 365;
+                        aprs[marketId] = (annualRewardsUSD / marketGroup.totalTVL) * 100;
+                    } else {
+                        aprs[marketId] = 0;
+                    }
+                    
+                    // Calculate APR for child markets
+                    if (marketGroup.childMarkets) {
+                        Object.entries(marketGroup.childMarkets).forEach(([childMarketId, childGroup]: [string, any]) => {
+                            if (childGroup.totalTVL > 0 && childGroup.totalDailyRewards > 0) {
+                                const childAnnualRewardsUSD = childGroup.totalDailyRewards * pricePerToken * 365;
+                                aprs[childMarketId] = (childAnnualRewardsUSD / childGroup.totalTVL) * 100;
+                            } else {
+                                aprs[childMarketId] = 0;
+                            }
+                        });
+                    }
+                });
+                
+                setMarketAPRs(aprs);
+            } catch (error) {
+                console.error('Failed to calculate market APRs:', error);
+                setMarketAPRs({});
+            }
+        };
+        
+        if (Object.keys(groupedFarms).length > 0) {
+            calculateMarketAPRs();
+        }
+    }, [groupedFarms]);
 
     // Sort market keys by total TVL
     const sortedMarketKeys = useMemo(() => {
@@ -645,6 +699,7 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 activeFilter={activeFilter}
                 setSearchQuery={setSearchQuery}
                 setActiveFilter={setActiveFilter}
+                marketAPRs={marketAPRs}
             />
 
             {/* Floating Liquidity Assistant */}

@@ -116,7 +116,7 @@ export interface ScalarTradeState {
     hasUserModifiedSlider: boolean;
     tradeDirection: TradeDirection | null;
     collateralCurrency: Currency | null;
-    trade: V3Trade<Currency, Currency, TradeType> | undefined;
+    v3Trade: V3Trade<Currency, Currency, TradeType> | undefined;
     swapInputError: string | undefined;
     swapCallbackError: string | null;
     priceImpact: ReturnType<typeof computeFiatValuePriceImpact>;
@@ -665,7 +665,7 @@ export function useScalarTradeV2({
         hasUserModifiedSlider,
         tradeDirection,
         collateralCurrency,
-        trade: v3Trade,
+        v3Trade,
         swapInputError,
         swapCallbackError,
         priceImpact,

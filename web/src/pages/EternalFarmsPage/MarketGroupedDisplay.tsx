@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Trans } from '@lingui/macro';
 import { ChevronDown, ChevronUp, Filter, Info, Clock } from 'react-feather';
 import { formatDollarAmount } from '../../utils/numbers';
 import { FarmCard } from './FarmCard';
+import { ZapModal } from '../../components/MarketZap/ZapModal';
 
 interface MarketGroupedDisplayProps {
     sortedMarketKeys: string[];
@@ -43,6 +44,7 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
     expandedChildMarkets = new Set(),
     toggleChildMarket
 }) => {
+    const [zapMarket, setZapMarket] = useState<any>(null);
     // Helper function to format end date
     const formatEndDate = (endDate: Date | null) => {
         if (!endDate) return null;
@@ -98,7 +100,8 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
     }
 
     return (
-        <div className="eternal-page__markets-container">
+        <>
+            <div className="eternal-page__markets-container">
             {/* Toggle All Button */}
             <div className="eternal-page__markets-header">
                 <button 
@@ -206,8 +209,22 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                     </div>
                                 </div>
                             </div>
-                            <div className="eternal-page__market-toggle">
-                                {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                            <div className="eternal-page__market-actions">
+                                {marketGroup.farms.length > 1 && (
+                                    <button 
+                                        className="eternal-page__zap-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setZapMarket(marketGroup);
+                                        }}
+                                        aria-label={`Zap into ${marketGroup.marketName}`}
+                                    >
+                                        ⚡ Zap
+                                    </button>
+                                )}
+                                <div className="eternal-page__market-toggle">
+                                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                </div>
                             </div>
                         </div>
 
@@ -361,6 +378,17 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                     </div>
                 );
             })}
-        </div>
+            </div>
+            
+            {/* Zap Modal */}
+            {zapMarket && (
+                <ZapModal
+                    isOpen={!!zapMarket}
+                    onDismiss={() => setZapMarket(null)}
+                    market={zapMarket.market}
+                    pools={zapMarket.farms.map((farm: any) => farm.pool).filter(Boolean)}
+                />
+            )}
+        </>
     );
 };

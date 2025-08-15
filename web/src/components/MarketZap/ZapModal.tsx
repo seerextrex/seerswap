@@ -49,14 +49,47 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
   // Create collateral token immediately - the Modal wrapper handles performance
   const collateralToken = useMemo(() => {
     if (!market.collateralToken) return undefined;
-    return new Token(
-      chainId,
-      market.collateralToken.id,
-      Number(market.collateralToken.decimals),
-      market.collateralToken.symbol,
-      market.collateralToken.name
-    );
-  }, [market.collateralToken, chainId]);
+    
+    // Try to get collateral token details from the first pool that has it
+    // The market.collateralToken from the query might only have 'id' field
+    if (pools && pools.length > 0) {
+      for (const pool of pools) {
+        // Check if token0 or token1 matches the collateral token
+        if (pool.token0?.id.toLowerCase() === market.collateralToken.id.toLowerCase()) {
+          return new Token(
+            chainId,
+            pool.token0.id,
+            Number(pool.token0.decimals || 18),
+            pool.token0.symbol || 'Unknown',
+            pool.token0.name || 'Unknown Token'
+          );
+        }
+        if (pool.token1?.id.toLowerCase() === market.collateralToken.id.toLowerCase()) {
+          return new Token(
+            chainId,
+            pool.token1.id,
+            Number(pool.token1.decimals || 18),
+            pool.token1.symbol || 'Unknown',
+            pool.token1.name || 'Unknown Token'
+          );
+        }
+      }
+    }
+    
+    // Fallback: try to use market.collateralToken if it has decimals
+    if (market.collateralToken.decimals !== undefined && market.collateralToken.decimals !== null) {
+      return new Token(
+        chainId,
+        market.collateralToken.id,
+        Number(market.collateralToken.decimals),
+        market.collateralToken.symbol || 'Unknown',
+        market.collateralToken.name || 'Unknown Token'
+      );
+    }
+    
+    // Last resort: return undefined, will show error to user
+    return undefined;
+  }, [market.collateralToken, chainId, pools]);
   
   // Compute valid pools immediately using memoization
   const validPools = useMemo(() => {

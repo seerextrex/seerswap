@@ -476,6 +476,37 @@
     }
   }
 
+  &__market-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__zap-button {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #ffab00 0%, #ff8a00 100%);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    
+    &:hover {
+      background: linear-gradient(135deg, #ff8a00 0%, #ff6f00 100%);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
   &__market-toggle {
     color: rgba(255, 255, 255, 0.6);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

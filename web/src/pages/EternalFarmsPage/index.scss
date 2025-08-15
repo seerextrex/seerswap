@@ -1471,8 +1471,33 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
+    padding: 0.5rem;
     position: relative;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+    
+    &:hover {
+      background: rgba(79, 195, 247, 0.05);
+    }
+    
+    &--expanded {
+      margin-bottom: 1rem;
+    }
+  }
+  
+  &-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.2s ease;
+    
+    svg {
+      transition: transform 0.3s ease;
+    }
   }
   
   &-info {
@@ -1505,7 +1530,16 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1rem;
-    margin-top: 1rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &.expanded {
+      max-height: 3000px; // Large enough to show all content
+      opacity: 1;
+      margin-top: 1rem;
+    }
   }
 }
 

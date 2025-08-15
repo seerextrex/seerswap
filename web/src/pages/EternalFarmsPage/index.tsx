@@ -601,6 +601,19 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
         });
     }, []);
 
+    // Toggle individual child market
+    const toggleChildMarket = useCallback((childMarketKey: string) => {
+        setExpandedChildMarkets(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(childMarketKey)) {
+                newSet.delete(childMarketKey);
+            } else {
+                newSet.add(childMarketKey);
+            }
+            return newSet;
+        });
+    }, []);
+
     // Toggle all markets
     const toggleAllMarkets = useCallback(() => {
         if (expandedMarkets.size === sortedMarketKeys.length) {
@@ -807,6 +820,8 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 marketAPRs={marketAPRs}
                 expandedConditionalSections={expandedConditionalSections}
                 toggleConditionalSection={toggleConditionalSection}
+                expandedChildMarkets={expandedChildMarkets}
+                toggleChildMarket={toggleChildMarket}
             />
 
             {/* Floating Liquidity Assistant */}

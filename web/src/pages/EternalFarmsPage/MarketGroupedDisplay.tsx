@@ -20,6 +20,8 @@ interface MarketGroupedDisplayProps {
     marketAPRs?: { [marketId: string]: number };
     expandedConditionalSections?: Set<string>;
     toggleConditionalSection?: (key: string) => void;
+    expandedChildMarkets?: Set<string>;
+    toggleChildMarket?: (key: string) => void;
 }
 
 export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
@@ -37,7 +39,9 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
     setActiveFilter,
     marketAPRs = {},
     expandedConditionalSections = new Set(),
-    toggleConditionalSection
+    toggleConditionalSection,
+    expandedChildMarkets = new Set(),
+    toggleChildMarket
 }) => {
     // Helper function to format end date
     const formatEndDate = (endDate: Date | null) => {
@@ -280,51 +284,76 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                         id={`conditional-content-${marketKey}`}
                                         className={`eternal-page__child-markets-content ${expandedConditionalSections.has(marketKey) || !hasDirectFarms ? 'expanded' : ''}`}
                                     >
-                                        {Object.entries(marketGroup.childMarkets).map(([childKey, childGroup]: [string, any]) => (
-                                            <div key={childKey} className="eternal-page__child-market">
-                                                <div className="eternal-page__child-market-container">
-                                                    <div className="eternal-page__child-market-header">
-                                                        <div className="eternal-page__child-market-connector"></div>
-                                                        <MarketImage
-                                                            market={childGroup.market}
-                                                            marketName={childGroup.marketName}
-                                                            size={40}
-                                                        />
-                                                        <div className="eternal-page__child-market-info">
-                                                            <h4>{childGroup.marketName}</h4>
-                                                            <div className="eternal-page__child-market-stats">
-                                                                {childGroup.totalTVL > 0 && (
+                                        {Object.entries(marketGroup.childMarkets).map(([childKey, childGroup]: [string, any]) => {
+                                            const isChildExpanded = expandedChildMarkets.has(childKey);
+                                            return (
+                                                <div key={childKey} className="eternal-page__child-market">
+                                                    <div className="eternal-page__child-market-container">
+                                                        <div 
+                                                            className={`eternal-page__child-market-header ${isChildExpanded ? 'eternal-page__child-market-header--expanded' : ''}`}
+                                                            onClick={() => toggleChildMarket && toggleChildMarket(childKey)}
+                                                            onKeyDown={(e) => {
+                                                                if ((e.key === 'Enter' || e.key === ' ') && toggleChildMarket) {
+                                                                    e.preventDefault();
+                                                                    toggleChildMarket(childKey);
+                                                                }
+                                                            }}
+                                                            role="button"
+                                                            tabIndex={0}
+                                                            aria-expanded={isChildExpanded}
+                                                            aria-controls={`child-market-content-${childKey}`}
+                                                        >
+                                                            <div className="eternal-page__child-market-connector"></div>
+                                                            <MarketImage
+                                                                market={childGroup.market}
+                                                                marketName={childGroup.marketName}
+                                                                size={40}
+                                                            />
+                                                            <div className="eternal-page__child-market-info">
+                                                                <h4>{childGroup.marketName}</h4>
+                                                                <div className="eternal-page__child-market-stats">
                                                                     <span className="eternal-page__child-stat">
-                                                                        {formatDollarAmount(childGroup.totalTVL)} TVL
+                                                                        {childGroup.farms.length} outcome{childGroup.farms.length !== 1 ? 's' : ''}
                                                                     </span>
-                                                                )}
-                                                                {marketAPRs[childKey] !== undefined && marketAPRs[childKey] > 0 && (
-                                                                    <span className="eternal-page__child-stat eternal-page__child-stat--apr">
-                                                                        {Math.round(marketAPRs[childKey])}% APR
-                                                                    </span>
-                                                                )}
-                                                                {childGroup.estimatedEndDate && (
-                                                                    <span className="eternal-page__child-stat eternal-page__child-stat--end-date">
-                                                                        <Clock size={11} style={{ marginRight: '3px' }} />
-                                                                        {formatEndDate(childGroup.estimatedEndDate)}
-                                                                    </span>
-                                                                )}
+                                                                    {childGroup.totalTVL > 0 && (
+                                                                        <span className="eternal-page__child-stat">
+                                                                            {formatDollarAmount(childGroup.totalTVL)} TVL
+                                                                        </span>
+                                                                    )}
+                                                                    {marketAPRs[childKey] !== undefined && marketAPRs[childKey] > 0 && (
+                                                                        <span className="eternal-page__child-stat eternal-page__child-stat--apr">
+                                                                            {Math.round(marketAPRs[childKey])}% APR
+                                                                        </span>
+                                                                    )}
+                                                                    {childGroup.estimatedEndDate && (
+                                                                        <span className="eternal-page__child-stat eternal-page__child-stat--end-date">
+                                                                            <Clock size={11} style={{ marginRight: '3px' }} />
+                                                                            {formatEndDate(childGroup.estimatedEndDate)}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <div className="eternal-page__child-market-toggle">
+                                                                {isChildExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                                             </div>
                                                         </div>
+                                                        <div 
+                                                            id={`child-market-content-${childKey}`}
+                                                            className={`eternal-page__child-market-farms ${isChildExpanded ? 'expanded' : ''}`}
+                                                        >
+                                                            {childGroup.farms.map((farm: any) => (
+                                                                <FarmCard
+                                                                    key={`farm-child-${farm.id || farm.pool?.id}`}
+                                                                    farm={farm}
+                                                                    onClick={() => handleFarmClick(farm)}
+                                                                    TokenImage={TokenImage}
+                                                                />
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                    <div className="eternal-page__child-market-farms">
-                                                        {childGroup.farms.map((farm: any) => (
-                                                            <FarmCard
-                                                                key={`farm-child-${farm.id || farm.pool?.id}`}
-                                                                farm={farm}
-                                                                onClick={() => handleFarmClick(farm)}
-                                                                TokenImage={TokenImage}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}

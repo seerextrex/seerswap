@@ -1,27 +1,6 @@
-import { createPublicClient, http, formatUnits } from 'viem';
-import { mainnet } from 'viem/chains';
+import { formatUnits } from 'viem';
 
-// SEER token contract on Ethereum mainnet
-const SEER_TOKEN_ADDRESS = '0xD14Ef697281404646d8E2437a0050794a6a22Fd6' as const;
 const SEER_DECIMALS = 18;
-
-// ERC20 ABI for totalSupply
-const ERC20_ABI = [
-  {
-    inputs: [],
-    name: 'totalSupply',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'decimals',
-    outputs: [{ internalType: 'uint8', name: '', type: 'uint8' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
 
 // Cache for SEER token info
 let cachedSeerInfo: {
@@ -47,52 +26,51 @@ export async function getSeerTokenInfo(): Promise<{
   }
 
   try {
-    // Create public client for Ethereum mainnet
-    const client = createPublicClient({
-      chain: mainnet,
-      transport: http('https://eth.public-rpc.com'),
-    });
-
-    // Get total supply from contract
-    const totalSupply = await client.readContract({
-      address: SEER_TOKEN_ADDRESS,
-      abi: ERC20_ABI,
-      functionName: 'totalSupply',
-    });
-
-    // Double the supply as per instructions
-    const doubledSupply = totalSupply * 2n;
-
+    // Calculate supply based on time formula:
+    // (current time - october 10, 2024) * 266,666,666.667 SEER/month
+    const october10_2024 = new Date('2024-10-10T00:00:00Z').getTime();
+    const currentTime = Date.now();
+    const millisecondsSinceOct10 = currentTime - october10_2024;
+    
+    // Convert to months (30 days per month for simplicity)
+    const millisecondsPerMonth = 30 * 24 * 60 * 60 * 1000;
+    const monthsSinceOct10 = millisecondsSinceOct10 / millisecondsPerMonth;
+    
+    // Calculate supply: 266,666,666.667 SEER per month
+    const seerPerMonth = 266_666_666.667;
+    const totalSupplyNumber = monthsSinceOct10 * seerPerMonth;
+    
+    // Convert to bigint with decimals
+    const totalSupply = BigInt(Math.floor(totalSupplyNumber)) * 10n ** 18n;
+    
     // Calculate price per token
     // Market cap = $1,000,000
     const marketCap = 1_000_000;
-    const totalSupplyNumber = Number(formatUnits(doubledSupply, SEER_DECIMALS));
     const pricePerToken = marketCap / totalSupplyNumber;
 
     // Update cache
     cachedSeerInfo = {
-      totalSupply: doubledSupply,
+      totalSupply,
       pricePerToken,
       timestamp: Date.now(),
     };
 
     return {
-      totalSupply: doubledSupply,
+      totalSupply,
       pricePerToken,
       decimals: SEER_DECIMALS,
     };
   } catch (error) {
-    console.error('Failed to fetch SEER token info:', error);
+    console.error('Failed to calculate SEER token info:', error);
     
-    // Fallback values if fetch fails
-    // Approximate total supply based on typical values
-    const fallbackSupply = 1_000_000_000n * 10n ** 18n; // 1 billion tokens
-    const fallbackDoubledSupply = fallbackSupply * 2n;
-    const fallbackTotalSupplyNumber = Number(formatUnits(fallbackDoubledSupply, SEER_DECIMALS));
+    // Fallback values if calculation fails
+    // Use a reasonable default based on expected timeframe
+    const fallbackSupply = 533_333_333n * 10n ** 18n; // ~533 million tokens (approx 2 months worth at 266.67M/month)
+    const fallbackTotalSupplyNumber = Number(formatUnits(fallbackSupply, SEER_DECIMALS));
     const fallbackPricePerToken = 1_000_000 / fallbackTotalSupplyNumber;
 
     return {
-      totalSupply: fallbackDoubledSupply,
+      totalSupply: fallbackSupply,
       pricePerToken: fallbackPricePerToken,
       decimals: SEER_DECIMALS,
     };

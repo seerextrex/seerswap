@@ -212,10 +212,8 @@ export const FarmCard = memo(({ farm, onClick, TokenImage }: FarmCardProps) => {
                     <div className="value tvl">
                         {(() => {
                             const totalTVL = parseFloat(farm.pool?.totalValueLockedUSD || '0');
-                            const activeTVL = parseFloat(farm.totalAmountUSDEstimated || '0');
-                            // Show the minimum of total TVL and active TVL
-                            const displayTVL = activeTVL > 0 ? Math.min(totalTVL, activeTVL) : totalTVL;
-                            return displayTVL > 0 ? formatDollarAmount(displayTVL) : '—';
+                            // Show the actual pool TVL
+                            return totalTVL > 0 ? formatDollarAmount(totalTVL) : '—';
                         })()}
                     </div>
                 </div>

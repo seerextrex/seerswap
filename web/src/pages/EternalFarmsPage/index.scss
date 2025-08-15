@@ -460,6 +460,15 @@
       font-weight: 600;
     }
     
+    &--end-date {
+      background: linear-gradient(135deg, rgba(255, 171, 0, 0.15) 0%, rgba(255, 152, 0, 0.1) 100%);
+      border: 1px solid rgba(255, 171, 0, 0.2);
+      color: #ffab00;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+    }
+    
     &--children {
       background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
       color: #FFD700;
@@ -711,6 +720,15 @@
       background: rgba(102, 187, 106, 0.1);
       color: #66BB6A;
       font-weight: 600;
+    }
+    
+    &--end-date {
+      background: linear-gradient(135deg, rgba(255, 171, 0, 0.15) 0%, rgba(255, 152, 0, 0.1) 100%);
+      border: 1px solid rgba(255, 171, 0, 0.15);
+      color: #ffab00;
+      display: inline-flex;
+      align-items: center;
+      font-weight: 500;
     }
   }
 

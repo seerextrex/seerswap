@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Trans } from '@lingui/macro';
-import { ChevronDown, ChevronUp, Filter, Info } from 'react-feather';
+import { ChevronDown, ChevronUp, Filter, Info, Clock } from 'react-feather';
 import { formatDollarAmount } from '../../utils/numbers';
 import { FarmCard } from './FarmCard';
 
@@ -39,6 +39,33 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
     expandedConditionalSections = new Set(),
     toggleConditionalSection
 }) => {
+    // Helper function to format end date
+    const formatEndDate = (endDate: Date | null) => {
+        if (!endDate) return null;
+        
+        const now = new Date();
+        const diffTime = endDate.getTime() - now.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays < 0) {
+            return 'Ended';
+        } else if (diffDays === 0) {
+            return 'Ends today';
+        } else if (diffDays === 1) {
+            return 'Ends tomorrow';
+        } else if (diffDays <= 7) {
+            return `Ends in ${diffDays} days`;
+        } else if (diffDays <= 30) {
+            const weeks = Math.floor(diffDays / 7);
+            return `Ends in ${weeks} week${weeks > 1 ? 's' : ''}`;
+        } else if (diffDays <= 365) {
+            const months = Math.floor(diffDays / 30);
+            return `Ends in ${months} month${months > 1 ? 's' : ''}`;
+        } else {
+            const years = Math.floor(diffDays / 365);
+            return `Ends in ${years} year${years > 1 ? 's' : ''}`;
+        }
+    };
     // Check if there are any markets to display
     const hasMarkets = sortedMarketKeys.length > 0;
 
@@ -166,6 +193,12 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                                 </div>
                                             </span>
                                         )}
+                                        {marketGroup.estimatedEndDate && (
+                                            <span className="eternal-page__market-stat eternal-page__market-stat--end-date">
+                                                <Clock size={12} style={{ marginRight: '4px' }} />
+                                                {formatEndDate(marketGroup.estimatedEndDate)}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -268,6 +301,12 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                                                 {marketAPRs[childKey] !== undefined && marketAPRs[childKey] > 0 && (
                                                                     <span className="eternal-page__child-stat eternal-page__child-stat--apr">
                                                                         {Math.round(marketAPRs[childKey])}% APR
+                                                                    </span>
+                                                                )}
+                                                                {childGroup.estimatedEndDate && (
+                                                                    <span className="eternal-page__child-stat eternal-page__child-stat--end-date">
+                                                                        <Clock size={11} style={{ marginRight: '3px' }} />
+                                                                        {formatEndDate(childGroup.estimatedEndDate)}
                                                                     </span>
                                                                 )}
                                                             </div>

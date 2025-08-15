@@ -365,6 +365,29 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                     farm.dailyRewardRate || 0;
                 return total + dailyReward;
             }, 0);
+            
+            // Calculate estimated end date (all farms in a market have same end date)
+            group.estimatedEndDate = null;
+            if (group.farms.length > 0) {
+                const firstFarm = group.farms[0];
+                if (firstFarm.rewardRate && firstFarm.rewardReserve) {
+                    try {
+                        const rewardRateBigInt = BigInt(firstFarm.rewardRate);
+                        const rewardReserveBigInt = BigInt(firstFarm.rewardReserve);
+                        
+                        if (rewardRateBigInt > 0n) {
+                            const secondsRemaining = Number(rewardReserveBigInt / rewardRateBigInt);
+                            
+                            // If rewards would last more than 10 years, don't show end date
+                            if (secondsRemaining <= 315360000) {
+                                group.estimatedEndDate = new Date(Date.now() + secondsRemaining * 1000);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error calculating end date:', error);
+                    }
+                }
+            }
 
             // Initialize conditional market totals
             group.conditionalTotalTVL = 0;
@@ -384,6 +407,28 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                         farm.dailyRewardRate || 0;
                     return total + dailyReward;
                 }, 0);
+                
+                // Calculate estimated end date for child market
+                childGroup.estimatedEndDate = null;
+                if (childGroup.farms.length > 0) {
+                    const firstFarm = childGroup.farms[0];
+                    if (firstFarm.rewardRate && firstFarm.rewardReserve) {
+                        try {
+                            const rewardRateBigInt = BigInt(firstFarm.rewardRate);
+                            const rewardReserveBigInt = BigInt(firstFarm.rewardReserve);
+                            
+                            if (rewardRateBigInt > 0n) {
+                                const secondsRemaining = Number(rewardReserveBigInt / rewardRateBigInt);
+                                
+                                if (secondsRemaining <= 315360000) {
+                                    childGroup.estimatedEndDate = new Date(Date.now() + secondsRemaining * 1000);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error calculating child market end date:', error);
+                        }
+                    }
+                }
 
                 // Track conditional market totals separately
                 group.conditionalTotalTVL += childGroup.totalTVL;

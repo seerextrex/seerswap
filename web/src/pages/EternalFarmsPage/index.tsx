@@ -196,6 +196,7 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
     const [selectedFarm, setSelectedFarm] = useState<any>(null);
     const [expandedMarkets, setExpandedMarkets] = useState<Set<string>>(new Set());
     const [expandedChildMarkets, setExpandedChildMarkets] = useState<Set<string>>(new Set());
+    const [expandedConditionalSections, setExpandedConditionalSections] = useState<Set<string>>(new Set());
     const [totalAPR, setTotalAPR] = useState<number>(0);
     const [marketAPRs, setMarketAPRs] = useState<{ [marketId: string]: number }>({});
     
@@ -214,6 +215,7 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
 
         const poolTVLMap = new Map<string, number>();
         const groups: any = {};
+        const childMarketIds = new Set<string>(); // Track which markets are children
 
         allFarms.forEach((farm: any) => {
             const pool = farm.pool;
@@ -239,6 +241,9 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
 
                 // If this is a child market, ONLY add it to parent's children, not as top-level
                 if (isChildMarket && parentMarketId) {
+                    // Mark this market as a child
+                    childMarketIds.add(marketId);
+                    
                     // Ensure parent group exists
                     if (!groups[parentMarketId]) {
                         // This shouldn't happen, but create parent if needed
@@ -259,8 +264,8 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                     groups[parentMarketId].childMarkets[marketId].farms.push(farm);
                     groups[parentMarketId].childMarkets[marketId].poolIds.add(poolId);
                     groups[parentMarketId].isParent = true;
-                } else {
-                    // Only add as top-level group if NOT a child market
+                } else if (!childMarketIds.has(marketId)) {
+                    // Only add as top-level group if NOT already marked as a child market
                     if (!groups[marketId]) {
                         groups[marketId] = {
                             marketId,
@@ -296,13 +301,39 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 if (market0CollateralId && (market0CollateralId === token0Id || market0CollateralId === token1Id)) {
                     // market0 is the CHILD (it uses a token as collateral)
                     // market1 must be the PARENT (whose outcome token is being used)
-                    addToMarketGroup(market1, false);  // Parent at top level
+                    // Only ensure parent group exists, but DON'T add this farm to parent's direct farms
+                    if (!groups[market1.id]) {
+                        groups[market1.id] = {
+                            marketId: market1.id,
+                            marketName: market1.marketName || 'Unknown Market',
+                            market: market1,
+                            farms: [],
+                            childMarkets: {},
+                            poolIds: new Set<string>(),
+                            isParent: false,
+                            totalTVL: 0,
+                            totalDailyRewards: 0
+                        };
+                    }
                     addToMarketGroup(market0, true, market1.id);  // Child nested under parent
                     isConditional = true;
                 } else if (market1CollateralId && (market1CollateralId === token0Id || market1CollateralId === token1Id)) {
                     // market1 is the CHILD (it uses a token as collateral)
                     // market0 must be the PARENT (whose outcome token is being used)
-                    addToMarketGroup(market0, false);  // Parent at top level
+                    // Only ensure parent group exists, but DON'T add this farm to parent's direct farms
+                    if (!groups[market0.id]) {
+                        groups[market0.id] = {
+                            marketId: market0.id,
+                            marketName: market0.marketName || 'Unknown Market',
+                            market: market0,
+                            farms: [],
+                            childMarkets: {},
+                            poolIds: new Set<string>(),
+                            isParent: false,
+                            totalTVL: 0,
+                            totalDailyRewards: 0
+                        };
+                    }
                     addToMarketGroup(market1, true, market0.id);  // Child nested under parent
                     isConditional = true;
                 }
@@ -335,6 +366,10 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 return total + dailyReward;
             }, 0);
 
+            // Initialize conditional market totals
+            group.conditionalTotalTVL = 0;
+            group.conditionalTotalDailyRewards = 0;
+
             // Calculate for child markets
             Object.values(group.childMarkets).forEach((childGroup: any) => {
                 childGroup.totalTVL = Array.from(childGroup.poolIds).reduce((total: number, poolId) => {
@@ -350,9 +385,13 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                     return total + dailyReward;
                 }, 0);
 
+                // Track conditional market totals separately
+                group.conditionalTotalTVL += childGroup.totalTVL;
+                group.conditionalTotalDailyRewards += childGroup.totalDailyRewards;
+
                 // Add child totals to parent totals
                 group.totalDailyRewards += childGroup.totalDailyRewards;
-                group.totalTVL += childGroup.totalTVL;  // FIX: Also aggregate TVL from child markets
+                group.totalTVL += childGroup.totalTVL;
 
                 // Remove poolIds set from final object
                 delete childGroup.poolIds;
@@ -449,7 +488,15 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                         aprs[marketId] = 0;
                     }
                     
-                    // Calculate APR for child markets
+                    // Calculate APR for conditional markets aggregate
+                    if (marketGroup.conditionalTotalTVL > 0 && marketGroup.conditionalTotalDailyRewards > 0) {
+                        const conditionalAnnualRewardsUSD = marketGroup.conditionalTotalDailyRewards * pricePerToken * 365;
+                        aprs[`${marketId}_conditional`] = (conditionalAnnualRewardsUSD / marketGroup.conditionalTotalTVL) * 100;
+                    } else {
+                        aprs[`${marketId}_conditional`] = 0;
+                    }
+                    
+                    // Calculate APR for individual child markets
                     if (marketGroup.childMarkets) {
                         Object.entries(marketGroup.childMarkets).forEach(([childMarketId, childGroup]: [string, any]) => {
                             if (childGroup.totalTVL > 0 && childGroup.totalDailyRewards > 0) {
@@ -486,6 +533,19 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
     // Toggle market expansion
     const toggleMarket = useCallback((marketKey: string) => {
         setExpandedMarkets(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(marketKey)) {
+                newSet.delete(marketKey);
+            } else {
+                newSet.add(marketKey);
+            }
+            return newSet;
+        });
+    }, []);
+
+    // Toggle conditional markets section
+    const toggleConditionalSection = useCallback((marketKey: string) => {
+        setExpandedConditionalSections(prev => {
             const newSet = new Set(prev);
             if (newSet.has(marketKey)) {
                 newSet.delete(marketKey);
@@ -700,6 +760,8 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                 setSearchQuery={setSearchQuery}
                 setActiveFilter={setActiveFilter}
                 marketAPRs={marketAPRs}
+                expandedConditionalSections={expandedConditionalSections}
+                toggleConditionalSection={toggleConditionalSection}
             />
 
             {/* Floating Liquidity Assistant */}

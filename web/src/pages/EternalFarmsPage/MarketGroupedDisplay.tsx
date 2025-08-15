@@ -18,6 +18,8 @@ interface MarketGroupedDisplayProps {
     setSearchQuery: (query: string) => void;
     setActiveFilter: (filter: any) => void;
     marketAPRs?: { [marketId: string]: number };
+    expandedConditionalSections?: Set<string>;
+    toggleConditionalSection?: (key: string) => void;
 }
 
 export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
@@ -33,7 +35,9 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
     activeFilter,
     setSearchQuery,
     setActiveFilter,
-    marketAPRs = {}
+    marketAPRs = {},
+    expandedConditionalSections = new Set(),
+    toggleConditionalSection
 }) => {
     // Check if there are any markets to display
     const hasMarkets = sortedMarketKeys.length > 0;
@@ -192,12 +196,57 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                             {hasChildMarkets && (
                                 <div className="eternal-page__child-markets">
                                     {hasDirectFarms && (
-                                        <div className="eternal-page__child-markets-divider">
-                                            <span className="eternal-page__child-markets-label">
-                                                <Trans>Conditional Markets</Trans>
-                                            </span>
+                                        <div 
+                                            className="eternal-page__child-markets-divider"
+                                            onClick={() => toggleConditionalSection && toggleConditionalSection(marketKey)}
+                                            onKeyDown={(e) => {
+                                                if ((e.key === 'Enter' || e.key === ' ') && toggleConditionalSection) {
+                                                    e.preventDefault();
+                                                    toggleConditionalSection(marketKey);
+                                                }
+                                            }}
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-expanded={expandedConditionalSections.has(marketKey)}
+                                            aria-controls={`conditional-content-${marketKey}`}
+                                        >
+                                            <div className="eternal-page__child-markets-header-content">
+                                                <span className="eternal-page__child-markets-label">
+                                                    <Trans>Conditional Markets</Trans>
+                                                    <span className="eternal-page__child-markets-count">
+                                                        ({Object.keys(marketGroup.childMarkets).length})
+                                                    </span>
+                                                </span>
+                                                <div className="eternal-page__child-markets-summary">
+                                                    {marketGroup.conditionalTotalTVL > 0 && (
+                                                        <span className="eternal-page__child-markets-summary-stat">
+                                                            <span className="label">TVL:</span>
+                                                            <span className="value">{formatDollarAmount(marketGroup.conditionalTotalTVL)}</span>
+                                                        </span>
+                                                    )}
+                                                    {marketGroup.conditionalTotalDailyRewards > 0 && (
+                                                        <span className="eternal-page__child-markets-summary-stat">
+                                                            <span className="label">Rewards:</span>
+                                                            <span className="value">{marketGroup.conditionalTotalDailyRewards.toLocaleString(undefined, { maximumFractionDigits: 2 })} SEER/day</span>
+                                                        </span>
+                                                    )}
+                                                    {marketAPRs[`${marketKey}_conditional`] !== undefined && marketAPRs[`${marketKey}_conditional`] > 0 && (
+                                                        <span className="eternal-page__child-markets-summary-stat eternal-page__child-markets-summary-stat--apr">
+                                                            <span className="label">APR:</span>
+                                                            <span className="value">{Math.round(marketAPRs[`${marketKey}_conditional`])}%</span>
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="eternal-page__child-markets-toggle">
+                                                {expandedConditionalSections.has(marketKey) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                            </div>
                                         </div>
                                     )}
+                                    <div 
+                                        id={`conditional-content-${marketKey}`}
+                                        className={`eternal-page__child-markets-content ${expandedConditionalSections.has(marketKey) || !hasDirectFarms ? 'expanded' : ''}`}
+                                    >
                                         {Object.entries(marketGroup.childMarkets).map(([childKey, childGroup]: [string, any]) => (
                                             <div key={childKey} className="eternal-page__child-market">
                                                 <div className="eternal-page__child-market-container">
@@ -237,6 +286,7 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                                             </div>
                                         </div>
                                     ))}
+                                    </div>
                                 </div>
                             )}
                         </div>

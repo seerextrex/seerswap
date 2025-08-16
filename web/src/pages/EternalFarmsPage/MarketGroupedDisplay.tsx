@@ -387,6 +387,7 @@ export const MarketGroupedDisplay: React.FC<MarketGroupedDisplayProps> = ({
                     onDismiss={() => setZapMarket(null)}
                     market={zapMarket.market}
                     pools={zapMarket.farms.map((farm: any) => farm.pool).filter(Boolean)}
+                    farms={zapMarket.farms} // Pass the farms data for auto-staking
                 />
             )}
         </>

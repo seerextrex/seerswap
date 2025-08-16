@@ -1,0 +1,6 @@
+[submodule "contracts/seerswap/lib/forge-std"]
+	path = contracts/seerswap/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "contracts/seerswap/lib/openzeppelin-contracts"]
+	path = contracts/seerswap/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts

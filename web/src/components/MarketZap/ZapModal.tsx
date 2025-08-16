@@ -12,6 +12,7 @@ import { getExplorerLink, ExplorerDataType } from '../../utils/getExplorerLink';
 import TransactionConfirmationModal from '../TransactionConfirmationModal';
 import Modal from '../Modal';
 import SettingsTab from '../Settings';
+import { ZapErrorRecovery, ZapStep, ZapProgress } from './ZapErrorRecovery';
 import './ZapModal.scss';
 
 interface ZapModalProps {
@@ -19,11 +20,13 @@ interface ZapModalProps {
   onDismiss: () => void;
   market: Market;
   pools: Pool[];
+  farms?: any[]; // Optional farms data for auto-staking
 }
 
 interface ZapModalContentProps {
   market: Market;
   pools: Pool[];
+  farms?: any[];
   onDismiss: () => void;
 }
 
@@ -31,7 +34,7 @@ const DEFAULT_ZAP_SLIPPAGE = new Percent(50, 10_000); // 0.5% default for zap
 const MIN_ZAP_AMOUNT = 0.0001; // Minimum 0.0001 token (allows small amounts)
 
 // Lightweight content component - renders after modal opens
-export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools, onDismiss }) => {
+export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools, farms, onDismiss }) => {
   const { chain } = useAccount();
   const chainId = chain?.id || 100; // Default to Gnosis if not connected
   
@@ -41,6 +44,8 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
   const [showConfirm, setShowConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [txSuccess, setTxSuccess] = useState(false);
+  const [zapProgress, setZapProgress] = useState<ZapProgress | null>(null);
+  const [showRecovery, setShowRecovery] = useState(false);
   
   // Get user's slippage tolerance and deadline
   const allowedSlippage = useUserSlippageToleranceWithDefault(DEFAULT_ZAP_SLIPPAGE);
@@ -196,7 +201,9 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
         poolAllocations,
         validPools,
         slippageTolerance: allowedSlippage,
-        deadline: deadline?.toString()
+        deadline: deadline?.toString(),
+        farms: farms, // Pass farms data for auto-staking
+        autoStake: true // Enable auto-staking
       });
 
       setTxHash(txHash);
@@ -375,7 +382,7 @@ export const ZapModalContent: React.FC<ZapModalContentProps> = ({ market, pools,
 };
 
 // Legacy wrapper for backward compatibility
-export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, pools }) => {
+export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, pools, farms }) => {
   const [hasOpened, setHasOpened] = useState(false);
   
   useEffect(() => {
@@ -390,6 +397,7 @@ export const ZapModal: React.FC<ZapModalProps> = ({ isOpen, onDismiss, market, p
         <ZapModalContent
           market={market}
           pools={pools}
+          farms={farms}
           onDismiss={onDismiss}
         />
       )}

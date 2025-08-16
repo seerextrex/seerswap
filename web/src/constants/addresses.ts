@@ -42,6 +42,13 @@ export const FARMING_CENTER: AddressMap = {
     [AlgebraConfig.CHAIN_PARAMS.chainId]: AlgebraConfig.V3_CONTRACTS.FARMING_CENTER_ADDRESS
 }
 
+export const MARKET_ZAP: AddressMap = {
+    100: '0x0000000000000000000000000000000000000000', // TODO: Deploy and update address for Gnosis
+    11155111: '0x0000000000000000000000000000000000000000', // TODO: Deploy and update address for Sepolia
+    1: '0x0000000000000000000000000000000000000000', // TODO: Deploy and update address for Mainnet
+    [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x0000000000000000000000000000000000000000' // TODO: Deploy and update
+}
+
 export const V2_FACTORY_ADDRESSES: AddressMap = {
     [AlgebraConfig.CHAIN_PARAMS.chainId]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32'
 }

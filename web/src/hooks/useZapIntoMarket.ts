@@ -2,11 +2,11 @@ import { useCallback, useState } from 'react';
 import { Token, CurrencyAmount, Percent } from '@uniswap/sdk-core';
 import { TickMath } from 'lib/src';
 import { useAccount, useSendCalls, useWalletClient, usePublicClient } from 'wagmi';
-import { encodeFunctionData, Address, erc20Abi } from 'viem';
+import { encodeFunctionData, Address, erc20Abi, decodeEventLog } from 'viem';
 import { readContract, waitForCallsStatus } from '@wagmi/core';
 import { wagmiConfig } from '../wagmi.config';
 import { Market, Pool, getPoolTokensForMarket } from '../utils/market';
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants/addresses';
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, FARMING_CENTER, MARKET_ZAP } from '../constants/addresses';
 import { useEIP7702Support, type Execution } from './useEIP7702Support';
 
 interface PoolAllocation {
@@ -22,6 +22,8 @@ interface ZapIntoMarketParams {
   validPools: Pool[];
   slippageTolerance: Percent;
   deadline?: string;
+  farms?: any[]; // Farm data for each pool to stake into
+  autoStake?: boolean; // Whether to automatically stake NFTs into farms
 }
 
 // Seer Router ABI for splitPosition that handles wrapping automatically
@@ -83,6 +85,48 @@ const POSITION_MANAGER_ABI = [
     ],
     stateMutability: 'payable',
     type: 'function'
+  },
+  {
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'tokenId', type: 'uint256' }
+    ],
+    name: 'approve',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  }
+] as const;
+
+// Farming Center ABI for staking
+const FARMING_CENTER_ABI = [
+  {
+    inputs: [
+      {
+        components: [
+          { name: 'rewardToken', type: 'address' },
+          { name: 'bonusRewardToken', type: 'address' },
+          { name: 'pool', type: 'address' },
+          { name: 'startTime', type: 'uint256' },
+          { name: 'endTime', type: 'uint256' }
+        ],
+        name: 'key',
+        type: 'tuple'
+      },
+      { name: 'tokenId', type: 'uint256' },
+      { name: 'tokensLocked', type: 'uint256' }
+    ],
+    name: 'enterFarming',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [{ name: 'data', type: 'bytes[]' }],
+    name: 'multicall',
+    outputs: [{ name: 'results', type: 'bytes[]' }],
+    stateMutability: 'payable',
+    type: 'function'
   }
 ] as const;
 
@@ -107,6 +151,27 @@ const POOL_ABI = [
 
 // MetaMask has a limit of 10 calls per batch for EIP-7702
 const BATCH_SIZE = 10;
+
+// Market Zap Simple Contract ABI - KISS principle
+const MARKET_ZAP_ABI = [
+  {
+    inputs: [
+      { name: 'market', type: 'address' },
+      { name: 'collateralToken', type: 'address' },
+      { name: 'splitAmount', type: 'uint256' },
+      { name: 'pools', type: 'address[]' },
+      { name: 'minLiquidities', type: 'uint256[]' },
+      { name: 'slippageBps', type: 'uint256' },
+      { name: 'deadline', type: 'uint256' },
+      { name: 'rewardTokens', type: 'address[]' },
+      { name: 'endTimes', type: 'uint256[]' }
+    ],
+    name: 'zap',
+    outputs: [{ name: 'tokenIds', type: 'uint256[]' }],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  }
+] as const;
 
 /**
  * Calculate the amount of collateral needed for a full range position
@@ -149,6 +214,191 @@ export function useZapIntoMarket() {
   const publicClient = usePublicClient();
 
   const zapIntoMarket = useCallback(async (params: ZapIntoMarketParams) => {
+    if (!account || !chainId) {
+      throw new Error('Wallet not connected');
+    }
+    
+    // Check if Market Zap contract is deployed
+    const marketZapAddress = MARKET_ZAP[chainId];
+    const useContract = marketZapAddress && marketZapAddress !== '0x0000000000000000000000000000000000000000';
+    
+    if (useContract && walletClient) {
+      // Use the atomic Zap contract if available
+      return await zapViaContract(params);
+    } else if (typeof sendCallsAsync === 'function') {
+      // Fall back to batched transactions
+      return await zapViaBatching(params);
+    } else {
+      throw new Error('Neither Zap contract nor batch calls are available');
+    }
+  }, [account, chainId, sendCallsAsync, walletClient, publicClient]);
+  
+  // Zap via smart contract (atomic, preferred)
+  const zapViaContract = useCallback(async (params: ZapIntoMarketParams) => {
+    if (!walletClient || !chainId || !publicClient) {
+      throw new Error('Wallet client not available');
+    }
+    
+    const marketZapAddress = MARKET_ZAP[chainId];
+    if (!marketZapAddress || marketZapAddress === '0x0000000000000000000000000000000000000000') {
+      throw new Error('Market Zap contract not deployed on this chain');
+    }
+    
+    const {
+      market,
+      collateralToken,
+      amount,
+      validPools,
+      slippageTolerance,
+      deadline,
+      farms = [],
+      autoStake = false
+    } = params;
+    
+    setLoading(true);
+    
+    try {
+      const totalAmount = BigInt(amount.quotient.toString());
+      const txDeadline = deadline ? BigInt(deadline) : BigInt(Math.floor(Date.now() / 1000) + 3600);
+      
+      // Calculate optimal split amount off-chain
+      const SCALE = 10n ** 18n;
+      let sumOfRatiosScaled = 0n;
+      const poolRatios: bigint[] = [];
+      
+      // Get current price ratios for each pool
+      for (const pool of validPools) {
+        try {
+          const globalState = await publicClient.readContract({
+            address: pool.id as Address,
+            abi: POOL_ABI,
+            functionName: 'globalState'
+          });
+          
+          const sqrtPriceX96 = globalState[0];
+          const isToken0Outcome = pool.token0.id.toLowerCase() !== collateralToken.address.toLowerCase();
+          const collateralRatioScaled = calculateFullRangeRatio(sqrtPriceX96, isToken0Outcome);
+          
+          poolRatios.push(collateralRatioScaled);
+          sumOfRatiosScaled += collateralRatioScaled;
+        } catch (error) {
+          console.error(`Failed to get price for pool ${pool.id}, using 1:1 ratio`);
+          poolRatios.push(SCALE); // Default to 1:1 ratio
+          sumOfRatiosScaled += SCALE;
+        }
+      }
+      
+      // Calculate optimal split: splitAmount = totalAmount * SCALE / (SCALE + sum(ratios))
+      const divisorScaled = SCALE + sumOfRatiosScaled;
+      const splitAmount = (totalAmount * SCALE * 98n) / (divisorScaled * 100n); // 98% safety factor
+      
+      console.log('Calculated optimal split:', {
+        totalAmount: totalAmount.toString(),
+        splitAmount: splitAmount.toString(),
+        sumOfRatios: (sumOfRatiosScaled / (10n ** 16n)).toString() + '%',
+        poolCount: validPools.length
+      });
+      
+      // Calculate minimum liquidity amounts per pool
+      // Use the split amount as base, adjusted by pool ratio
+      const minLiquidities = poolRatios.map(ratio => {
+        // Expected liquidity is proportional to the geometric mean of amounts
+        // For full range, this is roughly sqrt(outcomeAmount * collateralAmount)
+        // outcomeAmount = splitAmount, collateralAmount = splitAmount * ratio / SCALE
+        const collateralForPool = (splitAmount * ratio) / SCALE;
+        // Approximate liquidity = sqrt(splitAmount * collateralForPool)
+        // Apply slippage tolerance
+        const slippageBps = BigInt(Math.floor(slippageTolerance.numerator.toString() * 10000n / slippageTolerance.denominator.toString()));
+        const minLiquidity = (splitAmount * (10000n - slippageBps)) / 10000n;
+        return minLiquidity / 2n; // Conservative estimate
+      });
+      
+      // Convert slippage tolerance to basis points
+      const slippageBps = BigInt(Math.floor(slippageTolerance.numerator.toString() * 10000n / slippageTolerance.denominator.toString()));
+      
+      // First approve the zap contract for the split amount only
+      const collateralAddress = collateralToken.address as Address;
+      const approveTx = await walletClient.writeContract({
+        address: collateralAddress,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [marketZapAddress as Address, splitAmount],
+        chain: chain
+      });
+      
+      console.log('Approving Market Zap contract for', splitAmount.toString(), 'collateral...');
+      await publicClient.waitForTransactionReceipt({ 
+        hash: approveTx,
+        confirmations: 1 
+      });
+      
+      // Prepare reward tokens and end times (address(0) means no farming for that pool)
+      const rewardTokens: Address[] = [];
+      const endTimes: bigint[] = [];
+      
+      for (const pool of validPools) {
+        if (autoStake && farms && farms.length > 0) {
+          const farm = farms.find(f => f.pool?.id?.toLowerCase() === pool.id.toLowerCase());
+          if (farm) {
+            rewardTokens.push(farm.rewardToken as Address);
+            endTimes.push(BigInt(farm.endTime || farm.endTimeImplied || 2147483647));
+          } else {
+            // No farm for this pool, NFT will be sent to user
+            rewardTokens.push('0x0000000000000000000000000000000000000000' as Address);
+            endTimes.push(0n);
+          }
+        } else {
+          // Not staking, all NFTs go to user
+          rewardTokens.push('0x0000000000000000000000000000000000000000' as Address);
+          endTimes.push(0n);
+        }
+      }
+      
+      // Execute the unified zap function
+      console.log('Executing zap via MarketZapSimple contract...');
+      if (autoStake && farms && farms.length > 0) {
+        console.log('Auto-staking enabled for pools with farms');
+      }
+      
+      const zapTx = await walletClient.writeContract({
+        address: marketZapAddress as Address,
+        abi: MARKET_ZAP_ABI,
+        functionName: 'zap',
+        args: [
+          market.id as Address,
+          collateralAddress,
+          splitAmount,
+          validPools.map(p => p.id as Address),
+          minLiquidities,
+          slippageBps,
+          txDeadline,
+          rewardTokens,
+          endTimes
+        ],
+        chain: chain
+      });
+      
+      console.log('Zap transaction hash:', zapTx);
+      
+      console.log('Waiting for zap transaction confirmation...');
+      const receipt = await publicClient.waitForTransactionReceipt({ 
+        hash: zapTx,
+        confirmations: 1 
+      });
+      console.log('Zap completed successfully!', receipt);
+      
+      setLoading(false);
+      return zapTx;
+      
+    } catch (error) {
+      setLoading(false);
+      console.error('Zap contract execution failed:', error);
+      throw error;
+    }
+  }, [chainId, walletClient, publicClient, chain]);
+  
+  // Original batched implementation (fallback)
+  const zapViaBatching = useCallback(async (params: ZapIntoMarketParams) => {
     if (!account || !chainId || !sendCallsAsync) {
       throw new Error('Wallet not connected or batch calls not supported');
     }
@@ -255,16 +505,16 @@ export function useZapIntoMarket() {
       }
       
       // Calculate the optimal split amount
-      // We'll receive splitAmount of EACH outcome token
-      // For each pool, we need (ratioScaled/SCALE) * splitAmount of collateral
-      // Total collateral needed = splitAmount * sum(ratios)/SCALE
-      // So: splitAmount + splitAmount * sum(ratios)/SCALE = totalAmount
+      // splitPosition gives us splitAmount of EACH outcome token
+      // We need splitAmount of collateral to perform the split
+      // Additionally, we need collateral to pair with the outcome tokens for liquidity
+      // For each pool: we get splitAmount of outcome, need (ratioScaled/SCALE) * splitAmount of collateral
+      // Total: splitAmount (for split) + splitAmount * sum(ratios)/SCALE (for pairing)
       // splitAmount * (1 + sum(ratios)/SCALE) = totalAmount
-      // splitAmount * (SCALE + sum(ratios))/SCALE = totalAmount
       // splitAmount = totalAmount * SCALE / (SCALE + sum(ratios))
       
       const divisorScaled = SCALE + sumOfRatiosScaled;
-      // Apply 98% factor for safety margin (98/100)
+      // Apply 98% factor for safety margin to account for rounding and fees
       const splitAmount = (totalAmount * SCALE * 98n) / (divisorScaled * 100n);
       const collateralReserved = totalAmount - splitAmount;
       
@@ -351,42 +601,27 @@ export function useZapIntoMarket() {
           })
         });
         
-        // Calculate tick range for prediction market "full range"
-        // Full range means outcome token price from 0 to 1 collateral
+        // Calculate tick range for true full range position
+        // This provides liquidity across the entire possible price range
         const tickSpacing = pool.tickSpacing ? Number(pool.tickSpacing) : 60;
         
-        let tickLower: number;
-        let tickUpper: number;
-        
-        if (isToken0Outcome) {
-          // token0 is outcome, token1 is collateral
-          // Price represents collateral/outcome
-          // We want range [0, 1] collateral per outcome
-          // tick = 0 corresponds to price = 1
-          // MIN_TICK corresponds to price ≈ 0
-          tickLower = Math.ceil(TickMath.MIN_TICK / tickSpacing) * tickSpacing;
-          tickUpper = 0; // Price = 1 at tick 0
-        } else {
-          // token0 is collateral, token1 is outcome
-          // Price represents outcome/collateral  
-          // We want range [1, ∞] outcome per collateral
-          // tick = 0 corresponds to price = 1
-          // MAX_TICK corresponds to price ≈ ∞ (outcome worthless)
-          tickLower = 0; // Price = 1 at tick 0
-          tickUpper = Math.floor(TickMath.MAX_TICK / tickSpacing) * tickSpacing;
-        }
+        // Always use the full tick range, adjusted for tick spacing
+        const tickLower = Math.ceil(TickMath.MIN_TICK / tickSpacing) * tickSpacing;
+        const tickUpper = Math.floor(TickMath.MAX_TICK / tickSpacing) * tickSpacing;
         
         // Prepare mint parameters with slippage protection
         // Calculate the desired amounts for token0 and token1 based on token ordering
         const amount0Desired = isToken0Outcome ? outcomeAmountForPool : collateralAmountForPool;
         const amount1Desired = isToken0Outcome ? collateralAmountForPool : outcomeAmountForPool;
         
-        // For full-range positions, the actual amounts used can be VERY different
-        // from the desired amounts because liquidity is distributed across the entire range
-        // Setting minimums to 0 to avoid slippage reverts
-        // TODO: Calculate proper minimums based on liquidity math for full-range positions
-        const amount0Min = 0n;
-        const amount1Min = 0n;
+        // Calculate minimum amounts with slippage protection
+        // For full-range positions, apply slippage tolerance to desired amounts
+        const slippageMultiplier = 10000n - BigInt(Math.floor(Number(slippageTolerance.numerator.toString())));
+        const slippageDivisor = BigInt(slippageTolerance.denominator.toString());
+        
+        // Apply slippage tolerance (e.g., if 0.5% slippage, multiply by 9950/10000)
+        const amount0Min = (amount0Desired * slippageMultiplier) / slippageDivisor;
+        const amount1Min = (amount1Desired * slippageMultiplier) / slippageDivisor;
         
         console.log(`Mint params for pool ${pool.id}:`, {
           tickLower,
@@ -520,8 +755,9 @@ export function useZapIntoMarket() {
         console.log('All approvals confirmed');
       }
       
-      // Step 3: Execute multicall as a regular transaction (not 7702 batched)
+      // Step 3: Execute multicall and optionally stake into farms
       let liquidityTxHash: `0x${string}` | undefined;
+      const mintedTokenIds: bigint[] = [];
       
       if (mintCalls.length > 0) {
         console.log(`\nStep 3: Adding liquidity with ${mintCalls.length} mint operations via regular multicall`);
@@ -543,14 +779,137 @@ export function useZapIntoMarket() {
           liquidityTxHash = multicallTx;
           console.log('Liquidity multicall transaction hash:', liquidityTxHash);
           
-          // Wait for confirmation
+          // Wait for confirmation and get receipt to extract NFT IDs
           if (publicClient) {
             console.log('Waiting for liquidity transaction confirmation...');
-            await publicClient.waitForTransactionReceipt({ 
+            const receipt = await publicClient.waitForTransactionReceipt({ 
               hash: liquidityTxHash,
               confirmations: 1 
             });
             console.log('Liquidity transaction confirmed');
+            
+            // Extract NFT token IDs from the receipt logs
+            // Look for Transfer events from address(0) which indicate minting
+            const transferEventSignature = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+            
+            for (const log of receipt.logs) {
+              if (log.topics && log.topics[0] === transferEventSignature && 
+                  log.address.toLowerCase() === positionManagerAddress.toLowerCase() &&
+                  log.topics[1] === '0x0000000000000000000000000000000000000000000000000000000000000000') {
+                // This is a mint event (from address 0)
+                // topics[3] contains the tokenId
+                if (log.topics[3]) {
+                  const tokenId = BigInt(log.topics[3]);
+                  mintedTokenIds.push(tokenId);
+                  console.log('Minted NFT token ID:', tokenId.toString());
+                }
+              }
+            }
+            
+            // Step 4: If autoStake is enabled and we have farms data, stake the NFTs
+            if (params.autoStake && params.farms && params.farms.length > 0 && mintedTokenIds.length > 0) {
+              console.log('\nStep 4: Auto-staking NFTs into farms');
+              
+              const farmingCenterAddress = FARMING_CENTER[chainId];
+              if (!farmingCenterAddress) {
+                console.warn('Farming center not configured for this chain, skipping auto-stake');
+              } else {
+                // Create a map of pool ID to farm data for quick lookup
+                const poolToFarmMap = new Map<string, any>();
+                for (const farm of params.farms) {
+                  if (farm.pool?.id) {
+                    poolToFarmMap.set(farm.pool.id.toLowerCase(), farm);
+                  }
+                }
+                
+                // Prepare farming calls
+                const farmingCalls: Execution[] = [];
+                
+                // Match each minted NFT to its corresponding farm
+                for (let i = 0; i < mintedTokenIds.length && i < poolConfigs.length; i++) {
+                  const tokenId = mintedTokenIds[i];
+                  const poolConfig = poolConfigs[i];
+                  const farm = poolToFarmMap.get(poolConfig.pool.id.toLowerCase());
+                  
+                  if (farm) {
+                    console.log(`Preparing to stake NFT ${tokenId} into farm for pool ${poolConfig.pool.id}`);
+                    
+                    // First approve the NFT for farming center
+                    farmingCalls.push({
+                      to: positionManagerAddress as Address,
+                      value: 0n,
+                      data: encodeFunctionData({
+                        abi: POSITION_MANAGER_ABI,
+                        functionName: 'approve',
+                        args: [farmingCenterAddress as Address, tokenId]
+                      })
+                    });
+                    
+                    // Then enter farming (eternal farming, no tier)
+                    const farmKey = {
+                      rewardToken: farm.rewardToken as Address,
+                      bonusRewardToken: farm.bonusRewardToken || farm.rewardToken as Address,
+                      pool: poolConfig.pool.id as Address,
+                      startTime: BigInt(farm.startTime || 0),
+                      endTime: BigInt(farm.endTime || farm.endTimeImplied || 2147483647) // Max uint32 if no end time
+                    };
+                    
+                    farmingCalls.push({
+                      to: farmingCenterAddress as Address,
+                      value: 0n,
+                      data: encodeFunctionData({
+                        abi: FARMING_CENTER_ABI,
+                        functionName: 'enterFarming',
+                        args: [farmKey, tokenId, 0n] // 0n for tokensLocked (no tier)
+                      })
+                    });
+                  } else {
+                    console.warn(`No farm found for pool ${poolConfig.pool.id}, NFT ${tokenId} will not be staked`);
+                  }
+                }
+                
+                // Execute farming operations in batches
+                if (farmingCalls.length > 0) {
+                  console.log(`Executing ${farmingCalls.length} farming operations`);
+                  
+                  // Split into batches for MetaMask limit
+                  const farmingBatches: Execution[][] = [];
+                  for (let i = 0; i < farmingCalls.length; i += BATCH_SIZE) {
+                    farmingBatches.push(farmingCalls.slice(i, i + BATCH_SIZE));
+                  }
+                  
+                  for (let i = 0; i < farmingBatches.length; i++) {
+                    const batch = farmingBatches[i];
+                    console.log(`Executing farming batch ${i + 1}/${farmingBatches.length} with ${batch.length} calls`);
+                    
+                    try {
+                      const result = await sendCallsAsync({ calls: batch });
+                      const callsId = result.id;
+                      results.push(callsId);
+                      console.log(`Farming batch ${i + 1} calls ID:`, callsId);
+                      
+                      // Wait for confirmation
+                      console.log(`Waiting for farming batch ${i + 1} confirmation...`);
+                      const callsResult = await waitForCallsStatus(wagmiConfig, {
+                        id: callsId,
+                        timeout: 30000
+                      });
+                      
+                      if (!callsResult.receipts || callsResult.receipts.length === 0) {
+                        console.error(`No receipts for farming batch ${i + 1}, staking may have failed`);
+                      } else {
+                        console.log(`Farming batch ${i + 1} confirmed`);
+                      }
+                    } catch (error) {
+                      console.error(`Failed to execute farming batch ${i + 1}:`, error);
+                      console.log('Note: NFTs were minted successfully but staking failed. You can stake manually.');
+                    }
+                  }
+                  
+                  console.log('All farming operations completed');
+                }
+              }
+            }
           }
         } catch (error) {
           console.error('Failed to execute liquidity multicall:', error);

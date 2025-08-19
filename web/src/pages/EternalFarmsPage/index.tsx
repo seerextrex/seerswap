@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect, memo } from 'react';
 import { Trans } from '@lingui/macro';
-import { Search, TrendingUp, DollarSign, Award, Plus, Filter, X, ChevronDown, ChevronUp, Info } from 'react-feather';
+import { Search, TrendingUp, DollarSign, Award, Plus, Filter, X, ChevronDown, ChevronUp, Info, ArrowDown } from 'react-feather';
 import { formatDollarAmount } from '../../utils/numbers';
 import { getSeerTokenInfo } from '../../utils/seerTokenInfo';
 import { formatUnits } from 'viem';
@@ -199,6 +199,8 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
     const [expandedConditionalSections, setExpandedConditionalSections] = useState<Set<string>>(new Set());
     const [totalAPR, setTotalAPR] = useState<number>(0);
     const [marketAPRs, setMarketAPRs] = useState<{ [marketId: string]: number }>({});
+    const [sortBy, setSortBy] = useState<'tvl' | 'apr' | 'rewards'>('tvl');
+    const [showSortDropdown, setShowSortDropdown] = useState(false);
     
     // Call fetchHandler once on mount to load initial data
     useEffect(() => {
@@ -566,14 +568,28 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
         }
     }, [groupedFarms]);
 
-    // Sort market keys by total TVL
+    // Sort market keys based on selected sorting option
     const sortedMarketKeys = useMemo(() => {
         return Object.keys(groupedFarms).sort((a, b) => {
             const aGroup = groupedFarms[a];
             const bGroup = groupedFarms[b];
-            return (bGroup.totalTVL || 0) - (aGroup.totalTVL || 0);
+            
+            switch (sortBy) {
+                case 'apr':
+                    // Sort by APR (highest first)
+                    const aAPR = marketAPRs[a] || 0;
+                    const bAPR = marketAPRs[b] || 0;
+                    return bAPR - aAPR;
+                case 'rewards':
+                    // Sort by daily rewards (highest first)
+                    return (bGroup.totalDailyRewards || 0) - (aGroup.totalDailyRewards || 0);
+                case 'tvl':
+                default:
+                    // Sort by TVL (highest first)
+                    return (bGroup.totalTVL || 0) - (aGroup.totalTVL || 0);
+            }
         });
-    }, [groupedFarms]);
+    }, [groupedFarms, sortBy, marketAPRs]);
 
     // Toggle market expansion
     const toggleMarket = useCallback((marketKey: string) => {
@@ -800,6 +816,63 @@ const EternalFarmsPage = ({ data: propsData, refreshing: propsRefreshing, priceF
                     >
                         <Trans>My Farms</Trans>
                     </button>
+                    
+                    {/* Sort Dropdown */}
+                    <div className="eternal-page__sort-dropdown">
+                        <button 
+                            className="eternal-page__sort-button"
+                            onClick={() => setShowSortDropdown(!showSortDropdown)}
+                            onBlur={() => setTimeout(() => setShowSortDropdown(false), 200)}
+                            aria-haspopup="true"
+                            aria-expanded={showSortDropdown}
+                            aria-label="Sort farms by different criteria"
+                        >
+                            <span>
+                                <Trans>Sort by</Trans>{': '}
+                                {sortBy === 'apr' ? <Trans>APR</Trans> : 
+                                 sortBy === 'rewards' ? <Trans>Rewards</Trans> : 
+                                 <Trans>TVL</Trans>}
+                            </span>
+                            <ArrowDown size={16} />
+                        </button>
+                        {showSortDropdown && (
+                            <div className="eternal-page__sort-menu" role="menu">
+                                <button 
+                                    role="menuitem"
+                                    className={sortBy === 'apr' ? 'active' : ''}
+                                    onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        setSortBy('apr');
+                                        setShowSortDropdown(false);
+                                    }}
+                                >
+                                    <Trans>APR (High to Low)</Trans>
+                                </button>
+                                <button 
+                                    role="menuitem"
+                                    className={sortBy === 'tvl' ? 'active' : ''}
+                                    onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        setSortBy('tvl');
+                                        setShowSortDropdown(false);
+                                    }}
+                                >
+                                    <Trans>TVL (High to Low)</Trans>
+                                </button>
+                                <button 
+                                    role="menuitem"
+                                    className={sortBy === 'rewards' ? 'active' : ''}
+                                    onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        setSortBy('rewards');
+                                        setShowSortDropdown(false);
+                                    }}
+                                >
+                                    <Trans>Daily Rewards (High to Low)</Trans>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

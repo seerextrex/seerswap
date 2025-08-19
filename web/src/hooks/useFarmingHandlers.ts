@@ -235,34 +235,23 @@ export function useFarmingHandlers() {
 
             try {
                 console.log('Starting farmHandler for NFT:', selectedNFT.id);
-                console.log('Farm parameters:', {
-                    rewardToken,
-                    bonusRewardToken,
-                    pool,
-                    startTime,
-                    endTime,
-                    eventType,
-                    selectedTier
-                });
                 
                 // Check if NFT is already on farming center
                 const nftOwner = await nftContract.ownerOf(selectedNFT.id);
-                console.log('NFT owner:', nftOwner);
                 const isOnFarmingCenter = nftOwner.toLowerCase() === FARMING_CENTER[chainId].toLowerCase();
-                console.log('Is on farming center:', isOnFarmingCenter);
+                console.log('NFT owner:', nftOwner, 'Is on farming center:', isOnFarmingCenter);
 
                 const tierAmount = selectedTier ? BigInt(selectedTier.toString()) : 0n;
                 const isLimitFarming = eventType === FarmingType.LIMIT;
 
                 let result: TransactionResponse;
                 
-                // If we need to transfer the NFT first
                 if (!isOnFarmingCenter) {
-                    console.log('NFT not on farming center, need to transfer first');
+                    // NFT needs to be transferred and then entered into farming
+                    // We'll use a two-step approach: first approve+transfer, then enterFarming
                     
-                    // First, approve if needed
+                    // Check if approval is needed
                     const approvedAddress = await nftContract.getApproved(selectedNFT.id);
-                    console.log('Current approved address:', approvedAddress);
                     
                     if (approvedAddress.toLowerCase() !== FARMING_CENTER[chainId].toLowerCase()) {
                         console.log('Approving farming center...');
@@ -271,58 +260,70 @@ export function useFarmingHandlers() {
                             selectedNFT.id,
                             { gasPrice: BigInt(gasPrice) * BigInt(GAS_PRICE_MULTIPLIER) }
                         );
-                        console.log('Approve tx sent:', approveResult.hash);
-                        const approveReceipt = await approveResult.wait();
-                        console.log('Approve tx confirmed:', approveReceipt?.status === 1);
+                        await approveResult.wait();
+                        console.log('Approval confirmed');
                     }
                     
-                    // Then transfer the NFT to FarmingCenter
-                    console.log('Transferring NFT to farming center...');
-                    const transferResult = await nftContract["safeTransferFrom(address,address,uint256,bytes)"](
-                        account,
-                        FARMING_CENTER[chainId],
-                        selectedNFT.id,
-                        "0x",
+                    // Use multicall on the NonFungiblePositionManager to transfer
+                    // This matches the original implementation's approach
+                    console.log('Transferring NFT to farming center via multicall...');
+                    
+                    const transferCallData = nftInterface.encodeFunctionData(
+                        "safeTransferFrom(address,address,uint256)",
+                        [account, FARMING_CENTER[chainId], selectedNFT.id]
+                    );
+                    
+                    // Execute transfer via multicall (like the original approveHandler does)
+                    const transferResult = await nftContract.multicall(
+                        [transferCallData],
                         { gasPrice: BigInt(gasPrice) * BigInt(GAS_PRICE_MULTIPLIER) }
                     );
-                    console.log('Transfer tx sent:', transferResult.hash);
-                    const transferReceipt = await transferResult.wait();
-                    console.log('Transfer tx confirmed:', transferReceipt?.status === 1);
                     
-                    // The FarmingCenter should have minted a Farm NFT back to us
-                    // But we still use the original LP NFT ID for enterFarming
-                    console.log('NFT transferred, Farm NFT should be minted to user');
+                    await transferResult.wait();
+                    console.log('Transfer confirmed, NFT now on FarmingCenter');
+                    
+                    // Now the NFT is on FarmingCenter, enter farming
+                    result = await farmingContract.enterFarming(
+                        [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
+                        selectedNFT.id,
+                        tierAmount,
+                        isLimitFarming,
+                        { gasPrice: BigInt(gasPrice) * BigInt(GAS_PRICE_MULTIPLIER) }
+                    );
+                } else {
+                    // NFT already on farming center, just enter farming
+                    console.log('NFT already on farming center, entering farming directly...');
+                    result = await farmingContract.enterFarming(
+                        [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
+                        selectedNFT.id,
+                        tierAmount,
+                        isLimitFarming,
+                        { gasPrice: BigInt(gasPrice) * BigInt(GAS_PRICE_MULTIPLIER) }
+                    );
                 }
-                
-                // Now enter farming with the original LP NFT ID
-                console.log('Entering farming with LP NFT ID:', selectedNFT.id);
-                console.log('Enter farming params:', {
-                    key: [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
-                    tokenId: selectedNFT.id,
-                    tierAmount: tierAmount.toString(),
-                    isLimitFarming
-                });
-                
-                result = await farmingContract.enterFarming(
-                    [rewardToken, bonusRewardToken, pool, +startTime, +endTime],
-                    selectedNFT.id,
-                    tierAmount,
-                    isLimitFarming,
-                    { gasPrice: BigInt(gasPrice) * BigInt(GAS_PRICE_MULTIPLIER), gasLimit: 350000n }
-                );
-                console.log('Enter farming tx sent:', result.hash);
 
                 addTransaction(result, {
-                    summary: t`Farming NFT #${selectedNFT.id}`,
+                    summary: t`Deposited NFT #${selectedNFT.id} to farm`,
                 });
 
                 setFarmed({ hash: result.hash, id: selectedNFT.id });
+                console.log('Farm deposit successful, tx:', result.hash);
             } catch (err: any) {
-                console.error("Farm handler detailed error:", err);
-                console.error("Error code:", err.code);
-                console.error("Error data:", err.data);
-                console.error("Error reason:", err.reason);
-                setFarmed({ hash: null, id: selectedNFT.id, error: err.message || "failed" });
+                console.error("Farm handler error:", err);
+                const errorMessage = err.reason || err.message || "Transaction failed";
+                setFarmed({ hash: null, id: selectedNFT.id, error: errorMessage });
+                
+                // Provide more specific error messages based on the error
+                if (err.code === 4001) {
+                    // User rejected transaction
+                    console.log("User rejected the transaction");
+                } else if (errorMessage.includes("not approved")) {
+                    console.error("NFT not approved for FarmingCenter");
+                } else if (errorMessage.includes("already in farming")) {
+                    console.error("NFT is already in a farming program");
+                } else if (errorMessage.includes("not owner")) {
+                    console.error("You must own the Farm NFT to enter farming. The NFT may be stuck in FarmingCenter.");
+                }
             }
         },
         [account, chainId, gasPrice, signer, addTransaction, farmingCenterInterface, nftInterface]

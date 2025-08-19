@@ -124,6 +124,8 @@ contract Zap {
         uint256 paramsLength = mintParams.length;
         tokenIds = new uint256[](paramsLength);
         for (uint256 i; i < paramsLength; i++) {
+            IERC20(mintParams[i].token0).approve(address(positionManager), mintParams[i].amount0Desired);
+            IERC20(mintParams[i].token1).approve(address(positionManager), mintParams[i].amount1Desired);
             // Mint position
             (uint256 tokenId,,,) = positionManager.mint(mintParams[i]);
             tokenIds[i] = tokenId;

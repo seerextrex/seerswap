@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowRight, CheckCircle, Frown, X } from "react-feather";
 import { useFarmingSubgraph } from "../../hooks/useFarmingSubgraph";
 import { useFarmingHandlers } from "../../hooks/useFarmingHandlers";
@@ -77,19 +77,7 @@ const getOutcomeName = (market: any, tokenId: string): string | null => {
             // Apply special ordering for UP/DOWN outcomes
             const orderedOutcomes = getOrderedOutcomes(market.outcomes);
 
-            // Debug log for UP/DOWN ordering
-            if (market.outcomes.length === 2 &&
-                market.outcomes.some(o => o.toUpperCase() === 'UP') &&
-                market.outcomes.some(o => o.toUpperCase() === 'DOWN')) {
-                console.log('UP/DOWN Token Position Mapping:', {
-                    marketId: market.id,
-                    tokenId: tokenId,
-                    originalOutcomes: market.outcomes,
-                    orderedOutcomes: orderedOutcomes,
-                    tokenPosition: tokenPosition,
-                    wasReordered: orderedOutcomes[0] !== market.outcomes[0]
-                });
-            }
+            // UP/DOWN ordering handled silently
 
             // If outcomes were reordered (UP/DOWN case), we need to find the correct position in the reordered array
             if (market.outcomes.length === 2 &&
@@ -102,12 +90,7 @@ const getOutcomeName = (market: any, tokenId: string): string | null => {
                 if (reorderedPosition !== -1) {
                     const finalResult = orderedOutcomes[reorderedPosition];
 
-                    console.log('Position mapping applied:', {
-                        tokenPosition: tokenPosition,
-                        originalOutcome: originalOutcome,
-                        reorderedPosition: reorderedPosition,
-                        finalResult: finalResult
-                    });
+                    // Position mapping applied
 
                     return finalResult;
                 }
@@ -116,10 +99,7 @@ const getOutcomeName = (market: any, tokenId: string): string | null => {
             // Use the ordered outcomes directly with the token position
             const finalResult = orderedOutcomes[tokenPosition];
 
-            console.log('Using ordered outcomes directly:', {
-                tokenPosition: tokenPosition,
-                finalResult: finalResult
-            });
+            // Using ordered outcomes directly
 
             return finalResult;
         }
@@ -140,26 +120,14 @@ const getOrderedOutcomes = (outcomes: string[]): string[] => {
     const hasUp = upperOutcomes.includes('UP');
     const hasDown = upperOutcomes.includes('DOWN');
 
-    // Debug log for UP/DOWN detection
-    console.log('getOrderedOutcomes called:', {
-        originalOutcomes: outcomes,
-        upperOutcomes: upperOutcomes,
-        hasUp: hasUp,
-        hasDown: hasDown
-    });
+    // UP/DOWN detection
 
     // Special case: if we have UP and DOWN, ensure UP comes first
     if (hasUp && hasDown) {
         const upIndex = upperOutcomes.indexOf('UP');
         const downIndex = upperOutcomes.indexOf('DOWN');
 
-        console.log('UP/DOWN detected - reordering:', {
-            upIndex: upIndex,
-            downIndex: downIndex,
-            needsReordering: upIndex > downIndex,
-            originalOrder: outcomes,
-            resultOrder: upIndex > downIndex ? [outcomes[upIndex], outcomes[downIndex]] : outcomes
-        });
+        // UP/DOWN detected - reordering if needed
 
         if (upIndex > downIndex) {
             // UP is after DOWN, so reverse the array
@@ -227,7 +195,7 @@ export function FarmModal({
         fetchPositionsForPool: { positionsForPool, positionsForPoolLoading, fetchPositionsForPoolFn },
     } = useFarmingSubgraph() || {};
 
-    const { approveHandler, approvedHash, farmHandler, farmedHash } = useFarmingHandlers() || {};
+    const { farmHandler, farmedHash } = useFarmingHandlers() || {};
 
     const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
@@ -260,7 +228,6 @@ export function FarmModal({
     const _chunked = useChunkedRows(positionsForStake, 1000);
 
     const [submitState, setSubmitState] = useState(0);
-    const [submitLoader, setSubmitLoader] = useState(false);
 
     useEffect(() => setChunkedPositions(_chunked), [_chunked]);
 
@@ -270,109 +237,49 @@ export function FarmModal({
 
     const confirmed = useMemo(() => sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash), [sortedRecentTransactions, allTransactions]);
 
-    const filterNFTs = useCallback(
-        (fn) => {
-            if (!selectedNFT) return;
+    // We don't need separate approval tracking since farmHandler handles everything
+    const [depositLoading, setDepositLoading] = useState(false);
 
-            const _filtered = [selectedNFT].filter(fn);
-
-            return _filtered.length > 0 ? _filtered[0] : null;
-        },
-        [selectedNFT]
-    );
-
-    const NFTsForApprove = useMemo(() => filterNFTs((v: NTFInterface) => !v.onFarmingCenter), [selectedNFT, submitState]);
-
-    const NFTsForStake = useMemo(() => filterNFTs((v: NTFInterface) => v.onFarmingCenter), [selectedNFT, submitState]);
+    // Removed approval tracking - farmHandler handles it internally
 
     useEffect(() => {
-        if (!approvedHash || (approvedHash && submitState !== 0)) return;
-
-        if (typeof approvedHash === "string") {
-            setSubmitLoader(false);
-        } else if (approvedHash.hash && confirmed.includes(approvedHash.hash)) {
-            const _newChunked: any = [];
-
-            if (chunkedPositions) {
-                for (const row of chunkedPositions) {
-                    const _newRow: any = [];
-
-                    for (const position of row) {
-                        if (position.id === approvedHash.id) {
-                            position.onFarmingCenter = true;
-                            setSelectedNFT((old) => ({
-                                ...old,
-                                onFarmingCenter: true,
-                            }));
-                        }
-                        _newRow.push(position);
-                    }
-                    _newChunked.push(_newRow);
-                }
-            }
-
-            setChunkedPositions(_newChunked);
-            setSubmitState(1);
-            setSubmitLoader(false);
-        }
-    }, [approvedHash, confirmed]);
-
-    useEffect(() => {
-        if (!farmedHash || (farmedHash && submitState !== 2)) return;
+        if (!farmedHash || submitState !== 2) return;
 
         if (typeof farmedHash === "string") {
-            setSubmitLoader(false);
+            setDepositLoading(false);
         } else if (farmedHash.hash && confirmed.includes(farmedHash.hash)) {
-            const _newChunked: any = [];
-
-            if (chunkedPositions) {
-                for (const row of chunkedPositions) {
-                    const _newRow: any = [];
-
-                    for (const position of row) {
-                        if (position.id === farmedHash.id) {
-                            position.onFarmingCenter = true;
-                            setSelectedNFT((old) => ({
-                                ...old,
-                                onFarmingCenter: true,
-                            }));
-                        }
-                        _newRow.push(position);
-                    }
-                    _newChunked.push(_newRow);
-                }
-            }
-            setChunkedPositions(_newChunked);
+            // Successfully farmed - show success
             setSubmitState(3);
-            setSubmitLoader(false);
+            setDepositLoading(false);
         }
-    }, [farmedHash, confirmed]);
+    }, [farmedHash, confirmed, submitState]);
 
-    const approveNFTs = useCallback(() => {
-        setSubmitLoader(true);
-        setSubmitState(0);
-        if (selectedNFT && selectedNFT.id) {
-            approveHandler(selectedNFT as { id: string; onFarmingCenter?: boolean });
-        }
-    }, [selectedNFT, approveHandler]);
 
     const farmNFTs = useCallback(
-        (eventType: FarmingType) => {
-            setSubmitLoader(true);
+        async (eventType: FarmingType) => {
+            if (!selectedNFT?.id) return;
+            
+            setDepositLoading(true);
             setSubmitState(2);
-            if (selectedNFT && selectedNFT.id) {
-                farmHandler(
+            
+            try {
+                await farmHandler(
                     selectedNFT as { id: string; onFarmingCenter?: boolean },
                     {
                         pool: pool.id,
-                        rewardToken: rewardToken.id,
-                        bonusRewardToken: bonusRewardToken.id,
+                        rewardToken: rewardToken?.id || '0x0000000000000000000000000000000000000000',
+                        bonusRewardToken: bonusRewardToken?.id || '0x0000000000000000000000000000000000000000',
                         startTime,
                         endTime,
                     },
                     eventType,
                     selectedTier || 0
                 );
+                // Success - the farmedHash effect will handle showing success
+            } catch (error) {
+                console.error('Farm deposit failed:', error);
+            } finally {
+                setDepositLoading(false);
             }
         },
         [selectedNFT, pool, rewardToken, bonusRewardToken, startTime, endTime, farmHandler, selectedTier]
@@ -436,8 +343,8 @@ export function FarmModal({
 
     const linkToProviding = `/add/${pool.token0.id}/${pool.token1.id}/select-range`;
 
-    // Get the outcome name for this farm
-    const outcomeName = getFarmOutcomeName({ pool });
+    // Get the outcome name for this farm (memoized)
+    const outcomeName = useMemo(() => getFarmOutcomeName({ pool }), [pool]);
 
     return (
         <>
@@ -509,12 +416,13 @@ export function FarmModal({
                                     <div style={{ opacity: !isEnoughTokenForLock && selectedTier ? "0.5" : "1" }} className="mb-1 pl-1 pb-1 pr-1 mxs_pb-0 farm-modal__nft-position-row" key={i}>
                                         {row.map((token, j) => {
                                             return (
-                                                <PoistionCard
+                                                <PositionCard
+                                                    key={token.id}
                                                     token={token}
                                                     selectedNFT={selectedNFT}
                                                     isEnoughTokenForLock={isEnoughTokenForLock}
                                                     selectedTier={selectedTier}
-                                                    submitLoader={submitLoader}
+                                                    submitLoader={depositLoading}
                                                     setSelectedNFT={setSelectedNFT}
                                                 />
                                             );
@@ -545,7 +453,7 @@ export function FarmModal({
                                 <button disabled className="btn primary w-100 p-1">{t`Not enough ${multiplierToken.symbol}`}</button>
                             ) : selectedNFT ? (
                                 <div className={`f mxs_fd-c w-100`}>
-                                    {selectedTier && (
+                                    {selectedTier && showApproval && (
                                         <button
                                             disabled={!showApproval || !selectedTier}
                                             onClick={approveCallback}
@@ -559,39 +467,18 @@ export function FarmModal({
                                                         <Trans>Approving</Trans>
                                                     </span>
                                                 </span>
-                                            ) : !showApproval ? (
-                                                t`${multiplierToken.symbol} Approved`
                                             ) : (
                                                 t`Approve ${multiplierToken.symbol}`
                                             )}
                                         </button>
                                     )}
                                     <button
-                                        disabled={submitLoader || !NFTsForApprove}
-                                        onClick={approveNFTs}
-                                        id={"farming-approve-nft"}
-                                        className={"btn primary w-100 mr-1 mxs_mr-0 mxs_mb-1 p-1 farming-approve-nft"}
-                                    >
-                                        {submitLoader && submitState === 0 ? (
-                                            <span className={"f f-ac f-jc"}>
-                                                <Loader stroke={"white"} />
-                                                <span className={"ml-05"}>
-                                                    <Trans>Approving</Trans>
-                                                </span>
-                                            </span>
-                                        ) : NFTsForStake && !NFTsForApprove ? (
-                                            t`Position Approved`
-                                        ) : (
-                                            t`Approve Position`
-                                        )}
-                                    </button>
-                                    <button
-                                        disabled={submitLoader || !NFTsForStake}
+                                        disabled={depositLoading || (selectedTier && showApproval)}
                                         onClick={() => farmNFTs(farmingType)}
                                         id={"farming-deposit-nft"}
                                         className={"btn primary w-100 mxs_mb-1 p-1 farming-deposit-nft"}
                                     >
-                                        {submitLoader && submitState === 2 ? (
+                                        {depositLoading ? (
                                             <span className={"f f-ac f-jc"}>
                                                 <Loader stroke={"white"} />
                                                 <span className={"ml-05"}>
@@ -617,7 +504,7 @@ export function FarmModal({
 }
 
 // Internal component for displaying individual NFT position to stake
-const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, submitLoader, setSelectedNFT }) => {
+const PositionCard = React.memo(({ token, selectedNFT, isEnoughTokenForLock, selectedTier, submitLoader, setSelectedNFT }) => {
     // token here is the selectedNFT from the modal's state (type NTFInterface)
 
     // Get the detailed, on-chain position data for the selected NFT
@@ -638,7 +525,7 @@ const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, 
     const price0 = useUSDCPrice(currency0 ?? undefined);
     const price1 = useUSDCPrice(currency1 ?? undefined);
 
-    const fiatValueOfLiquidity: () => CurrencyAmount<Token> | null = () => {
+    const fiatValueOfLiquidity = useMemo(() => {
         if (positionLoading || !price0 || !price1 || !poolInstance || !liquidity || typeof tickLower !== "number" || typeof tickUpper !== "number") return null;
         const positionSDK = new Position({
             pool: poolInstance,
@@ -650,7 +537,7 @@ const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, 
         const fiatAmount0 = price0.quote(positionSDK.amount0);
         const fiatAmount1 = price1.quote(positionSDK.amount1);
         return fiatAmount0.add(fiatAmount1);
-    };
+    }, [positionLoading, price0, price1, poolInstance, liquidity, tickLower, tickUpper]);
 
     return (
         <div
@@ -676,7 +563,7 @@ const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, 
                 <p style={{ fontWeight: "bold" }}>
                     {currency0?.symbol} / {currency1?.symbol}
                 </p>
-                <p style={{ fontSize: "13px", marginTop: "6px" }}>${fiatValueOfLiquidity()?.toSignificant()}</p>
+                <p style={{ fontSize: "13px", marginTop: "6px" }}>${fiatValueOfLiquidity?.toSignificant()}</p>
             </div>
             <div style={{ marginLeft: "auto" }}>
                 <IsActive el={token} />
@@ -688,4 +575,4 @@ const PoistionCard = ({ token, selectedNFT, isEnoughTokenForLock, selectedTier, 
             </div>
         </div>
     );
-};
+});

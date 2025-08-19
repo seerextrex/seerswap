@@ -1,0 +1,20 @@
+{
+  "name": "seerswap-contracts",
+  "version": "1.0.0",
+  "description": "SeerSwap smart contracts",
+  "scripts": {
+    "deploy": "source .env && forge script script/Deploy.s.sol:DeployScript --rpc-url https://rpc.gnosischain.com --broadcast --legacy",
+    "deploy:verify": "source .env && forge script script/Deploy.s.sol:DeployScript --rpc-url https://rpc.gnosischain.com --broadcast --verify --etherscan-api-key $GNOSISSCAN_API_KEY --legacy",
+    "verify": "source .env && forge verify-contract --chain gnosis --etherscan-api-key $GNOSISSCAN_API_KEY",
+    "test": "forge test",
+    "build": "forge build"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "smart-contracts",
+    "gnosis"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 // Minimal interfaces
 interface IERC20 {
+    function balanceOf(address account) external view returns (uint256);
     function transferFrom(address from, address to, uint256 amount) external returns (bool);
     function transfer(address to, uint256 amount) external returns (bool);
     function approve(address spender, uint256 amount) external returns (bool);
@@ -26,7 +27,7 @@ interface INonfungiblePositionManager {
         address recipient;
         uint256 deadline;
     }
-    
+
     struct DecreaseLiquidityParams {
         uint256 tokenId;
         uint128 liquidity;
@@ -36,9 +37,13 @@ interface INonfungiblePositionManager {
         address token0;
         address token1;
     }
-    
-    function mint(MintParams calldata params) external returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
-    function decreaseLiquidity(DecreaseLiquidityParams calldata params) external returns (uint256 amount0, uint256 amount1);
+
+    function mint(MintParams calldata params)
+        external
+        returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
+    function decreaseLiquidity(DecreaseLiquidityParams calldata params)
+        external
+        returns (uint256 amount0, uint256 amount1);
 }
 
 interface IFarmingCenter {
@@ -48,18 +53,23 @@ interface IFarmingCenter {
         bool inLimitFarming;
         address owner;
     }
-    
+
     struct IncentiveKey {
         address rewardToken;
         address bonusRewardToken;
         address pool;
         uint256 nonce;
     }
-    
+
     function deposits(uint256 tokenId) external view returns (Deposit memory);
     function enterFarming(IncentiveKey memory key, uint256 tokenId, uint256 tokensLocked, bool isLimit) external;
     function exitFarming(IncentiveKey memory key, uint256 tokenId, bool isLimit) external;
-    function collectRewards(IncentiveKey memory key, uint256 tokenId) external returns (uint256 reward, uint256 bonusReward);
+    function collectRewards(
+        IncentiveKey memory key,
+        uint256 tokenId
+    )
+        external
+        returns (uint256 reward, uint256 bonusReward);
     function withdrawToken(uint256 tokenId, address to, bytes memory data) external;
 }
 
@@ -99,13 +109,14 @@ contract Zap {
         IERC20 collateralToken,
         address market,
         uint256 splitAmount,
+        uint256 totalAmount,
         INonfungiblePositionManager.MintParams[] calldata mintParams,
         IFarmingCenter.IncentiveKey[] calldata keys
     )
         external
         returns (uint256[] memory tokenIds)
     {
-        collateralToken.transferFrom(msg.sender, address(this), splitAmount);
+        collateralToken.transferFrom(msg.sender, address(this), totalAmount);
         collateralToken.approve(address(router), splitAmount);
         router.splitPosition(address(collateralToken), market, splitAmount);
 
@@ -126,6 +137,9 @@ contract Zap {
             // transfer to msg.sender
             IERC721(address(farmingCenter)).transferFrom(address(this), msg.sender, l2TokenId);
         }
+        // return excess collateral to msg.sender
+        collateralToken.transfer(msg.sender, collateralToken.balanceOf(address(this)));
+        // due to slippage we might have some extra outcome token dust in zap, ignore for now
     }
 
     function unzap(

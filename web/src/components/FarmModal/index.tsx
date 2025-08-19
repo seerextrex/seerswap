@@ -239,6 +239,7 @@ export function FarmModal({
 
     // We don't need separate approval tracking since farmHandler handles everything
     const [depositLoading, setDepositLoading] = useState(false);
+    const [depositStatus, setDepositStatus] = useState<string>("");
 
     // Removed approval tracking - farmHandler handles it internally
 
@@ -247,10 +248,15 @@ export function FarmModal({
 
         if (typeof farmedHash === "string") {
             setDepositLoading(false);
+            setDepositStatus("");
         } else if (farmedHash.hash && confirmed.includes(farmedHash.hash)) {
             // Successfully farmed - show success
             setSubmitState(3);
             setDepositLoading(false);
+            setDepositStatus("");
+        } else if (farmedHash.error) {
+            setDepositLoading(false);
+            setDepositStatus(`Error: ${farmedHash.error}`);
         }
     }, [farmedHash, confirmed, submitState]);
 
@@ -261,10 +267,11 @@ export function FarmModal({
             
             setDepositLoading(true);
             setSubmitState(2);
+            setDepositStatus("Processing farm deposit...");
             
             try {
                 await farmHandler(
-                    selectedNFT as { id: string; onFarmingCenter?: boolean },
+                    selectedNFT as { id: string },
                     {
                         pool: pool.id,
                         rewardToken: rewardToken?.id || '0x0000000000000000000000000000000000000000',
@@ -278,6 +285,7 @@ export function FarmModal({
                 // Success - the farmedHash effect will handle showing success
             } catch (error) {
                 console.error('Farm deposit failed:', error);
+                setDepositStatus("Transaction failed. Please try again.");
             } finally {
                 setDepositLoading(false);
             }
@@ -489,6 +497,11 @@ export function FarmModal({
                                             t`Deposit`
                                         )}
                                     </button>
+                                    {depositStatus && (
+                                        <div className="mt-1 p-05 br-8" style={{ background: "rgba(255,255,255,0.1)", fontSize: "0.9em" }}>
+                                            {depositStatus}
+                                        </div>
+                                    )}
                                 </div>
                             ) : chunkedPositions && chunkedPositions.length !== 0 ? (
                                 <button disabled id={"farming-select-nft"} className={`btn primary w-100 p-1 farming-select-nft`}>
@@ -551,7 +564,6 @@ const PositionCard = React.memo(({ token, selectedNFT, isEnoughTokenForLock, sel
                         old && old.id === token.id
                             ? null
                             : {
-                                onFarmingCenter: token.onFarmingCenter,
                                 id: token.id,
                             }
                     );

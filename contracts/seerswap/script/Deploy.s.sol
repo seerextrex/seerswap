@@ -18,11 +18,11 @@ contract DeployScript is Script {
         MarketZapSimple zap = new MarketZapSimple(
             GNOSIS_ROUTER,
             GNOSIS_POSITION_MANAGER,
-            GNOSIS_FARMING_CENTER
+            GNOSIS_FARMING_CENTER,
+            address(0) // No default reward token
         );
 
         console.log("MarketZapSimple deployed to:", address(zap));
-        console.log("Owner:", zap.owner());
 
         vm.stopBroadcast();
     }

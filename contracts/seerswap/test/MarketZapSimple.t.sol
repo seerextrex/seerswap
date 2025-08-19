@@ -12,14 +12,14 @@ contract MarketZapSimpleTest is Test {
     address constant FARMING_CENTER = address(0x3);
     
     function setUp() public {
-        zap = new MarketZapSimple(ROUTER, POSITION_MANAGER, FARMING_CENTER);
+        zap = new MarketZapSimple(ROUTER, POSITION_MANAGER, FARMING_CENTER, address(0));
     }
     
     function testDeployment() public {
         assertEq(address(zap.router()), ROUTER);
         assertEq(address(zap.positionManager()), POSITION_MANAGER);
         assertEq(address(zap.farmingCenter()), FARMING_CENTER);
-        assertEq(zap.owner(), address(this));
+        assertEq(zap.rewardToken(), address(0));
     }
     
     function testZapRevertsWithoutWhitelist() public {
@@ -43,12 +43,12 @@ contract MarketZapSimpleTest is Test {
         vm.expectRevert(MarketZapSimple.InvalidPool.selector);
         zap.zap(
             market,
-            collateral,
             1000,
             pools,
             minLiquidities,
             50, // 0.5% slippage
             block.timestamp + 3600,
+            collateral,
             rewardTokens,
             endTimes
         );
@@ -75,12 +75,12 @@ contract MarketZapSimpleTest is Test {
         vm.expectRevert(MarketZapSimple.DeadlineExpired.selector);
         zap.zap(
             market,
-            collateral,
             1000,
             pools,
             minLiquidities,
             50,
             block.timestamp - 1, // Deadline in the past
+            collateral,
             rewardTokens,
             endTimes
         );

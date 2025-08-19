@@ -254,7 +254,7 @@ export function FarmModal({
             setSubmitState(3);
             setDepositLoading(false);
             setDepositStatus("");
-        } else if (farmedHash.error) {
+        } else if (typeof farmedHash === 'object' && 'error' in farmedHash && farmedHash.error) {
             setDepositLoading(false);
             setDepositStatus(`Error: ${farmedHash.error}`);
         }
@@ -481,7 +481,7 @@ export function FarmModal({
                                         </button>
                                     )}
                                     <button
-                                        disabled={depositLoading || (selectedTier && showApproval)}
+                                        disabled={depositLoading || (!!selectedTier && showApproval)}
                                         onClick={() => farmNFTs(farmingType)}
                                         id={"farming-deposit-nft"}
                                         className={"btn primary w-100 mxs_mb-1 p-1 farming-deposit-nft"}
@@ -517,7 +517,16 @@ export function FarmModal({
 }
 
 // Internal component for displaying individual NFT position to stake
-const PositionCard = React.memo(({ token, selectedNFT, isEnoughTokenForLock, selectedTier, submitLoader, setSelectedNFT }) => {
+interface PositionCardProps {
+    token: NTFInterface;
+    selectedNFT: NTFInterface | null;
+    isEnoughTokenForLock: boolean;
+    selectedTier: string | null;
+    submitLoader: boolean;
+    setSelectedNFT: React.Dispatch<React.SetStateAction<NTFInterface | null>>;
+}
+
+const PositionCard = React.memo(({ token, selectedNFT, isEnoughTokenForLock, selectedTier, submitLoader, setSelectedNFT }: PositionCardProps) => {
     // token here is the selectedNFT from the modal's state (type NTFInterface)
 
     // Get the detailed, on-chain position data for the selected NFT
@@ -580,7 +589,7 @@ const PositionCard = React.memo(({ token, selectedNFT, isEnoughTokenForLock, sel
             <div style={{ marginLeft: "auto" }}>
                 <IsActive el={token} />
                 <div className={"farm-modal__nft-position__description"}>
-                    <a className={"fs-085 c-w hover-cp"} href={`${AlgebraConfig.MISC.appURL}/#/pool/${+token.id}`} rel="noopener noreferrer" target="_blank">
+                    <a className={"fs-085 c-w hover-cp"} href={`${AlgebraConfig.MISC.appURL}/#/pool/${token.id ? +token.id : ''}`} rel="noopener noreferrer" target="_blank">
                         <Trans>View position</Trans>
                     </a>
                 </div>

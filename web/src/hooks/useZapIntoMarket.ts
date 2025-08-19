@@ -308,13 +308,13 @@ export function useZapIntoMarket() {
         const collateralForPool = (splitAmount * ratio) / SCALE;
         // Approximate liquidity = sqrt(splitAmount * collateralForPool)
         // Apply slippage tolerance
-        const slippageBps = BigInt(Math.floor(slippageTolerance.numerator.toString() * 10000n / slippageTolerance.denominator.toString()));
+        const slippageBps = BigInt(Math.floor(Number(slippageTolerance.numerator.toString()) * 10000 / Number(slippageTolerance.denominator.toString())));
         const minLiquidity = (splitAmount * (10000n - slippageBps)) / 10000n;
         return minLiquidity / 2n; // Conservative estimate
       });
       
       // Convert slippage tolerance to basis points
-      const slippageBps = BigInt(Math.floor(slippageTolerance.numerator.toString() * 10000n / slippageTolerance.denominator.toString()));
+      const slippageBps = BigInt(Math.floor(Number(slippageTolerance.numerator.toString()) * 10000 / Number(slippageTolerance.denominator.toString())));
       
       // First approve the zap contract for the split amount only
       const collateralAddress = collateralToken.address as Address;

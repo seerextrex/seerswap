@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.29;
 
 import "forge-std/Script.sol";
-import "../src/MarketZapSimple.sol";
+import "../src/Zap.sol";
 
 contract DeployScript is Script {
     // Gnosis addresses
@@ -14,8 +14,8 @@ contract DeployScript is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        // Deploy MarketZapSimple
-        MarketZapSimple zap = new MarketZapSimple(
+        // Deploy Zap
+        Zap zap = new Zap(
             GNOSIS_ROUTER,
             GNOSIS_POSITION_MANAGER,
             GNOSIS_FARMING_CENTER,

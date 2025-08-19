@@ -1,11 +1,67 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "../../swapr/periphery/contracts/interfaces/INonfungiblePositionManager.sol";
-import "../../swapr/core/contracts/interfaces/IAlgebraPool.sol";
-import "../../swapr/tokenomics/contracts/interfaces/IFarmingCenter.sol";
+// Minimal interfaces
+interface IERC20 {
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    function transfer(address to, uint256 amount) external returns (bool);
+    function approve(address spender, uint256 amount) external returns (bool);
+}
+
+interface IERC721 {
+    function approve(address to, uint256 tokenId) external;
+    function transferFrom(address from, address to, uint256 tokenId) external;
+}
+
+interface INonfungiblePositionManager {
+    struct MintParams {
+        address token0;
+        address token1;
+        int24 tickLower;
+        int24 tickUpper;
+        uint256 amount0Desired;
+        uint256 amount1Desired;
+        uint256 amount0Min;
+        uint256 amount1Min;
+        address recipient;
+        uint256 deadline;
+    }
+    
+    struct DecreaseLiquidityParams {
+        uint256 tokenId;
+        uint128 liquidity;
+        uint256 amount0Min;
+        uint256 amount1Min;
+        uint256 deadline;
+        address token0;
+        address token1;
+    }
+    
+    function mint(MintParams calldata params) external returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
+    function decreaseLiquidity(DecreaseLiquidityParams calldata params) external returns (uint256 amount0, uint256 amount1);
+}
+
+interface IFarmingCenter {
+    struct Deposit {
+        uint256 L2TokenId;
+        uint32 numberOfFarms;
+        bool inLimitFarming;
+        address owner;
+    }
+    
+    struct IncentiveKey {
+        address rewardToken;
+        address bonusRewardToken;
+        address pool;
+        uint256 nonce;
+    }
+    
+    function deposits(uint256 tokenId) external view returns (Deposit memory);
+    function enterFarming(IncentiveKey memory key, uint256 tokenId, uint256 tokensLocked, bool isLimit) external;
+    function exitFarming(IncentiveKey memory key, uint256 tokenId, bool isLimit) external;
+    function collectRewards(IncentiveKey memory key, uint256 tokenId) external returns (uint256 reward, uint256 bonusReward);
+    function withdrawToken(uint256 tokenId, address to, bytes memory data) external;
+}
 
 // Minimal interfaces - only what we use
 interface IRouter {
@@ -13,15 +69,15 @@ interface IRouter {
 }
 
 /**
- * @title MarketZapSimple
+ * @title Zap
  * @author SeerSwap
  * @notice Immutable contract for atomic liquidity provision and farming for prediction markets.
  * @dev KISS - Keep It Simple Stupid. Following Kleros guidelines.
  */
-contract MarketZapSimple {
+contract Zap {
     // Immutable storage
     IRouter public immutable router;
-    IPositionManager public immutable positionManager;
+    INonfungiblePositionManager public immutable positionManager;
     IFarmingCenter public immutable farmingCenter;
     address public immutable rewardToken;
 
@@ -34,31 +90,31 @@ contract MarketZapSimple {
      */
     constructor(address _router, address _positionManager, address _farmingCenter, address _rewardToken) {
         router = IRouter(_router);
-        positionManager = IPositionManager(_positionManager);
+        positionManager = INonfungiblePositionManager(_positionManager);
         farmingCenter = IFarmingCenter(_farmingCenter);
         rewardToken = _rewardToken;
     }
 
     function zap(
         IERC20 collateralToken,
+        address market,
         uint256 splitAmount,
-        INonfungiblePositionManager.MintParams[] calldata params,
-        uint256 startTime,
-        uint256 endTime
+        INonfungiblePositionManager.MintParams[] calldata mintParams,
+        IFarmingCenter.IncentiveKey[] calldata keys
     )
         external
         returns (uint256[] memory tokenIds)
     {
         collateralToken.transferFrom(msg.sender, address(this), splitAmount);
         collateralToken.approve(address(router), splitAmount);
-        router.splitPosition(collateralToken, splitAmount);
+        router.splitPosition(address(collateralToken), market, splitAmount);
 
         // Add liquidity and stake
-        uint256 paramsLength = params.length;
+        uint256 paramsLength = mintParams.length;
         tokenIds = new uint256[](paramsLength);
         for (uint256 i; i < paramsLength; i++) {
             // Mint position
-            (uint256 tokenId,,,) = positionManager.mint(params[i]);
+            (uint256 tokenId,,,) = positionManager.mint(mintParams[i]);
             tokenIds[i] = tokenId;
 
             // Approve and stake into farming
@@ -68,19 +124,19 @@ contract MarketZapSimple {
             uint256 l2TokenId = farmingCenter.deposits(tokenId).L2TokenId;
             farmingCenter.enterFarming(keys[i], tokenIds[i], 0, false);
             // transfer to msg.sender
-            IERC721(address(farmingCenter)).transferFrom(address(farmingCenter), msg.sender, l2TokenId);
+            IERC721(address(farmingCenter)).transferFrom(address(this), msg.sender, l2TokenId);
         }
     }
 
     function unzap(
-        IncentiveKey[] memory keys,
+        IFarmingCenter.IncentiveKey[] memory keys,
         uint256[] calldata tokenIds,
-        INonfungiblePositionManager.DecreaseLiquidityParams calldata params
+        INonfungiblePositionManager.DecreaseLiquidityParams[] calldata params
     )
         external
     {
-        // precondition: approval all farming nfts to zap contract
-        // poscondition: remove approval all farming nfts to zap contract
+        // before unzapping: approval all farming nfts to zap contract
+        // after unzapping: remove approval all farming nfts to zap contract
         for (uint256 i; i < tokenIds.length; i++) {
             // transfer tokenIds[i] farming l2 nft to zap from msg.sender
             farmingCenter.collectRewards(keys[i], tokenIds[i]);

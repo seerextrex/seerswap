@@ -39,11 +39,8 @@ export function handlePoolCreated(event: PoolEvent): void {
   token0 = Token.load(token0_address.toHexString())
   token1 = Token.load(token1_address.toHexString())
 
-  if (!token0 || !token1) {
-    return
-  }
-
-  if (!(token0.isSeer || token1.isSeer)) {
+  if (!token0 || !token1 || !token0.isSeer || token1.isSeer) {
+    log.error('skipping pools with no seer relevant tokens', [])
     return
   }
 

@@ -1,3 +1,6 @@
+#!/bin/bash
+ENABLE_FUTARCHY_FACTORY=${ENABLE_FUTARCHY_FACTORY:-"false"}
+cat <<EOF > subgraph.yaml
 specVersion: 1.0.0
 description: Combined subgraph for Algebra DEX, Farming, and Prediction Markets
 features:
@@ -247,6 +250,9 @@ dataSources:
         - event: NewMarket(indexed address,string,address,bytes32,bytes32,bytes32[])
           handler: handleNewMarket
       file: ./src/market-factory.ts
+EOF
+if [ "$ENABLE_FUTARCHY_FACTORY" == "true" ]; then
+cat <<EOF >> subgraph.yaml 
   - kind: ethereum
     name: FutarchyFactory
     network: gnosis
@@ -270,6 +276,9 @@ dataSources:
         - event: NewProposal(indexed address,string,bytes32,bytes32)
           handler: handleNewProposal
       file: ./src/market-factory.ts
+EOF
+fi
+cat <<EOF >> subgraph.yaml 
   - kind: ethereum
     name: MarketFactoryFast
     network: gnosis
@@ -579,3 +588,4 @@ templates:
         - name: LightGeneralizedTCR
           file: ./abis/LightGeneralizedTCR.json
     network: gnosis
+EOF

@@ -55,6 +55,7 @@ export function handleMint(event: MintEvent): void {
   let poolAddress = event.address.toHexString()
   let pool = Pool.load(poolAddress)!
   if (pool === null) {
+    log.error('mybug the pool was null', [poolAddress])
     return;
   }
   let factory = Factory.load(FACTORY_ADDRESS)!

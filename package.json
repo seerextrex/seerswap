@@ -6,11 +6,17 @@
     "scripts": {
         "prepare": "husky"
     },
-    "workspaces": [
-        "contracts",
-        "web",
-        "subgraph"
-    ],
+    "workspaces": {
+        "packages": [
+            "contracts",
+            "web",
+            "subgraph"
+        ],
+        "nohoist": [
+            "**/subgraph/@graphprotocol/graph-ts",
+            "**/subgraph/@graphprotocol/graph-ts/**"
+        ]
+    },
     "devDependencies": {
         "husky": "^9.0.11"
     },

@@ -11,6 +11,12 @@ import {
   MarketFactory,
   NewMarket as NewMarketEvent,
 } from "../generated/MarketFactory/MarketFactory";
+import {
+  FutarchyFactory,
+  NewProposal as NewProposalEvent,
+} from "../generated/FutarchyFactory/FutarchyFactory";
+import { FutarchyProposal } from "../generated/FutarchyFactory/FutarchyProposal";
+import { Reality } from "../generated/FutarchyFactory/Reality";
 import { MarketView } from "../generated/MarketFactory/MarketView";
 import {
   Condition,
@@ -138,6 +144,68 @@ export function handleNewMarket(event: NewMarketEvent): void {
   );
 }
 
+export function handleNewProposal(event: NewProposalEvent): void {
+  const proposal = FutarchyProposal.bind(event.params.proposal);
+  const futarchyFactory = FutarchyFactory.bind(event.address);
+  const reality = Reality.bind(futarchyFactory.realitio());
+
+  const wrappedTokens: Address[] = [];
+  const outcomes: string[] = [];
+  for (let i = 0; i < 4; i++) {
+    const outcome = proposal.outcomes(BigInt.fromI32(i));
+    outcomes.push(outcome);
+    const result = proposal.wrappedOutcome(BigInt.fromI32(i));
+    wrappedTokens.push(result.getWrapped1155());
+    // create tokens for wrapped tokens if they don't exist already exist (check first)
+    let wrappedToken = Token.load(result.getWrapped1155().toHexString())
+    if (wrappedToken === null) {
+      let success = createTokenEntity(result.getWrapped1155(), true, event.params.proposal)
+      if (!success) {
+        log.debug('mybug the token was null', [])
+        return
+      }
+    }
+  }
+
+  const question = reality.questions(event.params.questionId);
+
+  processMarket(
+    event,
+    {
+      id: event.params.proposal.toHexString(),
+      type: "Futarchy",
+      marketName: event.params.marketName,
+      outcomes: outcomes,
+      lowerBound: BigInt.fromI32(0),
+      upperBound: BigInt.fromI32(0),
+      collateralToken1: proposal.collateralToken1(),
+      collateralToken2: proposal.collateralToken2(),
+      parentCollectionId: proposal.parentCollectionId(),
+      parentOutcome: proposal.parentOutcome(),
+      parentMarket: proposal.parentMarket(),
+      wrappedTokens: wrappedTokens,
+      conditionId: event.params.conditionId,
+      questionId: event.params.questionId,
+      questionsIds: [event.params.questionId],
+      templateId: BigInt.fromI32(2),
+      encodedQuestions: [proposal.encodedQuestion()],
+      questions: [
+        {
+          opening_ts: question.getOpening_ts(),
+          arbitrator: question.getArbitrator(),
+          timeout: question.getTimeout(),
+          finalize_ts: question.getFinalize_ts(),
+          is_pending_arbitration: question.getIs_pending_arbitration(),
+          best_answer: question.getBest_answer(),
+          bond: question.getBond(),
+          min_bond: question.getMin_bond(),
+        },
+      ],
+    },
+    Address.zero()
+  );
+}
+
 function getCollateralToken(
   parentMarket: Address,
   parentOutcome: BigInt,
@@ -187,30 +255,35 @@ export function processMarket(
   );
   market.collateralToken1 = data.collateralToken1.toHexString();
   market.collateralToken2 = data.collateralToken2.toHexString();
-  let collateralTokenEntity = Token.load(market.collateralToken)
-  if (collateralTokenEntity === null) {
-    let success = createTokenEntity(Address.fromString(market.collateralToken), false, Address.fromString(ADDRESS_ZERO))
-    if (!success) {
-      log.debug('mybug the token was null', [])
-      return
-    }
-  }
-  // create tokens for collateral tokens if they don't exist already exist (check first)
-  let collateralToken1 = Token.load(data.collateralToken1.toHexString())
-  if (collateralToken1 === null) {
-    let success = createTokenEntity(data.collateralToken1, false, Address.fromString(ADDRESS_ZERO))
-    if (!success) {
-      log.debug('mybug the token was null', [])
-      return
-    }
-  }
 
-  let collateralToken2 = Token.load(data.collateralToken2.toHexString())
-  if (collateralToken2 === null) {
-    let success = createTokenEntity(data.collateralToken2, false, Address.fromString(ADDRESS_ZERO))
-    if (!success) {
-      log.debug('mybug the token was null', [])
-      return
+
+  if (data.type == "Futarchy") {
+    // create tokens for collateral tokens if they don't exist already exist (check first)
+    let collateralToken1 = Token.load(data.collateralToken1.toHexString())
+    if (collateralToken1 === null) {
+      let success = createTokenEntity(data.collateralToken1, false, Address.fromString(ADDRESS_ZERO))
+      if (!success) {
+        log.debug('mybug the token was null', [])
+        return
+      }
+    }
+
+    let collateralToken2 = Token.load(data.collateralToken2.toHexString())
+    if (collateralToken2 === null) {
+      let success = createTokenEntity(data.collateralToken2, false, Address.fromString(ADDRESS_ZERO))
+      if (!success) {
+        log.debug('mybug the token was null', [])
+        return
+      }
+    }
+  } else {
+    let collateralTokenEntity = Token.load(market.collateralToken)
+    if (collateralTokenEntity === null) {
+      let success = createTokenEntity(Address.fromString(market.collateralToken), false, Address.fromString(ADDRESS_ZERO))
+      if (!success) {
+        log.debug('mybug the token was null', [])
+        return
+      }
     }
   }
 
@@ -257,8 +330,8 @@ export function processMarket(
       market.id.concat(data.questionsIds[i].toHexString()).concat(i.toString())
     );
     marketQuestion.market = market.id;
-    marketQuestion.question = question.id;
     marketQuestion.baseQuestion = question.id;
+    marketQuestion.question = question.id;
     marketQuestion.index = i;
     marketQuestion.save();
   }

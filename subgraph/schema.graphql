@@ -93,12 +93,12 @@ type Image @entity(immutable: false) {
 type MarketQuestion @entity(immutable: false) {
   id: ID!
   market: Market!
-  " a market can have the same question multiple times, we use the index to identify each one of them "
-  index: Int!
   " baseQuestion is the original question that was created when the market was created "
   baseQuestion: Question!
   " question is the latest question if the original question was reopened, otherwise it's the same as baseQuestion "
   question: Question!
+  " a market can have the same question multiple times, we use the index to identify each one of them "
+  index: Int!
 }
 
 type Condition @entity(immutable: false) {

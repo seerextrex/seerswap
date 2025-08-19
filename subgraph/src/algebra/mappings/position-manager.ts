@@ -114,12 +114,14 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
   let position = getPosition(event, event.params.tokenId)
   // position was not able to be fetched
   if (position == null) {
+    log.error("Position not found for increase liquidity event tx hash: {}", [event.transaction.hash.toHexString()])
     return
   }
   let token0 = Token.load(position.token0)
   let token1 = Token.load(position.token1)
 
   if (token0 == null || token1 == null) {
+    log.error("Token not found for increase liquidity event tx hash: {}", [event.transaction.hash.toHexString()])
     return
   }
 
@@ -153,13 +155,14 @@ export function handleIncreaseLiquidity(event: IncreaseLiquidity): void {
 
   let entity = Deposit.load(event.params.tokenId.toString());
 
-  if (entity == null) {
+  if (entity === null) {
     entity = new Deposit(event.params.tokenId.toString());
     entity.owner = event.transaction.from;
     entity.pool = event.params.pool.toHexString();
     // load pool and read markets
     let pool = Pool.load(event.params.pool.toHexString())
     if (pool == null) {
+      log.error("Pool not found for increase liquidity event tx hash: {}", [event.transaction.hash.toHexString()])
       return
     }
     //  let mint = new Mint(pool.id.toString() + '#' + pool.txCount.toString())

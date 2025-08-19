@@ -133,7 +133,7 @@ export function handleTokenUnstaked(event: FarmEnded): void {
 
   let entity = Deposit.load(event.params.tokenId.toString());
 
-  if (entity) {
+  if (entity != null) {
     let eternalFarming = EternalFarming.load(entity.eternalFarming!)
     if (eternalFarming) {
       eternalFarming.reward = eternalFarming.reward.minus(event.params.reward)

@@ -53,8 +53,9 @@ export function handleInitialize(event: Initialize): void {
 
 export function handleMint(event: MintEvent): void {
   let poolAddress = event.address.toHexString()
-  let pool = Pool.load(poolAddress)!
+  let pool = Pool.load(poolAddress)
   if (pool === null) {
+    log.error("Pool not found for mint event tx hash: {}", [event.transaction.hash.toHexString()])
     return;
   }
   let factory = Factory.load(FACTORY_ADDRESS)!
@@ -185,10 +186,12 @@ export function handleMint(event: MintEvent): void {
 
   if (lowerTick === null) {
     lowerTick = createTick(lowerTickId, lowerTickIdx, pool.id, event)
+    lowerTick.save()
   }
 
   if (upperTick === null) {
     upperTick = createTick(upperTickId, upperTickIdx, pool.id, event)
+    upperTick.save()
   }
 
   let amount = event.params.liquidityAmount
@@ -766,9 +769,19 @@ function updateTickFeeVarsAndSave(tick: Tick, event: ethereum.Event): void {
   // not all ticks are initialized so obtaining null is expected behavior
   let poolContract = PoolABI.bind(poolAddress)
 
-  let tickResult = poolContract.ticks(tick.tickIdx.toI32())
-  tick.feeGrowthOutside0X128 = tickResult.value2
-  tick.feeGrowthOutside1X128 = tickResult.value3
+  // Try to get tick data from contract, but handle failures gracefully
+  let tickResult = poolContract.try_ticks(tick.tickIdx.toI32())
+  if (!tickResult.reverted) {
+    tick.feeGrowthOutside0X128 = tickResult.value.value2
+    tick.feeGrowthOutside1X128 = tickResult.value.value3
+  } else {
+    // Log the error but continue - tick will still be saved with default fee values
+    log.error("Failed to fetch tick data from contract for tick {} in pool {}", [
+      tick.tickIdx.toString(),
+      poolAddress.toHexString()
+    ])
+  }
+  
   tick.save()
   updateTickDayData(tick, event)
 }

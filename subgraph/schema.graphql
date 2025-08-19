@@ -1126,7 +1126,7 @@ type LRegistryMetadata @entity(immutable: true) {
 }
 
 
-type MetaEvidence @entity(immutable: true) {
+type MetaEvidence @entity(immutable: false) {
   "The meta evidence ID."
   id: ID!
   "The URI of the meta evidence file."

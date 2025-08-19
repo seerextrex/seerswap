@@ -25,18 +25,6 @@ contract MarketZapSimple {
     IFarmingCenter public immutable farmingCenter;
     address public immutable rewardToken;
 
-    mapping(uint256 => address) public owner;
-
-    // Errors
-    error Unauthorized();
-    error InvalidPool();
-    error InvalidAmount();
-    error DeadlineExpired();
-    error InsufficientTokens();
-
-    // Events
-    event Zapped(address indexed sender, address indexed market, uint256[] tokenIds);
-
     /**
      * @notice Constructor sets immutable addresses.
      * @param _router Seer router for splitting positions.
@@ -78,40 +66,35 @@ contract MarketZapSimple {
             // send the NFT to the farming center
             IERC721(address(positionManager)).transferFrom(address(this), address(farmingCenter), tokenId);
             uint256 l2TokenId = farmingCenter.deposits(tokenId).L2TokenId;
-            // transfer all farming l2 nfts to msg.sender
+            farmingCenter.enterFarming(keys[i], tokenIds[i], 0, false);
+            // transfer to msg.sender
             IERC721(address(farmingCenter)).transferFrom(address(farmingCenter), msg.sender, l2TokenId);
         }
     }
 
-    function enterFarming(
+    function unzap(
         IncentiveKey[] memory keys,
         uint256[] calldata tokenIds,
-        uint256 startTime,
-        uint256 endTime
+        INonfungiblePositionManager.DecreaseLiquidityParams calldata params
     )
         external
     {
-        // must approve all tokens to the farming center
+        // precondition: approval all farming nfts to zap contract
+        // poscondition: remove approval all farming nfts to zap contract
         for (uint256 i; i < tokenIds.length; i++) {
-            farmingCenter.enterFarming(keys[i], tokenIds[i], 0, false);
-        }
-    }
-
-    function exitFarming(IncentiveKey[] memory keys, uint256[] calldata tokenIds) external {
-        for (uint256 i; i < tokenIds.length; i++) {
-            farmingCenter.exitFarming(keys[i], tokenIds[i], false);
-        }
-    }
-
-    function collectRewards(IncentiveKey[] memory keys, uint256[] calldata tokenIds) external {
-        for (uint256 i; i < tokenIds.length; i++) {
+            // transfer tokenIds[i] farming l2 nft to zap from msg.sender
             farmingCenter.collectRewards(keys[i], tokenIds[i]);
+            uint256 l2TokenId = farmingCenter.deposits(tokenIds[i]).L2TokenId;
+            IERC721(address(farmingCenter)).transferFrom(msg.sender, address(this), l2TokenId);
+            farmingCenter.exitFarming(keys[i], tokenIds[i], false);
+            // withdraw tokenId from farming center
+            farmingCenter.withdrawToken(tokenIds[i], address(this), "");
+            // decrease liquidity from position manager
+            (uint256 amount0, uint256 amount1) = positionManager.decreaseLiquidity(params[i]);
+            // transfer amount0 and amount1 to msg.sender
+            IERC20(params[i].token0).transfer(msg.sender, amount0);
+            IERC20(params[i].token1).transfer(msg.sender, amount1);
         }
-    }
-
-    function claimRewards(IncentiveKey[] memory keys, uint256[] calldata tokenIds) external {
-        for (uint256 i; i < tokenIds.length; i++) {
-            farmingCenter.claimRewards(keys[i], tokenIds[i]);
-        }
+        // after claim reward from eoa or batch 7702
     }
 }

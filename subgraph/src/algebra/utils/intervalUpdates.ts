@@ -42,15 +42,15 @@ export function updateAlgebraDayData(event: ethereum.Event): AlgebraDayData {
 }
 
 
-export function updatePoolDayData(event: ethereum.Event): PoolDayData {
+export function updatePoolDayData(event: ethereum.Event, poolAddress: string | null = null): PoolDayData {
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
-  let dayPoolID = event.address
-    .toHexString()
+  let poolAddr = poolAddress !== null ? poolAddress : event.address.toHexString()
+  let dayPoolID = poolAddr
     .concat('-')
     .concat(dayID.toString())
-  let pool = Pool.load(event.address.toHexString())!
+  let pool = Pool.load(poolAddr)!
   let poolDayData = PoolDayData.load(dayPoolID)
   if (poolDayData === null) {
     poolDayData = new PoolDayData(dayPoolID)
@@ -128,15 +128,15 @@ export function updateFeeHourData(event: ethereum.Event, Fee: BigInt): void {
   FeeHourDataEntity.save()
 }
 
-export function updatePoolHourData(event: ethereum.Event): PoolHourData {
+export function updatePoolHourData(event: ethereum.Event, poolAddress: string | null = null): PoolHourData {
   let timestamp = event.block.timestamp.toI32()
   let hourIndex = timestamp / 3600 // get unique hour within unix history
   let hourStartUnix = hourIndex * 3600 // want the rounded effect
-  let hourPoolID = event.address
-    .toHexString()
+  let poolAddr = poolAddress !== null ? poolAddress : event.address.toHexString()
+  let hourPoolID = poolAddr
     .concat('-')
     .concat(hourIndex.toString())
-  let pool = Pool.load(event.address.toHexString())!
+  let pool = Pool.load(poolAddr)!
   let poolHourData = PoolHourData.load(hourPoolID)
   if (poolHourData === null) {
     poolHourData = new PoolHourData(hourPoolID)

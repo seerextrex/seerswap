@@ -53,6 +53,13 @@ export function handleInitialize(event: Initialize): void {
 
 export function handleMint(event: MintEvent): void {
   let poolAddress = event.address.toHexString()
+  /*log.error("handleMint called for pool: {} tx: {} bottomTick: {} topTick: {}", [
+    poolAddress, 
+    event.transaction.hash.toHexString(),
+    event.params.bottomTick.toString(),
+    event.params.topTick.toString()
+  ])*/
+  
   let pool = Pool.load(poolAddress)
   if (pool === null) {
     log.error("Pool not found for mint event tx hash: {}", [event.transaction.hash.toHexString()])
@@ -158,7 +165,7 @@ export function handleMint(event: MintEvent): void {
 
   let transaction = loadTransaction(event)
   let mint = new Mint(transaction.id + '#' + (event.logIndex.toString()))
-  log.info("Mint created for pool {}", [transaction.id + '#' + (event.logIndex.toString())])
+  //log.error("Mint created for pool {}", [transaction.id + '#' + (event.logIndex.toString())])
   mint.transaction = transaction.id
   mint.timestamp = transaction.timestamp
   mint.pool = pool.id
@@ -181,17 +188,25 @@ export function handleMint(event: MintEvent): void {
   let lowerTickId = poolAddress + '#' + BigInt.fromI32(event.params.bottomTick).toString()
   let upperTickId = poolAddress + '#' + BigInt.fromI32(event.params.topTick).toString()
 
+  log.info("handleMint tick creation - lowerTickId: {} upperTickId: {}", [lowerTickId, upperTickId])
+
   let lowerTick = Tick.load(lowerTickId)
   let upperTick = Tick.load(upperTickId)
 
   if (lowerTick === null) {
+    log.info("Creating new lowerTick: {}", [lowerTickId])
     lowerTick = createTick(lowerTickId, lowerTickIdx, pool.id, event)
     lowerTick.save()
+  } else {
+    log.info("LowerTick already exists: {}", [lowerTickId])
   }
 
   if (upperTick === null) {
+    log.info("Creating new upperTick: {}", [upperTickId])
     upperTick = createTick(upperTickId, upperTickIdx, pool.id, event)
     upperTick.save()
+  } else {
+    log.info("UpperTick already exists: {}", [upperTickId])
   }
 
   let amount = event.params.liquidityAmount

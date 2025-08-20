@@ -5,6 +5,8 @@ features:
   - ipfsOnEthereumContracts
 schema:
   file: ./schema.graphql
+indexerHints:
+  prune: never
 dataSources:
   - kind: ethereum/contract
     name: LightGTCRFactory

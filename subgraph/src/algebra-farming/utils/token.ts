@@ -88,7 +88,14 @@ export function fetchTokenDecimals(tokenAddress: Address): BigInt {
 export function createTokenEntity(tokenAddress: Address, isSeer: boolean, market: Address): boolean {
   // check if token already exists
   let token = Token.load(tokenAddress.toHexString())
-  if (token != null) {
+  if (tokenAddress.toHexString() == ADDRESS_ZERO) {
+    return false;
+  }
+  if (tokenAddress.toHexString() == "0x68984a7d283ff918e530368e6aaad1fc2af88692"){
+    log.error("YOYOYOYOYOYOY",[]);
+  }
+  if (token !== null) {
+    //log.error('token {} already exists', [tokenAddress.toHexString()])
     return true
   }
 
@@ -97,7 +104,7 @@ export function createTokenEntity(tokenAddress: Address, isSeer: boolean, market
   let decimals = fetchTokenDecimals(tokenAddress)
   // bail if we couldn't figure out the decimals
   if (decimals === null) {
-    log.debug('mybug the decimal on token 0 was null', [])
+    //log.error('Failed to fetch decimals for token {} in market {}', [tokenAddress.toHexString(), market.toHexString()])
     return false
   }
   token.decimals = decimals
@@ -115,8 +122,11 @@ export function createTokenEntity(tokenAddress: Address, isSeer: boolean, market
   token.poolCount = ZERO_BI
   token.whitelistPools = []
   token.isSeer = isSeer
-  if (market.toHexString().localeCompare(ADDRESS_ZERO) !== 0) {
+  if (market.toHexString() != ADDRESS_ZERO) {
     token.market = market.toHexString()
+  }
+    if (tokenAddress.toHexString() == "0x68984a7d283ff918e530368e6aaad1fc2af88692"){
+    log.error("YOYOYOYOYOYOY2121",[token.isSeer.toString(), token.id]);
   }
   token.save()
   return true

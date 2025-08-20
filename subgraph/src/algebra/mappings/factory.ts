@@ -11,7 +11,7 @@ import { log, BigInt, Address } from '@graphprotocol/graph-ts'
 import { createTokenEntity } from '../../algebra-farming/utils/token'
 
 export function handlePoolCreated(event: PoolEvent): void {
-
+  //log.error("handling pool creation {}", [event.transaction.hash.toHexString()]);
   let token0_address = event.params.token0
   let token1_address = event.params.token1
 
@@ -21,29 +21,36 @@ export function handlePoolCreated(event: PoolEvent): void {
   // create wxdai or sdai if they are not registered
 
   if (token0 === null && (token0_address.toHexString() === WXDAI_ADDRESS || token0_address.toHexString() === SDAI_ADDRESS)) {
+    log.error("Creating token0: {}", [token0_address.toHexString()])
     let success = createTokenEntity(token0_address, false, Address.fromString(ADDRESS_ZERO))
     if (!success) {
       log.error('mybug the token was null', [])
       return
     }
+    token0 = Token.load(token0_address.toHexString())
   }
 
   if (token1 === null && (token1_address.toHexString() === WXDAI_ADDRESS || token1_address.toHexString() === SDAI_ADDRESS)) {
+    log.error("Creating token1: {}", [token1_address.toHexString()])
     let success = createTokenEntity(token1_address, false, Address.fromString(ADDRESS_ZERO))
     if (!success) {
       log.error('mybug the token was null', [])
       return
     }
+    token1 = Token.load(token1_address.toHexString())
   }
 
-  token0 = Token.load(token0_address.toHexString())
-  token1 = Token.load(token1_address.toHexString())
-
-  if (!token0 || !token1) {
+  if (token0 === null || token1 === null) {
+    log.error("Token not found for pool created event tx hash null: {}", [event.transaction.hash.toHexString()])
+    const isToken0 = token0 === null;
+    const isToken1 = token1 === null;
+    log.error("isToken0: {}, isToken1: {}", [isToken0.toString(), isToken1.toString()])
+    log.error("token0_address: {}, token1_address: {}", [token0_address.toHexString(), token1_address.toHexString()])
     return
   }
 
   if (!(token0.isSeer || token1.isSeer)) {
+    log.error("Token not found for pool created event tx hash seer: {}", [event.transaction.hash.toHexString()])
     return
   }
 

@@ -11,7 +11,7 @@ import {
   MarketFactory,
   NewMarket as NewMarketEvent,
 } from "../generated/MarketFactory/MarketFactory";
-import { MarketView } from "../generated/MarketFactory/MarketView";
+import { MarketView, MarketView__getMarketResultValue0Struct } from "../generated/MarketFactory/MarketView";
 import {
   Condition,
   Market,
@@ -32,7 +32,7 @@ function getMarketViewAddress(network: string): string {
     return "0xAb797C4C6022A401c31543E316D3cd04c67a87fC";
   }
 
-  return "0x995dC9c89B6605a1E8cc028B37cb8e568e27626f";
+  return "0x995dc9c89b6605a1e8cc028b37cb8e568e27626f";
 }
 
 function getNextMarketIndex(): BigInt {
@@ -80,6 +80,7 @@ class MarketData {
 }
 
 export function handleNewMarket(event: NewMarketEvent): void {
+  log.error("Creating market {} at txn hash {}", [event.params.market.toHexString(), event.transaction.hash.toHexString()])
   const marketView = MarketView.bind(
     Address.fromString(getMarketViewAddress(dataSource.network()))
   );
@@ -89,16 +90,28 @@ export function handleNewMarket(event: NewMarketEvent): void {
     Address.fromString(event.params.market.toHexString())
   );
 
+  let parentMarket = Market.load(data.parentMarket.toHexString());
+  if (data.parentMarket.toHexString() != ADDRESS_ZERO && parentMarket == null) {
+    log.error("Must create parent market with market factory first {}", [event.params.market.toHexString()])
+    return
+  }
 
-  // create tokens
+
   for (let i = 0; i < data.wrappedTokens.length; i++) {
-    let token = Token.load(data.wrappedTokens[i].toHexString())
-    if (token === null) {
-      let success = createTokenEntity(data.wrappedTokens[i], true, event.params.market)
-      if (!success) {
-        log.debug('mybug the token was null', [])
-        return
-      }
+    log.warning("Creating token entity for address {} at index {} for market {}, txn hash {}", [
+      data.wrappedTokens[i].toHexString(),
+      i.toString(),
+      event.params.market.toHexString(),
+      event.transaction.hash.toHexString()
+    ])
+    let tokenAddress = data.wrappedTokens[i].toHexString()
+    let success = createTokenEntity(data.wrappedTokens[i], true, event.params.market)
+    if (!success) {
+      log.error('Failed to create token entity for address {} at index {} for market {}', [
+        tokenAddress,
+        i.toString(),
+        event.params.market.toHexString()
+      ])
     }
   }
 
@@ -147,9 +160,13 @@ function getCollateralToken(
     return collateralToken.toHexString();
   }
 
-  const market = Market.load(parentMarket.toHexString());
+  let market = Market.load(parentMarket.toHexString());
 
   if (!market) {
+    log.error(
+      "Parent market {} not found. Attempting to fetch and create it (may have been deployed manually)",
+      [parentMarket.toHexString()]
+    );
     return collateralToken.toHexString();
   }
 
@@ -185,32 +202,42 @@ export function processMarket(
     data.parentOutcome,
     collateralToken
   );
+
+  // Log collateral token for conditional markets
+  if (!data.parentMarket.equals(Address.zero())) {
+    log.error('Conditional market {} has collateralToken: {}, from parent: {}, outcome: {}', [
+      data.id,
+      market.collateralToken,
+      data.parentMarket.toHexString(),
+      data.parentOutcome.toString()
+    ])
+  }
+
   market.collateralToken1 = data.collateralToken1.toHexString();
   market.collateralToken2 = data.collateralToken2.toHexString();
   let collateralTokenEntity = Token.load(market.collateralToken)
-  if (collateralTokenEntity === null) {
+  if (collateralTokenEntity === null && market.collateralToken != ADDRESS_ZERO) {
     let success = createTokenEntity(Address.fromString(market.collateralToken), false, Address.fromString(ADDRESS_ZERO))
     if (!success) {
-      log.debug('mybug the token was null', [])
-      return
+      log.error('Failed to create collateralToken entity for market {}: token {}', [data.id, market.collateralToken])
     }
   }
   // create tokens for collateral tokens if they don't exist already exist (check first)
   let collateralToken1 = Token.load(data.collateralToken1.toHexString())
-  if (collateralToken1 === null) {
+  if (collateralToken1 === null && data.collateralToken1.toHexString() != ADDRESS_ZERO) {
     let success = createTokenEntity(data.collateralToken1, false, Address.fromString(ADDRESS_ZERO))
     if (!success) {
-      log.debug('mybug the token was null', [])
-      return
+      log.error('Failed to create collateralToken1 entity for market {}: token {}', [data.id, data.collateralToken1.toHexString()])
+      // Don't return early - continue to save the Market entity
     }
   }
 
   let collateralToken2 = Token.load(data.collateralToken2.toHexString())
-  if (collateralToken2 === null) {
+  if (collateralToken2 === null && data.collateralToken2.toHexString() != ADDRESS_ZERO) {
     let success = createTokenEntity(data.collateralToken2, false, Address.fromString(ADDRESS_ZERO))
     if (!success) {
-      log.debug('mybug the token was null', [])
-      return
+      log.error('Failed to create collateralToken2 entity for market {}: token {}', [data.id, data.collateralToken2.toHexString()])
+      // Don't return early - continue to save the Market entity
     }
   }
 

@@ -34,9 +34,24 @@ export function handleIncentiveCreated(event: EternalFarmingCreated): void {
     return;
   }
 
-  createTokenEntity(event.params.rewardToken, false, Address.fromString(ADDRESS_ZERO))
-  createTokenEntity(event.params.bonusRewardToken, false, Address.fromString(ADDRESS_ZERO))
-  createTokenEntity(event.params.multiplierToken, false, Address.fromString(ADDRESS_ZERO))
+  if (event.params.rewardToken.toHexString() != ADDRESS_ZERO) {
+    const success = createTokenEntity(event.params.rewardToken, false, Address.fromString(ADDRESS_ZERO))
+    if (!success) {
+      log.error('Failed to create rewardToken entity for txn {}: token {}', [event.transaction.hash.toHexString(), event.params.rewardToken.toHexString()])
+    }
+  }
+  if (event.params.bonusRewardToken.toHexString() != ADDRESS_ZERO) {
+    const success = createTokenEntity(event.params.bonusRewardToken, false, Address.fromString(ADDRESS_ZERO))
+    if (!success) {
+      log.error('Failed to create bonusRewardToken entity for txn {}: token {}', [event.transaction.hash.toHexString(), event.params.bonusRewardToken.toHexString()])
+    }
+  }
+  if (event.params.multiplierToken.toHexString() != ADDRESS_ZERO) {
+    const success = createTokenEntity(event.params.multiplierToken, false, Address.fromString(ADDRESS_ZERO))
+    if (!success) {
+      log.error('Failed to create multiplierToken entity for txn {}: token {}', [event.transaction.hash.toHexString(), event.params.multiplierToken.toHexString()])
+    }
+  }
 
   let _incentiveTuple = changetype<ethereum.Tuple>(incentiveIdTuple);
 
@@ -81,6 +96,7 @@ export function handleIncentiveCreated(event: EternalFarmingCreated): void {
 
 
 export function handleTokenStaked(event: FarmEntered): void {
+  log.error("handleTokenStaked event tx hash: {}", [event.transaction.hash.toHexString()])
   let entity = Deposit.load(event.params.tokenId.toString());
   if (entity != null) {
     entity.eternalFarming = event.params.incentiveId.toHexString();
@@ -113,6 +129,8 @@ export function handleTokenStaked(event: FarmEntered): void {
       updateEternalFarming(eternalFarming, event)
       eternalFarming.save()
     }
+  } else {
+    log.error("Deposit entity not found in handleTokenStaked for tx hash: {}", [event.transaction.hash.toHexString()])
   }
   // TODO: Consider logging a warning or error if entity == null, as liquidity wouldn't be tracked.
   // For example: else { log.warning("Deposit entity {} not found in handleTokenStaked", [event.params.tokenId.toString()]); }
@@ -270,7 +288,7 @@ export function handleRewardsRatesChanged(event: RewardsRatesChanged): void {
   let eternalFarming = EternalFarming.load(event.params.incentiveId.toHexString())
   if (eternalFarming) {
     if (eternalFarming.rewardRate != BigInt.fromString("0")) {
-      log.error("RewardsRatesChanged should never happen", [event.params.incentiveId.toHexString()])
+      log.warning("RewardsRatesChanged should never happen", [event.params.incentiveId.toHexString()])
       return;
     }
     eternalFarming.rewardRate = event.params.rewardRate
